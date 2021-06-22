@@ -1,7 +1,7 @@
 <template>
   <b-row class="mt-n1">
     <b-col cols="12">
-      <div class="card-header">
+      <div class="card-header d-none">
         <div class="d-flex justify-content-start flex-wrap">
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -38,13 +38,173 @@
             </b-input-group>
           </b-form-group>
         </div>
-
         <!-- Card Actions -->
         <b-card-actions-container
           class="mr-md-50"
           :available-actions="['refresh']"
           @refresh="refreshTable"
         />
+      </div>
+
+      <!-- Collapse dropdown filter -->
+      <div class="dropdown-filter">
+        <!-- toggle button -->
+        <div class="d-flex">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            v-b-toggle.collapse-1
+            variant="primary"
+            size="sm"
+            class="mr-50"
+          >
+            <feather-icon
+              icon="FilterIcon"
+              class="mr-50"
+            />
+            Filter
+          </b-button>
+
+          <b-form-group
+            class="mb-0"
+          >
+            <b-input-group
+              class="input-group-merge"
+              size="sm"
+            >
+              <b-input-group-prepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </b-input-group-prepend>
+              <b-form-input
+                id="filterInput"
+                v-model="filter"
+                type="search"
+                placeholder="Cari..."
+                debounce="500"
+              />
+            </b-input-group>
+          </b-form-group>
+        </div>
+
+        <b-collapse
+          id="collapse-1"
+          class="mt-2"
+        >
+          <b-card class="mb-0">
+            <!-- filter dropdown -->
+            <div>
+              <div>
+                <validation-observer ref="formRules">
+                  <b-form
+                    ref="formFilterDropdown"
+                  >
+
+                    <!-- Row Loop -->
+                    <b-row
+                      ref="row"
+                    >
+
+                      <!-- Pendidikan Terakhir -->
+                      <b-col md="4">
+                        <b-form-group
+                          label="Pendidikan Terakhir"
+                          label-for="item-name"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="Education"
+                          >
+                            <b-form-select
+                              ref="fieldEducation"
+                              v-model="filterEducation"
+                              :options="educationOptions"
+                              :state="errors.length > 0 ? false:null"
+                              @change="filterSelectEducation"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+
+                      <!-- Pengalaman Kerja -->
+                      <b-col
+                        md="4"
+                        class="d-flex justify-content-center"
+                      >
+                        <b-form-group
+                          label="Pengalaman kerja"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="Experience Status"
+                          >
+
+                            <b-form-radio-group
+                              v-model="filterExperienced"
+                              class="mt-50"
+                              :options="experienceStatusOptions"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+
+                      <!-- Lama Bekerja -->
+                      <transition name="fade">
+                        <b-col
+                          v-if="filterExperienced"
+                          md="4"
+                        >
+                          <b-form-group
+                            label="Lama bekerja"
+                          >
+                            <validation-provider
+                              #default="{ errors }"
+                              name="Experience Year"
+                            >
+                              <b-form-select
+                                v-model="filterExperienceYear"
+                                :options="experienceYearOptions"
+                                :state="errors.length > 0 ? false:null"
+                                @change="filterByExperienceYear"
+                              />
+                              <small class="text-danger">{{ errors[0] }}</small>
+                            </validation-provider>
+                          </b-form-group>
+                        </b-col>
+                      </transition>
+
+                      <!-- Lama Pengalaman -->
+                      <b-col
+                        md="5"
+                      >
+                        <b-form-group
+                          label="Lama Pengalaman"
+                          label-for="quantity"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="Experience Status"
+                          >
+
+                            <b-form-radio-group
+                              v-model="fieldFilterExperienceLong"
+                              class="mt-50"
+                              :options="experienceLongOptions"
+                              @change="filterByExperienceLong"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+
+                  </b-form>
+                </validation-observer>
+              </div>
+            </div>
+            <!-- End Filter dropdown -->
+          </b-card>
+        </b-collapse>
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
@@ -371,6 +531,9 @@ import {
   BRow,
   BCol,
   BButton,
+  BCard,
+  BCollapse,
+  VBToggle,
   BTable,
   BAvatar,
   BBadge,
@@ -387,10 +550,12 @@ import {
 import { required, min, minValue } from '@validations'
 import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { heightTransition } from '@core/mixins/ui/transition'
 
 export default {
   directives: {
     'b-tooltip': VBTooltip,
+    'b-toggle': VBToggle,
     Ripple,
   },
   components: {
@@ -401,6 +566,8 @@ export default {
     BCol,
 
     BButton,
+    BCollapse,
+    BCard,
     BTable,
     BAvatar,
     BBadge,
@@ -417,8 +584,17 @@ export default {
     BModal,
     BForm,
   },
+  mixins: [heightTransition],
   data() {
     return {
+      selectEducation: '',
+      items: [{
+        id: 1,
+        selected: 'male',
+        selected1: 'designer',
+        prevHeight: 0,
+      }],
+      nextTodoId: 2,
       perPage: 10,
       pageOptions: [5, 10, 20],
       totalRows: 1,
@@ -432,6 +608,7 @@ export default {
       loading: false,
       endpointGetAll: '/talent',
       endpointDelete: '/talent/:id',
+      endpointGetStaff: '/staff',
 
       required,
       min,
@@ -441,7 +618,9 @@ export default {
       filterPositionItems: [],
       filterEducation: '',
       filterExperienced: '',
+      filterExperiencedIsTrue: true,
       filterExperienceYear: '',
+      fieldFilterExperienceLong: '',
 
       loadingQuestionnaire: false,
       questionItems: [],
@@ -457,7 +636,12 @@ export default {
         { text: 'Ada', value: 1 },
         { text: 'Tidak ada', value: 0 },
       ],
+      experienceLongOptions: [
+        { text: 'Terlama', value: 0 },
+        { text: 'Paling Sedikit', value: 1 },
+      ],
       experienceYearOptions: [
+        { text: '0 year', value: '0' },
         { text: '< 1 year', value: '< 1 year' },
         { text: '1 year', value: '1 year' },
         { text: '2 years', value: '2 years' },
@@ -469,7 +653,7 @@ export default {
         { key: 'full_name', label: 'Nama' },
         {
           key: 'talent.education',
-          label: 'Pendidikan',
+          label: 'Pendidikan dev',
           sortable: false,
           formatter: value => (value || '-'),
         },
@@ -542,7 +726,12 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
-    tableProvider() {
+    filterExperiencedChecked() {
+      if (this.filterExperiencedIsTrue !== true) {
+        this.filterExperienced = ''
+      }
+    },
+    filterSelectEducation() {
       const params = {
         keyword: this.filter,
         position_id: this.filterPositionId,
@@ -554,9 +743,74 @@ export default {
         sort: this.sortBy,
         direction: this.sortDirection,
       }
+      if (this.filterExperienced) Object.assign(params, { year_experience: this.filterExperienceYear })
+      const getEducation = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.refreshTable()
+      return { getEducation }
+    },
+    filterByExperienceYear() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        education: this.filterEducation,
+        has_work_experience: this.filterExperienced,
+        status: 'registered,selected',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      if (this.filterExperienced) Object.assign(params, { year_experience: this.filterExperienceYear })
+      const getExperienceYear = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.filterExperiencedChecked()
+      this.refreshTable()
+      return { getExperienceYear }
+    },
+    filterByExperienceLong() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        longlestTalent: this.fieldFilterExperienceLong,
+        status: 'registered,selected',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      const getLongLest = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.refreshTable()
+      return { getLongLest }
+    },
+    tableProvider() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        education: this.filterEducation,
+        has_work_experience: this.filterExperienced,
+        longlestTalent: this.fieldFilterExperienceLong,
+        status: 'registered,selected',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
 
       if (this.filterExperienced) Object.assign(params, { year_experience: this.filterExperienceYear })
-
       return this.$http.get(this.endpointGetAll, {
         params,
       }).then(response => {
@@ -634,9 +888,10 @@ export default {
     },
     selectPosition(id) {
       this.filterPositionId = id
+      return id
     },
     toggleModal() {
-      this.$refs.formModal.toggle()
+      this.$refs.formFilterDropdown.toggle()
     },
     async toggleModalQuestionnaire(item) {
       this.$refs.questionnaireModal.toggle()
@@ -663,7 +918,7 @@ export default {
           this.refreshTable()
 
           this.$nextTick(() => {
-            this.$refs.formModal.toggle()
+            this.$refs.formFilterDropdown.toggle()
           })
         }
       })
@@ -695,3 +950,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  [dir] .card .dropdown-filter {
+    padding: 1.5rem;
+  }
+</style>

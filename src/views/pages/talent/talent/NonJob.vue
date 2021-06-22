@@ -1,7 +1,7 @@
 <template>
   <b-row class="mt-n1">
     <b-col cols="12">
-      <div class="card-header">
+      <div class="card-header d-none">
         <div class="d-flex justify-content-start flex-wrap">
           <b-button
             v-if="false"
@@ -45,6 +45,145 @@
           :available-actions="['refresh']"
           @refresh="refreshTable"
         />
+      </div>
+
+      <!-- Collapse Filter -->
+      <div class="dropdown-filter">
+        <!-- toggle button -->
+        <div class="d-flex">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            v-b-toggle.collapse-1
+            variant="primary"
+            size="sm"
+            class="mr-50"
+          >
+            <feather-icon
+              icon="FilterIcon"
+              class="mr-50"
+            />
+            Filter
+          </b-button>
+
+          <b-form-group
+            class="mb-0"
+          >
+            <b-input-group
+              class="input-group-merge"
+              size="sm"
+            >
+              <b-input-group-prepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </b-input-group-prepend>
+              <b-form-input
+                id="filterInput"
+                v-model="filter"
+                type="search"
+                placeholder="Cari..."
+                debounce="500"
+              />
+            </b-input-group>
+          </b-form-group>
+
+        </div>
+
+        <b-collapse
+          id="collapse-1"
+          class="mt-2"
+        >
+          <b-card class="mb-0">
+            <!-- filter dropdown -->
+            <div>
+              <div>
+                <b-form
+                  ref="form"
+                >
+
+                  <!-- Row Loop -->
+                  <b-row
+                    ref="row"
+                  >
+
+                    <!-- Talent lead terakhir -->
+                    <b-col md="3">
+                      <validation-observer>
+                        <b-form-group
+                          label="Leader"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="Leader"
+                          >
+                            <v-select
+                              v-model="fieldFilterByLeader"
+                              :options="staffItems"
+                              label="full_name"
+                              :state="errors.length > 0 ? false:null"
+                              placeholder="Ketik untuk mencari..."
+                              @search="onSearchStaff"
+                              @input="filterByLeader"
+                            >
+                              <li
+                                slot="list-footer"
+                                class="vs__dropdown-option vs__dropdown-option--disabled"
+                              >
+                                <feather-icon
+                                  icon="MoreHorizontalIcon"
+                                  size="16"
+                                />
+                              </li>
+                            </v-select>
+                          </validation-provider>
+                        </b-form-group>
+                      </validation-observer>
+                    </b-col>
+
+                    <!-- Waktu Kosong -->
+                    <b-col md="3">
+                      <b-form-group
+                        label="Waktu Kosong"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Education"
+                        >
+                          <b-form-select
+                            :state="errors.length > 0 ? false:null"
+                            :options="timeOptions"
+                          />
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+
+                    <!-- Rating -->
+                    <b-col md="3">
+                      <b-form-group
+                        label="Rating"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Education"
+                        >
+                          <b-form-select
+                            v-model="fieldFilterByRating"
+                            :options="ratingOptions"
+                            :state="errors.length > 0 ? false:null"
+                            @change="filterByRating"
+                          />
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+
+                  </b-row>
+
+                </b-form>
+              </div>
+            </div>
+            <!-- End Filter dropdown -->
+          </b-card>
+        </b-collapse>
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
@@ -239,10 +378,14 @@ import {
   BFormRow,
   BRow,
   BCol,
+  BCard,
+  BCollapse,
+  VBToggle,
   BButton,
   BTable,
   BAvatar,
   BBadge,
+  BForm,
   BFormGroup,
   BFormSelect,
   BInputGroup,
@@ -254,21 +397,31 @@ import {
   VBTooltip,
 } from 'bootstrap-vue'
 import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
+import { heightTransition } from '@core/mixins/ui/transition'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { required, min, minValue } from '@validations'
+import vSelect from 'vue-select'
 
 export default {
   directives: {
     'b-tooltip': VBTooltip,
+    'b-toggle': VBToggle,
     Ripple,
   },
   components: {
+    ValidationProvider,
+    ValidationObserver,
     BFormRow,
     BRow,
     BCol,
+    BCard,
+    BCollapse,
 
     BButton,
     BTable,
     BAvatar,
     BBadge,
+    BForm,
     BFormGroup,
     BFormSelect,
     BInputGroup,
@@ -278,9 +431,18 @@ export default {
     BOverlay,
     BCardBody,
     BCardActionsContainer,
+    vSelect,
   },
+  mixins: [heightTransition],
   data() {
     return {
+      // New Filter
+      fieldFilterByLeader: '',
+      fieldFilterByRating: '',
+      staffItems: [],
+      staffId: '',
+      // End new filter
+
       perPage: 10,
       pageOptions: [5, 10, 20],
       totalRows: 1,
@@ -295,8 +457,22 @@ export default {
       endpointGetAll: '/talent',
       endpointDelete: '/talent/:id',
 
+      required,
+      min,
+      minValue,
+
       filterPositionId: 1,
       filterPositionItems: [],
+
+      ratingOptions: [
+        { text: 'Terbanyak', value: 0 },
+        { text: 'Paling Sedikit', value: 1 },
+      ],
+
+      timeOptions: [
+        { text: 'Terlama', value: 0 },
+        { text: 'Paling Sedikit', value: 1 },
+      ],
 
       fields: [
         { key: 'talent.id', label: 'Id' },
@@ -364,6 +540,73 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
+    // New Filter
+    onSearchStaff(search, loading) {
+      if (search.length) {
+        this.searchStaff(loading, search, this)
+      }
+    },
+    searchStaff: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadStaffs(search).finally(() => loading(false))
+    }, 500),
+    loadStaffs(search) {
+      return this.$http.get('/leader', {
+        params: {
+          keyword: search,
+          page: 1,
+          limit: 5,
+          sort: 'name',
+          direction: 'asc',
+        },
+      })
+        .then(async response => {
+          const { data } = response.data.data
+          this.hasMoreStaff = response.data.data.total > data.length
+          this.staffItems = data
+        })
+    },
+    filterByLeader() {
+      const params = {
+        position_id: this.filterPositionId,
+        status: 'non job',
+        name_lead: this.fieldFilterByLeader,
+        page: this.currentPage,
+        withLastJob: 1,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      const getTalentByLeader = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.refreshTable()
+      return { getTalentByLeader }
+    },
+    filterByRating() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        status: 'hired',
+        sortRating: this.fieldFilterByRating,
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+
+      return this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        this.refreshTable()
+        return data
+      })
+    },
+    // End new Filter
     tableProvider() {
       return this.$http.get(this.endpointGetAll, {
         params: {
@@ -455,3 +698,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  [dir] .card .dropdown-filter {
+    padding: 1.5rem;
+  }
+</style>

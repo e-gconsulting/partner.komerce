@@ -59,4 +59,12 @@ export default [
       redirectIfLoggedIn: true,
     },
   },
+  {
+    path: '/tesdev',
+    name: 'tes-dev',
+    component: () => import('@/views/pages/Tesdev.vue'),
+    meta: {
+      layout: 'full',
+    },
+  },
 ]

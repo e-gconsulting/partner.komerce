@@ -1,7 +1,7 @@
 <template>
   <b-row class="mt-n1">
     <b-col cols="12">
-      <div class="card-header">
+      <div class="card-header d-none">
         <div class="d-flex justify-content-start flex-wrap">
           <b-button
             v-if="false"
@@ -45,6 +45,161 @@
           :available-actions="['refresh']"
           @refresh="refreshTable"
         />
+      </div>
+
+      <!-- Collapse filter -->
+      <div class="dropdown-filter">
+        <!-- toggle button -->
+        <div class="d-flex">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            v-b-toggle.collapse-1
+            variant="primary"
+            size="sm"
+            class="mr-50"
+          >
+            <feather-icon
+              icon="FilterIcon"
+              class="mr-50"
+            />
+            Filter
+          </b-button>
+
+          <b-form-group
+            class="mb-0"
+          >
+            <b-input-group
+              class="input-group-merge"
+              size="sm"
+            >
+              <b-input-group-prepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </b-input-group-prepend>
+              <b-form-input
+                id="filterInput"
+                v-model="filter"
+                type="search"
+                placeholder="Cari..."
+                debounce="500"
+              />
+            </b-input-group>
+          </b-form-group>
+        </div>
+
+        <b-collapse
+          id="collapse-1"
+          class="mt-2"
+        >
+          <b-card class="mb-0">
+            <!-- filter dropdown -->
+            <div>
+              <div>
+                <b-form
+                  ref="form"
+                >
+
+                  <!-- Row Loop -->
+                  <b-row
+                    ref="row"
+                  >
+
+                    <!-- Leader -->
+                    <b-col md="3">
+                      <validation-observer>
+                        <b-form-group
+                          label="Leader"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="Leader"
+                          >
+                            <v-select
+                              v-model="fieldFilterByLeader"
+                              :options="staffItems"
+                              label="full_name"
+                              :state="errors.length > 0 ? false:null"
+                              placeholder="Ketik untuk mencari..."
+                              @search="onSearchStaff"
+                              @input="filterByLeader"
+                            >
+                              <li
+                                slot="list-footer"
+                                class="vs__dropdown-option vs__dropdown-option--disabled"
+                              >
+                                <feather-icon
+                                  icon="MoreHorizontalIcon"
+                                  size="16"
+                                />
+                              </li>
+                            </v-select>
+                          </validation-provider>
+                        </b-form-group>
+                      </validation-observer>
+                    </b-col>
+
+                    <!-- Partner -->
+                    <b-col md="3">
+                      <validation-observer>
+                        <b-form-group
+                          label="Partner"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="No partner"
+                            rules="required"
+                          >
+                            <v-select
+                              v-model="fieldFilterByPartner"
+                              :options="partnerItems"
+                              :state="errors.length > 0 ? false:null"
+                              placeholder="Ketik untuk mencari..."
+                              @search="onSearchPartner"
+                              @input="filterByPartner"
+                            >
+                              <li
+                                v-if="hasMoreStaff"
+                                slot="list-footer"
+                                class="vs__dropdown-option vs__dropdown-option--disabled"
+                              >
+                                <feather-icon
+                                  icon="MoreHorizontalIcon"
+                                  size="16"
+                                />
+                              </li>
+                            </v-select>
+                          </validation-provider>
+                        </b-form-group>
+                      </validation-observer>
+                    </b-col>
+
+                    <!-- Rating -->
+                    <b-col md="3">
+                      <b-form-group
+                        label="Rating"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Education"
+                        >
+                          <b-form-select
+                            ref="fieldRating"
+                            v-model="fieldFilterByRating"
+                            :options="ratingOptions"
+                            :state="errors.length > 0 ? false:null"
+                            @change="filterByRating"
+                          />
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+
+                </b-form>
+              </div>
+            </div>
+            <!-- End Filter dropdown -->
+          </b-card>
+        </b-collapse>
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
@@ -236,12 +391,16 @@
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
 import {
+  BCard,
+  BCollapse,
+  VBToggle,
   BRow,
   BCol,
   BButton,
   BTable,
   BAvatar,
   BBadge,
+  BForm,
   BFormGroup,
   BFormSelect,
   BInputGroup,
@@ -253,21 +412,31 @@ import {
   VBTooltip, BFormRow,
 } from 'bootstrap-vue'
 import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
+import { heightTransition } from '@core/mixins/ui/transition'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { required, min, minValue } from '@validations'
+import vSelect from 'vue-select'
 
 export default {
   directives: {
     'b-tooltip': VBTooltip,
+    'b-toggle': VBToggle,
     Ripple,
   },
   components: {
+    ValidationProvider,
+    ValidationObserver,
     BFormRow,
     BRow,
     BCol,
 
+    BCollapse,
+    BCard,
     BButton,
     BTable,
     BAvatar,
     BBadge,
+    BForm,
     BFormGroup,
     BFormSelect,
     BInputGroup,
@@ -277,9 +446,29 @@ export default {
     BOverlay,
     BCardBody,
     BCardActionsContainer,
+    vSelect,
   },
+  mixins: [heightTransition],
   data() {
     return {
+      // Dropdown filter
+      fieldFilterByLeader: '',
+      fieldFilterByPartner: '',
+      fieldFilterByRating: '',
+
+      partnerNums: [],
+      ratingNums: [],
+      ratingItems: [],
+      partnerItems: [],
+      staffItems: [],
+      staffId: '',
+      items: [{
+        id: 1,
+        selected: 'male',
+        selected1: 'designer',
+        prevHeight: 0,
+      }],
+      // End Dropdown filter
       perPage: 10,
       pageOptions: [5, 10, 20],
       totalRows: 1,
@@ -293,9 +482,19 @@ export default {
       loading: false,
       endpointGetAll: '/talent',
       endpointDelete: '/talent/:id',
+      hasMoreStaff: false,
+
+      ratingOptions: [
+        { text: 'Terbanyak', value: 0 },
+        { text: 'Paling Sedikit', value: 1 },
+      ],
 
       filterPositionId: 1,
       filterPositionItems: [],
+
+      required,
+      min,
+      minValue,
 
       fields: [
         { key: 'id', label: 'Id' },
@@ -353,19 +552,136 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
-    tableProvider() {
-      const key = /^-?\d+$/.test(this.filter) ? 'no_partner' : 'keyword'
+    // New Filter
+    onSearchPartner(search, loading) {
+      if (search.length) {
+        this.searchPartner(loading, search, this)
+      }
+    },
+    searchPartner: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadPartners(search).finally(() => loading(false))
+    }, 500),
+    loadPartners(search) {
+      const key = /^-?\d+$/.test(search) ? 'no_partner' : 'name'
+
+      return this.$http.get('/user/partner/pagination', {
+        params: {
+          [key]: search,
+          account_status: 'active',
+          page: 1,
+          limit: 5,
+          sort: 'name',
+          direction: 'asc',
+        },
+      })
+        .then(async response => {
+          const { data } = response.data.data
+          for (let i = 0; i < data.length; i += 1) {
+            data[i].label = `${data[i].no_partner} - ${data[i].full_name}`
+          }
+          this.hasMorePartner = response.data.data.total > data.length
+          this.partnerItems = data
+        })
+    },
+    onSearchStaff(search, loading) {
+      if (search.length) {
+        this.searchStaff(loading, search, this)
+      }
+    },
+    searchStaff: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadStaffs(search).finally(() => loading(false))
+    }, 500),
+    loadStaffs(search) {
+      return this.$http.get('/leader', {
+        params: {
+          keyword: search,
+          page: 1,
+          limit: 5,
+          sort: 'name',
+          direction: 'asc',
+        },
+      })
+        .then(async response => {
+          const { data } = response.data.data
+          this.hasMoreStaff = response.data.data.total > data.length
+          this.staffItems = data
+        })
+    },
+    filterByLeader() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        status: 'hired',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      const getTalentByLeader = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.refreshTable()
+      return { getTalentByLeader }
+    },
+    filterByPartner() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        status: 'hired',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      const getPartner = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.refreshTable()
+      return getPartner
+    },
+    filterByRating() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        status: 'hired',
+        sortRating: this.fieldFilterByRating,
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
 
       return this.$http.get(this.endpointGetAll, {
-        params: {
-          [key]: this.filter,
-          position_id: this.filterPositionId,
-          status: 'hired',
-          page: this.currentPage,
-          limit: this.perPage,
-          sort: this.sortBy,
-          direction: this.sortDirection,
-        },
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        this.refreshTable()
+        return data
+      })
+    },
+    tableProvider() {
+      const params = {
+        keyword: this.filter,
+        position_id: this.filterPositionId,
+        status: 'hired',
+        rate: this.fieldFilterByRating,
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      if (this.fieldFilterByPartner) Object.assign(params, { no_partner: String(this.fieldFilterByPartner.no_partner) })
+      if (this.fieldFilterByLeader) Object.assign(params, { name_lead: this.fieldFilterByLeader.full_name })
+      const getResultData = this.$http.get(this.endpointGetAll, {
+        params,
       }).then(response => {
         const { data } = response.data.data
         this.totalRows = response.data.data.total
@@ -382,7 +698,9 @@ export default {
         })
         return []
       })
+      return getResultData
     },
+    // End new filter
     refreshTable() {
       this.$refs.table.refresh()
     },
@@ -445,3 +763,11 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+@import '~@core/scss/vue/libs/vue-select.scss';
+@import '~@core/scss/vue/libs/vue-flatpicker.scss';
+  [dir] .card .dropdown-filter {
+    padding: 1.5rem;
+  }
+</style>

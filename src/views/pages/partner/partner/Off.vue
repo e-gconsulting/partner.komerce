@@ -1,7 +1,7 @@
 <template>
   <b-row class="mt-n1">
     <b-col cols="12">
-      <div class="card-header">
+      <div class="card-header d-none">
         <div class="d-flex justify-content-start flex-wrap">
           <b-button
             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
@@ -45,6 +45,154 @@
           :available-actions="['refresh']"
           @refresh="refreshTable"
         />
+      </div>
+
+      <!-- Collapse Filter -->
+      <div class="dropdown-filter">
+        <!-- toggle button -->
+        <div class="d-flex">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            v-b-toggle.collapse-1
+            variant="primary"
+            size="sm"
+            class="mr-50"
+          >
+            <feather-icon
+              icon="FilterIcon"
+              class="mr-50"
+            />
+            Filter
+          </b-button>
+
+          <b-form-group
+            class="mb-0"
+          >
+            <b-input-group
+              class="input-group-merge"
+              size="sm"
+            >
+              <b-input-group-prepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </b-input-group-prepend>
+              <b-form-input
+                id="filterInput"
+                v-model="filter"
+                type="search"
+                placeholder="Cari..."
+                debounce="500"
+              />
+            </b-input-group>
+          </b-form-group>
+        </div>
+
+        <b-collapse
+          id="collapse-1"
+          class="mt-2"
+        >
+          <b-card class="mb-0">
+            <!-- filter dropdown -->
+            <div>
+              <div>
+                <b-form
+                  ref="form"
+                >
+
+                  <!-- Row Loop -->
+                  <b-row
+                    ref="row"
+                  >
+
+                    <!-- Sektor Bisnis -->
+                    <b-col md="3">
+                      <b-form-group
+                        label="Sektor Bisnis"
+                        label-for="item-name"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Sektor bisnis"
+                        >
+                          <v-select
+                            v-model="filterPartnerCategoryId"
+                            label="partner_category_name"
+                            :reduce="option => option.id"
+                            :options="filterPartnerCategoryItems"
+                            :state="errors.length > 0 ? false:null"
+                            transition=""
+                            placeholder="Ketik untuk mencari..."
+                            @input="filterByPartnerCategory"
+                          />
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+
+                    <!-- Leader -->
+                    <b-col md="3">
+                      <b-form-group
+                        label="Leader"
+                        label-for="item-name"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Leader"
+                        >
+                          <v-select
+                            v-model="filterStaffId"
+                            label="full_name"
+                            :reduce="option => option.id"
+                            :options="filterStaffItems"
+                            :state="errors.length > 0 ? false:null"
+                            :filterable="false"
+                            transition=""
+                            placeholder="Ketik untuk mencari..."
+                            @search="onSearchStaff"
+                            @input="filterByLeader"
+                          >
+                            <li
+                              v-if="hasMoreFilterStaff"
+                              slot="list-footer"
+                              class="vs__dropdown-option vs__dropdown-option--disabled"
+                            >
+                              <feather-icon
+                                icon="MoreHorizontalIcon"
+                                size="16"
+                              />
+                            </li>
+                          </v-select>
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+
+                    <!-- Remove Button -->
+                    <b-col
+                      lg="2"
+                      md="3"
+                      class="mb-50 d-none"
+                    >
+                      <b-button
+                        v-ripple.400="'rgba(234, 84, 85, 0.15)'"
+                        variant="outline-danger"
+                        class="mt-0 mt-md-2"
+                        @click="removeItem(index)"
+                      >
+                        <feather-icon
+                          icon="XIcon"
+                          class="mr-25"
+                        />
+                        <span>Delete</span>
+                      </b-button>
+                    </b-col>
+                  </b-row>
+
+                </b-form>
+              </div>
+            </div>
+            <!-- End Filter dropdown -->
+          </b-card>
+        </b-collapse>
       </div>
 
       <b-overlay
@@ -319,6 +467,9 @@ import Ripple from 'vue-ripple-directive'
 import {
   BRow,
   BCol,
+  BCard,
+  BCollapse,
+  VBToggle,
   BButton,
   BTable,
   BAvatar,
@@ -342,6 +493,7 @@ import PartnerForm from './Form.vue'
 export default {
   directives: {
     'b-tooltip': VBTooltip,
+    'b-toggle': VBToggle,
     Ripple,
   },
   components: {
@@ -350,6 +502,8 @@ export default {
     BFormRow,
     BRow,
     BCol,
+    BCard,
+    BCollapse,
 
     BButton,
     BTable,
@@ -397,23 +551,6 @@ export default {
       hasMoreFilterStaff: false,
 
       partnerId: '',
-
-      educationOptions: [
-        { text: 'SD', value: 'SD' },
-        { text: 'SMP', value: 'SMP' },
-        { text: 'SMA/SMK', value: 'SMA/SMK' },
-        { text: 'Sarjana', value: 'Sarjana' },
-      ],
-      experienceStatusOptions: [
-        { text: 'Ada', value: 1 },
-        { text: 'Tidak ada', value: 0 },
-      ],
-      experienceYearOptions: [
-        { text: '< 1 year', value: '< 1 year' },
-        { text: '1 year', value: '1 year' },
-        { text: '2 years', value: '2 years' },
-        { text: '3 years', value: '3 years' },
-      ],
 
       fields: [
         { key: 'full_name', label: 'Nama' },
@@ -464,6 +601,42 @@ export default {
     this.loadStaffs()
   },
   methods: {
+    filterByPartnerCategory() {
+      const key = /^-?\d+$/.test(this.filter) ? 'no_partner' : 'name'
+      const params = {
+        [key]: this.filter,
+        partner_category: this.filterPartnerCategoryId,
+        account_status: 'registered',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      return this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        this.refreshTable()
+        return data
+      })
+    },
+    filterByLeader() {
+      const params = {
+        team_lead: this.filterStaffId,
+        account_status: 'active',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+      return this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        this.refreshTable()
+        return data
+      })
+    },
     tableProvider() {
       const key = /^-?\d+$/.test(this.filter) ? 'no_partner' : 'name'
 
@@ -560,7 +733,7 @@ export default {
       that.loadStaffs(search).finally(() => loading(false))
     }, 500),
     loadStaffs(search) {
-      return this.$http.get('/staff', {
+      return this.$http.get('/leader', {
         params: {
           keyword: search,
           page: 1,
@@ -607,4 +780,10 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+</style>
+
+<style scoped>
+  [dir] .card .dropdown-filter {
+    padding: 1.5rem;
+  }
 </style>

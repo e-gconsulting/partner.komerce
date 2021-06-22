@@ -1,5 +1,296 @@
 <template>
   <div>
+    <b-row>
+      <b-col cols="12">
+        <b-card
+          :class="{'has-button-floating': hasActionCreate}"
+          no-body
+        >
+          <div class="card-header">
+            <b-card-title>{{ $route.meta.name.plural }}</b-card-title>
+
+            <!-- Card Actions -->
+            <b-card-actions-container
+              :available-actions="['refresh']"
+              @refresh="refreshTable"
+            />
+          </div>
+          <b-card-body>
+            <div class="d-flex justify-content-start flex-wrap">
+
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                v-b-toggle.collapse-1
+                variant="primary"
+                size="sm"
+                class="mr-50"
+              >
+                <feather-icon
+                  icon="FilterIcon"
+                  class="mr-50"
+                />
+                Filter
+              </b-button>
+
+              <!-- filter -->
+              <b-form-group
+                class="mb-0"
+              >
+                <b-input-group
+                  class="input-group-merge"
+                  size="sm"
+                >
+                  <b-input-group-prepend is-text>
+                    <feather-icon icon="SearchIcon" />
+                  </b-input-group-prepend>
+                  <b-form-input
+                    id="filterInput"
+                    v-model="filter"
+                    type="search"
+                    placeholder="Cari..."
+                    debounce="500"
+                    @input="onChange"
+                  />
+                </b-input-group>
+              </b-form-group>
+            </div>
+          </b-card-body>
+          <b-collapse
+            id="collapse-1"
+            class="mt-2"
+          >
+            <b-card class="border mb-0">
+              <validation-observer ref="formRules">
+                <b-form @submit.stop.prevent="submit">
+                  <b-col md="3">
+                    <b-form-group
+                      label="Divisi"
+                    >
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Divisi"
+                      >
+                        <v-select
+                          v-model="divisionId"
+                          label="division_name"
+                          :reduce="option => option.id"
+                          :options="divisionItems"
+                          :state="errors.length > 0 ? false:null"
+                          :filterable="false"
+                          placeholder="Ketik untuk mencari..."
+                          transition=""
+                          @search="onSearchDivision"
+                          @input="filterByDivision"
+                        >
+                          <li
+                            v-if="hasMoreDivision"
+                            slot="list-footer"
+                            class="vs__dropdown-option vs__dropdown-option--disabled"
+                          >
+                            <feather-icon
+                              icon="MoreHorizontalIcon"
+                              size="16"
+                            />
+                          </li>
+                        </v-select>
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+                </b-form>
+              </validation-observer>
+            </b-card>
+          </b-collapse>
+
+          <b-overlay
+            variant="light"
+            :show="loading"
+            spinner-variant="primary"
+            blur="0"
+            opacity=".5"
+            rounded="sm"
+          >
+            <b-table
+              ref="table"
+              striped
+              hover
+              responsive
+              class="position-relative"
+              empty-text="Tidak ada data untuk ditampilkan."
+              :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
+
+              :show-empty="!loading"
+              :per-page="perPage"
+              :current-page="currentPage"
+              :items="tableProvider"
+              :fields="tableFields"
+              :sort-by.sync="sortBy"
+              :sort-desc.sync="sortDesc"
+              :filter="filter"
+              :filter-included-fields="filterOn"
+              :tbody-tr-class="rowClass"
+              :busy.sync="loading"
+            >
+              <template #cell(full_name)="data">
+                <b-form-row class="flex-nowrap">
+                  <b-col
+                    v-if="data.item.photo_profile_url !== undefined"
+                    cols="auto"
+                  >
+                    <b-avatar
+                      :src="data.item.photo_profile_url"
+                      class="mr-50"
+                    />
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    {{ data.value }}
+                  </b-col>
+                </b-form-row>
+              </template>
+              <template #cell(name)="data">
+                <b-form-row>
+                  <b-col
+                    v-if="data.item.icon !== undefined"
+                    cols="auto"
+                  >
+                    <b-avatar
+                      :src="data.item.icon"
+                      class="mr-50"
+                      variant="light-secondary"
+                      rounded="lg"
+                    >
+                      <feather-icon
+                        v-if="!data.item.icon"
+                        icon="ImageIcon"
+                      />
+                    </b-avatar>
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    {{ data.value }}
+                  </b-col>
+                </b-form-row>
+              </template>
+              <template #cell(full_name)="data">
+                <b-form-row class="flex-nowrap">
+                  <b-col
+                    v-if="data.item.photo_profile_url !== undefined"
+                    cols="auto"
+                  >
+                    <b-avatar
+                      :src="data.item.photo_profile_url"
+                      class="mr-50"
+                    />
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    {{ data.value }}
+                  </b-col>
+                </b-form-row>
+              </template>
+              <template #cell(status)="data">
+                <b-badge :variant="status[1][data.value]">
+                  {{ status[0][data.value] }}
+                </b-badge>
+              </template>
+              <template #cell(status)="data">
+                <b-badge :variant="status[1][data.value]">
+                  {{ status[0][data.value] }}
+                </b-badge>
+              </template>
+              <template
+                #cell()="data"
+              >
+                <b-badge
+                  v-if="data.field.badge"
+                  :variant="data.field.badge[1][data.value]"
+                >
+                  {{ data.field.badge[0][data.value] }}
+                </b-badge>
+                <span v-else>{{ data.value }}</span>
+              </template>
+              <template #cell(action)="data">
+                <span
+                  v-if="isDeleted(getId(data.item))"
+                  class="text-danger"
+                >Deleted</span>
+                <div v-else>
+                  <b-button
+                    v-if="hasActionEdit"
+                    tag="router-link"
+                    :to="{ name: $route.meta.routeEdit, params: { id: getId(data.item) } }"
+                    class="btn-icon mr-50"
+                    size="sm"
+                    variant="flat-warning"
+                  >
+                    <feather-icon
+                      icon="EditIcon"
+                    />
+                  </b-button>
+                  <b-button
+                    v-if="hasActionDelete"
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-danger"
+                    @click="confirmDelete(data)"
+                  >
+                    <feather-icon
+                      icon="Trash2Icon"
+                    />
+                  </b-button>
+                </div>
+              </template>
+            </b-table>
+          </b-overlay>
+
+          <b-card-body class="d-flex justify-content-between flex-wrap pt-0">
+
+            <!-- page length -->
+            <b-form-group
+              label="Per Page"
+              label-cols="6"
+              label-align="left"
+              label-size="sm"
+              label-for="sortBySelect"
+              class="text-nowrap mb-md-0 mr-1"
+            >
+              <b-form-select
+                id="perPageSelect"
+                v-model="perPage"
+                size="sm"
+                inline
+                :options="pageOptions"
+              />
+            </b-form-group>
+
+            <!-- pagination -->
+            <div>
+              <b-pagination
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                first-number
+                last-number
+                prev-class="prev-item"
+                next-class="next-item"
+                class="mb-0"
+              >
+                <template #prev-text>
+                  <feather-icon
+                    icon="ChevronLeftIcon"
+                    size="18"
+                  />
+                </template>
+                <template #next-text>
+                  <feather-icon
+                    icon="ChevronRightIcon"
+                    size="18"
+                  />
+                </template>
+              </b-pagination>
+            </div>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
     <card-table
       ref="cardTable"
       :endpoint-get-all="endpointGetAll"
@@ -8,105 +299,71 @@
       :fields="fields"
       :show-filter="toggleModal"
     />
-    <b-modal
-      id="form-modal"
-      ref="formModal"
-      title="Filter"
-      centered
-    >
-      <validation-observer ref="formRules">
-        <b-form @submit.stop.prevent="submit">
-          <b-form-group
-            label="Divisi"
-            label-cols-md="4"
-          >
-            <validation-provider
-              #default="{ errors }"
-              name="Divisi"
-            >
-              <v-select
-                v-model="divisionId"
-                label="division_name"
-                :reduce="option => option.id"
-                :options="divisionItems"
-                :state="errors.length > 0 ? false:null"
-                :filterable="false"
-                placeholder="Ketik untuk mencari..."
-                transition=""
-                @search="onSearchDivision"
-              >
-                <li
-                  v-if="hasMoreDivision"
-                  slot="list-footer"
-                  class="vs__dropdown-option vs__dropdown-option--disabled"
-                >
-                  <feather-icon
-                    icon="MoreHorizontalIcon"
-                    size="16"
-                  />
-                </li>
-              </v-select>
-              <small class="text-danger">{{ errors[0] }}</small>
-            </validation-provider>
-          </b-form-group>
-        </b-form>
-      </validation-observer>
-
-      <template #modal-footer>
-        <b-form-row class="align-items-center w-100">
-          <b-col md>
-            <b-button
-              size="sm"
-              variant="flat-danger"
-              class="px-50 ml-n50"
-              @click="resetForm"
-            >
-              Reset Filter
-            </b-button>
-          </b-col>
-          <b-col cols="auto">
-            <b-button
-              variant="light"
-              @click="toggleModal"
-            >
-              Cancel
-            </b-button>
-          </b-col>
-          <b-col cols="auto">
-            <b-button
-              variant="primary"
-              @click="handleOk"
-            >
-              Terapkan
-            </b-button>
-          </b-col>
-        </b-form-row>
-      </template>
-    </b-modal>
   </div>
 </template>
 
 <script>
-import CardTable from '@/views/components/CardTable.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
+import Ripple from 'vue-ripple-directive'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import {
-  BButton, BCol, BForm, BFormGroup, BFormRow, BModal,
+  BFormRow,
+  BRow,
+  BCol,
+  BCollapse,
+  BForm,
+  BButton,
+  BTable,
+  BAvatar,
+  BBadge,
+  BFormGroup,
+  BFormSelect,
+  BPagination,
+  BInputGroup,
+  BFormInput,
+  BInputGroupPrepend,
+  BCard,
+  BCardTitle,
+  BCardBody,
+  BOverlay,
+  VBTooltip,
+  VBToggle,
 } from 'bootstrap-vue'
 import { min, required } from '@core/utils/validations/validations'
 import vSelect from 'vue-select'
 
 export default {
+  directives: {
+    'b-tooltip': VBTooltip,
+    'b-toggle': VBToggle,
+    Ripple,
+  },
   components: {
     ValidationProvider,
     ValidationObserver,
     BFormRow,
+    BRow,
     BCol,
-    CardTable,
-    BModal,
-    vSelect,
-    BFormGroup,
+    BCollapse,
     BForm,
+
     BButton,
+    BTable,
+    BAvatar,
+    BBadge,
+    BFormGroup,
+    BFormSelect,
+    BPagination,
+    BInputGroup,
+    BFormInput,
+    BInputGroupPrepend,
+    BCard,
+    BCardActionsContainer,
+    BCardTitle,
+    BOverlay,
+    BCardBody,
+    vSelect,
   },
   data() {
     return {
@@ -128,6 +385,17 @@ export default {
       divisionId: '',
       hasMoreDivision: false,
       divisionItems: [],
+
+      perPage: 10,
+      pageOptions: [5, 10, 20],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      filter: null,
+      filterOn: [],
+      deletedIds: [],
+      loading: false,
     }
   },
   computed: {
@@ -136,11 +404,145 @@ export default {
         division_id: this.divisionId,
       }
     },
+    tableFields() {
+      const fields = [...this.fields]
+
+      if (this.hasActionEdit || this.hasActionDelete) {
+        fields.push({ key: 'action', label: 'Aksi', class: 'col-action' })
+      }
+
+      return fields
+    },
+    hasActionDelete() {
+      return this.endpointDelete !== undefined
+    },
+    hasActionEdit() {
+      return this.$route.meta.routeEdit !== undefined
+    },
+    hasActionCreate() {
+      return this.$route.meta.routeCreate !== undefined
+    },
+    sortDirection() {
+      return this.sortDesc ? 'desc' : 'asc'
+    },
   },
   mounted() {
     this.loadDivisions()
   },
   methods: {
+    filterByDivision() {
+      return this.$http({
+        method: this.getAllMethod,
+        url: this.endpointGetAll,
+        params: {
+          ...this.filters,
+          [this.keywordKey]: this.filter,
+          page: this.currentPage,
+          limit: this.perPage,
+          sort_by: this.sortBy,
+          sort: this.sortDirection,
+        },
+      }).then(response => {
+        const { data } = response.data.data
+        this.refreshTable()
+        return data
+      })
+    },
+    tableProvider() {
+      return this.$http({
+        method: this.getAllMethod,
+        url: this.endpointGetAll,
+        params: {
+          ...this.filters,
+          [this.keywordKey]: this.filter,
+          page: this.currentPage,
+          limit: this.perPage,
+          sort_by: this.sortBy,
+          sort: this.sortDirection,
+        },
+      }).then(response => {
+        const { data } = response.data.data
+        this.totalRows = response.data.data.total
+        return data
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Unable to load the table data. Please try again later or contact support.',
+            variant: 'danger',
+          },
+        })
+        return []
+      })
+    },
+    refreshTable() {
+      this.$refs.table.refresh()
+    },
+    confirmDelete(data) {
+      this.$swal({
+        title: 'Anda yakin?',
+        text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.delete(data)
+        }
+      })
+    },
+    delete(data) {
+      this.loading = true
+      const endpoint = this.endpointDelete.replace(/:id/g, this.getId(data.item))
+
+      this.$http({
+        method: this.deleteMethod,
+        url: endpoint,
+      })
+        .then(response => {
+          if (response.data.status !== undefined && !response.data.status) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text: response.data.message,
+                variant: 'danger',
+                icon: 'AlertCircleIcon',
+              },
+            }, { timeout: 2500 })
+
+            return
+          }
+
+          this.deletedIds.push(this.getId(data.item))
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    isDeleted(id) {
+      return this.deletedIds.includes(id)
+    },
+    rowClass(item, type) {
+      const colorClass = 'table-danger'
+      if (!item || type !== 'row') { return }
+
+      // eslint-disable-next-line consistent-return
+      if (this.isDeleted(this.getId(item))) { return colorClass }
+    },
+    getId(item) {
+      return item.staff?.id || item.id
+    },
+    onChange(value) {
+      this.$emit('input', value)
+    },
     toggleModal() {
       this.$refs.formModal.toggle()
     },
