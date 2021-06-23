@@ -11,7 +11,47 @@
           <b-form>
             <b-row>
               <b-col md="12">
-                <b-form-group label="Pendapatan Minimum" label-cols-md="4">
+                <b-form-group label="Posisi" label-cols-md="4">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="minimum_income"
+                    rules="required|min:3"
+                  >
+                    <b-form-input
+                      v-model="name"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
+                      type="number"
+                    />
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.name
+                    }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group label="Address" label-cols-md="4">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Address"
+                    rules="required|min:5"
+                  >
+                    <b-form-textarea
+                      v-model="address"
+                      :disabled="loadingAddress"
+                      :state="
+                        errors.length > 0 || submitErrors.address ? false : null
+                      "
+                    />
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.address
+                    }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group label="Biaya Standar" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="minimum_income"
@@ -43,49 +83,46 @@
                       :reduce="option => option.id"
                       :options="['Presentase %', 'Nominal Rp']"
                       :filterable="false"
-                      placeholder="Ketik untuk mencari..."
                     >
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Nilai Sharing Fee" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="No HP"
-                    rules="required"
-                  >
-                    <cleave
-                      v-model="phone"
-                      class="form-control"
-                      :options="options.phone"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Nilai Maksimal Sharing Fee"
-                  label-cols-md="4"
-                >
-                  <validation-provider
-                    #default="{ errors }"
-                    name="No HP"
-                    rules="required"
-                  >
-                    <cleave
-                      v-model="phone"
-                      class="form-control"
-                      :options="options.phone"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
                 <hr />
               </b-col>
+            </b-row>
+            <b-row>
+              <b-col md="5">
+                <b>Jumlah Talent Minimal</b>
+              </b-col>
+              <b-col md="5">
+                <b>Biaya</b>
+              </b-col>
+            </b-row>
+            <b-row class="mt-1" v-for="item in [1, 2, 3]" :key="item">
+              <b-col md="5">
+                <b-form-input v-model="name" type="number" />
+              </b-col>
+              <b-col md="5">
+                <b-form-input v-model="name" type="number" />
+              </b-col>
+              <b-col md="2">
+                <b-button variant="outline-danger" type="button">
+                  <feather-icon icon="Trash2Icon" size="18" />
+                </b-button>
+              </b-col>
+              <b-col md="12">
+                <hr />
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col class="text-right">
+                <b-button variant="outline-danger" type="button">
+                  Tambah Kolom
+                </b-button>
+              </b-col>
+            </b-row>
+            <b-row>
               <b-col md="12" class="mt-2">
                 <b-button
                   :variant="editMode ? 'warning' : 'primary'"
@@ -117,15 +154,13 @@ import {
   BButton,
   BSpinner,
   VBTooltip,
+  BFormTextarea,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
-import Cleave from 'vue-cleave-component'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'cleave.js/dist/addons/cleave-phone.id'
+import vSelect from 'vue-select'
 
 export default {
   directives: {
@@ -143,8 +178,8 @@ export default {
     BCol,
     BButton,
     BSpinner,
+    BFormTextarea,
     vSelect,
-    Cleave,
   },
   data() {
     return {

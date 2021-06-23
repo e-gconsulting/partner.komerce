@@ -43,7 +43,6 @@
                       :reduce="option => option.id"
                       :options="['Presentase %', 'Nominal Rp']"
                       :filterable="false"
-                      placeholder="Ketik untuk mencari..."
                     >
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
