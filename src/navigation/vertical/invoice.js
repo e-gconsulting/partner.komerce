@@ -11,6 +11,13 @@ export default [
         resource: 'Invoice',
         action: 'manage',
       },
+      {
+        title: 'Biaya Admin',
+        icon: 'UserPlusIcon',
+        route: 'admin-fee',
+        resource: 'Invoice',
+        action: 'manage',
+      },
     ],
   },
 ]
