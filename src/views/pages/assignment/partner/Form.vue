@@ -11,7 +11,7 @@
           <b-form>
             <b-row>
               <b-col md="12">
-                <b-form-group label="Posisi" label-cols-md="4">
+                <b-form-group label="No SK" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="minimum_income"
@@ -31,27 +31,7 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Address" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Address"
-                    rules="required|min:5"
-                  >
-                    <b-form-textarea
-                      v-model="address"
-                      :disabled="loadingAddress"
-                      :state="
-                        errors.length > 0 || submitErrors.address ? false : null
-                      "
-                    />
-                    <small class="text-danger">{{
-                      errors[0] || submitErrors.address
-                    }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Biaya Standar" label-cols-md="4">
+                <b-form-group label="Dokumen" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="minimum_income"
@@ -71,73 +51,108 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
+                <b-form-group label="Tanggal" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="PIC"
-                    rules="required"
+                    name="minimum_income"
+                    rules="required|min:3"
                   >
-                    <v-select
-                      v-model="staffId"
-                      label="full_name"
-                      :reduce="option => option.id"
-                      :options="['Presentase %', 'Nominal Rp']"
-                      :filterable="false"
-                    >
-                    </v-select>
-                    <small class="text-danger">{{ errors[0] }}</small>
+                    <b-form-input
+                      v-model="name"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
+                      type="number"
+                    />
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.name
+                    }}</small>
                   </validation-provider>
+                  <small class="text-default">
+                    * Tanggal Talent mulai di hire oleh Partner
+                  </small>
                 </b-form-group>
                 <hr />
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col md="5">
-                <b>Jumlah Talent Minimal</b>
-              </b-col>
-              <b-col md="5">
-                <b>Biaya</b>
-              </b-col>
-            </b-row>
-            <b-row class="mt-1" v-for="item in [1, 2, 3]" :key="item">
-              <b-col md="5">
-                <b-form-input v-model="name" type="number" />
-              </b-col>
-              <b-col md="5">
-                <b-form-input v-model="name" type="number" />
-              </b-col>
-              <b-col md="2">
-                <b-button variant="outline-danger" type="button">
-                  <feather-icon icon="Trash2Icon" size="18" />
-                </b-button>
-              </b-col>
-              <b-col md="12">
-                <hr />
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col class="text-right">
-                <b-button variant="outline-danger" type="button">
-                  Tambah Kolom
-                </b-button>
-              </b-col>
-            </b-row>
-            <b-row>
-              <b-col md="12" class="mt-2">
-                <b-button
-                  :variant="editMode ? 'warning' : 'primary'"
-                  type="submit"
-                  class="mr-50"
-                  :disabled="loadingSubmit"
-                  @click.prevent="submit"
-                >
-                  <b-spinner v-if="loadingSubmit" small />
-                  Submit
-                </b-button>
               </b-col>
             </b-row>
           </b-form>
         </validation-observer>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col md="12" class="mt-2">
+        <b-row>
+          <b-col md="1">
+            <b>List Talent</b>
+          </b-col>
+          <b-col md="2">
+            <b>Nama</b>
+          </b-col>
+          <b-col md="2">
+            <b>Partner</b>
+          </b-col>
+          <b-col md="2">
+            <b>Team Lead</b>
+          </b-col>
+          <b-col md="2">
+            <b>Device</b>
+          </b-col>
+          <b-col md="2">
+            <b>Kantor</b>
+          </b-col>
+          <b-col md="1">
+            <b>Aksi</b>
+          </b-col>
+        </b-row>
+        <b-row class="mt-1" v-for="item in [1, 2, 3]" :key="item">
+          <b-col md="2" offset-md="1">
+            <b-form-input v-model="name" type="number" />
+          </b-col>
+          <b-col md="2">
+            <b-form-input v-model="name" type="number" />
+          </b-col>
+          <b-col md="2">
+            <b-form-input v-model="name" type="number" />
+          </b-col>
+          <b-col md="2">
+            <b-form-input v-model="name" type="number" />
+          </b-col>
+          <b-col md="2">
+            <b-form-input v-model="name" type="number" />
+          </b-col>
+          <b-col md="1">
+            <b-button variant="outline-danger" type="button">
+              <feather-icon icon="Trash2Icon" size="18" />
+            </b-button>
+          </b-col>
+          <b-col md="12">
+            <hr />
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col class="text-right">
+            <b-button variant="outline-danger" type="button">
+              Tambah Kolom
+            </b-button>
+          </b-col>
+        </b-row>
+      </b-col>
+      <b-col md="12">
+        <p>
+          <small>
+            * Assign akan mengganti status Talent dari Non Job menjadi Hired
+          </small>
+        </p>
+        <b-button
+          :variant="editMode ? 'warning' : 'primary'"
+          type="submit"
+          class="mr-50"
+          :disabled="loadingSubmit"
+          @click.prevent="submit"
+        >
+          <b-spinner v-if="loadingSubmit" small />
+          Assign
+        </b-button>
       </b-col>
     </b-row>
   </b-card-actions>
@@ -154,13 +169,11 @@ import {
   BButton,
   BSpinner,
   VBTooltip,
-  BFormTextarea,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
-import vSelect from 'vue-select'
 
 export default {
   directives: {
@@ -178,8 +191,6 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    BFormTextarea,
-    vSelect,
   },
   data() {
     return {
