@@ -319,6 +319,7 @@ export default {
               { action: 'manage', subject: 'Training' },
               { action: 'manage', subject: 'Division' },
               { action: 'manage', subject: 'Invoice' },
+              { action: 'manage', subject: 'Assignment' },
             ]
           } else if (role === 'PARTNER') {
             ability = [

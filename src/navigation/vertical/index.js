@@ -39,6 +39,7 @@ import division from './division'
 import position from './position'
 import masterData from './master-data'
 import invoice from './invoice'
+import assignment from './assignment'
 
 // Partner
 import talentPool from './talent-pool'
@@ -53,6 +54,7 @@ export default [
   ...management,
   ...masterData,
   ...invoice,
+  ...assignment,
   ...division,
   ...position,
 

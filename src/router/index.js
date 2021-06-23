@@ -21,6 +21,7 @@ import talentPool from './routes/talent-pool'
 import parentProfile from './routes/partner-profile'
 import wishlist from './routes/wishlist'
 import invoice from './routes/invoice'
+import assignment from './routes/assignment'
 
 Vue.use(VueRouter)
 
@@ -41,6 +42,7 @@ const router = new VueRouter({
     ...division,
     ...position,
     ...invoice,
+    ...assignment,
 
     ...talentPool,
     ...parentProfile,
