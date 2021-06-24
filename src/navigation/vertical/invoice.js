@@ -25,6 +25,13 @@ export default [
         resource: 'Invoice',
         action: 'manage',
       },
+      {
+        title: 'Invoice Talent',
+        icon: 'UserPlusIcon',
+        route: 'invoice-talent',
+        resource: 'Invoice',
+        action: 'manage',
+      },
     ],
   },
 ]
