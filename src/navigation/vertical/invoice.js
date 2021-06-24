@@ -18,6 +18,13 @@ export default [
         resource: 'Invoice',
         action: 'manage',
       },
+      {
+        title: 'Invoice Admin',
+        icon: 'UserPlusIcon',
+        route: 'invoice-admin',
+        resource: 'Invoice',
+        action: 'manage',
+      },
     ],
   },
 ]
