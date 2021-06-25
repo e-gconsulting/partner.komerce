@@ -14,11 +14,11 @@
                 <b-form-group label="Pendapatan Minimum" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="minimum_income"
-                    rules="required|min:3"
+                    name="Pendapatan Minimum"
+                    rules="required|integer"
                   >
                     <b-form-input
-                      v-model="name"
+                      v-model="minimum_income"
                       :state="
                         errors.length > 0 || submitErrors.name ? false : null
                       "
@@ -34,15 +34,13 @@
                 <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="PIC"
+                    name="Jenis Sharing Fee"
                     rules="required"
                   >
                     <v-select
-                      v-model="staffId"
-                      label="full_name"
-                      :reduce="option => option.id"
-                      :options="['Presentase %', 'Nominal Rp']"
-                      :filterable="false"
+                      v-model="sharing_fee_type"
+                      label="label"
+                      :options="sharing_fee_type_option"
                     >
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -53,13 +51,15 @@
                 <b-form-group label="Nilai Sharing Fee" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="No HP"
-                    rules="required"
+                    name="Nilai Sharing Fee"
+                    rules="required|integer"
                   >
-                    <cleave
-                      v-model="phone"
-                      class="form-control"
-                      :options="options.phone"
+                    <b-form-input
+                      v-model="sharing_fee_value"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
+                      type="number"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -72,13 +72,15 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="No HP"
-                    rules="required"
+                    name="Nilai Maksimal Sharing Fee"
+                    rules="required|integer"
                   >
-                    <cleave
-                      v-model="phone"
-                      class="form-control"
-                      :options="options.phone"
+                    <b-form-input
+                      v-model="max_nominal_sharing_fee"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
+                      type="number"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -117,14 +119,11 @@ import {
   BSpinner,
   VBTooltip,
 } from 'bootstrap-vue'
-import { required, min, minValue } from '@validations'
+import { required, integer } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
-import Cleave from 'vue-cleave-component'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import 'cleave.js/dist/addons/cleave-phone.id'
 
 export default {
   directives: {
@@ -143,7 +142,6 @@ export default {
     BButton,
     BSpinner,
     vSelect,
-    Cleave,
   },
   data() {
     return {
@@ -153,8 +151,7 @@ export default {
       submitErrors: '',
 
       required,
-      min,
-      minValue,
+      integer,
 
       name: '',
       staffId: '',
@@ -162,12 +159,23 @@ export default {
       hasMoreStaff: false,
       phone: '',
 
-      options: {
-        phone: {
-          phone: true,
-          phoneRegionCode: 'ID',
+      sharing_fee_type_option: [
+        {
+          value: 'percentage',
+          label: 'Presentase %',
         },
+        {
+          value: 'rp',
+          label: 'Nominal Rp',
+        },
+      ],
+      minimum_income: '',
+      sharing_fee_type: {
+        value: '',
+        label: '',
       },
+      sharing_fee_value: '',
+      max_nominal_sharing_fee: '',
     }
   },
   computed: {
@@ -179,28 +187,16 @@ export default {
     },
     successText() {
       return this.editMode
-        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+        ? `${this.$route.meta.name.singular} berhasil diperbaharui`
+        : `${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
-      const endpoint = '/operationalOffice'
+      const endpoint = '/talentSharingFee'
       return this.editMode ? `${endpoint}/${this.id}` : endpoint
     },
   },
-  watch: {
-    staffId(newValue) {
-      this.phone = newValue
-        ? this.staffItems.find(o => o.id === newValue).no_hp
-        : ''
-    },
-  },
   async mounted() {
-    this.sync()
-    this.loadProvincies()
-
     if (this.editMode) await this.loadForm()
-
-    if (!this.editMode || !this.staffItems.length) this.loadStaffs()
   },
   methods: {
     submit() {
@@ -210,18 +206,12 @@ export default {
 
           const data = {
             _method: this.method,
-            name: this.name,
-            staff_id: this.staffId,
-            phone: this.phone,
-            lat: this.latitude,
-            lng: this.longitude,
-            address: this.address,
-            province_id: this.provinceId,
-            regency_id: this.regencyId,
-            district_id: this.districtId,
+            minimum_income: this.minimum_income,
+            sharing_fee_type: this.sharing_fee_type.value,
+            sharing_fee_value: this.sharing_fee_value,
+            max_nominal_sharing_fee: this.max_nominal_sharing_fee,
           }
-
-          if (this.editMode) Object.assign(data, { id: this.id })
+          // if (this.editMode) Object.assign(data, { id: this.id })
 
           this.$http
             .post(this.endpoint, data)
