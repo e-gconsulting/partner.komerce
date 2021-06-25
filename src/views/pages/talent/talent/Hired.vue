@@ -104,7 +104,7 @@
                   >
 
                     <!-- Leader -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <validation-observer>
                         <b-form-group
                           label="Leader"
@@ -138,7 +138,7 @@
                     </b-col>
 
                     <!-- Partner -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <validation-observer>
                         <b-form-group
                           label="Partner"
@@ -172,26 +172,6 @@
                       </validation-observer>
                     </b-col>
 
-                    <!-- Rating -->
-                    <b-col md="3">
-                      <b-form-group
-                        label="Rating"
-                      >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Education"
-                        >
-                          <b-form-select
-                            ref="fieldRating"
-                            v-model="fieldFilterByRating"
-                            :options="ratingOptions"
-                            :state="errors.length > 0 ? false:null"
-                            @change="filterByRating"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
                   </b-row>
 
                 </b-form>
@@ -518,7 +498,7 @@ export default {
         {
           key: 'talent_rating',
           label: 'Rating',
-          sortable: false,
+          sortable: true,
         },
       ],
     }
@@ -623,6 +603,7 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
+        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
@@ -642,30 +623,11 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
+        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
       return getPartner
-    },
-    filterByRating() {
-      const params = {
-        keyword: this.filter,
-        position_id: this.filterPositionId,
-        status: 'hired',
-        sortRating: this.fieldFilterByRating,
-        page: this.currentPage,
-        limit: this.perPage,
-        sort: this.sortBy,
-        direction: this.sortDirection,
-      }
-
-      return this.$http.get(this.endpointGetAll, {
-        params,
-      }).then(response => {
-        const { data } = response.data.data
-        this.refreshTable()
-        return data
-      })
     },
     tableProvider() {
       const params = {

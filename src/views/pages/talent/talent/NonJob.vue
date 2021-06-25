@@ -105,7 +105,7 @@
                   >
 
                     <!-- Talent lead terakhir -->
-                    <b-col md="3">
+                    <b-col md="5">
                       <validation-observer>
                         <b-form-group
                           label="Leader"
@@ -139,42 +139,6 @@
                     </b-col>
 
                     <!-- Waktu Kosong -->
-                    <b-col md="3">
-                      <b-form-group
-                        label="Waktu Kosong"
-                      >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Education"
-                        >
-                          <b-form-select
-                            :state="errors.length > 0 ? false:null"
-                            :options="timeOptions"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
-
-                    <!-- Rating -->
-                    <b-col md="3">
-                      <b-form-group
-                        label="Rating"
-                      >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Education"
-                        >
-                          <b-form-select
-                            v-model="fieldFilterByRating"
-                            :options="ratingOptions"
-                            :state="errors.length > 0 ? false:null"
-                            @change="filterByRating"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
 
                   </b-row>
 
@@ -485,7 +449,7 @@ export default {
         {
           key: 'last_date_of_pause',
           label: 'Waktu Kosong',
-          sortable: false,
+          sortable: true,
           formatter: value => {
             if (!value || value === '0000-00-00 00:00:00') return '-'
 
@@ -506,7 +470,7 @@ export default {
         {
           key: 'talent_rating',
           label: 'Rating',
-          sortable: false,
+          sortable: true,
         },
       ],
     }
@@ -570,9 +534,7 @@ export default {
       const params = {
         position_id: this.filterPositionId,
         status: 'non job',
-        name_lead: this.fieldFilterByLeader,
         page: this.currentPage,
-        withLastJob: 1,
         limit: this.perPage,
         sort: this.sortBy,
         direction: this.sortDirection,
@@ -581,44 +543,27 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
+        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
       return { getTalentByLeader }
     },
-    filterByRating() {
+    // End new Filter
+    tableProvider() {
       const params = {
         keyword: this.filter,
         position_id: this.filterPositionId,
-        status: 'hired',
-        sortRating: this.fieldFilterByRating,
+        status: 'non job',
+        withLastJob: 1,
         page: this.currentPage,
         limit: this.perPage,
         sort: this.sortBy,
         direction: this.sortDirection,
       }
-
-      return this.$http.get(this.endpointGetAll, {
+      if (this.fieldFilterByLeader) Object.assign(params, { last_lead: this.fieldFilterByLeader.full_name })
+      const getResultData = this.$http.get(this.endpointGetAll, {
         params,
-      }).then(response => {
-        const { data } = response.data.data
-        this.refreshTable()
-        return data
-      })
-    },
-    // End new Filter
-    tableProvider() {
-      return this.$http.get(this.endpointGetAll, {
-        params: {
-          keyword: this.filter,
-          position_id: this.filterPositionId,
-          status: 'non job',
-          withLastJob: 1,
-          page: this.currentPage,
-          limit: this.perPage,
-          sort: this.sortBy,
-          direction: this.sortDirection,
-        },
       }).then(response => {
         const { data } = response.data.data
         this.totalRows = response.data.data.total
@@ -635,6 +580,7 @@ export default {
         })
         return []
       })
+      return getResultData
     },
     refreshTable() {
       this.$refs.table.refresh()

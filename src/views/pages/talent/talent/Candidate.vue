@@ -113,12 +113,12 @@
                             #default="{ errors }"
                             name="Education"
                           >
-                            <b-form-select
-                              ref="fieldEducation"
+                            <v-select
                               v-model="filterEducation"
                               :options="educationOptions"
-                              :state="errors.length > 0 ? false:null"
-                              @change="filterSelectEducation"
+                              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                              label="title"
+                              @input="filterSelectEducation"
                             />
                             <small class="text-danger">{{ errors[0] }}</small>
                           </validation-provider>
@@ -161,11 +161,12 @@
                               #default="{ errors }"
                               name="Experience Year"
                             >
-                              <b-form-select
+                              <v-select
                                 v-model="filterExperienceYear"
                                 :options="experienceYearOptions"
-                                :state="errors.length > 0 ? false:null"
-                                @change="filterByExperienceYear"
+                                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                                label="title"
+                                @input="filterByExperienceYear"
                               />
                               <small class="text-danger">{{ errors[0] }}</small>
                             </validation-provider>
@@ -173,29 +174,6 @@
                         </b-col>
                       </transition>
 
-                      <!-- Lama Pengalaman -->
-                      <b-col
-                        md="5"
-                      >
-                        <b-form-group
-                          label="Lama Pengalaman"
-                          label-for="quantity"
-                        >
-                          <validation-provider
-                            #default="{ errors }"
-                            name="Experience Status"
-                          >
-
-                            <b-form-radio-group
-                              v-model="fieldFilterExperienceLong"
-                              class="mt-50"
-                              :options="experienceLongOptions"
-                              @change="filterByExperienceLong"
-                            />
-                            <small class="text-danger">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
                     </b-row>
 
                   </b-form>
@@ -551,6 +529,7 @@ import { required, min, minValue } from '@validations'
 import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
+import vSelect from 'vue-select'
 
 export default {
   directives: {
@@ -583,6 +562,7 @@ export default {
     BCardActionsContainer,
     BModal,
     BForm,
+    vSelect,
   },
   mixins: [heightTransition],
   data() {
@@ -599,7 +579,7 @@ export default {
       pageOptions: [5, 10, 20],
       totalRows: 1,
       currentPage: 1,
-      sortBy: '',
+      sortBy: 'talent.year_experience',
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
@@ -620,32 +600,31 @@ export default {
       filterExperienced: '',
       filterExperiencedIsTrue: true,
       filterExperienceYear: '',
-      fieldFilterExperienceLong: '',
 
       loadingQuestionnaire: false,
       questionItems: [],
       answers: [],
 
       educationOptions: [
-        { text: 'SD', value: 'SD' },
-        { text: 'SMP', value: 'SMP' },
-        { text: 'SMA/SMK', value: 'SMA/SMK' },
-        { text: 'Sarjana', value: 'Sarjana' },
+        { value: 'SD', title: 'SD' },
+        { value: 'SMP', title: 'SMP' },
+        { value: 'SMA/SMK', title: 'SMA/SMK' },
+        { value: 'Sarjana', title: 'Sarjana' },
       ],
+
       experienceStatusOptions: [
         { text: 'Ada', value: 1 },
         { text: 'Tidak ada', value: 0 },
       ],
       experienceLongOptions: [
-        { text: 'Terlama', value: 0 },
-        { text: 'Paling Sedikit', value: 1 },
+        { text: 'Terlama', value: '1' },
+        { text: 'Paling Sedikit', value: '2' },
       ],
       experienceYearOptions: [
-        { text: '0 year', value: '0' },
-        { text: '< 1 year', value: '< 1 year' },
-        { text: '1 year', value: '1 year' },
-        { text: '2 years', value: '2 years' },
-        { text: '3 years', value: '3 years' },
+        { title: '< 1 year', value: '< 1 year' },
+        { title: '1 years', value: '1 years' },
+        { title: '2 years', value: '2 years' },
+        { title: '3 years', value: '3 years' },
       ],
 
       fields: [
@@ -653,7 +632,7 @@ export default {
         { key: 'full_name', label: 'Nama' },
         {
           key: 'talent.education',
-          label: 'Pendidikan dev',
+          label: 'Pendidikan',
           sortable: false,
           formatter: value => (value || '-'),
         },
@@ -666,6 +645,7 @@ export default {
         {
           key: 'talent.year_experience',
           label: 'Pengalaman Kerja',
+          sortable: true,
           formatter: value => (value || 'No'),
         },
         {
@@ -726,28 +706,21 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
-    filterExperiencedChecked() {
-      if (this.filterExperiencedIsTrue !== true) {
-        this.filterExperienced = ''
-      }
-    },
     filterSelectEducation() {
       const params = {
         keyword: this.filter,
         position_id: this.filterPositionId,
-        education: this.filterEducation,
-        has_work_experience: this.filterExperienced,
         status: 'registered,selected',
         page: this.currentPage,
         limit: this.perPage,
         sort: this.sortBy,
         direction: this.sortDirection,
       }
-      if (this.filterExperienced) Object.assign(params, { year_experience: this.filterExperienceYear })
       const getEducation = this.$http.get(this.endpointGetAll, {
         params,
       }).then(response => {
         const { data } = response.data.data
+        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
@@ -757,7 +730,6 @@ export default {
       const params = {
         keyword: this.filter,
         position_id: this.filterPositionId,
-        education: this.filterEducation,
         has_work_experience: this.filterExperienced,
         status: 'registered,selected',
         page: this.currentPage,
@@ -765,44 +737,20 @@ export default {
         sort: this.sortBy,
         direction: this.sortDirection,
       }
-      if (this.filterExperienced) Object.assign(params, { year_experience: this.filterExperienceYear })
       const getExperienceYear = this.$http.get(this.endpointGetAll, {
         params,
       }).then(response => {
         const { data } = response.data.data
+        this.totalRows = response.data.data.total
         return data
       })
-      this.filterExperiencedChecked()
       this.refreshTable()
       return { getExperienceYear }
-    },
-    filterByExperienceLong() {
-      const params = {
-        keyword: this.filter,
-        position_id: this.filterPositionId,
-        longlestTalent: this.fieldFilterExperienceLong,
-        status: 'registered,selected',
-        page: this.currentPage,
-        limit: this.perPage,
-        sort: this.sortBy,
-        direction: this.sortDirection,
-      }
-      const getLongLest = this.$http.get(this.endpointGetAll, {
-        params,
-      }).then(response => {
-        const { data } = response.data.data
-        return data
-      })
-      this.refreshTable()
-      return { getLongLest }
     },
     tableProvider() {
       const params = {
         keyword: this.filter,
         position_id: this.filterPositionId,
-        education: this.filterEducation,
-        has_work_experience: this.filterExperienced,
-        longlestTalent: this.fieldFilterExperienceLong,
         status: 'registered,selected',
         page: this.currentPage,
         limit: this.perPage,
@@ -810,7 +758,8 @@ export default {
         direction: this.sortDirection,
       }
 
-      if (this.filterExperienced) Object.assign(params, { year_experience: this.filterExperienceYear })
+      if (this.filterEducation) Object.assign(params, { education: this.filterEducation.value })
+      if (this.filterExperienceYear) Object.assign(params, { year_experience: this.filterExperienceYear.value })
       return this.$http.get(this.endpointGetAll, {
         params,
       }).then(response => {

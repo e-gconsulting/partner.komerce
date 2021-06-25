@@ -104,7 +104,7 @@
                   >
 
                     <!-- Sektor bisnis -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <b-form-group
                         label="Sektor Bisnis"
                         label-for="item-name"
@@ -129,7 +129,7 @@
                     </b-col>
 
                     <!-- Leader -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <b-form-group
                         label="Leader"
                         label-for="item-name"
@@ -166,63 +166,6 @@
                       </b-form-group>
                     </b-col>
 
-                    <!-- Bakat Dipekerjakan -->
-                    <b-col md="3">
-                      <b-form-group
-                        label="Bakat Dipekerjakan"
-                        label-for="item-name"
-                      >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Education"
-                        >
-                          <b-form-select
-                            :state="errors.length > 0 ? false:null"
-                            :options="bakatOptions"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
-
-                    <!-- Durasi -->
-                    <b-col md="3">
-                      <b-form-group
-                        label="Durasi"
-                        label-for="item-durasi"
-                      >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Education"
-                        >
-                          <b-form-select
-                            :state="errors.length > 0 ? false:null"
-                            :options="durasiOptions"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
-
-                    <!-- Remove Button -->
-                    <b-col
-                      lg="2"
-                      md="3"
-                      class="mb-50 d-none"
-                    >
-                      <b-button
-                        v-ripple.400="'rgba(234, 84, 85, 0.15)'"
-                        variant="outline-danger"
-                        class="mt-0 mt-md-2"
-                        @click="removeItem(index)"
-                      >
-                        <feather-icon
-                          icon="XIcon"
-                          class="mr-25"
-                        />
-                        <span>Delete</span>
-                      </b-button>
-                    </b-col>
                   </b-row>
 
                 </b-form>
@@ -607,11 +550,11 @@ export default {
         { key: 'full_name', label: 'Nama' },
         { key: 'no_partner', label: 'No. Partner' },
         { key: 'partner_detail.partner_category_name', label: 'Sektor Bisnis' },
-        { key: 'total_sdm_assigned', label: 'Bakat dipekerjakan' },
+        { key: 'total_sdm_assigned', label: 'Bakat dipekerjakan', sortable: true },
         {
           key: 'partner_detail.active_at',
           label: 'Durasi',
-          sortable: false,
+          sortable: true,
           formatter: value => {
             if (!value || value === '0000-00-00 00:00:00') return '-'
 

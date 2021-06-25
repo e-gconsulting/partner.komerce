@@ -104,7 +104,7 @@
                   >
 
                     <!-- Sektor Bisnis -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <b-form-group
                         label="Sektor Bisnis"
                         label-for="item-name"
@@ -129,7 +129,7 @@
                     </b-col>
 
                     <!-- Leader -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <b-form-group
                         label="Leader"
                         label-for="item-name"
@@ -166,25 +166,6 @@
                       </b-form-group>
                     </b-col>
 
-                    <!-- Remove Button -->
-                    <b-col
-                      lg="2"
-                      md="3"
-                      class="mb-50 d-none"
-                    >
-                      <b-button
-                        v-ripple.400="'rgba(234, 84, 85, 0.15)'"
-                        variant="outline-danger"
-                        class="mt-0 mt-md-2"
-                        @click="removeItem(index)"
-                      >
-                        <feather-icon
-                          icon="XIcon"
-                          class="mr-25"
-                        />
-                        <span>Delete</span>
-                      </b-button>
-                    </b-col>
                   </b-row>
 
                 </b-form>

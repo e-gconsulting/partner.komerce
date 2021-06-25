@@ -104,7 +104,7 @@
                   >
 
                     <!-- Sektor Bisnis -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <b-form-group
                         label="Sektor Bisnis"
                         label-for="item-name"
@@ -129,7 +129,7 @@
                     </b-col>
 
                     <!-- Leader -->
-                    <b-col md="3">
+                    <b-col md="4">
                       <b-form-group
                         label="Leader"
                         label-for="item-name"

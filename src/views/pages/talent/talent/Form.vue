@@ -12,7 +12,7 @@
       <b-col
         md="6"
       >
-        <!-- form -->
+        <!-- form edit talent -->
         <validation-observer ref="formRules">
           <b-form>
             <b-row>
