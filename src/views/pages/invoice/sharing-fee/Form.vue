@@ -211,7 +211,6 @@ export default {
             sharing_fee_value: this.sharing_fee_value,
             max_nominal_sharing_fee: this.max_nominal_sharing_fee,
           }
-          // if (this.editMode) Object.assign(data, { id: this.id })
 
           this.$http
             .post(this.endpoint, data)
