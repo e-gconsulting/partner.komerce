@@ -250,32 +250,14 @@ export default {
         .get(this.endpoint)
         .then(async response => {
           const { data } = response.data
-
-          this.name = data.name
-          this.address = data.address
-          this.latitude = Number(data.lat)
-          this.longitude = Number(data.lng)
-          this.coordinateTemp.lat = this.latitude
-          this.coordinateTemp.lng = this.longitude
-          this.zoom = 16
-
-          if (data.district) {
-            this.provinceItems = [data.district.regency.province]
-            this.provinceId = data.district.regency.province.id
-            this.regencyItems = [data.district.regency]
-            this.regencyId = data.district.regency.id
-            this.districtItems = [data.district]
-            this.districtId = data.district.id
+          console.log({ data })
+          this.minimum_income = data.minimum_income
+          this.sharing_fee_type = {
+            value: '',
+            label: '',
           }
-
-          if (data.staff) {
-            data.staff.full_name = data.staff.user.full_name
-            data.staff.no_hp = data.phone
-
-            this.staffItems = [data.staff]
-            this.staffId = Number(data.staff_id)
-            this.loadStaffs(data.staff.full_name)
-          }
+          this.sharing_fee_value = ''
+          this.max_nominal_sharing_fee = ''
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false

@@ -68,6 +68,7 @@
 
 <script>
 import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   BRow,
   BCol,
@@ -158,6 +159,38 @@ export default {
           this.delete(data)
         }
       })
+    },
+    delete(data) {
+      this.loading = true
+      const endpoint = `talentSharingFee/${this.getId(data.item)}`
+
+      this.$http({
+        method: 'delete',
+        url: endpoint,
+      })
+        .then(response => {
+          if (response.data.status !== undefined && !response.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: response.data.message,
+                  variant: 'danger',
+                  icon: 'AlertCircleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+
+            return
+          }
+
+          this.loadData()
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
   },
 }
