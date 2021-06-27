@@ -256,8 +256,8 @@ export default {
             value: '',
             label: '',
           }
-          this.sharing_fee_value = ''
-          this.max_nominal_sharing_fee = ''
+          this.sharing_fee_value = data.sharing_fee_value
+          this.max_nominal_sharing_fee = data.max_nominal_sharing_fee
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false
