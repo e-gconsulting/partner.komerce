@@ -147,17 +147,10 @@ export default {
     return {
       id: this.$route.params.id,
       loadingSubmit: false,
-      loadingAddress: false,
       submitErrors: '',
 
       required,
       integer,
-
-      name: '',
-      staffId: '',
-      staffItems: [],
-      hasMoreStaff: false,
-      phone: '',
 
       sharing_fee_type_option: [
         {

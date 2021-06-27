@@ -14,38 +14,50 @@
                 <b-form-group label="Posisi" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="minimum_income"
-                    rules="required|min:3"
+                    name="Posisi"
+                    rules="required"
                   >
-                    <b-form-input
-                      v-model="name"
-                      :state="
-                        errors.length > 0 || submitErrors.name ? false : null
-                      "
-                      type="number"
-                    />
-                    <small class="text-danger">{{
-                      errors[0] || submitErrors.name
-                    }}</small>
+                    <v-select
+                      v-model="position_id"
+                      label="position_name"
+                      :reduce="option => option.id"
+                      :options="positionItems"
+                      :state="errors.length > 0 ? false : null"
+                      :filterable="false"
+                      placeholder="Ketik untuk mencari..."
+                      @search="onSearchPosition"
+                    >
+                      <li
+                        v-if="hasMorePosition"
+                        slot="list-footer"
+                        class="
+                          vs__dropdown-option vs__dropdown-option--disabled
+                        "
+                      >
+                        <feather-icon icon="MoreHorizontalIcon" size="16" />
+                      </li>
+                    </v-select>
+                    <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Address" label-cols-md="4">
+                <b-form-group label="Deskripsi" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="Address"
-                    rules="required|min:5"
+                    name="Deskripsi"
+                    rules="required"
                   >
                     <b-form-textarea
-                      v-model="address"
-                      :disabled="loadingAddress"
+                      v-model="description"
                       :state="
-                        errors.length > 0 || submitErrors.address ? false : null
+                        errors.length > 0 || submitErrors.description
+                          ? false
+                          : null
                       "
                     />
                     <small class="text-danger">{{
-                      errors[0] || submitErrors.address
+                      errors[0] || submitErrors.description
                     }}</small>
                   </validation-provider>
                 </b-form-group>
@@ -54,18 +66,20 @@
                 <b-form-group label="Biaya Standar" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="minimum_income"
-                    rules="required|min:3"
+                    name="Biaya Standar"
+                    rules="required|integer"
                   >
                     <b-form-input
-                      v-model="name"
+                      v-model="admin_fee"
                       :state="
-                        errors.length > 0 || submitErrors.name ? false : null
+                        errors.length > 0 || submitErrors.admin_fee
+                          ? false
+                          : null
                       "
                       type="number"
                     />
                     <small class="text-danger">{{
-                      errors[0] || submitErrors.name
+                      errors[0] || submitErrors.admin_fee
                     }}</small>
                   </validation-provider>
                 </b-form-group>
@@ -74,15 +88,14 @@
                 <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="PIC"
+                    name="Jenis Sharing Fee"
                     rules="required"
                   >
                     <v-select
-                      v-model="staffId"
-                      label="full_name"
-                      :reduce="option => option.id"
-                      :options="['Presentase %', 'Nominal Rp']"
-                      :filterable="false"
+                      v-model="admadmin_fee_discount_typein_fee"
+                      :reduce="option => option.value"
+                      label="label"
+                      :options="sharing_fee_type_option"
                     >
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -99,15 +112,45 @@
                 <b>Biaya</b>
               </b-col>
             </b-row>
-            <b-row class="mt-1" v-for="item in [1, 2, 3]" :key="item">
+            <b-row
+              class="mt-1"
+              v-for="(
+                talent_admin_fee_discount, index
+              ) in talent_admin_fee_discounts"
+              :key="`talent_admin_fee_discounts_${index}`"
+            >
               <b-col md="5">
-                <b-form-input v-model="name" type="number" />
+                <validation-provider
+                  #default="{ errors }"
+                  name="Jumlah Talent Minimal"
+                  rules="required|integer"
+                >
+                  <b-form-input
+                    v-model="talent_admin_fee_discount.minimum_total_talent"
+                    type="number"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
               </b-col>
               <b-col md="5">
-                <b-form-input v-model="name" type="number" />
+                <validation-provider
+                  #default="{ errors }"
+                  name="Jumlah Talent Minimal"
+                  rules="required|integer"
+                >
+                  <b-form-input
+                    v-model="talent_admin_fee_discount.admin_fee_discount_value"
+                    type="number"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
               </b-col>
               <b-col md="2">
-                <b-button variant="outline-danger" type="button">
+                <b-button
+                  variant="outline-danger"
+                  type="button"
+                  @click="removeTalentAdminFeeDiscounts(index)"
+                >
                   <feather-icon icon="Trash2Icon" size="18" />
                 </b-button>
               </b-col>
@@ -117,7 +160,11 @@
             </b-row>
             <b-row>
               <b-col class="text-right">
-                <b-button variant="outline-danger" type="button">
+                <b-button
+                  variant="outline-danger"
+                  type="button"
+                  @click="addTalentAdminFeeDiscounts"
+                >
                   Tambah Kolom
                 </b-button>
               </b-col>
@@ -156,7 +203,7 @@ import {
   VBTooltip,
   BFormTextarea,
 } from 'bootstrap-vue'
-import { required, min, minValue } from '@validations'
+import { required, integer } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
@@ -185,25 +232,28 @@ export default {
     return {
       id: this.$route.params.id,
       loadingSubmit: false,
-      loadingAddress: false,
       submitErrors: '',
 
       required,
-      min,
-      minValue,
+      integer,
 
-      name: '',
-      staffId: '',
-      staffItems: [],
-      hasMoreStaff: false,
-      phone: '',
-
-      options: {
-        phone: {
-          phone: true,
-          phoneRegionCode: 'ID',
+      hasMorePosition: false,
+      positionItems: [],
+      position_id: '',
+      description: '',
+      admin_fee: '',
+      sharing_fee_type_option: [
+        {
+          value: 'percentage',
+          label: 'Presentase %',
         },
-      },
+        {
+          value: 'rp',
+          label: 'Nominal Rp',
+        },
+      ],
+      admadmin_fee_discount_typein_fee: '',
+      talent_admin_fee_discounts: [],
     }
   },
   computed: {
@@ -219,26 +269,55 @@ export default {
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
-      const endpoint = '/operationalOffice'
+      const endpoint = '/talentAdminFee'
       return this.editMode ? `${endpoint}/${this.id}` : endpoint
     },
   },
-  watch: {
-    staffId(newValue) {
-      this.phone = newValue
-        ? this.staffItems.find(o => o.id === newValue).no_hp
-        : ''
-    },
-  },
   async mounted() {
-    this.sync()
-    this.loadProvincies()
-
-    if (this.editMode) await this.loadForm()
-
-    if (!this.editMode || !this.staffItems.length) this.loadStaffs()
+    this.loadPositions()
+    // if (this.editMode) await this.loadForm()
   },
   methods: {
+    onSearchPosition(search, loading) {
+      if (search.length) {
+        this.searchPosition(loading, search, this)
+      }
+    },
+    searchPosition: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadPositions(search).finally(() => loading(false))
+    }, 500),
+    loadPositions(search) {
+      return this.$http
+        .post(
+          '/position/pagination',
+          {},
+          {
+            params: {
+              division_id: this.divisionId,
+              position_name: search,
+              page: 1,
+              limit: 5,
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
+        .then(async response => {
+          const { data } = response.data.data
+          this.positionItems = Object.keys(data).map(key => data[key])
+          this.hasMorePosition = response.data.data.total > this.positionItems.length
+        })
+    },
+    addTalentAdminFeeDiscounts() {
+      this.talent_admin_fee_discounts.push({
+        minimum_total_talent: '',
+        admin_fee_discount_value: '',
+      })
+    },
+    removeTalentAdminFeeDiscounts(index) {
+      this.talent_admin_fee_discounts.splice(index, 1)
+    },
     submit() {
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -246,18 +325,13 @@ export default {
 
           const data = {
             _method: this.method,
-            name: this.name,
-            staff_id: this.staffId,
-            phone: this.phone,
-            lat: this.latitude,
-            lng: this.longitude,
-            address: this.address,
-            province_id: this.provinceId,
-            regency_id: this.regencyId,
-            district_id: this.districtId,
+            position_id: this.position_id,
+            description: this.description,
+            admin_fee: this.admin_fee,
+            admadmin_fee_discount_typein_fee: this
+              .admadmin_fee_discount_typein_fee,
+            talent_admin_fee_discounts: this.talent_admin_fee_discounts,
           }
-
-          if (this.editMode) Object.assign(data, { id: this.id })
 
           this.$http
             .post(this.endpoint, data)
