@@ -1,7 +1,7 @@
 <template>
   <b-card-actions
     ref="formCard"
-    :title="`${editMode ? 'Ubah' : 'Tambah'} ${$route.meta.name.singular}`"
+    :title="`${showMode ? 'Detil' : 'Tambah'} ${$route.meta.name.singular}`"
     no-actions
   >
     <validation-observer ref="formRules">
@@ -23,6 +23,7 @@
                         errors.length > 0 || submitErrors.name ? false : null
                       "
                       type="text"
+                      :disabled="showMode"
                     />
                     <small class="text-danger">{{
                       errors[0] || submitErrors.name
@@ -43,6 +44,7 @@
                         errors.length > 0 || submitErrors.name ? false : null
                       "
                       type="url"
+                      :disabled="showMode"
                     />
                     <small class="text-danger">{{
                       errors[0] || submitErrors.name
@@ -65,6 +67,7 @@
                         altFormat: 'j/n/Y',
                         dateFormat: 'Y-m-d',
                       }"
+                      :disabled="showMode"
                     />
                     <small class="text-danger">{{
                       errors[0] || submitErrors.name
@@ -102,160 +105,189 @@
             <b-col md="2">
               <b>Kantor</b>
             </b-col>
-            <b-col md="1">
+            <b-col md="1" v-if="!showMode">
               <b>Aksi</b>
             </b-col>
           </b-row>
-          <b-row
-            class="mt-1"
-            v-for="(assignment, index) in assignments"
-            :key="index"
-          >
-            <b-col md="2" offset-md="1">
-              <validation-provider
-                #default="{ errors }"
-                name="Talent"
-                rules="required"
-              >
-                <v-select
-                  v-model="assignment.talent_id"
-                  label="full_name"
-                  :reduce="option => option.id"
-                  :options="talentItems"
-                  placeholder="Ketik untuk mencari..."
-                  @search="onSearchTalent"
+          <template v-if="!showMode">
+            <b-row
+              class="mt-1"
+              v-for="(assignment, index) in assignments"
+              :key="index"
+            >
+              <b-col md="2" offset-md="1">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Talent"
+                  rules="required"
                 >
-                  <li
-                    v-if="hasMoreTalent"
-                    slot="list-footer"
-                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                  <v-select
+                    v-model="assignment.talent_id"
+                    label="full_name"
+                    :reduce="option => option.id"
+                    :options="talentItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchTalent"
                   >
-                    <feather-icon icon="MoreHorizontalIcon" size="16" />
-                  </li>
-                </v-select>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="2">
-              <validation-provider
-                #default="{ errors }"
-                name="Partner"
-                rules="required"
-              >
-                <v-select
-                  v-model="assignment.partner_id"
-                  label="full_name"
-                  :reduce="option => option.partner_detail.id"
-                  :options="partnerItems"
-                  placeholder="Ketik untuk mencari..."
-                  @search="onSearchPartner"
+                    <li
+                      v-if="hasMoreTalent"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-col>
+              <b-col md="2">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Partner"
+                  rules="required"
                 >
-                  <li
-                    v-if="hasMorePartner"
-                    slot="list-footer"
-                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                  <v-select
+                    v-model="assignment.partner_id"
+                    label="full_name"
+                    :reduce="option => option.partner_detail.id"
+                    :options="partnerItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchPartner"
                   >
-                    <feather-icon icon="MoreHorizontalIcon" size="16" />
-                  </li>
-                </v-select>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="2">
-              <validation-provider
-                #default="{ errors }"
-                name="Team Lead"
-                rules="required"
-              >
-                <v-select
-                  v-model="assignment.staff_id"
-                  label="full_name"
-                  :reduce="option => option.id"
-                  :options="teamLeadItems"
-                  placeholder="Ketik untuk mencari..."
-                  @search="onSearchTeamLead"
+                    <li
+                      v-if="hasMorePartner"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-col>
+              <b-col md="2">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Team Lead"
+                  rules="required"
                 >
-                  <li
-                    v-if="hasMoreTeamLead"
-                    slot="list-footer"
-                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                  <v-select
+                    v-model="assignment.staff_id"
+                    label="full_name"
+                    :reduce="option => option.id"
+                    :options="teamLeadItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchTeamLead"
                   >
-                    <feather-icon icon="MoreHorizontalIcon" size="16" />
-                  </li>
-                </v-select>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="2">
-              <validation-provider
-                #default="{ errors }"
-                name="Device"
-                rules="required"
-              >
-                <v-select
-                  v-model="assignment.device_id"
-                  label="brancd"
-                  :reduce="option => option.id"
-                  :options="deviceItems"
-                  placeholder="Ketik untuk mencari..."
-                  @search="onSearchDevice"
-                  :disabled="!assignment.partner_id"
+                    <li
+                      v-if="hasMoreTeamLead"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-col>
+              <b-col md="2">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Device"
+                  rules="required"
                 >
-                  <li
-                    v-if="hasMoreDevice"
-                    slot="list-footer"
-                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                  <v-select
+                    v-model="assignment.device_id"
+                    label="brancd"
+                    :reduce="option => option.id"
+                    :options="deviceItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchDevice"
+                    :disabled="!assignment.partner_id"
                   >
-                    <feather-icon icon="MoreHorizontalIcon" size="16" />
-                  </li>
-                </v-select>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="2">
-              <validation-provider
-                #default="{ errors }"
-                name="Kantor"
-                rules="required"
-              >
-                <v-select
-                  v-model="assignment.office_id"
-                  label="office_name"
-                  :reduce="option => option.id"
-                  :options="officeItems"
-                  placeholder="Ketik untuk mencari..."
-                  @search="onSearchOffice"
+                    <li
+                      v-if="hasMoreDevice"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-col>
+              <b-col md="2">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Kantor"
+                  rules="required"
                 >
-                  <li
-                    v-if="hasMoreOffice"
-                    slot="list-footer"
-                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                  <v-select
+                    v-model="assignment.office_id"
+                    label="office_name"
+                    :reduce="option => option.id"
+                    :options="officeItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchOffice"
                   >
-                    <feather-icon icon="MoreHorizontalIcon" size="16" />
-                  </li>
-                </v-select>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="1">
-              <b-button
-                variant="outline-danger"
-                type="button"
-                @click="removeAssignment(index)"
-              >
-                <feather-icon icon="Trash2Icon" size="18" />
-              </b-button>
-            </b-col>
-            <b-col md="12">
-              <hr />
-            </b-col>
-          </b-row>
+                    <li
+                      v-if="hasMoreOffice"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-col>
+              <b-col md="1">
+                <b-button
+                  variant="outline-danger"
+                  type="button"
+                  @click="removeAssignment(index)"
+                >
+                  <feather-icon icon="Trash2Icon" size="18" />
+                </b-button>
+              </b-col>
+              <b-col md="12">
+                <hr />
+              </b-col>
+            </b-row>
+          </template>
+          <template v-else>
+            <b-row
+              class="mt-1"
+              v-for="(assignment, index) in assignments"
+              :key="index"
+            >
+              <b-col md="2" offset-md="1">
+                <p>{{ assignment.talent.user.full_name }}</p>
+              </b-col>
+              <b-col md="2">
+                <p>{{ assignment.partner.user.full_name }}</p>
+              </b-col>
+              <b-col md="2">
+                <p>{{ assignment.staff.user.full_name }}</p>
+              </b-col>
+              <b-col md="2">
+                <p>{{ assignment.device.brancd }}</p>
+              </b-col>
+              <b-col md="2">
+                <p>{{ assignment.office.office_name }}</p>
+              </b-col>
+              <b-col md="12">
+                <hr />
+              </b-col>
+            </b-row>
+          </template>
           <b-row>
             <b-col class="text-right">
               <b-button
                 variant="outline-danger"
                 type="button"
                 @click="addAssignment"
+                v-if="!showMode"
               >
                 Tambah Kolom
               </b-button>
@@ -269,11 +301,12 @@
             </small>
           </p>
           <b-button
-            :variant="editMode ? 'warning' : 'primary'"
+            variant="primary"
             type="submit"
             class="mr-50"
             :disabled="loadingSubmit"
             @click.prevent="submit"
+            v-if="!showMode"
           >
             <b-spinner v-if="loadingSubmit" small />
             Assign
@@ -354,27 +387,27 @@ export default {
     method() {
       return this.editMode ? 'put' : 'post'
     },
-    editMode() {
+    showMode() {
       return this.id !== undefined
     },
     successText() {
-      return this.editMode
-        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
       const endpoint = '/skDocument/skPartnerAssignment'
-      return this.editMode ? `${endpoint}/${this.id}` : endpoint
+      return this.showMode ? `${endpoint}/${this.id}` : endpoint
     },
   },
   async mounted() {
-    this.loadTalents()
-    this.loadPartners()
-    this.loadTeamLeads()
-    this.loadOffices()
-    this.loadDevices()
-
-    // if (this.editMode) await this.loadForm()
+    if (this.showMode) {
+      await this.loadForm()
+    } else {
+      this.loadTalents()
+      this.loadPartners()
+      this.loadTeamLeads()
+      this.loadOffices()
+      this.loadDevices()
+    }
   },
   methods: {
     onSearchTalent(search, loading) {
@@ -597,32 +630,14 @@ export default {
         .get(this.endpoint)
         .then(async response => {
           const { data } = response.data
+          this.sk_number = data.sk_number
+          this.release_date = data.release_date
+          this.document_url = data.document_url
+          this.assignments = data.sk_partner_assignments
 
-          this.name = data.name
-          this.address = data.address
-          this.latitude = Number(data.lat)
-          this.longitude = Number(data.lng)
-          this.coordinateTemp.lat = this.latitude
-          this.coordinateTemp.lng = this.longitude
-          this.zoom = 16
-
-          if (data.district) {
-            this.provinceItems = [data.district.regency.province]
-            this.provinceId = data.district.regency.province.id
-            this.regencyItems = [data.district.regency]
-            this.regencyId = data.district.regency.id
-            this.districtItems = [data.district]
-            this.districtId = data.district.id
-          }
-
-          if (data.staff) {
-            data.staff.full_name = data.staff.user.full_name
-            data.staff.no_hp = data.phone
-
-            this.staffItems = [data.staff]
-            this.staffId = Number(data.staff_id)
-            this.loadStaffs(data.staff.full_name)
-          }
+          data.sk_partner_assignments.forEach(skPartnerAssignment => {
+            this.talentItems.push(skPartnerAssignment.talent.user)
+          })
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false
