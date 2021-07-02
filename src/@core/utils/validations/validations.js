@@ -4,6 +4,7 @@ import {
   email as rule_email,
   min as rule_min,
   min_value as rule_min_value,
+  max_value as rule_max_value,
   confirmed as rule_confirmed,
   regex as rule_regex,
   between as rule_between,
@@ -30,6 +31,8 @@ export const email = extend('email', rule_email)
 export const min = extend('min', rule_min)
 
 export const minValue = extend('min_value', rule_min_value)
+
+export const maxValue = extend('max_value', rule_max_value)
 
 export const confirmed = extend('confirmed', rule_confirmed)
 

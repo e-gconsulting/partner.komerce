@@ -41,6 +41,7 @@
                       v-model="sharing_fee_type"
                       label="label"
                       :options="sharing_fee_type_option"
+                      :reduce="option => option.value"
                     >
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -163,10 +164,7 @@ export default {
         },
       ],
       minimum_income: '',
-      sharing_fee_type: {
-        value: '',
-        label: '',
-      },
+      sharing_fee_type: '',
       sharing_fee_value: '',
       max_nominal_sharing_fee: '',
     }
@@ -200,31 +198,44 @@ export default {
           const data = {
             _method: this.method,
             minimum_income: this.minimum_income,
-            sharing_fee_type: this.sharing_fee_type.value,
+            sharing_fee_type: this.sharing_fee_type,
             sharing_fee_value: this.sharing_fee_value,
             max_nominal_sharing_fee: this.max_nominal_sharing_fee,
           }
 
           this.$http
             .post(this.endpoint, data)
-            .then(() => {
-              this.$toast(
-                {
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Success',
-                    text: this.successText,
-                    variant: 'success',
-                    attachment: 'CheckIcon',
+            .then(response => {
+              if (!response.data.success) {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: response.data.message,
+                      variant: 'danger',
+                      attachment: 'AlertTriangleIcon',
+                    },
                   },
-                },
-                { timeout: 2500 },
-              )
-              this.$router.push({ name: this.$route.meta.navActiveLink })
+                  { timeout: 2500 },
+                )
+              } else {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Success',
+                      text: this.successText,
+                      variant: 'success',
+                      attachment: 'CheckIcon',
+                    },
+                  },
+                  { timeout: 2500 },
+                )
+                this.$router.push({ name: this.$route.meta.navActiveLink })
+              }
             })
             .catch(error => {
-              this.loadingSubmit = false
-
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(
@@ -232,6 +243,9 @@ export default {
                   ).map(([key, value]) => [key, value[0]]),
                 )
               }
+            })
+            .finally(() => {
+              this.loadingSubmit = false
             })
         }
       })
@@ -243,12 +257,8 @@ export default {
         .get(this.endpoint)
         .then(async response => {
           const { data } = response.data
-          console.log({ data })
           this.minimum_income = data.minimum_income
-          this.sharing_fee_type = {
-            value: '',
-            label: '',
-          }
+          this.sharing_fee_type = data.sharing_fee_type
           this.sharing_fee_value = data.sharing_fee_value
           this.max_nominal_sharing_fee = data.max_nominal_sharing_fee
         })
