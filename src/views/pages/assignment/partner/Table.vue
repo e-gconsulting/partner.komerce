@@ -4,6 +4,7 @@
 
 <script>
 import CardTable from '@/views/components/CardTable.vue'
+import filters from '@/libs/filters'
 
 export default {
   components: {
@@ -14,7 +15,11 @@ export default {
       endpointGetAll: '/skDocument/skPartnerAssignment',
       fields: [
         { key: 'sk_number', label: 'No. SK' },
-        { key: 'release_date', label: 'Tanggal Diterbitkan' },
+        {
+          key: 'release_date',
+          label: 'Tanggal Diterbitkan',
+          formatter: val => filters.date(Date.parse(val)),
+        },
       ],
     }
   },
