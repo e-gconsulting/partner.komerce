@@ -22,8 +22,6 @@
                       label="position_name"
                       :reduce="option => option.id"
                       :options="positionItems"
-                      :state="errors.length > 0 ? false : null"
-                      :filterable="false"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchPosition"
                     >
@@ -275,7 +273,7 @@ export default {
   },
   async mounted() {
     this.loadPositions()
-    // if (this.editMode) await this.loadForm()
+    if (this.editMode) await this.loadForm()
   },
   methods: {
     onSearchPosition(search, loading) {
@@ -372,31 +370,11 @@ export default {
         .then(async response => {
           const { data } = response.data
 
-          this.name = data.name
-          this.address = data.address
-          this.latitude = Number(data.lat)
-          this.longitude = Number(data.lng)
-          this.coordinateTemp.lat = this.latitude
-          this.coordinateTemp.lng = this.longitude
-          this.zoom = 16
-
-          if (data.district) {
-            this.provinceItems = [data.district.regency.province]
-            this.provinceId = data.district.regency.province.id
-            this.regencyItems = [data.district.regency]
-            this.regencyId = data.district.regency.id
-            this.districtItems = [data.district]
-            this.districtId = data.district.id
-          }
-
-          if (data.staff) {
-            data.staff.full_name = data.staff.user.full_name
-            data.staff.no_hp = data.phone
-
-            this.staffItems = [data.staff]
-            this.staffId = Number(data.staff_id)
-            this.loadStaffs(data.staff.full_name)
-          }
+          this.position_id = data.position_id
+          this.description = data.description
+          this.admin_fee = data.admin_fee
+          this.admadmin_fee_discount_typein_fee = data.admin_fee_discount_type
+          this.talent_admin_fee_discounts = data.talent_admin_fee_discounts
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false
