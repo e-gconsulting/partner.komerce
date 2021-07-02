@@ -146,6 +146,19 @@
               >
               <div v-else>
                 <b-button
+                  v-if="hasActionShow"
+                  tag="router-link"
+                  :to="{
+                    name: $route.meta.routeShow,
+                    params: { id: getId(data.item) },
+                  }"
+                  class="btn-icon mr-50"
+                  size="sm"
+                  variant="flat-info"
+                >
+                  <feather-icon icon="SearchIcon" />
+                </b-button>
+                <b-button
                   v-if="hasActionEdit"
                   tag="router-link"
                   :to="{
@@ -331,7 +344,7 @@ export default {
     tableFields() {
       const fields = [...this.fields]
 
-      if (this.hasActionEdit || this.hasActionDelete) {
+      if (this.hasActionEdit || this.hasActionDelete || this.hasActionShow) {
         fields.push({ key: 'action', label: 'Aksi', class: 'col-action' })
       }
 
@@ -342,6 +355,9 @@ export default {
     },
     hasActionEdit() {
       return this.$route.meta.routeEdit !== undefined
+    },
+    hasActionShow() {
+      return this.$route.meta.routeShow !== undefined
     },
     hasActionCreate() {
       return this.$route.meta.routeCreate !== undefined

@@ -1,9 +1,5 @@
 <template>
-  <card-table
-    :endpoint-get-all="endpointGetAll"
-    :endpoint-delete="endpointDelete"
-    :fields="fields"
-  />
+  <card-table :endpoint-get-all="endpointGetAll" :fields="fields" />
 </template>
 
 <script>
@@ -15,11 +11,10 @@ export default {
   },
   data() {
     return {
-      endpointGetAll: '/operationalOffice',
-      endpointDelete: 'operationalOffice/:id',
+      endpointGetAll: '/skDocument/skPartnerAssignment',
       fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'name', label: 'Nama' },
+        { key: 'sk_number', label: 'No. SK' },
+        { key: 'release_date', label: 'Tanggal Diterbitkan' },
       ],
     }
   },

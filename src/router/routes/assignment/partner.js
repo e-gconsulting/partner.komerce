@@ -11,7 +11,7 @@ export default [
     meta: {
       name: pageName,
       routeCreate: 'assignment-partner-create',
-      routeEdit: 'assignment-partner-edit',
+      routeShow: 'assignment-partner-show',
       resource: 'Assignment',
       action: 'manage',
       breadcrumb: [
@@ -50,8 +50,8 @@ export default [
     },
   },
   {
-    path: '/assignment-partner/:id/edit',
-    name: 'assignment-partner-edit',
+    path: '/assignment-partner/:id/show',
+    name: 'assignment-partner-show',
     component: () => import('@/views/pages/assignment/partner/Form.vue'),
     meta: {
       name: pageName,
@@ -67,7 +67,7 @@ export default [
           route: 'assignment-partner',
         },
         {
-          text: 'Edit',
+          text: 'Show',
           active: true,
         },
       ],
