@@ -1,6 +1,6 @@
 import Vue from 'vue'
 
-Vue.filter('rupiah', value => {
+const rupiah = value => {
   if (typeof value !== 'number') {
     return value
   }
@@ -10,4 +10,8 @@ Vue.filter('rupiah', value => {
     minimumFractionDigits: 0,
   })
   return formatter.format(value)
-})
+}
+
+Vue.filter('rupiah', rupiah)
+
+export default { rupiah }

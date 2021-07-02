@@ -8,6 +8,7 @@
 
 <script>
 import CardTable from '@/views/components/CardTable.vue'
+import filters from '@/libs/filters'
 
 export default {
   components: {
@@ -15,11 +16,22 @@ export default {
   },
   data() {
     return {
-      endpointGetAll: '/operationalOffice',
-      endpointDelete: 'operationalOffice/:id',
+      endpointGetAll: '/talentAdminFee',
+      endpointDelete: 'talentAdminFee/:id',
       fields: [
         { key: 'id', label: 'Id' },
-        { key: 'name', label: 'Nama' },
+        { key: 'position.position_name', label: 'Posisi' },
+        { key: 'description', label: 'Deskripsi' },
+        {
+          key: 'admin_fee',
+          label: 'Biaya Standar',
+          formatter: val => filters.rupiah(val),
+        },
+        {
+          key: 'admin_fee_discount_type',
+          label: 'Type',
+          badge: 'success',
+        },
       ],
     }
   },
