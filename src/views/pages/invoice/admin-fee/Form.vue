@@ -90,7 +90,7 @@
                     rules="required"
                   >
                     <v-select
-                      v-model="admadmin_fee_discount_typein_fee"
+                      v-model="admin_fee_discount_type"
                       :reduce="option => option.value"
                       label="label"
                       :options="sharing_fee_type_option"
@@ -250,7 +250,7 @@ export default {
           label: 'Nominal Rp',
         },
       ],
-      admadmin_fee_discount_typein_fee: '',
+      admin_fee_discount_type: '',
       talent_admin_fee_discounts: [],
     }
   },
@@ -326,8 +326,7 @@ export default {
             position_id: this.position_id,
             description: this.description,
             admin_fee: this.admin_fee,
-            admadmin_fee_discount_typein_fee: this
-              .admadmin_fee_discount_typein_fee,
+            admin_fee_discount_type: this.admin_fee_discount_type,
             talent_admin_fee_discounts: this.talent_admin_fee_discounts,
           }
 
@@ -373,7 +372,7 @@ export default {
           this.position_id = data.position_id
           this.description = data.description
           this.admin_fee = data.admin_fee
-          this.admadmin_fee_discount_typein_fee = data.admin_fee_discount_type
+          this.admin_fee_discount_type = data.admin_fee_discount_type
           this.talent_admin_fee_discounts = data.talent_admin_fee_discounts
         })
         .finally(() => {
