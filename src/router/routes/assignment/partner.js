@@ -26,7 +26,7 @@ export default [
     },
   },
   {
-    path: '/assignment-partner/create',
+    path: '/assignment/partner/create',
     name: 'assignment-partner-create',
     component: () => import('@/views/pages/assignment/partner/Form.vue'),
     meta: {
