@@ -320,6 +320,7 @@ export default {
               { action: 'manage', subject: 'Division' },
               { action: 'manage', subject: 'Invoice' },
               { action: 'manage', subject: 'Assignment' },
+              { action: 'manage', subject: 'JobRoleSetting' },
             ]
           } else if (role === 'PARTNER') {
             ability = [

@@ -40,6 +40,7 @@ import position from './position'
 import masterData from './master-data'
 import invoice from './invoice'
 import assignment from './assignment'
+import jobRoleSetting from './job-role-setting'
 
 // Partner
 import talentPool from './talent-pool'
@@ -57,6 +58,7 @@ export default [
   ...assignment,
   ...division,
   ...position,
+  ...jobRoleSetting,
 
   ...talentPool,
   ...wishlist,

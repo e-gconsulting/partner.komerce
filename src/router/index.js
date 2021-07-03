@@ -22,6 +22,7 @@ import parentProfile from './routes/partner-profile'
 import wishlist from './routes/wishlist'
 import invoice from './routes/invoice'
 import assignment from './routes/assignment'
+import jobRoleSetting from './routes/job-role-setting'
 
 Vue.use(VueRouter)
 
@@ -47,6 +48,7 @@ const router = new VueRouter({
     ...talentPool,
     ...parentProfile,
     ...wishlist,
+    ...jobRoleSetting,
     {
       path: '*',
       redirect: 'error-404',
