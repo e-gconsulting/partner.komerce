@@ -18,7 +18,7 @@ export default [
       },
       {
         title: 'Pindah Kantor',
-        route: 'assignment-move-office',
+        route: 'assignment-team-lead-office',
         resource: 'Assignment',
         action: 'manage',
       },
