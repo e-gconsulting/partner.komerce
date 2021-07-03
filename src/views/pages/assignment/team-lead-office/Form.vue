@@ -292,14 +292,8 @@ export default {
       min,
       integer,
 
-      hasMoreTalent: false,
-      talentItems: [],
-      hasMorePartner: false,
-      partnerItems: [],
       hasMoreTeamLead: false,
       teamLeadItems: [],
-      hasMoreDevice: false,
-      deviceItems: [],
       hasMoreOffice: false,
       officeItems: [],
 

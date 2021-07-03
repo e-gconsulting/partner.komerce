@@ -326,12 +326,8 @@ export default {
 
       hasMoreTalent: false,
       talentItems: [],
-      hasMorePartner: false,
-      partnerItems: [],
       hasMoreTeamLead: false,
       teamLeadItems: [],
-      hasMoreDevice: false,
-      deviceItems: [],
       hasMoreOffice: false,
       officeItems: [],
 
@@ -506,23 +502,37 @@ export default {
 
           this.$http
             .post(this.endpoint, data)
-            .then(() => {
-              this.$toast(
-                {
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Success',
-                    text: this.successText,
-                    variant: 'success',
-                    attachment: 'CheckIcon',
+            .then(response => {
+              if (!response.data.success) {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: response.data.message,
+                      variant: 'danger',
+                      attachment: 'AlertTriangleIcon',
+                    },
                   },
-                },
-                { timeout: 2500 },
-              )
-              this.$router.push({ name: this.$route.meta.navActiveLink })
+                  { timeout: 2500 },
+                )
+              } else {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Success',
+                      text: this.successText,
+                      variant: 'success',
+                      attachment: 'CheckIcon',
+                    },
+                  },
+                  { timeout: 2500 },
+                )
+                this.$router.push({ name: this.$route.meta.navActiveLink })
+              }
             })
             .catch(error => {
-              this.loadingSubmit = false
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(
@@ -530,6 +540,9 @@ export default {
                   ).map(([key, value]) => [key, value[0]]),
                 )
               }
+            })
+            .finally(() => {
+              this.loadingSubmit = false
             })
         }
       })
