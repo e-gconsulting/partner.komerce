@@ -333,93 +333,15 @@
         </b-row>
       </validation-observer>
     </b-card-actions>
-    <b-modal
-      id="confirmation-modal"
-      ref="confirmationModal"
-      title="Check Detail"
-      :ok-title="loadingSubmit ? 'Submitting..' : 'Submit'"
-      :ok-disabled="loadingSubmit"
-      ok-variant="primary"
-      cancel-variant="light"
-      @ok="save"
-      size="xl"
-      centered
-    >
-      <div class="alert alert-danger p-2">
-        *Silahkan cek kembali detail assignment yang kamu buat. Pastikan semua
-        sudah benar. Data yang sudah dikirim
-        <b class="text-danger">tidak bisa di edit</b> kembali.
-      </div>
-      <b-row>
-        <b-col md="6">
-          <b-row class="mb-1">
-            <b-col md="6"> No SK </b-col>
-            <b-col md="6">
-              <b>{{ sk_number }}</b>
-            </b-col>
-          </b-row>
-          <b-row class="mb-1">
-            <b-col md="6"> Dokumen </b-col>
-            <b-col md="6">
-              <a :href="document_url" target="_blank"
-                ><b>{{ document_url }}</b></a
-              >
-            </b-col>
-          </b-row>
-          <b-row class="mb-1">
-            <b-col md="6"> Tanggal </b-col>
-            <b-col md="6">
-              <b>{{ release_date }}</b>
-            </b-col>
-          </b-row>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col md="1">
-          <b>List Talent</b>
-        </b-col>
-        <b-col md="2">
-          <b>Nama</b>
-        </b-col>
-        <b-col md="2">
-          <b>Partner</b>
-        </b-col>
-        <b-col md="2">
-          <b>Team Lead</b>
-        </b-col>
-        <b-col md="2">
-          <b>Device</b>
-        </b-col>
-        <b-col md="2">
-          <b>Kantor</b>
-        </b-col>
-      </b-row>
-      <b-row
-        class="mt-1"
-        v-for="(assignment, index) in assignments"
-        :key="index"
-      >
-        <b-col md="2" offset-md="1">
-          {{ assignment.talent ? assignment.talent.full_name : '-' }}
-        </b-col>
-        <b-col md="2">
-          {{ assignment.partner ? assignment.partner.full_name : '-' }}
-        </b-col>
-        <b-col md="2">
-          {{ assignment.staff ? assignment.staff.full_name : '-' }}
-        </b-col>
-        <b-col md="2">
-          {{ assignment.device ? assignment.device.brancd : '-' }}
-        </b-col>
-        <b-col md="2">
-          {{ assignment.office ? assignment.office.office_name : '-' }}
-        </b-col>
-        <b-col md="1" />
-        <b-col md="12">
-          <hr />
-        </b-col>
-      </b-row>
-    </b-modal>
+    <modal
+      :sk_number="sk_number"
+      :document_url="document_url"
+      :release_date="release_date"
+      :assignments="assignments"
+      :loadingSubmit="loadingSubmit"
+      :save="save"
+      ref="confirmationModalComponent"
+    />
   </b-overlay>
 </template>
 
@@ -434,7 +356,6 @@ import {
   BButton,
   BSpinner,
   VBTooltip,
-  BModal,
   BOverlay,
 } from 'bootstrap-vue'
 import { required, integer, min } from '@validations'
@@ -443,6 +364,7 @@ import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
 import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
+import Modal from './Modal.vue'
 
 export default {
   directives: {
@@ -462,8 +384,8 @@ export default {
     BSpinner,
     flatPickr,
     vSelect,
-    BModal,
     BOverlay,
+    Modal,
   },
   data() {
     return {
@@ -707,7 +629,7 @@ export default {
       this.assignments.splice(index, 1)
     },
     submit() {
-      this.$refs.confirmationModal.toggle()
+      this.$refs.confirmationModalComponent.show()
     },
     save() {
       this.$refs.formRules.validate().then(success => {
