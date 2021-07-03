@@ -131,9 +131,8 @@
                     rules="required"
                   >
                     <v-select
-                      v-model="assignment.talent_id"
+                      v-model="assignment.talent"
                       label="full_name"
-                      :reduce="option => option.id"
                       :options="talentItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchTalent"
@@ -158,9 +157,9 @@
                     rules="required"
                   >
                     <v-select
-                      v-model="assignment.partner_id"
+                      v-model="assignment.partner"
+                      @input="val => loadDevices('', val)"
                       label="full_name"
-                      :reduce="option => option.partner_detail.id"
                       :options="partnerItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchPartner"
@@ -185,9 +184,8 @@
                     rules="required"
                   >
                     <v-select
-                      v-model="assignment.staff_id"
+                      v-model="assignment.staff"
                       label="full_name"
-                      :reduce="option => option.staff.id"
                       :options="teamLeadItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchTeamLead"
@@ -212,13 +210,15 @@
                     rules="required"
                   >
                     <v-select
-                      v-model="assignment.device_id"
+                      v-model="assignment.device"
                       label="brancd"
-                      :reduce="option => option.id"
                       :options="deviceItems"
                       placeholder="Ketik untuk mencari..."
-                      @search="onSearchDevice"
-                      :disabled="!assignment.partner_id"
+                      @search="
+                        (search, loading) =>
+                          onSearchDevice(search, loading, assignment.partner)
+                      "
+                      :disabled="!assignment.partner"
                     >
                       <li
                         v-if="hasMoreDevice"
@@ -240,9 +240,8 @@
                     rules="required"
                   >
                     <v-select
-                      v-model="assignment.office_id"
+                      v-model="assignment.office"
                       label="office_name"
-                      :reduce="option => option.id"
                       :options="officeItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchOffice"
@@ -401,58 +400,21 @@
         :key="index"
       >
         <b-col md="2" offset-md="1">
-          <v-select
-            v-model="assignment.talent_id"
-            label="full_name"
-            :reduce="option => option.id"
-            :options="talentItems"
-            @search="onSearchTalent"
-            disabled
-          >
-          </v-select>
+          {{ assignment.talent ? assignment.talent.full_name : '-' }}
         </b-col>
         <b-col md="2">
-          <v-select
-            v-model="assignment.partner_id"
-            label="full_name"
-            :reduce="option => option.partner_detail.id"
-            :options="partnerItems"
-            @search="onSearchPartner"
-          >
-          </v-select>
+          {{ assignment.partner ? assignment.partner.full_name : '-' }}
         </b-col>
         <b-col md="2">
-          <v-select
-            v-model="assignment.staff_id"
-            label="full_name"
-            :reduce="option => option.staff.id"
-            :options="teamLeadItems"
-            @search="onSearchTeamLead"
-          >
-          </v-select>
+          {{ assignment.staff ? assignment.staff.full_name : '-' }}
         </b-col>
         <b-col md="2">
-          <v-select
-            v-model="assignment.device_id"
-            label="brancd"
-            :reduce="option => option.id"
-            :options="deviceItems"
-            @search="onSearchDevice"
-            :disabled="!assignment.partner_id"
-          >
-          </v-select>
+          {{ assignment.device ? assignment.device.brancd : '-' }}
         </b-col>
         <b-col md="2">
-          <v-select
-            v-model="assignment.office_id"
-            label="office_name"
-            :reduce="option => option.id"
-            :options="officeItems"
-            @search="onSearchOffice"
-          >
-          </v-select>
+          {{ assignment.office ? assignment.office.office_name : '-' }}
         </b-col>
-        <b-col md="1"> </b-col>
+        <b-col md="1" />
         <b-col md="12">
           <hr />
         </b-col>
@@ -556,7 +518,6 @@ export default {
       this.loadPartners()
       this.loadTeamLeads()
       this.loadOffices()
-      this.loadDevices()
     }
     this.loading = false
   },
@@ -572,23 +533,27 @@ export default {
     }, 500),
     loadTalents(search) {
       return this.$http
-        .get(
-          '/talent',
-          {},
-          {
-            params: {
-              name: search,
-              page: 1,
-              limit: 5,
-              sort: 'name',
-              direction: 'asc',
-              status: 'selected,hired,non job',
-            },
+        .get('/talent', {
+          params: {
+            name: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+            status: 'selected,hired,non job',
           },
-        )
+        })
         .then(async response => {
           const { data } = response.data.data
-          this.talentItems = Object.keys(data).map(key => data[key])
+          this.talentItems = this.assignments.map(
+            assignment => assignment.talent,
+          )
+          data.forEach(res => {
+            this.talentItems.push(res)
+          })
+          this.talentItems = this.talentItems.filter(
+            (item, val) => this.talentItems.indexOf(item) === val && item?.id,
+          )
           this.hasMoreTalent = response.data.data.total > this.talentItems.length
         })
     },
@@ -603,23 +568,27 @@ export default {
     }, 500),
     loadPartners(search) {
       return this.$http
-        .get(
-          '/user/partner/pagination',
-          {},
-          {
-            params: {
-              name: search,
-              page: 1,
-              limit: 5,
-              sort: 'name',
-              direction: 'asc',
-              account_status: 'active',
-            },
+        .get('/user/partner/pagination', {
+          params: {
+            name: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+            account_status: 'active',
           },
-        )
+        })
         .then(async response => {
           const { data } = response.data.data
-          this.partnerItems = Object.keys(data).map(key => data[key])
+          this.partnerItems = this.assignments.map(
+            assignment => assignment.partner,
+          )
+          data.forEach(res => {
+            this.partnerItems.push(res)
+          })
+          this.partnerItems = this.partnerItems.filter(
+            (item, val) => this.partnerItems.indexOf(item) === val && item?.id,
+          )
           this.hasMorePartner = response.data.data.total > this.partnerItems.length
         })
     },
@@ -634,54 +603,62 @@ export default {
     }, 500),
     loadTeamLeads(search) {
       return this.$http
-        .get(
-          '/leader',
-          {},
-          {
-            params: {
-              keyword: search,
-              page: 1,
-              limit: 5,
-              sort: 'name',
-              direction: 'asc',
-              account_status: 'active',
-            },
+        .get('/leader', {
+          params: {
+            keyword: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+            account_status: 'active',
           },
-        )
+        })
         .then(async response => {
           const { data } = response.data.data
-          this.teamLeadItems = Object.keys(data).map(key => data[key])
+          this.teamLeadItems = this.assignments.map(
+            assignment => assignment.office,
+          )
+          data.forEach(res => {
+            this.teamLeadItems.push(res)
+          })
+          this.teamLeadItems = this.teamLeadItems.filter(
+            (item, val) => this.teamLeadItems.indexOf(item) === val && item?.id,
+          )
           this.hasMoreTeamLead = response.data.data.total > this.teamLeadItems.length
         })
     },
-    onSearchDevice(search, loading) {
+    onSearchDevice(search, loading, partner) {
       if (search.length) {
-        this.searchDevice(loading, search, this)
+        this.searchDevice(loading, search, this, partner)
       }
     },
-    searchDevice: _.debounce((loading, search, that) => {
+    searchDevice: _.debounce((loading, search, that, partner) => {
       loading(true)
-      that.loadDevices(search).finally(() => loading(false))
+      that.loadDevices(search, partner).finally(() => loading(false))
     }, 500),
-    loadDevices(search) {
+    loadDevices(search, partner) {
       return this.$http
-        .get(
-          '/device/pagination',
-          {},
-          {
-            params: {
-              brancd: search,
-              // no_partner: search,
-              page: 1,
-              limit: 5,
-              sort: 'name',
-              direction: 'asc',
-            },
+        .get('/device/pagination', {
+          params: {
+            brancd: search,
+            no_partner: partner?.no_partner,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
           },
-        )
+        })
         .then(async response => {
           const { data } = response.data.data
-          this.deviceItems = Object.keys(data).map(key => data[key])
+          this.deviceItems = this.assignments.map(
+            assignment => assignment.device,
+          )
+          data.forEach(res => {
+            this.deviceItems.push(res)
+          })
+          this.deviceItems = this.deviceItems.filter(
+            (item, val) => this.deviceItems.indexOf(item) === val && item?.id,
+          )
           this.hasMoreDevice = response.data.data.total > this.deviceItems.length
         })
     },
@@ -711,18 +688,20 @@ export default {
         )
         .then(async response => {
           const { data } = response.data.data
-          this.officeItems = Object.keys(data).map(key => data[key])
+          this.officeItems = this.assignments.map(
+            assignment => assignment.office,
+          )
+          data.forEach(res => {
+            this.officeItems.push(res)
+          })
+          this.officeItems = this.officeItems.filter(
+            (item, val) => this.officeItems.indexOf(item) === val && item?.id,
+          )
           this.hasMoreOffice = response.data.data.total > this.officeItems.length
         })
     },
     addAssignment() {
-      this.assignments.push({
-        talent_id: '',
-        partner_id: '',
-        office_id: '',
-        device_id: '',
-        staff_id: '',
-      })
+      this.assignments.push({})
     },
     removeAssignment(index) {
       this.assignments.splice(index, 1)
@@ -741,8 +720,16 @@ export default {
             release_date: this.release_date,
             document_type: this.document_type,
             document_url: this.document_url,
-            assignments: this.assignments,
+            assignments: this.assignments.map(assignment => ({
+              office_id: assignment.office.id,
+              talent_id: assignment.talent.talent.id,
+              partner_id: assignment.partner.partner_detail.id,
+              staff_id: assignment.staff.staff.id,
+              device_id: assignment.device.id,
+            })),
           }
+
+          console.log({ data })
 
           this.$http
             .post(this.endpoint, data)
