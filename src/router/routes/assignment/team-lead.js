@@ -7,11 +7,11 @@ export default [
   {
     path: '/assignment/team-lead',
     name: 'assignment-team-lead',
-    component: () => import('@/views/pages/assignment/partner/Table.vue'),
+    component: () => import('@/views/pages/assignment/team-lead/Table.vue'),
     meta: {
       name: pageName,
       routeCreate: 'assignment-team-lead-create',
-      routeEdit: 'assignment-team-lead-edit',
+      routeShow: 'assignment-team-lead-show',
       resource: 'Assignment',
       action: 'manage',
       breadcrumb: [
@@ -26,9 +26,9 @@ export default [
     },
   },
   {
-    path: '/assignment-team-lead/create',
+    path: '/assignment/team-lead/create',
     name: 'assignment-team-lead-create',
-    component: () => import('@/views/pages/assignment/partner/Form.vue'),
+    component: () => import('@/views/pages/assignment/team-lead/Form.vue'),
     meta: {
       name: pageName,
       navActiveLink: 'assignment-team-lead',
@@ -50,9 +50,9 @@ export default [
     },
   },
   {
-    path: '/assignment-team-lead/:id/edit',
-    name: 'assignment-team-lead-edit',
-    component: () => import('@/views/pages/assignment/partner/Form.vue'),
+    path: '/assignment-team-lead/:id/show',
+    name: 'assignment-team-lead-show',
+    component: () => import('@/views/pages/assignment/team-lead/Form.vue'),
     meta: {
       name: pageName,
       navActiveLink: 'assignment-team-lead',
@@ -67,7 +67,7 @@ export default [
           route: 'assignment-team-lead',
         },
         {
-          text: 'Edit',
+          text: 'Show',
           active: true,
         },
       ],
