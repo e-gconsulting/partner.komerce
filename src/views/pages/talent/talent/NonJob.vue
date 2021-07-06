@@ -733,7 +733,7 @@ export default {
         if (this.fieldSortirTime === null) {
           this.fieldSortirTime = 0
         }
-        return data
+        return data.filter(items => items.last_date_of_pause !== '0000-00-00 00:00:00')
       })
       this.refreshTable()
       return getResult
@@ -789,6 +789,12 @@ export default {
           }
           return data
         })
+        // if (this.fieldSortirTime.value === 2) {
+        //   return data.filter(items => items.last_date_of_pause !== '0000-00-00 00:00:00')
+        // }
+        // if (this.fieldSortirTime.value === 1) {
+        //   return data.filter(items => items.last_date_of_pause !== '0000-00-00 00:00:00')
+        // }
         return data
       }).catch(() => {
         this.$toast({

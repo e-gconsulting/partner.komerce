@@ -527,7 +527,7 @@ export default {
         { key: 'full_name', label: 'Nama' },
         { key: 'no_partner', label: 'No. Partner' },
         { key: 'partner_detail.partner_category_name', label: 'Sektor Bisnis' },
-        { key: 'partner_detail.business_type_name', label: 'Tipe Bisnis' },
+        { key: 'partner_detail.business_type.name', label: 'Tipe Bisnis' },
       ],
     }
   },

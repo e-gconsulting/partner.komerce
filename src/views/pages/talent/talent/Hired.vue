@@ -140,6 +140,7 @@
                                   @input="filterByLeader"
                                 >
                                   <li
+                                    v-if="hasMoreStaff"
                                     slot="list-footer"
                                     class="vs__dropdown-option vs__dropdown-option--disabled"
                                   >
