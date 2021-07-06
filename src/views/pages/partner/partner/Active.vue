@@ -175,6 +175,88 @@
 
           </b-card>
         </b-collapse>
+        <b-row class="justify-content-end mt-3">
+          <b-col md="8">
+            <b-col class="text-right">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-toggle.collapse-3
+                size="sm"
+                variant="primary"
+                class="btn-sortir"
+              >
+                Sortir
+              </b-button>
+            </b-col>
+            <b-collapse
+              id="collapse-3"
+              class="mt-2"
+            >
+              <b-card class="mb-0">
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
+
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
+                      >
+
+                        <!-- Bakat dipekerjakan -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Bakat di Pekerjakan"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Bakat di Pekerjakan"
+                              >
+                                <v-select
+                                  v-model="fieldSortirBakatDipekerjakan"
+                                  :options="bakatDipekerjakanOptions"
+                                  label="title"
+                                  :state="errors.length > 0 ? false:null"
+                                  @input="sortirBakatDipekerjakan"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                        <!-- Durasi -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Durasi"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Durasi"
+                              >
+                                <v-select
+                                  v-model="fieldSortirDurasi"
+                                  :options="durasiOptions"
+                                  :state="errors.length > 0 ? false:null"
+                                  label="title"
+                                  @input="sortirDurasi"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                      </b-row>
+
+                    </b-form>
+                  </div>
+                </div>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
       </div>
 
       <b-overlay
@@ -536,27 +618,32 @@ export default {
 
       partnerId: '',
 
-      bakatOptions: [
-        { text: 'Terbanyak', value: 0 },
-        { text: 'Paling Sedikit', value: 1 },
+      fieldSortirBakatDipekerjakan: [],
+      fieldSortirDurasi: [],
+
+      handlingNullDurasi: '0000-00-00 00:00:00',
+
+      bakatDipekerjakanOptions: [
+        { title: 'Terbanyak', value: 1 },
+        { title: 'Paling Sedikit', value: 2 },
       ],
 
       durasiOptions: [
-        { text: 'Terlama', value: 0 },
-        { text: 'Paling Sedikit', value: 1 },
+        { title: 'Terlama', value: 2 },
+        { title: 'Paling Sedikit', value: 1 },
       ],
 
       fields: [
         { key: 'full_name', label: 'Nama' },
         { key: 'no_partner', label: 'No. Partner' },
         { key: 'partner_detail.partner_category_name', label: 'Sektor Bisnis' },
-        { key: 'total_sdm_assigned', label: 'Bakat dipekerjakan', sortable: true },
+        { key: 'total_sdm_assigned', label: 'Bakat dipekerjakan', sortable: false },
         {
           key: 'partner_detail.active_at',
           label: 'Durasi',
-          sortable: true,
+          sortable: false,
           formatter: value => {
-            if (!value || value === '0000-00-00 00:00:00') return '-'
+            if (!value || value === '0000-00-00 00:00:00') return '0'
 
             const dateDiff = (new Date() - Date.parse(value))
             const dayDiff = dateDiff / (24 * 60 * 60 * 1000)
@@ -631,15 +718,58 @@ export default {
         return data
       })
     },
+    sortirBakatDipekerjakan() {
+      const params = {
+        account_status: 'active',
+        page: this.currentPage,
+        limit: this.perPage,
+      }
+      return this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data?.data
+        // data.sort((itemsA, itemsB) => {
+        //   if (this.fieldSortirBakatDipekerjakan.value === 1) {
+        //     return itemsA.total_sdm_assigned < itemsB.total_sdm_assigned ? 1 : -1
+        //   }
+        //   if (this.fieldSortirBakatDipekerjakan.value === 2) {
+        //     return itemsA.total_sdm_assigned > itemsB.total_sdm_assigned ? 1 : -1
+        //   }
+        //   return data
+        // })
+        if (this.fieldSortirBakatDipekerjakan === null) {
+          this.fieldSortirBakatDipekerjakan = 0
+        }
+
+        this.refreshTable()
+        return data
+      })
+    },
+    sortirDurasi() {
+      return this.$http.get(this.endpointGetAll, {
+        params: {
+          account_status: 'active',
+          page: this.currentPage,
+          limit: this.perPage,
+        },
+      }).then(response => {
+        const { data } = response.data.data
+        if (this.fieldSortirDurasi === null) {
+          this.fieldSortirDurasi = 0
+        }
+        this.refreshTable()
+        return data
+      })
+    },
     tableProvider() {
       const key = /^-?\d+$/.test(this.filter) ? 'no_partner' : 'name'
-
       return this.$http.get(this.endpointGetAll, {
         params: {
           [key]: this.filter,
           partner_category: this.filterPartnerCategoryId,
           team_lead: this.filterStaffId,
           account_status: 'active',
+          sortDuration: this.fieldSortirDurasi.value,
           page: this.currentPage,
           limit: this.perPage,
           sort: this.sortBy,
@@ -648,6 +778,21 @@ export default {
       }).then(response => {
         const { data } = response.data.data
         this.totalRows = response.data.data.total
+        data.sort((itemsA, itemsB) => {
+          if (this.fieldSortirBakatDipekerjakan.value === 1) {
+            return itemsA.total_sdm_assigned < itemsB.total_sdm_assigned ? 1 : -1
+          }
+          if (this.fieldSortirBakatDipekerjakan.value === 2) {
+            return itemsA.total_sdm_assigned > itemsB.total_sdm_assigned ? 1 : -1
+          }
+          // if (this.fieldSortirDurasi.value === 1) {
+          //   return new Date(itemsA.partner_detail.active_at) - new Date(itemsB.partner_detail.active_at)
+          // }
+          // if (this.fieldSortirDurasi.value === 2) {
+          //   return new Date(itemsB.partner_detail.active_at) - new Date(itemsA.partner_detail.active_at)
+          // }
+          return data
+        })
         return data
       }).catch(() => {
         this.$toast({

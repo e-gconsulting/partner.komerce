@@ -1,0 +1,9 @@
+@media only screen and (max-width: 767px) {
+    [dir] .sortir-talent-mobile {
+        display: block;
+    }
+
+    [dir] .sortir-talent {
+        display: none;
+    }
+}

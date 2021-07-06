@@ -51,19 +51,21 @@
       <div class="dropdown-filter">
         <!-- toggle button -->
         <div class="d-flex">
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            v-b-toggle.collapse-1
-            variant="primary"
-            size="sm"
-            class="mr-50"
-          >
-            <feather-icon
-              icon="FilterIcon"
+          <b-form-group>
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-1
+              variant="primary"
+              size="sm"
               class="mr-50"
-            />
-            Filter
-          </b-button>
+            >
+              <feather-icon
+                icon="FilterIcon"
+                class="mr-50"
+              />
+              Filter
+            </b-button>
+          </b-form-group>
 
           <b-form-group
             class="mb-0"
@@ -84,70 +86,234 @@
               />
             </b-input-group>
           </b-form-group>
-
+          <b-col
+            class="text-right sortir-talent"
+          >
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-2
+              size="sm"
+              variant="primary"
+              class="btn-sortir"
+            >
+              Sortir
+            </b-button>
+          </b-col>
         </div>
 
-        <b-collapse
-          id="collapse-1"
-          class="mt-2"
-        >
-          <b-card class="mb-0">
-            <!-- filter dropdown -->
-            <div>
-              <div>
-                <b-form
-                  ref="form"
-                >
+        <b-row>
+          <b-col md="6">
+            <b-collapse
+              id="collapse-1"
+              class="mt-2"
+            >
+              <b-card class="mb-0">
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
+                      >
 
-                  <!-- Row Loop -->
-                  <b-row
-                    ref="row"
-                  >
-
-                    <!-- Talent lead terakhir -->
-                    <b-col md="5">
-                      <validation-observer>
-                        <b-form-group
-                          label="Leader"
-                        >
-                          <validation-provider
-                            #default="{ errors }"
-                            name="Leader"
-                          >
-                            <v-select
-                              v-model="fieldFilterByLeader"
-                              :options="staffItems"
-                              label="full_name"
-                              :state="errors.length > 0 ? false:null"
-                              placeholder="Ketik untuk mencari..."
-                              @search="onSearchStaff"
-                              @input="filterByLeader"
+                        <!-- Talent lead terakhir -->
+                        <b-col md="10">
+                          <validation-observer>
+                            <b-form-group
+                              label="Leader"
                             >
-                              <li
-                                slot="list-footer"
-                                class="vs__dropdown-option vs__dropdown-option--disabled"
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Leader"
                               >
-                                <feather-icon
-                                  icon="MoreHorizontalIcon"
-                                  size="16"
+                                <v-select
+                                  v-model="fieldFilterByLeader"
+                                  :options="staffItems"
+                                  label="full_name"
+                                  :state="errors.length > 0 ? false:null"
+                                  placeholder="Ketik untuk mencari..."
+                                  @search="onSearchStaff"
+                                  @input="filterByLeader"
+                                >
+                                  <li
+                                    slot="list-footer"
+                                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                                  >
+                                    <feather-icon
+                                      icon="MoreHorizontalIcon"
+                                      size="16"
+                                    />
+                                  </li>
+                                </v-select>
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                      </b-row>
+                    </b-form>
+                  </div>
+                </div>
+              </b-card>
+            </b-collapse>
+          </b-col>
+          <b-col
+            md="6"
+            class="sortir-talent"
+          >
+            <b-collapse
+              id="collapse-2"
+              class="mt-2 border"
+            >
+              <b-card class="mb-0">
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
+                      >
+
+                        <!-- Waktu kosong -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Waktu Kosong"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Waktu Kosong"
+                              >
+                                <v-select
+                                  v-model="fieldSortirTime"
+                                  :options="timeOptions"
+                                  label="title"
+                                  :state="errors.length > 0 ? false:null"
+                                  @input="sortirTime"
                                 />
-                              </li>
-                            </v-select>
-                          </validation-provider>
-                        </b-form-group>
-                      </validation-observer>
-                    </b-col>
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
 
-                    <!-- Waktu Kosong -->
+                        <!-- Rating -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Rating"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Talent Rating"
+                                rules="required"
+                              >
+                                <v-select
+                                  v-model="fieldSortirRating"
+                                  :options="ratingOptions"
+                                  :state="errors.length > 0 ? false:null"
+                                  label="title"
+                                  @input="sortirRating"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
 
-                  </b-row>
+                      </b-row>
+                    </b-form>
+                  </div>
+                </div>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
 
-                </b-form>
-              </div>
-            </div>
-            <!-- End Filter dropdown -->
-          </b-card>
-        </b-collapse>
+        <!-- sortir mobile -->
+        <b-row class="justify-content-end sortir-talent-mobile">
+          <b-col md="6">
+            <b-col class="text-right">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-toggle.collapse-3
+                size="sm"
+                variant="primary"
+                class="btn-sortir"
+              >
+                Sortir
+              </b-button>
+            </b-col>
+            <b-collapse
+              id="collapse-3"
+              class="mt-2 border"
+            >
+              <b-card class="mb-0">
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
+
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
+                      >
+
+                        <!-- Waktu kosong -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Waktu Kosong"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Waktu Kosong"
+                              >
+                                <v-select
+                                  :options="timeOptions"
+                                  label="title"
+                                  :state="errors.length > 0 ? false:null"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                        <!-- Rating -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Rating"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Talent Rating"
+                                rules="required"
+                              >
+                                <v-select
+                                  :options="ratingOptions"
+                                  :state="errors.length > 0 ? false:null"
+                                  label="title"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                      </b-row>
+
+                    </b-form>
+                  </div>
+                </div>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
+        <!-- end sortir mobile -->
+
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
@@ -428,14 +594,17 @@ export default {
       filterPositionId: 1,
       filterPositionItems: [],
 
+      fieldSortirTime: [],
+      fieldSortirRating: [],
+
       ratingOptions: [
-        { text: 'Terbanyak', value: 0 },
-        { text: 'Paling Sedikit', value: 1 },
+        { title: 'Terbanyak', value: '1' },
+        { title: 'Paling Sedikit', value: '2' },
       ],
 
       timeOptions: [
-        { text: 'Terlama', value: 0 },
-        { text: 'Paling Sedikit', value: 1 },
+        { title: 'Terlama', value: 2 },
+        { title: 'Paling Sedikit', value: 1 },
       ],
 
       fields: [
@@ -449,9 +618,9 @@ export default {
         {
           key: 'last_date_of_pause',
           label: 'Waktu Kosong',
-          sortable: true,
+          sortable: false,
           formatter: value => {
-            if (!value || value === '0000-00-00 00:00:00') return '-'
+            if (!value || value === '0000-00-00 00:00:00') return '0'
 
             const dateDiff = (new Date() - Date.parse(value))
             const dayDiff = dateDiff / (24 * 60 * 60 * 1000)
@@ -470,7 +639,7 @@ export default {
         {
           key: 'talent_rating',
           label: 'Rating',
-          sortable: true,
+          sortable: false,
         },
       ],
     }
@@ -543,13 +712,50 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
-        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
       return { getTalentByLeader }
     },
     // End new Filter
+    sortirTime() {
+      const params = {
+        status: 'non job',
+        withLastJob: 1,
+        page: this.currentPage,
+        limit: this.perPage,
+      }
+
+      const getResult = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        if (this.fieldSortirTime === null) {
+          this.fieldSortirTime = 0
+        }
+        return data
+      })
+      this.refreshTable()
+      return getResult
+    },
+    sortirRating() {
+      const params = {
+        status: 'hired',
+        page: this.currentPage,
+        limit: this.perPage,
+      }
+      const resultRating = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        if (this.fieldSortirRating === null) {
+          this.fieldSortirRating = ''
+        }
+        return data
+      })
+      this.refreshTable()
+      return resultRating
+    },
     tableProvider() {
       const params = {
         keyword: this.filter,
@@ -561,12 +767,28 @@ export default {
         sort: this.sortBy,
         direction: this.sortDirection,
       }
-      if (this.fieldFilterByLeader) Object.assign(params, { last_lead: this.fieldFilterByLeader.full_name })
+      if (this.fieldFilterByLeader) Object.assign(params, { last_name_lead: this.fieldFilterByLeader.full_name })
+      // if (this.fieldSortirTime) Object.assign(params, { sortFreeTime: this.fieldSortirTime.value })
       const getResultData = this.$http.get(this.endpointGetAll, {
         params,
       }).then(response => {
         const { data } = response.data.data
         this.totalRows = response.data.data.total
+        data.sort((itemsA, itemsB) => {
+          if (this.fieldSortirRating.value === '1') {
+            return itemsB.talent_rating - itemsA.talent_rating
+          }
+          if (this.fieldSortirRating.value === '2') {
+            return itemsA.talent_rating - itemsB.talent_rating
+          }
+          if (this.fieldSortirTime.value === 1) {
+            return new Date(itemsA.last_date_of_pause) < new Date(itemsB.last_date_of_pause) ? 1 : -1
+          }
+          if (this.fieldSortirTime.value === 2) {
+            return new Date(itemsA.last_date_of_pause) > new Date(itemsB.last_date_of_pause) ? 1 : -1
+          }
+          return data
+        })
         return data
       }).catch(() => {
         this.$toast({
@@ -646,6 +868,8 @@ export default {
 </script>
 
 <style scoped>
+@import '~@core/css/style.css';
+@import '~@core/css/responsive.css';
   [dir] .card .dropdown-filter {
     padding: 1.5rem;
   }

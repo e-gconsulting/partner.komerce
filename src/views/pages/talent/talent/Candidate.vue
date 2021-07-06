@@ -50,19 +50,21 @@
       <div class="dropdown-filter">
         <!-- toggle button -->
         <div class="d-flex">
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            v-b-toggle.collapse-1
-            variant="primary"
-            size="sm"
-            class="mr-50"
-          >
-            <feather-icon
-              icon="FilterIcon"
+          <b-form-group>
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-1
+              variant="primary"
+              size="sm"
               class="mr-50"
-            />
-            Filter
-          </b-button>
+            >
+              <feather-icon
+                icon="FilterIcon"
+                class="mr-50"
+              />
+              Filter
+            </b-button>
+          </b-form-group>
 
           <b-form-group
             class="mb-0"
@@ -130,22 +132,24 @@
                         md="4"
                         class="d-flex justify-content-center"
                       >
-                        <b-form-group
-                          label="Pengalaman kerja"
-                        >
-                          <validation-provider
-                            #default="{ errors }"
-                            name="Experience Status"
+                        <validation-observer>
+                          <b-form-group
+                            label="Pengalaman kerja"
                           >
-
-                            <b-form-radio-group
-                              v-model="filterExperienced"
-                              class="mt-50"
-                              :options="experienceStatusOptions"
-                            />
-                            <small class="text-danger">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </b-form-group>
+                            <validation-provider
+                              #default="{ errors }"
+                              name="Experience Status"
+                            >
+                              <b-form-radio-group
+                                v-model="filterExperienced"
+                                class="mt-50"
+                                :options="experienceStatusOptions"
+                                @change="check(experienceStatusOptions)"
+                              />
+                              <small class="text-danger">{{ errors[0] }}</small>
+                            </validation-provider>
+                          </b-form-group>
+                        </validation-observer>
                       </b-col>
 
                       <!-- Lama Bekerja -->
@@ -183,6 +187,48 @@
             <!-- End Filter dropdown -->
           </b-card>
         </b-collapse>
+        <b-row>
+          <b-col class="d-flex justify-content-end">
+            <b-col
+              md="5"
+              class="text-right"
+            >
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-toggle.collapse-1-inner
+                size="sm"
+                variant="primary"
+                class="btn-sortir"
+              >
+                Sortir
+              </b-button>
+              <b-collapse
+                id="collapse-1-inner"
+                class="mt-2 border"
+              >
+                <b-card class="mb-0 text-left">
+                  <b-form-group
+                    label="Lama Pengalaman"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Lama Pengalaman"
+                      rules="required"
+                    >
+                      <v-select
+                        v-model="fieldSortirExperienceLong"
+                        :options="experienceLongOptions"
+                        label="title"
+                        :state="errors.length > 0 ? false:null"
+                        @input="sortirExperienceLong"
+                      />
+                    </validation-provider>
+                  </b-form-group>
+                </b-card>
+              </b-collapse>
+            </b-col>
+          </b-col>
+        </b-row>
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
@@ -579,7 +625,7 @@ export default {
       pageOptions: [5, 10, 20],
       totalRows: 1,
       currentPage: 1,
-      sortBy: 'talent.year_experience',
+      sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
       filter: null,
@@ -598,8 +644,12 @@ export default {
       filterPositionItems: [],
       filterEducation: '',
       filterExperienced: '',
+      filterExperiencedPrevious: '',
+      previouslySelected: '',
       filterExperiencedIsTrue: true,
       filterExperienceYear: '',
+
+      fieldSortirExperienceLong: '',
 
       loadingQuestionnaire: false,
       questionItems: [],
@@ -615,10 +665,11 @@ export default {
       experienceStatusOptions: [
         { text: 'Ada', value: 1 },
         { text: 'Tidak ada', value: 0 },
+        { text: 'Default', value: '' },
       ],
       experienceLongOptions: [
-        { text: 'Terlama', value: '1' },
-        { text: 'Paling Sedikit', value: '2' },
+        { title: 'Terlama', value: '1' },
+        { title: 'Paling Sedikit', value: '2' },
       ],
       experienceYearOptions: [
         { title: '< 1 year', value: '< 1 year' },
@@ -645,7 +696,6 @@ export default {
         {
           key: 'talent.year_experience',
           label: 'Pengalaman Kerja',
-          sortable: true,
           formatter: value => (value || 'No'),
         },
         {
@@ -706,6 +756,33 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
+    check(experienceStatusOptions) {
+      experienceStatusOptions.forEach(items => {
+        if (items.value === 1) {
+          this.$http.get(this.endpointGetAll, {
+            params: {
+              status: 'registered,selected',
+            },
+          }).then(response => {
+            const { data } = response.data.data
+            this.refreshTable()
+            return data
+          })
+        }
+        if (items.value === 0) {
+          this.$http.get(this.endpointGetAll, {
+            params: {
+              status: 'registered,selected',
+              has_work_experience: '0',
+            },
+          }).then(response => {
+            const { data } = response.data.data
+            this.refreshTable()
+            return data
+          })
+        }
+      })
+    },
     filterSelectEducation() {
       const params = {
         keyword: this.filter,
@@ -720,7 +797,6 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
-        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
@@ -741,11 +817,29 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
-        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
       return { getExperienceYear }
+    },
+    sortirExperienceLong() {
+      const params = {
+        position_id: this.filterPositionId,
+        status: 'registered,selected',
+        page: this.currentPage,
+        limit: this.perPage,
+        sort: this.sortBy,
+        direction: this.sortDirection,
+      }
+
+      const getResult = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        return data
+      })
+      this.refreshTable()
+      return getResult
     },
     tableProvider() {
       const params = {
@@ -759,7 +853,10 @@ export default {
       }
 
       if (this.filterEducation) Object.assign(params, { education: this.filterEducation.value })
+      if (this.filterExperienced === 0) Object.assign(params, { has_work_experience: '0' })
+      if (this.filterExperienced) Object.assign(params, { has_work_experience: this.filterExperienced })
       if (this.filterExperienceYear) Object.assign(params, { year_experience: this.filterExperienceYear.value })
+      if (this.fieldSortirExperienceLong) Object.assign(params, { sortExperience: this.fieldSortirExperienceLong.value })
       return this.$http.get(this.endpointGetAll, {
         params,
       }).then(response => {

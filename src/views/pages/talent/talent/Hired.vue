@@ -51,19 +51,21 @@
       <div class="dropdown-filter">
         <!-- toggle button -->
         <div class="d-flex">
-          <b-button
-            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-            v-b-toggle.collapse-1
-            variant="primary"
-            size="sm"
-            class="mr-50"
-          >
-            <feather-icon
-              icon="FilterIcon"
+          <b-form-group>
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-1
+              variant="primary"
+              size="sm"
               class="mr-50"
-            />
-            Filter
-          </b-button>
+            >
+              <feather-icon
+                icon="FilterIcon"
+                class="mr-50"
+              />
+              Filter
+            </b-button>
+          </b-form-group>
 
           <b-form-group
             class="mb-0"
@@ -84,102 +86,192 @@
               />
             </b-input-group>
           </b-form-group>
+          <b-col
+            class="text-right sortir-talent"
+          >
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-1-inner
+              size="sm"
+              variant="primary"
+              class="btn-sortir"
+            >
+              Sortir
+            </b-button>
+          </b-col>
         </div>
 
-        <b-collapse
-          id="collapse-1"
-          class="mt-2"
-        >
-          <b-card class="mb-0">
-            <!-- filter dropdown -->
-            <div>
-              <div>
-                <b-form
-                  ref="form"
-                >
+        <b-row>
+          <b-col md="8">
+            <b-collapse
+              id="collapse-1"
+              class="mt-2"
+            >
+              <b-card class="mb-0">
+                <!-- filter dropdown -->
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
 
-                  <!-- Row Loop -->
-                  <b-row
-                    ref="row"
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
+                      >
+
+                        <!-- Leader -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Leader"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Leader"
+                              >
+                                <v-select
+                                  v-model="fieldFilterByLeader"
+                                  :options="staffItems"
+                                  label="full_name"
+                                  :state="errors.length > 0 ? false:null"
+                                  placeholder="Ketik untuk mencari..."
+                                  @search="onSearchStaff"
+                                  @input="filterByLeader"
+                                >
+                                  <li
+                                    slot="list-footer"
+                                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                                  >
+                                    <feather-icon
+                                      icon="MoreHorizontalIcon"
+                                      size="16"
+                                    />
+                                  </li>
+                                </v-select>
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                        <!-- Partner -->
+                        <b-col md="6">
+                          <validation-observer>
+                            <b-form-group
+                              label="Partner"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="No partner"
+                                rules="required"
+                              >
+                                <v-select
+                                  v-model="fieldFilterByPartner"
+                                  :options="partnerItems"
+                                  :state="errors.length > 0 ? false:null"
+                                  placeholder="Ketik untuk mencari..."
+                                  @search="onSearchPartner"
+                                  @input="filterByPartner"
+                                >
+                                  <li
+                                    v-if="hasMoreStaff"
+                                    slot="list-footer"
+                                    class="vs__dropdown-option vs__dropdown-option--disabled"
+                                  >
+                                    <feather-icon
+                                      icon="MoreHorizontalIcon"
+                                      size="16"
+                                    />
+                                  </li>
+                                </v-select>
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                      </b-row>
+                    </b-form>
+                  </div>
+                </div>
+              </b-card>
+            </b-collapse>
+          </b-col>
+          <b-col
+            md="4"
+            class="sortir-talent"
+          >
+            <b-collapse
+              id="collapse-1-inner"
+              class="mt-2 border"
+            >
+              <b-card class="mb-0 text-left">
+                <validation-observer>
+                  <b-form-group
+                    label="Rating"
                   >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Rating"
+                      rules="required"
+                    >
+                      <v-select
+                        v-model="fieldSortirRating"
+                        :options="ratingOptions"
+                        label="title"
+                        :state="errors.length > 0 ? false:null"
+                        @input="sortirRating"
+                      />
+                    </validation-provider>
+                  </b-form-group>
+                </validation-observer>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
 
-                    <!-- Leader -->
-                    <b-col md="4">
-                      <validation-observer>
-                        <b-form-group
-                          label="Leader"
-                        >
-                          <validation-provider
-                            #default="{ errors }"
-                            name="Leader"
-                          >
-                            <v-select
-                              v-model="fieldFilterByLeader"
-                              :options="staffItems"
-                              label="full_name"
-                              :state="errors.length > 0 ? false:null"
-                              placeholder="Ketik untuk mencari..."
-                              @search="onSearchStaff"
-                              @input="filterByLeader"
-                            >
-                              <li
-                                slot="list-footer"
-                                class="vs__dropdown-option vs__dropdown-option--disabled"
-                              >
-                                <feather-icon
-                                  icon="MoreHorizontalIcon"
-                                  size="16"
-                                />
-                              </li>
-                            </v-select>
-                          </validation-provider>
-                        </b-form-group>
-                      </validation-observer>
-                    </b-col>
-
-                    <!-- Partner -->
-                    <b-col md="4">
-                      <validation-observer>
-                        <b-form-group
-                          label="Partner"
-                        >
-                          <validation-provider
-                            #default="{ errors }"
-                            name="No partner"
-                            rules="required"
-                          >
-                            <v-select
-                              v-model="fieldFilterByPartner"
-                              :options="partnerItems"
-                              :state="errors.length > 0 ? false:null"
-                              placeholder="Ketik untuk mencari..."
-                              @search="onSearchPartner"
-                              @input="filterByPartner"
-                            >
-                              <li
-                                v-if="hasMoreStaff"
-                                slot="list-footer"
-                                class="vs__dropdown-option vs__dropdown-option--disabled"
-                              >
-                                <feather-icon
-                                  icon="MoreHorizontalIcon"
-                                  size="16"
-                                />
-                              </li>
-                            </v-select>
-                          </validation-provider>
-                        </b-form-group>
-                      </validation-observer>
-                    </b-col>
-
-                  </b-row>
-
-                </b-form>
-              </div>
-            </div>
-            <!-- End Filter dropdown -->
-          </b-card>
-        </b-collapse>
+        <!-- sortir mobile -->
+        <b-row class="justify-content-end sortir-talent-mobile">
+          <b-col md="6">
+            <b-col class="text-right">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-toggle.collapse-2-inner
+                size="sm"
+                variant="primary"
+                class="btn-sortir"
+              >
+                Sortir
+              </b-button>
+            </b-col>
+            <b-collapse
+              id="collapse-2-inner"
+              class="mt-2 border"
+            >
+              <b-card class="mb-0 text-left">
+                <validation-observer>
+                  <b-form-group
+                    label="Rating"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Rating"
+                      rules="required"
+                    >
+                      <v-select
+                        v-model="fieldSortirRating"
+                        :options="ratingOptions"
+                        label="title"
+                        :state="errors.length > 0 ? false:null"
+                        @input="sortirRating"
+                      />
+                    </validation-provider>
+                  </b-form-group>
+                </validation-observer>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
+        <!-- end sortir mobile -->
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
@@ -434,7 +526,7 @@ export default {
       // Dropdown filter
       fieldFilterByLeader: '',
       fieldFilterByPartner: '',
-      fieldFilterByRating: '',
+      fieldSortirRating: [],
 
       partnerNums: [],
       ratingNums: [],
@@ -454,7 +546,7 @@ export default {
       totalRows: 1,
       currentPage: 1,
       sortBy: '',
-      sortDesc: false,
+      sortDesc: true,
       sortDirection: 'asc',
       filter: null,
       filterOn: [],
@@ -465,8 +557,8 @@ export default {
       hasMoreStaff: false,
 
       ratingOptions: [
-        { text: 'Terbanyak', value: 0 },
-        { text: 'Paling Sedikit', value: 1 },
+        { title: 'Paling Banyak', value: 1 },
+        { title: 'Paling Sedikit', value: 2 },
       ],
 
       filterPositionId: 1,
@@ -498,7 +590,7 @@ export default {
         {
           key: 'talent_rating',
           label: 'Rating',
-          sortable: true,
+          sortable: false,
         },
       ],
     }
@@ -532,7 +624,6 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
-    // New Filter
     onSearchPartner(search, loading) {
       if (search.length) {
         this.searchPartner(loading, search, this)
@@ -603,7 +694,6 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
-        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
@@ -623,18 +713,35 @@ export default {
         params,
       }).then(response => {
         const { data } = response.data.data
-        this.totalRows = response.data.data.total
         return data
       })
       this.refreshTable()
       return getPartner
+    },
+    sortirRating() {
+      const params = {
+        status: 'hired',
+        page: this.currentPage,
+        limit: this.perPage,
+      }
+      const resultRating = this.$http.get(this.endpointGetAll, {
+        params,
+      }).then(response => {
+        const { data } = response.data.data
+        if (this.fieldSortirRating === null) {
+          this.fieldSortirRating = ''
+        }
+        console.log(this.fieldSortirRating)
+        return data
+      })
+      this.refreshTable()
+      return resultRating
     },
     tableProvider() {
       const params = {
         keyword: this.filter,
         position_id: this.filterPositionId,
         status: 'hired',
-        rate: this.fieldFilterByRating,
         page: this.currentPage,
         limit: this.perPage,
         sort: this.sortBy,
@@ -647,6 +754,15 @@ export default {
       }).then(response => {
         const { data } = response.data.data
         this.totalRows = response.data.data.total
+        data.sort((itemsA, itemsB) => {
+          if (this.fieldSortirRating.value === 1) {
+            return itemsB.talent_rating - itemsA.talent_rating
+          }
+          if (this.fieldSortirRating.value === 2) {
+            return itemsA.talent_rating - itemsB.talent_rating
+          }
+          return data
+        })
         return data
       }).catch(() => {
         this.$toast({
