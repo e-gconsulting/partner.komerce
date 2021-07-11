@@ -193,6 +193,7 @@ export default {
               limit: 5,
               sort: 'name',
               direction: 'asc',
+              is_division_external: 1,
             },
           },
         )

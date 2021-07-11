@@ -21,29 +21,17 @@
             :title="`${tab.application_name} (${tab.platform_type})`"
             lazy
           >
-            <b-table :items="items" :fields="fields" show-empty>
-              <template #cell(id)="data">
-                <b-button
-                  tag="router-link"
-                  :to="{
-                    name: $route.meta.routeShow,
-                    params: { id: data.item.id },
-                  }"
-                  class="btn-icon"
-                  variant="outline-info"
-                >
-                  <feather-icon
-                    icon="SettingsIcon"
-                    size="18"
-                    class="mr-1 p-0"
-                  />
-                  Manage
-                </b-button>
-              </template>
-              <template #empty="scope">
-                <p class="text-center">{{ scope.emptyFilteredText }}</p>
-              </template>
-            </b-table>
+            <Collapse
+              v-for="(item, index) in items"
+              :key="index"
+              :index="`${tabIndex}-${index}`"
+              :item="item"
+            />
+            <b-row v-if="items.length < 1">
+              <b-col>
+                <p class="text-center">No Menu Available</p>
+              </b-col>
+            </b-row>
           </b-tab>
         </b-tabs>
       </b-card-actions>
@@ -53,18 +41,21 @@
 
 <script>
 import {
-  BTabs, BTab, BTable, BButton, BOverlay,
+  BTabs, BTab, BOverlay, BRow, BCol,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
+import Collapse from './Collapse.vue'
 
 export default {
   components: {
     BCardActions,
-    BTable,
     BTabs,
     BTab,
-    BButton,
+
     BOverlay,
+    BRow,
+    BCol,
+    Collapse,
   },
   data() {
     const tabs = []
@@ -110,7 +101,7 @@ export default {
       this.items = []
       this.$http
         .get(
-          `menu?parent_menu_id=0&komerce_application_id=${komereApplicationId}&is_root_menu=true`,
+          `menu/getMenuWithChildrens?&komerce_application_id=${komereApplicationId}`,
         )
         .then(({ data }) => {
           this.items = data.data
