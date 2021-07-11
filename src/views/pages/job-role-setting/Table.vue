@@ -1,39 +1,111 @@
 <template>
-  <card-table
-    :endpoint-get-all="endpointGetAll"
-    :endpoint-delete="endpointDelete"
-    :fields="fields"
-  />
+  <div class="pb-1">
+    <b-card-actions
+      ref="formCard"
+      :title="$route.meta.name.singular"
+      :show="loading"
+      no-actions
+      no-body
+    >
+      <b-tabs v-model="tabIndex" fill>
+        <b-tab
+          v-for="tab in tabs"
+          :key="tab.id"
+          :title="`${tab.application_name} (${tab.platform_type})`"
+          lazy
+        >
+          <b-table :items="items" :fields="fields" show-empty>
+            <template #cell(id)="data">
+              <b-button
+                tag="router-link"
+                :to="{
+                  name: $route.meta.routeShow,
+                  params: { id: data.item.id },
+                }"
+                class="btn-icon"
+                variant="outline-info"
+              >
+                <feather-icon icon="SettingsIcon" size="18" class="mr-1 p-0" />
+                Manage
+              </b-button>
+            </template>
+            <template #empty="scope">
+              <p class="text-center">{{ scope.emptyFilteredText }}</p>
+            </template>
+          </b-table>
+        </b-tab>
+      </b-tabs>
+    </b-card-actions>
+  </div>
 </template>
 
 <script>
-import CardTable from '@/views/components/CardTable.vue'
-import filters from '@/libs/filters'
+import {
+  BTabs, BTab, BTable, BButton,
+} from 'bootstrap-vue'
+import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 
 export default {
   components: {
-    CardTable,
+    BCardActions,
+    BTable,
+    BTabs,
+    BTab,
+    BButton,
   },
   data() {
+    const tabs = []
     return {
-      endpointGetAll: '/talentAdminFee',
-      endpointDelete: 'talentAdminFee/:id',
+      tabIndex: 0,
+      tabs,
+      loading: false,
       fields: [
-        { key: 'id', label: 'Id' },
-        { key: 'position.position_name', label: 'Posisi' },
-        { key: 'description', label: 'Deskripsi' },
         {
-          key: 'admin_fee',
-          label: 'Biaya Standar',
-          formatter: (val, key, item) => (item.admin_fee_discount_type === 'rp' ? filters.rupiah(val) : val),
+          key: 'name',
+          label: 'Root Menu',
         },
         {
-          key: 'admin_fee_discount_type',
-          label: 'Type',
-          badge: 'success',
+          key: 'id',
+          label: 'Manage',
         },
       ],
+      items: [],
     }
+  },
+  async created() {
+    this.loading = true
+
+    return this.$http
+      .get('komerceApplication')
+      .then(response => {
+        const { data } = response.data
+
+        this.tabs = data
+      })
+      .finally(() => {
+        this.loading = false
+      })
+  },
+  watch: {
+    tabIndex(newValue) {
+      const komereApplicationId = this.tabs[newValue].id
+      this.getAllMenu(komereApplicationId)
+    },
+  },
+  methods: {
+    getAllMenu(komereApplicationId) {
+      this.loading = true
+      this.$http
+        .get(
+          `menu?parent_menu_id=0&komerce_application_id=${komereApplicationId}&is_root_menu=true`,
+        )
+        .then(({ data }) => {
+          this.items = data.data
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
   },
 }
 </script>
