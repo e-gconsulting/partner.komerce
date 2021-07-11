@@ -1,101 +1,109 @@
 <template>
-  <b-card-actions
-    ref="formCard"
-    :title="`Manage ${$route.meta.name.singular}`"
-    no-actions
+  <b-overlay
+    variant="light"
     :show="loading"
+    spinner-variant="primary"
+    blur="0"
+    opacity=".5"
+    rounded="sm"
   >
-    <b-row>
-      <b-col md="6">
-        <!-- form -->
-        <validation-observer ref="formRules">
-          <b-form>
-            <b-row>
-              <b-col md="12">
-                <b-form-group label="Menu" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Menu"
-                    rules="required"
-                  >
-                    <v-select
-                      v-model="menu_id"
-                      label="name"
-                      :reduce="option => option.id"
-                      :options="menuItems"
-                      placeholder="Ketik untuk mencari..."
-                      @search="onSearchMenu"
+    <b-card-actions
+      ref="formCard"
+      :title="`Manage ${$route.meta.name.singular}`"
+      no-actions
+    >
+      <b-row>
+        <b-col md="6">
+          <!-- form -->
+          <validation-observer ref="formRules">
+            <b-form>
+              <b-row>
+                <b-col md="12">
+                  <b-form-group label="Menu" label-cols-md="4">
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Menu"
+                      rules="required"
                     >
-                      <li
-                        v-if="hasMoreMenu"
-                        slot="list-footer"
-                        class="
-                          vs__dropdown-option vs__dropdown-option--disabled
-                        "
+                      <v-select
+                        v-model="menu_id"
+                        label="name"
+                        :reduce="option => option.id"
+                        :options="menuItems"
+                        placeholder="Ketik untuk mencari..."
+                        @search="onSearchMenu"
                       >
-                        <feather-icon icon="MoreHorizontalIcon" size="16" />
-                      </li>
-                    </v-select>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-                <b-form-group label="Posisi" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Posisi"
-                    rules="required"
-                  >
-                    <v-select
-                      v-model="position_id"
-                      label="position_name"
-                      :reduce="option => option.id"
-                      :options="positionItems"
-                      placeholder="Ketik untuk mencari..."
-                      @search="onSearchPosition"
+                        <li
+                          v-if="hasMoreMenu"
+                          slot="list-footer"
+                          class="
+                            vs__dropdown-option vs__dropdown-option--disabled
+                          "
+                        >
+                          <feather-icon icon="MoreHorizontalIcon" size="16" />
+                        </li>
+                      </v-select>
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </b-form-group>
+                  <b-form-group label="Posisi" label-cols-md="4">
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Posisi"
+                      rules="required"
                     >
-                      <li
-                        v-if="hasMorePosition"
-                        slot="list-footer"
-                        class="
-                          vs__dropdown-option vs__dropdown-option--disabled
-                        "
+                      <v-select
+                        v-model="position_id"
+                        label="position_name"
+                        :reduce="option => option.id"
+                        :options="positionItems"
+                        placeholder="Ketik untuk mencari..."
+                        @search="onSearchPosition"
                       >
-                        <feather-icon icon="MoreHorizontalIcon" size="16" />
-                      </li>
-                    </v-select>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <hr />
-                <h3>Access:</h3>
-                <b-row
-                  v-for="access in listAccess"
-                  :key="access.id"
-                  class="mb-1"
-                >
-                  <b-col md="4">
-                    <h5>
-                      {{ access.access_name }}
-                    </h5>
-                  </b-col>
-                  <b-col md="8">
-                    <b-form-checkbox
-                      v-model="checked"
-                      name="check-button"
-                      switch
-                    >
-                    </b-form-checkbox>
-                  </b-col>
-                </b-row>
-              </b-col>
-            </b-row>
-          </b-form>
-        </validation-observer>
-      </b-col>
-    </b-row>
-  </b-card-actions>
+                        <li
+                          v-if="hasMorePosition"
+                          slot="list-footer"
+                          class="
+                            vs__dropdown-option vs__dropdown-option--disabled
+                          "
+                        >
+                          <feather-icon icon="MoreHorizontalIcon" size="16" />
+                        </li>
+                      </v-select>
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
+                <b-col md="12">
+                  <hr />
+                  <h3>Access:</h3>
+                  <b-row
+                    v-for="access in listAccess"
+                    :key="access.id"
+                    class="mb-1"
+                  >
+                    <b-col md="4">
+                      <h5>
+                        {{ access.access_name }}
+                      </h5>
+                    </b-col>
+                    <b-col md="8">
+                      <b-form-checkbox
+                        v-model="checked"
+                        name="check-button"
+                        switch
+                      >
+                      </b-form-checkbox>
+                    </b-col>
+                  </b-row>
+                </b-col>
+              </b-row>
+            </b-form>
+          </validation-observer>
+        </b-col>
+      </b-row>
+    </b-card-actions>
+  </b-overlay>
 </template>
 
 <script>
@@ -107,6 +115,7 @@ import {
   BCol,
   VBTooltip,
   BFormCheckbox,
+  BOverlay,
 } from 'bootstrap-vue'
 import { required, integer } from '@validations'
 // import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -129,6 +138,7 @@ export default {
     BCol,
     BFormCheckbox,
     vSelect,
+    BOverlay,
   },
   data() {
     return {
