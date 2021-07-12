@@ -19,38 +19,11 @@
             <b-form>
               <b-row>
                 <b-col md="12">
-                  <b-form-group label="Menu" label-cols-md="4">
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Menu"
-                      rules="required"
-                    >
-                      <v-select
-                        v-model="menu_id"
-                        label="name"
-                        :reduce="option => option.id"
-                        :options="menuItems"
-                        placeholder="Ketik untuk mencari..."
-                        @search="onSearchMenu"
-                      >
-                        <li
-                          v-if="hasMoreMenu"
-                          slot="list-footer"
-                          class="
-                            vs__dropdown-option vs__dropdown-option--disabled
-                          "
-                        >
-                          <feather-icon icon="MoreHorizontalIcon" size="16" />
-                        </li>
-                      </v-select>
-                      <small class="text-danger">{{ errors[0] }}</small>
-                    </validation-provider>
-                  </b-form-group>
                   <b-form-group label="Posisi" label-cols-md="4">
                     <validation-provider
                       #default="{ errors }"
                       name="Posisi"
-                      rules="required"
+                      rules=""
                     >
                       <v-select
                         v-model="position_id"
@@ -73,6 +46,9 @@
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
                   </b-form-group>
+                </b-col>
+                <b-col v-if="position_id">
+                  <b-button variant="primary">Assign Position</b-button>
                 </b-col>
                 <b-col md="12">
                   <hr />
@@ -116,8 +92,8 @@ import {
   VBTooltip,
   BFormCheckbox,
   BOverlay,
+  BButton,
 } from 'bootstrap-vue'
-import { required, integer } from '@validations'
 // import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
@@ -139,6 +115,7 @@ export default {
     BFormCheckbox,
     vSelect,
     BOverlay,
+    BButton,
   },
   data() {
     return {
@@ -146,15 +123,10 @@ export default {
       submitErrors: '',
       loading: false,
 
-      required,
-      integer,
-
+      assignedPositions: [],
       hasMorePosition: false,
       positionItems: [],
       position_id: '',
-      hasMoreMenu: false,
-      menuItems: [],
-      menu_id: '',
       listAccess: [],
       checked: false,
     }
@@ -165,11 +137,26 @@ export default {
     },
   },
   async mounted() {
-    this.loadPositions()
-    this.loadMenus()
+    await this.loadAssignedPositions()
+    await this.loadPositions()
     this.getAccess()
   },
   methods: {
+    loadAssignedPositions() {
+      this.loading = true
+      return this.$http
+        .get('menu/getPositionAccess', {
+          params: {
+            menu_id: this.id,
+          },
+        })
+        .then(({ data }) => {
+          this.assignedPositions = data.data
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     onSearchPosition(search, loading) {
       if (search.length) {
         this.searchPosition(loading, search, this)
@@ -197,37 +184,15 @@ export default {
             },
           },
         )
-        .then(async response => {
-          const { data } = response.data.data
-          this.positionItems = Object.keys(data).map(key => data[key])
-          this.hasMorePosition = response.data.data.total > this.positionItems.length
-        })
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    onSearchMenu(search, loading) {
-      if (search.length) {
-        this.searchMenu(loading, search, this)
-      }
-    },
-    searchMenu: _.debounce((loading, search, that) => {
-      this.loading = true
-      that.loadMenus(search).finally(() => loading(false))
-    }, 500),
-    loadMenus(search) {
-      this.loading = true
-      return this.$http
-        .get('/menu', {
-          params: {
-            parent_menu_id: 4,
-            keyword: search,
-          },
-        })
         .then(response => {
-          const { data } = response.data
-          this.menuItems = data
-          this.hasMoreMenu = response.data.data.total > this.menuItems.length
+          const { data } = response.data.data
+          this.positionItems = data.filter(
+            position => !this.assignedPositions.some(
+              assignedPosition => assignedPosition.id === position.id,
+            ),
+          )
+          const positionItemsLength = this.positionItems.length
+          this.hasMorePosition = response.data.data.total - positionItemsLength > positionItemsLength
         })
         .finally(() => {
           this.loading = false

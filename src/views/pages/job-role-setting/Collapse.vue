@@ -10,11 +10,11 @@
           name: $route.meta.routeShow,
           params: { id: item.id },
         }"
-        class="btn-icon"
         variant="outline-info"
         size="sm"
       >
-        Manage
+        <feather-icon icon="SettingsIcon" class="mr-50" />
+        <span class="align-middle">Manage</span>
       </b-button>
     </b-col>
     <b-col md="12" v-if="item.childrens.length > 0">
