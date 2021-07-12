@@ -68,7 +68,16 @@
             :items="eligiblePositionMenu.positions"
           >
             <template #cell(access)="">
-              <b-button variant="primary"> Berikan Akses </b-button>
+              <b-button variant="primary" size="sm"> Berikan Akses </b-button>
+            </template>
+            <template #cell(unassign)="data">
+              <b-button
+                variant="warning"
+                size="sm"
+                @click.prevent="unassignPositionToMenu(data.item.id)"
+              >
+                Hapus Akses
+              </b-button>
             </template>
           </b-table>
         </b-col>
@@ -142,6 +151,10 @@ export default {
             }
             return value.map(item => item.access_name).join(', ')
           },
+        },
+        {
+          key: 'unassign',
+          label: 'Hapus Akses',
         },
       ],
 
@@ -274,6 +287,45 @@ export default {
             })
         }
       })
+    },
+    unassignPositionToMenu(positionId) {
+      this.loading = true
+
+      const data = {
+        menu_id: this.id,
+        position_id: positionId,
+      }
+
+      return this.$http
+        .post('/menu/releasePosition', data)
+        .then(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                text: 'Berhasil Hapus Akses',
+                variant: 'success',
+                attachment: 'CheckIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
+          this.getMenuAndPositionData()
+        })
+        .catch(error => {
+          if (error.response.status === 422) {
+            this.submitErrors = Object.fromEntries(
+              Object.entries(error.response.data.data).map(([key, value]) => [
+                key,
+                value[0],
+              ]),
+            )
+          }
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
   },
 }
