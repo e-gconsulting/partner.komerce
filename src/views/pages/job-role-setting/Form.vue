@@ -67,8 +67,14 @@
             :fields="fields"
             :items="eligiblePositionMenu.positions"
           >
-            <template #cell(access)="">
-              <b-button variant="primary" size="sm"> Berikan Akses </b-button>
+            <template #cell(access)="data">
+              <b-button
+                variant="primary"
+                size="sm"
+                @click.prevent="showModal(data.item)"
+              >
+                Berikan Akses
+              </b-button>
             </template>
             <template #cell(unassign)="data">
               <b-button
@@ -83,6 +89,12 @@
         </b-col>
       </b-row>
     </b-card-actions>
+    <modal
+      ref="accessModalComponent"
+      :listAccess="listAccess"
+      :selectedPosition="selectedPosition"
+      :refreshMethod="loadEligiblePositionMenu"
+    />
   </b-overlay>
 </template>
 
@@ -95,7 +107,6 @@ import {
   BRow,
   BCol,
   VBTooltip,
-  // BFormCheckbox,
   BOverlay,
   BButton,
   BTable,
@@ -105,6 +116,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
+import Modal from './Modal.vue'
 
 export default {
   directives: {
@@ -120,11 +132,11 @@ export default {
     BRow,
     BCol,
     BSpinner,
-    // BFormCheckbox,
     vSelect,
     BOverlay,
     BButton,
     BTable,
+    Modal,
   },
   data() {
     return {
@@ -165,7 +177,7 @@ export default {
       positionItems: [],
       position_id: '',
       listAccess: [],
-      checked: false,
+      selectedPosition: {},
     }
   },
   computed: {
@@ -326,6 +338,10 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    showModal(position) {
+      this.selectedPosition = position
+      this.$refs.accessModalComponent.show()
     },
   },
 }
