@@ -9,7 +9,7 @@
   >
     <b-card-actions
       ref="formCard"
-      :title="`Manage ${$route.meta.name.singular}`"
+      :title="`Manage ${$route.meta.name.singular}: ${eligiblePositionMenu.name}`"
       no-actions
     >
       <b-row>
@@ -17,13 +17,13 @@
           <!-- form -->
           <validation-observer ref="formRules">
             <b-form>
-              <b-row>
+              <b-row class="mb-2">
                 <b-col md="12">
                   <b-form-group label="Posisi" label-cols-md="4">
                     <validation-provider
                       #default="{ errors }"
                       name="Posisi"
-                      rules=""
+                      rules="required"
                     >
                       <v-select
                         v-model="position_id"
@@ -47,35 +47,30 @@
                     </validation-provider>
                   </b-form-group>
                 </b-col>
-                <b-col v-if="position_id">
-                  <b-button variant="primary">Assign Position</b-button>
-                </b-col>
-                <b-col md="12">
-                  <hr />
-                  <h3>Access:</h3>
-                  <b-row
-                    v-for="access in listAccess"
-                    :key="access.id"
-                    class="mb-1"
+                <b-col md="8" offset-md="4">
+                  <b-button
+                    variant="primary"
+                    :disabled="!position_id"
+                    @click.prevent="assignPositionToMenu"
                   >
-                    <b-col md="4">
-                      <h5>
-                        {{ access.access_name }}
-                      </h5>
-                    </b-col>
-                    <b-col md="8">
-                      <b-form-checkbox
-                        v-model="checked"
-                        name="check-button"
-                        switch
-                      >
-                      </b-form-checkbox>
-                    </b-col>
-                  </b-row>
+                    <b-spinner v-if="loadingSubmit" small /> Assign Position
+                  </b-button>
                 </b-col>
               </b-row>
             </b-form>
           </validation-observer>
+        </b-col>
+        <b-col md="12">
+          <hr />
+          <b-table
+            hover
+            :fields="fields"
+            :items="eligiblePositionMenu.positions"
+          >
+            <template #cell(access)="">
+              <b-button variant="primary"> Berikan Akses </b-button>
+            </template>
+          </b-table>
         </b-col>
       </b-row>
     </b-card-actions>
@@ -84,17 +79,20 @@
 
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { required } from '@validations'
 import {
   BFormGroup,
   BForm,
   BRow,
   BCol,
   VBTooltip,
-  BFormCheckbox,
+  // BFormCheckbox,
   BOverlay,
   BButton,
+  BTable,
+  BSpinner,
 } from 'bootstrap-vue'
-// import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
@@ -112,18 +110,44 @@ export default {
     BForm,
     BRow,
     BCol,
-    BFormCheckbox,
+    BSpinner,
+    // BFormCheckbox,
     vSelect,
     BOverlay,
     BButton,
+    BTable,
   },
   data() {
     return {
       id: this.$route.params.id,
       submitErrors: '',
       loading: false,
+      loadingSubmit: false,
+      required,
+      fields: [
+        {
+          key: 'position_name',
+          label: 'Posisi',
+        },
+        {
+          key: 'access',
+          label: 'Hak Akses',
+        },
+        {
+          key: 'accesses',
+          label: 'Data Hak Akses',
+          formatter: value => {
+            if (!value) {
+              return '-'
+            }
+            return value.map(item => item.access_name).join(', ')
+          },
+        },
+      ],
 
-      assignedPositions: [],
+      eligiblePositionMenu: {
+        positions: [],
+      },
       hasMorePosition: false,
       positionItems: [],
       position_id: '',
@@ -136,22 +160,21 @@ export default {
       return `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
     },
   },
-  async mounted() {
-    await this.loadAssignedPositions()
-    await this.loadPositions()
+  mounted() {
+    this.getMenuAndPositionData()
     this.getAccess()
   },
   methods: {
-    loadAssignedPositions() {
+    async getMenuAndPositionData() {
+      await this.loadEligiblePositionMenu()
+      await this.loadPositions()
+    },
+    loadEligiblePositionMenu() {
       this.loading = true
       return this.$http
-        .get('menu/getPositionAccess', {
-          params: {
-            menu_id: this.id,
-          },
-        })
+        .get(`menu/getPositionByMenu/${this.id}`)
         .then(({ data }) => {
-          this.assignedPositions = data.data
+          this.eligiblePositionMenu = data.data
         })
         .finally(() => {
           this.loading = false
@@ -187,7 +210,7 @@ export default {
         .then(response => {
           const { data } = response.data.data
           this.positionItems = data.filter(
-            position => !this.assignedPositions.some(
+            position => !this.eligiblePositionMenu.positions.some(
               assignedPosition => assignedPosition.id === position.id,
             ),
           )
@@ -208,6 +231,49 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    assignPositionToMenu() {
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          this.loadingSubmit = true
+
+          const data = {
+            menu_id: this.id,
+            position_id: this.position_id,
+          }
+
+          this.$http
+            .post('/menu/assignPosition', data)
+            .then(() => {
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    text: this.successText,
+                    variant: 'success',
+                    attachment: 'CheckIcon',
+                  },
+                },
+                { timeout: 2500 },
+              )
+              this.position_id = 0
+              this.getMenuAndPositionData()
+            })
+            .catch(error => {
+              if (error.response.status === 422) {
+                this.submitErrors = Object.fromEntries(
+                  Object.entries(
+                    error.response.data.data,
+                  ).map(([key, value]) => [key, value[0]]),
+                )
+              }
+            })
+            .finally(() => {
+              this.loadingSubmit = false
+            })
+        }
+      })
     },
   },
 }
