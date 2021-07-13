@@ -198,12 +198,12 @@
             </b-collapse>
           </b-col>
           <b-col
-            md="4"
-            class="sortir-talent"
+            md="3"
+            class="sortir-talent text-right"
           >
             <b-collapse
               id="collapse-1-inner"
-              class="mt-2 border"
+              class="mt-2"
             >
               <b-card class="mb-0 text-left">
                 <validation-observer>
@@ -246,7 +246,7 @@
             </b-col>
             <b-collapse
               id="collapse-2-inner"
-              class="mt-2 border"
+              class="mt-2"
             >
               <b-card class="mb-0 text-left">
                 <validation-observer>

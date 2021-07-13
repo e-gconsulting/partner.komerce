@@ -84,110 +84,114 @@
               />
             </b-input-group>
           </b-form-group>
+          <b-col
+            class="text-right sortir-talent"
+          >
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-3
+              size="sm"
+              variant="primary"
+              class="btn-sortir"
+            >
+              Sortir
+            </b-button>
+          </b-col>
         </div>
 
-        <b-collapse
-          id="collapse-1"
-          class="mt-2"
-        >
-          <b-card class="mb-0">
-            <!-- filter dropdown -->
-            <div>
-              <div>
-                <b-form
-                  ref="form"
-                >
+        <b-row>
+          <b-col>
+            <b-collapse
+              id="collapse-1"
+              class="mt-2"
+            >
+              <b-card class="mb-0">
+                <!-- filter dropdown -->
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
 
-                  <!-- Row Loop -->
-                  <b-row
-                    ref="row"
-                  >
-
-                    <!-- Sektor bisnis -->
-                    <b-col md="4">
-                      <b-form-group
-                        label="Sektor Bisnis"
-                        label-for="item-name"
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
                       >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Sektor bisnis"
-                        >
-                          <v-select
-                            v-model="filterPartnerCategoryId"
-                            label="partner_category_name"
-                            :reduce="option => option.id"
-                            :options="filterPartnerCategoryItems"
-                            :state="errors.length > 0 ? false:null"
-                            transition=""
-                            placeholder="Ketik untuk mencari..."
-                            @input="filterByPartnerCategory"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
 
-                    <!-- Leader -->
-                    <b-col md="4">
-                      <b-form-group
-                        label="Leader"
-                        label-for="item-name"
-                      >
-                        <validation-provider
-                          #default="{ errors }"
-                          name="Leader"
-                        >
-                          <v-select
-                            v-model="filterStaffId"
-                            label="full_name"
-                            :reduce="option => option.id"
-                            :options="filterStaffItems"
-                            :state="errors.length > 0 ? false:null"
-                            :filterable="false"
-                            transition=""
-                            placeholder="Ketik untuk mencari..."
-                            @search="onSearchStaff"
-                            @input="filterByLeader"
+                        <!-- Sektor bisnis -->
+                        <b-col md="6">
+                          <b-form-group
+                            label="Sektor Bisnis"
                           >
-                            <li
-                              v-if="hasMoreFilterStaff"
-                              slot="list-footer"
-                              class="vs__dropdown-option vs__dropdown-option--disabled"
+                            <validation-provider
+                              #default="{ errors }"
+                              name="Sektor bisnis"
                             >
-                              <feather-icon
-                                icon="MoreHorizontalIcon"
-                                size="16"
+                              <v-select
+                                v-model="filterPartnerCategoryId"
+                                label="partner_category_name"
+                                :reduce="option => option.id"
+                                :options="filterPartnerCategoryItems"
+                                :state="errors.length > 0 ? false:null"
+                                transition=""
+                                placeholder="Ketik untuk mencari..."
+                                @input="filterByPartnerCategory"
                               />
-                            </li>
-                          </v-select>
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
+                              <small class="text-danger">{{ errors[0] }}</small>
+                            </validation-provider>
+                          </b-form-group>
+                        </b-col>
 
-                  </b-row>
+                        <!-- Leader -->
+                        <b-col md="6">
+                          <b-form-group
+                            label="Leader"
+                          >
+                            <validation-provider
+                              #default="{ errors }"
+                              name="Leader"
+                            >
+                              <v-select
+                                v-model="filterStaffId"
+                                label="full_name"
+                                :reduce="option => option.id"
+                                :options="filterStaffItems"
+                                :state="errors.length > 0 ? false:null"
+                                :filterable="false"
+                                transition=""
+                                placeholder="Ketik untuk mencari..."
+                                @search="onSearchStaff"
+                                @input="filterByLeader"
+                              >
+                                <li
+                                  v-if="hasMoreFilterStaff"
+                                  slot="list-footer"
+                                  class="vs__dropdown-option vs__dropdown-option--disabled"
+                                >
+                                  <feather-icon
+                                    icon="MoreHorizontalIcon"
+                                    size="16"
+                                  />
+                                </li>
+                              </v-select>
+                              <small class="text-danger">{{ errors[0] }}</small>
+                            </validation-provider>
+                          </b-form-group>
+                        </b-col>
 
-                </b-form>
-              </div>
-            </div>
-            <!-- End Filter dropdown -->
+                      </b-row>
 
-          </b-card>
-        </b-collapse>
-        <b-row class="justify-content-end mt-3">
-          <b-col md="8">
-            <b-col class="text-right">
-              <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                v-b-toggle.collapse-3
-                size="sm"
-                variant="primary"
-                class="btn-sortir"
-              >
-                Sortir
-              </b-button>
-            </b-col>
+                    </b-form>
+                  </div>
+                </div>
+                <!-- End Filter dropdown -->
+
+              </b-card>
+            </b-collapse>
+          </b-col>
+          <b-col
+            class="sortir-talent"
+          >
             <b-collapse
               id="collapse-3"
               class="mt-2"
@@ -205,7 +209,7 @@
                       >
 
                         <!-- Bakat dipekerjakan -->
-                        <b-col md="6">
+                        <b-col md="5">
                           <validation-observer>
                             <b-form-group
                               label="Bakat di Pekerjakan"
@@ -227,7 +231,7 @@
                         </b-col>
 
                         <!-- Durasi -->
-                        <b-col md="6">
+                        <b-col md="5">
                           <validation-observer>
                             <b-form-group
                               label="Durasi"
@@ -257,6 +261,91 @@
             </b-collapse>
           </b-col>
         </b-row>
+
+        <!-- sortir mobile -->
+        <b-row class="justify-content-end sortir-talent-mobile">
+          <b-col md="6">
+            <b-col class="text-right">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-toggle.collapse-3
+                size="sm"
+                variant="primary"
+                class="btn-sortir"
+              >
+                Sortir
+              </b-button>
+            </b-col>
+            <b-collapse
+              id="collapse-3"
+              class="mt-2"
+            >
+              <b-card class="mb-0">
+                <div>
+                  <div>
+                    <b-form
+                      ref="form"
+                    >
+
+                      <!-- Row Loop -->
+                      <b-row
+                        ref="row"
+                      >
+
+                        <!-- Bakat dipekerjakan -->
+                        <b-col md="5">
+                          <validation-observer>
+                            <b-form-group
+                              label="Bakat di Pekerjakan"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Bakat di Pekerjakan"
+                              >
+                                <v-select
+                                  v-model="fieldSortirBakatDipekerjakan"
+                                  :options="bakatDipekerjakanOptions"
+                                  label="title"
+                                  :state="errors.length > 0 ? false:null"
+                                  @input="sortirBakatDipekerjakan"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                        <!-- Durasi -->
+                        <b-col md="5">
+                          <validation-observer>
+                            <b-form-group
+                              label="Durasi"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Durasi"
+                              >
+                                <v-select
+                                  v-model="fieldSortirDurasi"
+                                  :options="durasiOptions"
+                                  :state="errors.length > 0 ? false:null"
+                                  label="title"
+                                  @input="sortirDurasi"
+                                />
+                              </validation-provider>
+                            </b-form-group>
+                          </validation-observer>
+                        </b-col>
+
+                      </b-row>
+
+                    </b-form>
+                  </div>
+                </div>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
+        <!-- end sortir mobile -->
       </div>
 
       <b-overlay
@@ -924,5 +1013,19 @@ export default {
 <style scoped>
   [dir] .card .dropdown-filter {
     padding: 1.5rem;
+  }
+
+  [dir] .sortir-talent-mobile {
+    display: none;
+  }
+
+  @media only screen and (max-width: 767px) {
+    [dir] .sortir-talent-mobile {
+        display: block;
+    }
+
+    [dir] .sortir-talent {
+        display: none;
+    }
   }
 </style>

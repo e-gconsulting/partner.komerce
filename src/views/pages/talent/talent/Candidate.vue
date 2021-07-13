@@ -85,128 +85,109 @@
               />
             </b-input-group>
           </b-form-group>
+          <b-col
+            class="text-right sortir-talent"
+          >
+            <b-button
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              v-b-toggle.collapse-1-inner
+              size="sm"
+              variant="primary"
+              class="btn-sortir"
+            >
+              Sortir
+            </b-button>
+          </b-col>
         </div>
 
-        <b-collapse
-          id="collapse-1"
-          class="mt-2"
-        >
-          <b-card class="mb-0">
-            <!-- filter dropdown -->
-            <div>
-              <div>
-                <validation-observer ref="formRules">
-                  <b-form
-                    ref="formFilterDropdown"
-                  >
-
-                    <!-- Row Loop -->
-                    <b-row
-                      ref="row"
-                    >
-
-                      <!-- Pendidikan Terakhir -->
-                      <b-col md="4">
-                        <b-form-group
-                          label="Pendidikan Terakhir"
-                          label-for="item-name"
-                        >
-                          <validation-provider
-                            #default="{ errors }"
-                            name="Education"
-                          >
-                            <v-select
-                              v-model="filterEducation"
-                              :options="educationOptions"
-                              :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                              label="title"
-                              @input="filterSelectEducation"
-                            />
-                            <small class="text-danger">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
-
-                      <!-- Pengalaman Kerja -->
-                      <b-col
-                        md="4"
-                        class="d-flex justify-content-center"
-                      >
-                        <validation-observer>
-                          <b-form-group
-                            label="Pengalaman kerja"
-                          >
-                            <validation-provider
-                              #default="{ errors }"
-                              name="Experience Status"
-                            >
-                              <b-form-radio-group
-                                v-model="filterExperienced"
-                                class="mt-50"
-                                :options="experienceStatusOptions"
-                                @change="check(experienceStatusOptions)"
-                              />
-                              <small class="text-danger">{{ errors[0] }}</small>
-                            </validation-provider>
-                          </b-form-group>
-                        </validation-observer>
-                      </b-col>
-
-                      <!-- Lama Bekerja -->
-                      <transition name="fade">
-                        <b-col
-                          v-if="filterExperienced"
-                          md="4"
-                        >
-                          <b-form-group
-                            label="Lama bekerja"
-                          >
-                            <validation-provider
-                              #default="{ errors }"
-                              name="Experience Year"
-                            >
-                              <v-select
-                                v-model="filterExperienceYear"
-                                :options="experienceYearOptions"
-                                :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
-                                label="title"
-                                @input="filterByExperienceYear"
-                              />
-                              <small class="text-danger">{{ errors[0] }}</small>
-                            </validation-provider>
-                          </b-form-group>
-                        </b-col>
-                      </transition>
-
-                    </b-row>
-
-                  </b-form>
-                </validation-observer>
-              </div>
-            </div>
-            <!-- End Filter dropdown -->
-          </b-card>
-        </b-collapse>
         <b-row>
-          <b-col class="d-flex justify-content-end">
-            <b-col
-              md="5"
-              class="text-right"
+          <b-col>
+            <b-collapse
+              id="collapse-1"
+              class="mt-2"
             >
-              <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                v-b-toggle.collapse-1-inner
-                size="sm"
-                variant="primary"
-                class="btn-sortir"
-              >
-                Sortir
-              </b-button>
-              <b-collapse
-                id="collapse-1-inner"
-                class="mt-2 border"
-              >
-                <b-card class="mb-0 text-left">
+              <b-card class="mb-0">
+                <!-- filter dropdown -->
+                <div>
+                  <div>
+                    <validation-observer ref="formRules">
+                      <b-form
+                        ref="formFilterDropdown"
+                      >
+
+                        <!-- Row Loop -->
+                        <b-row
+                          ref="row"
+                        >
+
+                          <!-- Pendidikan Terakhir -->
+                          <b-col md="5">
+                            <b-form-group
+                              label="Pendidikan Terakhir"
+                              label-for="item-name"
+                            >
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Education"
+                              >
+                                <v-select
+                                  v-model="filterEducation"
+                                  :options="educationOptions"
+                                  :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                                  label="title"
+                                  @input="filterSelectEducation"
+                                />
+                                <small class="text-danger">{{ errors[0] }}</small>
+                              </validation-provider>
+                            </b-form-group>
+                          </b-col>
+
+                          <!-- Pengalaman Kerja -->
+                          <b-col
+                            md="6"
+                            class="d-flex justify-content-center"
+                          >
+                            <validation-observer>
+                              <b-form-group
+                                label="Pengalaman kerja"
+                              >
+                                <validation-provider
+                                  #default="{ errors }"
+                                  name="Experience Status"
+                                >
+                                  <b-form-radio-group
+                                    v-model="filterExperienced"
+                                    class="mt-50"
+                                    :options="experienceStatusOptions"
+                                    @change="check(experienceStatusOptions)"
+                                  />
+                                  <small class="text-danger">{{ errors[0] }}</small>
+                                </validation-provider>
+                              </b-form-group>
+                            </validation-observer>
+                          </b-col>
+                        </b-row>
+
+                      </b-form>
+                    </validation-observer>
+                  </div>
+                </div>
+                <!-- End Filter dropdown -->
+              </b-card>
+            </b-collapse>
+          </b-col>
+
+          <!-- Sortir -->
+          <b-col
+            md="4"
+            class="sortir-talent"
+          >
+            <b-collapse
+              id="collapse-1-inner"
+              class="mt-2 text-right"
+            >
+              <b-card class="mb-0 text-left">
+                <b-col md="10">
                   <b-form-group
                     label="Lama Pengalaman"
                   >
@@ -224,11 +205,84 @@
                       />
                     </validation-provider>
                   </b-form-group>
-                </b-card>
-              </b-collapse>
-            </b-col>
+                </b-col>
+              </b-card>
+            </b-collapse>
           </b-col>
         </b-row>
+        <b-row>
+
+          <!-- Lama Bekerja -->
+          <transition name="fade">
+            <b-col
+              v-if="filterExperienced"
+              md="3"
+              class="ml-2"
+            >
+              <b-form-group
+                label="Lama bekerja"
+              >
+                <validation-provider
+                  #default="{ errors }"
+                  name="Experience Year"
+                >
+                  <v-select
+                    v-model="filterExperienceYear"
+                    :options="experienceYearOptions"
+                    :dir="$store.state.appConfig.isRTL ? 'rtl' : 'ltr'"
+                    label="title"
+                    @input="filterByExperienceYear"
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+          </transition>
+        </b-row>
+
+        <!-- sortir mobile -->
+        <b-row class="justify-content-end mt-1 sortir-talent-mobile">
+          <b-col md="6">
+            <b-col class="text-right">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-toggle.collapse-2-inner
+                size="sm"
+                variant="primary"
+                class="btn-sortir"
+              >
+                Sortir
+              </b-button>
+            </b-col>
+            <b-collapse
+              id="collapse-2-inner"
+              class="mt-2"
+            >
+              <b-card class="mb-0 text-left">
+                <validation-observer>
+                  <b-form-group
+                    label="Lama Pengalaman"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Lama Pengalaman"
+                      rules="required"
+                    >
+                      <v-select
+                        v-model="fieldSortirExperienceLong"
+                        :options="experienceLongOptions"
+                        label="title"
+                        :state="errors.length > 0 ? false:null"
+                        @input="sortirExperienceLong"
+                      />
+                    </validation-provider>
+                  </b-form-group>
+                </validation-observer>
+              </b-card>
+            </b-collapse>
+          </b-col>
+        </b-row>
+        <!-- end sortir mobile -->
       </div>
 
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">

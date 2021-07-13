@@ -119,7 +119,7 @@
                       >
 
                         <!-- Talent lead terakhir -->
-                        <b-col md="10">
+                        <b-col md="8">
                           <validation-observer>
                             <b-form-group
                               label="Leader"
@@ -165,7 +165,7 @@
           >
             <b-collapse
               id="collapse-2"
-              class="mt-2 border"
+              class="mt-2"
             >
               <b-card class="mb-0">
                 <div>
@@ -248,7 +248,7 @@
             </b-col>
             <b-collapse
               id="collapse-3"
-              class="mt-2 border"
+              class="mt-2"
             >
               <b-card class="mb-0">
                 <div>
