@@ -5,20 +5,13 @@
     no-actions
   >
     <b-row>
-      <b-col
-        md="6"
-      >
+      <b-col md="6">
         <!-- form -->
         <validation-observer ref="formRules">
           <b-form>
             <b-row>
-              <b-col
-                class="pb-2"
-                md="12"
-              >
-                <h3 class="mb-2">
-                  Profil
-                </h3>
+              <b-col class="pb-2" md="12">
+                <h3 class="mb-2">Profil</h3>
                 <b-form-row>
                   <b-col cols="4">
                     <div class="text-center mr-md-1">
@@ -29,10 +22,7 @@
                     </div>
                   </b-col>
                   <b-col cols="8">
-                    <b-form-group
-                      label="Foto profil"
-                      label-cols-md="12"
-                    >
+                    <b-form-group label="Foto profil" label-cols-md="12">
                       <validation-provider
                         #default="{ errors }"
                         name="Foto profil"
@@ -40,10 +30,12 @@
                       >
                         <b-form-file
                           v-model="imageFile"
-                          :state="errors.length > 0 ? false:null"
-                          :placeholder="imageInitialFile ?
-                            imageInitialFile.split('/').pop()
-                            : `Pilih atau drop file disini...`"
+                          :state="errors.length > 0 ? false : null"
+                          :placeholder="
+                            imageInitialFile
+                              ? imageInitialFile.split('/').pop()
+                              : `Pilih atau drop file disini...`
+                          "
                           drop-placeholder="Drop file disini..."
                           accept="image/*"
                         />
@@ -54,10 +46,7 @@
                 </b-form-row>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Nama lengkap"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Nama lengkap" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Nama"
@@ -65,18 +54,19 @@
                   >
                     <b-form-input
                       v-model="name"
-                      :state="errors.length > 0 || submitErrors.name ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
                       :formatter="capitalize"
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.name }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.name
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Username"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Username" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Username"
@@ -84,17 +74,20 @@
                   >
                     <b-form-input
                       v-model="username"
-                      :state="errors.length || submitErrors.username > 0 ? false:null"
+                      :state="
+                        errors.length || submitErrors.username > 0
+                          ? false
+                          : null
+                      "
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.username }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.username
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Jenis kelamin"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Jenis kelamin" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Jenis kelamin"
@@ -110,23 +103,23 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Tanggal lahir"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Tanggal lahir" label-cols-md="4">
                   <flat-pickr
                     v-model="birthDate"
                     class="form-control"
-                    :config="{ altInput: true, altFormat: 'j F Y', dateFormat: 'Y-m-d',}"
+                    :config="{
+                      altInput: true,
+                      altFormat: 'j F Y',
+                      dateFormat: 'Y-m-d',
+                    }"
                   />
-                  <small class="text-danger">{{ submitErrors.birth_date }}</small>
+                  <small class="text-danger">{{
+                    submitErrors.birth_date
+                  }}</small>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Status pernikahan"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Status pernikahan" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Status pernikahan"
@@ -142,13 +135,8 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <h3 class="my-2">
-                  Alamat
-                </h3>
-                <b-form-group
-                  label="Alamat"
-                  label-cols-md="4"
-                >
+                <h3 class="my-2">Alamat</h3>
+                <b-form-group label="Alamat" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Alamat"
@@ -156,17 +144,18 @@
                   >
                     <b-form-textarea
                       v-model="address"
-                      :state="errors.length > 0 || submitErrors.address ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.address ? false : null
+                      "
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.address }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.address
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Provinsi"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Provinsi" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Provinsi"
@@ -177,18 +166,21 @@
                       label="name"
                       :reduce="option => option.id"
                       :options="provinceItems"
-                      :state="errors.length > 0 || submitErrors.province_id ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.province_id
+                          ? false
+                          : null
+                      "
                       placeholder="Ketik untuk mencari..."
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.province_id }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.province_id
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Kota"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Kota" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Kota"
@@ -200,18 +192,21 @@
                       :reduce="option => option.id"
                       :options="regencyItems"
                       :disabled="!provinceId"
-                      :state="errors.length > 0 || submitErrors.regency_id ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.regency_id
+                          ? false
+                          : null
+                      "
                       placeholder="Ketik untuk mencari..."
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.regency_id }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.regency_id
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Kecamatan"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Kecamatan" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Kecamatan"
@@ -223,21 +218,22 @@
                       :reduce="option => option.id"
                       :options="districtItems"
                       :disabled="!regencyId"
-                      :state="errors.length > 0 || submitErrors.district_id ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.district_id
+                          ? false
+                          : null
+                      "
                       placeholder="Ketik untuk mencari..."
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.district_id }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.district_id
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <h3 class="my-2">
-                  Data Komerce
-                </h3>
-                <b-form-group
-                  label="Divisi"
-                  label-cols-md="4"
-                >
+                <h3 class="my-2">Data Komerce</h3>
+                <b-form-group label="Divisi" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Divisi"
@@ -248,18 +244,17 @@
                       label="division_name"
                       :reduce="option => option.id"
                       :options="divisionItems"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       placeholder="Ketik untuk mencari..."
                     >
                       <li
                         v-if="hasMoreDivision"
                         slot="list-footer"
-                        class="vs__dropdown-option vs__dropdown-option--disabled"
+                        class="
+                          vs__dropdown-option vs__dropdown-option--disabled
+                        "
                       >
-                        <feather-icon
-                          icon="MoreHorizontalIcon"
-                          size="16"
-                        />
+                        <feather-icon icon="MoreHorizontalIcon" size="16" />
                       </li>
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -267,10 +262,7 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Posisi"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Posisi" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Posisi"
@@ -281,7 +273,7 @@
                       label="position_name"
                       :reduce="option => option.id"
                       :options="positionItems"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       :filterable="false"
                       :disabled="!divisionId"
                       placeholder="Ketik untuk mencari..."
@@ -290,12 +282,11 @@
                       <li
                         v-if="hasMorePosition"
                         slot="list-footer"
-                        class="vs__dropdown-option vs__dropdown-option--disabled"
+                        class="
+                          vs__dropdown-option vs__dropdown-option--disabled
+                        "
                       >
-                        <feather-icon
-                          icon="MoreHorizontalIcon"
-                          size="16"
-                        />
+                        <feather-icon icon="MoreHorizontalIcon" size="16" />
                       </li>
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -303,23 +294,23 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Tanggal Bergabung"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Tanggal Bergabung" label-cols-md="4">
                   <flat-pickr
                     v-model="joinDate"
                     class="form-control"
-                    :config="{ altInput: true, altFormat: 'j F Y', dateFormat: 'Y-m-d',}"
+                    :config="{
+                      altInput: true,
+                      altFormat: 'j F Y',
+                      dateFormat: 'Y-m-d',
+                    }"
                   />
-                  <small class="text-danger">{{ submitErrors.join_date }}</small>
+                  <small class="text-danger">{{
+                    submitErrors.join_date
+                  }}</small>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Working space"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Working space" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Working space"
@@ -330,18 +321,17 @@
                       label="office_name"
                       :reduce="option => option.id"
                       :options="workingSpaceItems"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       placeholder="Ketik untuk mencari..."
                     >
                       <li
                         v-if="hasMoreWorkingSpace"
                         slot="list-footer"
-                        class="vs__dropdown-option vs__dropdown-option--disabled"
+                        class="
+                          vs__dropdown-option vs__dropdown-option--disabled
+                        "
                       >
-                        <feather-icon
-                          icon="MoreHorizontalIcon"
-                          size="16"
-                        />
+                        <feather-icon icon="MoreHorizontalIcon" size="16" />
                       </li>
                     </v-select>
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -349,13 +339,8 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <h3 class="my-2">
-                  Kontak
-                </h3>
-                <b-form-group
-                  label="No hp"
-                  label-cols-md="4"
-                >
+                <h3 class="my-2">Kontak</h3>
+                <b-form-group label="No hp" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="No hp"
@@ -371,10 +356,7 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Email"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Email" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Email"
@@ -383,38 +365,39 @@
                     <b-form-input
                       v-model="email"
                       type="email"
-                      :state="errors.length > 0 || submitErrors.email ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.email ? false : null
+                      "
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.email }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.email
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <h3 class="my-2">
-                  Akun Bank
-                </h3>
-                <b-form-group
-                  label="Nama bank"
-                  label-cols-md="4"
-                >
+                <h3 class="my-2">Akun Bank</h3>
+                <b-form-group label="Nama bank" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="Nama bank"
+                    name="Nama Bank"
                     rules="required"
                   >
-                    <b-form-input
+                    <v-select
                       v-model="bankName"
-                      :state="errors.length > 0 ? false:null"
+                      label="name"
+                      :reduce="option => option.name"
+                      :options="banks"
+                      :filterable="false"
+                      :state="errors.length > 0 ? false : null"
+                      placeholder="Ketik untuk mencari..."
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="No rekening"
-                  label-cols-md="4"
-                >
+                <b-form-group label="No rekening" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="No rekening"
@@ -423,17 +406,14 @@
                     <b-form-input
                       v-model="accountNumber"
                       type="number"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Nama pemilik bank"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Nama pemilik bank" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Nama pemilik bank"
@@ -442,23 +422,15 @@
                     <b-form-input
                       v-model="accountName"
                       :formatter="capitalize"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                     />
                     <small class="text-danger d-block">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
-              <b-col
-                v-if="!editMode"
-                md="12"
-              >
-                <h3 class="my-2">
-                  Password
-                </h3>
-                <b-form-group
-                  label="Password"
-                  label-cols-md="4"
-                >
+              <b-col v-if="!editMode" md="12">
+                <h3 class="my-2">Password</h3>
+                <b-form-group label="Password" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Password"
@@ -468,20 +440,14 @@
                     <b-form-input
                       v-model="password"
                       type="password"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
-              <b-col
-                v-if="!editMode"
-                md="12"
-              >
-                <b-form-group
-                  label="Konfirmasi password"
-                  label-cols-md="4"
-                >
+              <b-col v-if="!editMode" md="12">
+                <b-form-group label="Konfirmasi password" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Konfirmasi password"
@@ -489,17 +455,15 @@
                   >
                     <b-form-input
                       v-model="passwordConfirm"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       type="password"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
-              <b-col
-                md="12"
-              >
-                <hr class="mb-2">
+              <b-col md="12">
+                <hr class="mb-2" />
                 <b-button
                   :variant="editMode ? 'warning' : 'primary'"
                   type="submit"
@@ -507,10 +471,7 @@
                   :disabled="loadingSubmit"
                   @click.prevent="submit"
                 >
-                  <b-spinner
-                    v-if="loadingSubmit"
-                    small
-                  />
+                  <b-spinner v-if="loadingSubmit" small />
                   Submit
                 </b-button>
               </b-col>
@@ -597,6 +558,7 @@ export default {
       workingSpaceId: '',
       email: '',
       phone: '',
+      banks: [],
       bankName: '',
       accountNumber: '',
       accountName: '',
@@ -660,7 +622,8 @@ export default {
       return this.id !== undefined
     },
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
+      return this.editMode
+        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
@@ -686,10 +649,21 @@ export default {
     this.loadProvincies()
     this.loadWorkingSpaces()
     this.loadDivisions()
-
+    this.loadBanks()
     if (this.editMode) await this.loadForm()
   },
   methods: {
+    loadBanks() {
+      this.loading = true
+      this.$http
+        .get('xendit/disbursementbankAvailable')
+        .then(({ data }) => {
+          this.banks = data.data
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     submit() {
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -730,17 +704,21 @@ export default {
 
           if (this.imageFile) formData.append('photo_profile_url', this.imageFile)
 
-          this.$http.post(this.endpoint, formData)
+          this.$http
+            .post(this.endpoint, formData)
             .then(() => {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  text: this.successText,
-                  variant: 'success',
-                  attachment: 'CheckIcon',
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    text: this.successText,
+                    variant: 'success',
+                    attachment: 'CheckIcon',
+                  },
                 },
-              }, { timeout: 2500 })
+                { timeout: 2500 },
+              )
               this.$router.push({ name: this.$route.meta.navActiveLink })
             })
             .catch(error => {
@@ -748,9 +726,9 @@ export default {
 
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
-                  Object.entries(error.response.data.data).map(
-                    ([key, value]) => [key, value[0]],
-                  ),
+                  Object.entries(
+                    error.response.data.data,
+                  ).map(([key, value]) => [key, value[0]]),
                 )
               }
             })
@@ -760,7 +738,8 @@ export default {
     loadForm() {
       this.$refs.formCard.showLoading = true
 
-      return this.$http.get(this.endpoint)
+      return this.$http
+        .get(this.endpoint)
         .then(async response => {
           const { data } = response.data
 
@@ -786,7 +765,9 @@ export default {
           }
 
           if (data.position_id) {
-            this.positionItems = [{ id: data.position_id, position_name: data.position_name }]
+            this.positionItems = [
+              { id: data.position_id, position_name: data.position_name },
+            ]
             this.positionId = data.position_id
             this.loadPositions(data.position_name)
           }
@@ -813,38 +794,41 @@ export default {
         })
     },
     loadProvincies() {
-      return this.$http.get('/region/province', {
-        params: {
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/province', {
+          params: {
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.provinceItems = data
         })
     },
     loadRegencies() {
-      return this.$http.get('/region/regency', {
-        params: {
-          province_id: this.provinceId,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/regency', {
+          params: {
+            province_id: this.provinceId,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.regencyItems = data
         })
     },
     loadDistricts() {
-      return this.$http.get('/region/district', {
-        params: {
-          regency_id: this.regencyId,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/district', {
+          params: {
+            regency_id: this.regencyId,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.districtItems = data
@@ -860,16 +844,21 @@ export default {
       that.loadPositions(search).finally(() => loading(false))
     }, 500),
     loadPositions(search) {
-      return this.$http.post('/position/pagination', {}, {
-        params: {
-          division_id: this.divisionId,
-          position_name: search,
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .post(
+          '/position/pagination',
+          {},
+          {
+            params: {
+              division_id: this.divisionId,
+              position_name: search,
+              page: 1,
+              limit: 5,
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
         .then(async response => {
           const { data } = response.data.data
           this.positionItems = Object.keys(data).map(key => data[key])
@@ -877,24 +866,30 @@ export default {
         })
     },
     loadWorkingSpaces() {
-      return this.$http.post('/office', {}, {
-        params: {
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .post(
+          '/office',
+          {},
+          {
+            params: {
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
         .then(async response => {
           const { data } = response.data
           this.workingSpaceItems = data
         })
     },
     loadDivisions() {
-      return this.$http.get('/division', {
-        params: {
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/division', {
+          params: {
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
           this.divisionItems = data
@@ -908,7 +903,8 @@ export default {
       return new File([blob], filename, { type: blob.type })
     },
     capitalize(value) {
-      return value.toLowerCase()
+      return value
+        .toLowerCase()
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
