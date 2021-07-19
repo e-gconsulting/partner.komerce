@@ -290,7 +290,7 @@ export default {
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
-          if (!['ADMIN', 'PARTNER', 'SDM'].includes(role)) {
+          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
             return
@@ -307,31 +307,53 @@ export default {
             }
           }
 
-          if (role === 'ADMIN') {
-            ability = [
-              { action: 'read', subject: 'Dashboard' },
-              { action: 'manage', subject: 'Training' },
-              { action: 'manage', subject: 'Management' },
-              { action: 'manage', subject: 'MasterData' },
-              { action: 'manage', subject: 'Partner' },
-              { action: 'manage', subject: 'Position' },
-              { action: 'manage', subject: 'Talent' },
-              { action: 'manage', subject: 'Training' },
-              { action: 'manage', subject: 'Division' },
-              { action: 'manage', subject: 'Invoice' },
-              { action: 'manage', subject: 'Assignment' },
-              { action: 'manage', subject: 'JobRoleSetting' },
-            ]
-          } else if (role === 'PARTNER') {
-            ability = [
-              { action: 'manage', subject: 'TalentPool' },
-              { action: 'manage', subject: 'PartnerProfile' },
-            ]
-          } else if (role === 'SDM') {
-            ability = [
-              { action: 'read', subject: 'TalentHome' },
-              { action: 'manage', subject: 'TalentProfile' },
-            ]
+          switch (role) {
+            case 'ADMIN':
+              ability = [
+                { action: 'read', subject: 'Dashboard' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Management' },
+                { action: 'manage', subject: 'MasterData' },
+                { action: 'manage', subject: 'Partner' },
+                { action: 'manage', subject: 'Position' },
+                { action: 'manage', subject: 'Talent' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Division' },
+                { action: 'manage', subject: 'Invoice' },
+                { action: 'manage', subject: 'Assignment' },
+                { action: 'manage', subject: 'JobRoleSetting' },
+              ]
+              break
+            case 'MANAGEMENT':
+              ability = [
+                { action: 'read', subject: 'Dashboard' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Management' },
+                { action: 'manage', subject: 'MasterData' },
+                { action: 'manage', subject: 'Partner' },
+                { action: 'manage', subject: 'Position' },
+                { action: 'manage', subject: 'Talent' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Division' },
+                { action: 'manage', subject: 'Invoice' },
+                { action: 'manage', subject: 'Assignment' },
+                { action: 'manage', subject: 'JobRoleSetting' },
+              ]
+              break
+            case 'PARTNER':
+              ability = [
+                { action: 'manage', subject: 'TalentPool' },
+                { action: 'manage', subject: 'PartnerProfile' },
+              ]
+              break
+            case 'SDM':
+              ability = [
+                { action: 'read', subject: 'TalentHome' },
+                { action: 'manage', subject: 'TalentProfile' },
+              ]
+              break
+            default:
+              break
           }
 
           if (role === 'PARTNER') {
