@@ -28,6 +28,12 @@
         >
           <non-job />
         </b-tab>
+        <b-tab
+          title="Talent-Off"
+          lazy
+        >
+          <talent-off />
+        </b-tab>
       </b-tabs>
     </b-card-actions>
   </div>
@@ -41,6 +47,7 @@ import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Candidate from './Candidate.vue'
 import Hired from './Hired.vue'
 import NonJob from './NonJob.vue'
+import TalentOff from './TalentOff.vue'
 
 export default {
   components: {
@@ -50,9 +57,10 @@ export default {
     Candidate,
     Hired,
     NonJob,
+    TalentOff,
   },
   data() {
-    const tabs = ['candidate', 'hired', 'non-job']
+    const tabs = ['candidate', 'hired', 'non-job', 'talent-off']
     return {
       tabIndex: tabs.indexOf(this.$route.query.tab),
       tabs,

@@ -47,6 +47,7 @@ import {
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import FormContent from './Form.vue'
+// import FormContentResign from './FormResign.vue'
 import FormQuestionnaire from './questionnaire/Form.vue'
 import Experience from './experience/Form.vue'
 
@@ -59,6 +60,7 @@ export default {
     FormContent,
     FormQuestionnaire,
     Experience,
+    // FormContentResign,
   },
   data() {
     return {

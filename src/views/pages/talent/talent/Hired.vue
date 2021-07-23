@@ -398,7 +398,7 @@
                 class="btn-icon"
                 size="sm"
                 variant="flat-danger"
-                @click="confirmDelete(data)"
+                :to="{ name: $route.meta.routeResign, params: { id: data.item.talent.id, user_id: data.item.talent.user_id } }"
               >
                 <feather-icon
                   icon="Trash2Icon"
@@ -607,7 +607,7 @@ export default {
       return fields
     },
     hasActionDelete() {
-      return this.endpointDelete !== undefined
+      return this.$route.meta.routeResign !== undefined
     },
     hasActionEdit() {
       return this.$route.meta.routeEdit !== undefined
@@ -732,7 +732,6 @@ export default {
         if (this.fieldSortirRating === null) {
           this.fieldSortirRating = ''
         }
-        console.log(this.fieldSortirRating)
         return data
       })
       this.refreshTable()
