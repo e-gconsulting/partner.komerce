@@ -422,7 +422,6 @@
                     <validation-provider
                       #default="{ errors }"
                       name="No partner"
-                      rules="required"
                     >
                       <v-select
                         v-model="partnerNums"

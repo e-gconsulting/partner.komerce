@@ -314,13 +314,18 @@
                 label="URL Dokumen"
               />
             </b-col>
-            :
-            <b-col md="3">
+            <b-col>
               <a
                 target="_blank"
                 :href="urlDocument"
-                v-text="urlDocument"
-              />
+              >
+                <b-form-input
+                  v-model="urlDocument"
+                  class="area-url"
+                  disabled
+                  type="button"
+                />
+              </a>
             </b-col>
           </b-row>
         </b-col>
@@ -333,15 +338,18 @@
                 label="URL Lainnya"
               />
             </b-col>
-            :
-            <b-col
-              md="3"
-            >
+            <b-col>
               <a
                 target="_blank"
                 :href="urlOther"
-                v-text="urlOther"
-              />
+              >
+                <b-form-input
+                  v-model="urlOther"
+                  class="area-url"
+                  disabled
+                  type="button"
+                />
+              </a>
             </b-col>
           </b-row>
         </b-col>
@@ -709,5 +717,8 @@ export default {
 <style scoped>
   [dir] .card .dropdown-filter {
     padding: 1.5rem;
+  }
+  [dir] .area-url {
+    cursor: pointer;
   }
 </style>

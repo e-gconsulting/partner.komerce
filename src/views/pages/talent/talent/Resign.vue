@@ -86,10 +86,11 @@
                         <validation-provider
                           #default="{ errors }"
                           name="URL Dokumen"
-                          rules="required"
+                          rules="required|url"
                         >
                           <b-form-input
                             v-model="fieldURLDocument"
+                            type="url"
                             :state="errors.length > 0 ? false:null"
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
@@ -107,9 +108,11 @@
                         <validation-provider
                           #default="{ errors }"
                           name="URL Lainnnya"
+                          rules="url"
                         >
                           <b-form-input
                             v-model="fieldURLDocumentOther"
+                            type="url"
                             :state="errors.length > 0 ? false:null"
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
@@ -171,7 +174,7 @@ import vSelect from 'vue-select'
 // import Cleave from 'vue-cleave-component'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
-
+// const regexUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
 export default {
   components: {
     ValidationProvider,
@@ -213,6 +216,9 @@ export default {
       fieldURLDocumentOther: '',
       name: '',
 
+      isValid: false,
+      regex: new RegExp('(https?:\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+@]*)*(\\?[;&a-z\\d%_.~+=-@]*)?(\\#[-a-z\\d_@]*)?$', 'i'),
+
       pemutusanOptions: [
         { title: 'Resign', value: 'resign' },
         { title: 'Diberhentikan', value: 'dismissed' },
@@ -244,6 +250,7 @@ export default {
     },
   },
   mounted() {
+    this.isValid = ''
     this.$http.get(`/talent/${this.id}`).then(response => {
       const { data } = response.data
       this.resultUserId = data.id
