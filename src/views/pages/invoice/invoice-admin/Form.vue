@@ -13,15 +13,16 @@
               <b-form-group label="Status" label-cols-md="4">
                 <validation-provider
                   #default="{ errors }"
-                  name="minimum_income"
-                  rules="required|min:3"
+                  name="Status"
+                  rules="required"
                 >
                   <b-form-input
-                    v-model="name"
+                    v-model="status"
                     :state="
                       errors.length > 0 || submitErrors.name ? false : null
                     "
-                    type="number"
+                    type="text"
+                    disabled
                   />
                   <small class="text-danger">{{
                     errors[0] || submitErrors.name
@@ -33,15 +34,16 @@
               <b-form-group label="No. Invoice" label-cols-md="4">
                 <validation-provider
                   #default="{ errors }"
-                  name="No HP"
+                  name="No Invoice"
                   rules="required"
                 >
                   <b-form-input
-                    v-model="name"
+                    v-model="invoice_id"
                     :state="
                       errors.length > 0 || submitErrors.name ? false : null
                     "
-                    type="number"
+                    type="text"
+                    disabled
                   />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
@@ -51,16 +53,24 @@
               <b-form-group label="Partner" label-cols-md="4">
                 <validation-provider
                   #default="{ errors }"
-                  name="No HP"
+                  name="Partner"
                   rules="required"
                 >
-                  <b-form-input
-                    v-model="name"
-                    :state="
-                      errors.length > 0 || submitErrors.name ? false : null
-                    "
-                    type="number"
-                  />
+                  <v-select
+                    v-model="partner"
+                    label="full_name"
+                    :options="partnerItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchPartner"
+                  >
+                    <li
+                      v-if="hasMorePartner"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
@@ -69,15 +79,15 @@
               <b-form-group label="Judul Invoice" label-cols-md="4">
                 <validation-provider
                   #default="{ errors }"
-                  name="No HP"
+                  name="Judul Invoice"
                   rules="required"
                 >
                   <b-form-input
-                    v-model="name"
+                    v-model="title"
                     :state="
                       errors.length > 0 || submitErrors.name ? false : null
                     "
-                    type="number"
+                    type="text"
                   />
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
@@ -87,17 +97,21 @@
               <b-form-group label="Tanggal" label-cols-md="4">
                 <validation-provider
                   #default="{ errors }"
-                  name="No HP"
+                  name="Tanggal"
                   rules="required"
                 >
-                  <b-form-input
-                    v-model="name"
-                    :state="
-                      errors.length > 0 || submitErrors.name ? false : null
-                    "
-                    type="number"
+                  <flat-pickr
+                    v-model="invoice_period"
+                    class="form-control"
+                    :config="{
+                      altInput: true,
+                      altFormat: 'j/n/Y',
+                      dateFormat: 'Y-m-d',
+                    }"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-danger">{{
+                    errors[0] || submitErrors.name
+                  }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -148,7 +162,13 @@
         <b-row>
           <b-col md="12" class="mt-2">
             <hr />
-            <b-button variant="outline-danger" type="button" class="mr-50">
+            <b-button
+              variant="outline-danger"
+              type="button"
+              class="mr-50"
+              tag="router-link"
+              :to="{ name: 'invoice-admin' }"
+            >
               <b-spinner v-if="loadingSubmit" small />
               Cancel
             </b-button>
@@ -185,6 +205,8 @@ import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
+import flatPickr from 'vue-flatpickr-component'
+import vSelect from 'vue-select'
 
 export default {
   directives: {
@@ -202,6 +224,8 @@ export default {
     BCol,
     BButton,
     BSpinner,
+    flatPickr,
+    vSelect,
   },
   data() {
     return {
@@ -219,6 +243,15 @@ export default {
       staffItems: [],
       hasMoreStaff: false,
       phone: '',
+
+      // new states
+      status: 'draft',
+      invoice_id: 0,
+      title: '',
+      invoice_period: '',
+      partnerItems: [],
+      hasMorePartner: false,
+      partner: '',
 
       options: {
         phone: {
@@ -253,14 +286,38 @@ export default {
     },
   },
   async mounted() {
-    this.sync()
-    this.loadProvincies()
-
-    if (this.editMode) await this.loadForm()
-
-    if (!this.editMode || !this.staffItems.length) this.loadStaffs()
+    // if (this.editMode) await this.loadForm()
+    // if (!this.editMode || !this.staffItems.length) this.loadStaffs()
+    this.loadPartners()
   },
   methods: {
+    onSearchPartner(search, loading) {
+      if (search.length) {
+        this.searchPartner(loading, search, this)
+      }
+    },
+    searchPartner: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadPartners(search).finally(() => loading(false))
+    }, 500),
+    loadPartners(search) {
+      return this.$http
+        .get('/user/partner/pagination', {
+          params: {
+            name: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+            account_status: 'active',
+          },
+        })
+        .then(async response => {
+          const { data } = response.data.data
+          this.partnerItems = data
+          this.hasMorePartner = response.data.data.total > this.partnerItems.length
+        })
+    },
     submit() {
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -356,4 +413,5 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+@import '~@core/scss/vue/libs/vue-flatpicker.scss';
 </style>

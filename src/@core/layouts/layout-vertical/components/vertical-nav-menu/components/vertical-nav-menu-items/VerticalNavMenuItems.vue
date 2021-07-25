@@ -41,20 +41,29 @@ export default {
           item => item.title === menu.name,
         )
 
-        const isAvailableMenu = isAvailableMenuFilter[0]
-        isAvailableMenu.visible = !!isAvailableMenu
+        let isAvailableMenu = isAvailableMenuFilter[0]
+        isAvailableMenu = { ...isAvailableMenu, visible: !!isAvailableMenu }
 
-        isAvailableMenu.children.forEach((child, index) => {
-          isAvailableMenu.children[index].visible = !!menu.childrens.filter(
-            val => val.name === child.title,
-          )
-        })
+        if (isAvailableMenu.children) {
+          isAvailableMenu.children.forEach((child, index) => {
+            isAvailableMenu.children[index].visible = !!menu.childrens.filter(
+              val => val.name === child.title,
+            )
+          })
+        }
         return isAvailableMenu
       })
 
       return this.user.role_name === 'Management'
         ? visibleMenus
-        : this.items.map(item => ({ ...item, visible: true }))
+        : this.items.map(item => ({
+          ...item,
+          children: item.children?.map(child => ({
+            ...child,
+            visible: true,
+          })),
+          visible: true,
+        }))
     },
   },
   created() {

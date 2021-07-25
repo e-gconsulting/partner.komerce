@@ -11,6 +11,7 @@ export default [
     meta: {
       name: pageName,
       routeShow: 'invoice-admin-detail',
+      routeCreate: 'invoice-admin-create',
       resource: 'Invoice',
       action: 'manage',
       breadcrumb: [
@@ -43,6 +44,30 @@ export default [
         },
         {
           text: 'Detail',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/invoice-admin/create',
+    name: 'invoice-admin-create',
+    component: () => import('@/views/pages/invoice/invoice-admin/Form.vue'),
+    meta: {
+      name: pageName,
+      navActiveLink: 'invoice-admin',
+      resource: 'Invoice',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Invoice',
+        },
+        {
+          text: pageName.plural,
+          route: 'invoice-admin',
+        },
+        {
+          text: 'Create',
           active: true,
         },
       ],
