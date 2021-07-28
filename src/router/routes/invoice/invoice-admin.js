@@ -7,7 +7,7 @@ export default [
   {
     path: '/invoice-admin',
     name: 'invoice-admin',
-    component: () => import('@/views/pages/invoice/invoice-admin/Table.vue'),
+    component: () => import('@/views/pages/invoice/invoice-admin/Index.vue'),
     meta: {
       name: pageName,
       routeShow: 'invoice-admin-show',
