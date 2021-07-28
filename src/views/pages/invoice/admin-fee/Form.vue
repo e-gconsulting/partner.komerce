@@ -333,7 +333,7 @@ export default {
           this.$http
             .post(this.endpoint, data)
             .then(response => {
-              if (!response.data.success) {
+              if (!response.data.status) {
                 this.$toast(
                   {
                     component: ToastificationContent,

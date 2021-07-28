@@ -10,7 +10,7 @@ export default [
     component: () => import('@/views/pages/invoice/invoice-admin/Table.vue'),
     meta: {
       name: pageName,
-      routeShow: 'invoice-admin-detail',
+      routeShow: 'invoice-admin-show',
       routeCreate: 'invoice-admin-create',
       resource: 'Invoice',
       action: 'manage',
@@ -26,7 +26,7 @@ export default [
     },
   },
   {
-    path: '/invoice-admin/:id',
+    path: '/invoice-admin/show/:id',
     name: 'invoice-admin-show',
     component: () => import('@/views/pages/invoice/invoice-admin/Form.vue'),
     meta: {
