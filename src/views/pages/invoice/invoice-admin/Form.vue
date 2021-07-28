@@ -46,7 +46,7 @@
                     rules="required"
                   >
                     <b-form-input
-                      v-model="invoice_id"
+                      v-model="invoice_no"
                       :state="
                         errors.length > 0 || submitErrors.name ? false : null
                       "
@@ -214,26 +214,25 @@
                 Cancel
               </b-button>
               <b-button
+                variant="info"
+                type="submit"
+                class="mr-50"
+                :disabled="loadingSubmit"
+                @click.prevent="submit('draft')"
+              >
+                <b-spinner v-if="loadingSubmit" small />
+                Save
+              </b-button>
+              <b-button
                 variant="success"
                 type="submit"
                 class="mr-50"
                 :disabled="loadingSubmit"
                 @click.prevent="publish"
-                v-if="invoice_status == 0"
+                v-if="id"
               >
                 <b-spinner v-if="loadingSubmit" small />
                 Publish
-              </b-button>
-              <b-button
-                variant="info"
-                type="submit"
-                class="mr-50"
-                :disabled="loadingSubmit"
-                @click.prevent="submit"
-                v-else
-              >
-                <b-spinner v-if="loadingSubmit" small />
-                Save to Draft
               </b-button>
             </b-col>
           </b-row>
@@ -296,6 +295,7 @@ export default {
 
       status: 'draft',
       invoice_id: 0,
+      invoice_no: 0,
       title: '',
       invoicePeriod: '',
       partnerItems: [],
@@ -314,7 +314,7 @@ export default {
     },
     successText() {
       return this.publishMode
-        ? `Satu ${this.$route.meta.name.singular} berhasil ditayangkan`
+        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     totalFee() {
@@ -365,7 +365,7 @@ export default {
         })
     },
     getTalents() {
-      if (this.partner && this.invoicePeriod) {
+      if (this.partner && this.invoicePeriod && !this.id) {
         this.$http
           .get(
             `/invoice/admin/getInvoiceAdminEstimation?partner_id=${this.partner.partner_detail.id}&period=${this.invoicePeriod}`,
@@ -382,19 +382,24 @@ export default {
           })
       }
     },
+    validateTalents() {
+      const errorTalent = this.talents.find(
+        talent => !talent.hired_at || !talent.total_fee,
+      )
+      return errorTalent !== undefined
+    },
     submit() {
       this.$refs.formRules.validate().then(success => {
-        if (success) {
+        if (success && !this.validateTalents()) {
           this.loadingSubmit = true
 
           const data = {
-            _method: this.method,
             invoice_id: this.invoice_id,
             user_requester_id: this.$store.state.auth.userData.id,
             user_to_id: this.partner.id,
             title: this.title,
             description: '',
-            invoice_period: this.invoicePeriod,
+            invoice_period: `${this.invoicePeriod}-01`,
             items: this.talents,
           }
 
@@ -414,7 +419,6 @@ export default {
                   },
                   { timeout: 2500 },
                 )
-                this.loadingSubmit = true
                 this.$router.push({
                   name: 'invoice-admin-show',
                   params: { id: res.data.data.id },
@@ -459,7 +463,7 @@ export default {
               }
             })
             .finally(() => {
-              this.loadingSubmit = true
+              this.loadingSubmit = false
             })
         }
       })
@@ -542,7 +546,9 @@ export default {
           this.invoice_status = data.status
           this.title = data.title
           this.partner = data.user_to
-          // this.invoicePeriod = data.invoice_period
+          this.invoicePeriod = data.invoice_period
+          this.invoice_no = data.invoice_km_id
+          this.invoice_id = data.id
           this.talents = data.invoice_detail_admin.map(admin => ({
             user_id: admin.user_id,
             description: admin.description,
@@ -550,7 +556,6 @@ export default {
             total_fee: admin.total_fee,
             talent_user: admin.user,
           }))
-          console.log({ data })
         })
         .finally(() => {
           this.loading = false
