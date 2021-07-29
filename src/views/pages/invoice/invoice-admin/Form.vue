@@ -70,6 +70,7 @@
                       :options="partnerItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchPartner"
+                      :disabled="disabledInput"
                     >
                       <li
                         v-if="hasMorePartner"
@@ -98,6 +99,7 @@
                         errors.length > 0 || submitErrors.name ? false : null
                       "
                       type="text"
+                      :disabled="disabledInput"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -118,6 +120,7 @@
                         altFormat: 'F Y',
                         dateFormat: 'Y-m',
                       }"
+                      :disabled="disabledInput"
                     />
                     <small class="text-danger">{{
                       errors[0] || submitErrors.name
@@ -144,7 +147,10 @@
           </b-row>
           <b-row v-for="(talent, index) in talents" :key="`talent-${index}`">
             <b-col md="2" offset-md="2">
-              <p class="mt-1">{{ talent.talent_user.full_name }}</p>
+              <p class="mt-1" v-if="talent.talent_user">
+                {{ talent.talent_user.full_name }}
+              </p>
+              <p class="mt-1" v-else>-</p>
             </b-col>
             <b-col md="2">
               <validation-provider
@@ -160,6 +166,7 @@
                     altFormat: 'd M Y',
                     dateFormat: 'Y-m-d',
                   }"
+                  :disabled="disabledInput"
                 />
                 <small class="text-danger">{{
                   errors[0] || submitErrors.name
@@ -177,6 +184,7 @@
                   :state="errors.length > 0 || submitErrors.name ? false : null"
                   type="text"
                   class="mt-1"
+                  :disabled="disabledInput"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -189,6 +197,7 @@
                   size="sm"
                   class="mt-1"
                   @click="talents.splice(index, 1)"
+                  v-show="!disabledInput"
                 >
                   <feather-icon icon="Trash2Icon" size="18" />
                 </b-button>
@@ -219,6 +228,7 @@
                 class="mr-50"
                 :disabled="loadingSubmit"
                 @click.prevent="submit('draft')"
+                v-show="!disabledInput"
               >
                 <b-spinner v-if="loadingSubmit" small />
                 Save
@@ -230,6 +240,7 @@
                 :disabled="loadingSubmit"
                 @click.prevent="publish"
                 v-if="id"
+                v-show="!disabledInput"
               >
                 <b-spinner v-if="loadingSubmit" small />
                 Publish
@@ -293,7 +304,6 @@ export default {
       min,
       minValue,
 
-      status: 'draft',
       invoice_id: 0,
       invoice_no: 0,
       title: '',
@@ -323,6 +333,27 @@ export default {
         0,
       )
     },
+    disabledInput() {
+      return this.invoice_status > 0
+    },
+    status() {
+      let statusText
+      switch (this.invoice_status) {
+        case 1:
+          statusText = 'publish'
+          break
+        case 2:
+          statusText = 'paid'
+          break
+        case 3:
+          statusText = 'cancel'
+          break
+        default:
+          statusText = 'draft'
+          break
+      }
+      return statusText
+    },
   },
   watch: {
     partner() {
@@ -333,8 +364,8 @@ export default {
     },
   },
   async created() {
+    await this.loadPartners()
     if (this.publishMode) await this.loadForm()
-    this.loadPartners()
   },
   methods: {
     onSearchPartner(search, loading) {
