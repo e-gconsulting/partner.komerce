@@ -25,15 +25,21 @@
         {{ data.value }}
       </template>
 
-      <template #cell(draft)="data">
-        <b-avatar variant="primary" v-if="data.item.status >= 0">
+      <template #cell(paid)="data">
+        <b-avatar variant="primary" v-if="data.item.status == 2">
           <feather-icon icon="CheckIcon" />
+        </b-avatar>
+        <b-avatar variant="secondary" v-else>
+          <feather-icon icon="XIcon" />
         </b-avatar>
       </template>
 
-      <template #cell(published)="data">
-        <b-avatar variant="primary" v-if="data.item.status >= 1">
+      <template #cell(cancel)="data">
+        <b-avatar variant="primary" v-if="data.item.status == 3">
           <feather-icon icon="CheckIcon" />
+        </b-avatar>
+        <b-avatar variant="secondary" v-else>
+          <feather-icon icon="XIcon" />
         </b-avatar>
       </template>
 
@@ -47,18 +53,9 @@
             }"
             class="btn-icon mr-50"
             size="sm"
-            variant="flat-warning"
+            variant="flat-info"
           >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-          <b-button
-            class="btn-icon mr-50"
-            size="sm"
-            variant="flat-danger"
-            @click="remove(data.item.id)"
-            v-if="data.item.status == 0"
-          >
-            <feather-icon icon="TrashIcon" />
+            <feather-icon icon="SearchIcon" />
           </b-button>
         </b-row>
       </template>
@@ -137,12 +134,12 @@ export default {
           label: 'Nominal',
         },
         {
-          key: 'draft',
-          label: 'Draft',
+          key: 'paid',
+          label: 'Paid',
         },
         {
-          key: 'published',
-          label: 'Published',
+          key: 'cancel',
+          label: 'Cancel',
         },
         {
           key: 'action',
@@ -165,7 +162,7 @@ export default {
       this.loading = true
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=0,1`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=2,3`,
         )
         .then(res => {
           const { data } = res.data

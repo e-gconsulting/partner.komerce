@@ -11,7 +11,7 @@
           <active />
         </b-tab>
         <b-tab title="Riwayat" lazy>
-          <h1>Riwayat</h1>
+          <history />
         </b-tab>
       </b-tabs>
     </b-card-actions>
@@ -22,13 +22,16 @@
 import { BTabs, BTab } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Active from './Active.vue'
+import History from './History.vue'
 
 export default {
   components: {
     BCardActions,
     BTabs,
     BTab,
+
     Active,
+    History,
   },
   data() {
     const tabs = ['active', 'history']
