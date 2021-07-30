@@ -378,15 +378,16 @@ export default {
       that.loadPartners(search).finally(() => loading(false))
     }, 500),
     loadPartners(search) {
+      const key = /^-?\d+$/.test(search) ? 'no_partner' : 'name'
+
       return this.$http
         .get('/user/partner/pagination', {
           params: {
-            name: search,
+            [key]: search,
             page: 1,
             limit: 5,
             sort: 'name',
             direction: 'asc',
-            account_status: 'active',
           },
         })
         .then(async response => {

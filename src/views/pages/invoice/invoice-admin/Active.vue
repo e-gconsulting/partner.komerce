@@ -55,7 +55,7 @@
             class="btn-icon mr-50"
             size="sm"
             variant="flat-danger"
-            @click="remove(data.item.id)"
+            @click="confirmDelete(data.item.id)"
             v-if="data.item.status == 0"
           >
             <feather-icon icon="TrashIcon" />
@@ -177,11 +177,29 @@ export default {
           this.loading = false
         })
     },
+    confirmDelete(data) {
+      this.$swal({
+        title: 'Anda yakin?',
+        text: 'Hapus satu Invoice Admin dari tabel. Aksi ini tidak dapat dibatalkan.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.remove(data)
+        }
+      })
+    },
     async remove(id) {
       this.loading = true
       this.$http({
         method: 'delete',
-        url: `api/invoice/admin/deleteDraft/${id}`,
+        url: `/invoice/admin/deleteDraft/${id}`,
       })
         .then(() => {
           this.$toast(
@@ -189,7 +207,7 @@ export default {
               component: ToastificationContent,
               props: {
                 title: 'Success',
-                text: this.successText,
+                text: 'Draft Invoice Admin Berhasil Dihapus',
                 variant: 'success',
                 attachment: 'CheckIcon',
               },

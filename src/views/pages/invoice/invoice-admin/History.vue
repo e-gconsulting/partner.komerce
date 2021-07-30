@@ -94,7 +94,6 @@ import {
   BAvatar,
   BPagination,
 } from 'bootstrap-vue'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -168,32 +167,6 @@ export default {
           const { data } = res.data
           this.items = data.data
           this.totalRows = data.total
-        })
-        .catch(() => {})
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    async remove(id) {
-      this.loading = true
-      this.$http({
-        method: 'delete',
-        url: `api/invoice/admin/deleteDraft/${id}`,
-      })
-        .then(() => {
-          this.$toast(
-            {
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                text: this.successText,
-                variant: 'success',
-                attachment: 'CheckIcon',
-              },
-            },
-            { timeout: 2500 },
-          )
-          this.getData()
         })
         .catch(() => {})
         .finally(() => {
