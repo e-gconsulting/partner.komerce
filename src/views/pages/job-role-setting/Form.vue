@@ -222,13 +222,11 @@ export default {
           {},
           {
             params: {
-              division_id: this.divisionId,
               position_name: search,
               page: 1,
               limit: 5,
               sort: 'name',
               direction: 'asc',
-              is_division_external: 1,
             },
           },
         )
