@@ -410,7 +410,25 @@ export default {
       this.assignments.splice(index, 1)
     },
     submit() {
-      this.$refs.confirmationModalComponent.show()
+      this.$refs.formRules.validate().then(success => {
+        if (success && this.assignments.length) {
+          this.$refs.confirmationModalComponent.show()
+        } else {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text:
+                  'Check kembali isian kamu, pastikan ada satu assignment yang diinputkan',
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
+        }
+      })
     },
     save() {
       this.$refs.formRules.validate().then(success => {
