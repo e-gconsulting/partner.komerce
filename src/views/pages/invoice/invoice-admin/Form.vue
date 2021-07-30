@@ -58,6 +58,25 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
+                <b-form-group label="Judul Invoice" label-cols-md="4">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Judul Invoice"
+                    rules="required"
+                  >
+                    <b-form-input
+                      v-model="title"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
+                      type="text"
+                      disabled
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
                 <b-form-group label="Partner" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
@@ -82,25 +101,6 @@
                         <feather-icon icon="MoreHorizontalIcon" size="16" />
                       </li>
                     </v-select>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Judul Invoice" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Judul Invoice"
-                    rules="required"
-                  >
-                    <b-form-input
-                      v-model="title"
-                      :state="
-                        errors.length > 0 || submitErrors.name ? false : null
-                      "
-                      type="text"
-                      :disabled="disabledInput"
-                    />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
@@ -319,7 +319,6 @@ export default {
 
       invoice_id: 0,
       invoice_no: 0,
-      title: '',
       invoicePeriod: '',
       partnerItems: [],
       hasMorePartner: false,
@@ -366,6 +365,28 @@ export default {
           break
       }
       return statusText
+    },
+    title() {
+      const noPartner = this.partner?.no_partner || ''
+      const fullName = this.partner?.full_name || ''
+      const period = new Date(this.invoicePeriod)
+      const months = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+      ]
+      return `Invoice Admin Partner ${noPartner} ${fullName} ${months[
+        period.getMonth()
+      ] || ''} ${period.getFullYear() || ''}`
     },
   },
   watch: {
