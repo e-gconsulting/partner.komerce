@@ -16,6 +16,11 @@
         <feather-icon icon="SettingsIcon" class="mr-50" />
         <span class="align-middle">Manage</span>
       </b-button>
+      <feather-icon
+        icon="ChevronDownIcon"
+        class="ml-2 mr-50"
+        v-b-toggle="[`collapse-${index}`]"
+      />
     </b-col>
     <b-col md="12" v-if="item.childrens.length > 0">
       <b-collapse :id="`collapse-${index}`" class="mt-2">
