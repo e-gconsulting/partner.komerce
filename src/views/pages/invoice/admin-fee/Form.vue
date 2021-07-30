@@ -61,6 +61,24 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
+                <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Jenis Sharing Fee"
+                    rules="required"
+                  >
+                    <v-select
+                      v-model="admin_fee_discount_type"
+                      :reduce="option => option.value"
+                      label="label"
+                      :options="sharing_fee_type_option"
+                    >
+                    </v-select>
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
                 <b-form-group label="Biaya Standar" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
@@ -79,24 +97,6 @@
                     <small class="text-danger">{{
                       errors[0] || submitErrors.admin_fee
                     }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Jenis Sharing Fee"
-                    rules="required"
-                  >
-                    <v-select
-                      v-model="admin_fee_discount_type"
-                      :reduce="option => option.value"
-                      label="label"
-                      :options="sharing_fee_type_option"
-                    >
-                    </v-select>
-                    <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
                 <hr />
@@ -270,6 +270,11 @@ export default {
       const endpoint = '/talentAdminFee'
       return this.editMode ? `${endpoint}/${this.id}` : endpoint
     },
+    validateFee() {
+      return this.talent_admin_fee_discounts.filter(
+        talentAdminFeeDiscount => talentAdminFeeDiscount.admin_fee_discount_value > this.admin_fee,
+      ).length
+    },
   },
   async mounted() {
     this.loadPositions()
@@ -318,7 +323,7 @@ export default {
     },
     submit() {
       this.$refs.formRules.validate().then(success => {
-        if (success) {
+        if (success && !this.validateFee) {
           this.loadingSubmit = true
 
           const data = {
@@ -373,6 +378,22 @@ export default {
                 )
               }
             })
+            .finally(() => {
+              this.loadingSubmit = false
+            })
+        } else {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text: 'Nilai diskon tidak boleh melebihi biaya standart',
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
         }
       })
     },

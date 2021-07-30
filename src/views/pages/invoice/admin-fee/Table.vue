@@ -25,7 +25,9 @@ export default {
         {
           key: 'admin_fee',
           label: 'Biaya Standar',
-          formatter: (val, key, item) => (item.admin_fee_discount_type === 'rp' ? filters.rupiah(val) : val),
+          formatter: (val, key, item) => (item.admin_fee_discount_type === 'rp'
+            ? filters.rupiah(val)
+            : filters.number(val)),
         },
         {
           key: 'admin_fee_discount_type',

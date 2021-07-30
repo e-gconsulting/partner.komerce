@@ -8,7 +8,7 @@ const axiosIns = axios.create({
   // ================================
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 14000,
-  // headers: { 'X-Custom-Header': 'foobar' },
+  headers: { 'Application-Name': 'Web Komerce' },
 })
 
 axiosIns.interceptors.response.use(
@@ -19,8 +19,9 @@ axiosIns.interceptors.response.use(
     if (error.response.status === 401 || error.response.status === 403) {
       window.location('/unauthorized')
     }
+    /* eslint-disable comma-dangle */
     return Promise.reject(error)
-  },
+  }
 )
 
 Vue.prototype.$http = axiosIns
