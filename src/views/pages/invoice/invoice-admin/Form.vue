@@ -119,6 +119,7 @@
                         altInput: true,
                         altFormat: 'F Y',
                         dateFormat: 'Y-m',
+                        ...configs.monthSelect,
                       }"
                       :disabled="disabledInput"
                     />
@@ -270,8 +271,10 @@ import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
-import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
+import flatPickr from 'vue-flatpickr-component'
+import MonthSelectPlugin from 'flatpickr/dist/plugins/monthSelect/index'
+import 'flatpickr/dist/plugins/monthSelect/style.css'
 
 export default {
   directives: {
@@ -303,6 +306,16 @@ export default {
       required,
       min,
       minValue,
+      configs: {
+        monthSelect: {
+          plugins: [
+            new MonthSelectPlugin({
+              shorthand: true,
+              dateFormat: 'Y-m',
+            }),
+          ],
+        },
+      },
 
       invoice_id: 0,
       invoice_no: 0,
