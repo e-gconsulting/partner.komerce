@@ -142,16 +142,18 @@
               <b>Tanggal Assign</b>
             </b-col>
             <b-col md="2">
-              <b>Nominal</b>
+              <b>Total Gaji</b>
+            </b-col>
+            <b-col md="2">
+              <b>Gaji Bersih</b>
             </b-col>
             <b-col md="2" />
           </b-row>
           <b-row v-for="(talent, index) in talents" :key="`talent-${index}`">
             <b-col md="2" offset-md="2">
-              <p class="mt-1" v-if="talent.talent_user">
-                {{ talent.talent_user.full_name }}
+              <p class="mt-1">
+                {{ talent.full_name }}
               </p>
-              <p class="mt-1" v-else>-</p>
             </b-col>
             <b-col md="2">
               <validation-provider
@@ -181,9 +183,9 @@
                 rules="required"
               >
                 <b-form-input
-                  v-model="talent.total_fee"
+                  v-model="talent.total_gross_salary"
                   :state="errors.length > 0 || submitErrors.name ? false : null"
-                  type="text"
+                  type="number"
                   class="mt-1"
                   :disabled="disabledInput"
                 />
@@ -191,18 +193,23 @@
               </validation-provider>
             </b-col>
             <b-col md="2">
-              <b-row>
-                <b-button
-                  variant="outline-danger"
-                  type="button"
-                  size="sm"
+              <validation-provider
+                #default="{ errors }"
+                name="Nomial"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="talent.total_net_salary"
+                  :state="errors.length > 0 || submitErrors.name ? false : null"
+                  type="number"
                   class="mt-1"
-                  @click="talents.splice(index, 1)"
-                  v-show="!disabledInput"
-                >
-                  <feather-icon icon="Trash2Icon" size="18" />
-                </b-button>
-              </b-row>
+                  :disabled="disabledInput"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-col>
+            <b-col md="2 pt-2">
+              <b-badge variant="light-primary"> Primary </b-badge>
             </b-col>
           </b-row>
           <b-row>
@@ -266,6 +273,7 @@ import {
   BSpinner,
   VBTooltip,
   BOverlay,
+  BBadge,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -293,6 +301,8 @@ export default {
     BButton,
     BOverlay,
     BSpinner,
+    BBadge,
+
     flatPickr,
     vSelect,
   },
@@ -341,7 +351,7 @@ export default {
     },
     totalFee() {
       return this.talents.reduce(
-        (total, talent) => total + parseInt(talent.total_fee, 0),
+        (total, talent) => total + parseInt(talent.total_gross_salary, 0),
         0,
       )
     },
@@ -384,7 +394,7 @@ export default {
         'November',
         'Desember',
       ]
-      return `Invoice Admin Partner ${noPartner} ${fullName} ${months[
+      return `Invoice Talent Partner ${noPartner} ${fullName} ${months[
         period.getMonth()
       ] || ''} ${period.getFullYear() || ''}`
     },
@@ -431,26 +441,29 @@ export default {
         })
     },
     getTalents() {
-      if (this.partner && this.invoicePeriod && !this.id) {
+      if (this.partner && this.partner) {
         this.$http
           .get(
-            `/invoice/admin/getInvoiceAdminEstimation?partner_id=${this.partner.partner_detail.id}&period=${this.invoicePeriod}`,
+            `/talent?limit=5&status=hired&no_partner=${this.partner.no_partner}`,
           )
           .then(res => {
-            const { talent_admin_fee } = res.data.data
-            this.talents = talent_admin_fee.map(value => ({
-              user_id: value.talent_user.id,
-              description: '',
-              hired_at: value.hire_at,
-              total_fee: value.actual_talent_fee,
-              talent_user: value.talent_user,
+            const { data } = res.data.data
+            this.talents = data.map(value => ({
+              user_id: value.id,
+              description: '-',
+              hired_at: value.talent.hired_at,
+              total_gross_salary: 0,
+              total_net_salary: 0,
+              full_name: value.full_name,
             }))
           })
       }
     },
     validateTalents() {
       const errorTalent = this.talents.find(
-        talent => !talent.hired_at || !talent.total_fee,
+        talent => !talent.hired_at
+          || !talent.total_gross_salary
+          || !talent.total_net_salary,
       )
       return errorTalent !== undefined
     },
@@ -470,7 +483,7 @@ export default {
           }
 
           this.$http
-            .post('/invoice/admin/saveDraft', data)
+            .post('/invoice/gaji/saveDraft', data)
             .then(res => {
               if (res.data.status) {
                 this.$toast(
@@ -486,7 +499,7 @@ export default {
                   { timeout: 2500 },
                 )
                 this.$router.push({
-                  name: 'invoice-admin-show',
+                  name: 'invoice-talent-show',
                   params: { id: res.data.data.id },
                 })
               } else {
@@ -531,6 +544,19 @@ export default {
             .finally(() => {
               this.loadingSubmit = false
             })
+        } else {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text: 'Harap periksa lagi inputan Anda.',
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
         }
       })
     },
@@ -604,7 +630,7 @@ export default {
       this.loading = true
 
       return this.$http
-        .get(`/invoice/detail/admin/${this.id}`)
+        .get(`/invoice/detail/gaji/${this.id}`)
         .then(response => {
           const { data } = response.data
 
