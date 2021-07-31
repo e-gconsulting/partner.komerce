@@ -166,9 +166,10 @@ export default {
       const userRequesterId = this.$store.state.auth.userData.role_name !== 'Admin'
         ? this.$store.state.auth.userData.id
         : ''
+
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=0,1&user_requester_id=${userRequesterId}`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=2&status=0,1&user_requester_id=${userRequesterId}`,
         )
         .then(res => {
           const { data } = res.data

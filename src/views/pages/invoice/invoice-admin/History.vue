@@ -159,9 +159,12 @@ export default {
   methods: {
     async getData() {
       this.loading = true
+      const userRequesterId = this.$store.state.auth.userData.role_name !== 'Admin'
+        ? this.$store.state.auth.userData.id
+        : ''
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=2,3`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=2,3&user_requester_id=${userRequesterId}`,
         )
         .then(res => {
           const { data } = res.data

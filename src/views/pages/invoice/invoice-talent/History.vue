@@ -25,15 +25,21 @@
         {{ data.value }}
       </template>
 
-      <template #cell(draft)="data">
-        <b-avatar variant="primary" v-if="data.item.status >= 0">
+      <template #cell(paid)="data">
+        <b-avatar variant="primary" v-if="data.item.status == 2">
           <feather-icon icon="CheckIcon" />
+        </b-avatar>
+        <b-avatar variant="secondary" v-else>
+          <feather-icon icon="XIcon" />
         </b-avatar>
       </template>
 
-      <template #cell(published)="data">
-        <b-avatar variant="primary" v-if="data.item.status >= 1">
+      <template #cell(cancel)="data">
+        <b-avatar variant="primary" v-if="data.item.status == 3">
           <feather-icon icon="CheckIcon" />
+        </b-avatar>
+        <b-avatar variant="secondary" v-else>
+          <feather-icon icon="XIcon" />
         </b-avatar>
       </template>
 
@@ -47,18 +53,9 @@
             }"
             class="btn-icon mr-50"
             size="sm"
-            variant="flat-warning"
+            variant="flat-info"
           >
-            <feather-icon icon="EditIcon" />
-          </b-button>
-          <b-button
-            class="btn-icon mr-50"
-            size="sm"
-            variant="flat-danger"
-            @click="confirmDelete(data.item.id)"
-            v-if="data.item.status == 0"
-          >
-            <feather-icon icon="TrashIcon" />
+            <feather-icon icon="SearchIcon" />
           </b-button>
         </b-row>
       </template>
@@ -97,7 +94,6 @@ import {
   BAvatar,
   BPagination,
 } from 'bootstrap-vue'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -137,12 +133,12 @@ export default {
           label: 'Nominal',
         },
         {
-          key: 'draft',
-          label: 'Draft',
+          key: 'paid',
+          label: 'Paid',
         },
         {
-          key: 'published',
-          label: 'Published',
+          key: 'cancel',
+          label: 'Cancel',
         },
         {
           key: 'action',
@@ -166,59 +162,15 @@ export default {
       const userRequesterId = this.$store.state.auth.userData.role_name !== 'Admin'
         ? this.$store.state.auth.userData.id
         : ''
+
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=0,1&user_requester_id=${userRequesterId}`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=2&status=2,3&user_requester_id=${userRequesterId}`,
         )
         .then(res => {
           const { data } = res.data
           this.items = data.data
           this.totalRows = data.total
-        })
-        .catch(() => {})
-        .finally(() => {
-          this.loading = false
-        })
-    },
-    confirmDelete(data) {
-      this.$swal({
-        title: 'Anda yakin?',
-        text:
-          'Hapus satu Invoice Admin dari tabel. Aksi ini tidak dapat dibatalkan.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus!',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-danger ml-1',
-        },
-        buttonsStyling: false,
-      }).then(result => {
-        if (result.value) {
-          this.remove(data)
-        }
-      })
-    },
-    async remove(id) {
-      this.loading = true
-      this.$http({
-        method: 'delete',
-        url: `/invoice/admin/deleteDraft/${id}`,
-      })
-        .then(() => {
-          this.$toast(
-            {
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                text: 'Draft Invoice Admin Berhasil Dihapus',
-                variant: 'success',
-                attachment: 'CheckIcon',
-              },
-            },
-            { timeout: 2500 },
-          )
-          this.getData()
         })
         .catch(() => {})
         .finally(() => {
