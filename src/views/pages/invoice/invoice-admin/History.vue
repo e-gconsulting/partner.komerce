@@ -1,87 +1,109 @@
 <template>
-  <b-overlay
-    variant="light"
-    :show="loading"
-    spinner-variant="primary"
-    blur="0"
-    opacity=".5"
-    rounded="sm"
-  >
-    <b-table
-      responsive
-      :fields="fields"
-      :items="items"
-      class="mb-0"
-      empty-text="Tidak ada data untuk ditampilkan."
-    >
-      <template #cell(Phone)="data">
-        <span class="text-nowrap">
-          {{ data.value }}
-        </span>
-      </template>
-
-      <!-- Optional default data cell scoped slot -->
-      <template #cell()="data">
-        {{ data.value }}
-      </template>
-
-      <template #cell(paid)="data">
-        <b-avatar variant="primary" v-if="data.item.status == 2">
-          <feather-icon icon="CheckIcon" />
-        </b-avatar>
-        <b-avatar variant="secondary" v-else>
-          <feather-icon icon="XIcon" />
-        </b-avatar>
-      </template>
-
-      <template #cell(cancel)="data">
-        <b-avatar variant="primary" v-if="data.item.status == 3">
-          <feather-icon icon="CheckIcon" />
-        </b-avatar>
-        <b-avatar variant="secondary" v-else>
-          <feather-icon icon="XIcon" />
-        </b-avatar>
-      </template>
-
-      <template #cell(action)="data">
-        <b-row>
-          <b-button
-            tag="router-link"
-            :to="{
-              name: $route.meta.routeShow,
-              params: { id: data.item.id },
-            }"
-            class="btn-icon mr-50"
-            size="sm"
-            variant="flat-info"
-          >
-            <feather-icon icon="SearchIcon" />
-          </b-button>
-        </b-row>
-      </template>
-    </b-table>
+  <div>
     <b-row>
-      <b-col md="12" class="ml-1 my-2">
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="totalRows"
-          :per-page="perPage"
-          first-number
-          last-number
-          prev-class="prev-item"
-          next-class="next-item"
-          class="mb-0"
+      <b-col md="4" class="mb-2 ml-2">
+        <label for="">Pilih Partner</label>
+        <v-select
+          v-model="partner"
+          label="full_name"
+          :options="partnerItems"
+          placeholder="Ketik untuk mencari..."
+          @search="onSearchPartner"
         >
-          <template #prev-text>
-            <feather-icon icon="ChevronLeftIcon" size="18" />
-          </template>
-          <template #next-text>
-            <feather-icon icon="ChevronRightIcon" size="18" />
-          </template>
-        </b-pagination>
+          <li
+            v-if="hasMorePartner"
+            slot="list-footer"
+            class="vs__dropdown-option vs__dropdown-option--disabled"
+          >
+            <feather-icon icon="MoreHorizontalIcon" size="16" />
+          </li>
+        </v-select>
       </b-col>
     </b-row>
-  </b-overlay>
+    <b-overlay
+      variant="light"
+      :show="loading"
+      spinner-variant="primary"
+      blur="0"
+      opacity=".5"
+      rounded="sm"
+    >
+      <b-table
+        responsive
+        :fields="fields"
+        :items="items"
+        class="mb-0"
+        empty-text="Tidak ada data untuk ditampilkan."
+      >
+        <template #cell(Phone)="data">
+          <span class="text-nowrap">
+            {{ data.value }}
+          </span>
+        </template>
+
+        <!-- Optional default data cell scoped slot -->
+        <template #cell()="data">
+          {{ data.value }}
+        </template>
+
+        <template #cell(paid)="data">
+          <b-avatar variant="primary" v-if="data.item.status == 2">
+            <feather-icon icon="CheckIcon" />
+          </b-avatar>
+          <b-avatar variant="secondary" v-else>
+            <feather-icon icon="XIcon" />
+          </b-avatar>
+        </template>
+
+        <template #cell(cancel)="data">
+          <b-avatar variant="primary" v-if="data.item.status == 3">
+            <feather-icon icon="CheckIcon" />
+          </b-avatar>
+          <b-avatar variant="secondary" v-else>
+            <feather-icon icon="XIcon" />
+          </b-avatar>
+        </template>
+
+        <template #cell(action)="data">
+          <b-row>
+            <b-button
+              tag="router-link"
+              :to="{
+                name: $route.meta.routeShow,
+                params: { id: data.item.id },
+              }"
+              class="btn-icon mr-50"
+              size="sm"
+              variant="flat-info"
+            >
+              <feather-icon icon="SearchIcon" />
+            </b-button>
+          </b-row>
+        </template>
+      </b-table>
+      <b-row>
+        <b-col md="12" class="ml-1 my-2">
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            first-number
+            last-number
+            prev-class="prev-item"
+            next-class="next-item"
+            class="mb-0"
+          >
+            <template #prev-text>
+              <feather-icon icon="ChevronLeftIcon" size="18" />
+            </template>
+            <template #next-text>
+              <feather-icon icon="ChevronRightIcon" size="18" />
+            </template>
+          </b-pagination>
+        </b-col>
+      </b-row>
+    </b-overlay>
+  </div>
 </template>
 
 <script>
@@ -94,6 +116,7 @@ import {
   BAvatar,
   BPagination,
 } from 'bootstrap-vue'
+import vSelect from 'vue-select'
 
 export default {
   components: {
@@ -104,6 +127,8 @@ export default {
     BOverlay,
     BAvatar,
     BPagination,
+
+    vSelect,
   },
   data() {
     return {
@@ -146,25 +171,63 @@ export default {
         },
       ],
       items: [],
+
+      partnerItems: [],
+      hasMorePartner: false,
+      partner: '',
     }
   },
   mounted() {
+    this.loadPartners()
     this.getData()
   },
   watch: {
     currentPage() {
       this.getData()
     },
+    partner() {
+      this.getData()
+    },
   },
   methods: {
+    onSearchPartner(search, loading) {
+      if (search.length) {
+        this.searchPartner(loading, search, this)
+      }
+    },
+    searchPartner: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadPartners(search).finally(() => loading(false))
+    }, 500),
+    loadPartners(search) {
+      const key = /^-?\d+$/.test(search) ? 'no_partner' : 'name'
+
+      return this.$http
+        .get('/user/partner/pagination', {
+          params: {
+            [key]: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
+        .then(async response => {
+          const { data } = response.data.data
+          this.partnerItems = data
+          this.hasMorePartner = response.data.data.total > this.partnerItems.length
+        })
+    },
     async getData() {
       this.loading = true
       const userRequesterId = this.$store.state.auth.userData.role_name !== 'Admin'
         ? this.$store.state.auth.userData.id
         : ''
+      const userToId = this.partner?.id || ''
+
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=2,3&user_requester_id=${userRequesterId}`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=2,3&user_requester_id=${userRequesterId}&user_to_id=${userToId}`,
         )
         .then(res => {
           const { data } = res.data
