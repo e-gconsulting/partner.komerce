@@ -5,18 +5,13 @@
     no-actions
   >
     <b-row>
-      <b-col
-        md="6"
-      >
+      <b-col md="6">
         <!-- form -->
         <validation-observer ref="formRules">
           <b-form>
             <b-row>
               <b-col md="12">
-                <b-form-group
-                  label="Nama"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Nama" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Nama"
@@ -24,18 +19,19 @@
                   >
                     <b-form-input
                       v-model="name"
-                      :state="errors.length > 0 || submitErrors.name ? false:null"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
                       :formatter="capitalize"
                     />
-                    <small class="text-danger">{{ errors[0] || submitErrors.name }}</small>
+                    <small class="text-danger">{{
+                      errors[0] || submitErrors.name
+                    }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Skill"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Skill" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Skill"
@@ -46,7 +42,7 @@
                       label="name"
                       :reduce="option => option.id"
                       :options="skillItems"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       :filterable="false"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchSkill"
@@ -56,10 +52,7 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Phone"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Phone" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Phone"
@@ -75,10 +68,7 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Email"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Email" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Email"
@@ -87,36 +77,35 @@
                     <b-form-input
                       v-model="email"
                       type="email"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
-                <hr>
+                <hr />
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Bank Name"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Bank Name" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Bank Name"
                     rules="required"
                   >
-                    <b-form-input
+                    <v-select
                       v-model="bankName"
-                      :state="errors.length > 0 ? false:null"
+                      label="name"
+                      :reduce="option => option.name"
+                      :options="banks"
+                      :filterable="true"
+                      :state="errors.length > 0 ? false : null"
+                      placeholder="Ketik untuk mencari..."
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Account Name"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Account Name" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Account Name"
@@ -125,17 +114,14 @@
                     <b-form-input
                       v-model="accountName"
                       :formatter="capitalize"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="Account Number"
-                  label-cols-md="4"
-                >
+                <b-form-group label="Account Number" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="Account Number"
@@ -144,18 +130,15 @@
                     <b-form-input
                       v-model="accountNumber"
                       type="number"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                     />
                     <small class="text-danger d-block">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
-                <hr>
+                <hr />
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="City"
-                  label-cols-md="4"
-                >
+                <b-form-group label="City" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
                     name="City"
@@ -166,7 +149,7 @@
                       label="name"
                       :reduce="option => option.id"
                       :options="cityItems"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       :filterable="false"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchCity"
@@ -176,14 +159,8 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="NPWP"
-                  label-cols-md="4"
-                >
-                  <validation-provider
-                    #default="{ errors }"
-                    name="NPWP"
-                  >
+                <b-form-group label="NPWP" label-cols-md="4">
+                  <validation-provider #default="{ errors }" name="NPWP">
                     <cleave
                       v-model="npwp"
                       class="form-control"
@@ -194,31 +171,24 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group
-                  label="CV"
-                  label-cols-md="4"
-                >
+                <b-form-group label="CV" label-cols-md="4">
                   <b-form-row>
                     <b-col>
-                      <validation-provider
-                        #default="{ errors }"
-                        name="CV"
-                      >
+                      <validation-provider #default="{ errors }" name="CV">
                         <b-form-file
                           v-model="cvFile"
-                          :state="errors.length > 0 ? false:null"
-                          :placeholder="cvInitialFile ?
-                            cvInitialFile.split('/').pop()
-                            : `Pilih atau drop file disini...`"
+                          :state="errors.length > 0 ? false : null"
+                          :placeholder="
+                            cvInitialFile
+                              ? cvInitialFile.split('/').pop()
+                              : `Pilih atau drop file disini...`
+                          "
                           drop-placeholder="Drop file disini..."
                         />
                         <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
                     </b-col>
-                    <b-col
-                      v-if="cvInitialFile"
-                      cols="auto"
-                    >
+                    <b-col v-if="cvInitialFile" cols="auto">
                       <b-button
                         v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                         v-b-tooltip.hover.top="'Lihat File'"
@@ -233,10 +203,7 @@
                   </b-form-row>
                 </b-form-group>
               </b-col>
-              <b-col
-                md="12"
-                class="mt-2"
-              >
+              <b-col md="12" class="mt-2">
                 <b-button
                   :variant="editMode ? 'warning' : 'primary'"
                   type="submit"
@@ -244,10 +211,7 @@
                   :disabled="loadingSubmit"
                   @click.prevent="submit"
                 >
-                  <b-spinner
-                    v-if="loadingSubmit"
-                    small
-                  />
+                  <b-spinner v-if="loadingSubmit" small />
                   Submit
                 </b-button>
               </b-col>
@@ -262,7 +226,16 @@
 <script>
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BFormInput, BFormGroup, BForm, BRow, BCol, BButton, BSpinner, BFormFile, BFormRow, VBTooltip,
+  BFormInput,
+  BFormGroup,
+  BForm,
+  BRow,
+  BCol,
+  BButton,
+  BSpinner,
+  BFormFile,
+  BFormRow,
+  VBTooltip,
 } from 'bootstrap-vue'
 import { required, min } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -316,6 +289,7 @@ export default {
       cvInitialFile: null,
       skillItems: [],
       cityItems: [],
+      banks: [],
 
       options: {
         phone: {
@@ -337,7 +311,8 @@ export default {
       return this.id !== undefined
     },
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
+      return this.editMode
+        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
@@ -353,8 +328,20 @@ export default {
 
     this.loadSkills()
     this.loadCities()
+    this.loadBanks()
   },
   methods: {
+    loadBanks() {
+      this.loading = true
+      this.$http
+        .get('xendit/disbursementbankAvailable')
+        .then(({ data }) => {
+          this.banks = data.data
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     submit() {
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -367,6 +354,10 @@ export default {
           formData.append('phone', this.phone)
           formData.append('email', this.email)
           formData.append('regency_id', this.cityId)
+          formData.append(
+            'bank_code',
+            this.banks.find(bank => bank.name === this.bankName).code,
+          )
           formData.append('bank_name', this.bankName)
           formData.append('bank_account_number', this.accountNumber)
           formData.append('bank_account_name', this.accountName)
@@ -374,17 +365,21 @@ export default {
 
           if (this.cvFile) formData.append('cv', this.cvFile)
 
-          this.$http.post(this.endpoint, formData)
+          this.$http
+            .post(this.endpoint, formData)
             .then(() => {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  text: this.successText,
-                  variant: 'success',
-                  attachment: 'CheckIcon',
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    text: this.successText,
+                    variant: 'success',
+                    attachment: 'CheckIcon',
+                  },
                 },
-              }, { timeout: 2500 })
+                { timeout: 2500 },
+              )
               this.$router.push({ name: this.$route.meta.navActiveLink })
             })
             .catch(error => {
@@ -392,9 +387,9 @@ export default {
 
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
-                  Object.entries(error.response.data.data).map(
-                    ([key, value]) => [key, value[0]],
-                  ),
+                  Object.entries(
+                    error.response.data.data,
+                  ).map(([key, value]) => [key, value[0]]),
                 )
               }
             })
@@ -404,7 +399,8 @@ export default {
     loadForm() {
       this.$refs.formCard.showLoading = true
 
-      return this.$http.get(this.endpoint)
+      return this.$http
+        .get(this.endpoint)
         .then(async response => {
           const { data } = response.data
 
@@ -445,30 +441,32 @@ export default {
       that.loadCities(search).finally(() => loading(false))
     }, 500),
     loadSkills(search) {
-      return this.$http.get('/skill', {
-        params: {
-          keyword: search,
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/skill', {
+          params: {
+            keyword: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
           this.skillItems = data
         })
     },
     loadCities(search) {
-      return this.$http.get('/region/regency', {
-        params: {
-          keyword: search ?? 'jakarta', // TODO: remove initial keyword after pagination works
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/regency', {
+          params: {
+            keyword: search ?? 'jakarta', // TODO: remove initial keyword after pagination works
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.cityItems = data
@@ -482,7 +480,8 @@ export default {
       return new File([blob], filename, { type: blob.type })
     },
     capitalize(value) {
-      return value.toLowerCase()
+      return value
+        .toLowerCase()
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')

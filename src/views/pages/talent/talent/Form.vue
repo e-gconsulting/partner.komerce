@@ -513,7 +513,7 @@
                       label="name"
                       :reduce="option => option.name"
                       :options="banks"
-                      :filterable="false"
+                      :filterable="true"
                       :state="errors.length > 0 ? false : null"
                       placeholder="Ketik untuk mencari..."
                     />
@@ -691,6 +691,7 @@ export default {
       staffId: '',
       email: '',
       phone: '',
+      bankCode: '',
       bankName: '',
       accountNumber: '',
       accountName: '',
@@ -908,6 +909,12 @@ export default {
           formData.append('email', this.email)
 
           if (!this.selfRegister && !this.editProfileMode) {
+            if (this.bankName) {
+              formData.append(
+                'bank_code',
+                this.banks.find(bank => bank.name === this.bankName).code,
+              )
+            }
             if (this.bankName) formData.append('bank_name', this.bankName)
             if (this.accountName) formData.append('bank_owner_name', this.accountName)
             if (this.accountNumber) formData.append('bank_no', this.accountNumber)

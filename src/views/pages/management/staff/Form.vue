@@ -388,7 +388,7 @@
                       label="name"
                       :reduce="option => option.name"
                       :options="banks"
-                      :filterable="false"
+                      :filterable="true"
                       :state="errors.length > 0 ? false : null"
                       placeholder="Ketik untuk mencari..."
                     />
@@ -559,6 +559,7 @@ export default {
       email: '',
       phone: '',
       banks: [],
+      bankCode: '',
       bankName: '',
       accountNumber: '',
       accountName: '',
@@ -690,6 +691,10 @@ export default {
           formData.append('no_hp', this.phone)
           formData.append('email', this.email)
 
+          formData.append(
+            'bank_code',
+            this.banks.find(bank => bank.name === this.bankName).code,
+          )
           formData.append('bank_name', this.bankName)
           formData.append('bank_owner_name', this.accountName)
           formData.append('bank_no', this.accountNumber)
