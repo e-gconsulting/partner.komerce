@@ -147,7 +147,9 @@
             <b-col md="2">
               <b>Gaji Bersih</b>
             </b-col>
-            <b-col md="2" />
+            <b-col md="2">
+              <b>Status Disburse</b>
+            </b-col>
           </b-row>
           <b-row v-for="(talent, index) in talents" :key="`talent-${index}`">
             <b-col md="2" offset-md="2">
@@ -209,7 +211,7 @@
               </validation-provider>
             </b-col>
             <b-col md="2 pt-2">
-              <b-badge variant="light-primary"> Primary </b-badge>
+              <b-badge variant="light-secondary"> N/A </b-badge>
             </b-col>
           </b-row>
           <b-row>
@@ -400,11 +402,10 @@ export default {
     },
   },
   watch: {
-    partner() {
-      this.getTalents()
-    },
-    invoicePeriod() {
-      this.getTalents()
+    partner(newVal, oldVal) {
+      if (oldVal) {
+        this.getTalents()
+      }
     },
   },
   async created() {
@@ -641,12 +642,13 @@ export default {
           this.invoicePeriod = data.invoice_period
           this.invoice_no = data.invoice_km_id
           this.invoice_id = data.id
-          this.talents = data.invoice_detail_admin.map(admin => ({
-            user_id: admin.user_id,
-            description: admin.description,
-            hired_at: admin.hired_at,
-            total_fee: admin.total_fee,
-            talent_user: admin.user,
+          this.talents = data.invoice_detail_gaji.map(value => ({
+            user_id: value.id,
+            description: '-',
+            hired_at: value.hired_at,
+            total_gross_salary: value.total_gross_salary,
+            total_net_salary: value.total_net_salary,
+            full_name: value.sdm_data.full_name,
           }))
         })
         .finally(() => {
