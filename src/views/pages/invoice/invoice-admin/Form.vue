@@ -183,7 +183,7 @@
                 <b-form-input
                   v-model="talent.total_fee"
                   :state="errors.length > 0 || submitErrors.name ? false : null"
-                  type="text"
+                  type="number"
                   class="mt-1"
                   :disabled="disabledInput"
                 />

@@ -35,12 +35,6 @@
         class="mb-0"
         empty-text="Tidak ada data untuk ditampilkan."
       >
-        <template #cell(Phone)="data">
-          <span class="text-nowrap">
-            {{ data.value }}
-          </span>
-        </template>
-
         <!-- Optional default data cell scoped slot -->
         <template #cell()="data">
           {{ data.value }}
@@ -121,6 +115,7 @@ import {
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import vSelect from 'vue-select'
+import filters from '@/libs/filters'
 
 export default {
   components: {
@@ -154,12 +149,13 @@ export default {
           label: 'Tanggal',
         },
         {
-          key: 'invoice_peroid',
+          key: 'total_items',
           label: 'Jumlah Talent',
         },
         {
-          key: 'invoice_peroid',
+          key: 'amount',
           label: 'Nominal',
+          formatter: val => filters.rupiah(parseInt(val, 0)),
         },
         {
           key: 'draft',

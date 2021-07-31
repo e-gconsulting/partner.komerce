@@ -117,6 +117,7 @@ import {
   BPagination,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
+import filters from '@/libs/filters'
 
 export default {
   components: {
@@ -150,12 +151,13 @@ export default {
           label: 'Tanggal',
         },
         {
-          key: 'invoice_peroid',
+          key: 'total_items',
           label: 'Jumlah Talent',
         },
         {
-          key: 'invoice_peroid',
+          key: 'amount',
           label: 'Nominal',
+          formatter: val => filters.rupiah(parseInt(val, 0)),
         },
         {
           key: 'paid',
