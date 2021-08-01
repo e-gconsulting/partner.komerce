@@ -74,7 +74,9 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Nilai Maksimal Sharing Fee"
-                    rules="required|integer"
+                    :rules="`required|integer${
+                      sharing_fee_type === 'percentage' ? '|max_value:100' : ''
+                    }`"
                   >
                     <b-form-input
                       v-model="max_nominal_sharing_fee"
@@ -120,7 +122,7 @@ import {
   BSpinner,
   VBTooltip,
 } from 'bootstrap-vue'
-import { required, integer } from '@validations'
+import { required, integer, maxValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import vSelect from 'vue-select'
@@ -152,6 +154,7 @@ export default {
 
       required,
       integer,
+      maxValue,
 
       sharing_fee_type_option: [
         {
@@ -206,7 +209,7 @@ export default {
           this.$http
             .post(this.endpoint, data)
             .then(response => {
-              if (!response.data.success) {
+              if (!response.data.status) {
                 this.$toast(
                   {
                     component: ToastificationContent,

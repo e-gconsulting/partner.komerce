@@ -59,6 +59,10 @@ const router = new VueRouter({
 router.beforeEach((to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
 
+  if (to.name === 'unauthenticated' || to.name === 'error-404') {
+    return next()
+  }
+
   if (!canNavigate(to) && !isLoggedIn) {
     // Redirect to login if not logged in
     return next({ name: 'auth-login' })

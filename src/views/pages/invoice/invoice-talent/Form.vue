@@ -89,6 +89,7 @@
                       :options="partnerItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchPartner"
+                      :filterable="false"
                       :disabled="disabledInput"
                     >
                       <li
@@ -249,8 +250,8 @@
                 class="mr-50"
                 :disabled="loadingSubmit"
                 @click.prevent="publish"
-                v-if="id"
-                v-show="!disabledInput"
+                v-if="id && !disabledInput"
+                v-show="id && !disabledInput"
               >
                 <b-spinner v-if="loadingSubmit" small />
                 Publish
@@ -311,7 +312,7 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      loading: false,
+      loading: true,
       loadingSubmit: false,
       submitErrors: '',
 

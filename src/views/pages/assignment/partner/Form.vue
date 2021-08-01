@@ -162,6 +162,7 @@
                       label="full_name"
                       :options="partnerItems"
                       placeholder="Ketik untuk mencari..."
+                      :filterable="false"
                       @search="onSearchPartner"
                     >
                       <li
@@ -489,10 +490,12 @@ export default {
       that.loadPartners(search).finally(() => loading(false))
     }, 500),
     loadPartners(search) {
+      const key = /^-?\d+$/.test(search) ? 'no_partner' : 'name'
+
       return this.$http
         .get('/user/partner/pagination', {
           params: {
-            name: search,
+            [key]: search,
             page: 1,
             limit: 5,
             sort: 'name',

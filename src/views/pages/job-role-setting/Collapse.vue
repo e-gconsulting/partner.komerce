@@ -1,7 +1,7 @@
 <template>
-  <b-row class="py-1 pl-2 pr-1">
+  <b-row class="py-1 pl-2 pr-1" v-b-toggle="[`collapse-${index}`]">
     <b-col md="8">
-      <b v-b-toggle="[`collapse-${index}`]">{{ item.name }}</b>
+      <b>{{ item.name }}</b>
     </b-col>
     <b-col md="4" class="text-right">
       <b-button
@@ -16,11 +16,7 @@
         <feather-icon icon="SettingsIcon" class="mr-50" />
         <span class="align-middle">Manage</span>
       </b-button>
-      <feather-icon
-        icon="ChevronDownIcon"
-        class="ml-2 mr-50"
-        v-b-toggle="[`collapse-${index}`]"
-      />
+      <feather-icon icon="ChevronDownIcon" class="ml-2 mr-50" />
     </b-col>
     <b-col md="12" v-if="item.childrens.length > 0">
       <b-collapse :id="`collapse-${index}`" class="mt-2">
