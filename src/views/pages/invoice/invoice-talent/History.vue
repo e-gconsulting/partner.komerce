@@ -19,6 +19,16 @@
           </li>
         </v-select>
       </b-col>
+      <b-col md="4" class="mb-2">
+        <label for="">Pilih Status</label>
+        <v-select
+          multiple
+          v-model="status"
+          label="label"
+          :options="statusOptions"
+          placeholder="Ketik untuk mencari..."
+        />
+      </b-col>
     </b-row>
     <b-overlay
       variant="light"
@@ -132,6 +142,16 @@ export default {
     vSelect,
   },
   data() {
+    const statusOptions = [
+      {
+        key: 2,
+        label: 'Paid',
+      },
+      {
+        key: 3,
+        label: 'Cancel',
+      },
+    ]
     return {
       loading: false,
       currentPage: 1,
@@ -177,6 +197,9 @@ export default {
       partnerItems: [],
       hasMorePartner: false,
       partner: '',
+
+      statusOptions,
+      status: statusOptions,
     }
   },
   mounted() {
@@ -188,6 +211,9 @@ export default {
       this.getData()
     },
     partner() {
+      this.getData()
+    },
+    status() {
       this.getData()
     },
   },
@@ -226,10 +252,11 @@ export default {
         ? this.$store.state.auth.userData.id
         : ''
       const userToId = this.partner?.id || ''
+      const status = this.status.map(val => val.key).join(',')
 
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=2&status=2,3&user_requester_id=${userRequesterId}&user_to_id=${userToId}`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=2&status=${status}&user_requester_id=${userRequesterId}&user_to_id=${userToId}`,
         )
         .then(res => {
           const { data } = res.data
