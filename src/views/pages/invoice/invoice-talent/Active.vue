@@ -7,6 +7,7 @@
           v-model="partner"
           label="full_name"
           :options="partnerItems"
+          :filterable="false"
           placeholder="Ketik untuk mencari..."
           @search="onSearchPartner"
         >
