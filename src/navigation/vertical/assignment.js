@@ -5,19 +5,19 @@ export default [
     tagVariant: 'light-warning',
     children: [
       {
-        title: 'Partner',
+        title: 'Assign Partner',
         route: 'assignment-partner',
         resource: 'Assignment',
         action: 'manage',
       },
       {
-        title: 'Team Lead',
+        title: 'Assign Team Lead',
         route: 'assignment-team-lead',
         resource: 'Assignment',
         action: 'manage',
       },
       {
-        title: 'Pindah Kantor',
+        title: 'Assign Kantor Team Lead',
         route: 'assignment-team-lead-office',
         resource: 'Assignment',
         action: 'manage',

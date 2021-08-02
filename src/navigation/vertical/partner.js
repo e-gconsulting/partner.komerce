@@ -24,6 +24,26 @@ export default [
         resource: 'Partner',
         action: 'manage',
       },
+      {
+        title: 'Invoice',
+        icon: 'UserCheckIcon',
+        children: [
+          {
+            title: 'Invoice Admin',
+            icon: 'UserPlusIcon',
+            route: 'invoice-admin',
+            resource: 'Invoice',
+            action: 'manage',
+          },
+          {
+            title: 'Invoice Gaji Talent',
+            icon: 'UserPlusIcon',
+            route: 'invoice-talent',
+            resource: 'Invoice',
+            action: 'manage',
+          },
+        ],
+      },
     ],
   },
 ]

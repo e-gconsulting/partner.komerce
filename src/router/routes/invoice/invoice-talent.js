@@ -1,6 +1,6 @@
 const pageName = {
-  singular: 'Invoice Talent',
-  plural: 'Invoice Talent',
+  singular: 'Invoice Gaji Talent',
+  plural: 'Invoice Gaji Talent',
 }
 
 export default [

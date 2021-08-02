@@ -1,6 +1,6 @@
 const pageName = {
-  singular: 'Assignment Partner',
-  plural: 'Assignment Partner',
+  singular: 'Assign Partner',
+  plural: 'Assign Partner',
 }
 
 export default [

@@ -1,6 +1,6 @@
 const pageName = {
-  singular: 'Pengaturan Role Jabatan',
-  plural: 'Pengaturan Role Jabatan',
+  singular: 'Pengaturan Role Akses',
+  plural: 'Pengaturan Role Akses',
 }
 
 export default [
@@ -14,7 +14,6 @@ export default [
       resource: 'JobRoleSetting',
       action: 'manage',
       breadcrumb: [
-
         {
           text: pageName.plural,
           active: true,
