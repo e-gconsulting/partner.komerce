@@ -211,11 +211,10 @@ export default {
       }
     },
     searchPosition: _.debounce((loading, search, that) => {
-      this.loading = true
+      loading(true)
       that.loadPositions(search).finally(() => loading(false))
     }, 500),
     loadPositions(search) {
-      this.loading = true
       return this.$http
         .post(
           '/position/pagination',
@@ -239,9 +238,6 @@ export default {
           )
           const positionItemsLength = this.positionItems.length
           this.hasMorePosition = response.data.data.total - positionItemsLength > positionItemsLength
-        })
-        .finally(() => {
-          this.loading = false
         })
     },
     getAccess() {
