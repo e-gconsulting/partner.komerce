@@ -44,11 +44,23 @@ export default {
         let isAvailableMenu = isAvailableMenuFilter[0]
         isAvailableMenu = { ...isAvailableMenu, visible: !!isAvailableMenu }
 
+        // level 2
         if (isAvailableMenu.children) {
           isAvailableMenu.children.forEach((child, index) => {
             isAvailableMenu.children[index].visible = !!menu.childrens.filter(
               val => val.name === child.title,
             )
+
+            // level 3
+            if (child.children) {
+              child.children.forEach((child2, index2) => {
+                isAvailableMenu.children[index].children[
+                  index2
+                ].visible = !!menu.childrens.filter(
+                  val2 => val2.name === child2.title,
+                )
+              })
+            }
           })
         }
         return isAvailableMenu
@@ -58,9 +70,15 @@ export default {
         ? visibleMenus
         : this.items.map(item => ({
           ...item,
+          // level 2
           children: item.children?.map(child => ({
             ...child,
             visible: true,
+            // level 3
+            children: child.children?.map(child2 => ({
+              ...child2,
+              visible: true,
+            })),
           })),
           visible: true,
         }))
