@@ -47,17 +47,23 @@ export default {
         // level 2
         if (isAvailableMenu.children) {
           isAvailableMenu.children.forEach((child, index) => {
-            isAvailableMenu.children[index].visible = !!menu.childrens.filter(
+            isAvailableMenu.children[index].visible = !!menu.childrens.find(
               val => val.name === child.title,
             )
 
             // level 3
             if (child.children) {
-              child.children.forEach((child2, index2) => {
-                isAvailableMenu.children[index].children[
-                  index2
-                ].visible = !!menu.childrens.filter(
-                  val2 => val2.name === child2.title,
+              menu.childrens.forEach(menu1 => {
+                isAvailableMenu.children[index].children.forEach(
+                  (child2, index3) => {
+                    const visible = !!menu1.childrens.find(
+                      val2 => val2.name === child2.title,
+                    )
+
+                    isAvailableMenu.children[index].children[
+                      index3
+                    ].visible = visible
+                  },
                 )
               })
             }
