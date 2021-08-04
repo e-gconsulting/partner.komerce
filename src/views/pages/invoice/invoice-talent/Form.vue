@@ -212,7 +212,17 @@
               </validation-provider>
             </b-col>
             <b-col md="2 pt-2">
-              <b-badge variant="light-secondary"> N/A </b-badge>
+              <b-badge
+                :variant="
+                  getDisbursementStyle(
+                    talent.disbursement.disbursement_xendit_status
+                  )
+                "
+                v-if="talent.disbursement"
+              >
+                {{ talent.disbursement.disbursement_xendit_status }}
+              </b-badge>
+              <b-badge variant="light-secondary" v-else> N/A </b-badge>
             </b-col>
           </b-row>
           <b-row>
@@ -650,11 +660,30 @@ export default {
             total_gross_salary: value.total_gross_salary,
             total_net_salary: value.total_net_salary,
             full_name: value.sdm_data.full_name,
+            disbursement: value.disbursement,
           }))
         })
         .finally(() => {
           this.loading = false
         })
+    },
+    getDisbursementStyle(status = '') {
+      let style = ''
+      switch (status) {
+        case 'PENDING':
+          style = 'light-warning'
+          break
+        case 'COMPLETED':
+          style = 'light-success'
+          break
+        case 'FAILED':
+          style = 'light-danger'
+          break
+        default:
+          style = ''
+          break
+      }
+      return style
     },
   },
 }
