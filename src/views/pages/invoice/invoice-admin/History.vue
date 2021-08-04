@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-row>
-      <b-col md="4" class="mb-2 ml-2">
+      <b-col md="3" class="mb-2 ml-2">
         <label for="">Pilih Partner</label>
         <v-select
           v-model="partner"
@@ -20,7 +20,7 @@
           </li>
         </v-select>
       </b-col>
-      <b-col md="4" class="mb-2">
+      <b-col md="3" class="mb-2">
         <label for="">Pilih Status</label>
         <v-select
           multiple
@@ -28,6 +28,19 @@
           label="label"
           :options="statusOptions"
           placeholder="Ketik untuk mencari..."
+        />
+      </b-col>
+      <b-col md="3" class="mb-2">
+        <label for="">Pilih Periode</label>
+        <flat-pickr
+          v-model="invoicePeriod"
+          class="form-control"
+          :config="{
+            altInput: true,
+            altFormat: 'F Y',
+            dateFormat: 'Y-m',
+            ...configs.monthSelect,
+          }"
         />
       </b-col>
     </b-row>
@@ -45,6 +58,7 @@
         :items="items"
         class="mb-0"
         empty-text="Tidak ada data untuk ditampilkan."
+        show-empty
       >
         <template #cell(Phone)="data">
           <span class="text-nowrap">
@@ -91,6 +105,11 @@
             </b-button>
           </b-row>
         </template>
+        <template #empty="">
+          <div class="text-center">
+            <b>Tidak ada data untuk ditampilkan.</b>
+          </div>
+        </template>
       </b-table>
       <b-row>
         <b-col md="12" class="ml-1 my-2">
@@ -129,6 +148,9 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import filters from '@/libs/filters'
+import flatPickr from 'vue-flatpickr-component'
+import MonthSelectPlugin from 'flatpickr/dist/plugins/monthSelect/index'
+import 'flatpickr/dist/plugins/monthSelect/style.css'
 
 export default {
   components: {
@@ -141,6 +163,7 @@ export default {
     BPagination,
 
     vSelect,
+    flatPickr,
   },
   data() {
     const statusOptions = [
@@ -201,6 +224,18 @@ export default {
 
       statusOptions,
       status: statusOptions,
+
+      invoicePeriod: '',
+      configs: {
+        monthSelect: {
+          plugins: [
+            new MonthSelectPlugin({
+              shorthand: true,
+              dateFormat: 'Y-m',
+            }),
+          ],
+        },
+      },
     }
   },
   mounted() {
@@ -215,6 +250,9 @@ export default {
       this.getData()
     },
     status() {
+      this.getData()
+    },
+    invoicePeriod() {
       this.getData()
     },
   },
@@ -254,10 +292,11 @@ export default {
         : ''
       const userToId = this.partner?.id || ''
       const status = this.status.map(val => val.key).join(',')
+      const invoicePeriod = this.invoicePeriod ? `${this.invoicePeriod}-01` : ''
 
       this.$http
         .get(
-          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=${status}&user_requester_id=${userRequesterId}&user_to_id=${userToId}`,
+          `/invoice?page=${this.currentPage}&limit=${this.perPage}&invoice_type=1&status=${status}&user_requester_id=${userRequesterId}&user_to_id=${userToId}&invoice_period=${invoicePeriod}`,
         )
         .then(res => {
           const { data } = res.data
@@ -275,4 +314,5 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+@import '~@core/scss/vue/libs/vue-flatpicker.scss';
 </style>
