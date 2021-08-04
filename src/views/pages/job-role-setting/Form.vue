@@ -30,19 +30,9 @@
                         label="position_name"
                         :reduce="option => option.id"
                         :options="positionItems"
+                        filterable
                         placeholder="Ketik untuk mencari..."
-                        @search="onSearchPosition"
-                      >
-                        <li
-                          v-if="hasMorePosition"
-                          slot="list-footer"
-                          class="
-                            vs__dropdown-option vs__dropdown-option--disabled
-                          "
-                        >
-                          <feather-icon icon="MoreHorizontalIcon" size="16" />
-                        </li>
-                      </v-select>
+                      />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
                   </b-form-group>
@@ -205,27 +195,18 @@ export default {
           this.loading = false
         })
     },
-    onSearchPosition(search, loading) {
-      if (search.length) {
-        this.searchPosition(loading, search, this)
-      }
-    },
-    searchPosition: _.debounce((loading, search, that) => {
-      loading(true)
-      that.loadPositions(search).finally(() => loading(false))
-    }, 500),
-    loadPositions(search) {
+    loadPositions() {
       return this.$http
         .post(
           '/position/pagination',
           {},
           {
             params: {
-              position_name: search,
               page: 1,
-              limit: 5,
+              limit: 1000,
               sort: 'name',
               direction: 'asc',
+              is_division_external: 0,
             },
           },
         )
