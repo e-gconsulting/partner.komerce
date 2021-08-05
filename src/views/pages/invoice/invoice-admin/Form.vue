@@ -414,6 +414,7 @@ export default {
     }, 500),
     loadPartners(search) {
       const key = /^-?\d+$/.test(search) ? 'no_partner' : 'name'
+      this.loading = true
 
       return this.$http
         .get('/user/partner/pagination', {
@@ -429,6 +430,9 @@ export default {
           const { data } = response.data.data
           this.partnerItems = data
           this.hasMorePartner = response.data.data.total > this.partnerItems.length
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     getTalents() {
