@@ -174,6 +174,7 @@ export default {
         label: 'Publish',
       },
     ]
+    const currentDate = new Date()
     return {
       loading: false,
       currentPage: 1,
@@ -223,7 +224,7 @@ export default {
       statusOptions,
       status: statusOptions,
 
-      invoicePeriod: '',
+      invoicePeriod: `${currentDate.getFullYear()} ${currentDate.getDate()}`,
       configs: {
         monthSelect: {
           plugins: [
