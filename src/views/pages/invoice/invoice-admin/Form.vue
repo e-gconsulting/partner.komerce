@@ -491,8 +491,7 @@ export default {
                   { timeout: 2500 },
                 )
                 this.$router.push({
-                  name: 'invoice-admin-show',
-                  params: { id: res.data.data.id },
+                  name: 'invoice-admin',
                 })
               } else {
                 this.$toast(

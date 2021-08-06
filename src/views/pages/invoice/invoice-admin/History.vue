@@ -72,19 +72,19 @@
         </template>
 
         <template #cell(paid)="data">
-          <b-avatar variant="primary" v-if="data.item.status == 2">
+          <b-avatar variant="success" v-if="data.item.status == 2">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
-          <b-avatar variant="secondary" v-else>
+          <b-avatar variant="danger" rounded v-else>
             <feather-icon icon="XIcon" />
           </b-avatar>
         </template>
 
         <template #cell(cancel)="data">
-          <b-avatar variant="primary" v-if="data.item.status == 3">
+          <b-avatar variant="success" v-if="data.item.status == 3">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
-          <b-avatar variant="secondary" v-else>
+          <b-avatar variant="danger" rounded v-else>
             <feather-icon icon="XIcon" />
           </b-avatar>
         </template>
@@ -226,7 +226,8 @@ export default {
       statusOptions,
       status: statusOptions,
 
-      invoicePeriod: `${currentDate.getFullYear()} ${currentDate.getDate()}`,
+      invoicePeriod: `${currentDate.getFullYear()}-${currentDate.getMonth()
+        + 1}`,
       configs: {
         monthSelect: {
           plugins: [

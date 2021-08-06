@@ -511,8 +511,7 @@ export default {
                   { timeout: 2500 },
                 )
                 this.$router.push({
-                  name: 'invoice-talent-show',
-                  params: { id: res.data.data.id },
+                  name: 'invoice-talent',
                 })
               } else {
                 this.$toast(
@@ -593,7 +592,7 @@ export default {
               { timeout: 2500 },
             )
             this.$router.push({
-              name: 'invoice-admin',
+              name: 'invoice-talent',
             })
           } else {
             this.$toast(

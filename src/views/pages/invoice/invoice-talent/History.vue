@@ -226,7 +226,8 @@ export default {
       statusOptions,
       status: statusOptions,
 
-      invoicePeriod: `${currentDate.getFullYear()} ${currentDate.getDate()}`,
+      invoicePeriod: `${currentDate.getFullYear()}-${currentDate.getMonth()
+        + 1}`,
       configs: {
         monthSelect: {
           plugins: [

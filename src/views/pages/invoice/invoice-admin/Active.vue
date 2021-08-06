@@ -66,13 +66,13 @@
         </template>
 
         <template #cell(draft)="data">
-          <b-avatar variant="primary" v-if="data.item.status >= 0">
+          <b-avatar variant="success" v-if="data.item.status >= 0">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
         </template>
 
         <template #cell(published)="data">
-          <b-avatar variant="primary" v-if="data.item.status >= 1">
+          <b-avatar variant="success" v-if="data.item.status >= 1">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
         </template>
@@ -224,7 +224,8 @@ export default {
       statusOptions,
       status: statusOptions,
 
-      invoicePeriod: `${currentDate.getFullYear()} ${currentDate.getDate()}`,
+      invoicePeriod: `${currentDate.getFullYear()}-${currentDate.getMonth()
+        + 1}`,
       configs: {
         monthSelect: {
           plugins: [
