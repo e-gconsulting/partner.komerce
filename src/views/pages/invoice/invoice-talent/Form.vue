@@ -434,6 +434,7 @@ export default {
       that.loadPartners(search).finally(() => loading(false))
     }, 500),
     loadPartners(search) {
+      this.loading = true
       const key = /^-?\d+$/.test(search) ? 'no_partner' : 'name'
 
       return this.$http
@@ -450,6 +451,9 @@ export default {
           const { data } = response.data.data
           this.partnerItems = data
           this.hasMorePartner = response.data.data.total > this.partnerItems.length
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     getTalents() {
@@ -610,6 +614,7 @@ export default {
           }
         })
         .catch(error => {
+          console.log({ error })
           if (!error.response?.data.status) {
             this.$toast(
               {
