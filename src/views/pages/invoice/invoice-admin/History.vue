@@ -5,7 +5,7 @@
         <label for="">Pilih Partner</label>
         <v-select
           v-model="partner"
-          label="full_name"
+          label="label"
           :options="partnerItems"
           :filterable="false"
           placeholder="Ketik untuk mencari..."
@@ -283,6 +283,9 @@ export default {
         })
         .then(async response => {
           const { data } = response.data.data
+          for (let i = 0; i < data.length; i += 1) {
+            data[i].label = `${data[i].no_partner} - ${data[i].full_name}`
+          }
           this.partnerItems = data
           this.hasMorePartner = response.data.data.total > this.partnerItems.length
         })
