@@ -107,10 +107,10 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Tanggal" label-cols-md="4">
+                <b-form-group label="Periode" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="Tanggal"
+                    name="Periode"
                     rules="required"
                   >
                     <flat-pickr
