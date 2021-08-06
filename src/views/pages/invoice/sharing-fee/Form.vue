@@ -239,6 +239,20 @@ export default {
               }
             })
             .catch(error => {
+              if (!error.response?.data.status) {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: error.response.data.message,
+                      variant: 'danger',
+                      attachment: 'AlertTriangleIcon',
+                    },
+                  },
+                  { timeout: 2500 },
+                )
+              }
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(
@@ -264,6 +278,22 @@ export default {
           this.sharing_fee_type = data.sharing_fee_type
           this.sharing_fee_value = data.sharing_fee_value
           this.max_nominal_sharing_fee = data.max_nominal_sharing_fee
+        })
+        .catch(error => {
+          if (!error.response?.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false

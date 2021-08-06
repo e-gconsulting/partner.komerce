@@ -228,6 +228,22 @@ export default {
         .then(({ data }) => {
           this.listAccess = data.data
         })
+        .catch(error => {
+          if (!error.response?.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
+        })
         .finally(() => {
           this.loading = false
         })
@@ -261,6 +277,20 @@ export default {
               this.getMenuAndPositionData()
             })
             .catch(error => {
+              if (!error.response?.data.status) {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: error.response.data.message,
+                      variant: 'danger',
+                      attachment: 'AlertTriangleIcon',
+                    },
+                  },
+                  { timeout: 2500 },
+                )
+              }
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(
@@ -301,6 +331,20 @@ export default {
           this.getMenuAndPositionData()
         })
         .catch(error => {
+          if (!error.response?.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
           if (error.response.status === 422) {
             this.submitErrors = Object.fromEntries(
               Object.entries(error.response.data.data).map(([key, value]) => [

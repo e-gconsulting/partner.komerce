@@ -551,6 +551,20 @@ export default {
               }
             })
             .catch(error => {
+              if (!error.response?.data.status) {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: error.response.data.message,
+                      variant: 'danger',
+                      attachment: 'AlertTriangleIcon',
+                    },
+                  },
+                  { timeout: 2500 },
+                )
+              }
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(
@@ -574,6 +588,22 @@ export default {
           this.release_date = data.release_date
           this.document_url = data.document_url
           this.assignments = data.sk_teamlead_assignments
+        })
+        .catch(error => {
+          if (!error.response?.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false

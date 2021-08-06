@@ -370,6 +370,21 @@ export default {
             .catch(error => {
               this.loadingSubmit = false
 
+              if (!error.response?.data.status) {
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: error.response.data.message,
+                      variant: 'danger',
+                      attachment: 'AlertTriangleIcon',
+                    },
+                  },
+                  { timeout: 2500 },
+                )
+              }
+
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(
@@ -410,6 +425,22 @@ export default {
           this.admin_fee = data.admin_fee
           this.admin_fee_discount_type = data.admin_fee_discount_type
           this.talent_admin_fee_discounts = data.talent_admin_fee_discounts
+        })
+        .catch(error => {
+          if (!error.response?.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
         })
         .finally(() => {
           this.$refs.formCard.showLoading = false
