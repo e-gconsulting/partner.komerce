@@ -85,7 +85,7 @@
                   >
                     <v-select
                       v-model="partner"
-                      label="full_name"
+                      label="label"
                       :options="partnerItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchPartner"
@@ -449,6 +449,9 @@ export default {
         })
         .then(async response => {
           const { data } = response.data.data
+          for (let i = 0; i < data.length; i += 1) {
+            data[i].label = `${data[i].no_partner} - ${data[i].full_name}`
+          }
           this.partnerItems = data
           this.hasMorePartner = response.data.data.total > this.partnerItems.length
         })
@@ -654,6 +657,7 @@ export default {
           this.invoice_status = data.status
           this.title = data.title
           this.partner = data.user_to
+          this.partner.label = `${this.partner.no_partner} ${this.partner.full_name}`
           this.invoicePeriod = data.invoice_period
           this.invoice_no = data.invoice_km_id
           this.invoice_id = data.id

@@ -159,7 +159,7 @@
                     <v-select
                       v-model="assignment.partner"
                       @input="val => loadDevices('', val)"
-                      label="full_name"
+                      label="label"
                       :options="partnerItems"
                       placeholder="Ketik untuk mencari..."
                       :filterable="false"
@@ -284,7 +284,10 @@
                   <p>{{ assignment.talent.user.full_name }}</p>
                 </b-col>
                 <b-col md="2">
-                  <p>{{ assignment.partner.user.full_name }}</p>
+                  <p>
+                    {{ assignment.partner.no_partner }}
+                    {{ assignment.partner.user.full_name }}
+                  </p>
                 </b-col>
                 <b-col md="2">
                   <p>{{ assignment.staff.user.full_name }}</p>
@@ -505,6 +508,9 @@ export default {
         })
         .then(async response => {
           const { data } = response.data.data
+          for (let i = 0; i < data.length; i += 1) {
+            data[i].label = `${data[i].no_partner} - ${data[i].full_name}`
+          }
           this.partnerItems = this.assignments.map(
             assignment => assignment.partner,
           )
