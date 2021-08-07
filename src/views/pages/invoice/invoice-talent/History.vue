@@ -72,13 +72,13 @@
         </template>
 
         <template #cell(paid)="data">
-          <b-avatar variant="primary" v-if="data.item.status == 2">
+          <b-avatar variant="success" v-if="data.item.status == 2">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
         </template>
 
         <template #cell(cancel)="data">
-          <b-avatar variant="primary" v-if="data.item.status == 3">
+          <b-avatar variant="success" v-if="data.item.status == 3">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
         </template>

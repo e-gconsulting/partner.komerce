@@ -579,10 +579,11 @@ export default {
         })
       })
     },
-    async publish() {
+    publish() {
       this.loadingSubmit = true
       this.save()
         .then(() => {
+          this.loading = true
           this.$http
             .post(`/invoice/admin/publish/${this.id}`, {
               _method: 'PUT',
@@ -642,6 +643,9 @@ export default {
                 )
               }
             })
+            .finally(() => {
+              this.loading = false
+            })
         })
         .catch(error => {
           if (!error.response?.data.status) {
@@ -658,9 +662,6 @@ export default {
               { timeout: 2500 },
             )
           }
-        })
-        .finally(() => {
-          this.loadingSubmit = true
         })
     },
     loadForm() {

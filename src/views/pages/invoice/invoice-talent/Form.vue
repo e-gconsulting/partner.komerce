@@ -625,6 +625,7 @@ export default {
       this.loadingSubmit = true
       this.save()
         .then(() => {
+          this.loading = true
           this.$http
             .post(`/invoice/admin/publish/${this.id}`, {
               _method: 'PUT',
@@ -684,6 +685,9 @@ export default {
                 )
               }
             })
+            .finally(() => {
+              this.loading = false
+            })
         })
         .catch(error => {
           if (!error.response?.data.status) {
@@ -700,9 +704,6 @@ export default {
               { timeout: 2500 },
             )
           }
-        })
-        .finally(() => {
-          this.loadingSubmit = false
         })
     },
     loadForm() {
@@ -722,7 +723,7 @@ export default {
           this.invoice_no = data.invoice_km_id
           this.invoice_id = data.id
           this.talents = data.invoice_detail_gaji.map(value => ({
-            user_id: value.id,
+            user_id: value.sdm_data.id,
             description: '-',
             hired_at: value.hired_at,
             total_gross_salary: value.total_gross_salary,
