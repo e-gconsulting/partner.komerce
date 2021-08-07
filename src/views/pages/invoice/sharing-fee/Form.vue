@@ -53,7 +53,9 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Nilai Sharing Fee"
-                    rules="required|integer"
+                    :rules="`required|integer${
+                      sharing_fee_type === 'percentage' ? '|max_value:100' : ''
+                    }`"
                   >
                     <b-form-input
                       v-model="sharing_fee_value"
@@ -74,9 +76,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Nilai Maksimal Sharing Fee"
-                    :rules="`required|integer${
-                      sharing_fee_type === 'percentage' ? '|max_value:100' : ''
-                    }`"
+                    rules="required|integer"
                   >
                     <b-form-input
                       v-model="max_nominal_sharing_fee"

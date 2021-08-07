@@ -188,6 +188,7 @@
                 type="number"
                 class="mt-1"
                 :disabled="disabledInput"
+                @change="talentChanged(index)"
               />
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
@@ -203,7 +204,7 @@
                 :state="errors.length > 0 || submitErrors.name ? false : null"
                 type="number"
                 class="mt-1"
-                :disabled="disabledInput"
+                disabled
               />
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
@@ -363,6 +364,7 @@ export default {
         },
       },
 
+      sharingFee: {},
       invoice_id: 0,
       invoice_no: 0,
       invoicePeriod: '',
@@ -442,10 +444,41 @@ export default {
     },
   },
   async created() {
+    this.getSharingFee()
     await this.loadPartners()
     if (this.publishMode) await this.loadForm()
   },
   methods: {
+    getSharingFee() {
+      this.$http.get('talentSharingFee').then(res => {
+        const data = res.data?.data[0]
+        this.sharingFee = data
+      })
+    },
+    talentChanged(index) {
+      const talent = this.talents[index]
+      let percentageCutFee = 0
+      if (talent.total_gross_salary >= this.sharingFee.minimum_income) {
+        switch (this.sharingFee.sharing_fee_type) {
+          case 'percentage':
+            percentageCutFee = (talent.total_gross_salary * this.sharingFee.sharing_fee_value)
+              / 100
+
+            talent.total_net_salary = percentageCutFee > this.sharingFee.max_nominal_sharing_fee
+              ? talent.total_gross_salary
+                  - this.sharingFee.max_nominal_sharing_fee
+              : talent.total_gross_salary - percentageCutFee
+            break
+
+          default:
+            talent.total_net_salary = talent.total_gross_salary - this.sharingFee.sharing_fee_value
+            break
+        }
+      } else {
+        talent.total_net_salary = talent.total_gross_salary
+      }
+      this.talents[index] = talent
+    },
     onSearchPartner(search, loading) {
       if (search.length) {
         this.searchPartner(loading, search, this)
