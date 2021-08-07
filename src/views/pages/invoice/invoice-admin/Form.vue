@@ -116,7 +116,7 @@
                     :config="{
                       altInput: true,
                       altFormat: 'F Y',
-                      dateFormat: 'Y-m',
+                      dateFormat: 'Y-m-01',
                       ...configs.monthSelect,
                     }"
                     :disabled="disabledInput"
@@ -464,9 +464,10 @@ export default {
     },
     getTalents() {
       if (this.partner && this.invoicePeriod && !this.id) {
+        const { invoicePeriod } = this
         this.$http
           .get(
-            `/invoice/admin/getInvoiceAdminEstimation?partner_id=${this.partner.partner_detail.id}&period=${this.invoicePeriod}`,
+            `/invoice/admin/getInvoiceAdminEstimation?partner_id=${this.partner.partner_detail.id}&period=${invoicePeriod}`,
           )
           .then(res => {
             const { talent_admin_fee } = res.data.data
@@ -488,22 +489,104 @@ export default {
       return errorTalent !== undefined
     },
     submit() {
-      this.$refs.formRules.validate().then(success => {
-        if (success && !this.validateTalents()) {
-          this.loadingSubmit = true
+      this.save()
+        .then(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                text: this.successText,
+                variant: 'success',
+                attachment: 'CheckIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
+          this.$router.push({
+            name: 'invoice-admin',
+          })
+        })
+        .catch(error => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text: error.response.data.message,
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
+        })
+    },
+    save() {
+      return new Promise((resolve, reject) => {
+        this.$refs.formRules.validate().then(success => {
+          if (success && !this.validateTalents()) {
+            this.loadingSubmit = true
 
-          const data = {
-            invoice_id: this.invoice_id,
-            user_requester_id: this.$store.state.auth.userData.id,
-            user_to_id: this.partner.id,
-            title: this.title,
-            description: '',
-            invoice_period: `${this.invoicePeriod}-01`,
-            items: this.talents,
+            const data = {
+              invoice_id: this.invoice_id,
+              user_requester_id: this.$store.state.auth.userData.id,
+              user_to_id: this.partner.id,
+              title: this.title,
+              description: '',
+              invoice_period: `${this.invoicePeriod}`,
+              items: this.talents,
+            }
+
+            this.$http
+              .post('/invoice/admin/saveDraft', data)
+              .then(res => {
+                if (res.data.status) {
+                  resolve(res)
+                } else {
+                  reject(res)
+                }
+              })
+              .catch(error => {
+                this.loadingSubmit = false
+                reject(error)
+                if (error.response.status === 422) {
+                  this.submitErrors = Object.fromEntries(
+                    Object.entries(
+                      error.response.data.data,
+                    ).map(([key, value]) => [key, value[0]]),
+                  )
+                }
+              })
+              .finally(() => {
+                this.loadingSubmit = false
+              })
+          } else {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text:
+                    'Periksa kembali inputan Anda, pastikan tanggal assign dan nominal sudah terisi',
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
           }
-
+        })
+      })
+    },
+    async publish() {
+      this.loadingSubmit = true
+      this.save()
+        .then(() => {
           this.$http
-            .post('/invoice/admin/saveDraft', data)
+            .post(`/invoice/admin/publish/${this.id}`, {
+              _method: 'PUT',
+            })
             .then(res => {
               if (res.data.status) {
                 this.$toast(
@@ -537,7 +620,6 @@ export default {
               }
             })
             .catch(error => {
-              this.loadingSubmit = false
               if (!error.response?.data.status) {
                 this.$toast(
                   {
@@ -560,63 +642,6 @@ export default {
                 )
               }
             })
-            .finally(() => {
-              this.loadingSubmit = false
-            })
-        } else {
-          this.$toast(
-            {
-              component: ToastificationContent,
-              props: {
-                title: 'Failed',
-                text:
-                  'Periksa kembali inputan Anda, pastikan tanggal assign dan nominal sudah terisi',
-                variant: 'danger',
-                attachment: 'AlertTriangleIcon',
-              },
-            },
-            { timeout: 2500 },
-          )
-        }
-      })
-    },
-    publish() {
-      this.loadingSubmit = true
-      this.$http
-        .post(`/invoice/admin/publish/${this.id}`, {
-          _method: 'PUT',
-        })
-        .then(res => {
-          if (res.data.status) {
-            this.$toast(
-              {
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  text: this.successText,
-                  variant: 'success',
-                  attachment: 'CheckIcon',
-                },
-              },
-              { timeout: 2500 },
-            )
-            this.$router.push({
-              name: 'invoice-admin',
-            })
-          } else {
-            this.$toast(
-              {
-                component: ToastificationContent,
-                props: {
-                  title: 'Failed',
-                  text: res.data.message,
-                  variant: 'danger',
-                  attachment: 'AlertTriangleIcon',
-                },
-              },
-              { timeout: 2500 },
-            )
-          }
         })
         .catch(error => {
           if (!error.response?.data.status) {
@@ -633,17 +658,9 @@ export default {
               { timeout: 2500 },
             )
           }
-          if (error.response.status === 422) {
-            this.submitErrors = Object.fromEntries(
-              Object.entries(error.response.data.data).map(([key, value]) => [
-                key,
-                value[0],
-              ]),
-            )
-          }
         })
         .finally(() => {
-          this.loadingSubmit = false
+          this.loadingSubmit = true
         })
     },
     loadForm() {
