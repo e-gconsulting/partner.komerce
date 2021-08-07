@@ -266,6 +266,30 @@
                 <b-spinner v-if="loadingSubmit" small />
                 Publish
               </b-button>
+              <b-button
+                variant="success"
+                type="submit"
+                class="mr-50"
+                :disabled="loadingSubmit"
+                @click.prevent="pay(2)"
+                v-if="id && invoice_status == 1"
+                v-show="id && invoice_status == 1"
+              >
+                <b-spinner v-if="loadingSubmit" small />
+                Lunaskan
+              </b-button>
+              <b-button
+                variant="danger"
+                type="submit"
+                class="mr-50"
+                :disabled="loadingSubmit"
+                @click.prevent="pay(3)"
+                v-if="id && invoice_status == 1"
+                v-show="id && invoice_status == 1"
+              >
+                <b-spinner v-if="loadingSubmit" small />
+                Batalkan
+              </b-button>
             </b-col>
           </b-row>
         </b-form>
@@ -707,6 +731,93 @@ export default {
           break
       }
       return style
+    },
+    pay(status) {
+      this.$swal({
+        title: 'Anda yakin?',
+        text: `Status invoice akan berubah menjadi ${
+          status === 2 ? 'Lunas' : 'Cancel'
+        }`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Ubah!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.updateStatus(status)
+        }
+      })
+    },
+    updateStatus(status = 3) {
+      this.loadingSubmit = true
+      this.$http
+        .post('/invoice/update', {
+          invoice_id: this.id,
+          status,
+        })
+        .then(res => {
+          if (res.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  text: 'Status invoice berhasil diperbaharui',
+                  variant: 'success',
+                  attachment: 'CheckIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+            this.$router.push({
+              name: 'invoice-talent',
+            })
+          } else {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: res.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
+        })
+        .catch(error => {
+          if (!error.response?.data.status) {
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.message,
+                  variant: 'danger',
+                  attachment: 'AlertTriangleIcon',
+                },
+              },
+              { timeout: 2500 },
+            )
+          }
+          if (error.response.status === 422) {
+            this.submitErrors = Object.fromEntries(
+              Object.entries(error.response.data.data).map(([key, value]) => [
+                key,
+                value[0],
+              ]),
+            )
+          }
+        })
+        .finally(() => {
+          this.loadingSubmit = false
+        })
     },
   },
 }
