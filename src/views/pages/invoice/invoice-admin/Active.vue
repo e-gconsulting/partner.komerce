@@ -184,7 +184,7 @@ export default {
         {
           key: 'user_to',
           label: 'Partner',
-          formatter: val => `${val.no_partner} ${val.full_name}`,
+          formatter: val => `${val.no_partner} - ${val.full_name}`,
         },
         {
           key: 'invoice_km_id',
