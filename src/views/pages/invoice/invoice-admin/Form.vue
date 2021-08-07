@@ -14,266 +14,267 @@
     >
       <!-- form -->
       <validation-observer ref="formRules">
-        <b-form>
-          <b-row>
-            <b-col md="6">
-              <b-col md="12">
-                <b-form-group label="Status" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Status"
-                    rules="required"
-                  >
-                    <b-form-input
-                      v-model="status"
-                      :state="
-                        errors.length > 0 || submitErrors.name ? false : null
-                      "
-                      type="text"
-                      disabled
-                    />
-                    <small class="text-danger">{{
-                      errors[0] || submitErrors.name
-                    }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="No. Invoice" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="No Invoice"
-                    rules="required"
-                  >
-                    <b-form-input
-                      v-model="invoice_no"
-                      :state="
-                        errors.length > 0 || submitErrors.name ? false : null
-                      "
-                      type="text"
-                      disabled
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Judul Invoice" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Judul Invoice"
-                    rules="required"
-                  >
-                    <b-form-input
-                      v-model="title"
-                      :state="
-                        errors.length > 0 || submitErrors.name ? false : null
-                      "
-                      type="text"
-                      disabled
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Partner" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Partner"
-                    rules="required"
-                  >
-                    <v-select
-                      v-model="partner"
-                      label="label"
-                      :options="partnerItems"
-                      placeholder="Ketik untuk mencari..."
-                      @search="onSearchPartner"
-                      :filterable="false"
-                      :disabled="disabledInput"
-                    >
-                      <li
-                        v-if="hasMorePartner"
-                        slot="list-footer"
-                        class="
-                          vs__dropdown-option vs__dropdown-option--disabled
-                        "
-                      >
-                        <feather-icon icon="MoreHorizontalIcon" size="16" />
-                      </li>
-                    </v-select>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group label="Periode" label-cols-md="4">
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Periode"
-                    rules="required"
-                  >
-                    <flat-pickr
-                      v-model="invoicePeriod"
-                      class="form-control"
-                      :config="{
-                        altInput: true,
-                        altFormat: 'F Y',
-                        dateFormat: 'Y-m',
-                        ...configs.monthSelect,
-                      }"
-                      :disabled="disabledInput"
-                    />
-                    <small class="text-danger">{{
-                      errors[0] || submitErrors.name
-                    }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-            </b-col>
-          </b-row>
-          <b-row>
-            <b-col md="2">
-              <b>Data Tagihan</b>
-            </b-col>
-            <b-col md="2">
-              <b>Nama Talent</b>
-            </b-col>
-            <b-col md="2">
-              <b>Tanggal Assign</b>
-            </b-col>
-            <b-col md="2">
-              <b>Nominal</b>
-            </b-col>
-            <b-col md="2" />
-          </b-row>
-          <b-row v-for="(talent, index) in talents" :key="`talent-${index}`">
-            <b-col md="2" offset-md="2">
-              <p class="mt-1" v-if="talent.talent_user">
-                {{ talent.talent_user.full_name }}
-              </p>
-              <p class="mt-1" v-else>-</p>
-            </b-col>
-            <b-col md="2">
-              <validation-provider
-                #default="{ errors }"
-                name="Tanggal"
-                rules="required"
-              >
-                <flat-pickr
-                  v-model="talent.hired_at"
-                  class="form-control mt-1"
-                  :config="{
-                    altInput: true,
-                    altFormat: 'd M Y',
-                    dateFormat: 'Y-m-d',
-                  }"
-                  :disabled="disabledInput"
-                />
-                <small class="text-danger">{{
-                  errors[0] || submitErrors.name
-                }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="2">
-              <validation-provider
-                #default="{ errors }"
-                name="Nomial"
-                rules="required"
-              >
-                <b-form-input
-                  v-model="talent.total_fee"
-                  :state="errors.length > 0 || submitErrors.name ? false : null"
-                  type="number"
-                  class="mt-1"
-                  :disabled="disabledInput"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-col>
-            <b-col md="2">
-              <b-row>
-                <b-button
-                  variant="outline-danger"
-                  type="button"
-                  size="sm"
-                  class="mt-1"
-                  @click="talents.splice(index, 1)"
-                  v-show="!disabledInput"
+        <b-row>
+          <b-col md="6">
+            <b-col md="12">
+              <b-form-group label="Status" label-cols-md="4">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Status"
+                  rules="required"
                 >
-                  <feather-icon icon="Trash2Icon" size="18" />
-                </b-button>
-              </b-row>
+                  <b-form-input
+                    v-model="status"
+                    :state="
+                      errors.length > 0 || submitErrors.name ? false : null
+                    "
+                    type="text"
+                    disabled
+                  />
+                  <small class="text-danger">{{
+                    errors[0] || submitErrors.name
+                  }}</small>
+                </validation-provider>
+              </b-form-group>
             </b-col>
-          </b-row>
-          <b-row>
-            <b-col md="8" offset-md="2" class="mt-1">
-              <h3>Total Tagihan</h3>
-              <b class="text-danger">{{ totalFee | rupiah }}</b>
+            <b-col md="12">
+              <b-form-group label="No. Invoice" label-cols-md="4">
+                <validation-provider
+                  #default="{ errors }"
+                  name="No Invoice"
+                  rules="required"
+                >
+                  <b-form-input
+                    v-model="invoice_no"
+                    :state="
+                      errors.length > 0 || submitErrors.name ? false : null
+                    "
+                    type="text"
+                    disabled
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
             </b-col>
-          </b-row>
-          <b-row>
-            <b-col md="12" class="mt-2">
-              <hr />
+            <b-col md="12">
+              <b-form-group label="Judul Invoice" label-cols-md="4">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Judul Invoice"
+                  rules="required"
+                >
+                  <b-form-input
+                    v-model="title"
+                    :state="
+                      errors.length > 0 || submitErrors.name ? false : null
+                    "
+                    type="text"
+                    disabled
+                  />
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="12">
+              <b-form-group label="Partner" label-cols-md="4">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Partner"
+                  rules="required"
+                >
+                  <v-select
+                    v-model="partner"
+                    label="label"
+                    :options="partnerItems"
+                    placeholder="Ketik untuk mencari..."
+                    @search="onSearchPartner"
+                    :filterable="false"
+                    :disabled="disabledInput"
+                  >
+                    <li
+                      v-if="hasMorePartner"
+                      slot="list-footer"
+                      class="vs__dropdown-option vs__dropdown-option--disabled"
+                    >
+                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                    </li>
+                  </v-select>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+            <b-col md="12">
+              <b-form-group label="Periode" label-cols-md="4">
+                <validation-provider
+                  #default="{ errors }"
+                  name="Periode"
+                  rules="required"
+                >
+                  <flat-pickr
+                    v-model="invoicePeriod"
+                    class="form-control"
+                    :config="{
+                      altInput: true,
+                      altFormat: 'F Y',
+                      dateFormat: 'Y-m',
+                      ...configs.monthSelect,
+                    }"
+                    :disabled="disabledInput"
+                  />
+                  <small class="text-danger">{{
+                    errors[0] || submitErrors.name
+                  }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="2">
+            <b>Data Tagihan</b>
+          </b-col>
+          <b-col md="2">
+            <b>Nama Talent</b>
+          </b-col>
+          <b-col md="2">
+            <b>Tanggal Assign</b>
+          </b-col>
+          <b-col md="2">
+            <b>Nominal</b>
+          </b-col>
+          <b-col md="2" />
+        </b-row>
+        <b-row v-for="(talent, index) in talents" :key="`talent-${index}`">
+          <b-col md="2" offset-md="2">
+            <p class="mt-1" v-if="talent.talent_user">
+              {{ talent.talent_user.full_name }}
+            </p>
+            <p class="mt-1" v-else>-</p>
+          </b-col>
+          <b-col md="2">
+            <validation-provider
+              #default="{ errors }"
+              :name="`Tanggal Assign Talent ke-${index + 1}`"
+              rules="required"
+            >
+              <flat-pickr
+                v-model="talent.hired_at"
+                class="form-control mt-1"
+                :config="{
+                  altInput: true,
+                  altFormat: 'd M Y',
+                  dateFormat: 'Y-m-d',
+                }"
+                :disabled="disabledInput"
+              />
+              <small class="text-danger">{{
+                errors[0] || submitErrors.name
+              }}</small>
+            </validation-provider>
+          </b-col>
+          <b-col md="2">
+            <validation-provider
+              #default="{ errors }"
+              :name="`Nominal Talent ke-${index + 1}`"
+              rules="required|min_value:1000"
+            >
+              <b-form-input
+                v-model="talent.total_fee"
+                :state="errors.length > 0 || submitErrors.name ? false : null"
+                type="number"
+                class="mt-1"
+                :disabled="disabledInput"
+              />
+              <small class="text-danger">{{ errors[0] }}</small>
+            </validation-provider>
+          </b-col>
+          <b-col md="2">
+            <b-row>
               <b-button
                 variant="outline-danger"
                 type="button"
-                class="mr-50"
-                tag="router-link"
-                :to="{ name: 'invoice-admin' }"
-              >
-                Cancel
-              </b-button>
-              <b-button
-                variant="info"
-                type="submit"
-                class="mr-50"
-                :disabled="loadingSubmit"
-                @click.prevent="submit('draft')"
+                size="sm"
+                class="mt-1"
+                @click="talents.splice(index, 1)"
                 v-show="!disabledInput"
               >
-                <b-spinner v-if="loadingSubmit" small />
-                Save
+                <feather-icon icon="Trash2Icon" size="18" />
               </b-button>
-              <b-button
-                variant="success"
-                type="submit"
-                class="mr-50"
-                :disabled="loadingSubmit"
-                @click.prevent="publish"
-                v-if="id && !disabledInput"
-                v-show="id && !disabledInput"
-              >
-                <b-spinner v-if="loadingSubmit" small />
-                Publish
-              </b-button>
-              <b-button
-                variant="success"
-                type="submit"
-                class="mr-50"
-                :disabled="loadingSubmit"
-                @click.prevent="pay(2)"
-                v-if="id && invoice_status == 1"
-                v-show="id && invoice_status == 1"
-              >
-                <b-spinner v-if="loadingSubmit" small />
-                Lunaskan
-              </b-button>
-              <b-button
-                variant="danger"
-                type="submit"
-                class="mr-50"
-                :disabled="loadingSubmit"
-                @click.prevent="pay(3)"
-                v-if="id && invoice_status == 1"
-                v-show="id && invoice_status == 1"
-              >
-                <b-spinner v-if="loadingSubmit" small />
-                Batalkan
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-form>
+            </b-row>
+          </b-col>
+        </b-row>
+        <b-row class="mt-2" v-if="wasGetTalent && !talents.length">
+          <b-col offset-md="2" md="10">
+            <h5>Data Talent tidak tersedia</h5>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="8" offset-md="2" class="mt-1">
+            <h3>Total Tagihan</h3>
+            <b class="text-danger">{{ totalFee | rupiah }}</b>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col md="12" class="mt-2">
+            <hr />
+            <b-button
+              variant="outline-danger"
+              type="button"
+              class="mr-50"
+              tag="router-link"
+              :to="{ name: 'invoice-admin' }"
+            >
+              Cancel
+            </b-button>
+            <b-button
+              variant="info"
+              type="submit"
+              class="mr-50"
+              :disabled="loadingSubmit"
+              @click.prevent="submit('draft')"
+              v-show="!disabledInput"
+            >
+              <b-spinner v-if="loadingSubmit" small />
+              Save
+            </b-button>
+            <b-button
+              variant="success"
+              type="submit"
+              class="mr-50"
+              :disabled="loadingSubmit"
+              @click.prevent="publish"
+              v-if="id && !disabledInput"
+              v-show="id && !disabledInput"
+            >
+              <b-spinner v-if="loadingSubmit" small />
+              Publish
+            </b-button>
+            <b-button
+              variant="success"
+              type="submit"
+              class="mr-50"
+              :disabled="loadingSubmit"
+              @click.prevent="pay(2)"
+              v-if="id && invoice_status == 1"
+              v-show="id && invoice_status == 1"
+            >
+              <b-spinner v-if="loadingSubmit" small />
+              Lunaskan
+            </b-button>
+            <b-button
+              variant="danger"
+              type="submit"
+              class="mr-50"
+              :disabled="loadingSubmit"
+              @click.prevent="pay(3)"
+              v-if="id && invoice_status == 1"
+              v-show="id && invoice_status == 1"
+            >
+              <b-spinner v-if="loadingSubmit" small />
+              Batalkan
+            </b-button>
+          </b-col>
+        </b-row>
       </validation-observer>
     </b-card-actions>
   </b-overlay>
@@ -284,7 +285,6 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   BFormInput,
   BFormGroup,
-  BForm,
   BRow,
   BCol,
   BButton,
@@ -312,7 +312,6 @@ export default {
     ValidationObserver,
     BFormInput,
     BFormGroup,
-    BForm,
     BRow,
     BCol,
     BButton,
@@ -348,6 +347,7 @@ export default {
       partnerItems: [],
       hasMorePartner: false,
       partner: '',
+      wasGetTalent: false,
       talents: [],
       invoice_status: '',
     }
@@ -477,6 +477,7 @@ export default {
               total_fee: value.actual_talent_fee,
               talent_user: value.talent_user,
             }))
+            this.wasGetTalent = true
           })
       }
     },
@@ -562,6 +563,20 @@ export default {
             .finally(() => {
               this.loadingSubmit = false
             })
+        } else {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text:
+                  'Periksa kembali inputan Anda, pastikan tanggal assign dan nominal sudah terisi',
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
         }
       })
     },
