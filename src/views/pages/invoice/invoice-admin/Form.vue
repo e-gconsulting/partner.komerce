@@ -729,7 +729,7 @@ export default {
       })
     },
     updateStatus(status = 3) {
-      this.loadingSubmit = true
+      this.loading = true
       this.$http
         .post('/invoice/update', {
           invoice_id: this.id,
@@ -792,7 +792,7 @@ export default {
           }
         })
         .finally(() => {
-          this.loadingSubmit = false
+          this.loading = false
         })
     },
   },
