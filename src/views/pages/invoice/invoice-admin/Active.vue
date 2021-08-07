@@ -182,8 +182,9 @@ export default {
       totalRows: 0,
       fields: [
         {
-          key: 'user_to.full_name',
+          key: 'user_to',
           label: 'Partner',
+          formatter: val => `${val.no_partner} ${val.full_name}`,
         },
         {
           key: 'invoice_km_id',

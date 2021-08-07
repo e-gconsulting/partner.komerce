@@ -75,17 +75,11 @@
           <b-avatar variant="primary" v-if="data.item.status == 2">
             <feather-icon icon="CheckIcon" />
           </b-avatar>
-          <b-avatar variant="secondary" v-else>
-            <feather-icon icon="XIcon" />
-          </b-avatar>
         </template>
 
         <template #cell(cancel)="data">
           <b-avatar variant="primary" v-if="data.item.status == 3">
             <feather-icon icon="CheckIcon" />
-          </b-avatar>
-          <b-avatar variant="secondary" v-else>
-            <feather-icon icon="XIcon" />
           </b-avatar>
         </template>
 
@@ -184,8 +178,9 @@ export default {
       totalRows: 0,
       fields: [
         {
-          key: 'user_to.full_name',
+          key: 'user_to',
           label: 'Partner',
+          formatter: val => `${val.no_partner} ${val.full_name}`,
         },
         {
           key: 'invoice_km_id',
