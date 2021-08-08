@@ -860,6 +860,20 @@ export default {
         .then(({ data }) => {
           this.banks = data.data
         })
+        .catch(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Terjadi Kesalahan',
+                text: 'Terjadi kesalahan saat pengambilan data bank',
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
+        })
         .finally(() => {
           this.loading = false
         })
@@ -1090,7 +1104,7 @@ export default {
           this.phone = data.no_hp
           this.email = data.email
 
-          if (data.bank_accounts.length) {
+          if (data.bank_accounts[0].bank_code) {
             this.bankName = data.bank_accounts[0].bank_name
             this.accountNumber = data.bank_accounts[0].bank_no
             this.accountName = data.bank_accounts[0].bank_owner_name
