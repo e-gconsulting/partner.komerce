@@ -61,10 +61,10 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
+                <b-form-group label="Jenis Potongan" label-cols-md="4">
                   <validation-provider
                     #default="{ errors }"
-                    name="Jenis Sharing Fee"
+                    name="Jenis Potongan"
                     rules="required"
                   >
                     <v-select
@@ -107,7 +107,7 @@
                 <b>Jumlah Talent Minimal</b>
               </b-col>
               <b-col md="5">
-                <b>Biaya</b>
+                <b>Biaya Potongan</b>
               </b-col>
             </b-row>
             <b-row
@@ -133,7 +133,7 @@
               <b-col md="5">
                 <validation-provider
                   #default="{ errors }"
-                  name="Jumlah Talent Minimal"
+                  name="Jumlah Biaya"
                   rules="required|integer"
                 >
                   <b-form-input
@@ -319,6 +319,24 @@ export default {
       })
     },
     removeTalentAdminFeeDiscounts(index) {
+      this.$swal({
+        title: 'Anda yakin?',
+        text: 'Potongan Admin akan dihapus',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.remove(index)
+        }
+      })
+    },
+    remove(index) {
       this.talent_admin_fee_discounts.splice(index, 1)
     },
     submit() {
