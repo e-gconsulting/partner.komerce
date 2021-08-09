@@ -1,4 +1,4 @@
-const pageName = { singular: 'Instructor', plural: 'Instructors' }
+const pageName = { singular: 'Trainer', plural: 'Trainer' }
 
 export default [
   {

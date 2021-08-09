@@ -178,6 +178,9 @@
     }
   }
 }
+.nav-item.has-sub .nav-item.has-sub li svg {
+  display: inline-block!important;
+}
 
 // Media queries for small screen devices
 // =========================================

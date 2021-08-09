@@ -672,7 +672,6 @@
                   <validation-provider
                     #default="{ errors }"
                     name="URL Lainnya"
-                    rules="required"
                   >
                     <b-form-input
                       v-model="urlOther"
