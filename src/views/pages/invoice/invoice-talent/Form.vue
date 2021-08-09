@@ -244,7 +244,7 @@
               tag="router-link"
               :to="{ name: 'invoice-admin' }"
             >
-              Cancel
+              Kembali
             </b-button>
             <b-button
               variant="info"

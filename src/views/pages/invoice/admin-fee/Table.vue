@@ -28,6 +28,10 @@ export default {
           formatter: val => filters.rupiah(val),
         },
         {
+          key: 'admin_fee_talent_admin_fee_discounts',
+          label: 'Potongan Admin',
+        },
+        {
           key: 'admin_fee_discount_type',
           label: 'Type',
           badge: 'success',

@@ -125,12 +125,48 @@
                 {{ status[0][data.value] }}
               </b-badge>
             </template>
+            <!-- start admin fee components -->
             <template #cell(admin_fee_discount_type)="data">
               <b-badge variant="success" v-if="data.value == 'rp'"
                 >Nominal Rupiah</b-badge
               >
               <b-badge variant="primary" v-else>Presentase %</b-badge>
             </template>
+            <template #cell(admin_fee_talent_admin_fee_discounts)="data">
+              <b-button
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                v-b-modal="`admin-fee-modal-center-${data.item.id}`"
+                variant="outline-warning"
+                size="sm"
+              >
+                Lihat Detail
+              </b-button>
+              <b-modal
+                :id="`admin-fee-modal-center-${data.item.id}`"
+                centered
+                title="Detail"
+                ok-only
+                ok-title="Tutup"
+              >
+                <b-card-text>
+                  <ul>
+                    <li
+                      v-for="item in data.item.talent_admin_fee_discounts"
+                      :key="`${data.item.id}-${item.id}`"
+                    >
+                      Jika hire
+                      <b>{{ item.minimum_total_talent }} talent atau lebih,</b>
+                      maka biaya admin
+                      {{ item.admin_fee_discount_value | rupiah }} / talent.
+                    </li>
+                  </ul>
+                  <p v-if="!data.item.talent_admin_fee_discounts.length">
+                    Tidak ada Potongan Admin yang tersedia
+                  </p>
+                </b-card-text>
+              </b-modal>
+            </template>
+            <!-- end admin fee components -->
             <template #cell()="data">
               <b-badge
                 v-if="data.field.badge"
@@ -234,6 +270,8 @@
 import BCardActionsContainer from '@core/components/b-card-actions/BCardActionsContainer.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
+import filters from '@/libs/filters'
+
 import {
   BFormRow,
   BRow,
@@ -252,6 +290,8 @@ import {
   BCardTitle,
   BCardBody,
   BOverlay,
+  BModal,
+  BCardText,
   VBTooltip,
 } from 'bootstrap-vue'
 
@@ -278,9 +318,12 @@ export default {
     BCard,
     BCardActionsContainer,
     BCardTitle,
+    BCardText,
     BOverlay,
     BCardBody,
+    BModal,
   },
+  filters: { rupiah: filters.rupiah },
   props: {
     keywordKey: {
       type: String,
