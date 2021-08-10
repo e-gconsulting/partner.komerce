@@ -477,6 +477,8 @@ export default {
       } else {
         talent.total_net_salary = talent.total_gross_salary
       }
+
+      talent.total_net_salary = Math.round(talent.total_net_salary)
       this.talents[index] = talent
     },
     onSearchPartner(search, loading) {
@@ -727,7 +729,7 @@ export default {
             description: '-',
             hired_at: value.hired_at,
             total_gross_salary: value.total_gross_salary,
-            total_net_salary: value.total_net_salary,
+            total_net_salary: Math.round(value.total_net_salary),
             full_name: value.sdm_data.full_name,
             disbursement: value.disbursement,
           }))
