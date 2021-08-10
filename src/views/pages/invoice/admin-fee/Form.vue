@@ -120,7 +120,7 @@
               <b-col md="5">
                 <validation-provider
                   #default="{ errors }"
-                  name="Jumlah Talent Minimal"
+                  :name="`Jumlah Talent ke-${index + 1}`"
                   rules="required|integer"
                 >
                   <b-form-input
@@ -133,8 +133,8 @@
               <b-col md="5">
                 <validation-provider
                   #default="{ errors }"
-                  name="Jumlah Biaya"
-                  rules="required|integer"
+                  :name="`Jumlah Biaya Talent ke-${index + 1}`"
+                  :rules="`required|integer|max_value:${admin_fee}`"
                 >
                   <b-form-input
                     v-model="talent_admin_fee_discount.admin_fee_discount_value"
@@ -201,7 +201,7 @@ import {
   VBTooltip,
   BFormTextarea,
 } from 'bootstrap-vue'
-import { required, integer } from '@validations'
+import { required, integer, maxValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
@@ -234,6 +234,7 @@ export default {
 
       required,
       integer,
+      maxValue,
 
       hasMorePosition: false,
       positionItems: [],

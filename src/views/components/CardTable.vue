@@ -157,7 +157,11 @@
                       Jika hire
                       <b>{{ item.minimum_total_talent }} talent atau lebih,</b>
                       maka biaya admin
-                      {{ item.admin_fee_discount_value | rupiah }} / talent.
+                      {{
+                        (data.item.admin_fee - item.admin_fee_discount_value)
+                          | rupiah
+                      }}
+                      / talent.
                     </li>
                   </ul>
                   <p v-if="!data.item.talent_admin_fee_discounts.length">
