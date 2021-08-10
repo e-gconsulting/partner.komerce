@@ -518,7 +518,7 @@ export default {
       if (this.partner && this.partner) {
         this.$http
           .get(
-            `/talent?limit=5&status=hired&no_partner=${this.partner.no_partner}`,
+            `/talent?limit=1000&status=hired&no_partner=${this.partner.no_partner}`,
           )
           .then(res => {
             const { data } = res.data.data
