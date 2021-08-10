@@ -1065,9 +1065,9 @@ export default {
           if (data.talent.education) {
             this.education = data.talent.education
           }
-          if (data.talent.has_work_experience) {
-            this.experienced = Number(data.talent.has_work_experience)
-          }
+
+          this.experienced = Number(data.talent.has_work_experience)
+
           if (data.talent.year_experience) {
             this.experienceYear = data.talent.year_experience
           }

@@ -110,6 +110,10 @@
       </b-table>
       <b-row>
         <b-col md="12" class="ml-1 my-2">
+          <h4 class="text-success">Total Nominal</h4>
+          <b>{{ totalAmount | rupiah }}</b>
+        </b-col>
+        <b-col md="12" class="ml-1 my-2">
           <b-pagination
             v-model="currentPage"
             :total-rows="totalRows"
@@ -163,6 +167,7 @@ export default {
     vSelect,
     flatPickr,
   },
+  filters: { rupiah: filters.rupiah },
   data() {
     const statusOptions = [
       {
@@ -217,6 +222,7 @@ export default {
         },
       ],
       items: [],
+      totalAmount: 0,
 
       partnerItems: [],
       hasMorePartner: false,
@@ -306,6 +312,7 @@ export default {
           const { data } = res.data
           this.items = data.data
           this.totalRows = data.total
+          this.totalAmount = data.total_amount
         })
         .catch(() => {})
         .finally(() => {
