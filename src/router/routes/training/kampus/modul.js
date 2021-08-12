@@ -2,12 +2,14 @@ const pageName = { singular: 'Modul', plural: 'modul' }
 
 export default [
   {
-    path: '/kelas/modul',
+    path: '/kelas/modul/:class_id',
     name: 'modul',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/Modul.vue'),
     meta: {
       name: pageName,
+      navActiveLink: 'kelas',
       routeCreate: 'modul-create',
+      routeEdit: 'module-edit',
       routeLesson: 'manage-lesson',
       resource: 'Training',
       action: 'manage',
@@ -32,7 +34,7 @@ export default [
     component: () => import('@/views/pages/training/kampus-komerce/kelas/FormModul.vue'),
     meta: {
       name: pageName,
-      navActiveLink: 'modul',
+      navActiveLink: 'kelas',
       resource: 'Training',
       action: 'manage',
       breadcrumb: [
@@ -45,6 +47,30 @@ export default [
         },
         {
           text: 'create',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/kelas/modul/edit',
+    name: 'module-edit',
+    component: () => import('@/views/pages/training/kampus-komerce/kelas/EditModule.vue'),
+    meta: {
+      name: pageName,
+      navActiveLink: 'kelas',
+      resource: 'Training',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Training',
+        },
+        {
+          text: 'Manage Modul',
+          route: 'modul',
+        },
+        {
+          text: 'Edit',
           active: true,
         },
       ],

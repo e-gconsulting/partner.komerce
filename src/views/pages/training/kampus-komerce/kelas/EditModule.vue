@@ -1,7 +1,7 @@
 <template>
   <b-card-actions
     ref="formCard"
-    :title="`${editMode ? 'Edit' : 'Add'} ${$route.meta.name.singular}`"
+    title="Edit Module"
     no-actions
   >
     <b-row>
@@ -69,21 +69,6 @@
                         />
                         <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
-                    </b-col>
-                    <b-col
-                      v-if="iconFile || iconInitialFile"
-                      cols="auto"
-                    >
-                      <b-button
-                        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                        v-b-tooltip.hover.top="'Lihat File'"
-                        variant="gradient-secondary"
-                        class="btn-icon"
-                        target="_blank"
-                        :href="iconFile ? fileUrl(iconFile) : iconInitialFile"
-                      >
-                        <feather-icon icon="FileIcon" />
-                      </b-button>
                     </b-col>
                   </b-form-row>
                 </b-form-group>
@@ -232,10 +217,11 @@ export default {
     console.log(this.thumbnail)
     console.log(this.statusModule)
     console.log(this.trainerName)
-    // this.$http.get('/lms/module/list/14').then(response => {
-    //   const { data } = response
-    //   console.log(data)
-    // })
+    this.$http.get('/lms/module/list/14').then(response => {
+      const { data } = response
+      console.log(data)
+    })
+    this.loadForm()
   },
   methods: {
     submit() {
@@ -244,6 +230,7 @@ export default {
           this.loadingSubmit = true
 
           const formData = new FormData()
+          formData.append('_method', 'put')
           formData.append('module_title', this.moduleTitle)
           formData.append('module_subtitle', this.moduleSubtitle)
           formData.append('module_thumbnail', this.thumbnail)
@@ -251,7 +238,7 @@ export default {
           formData.append('module_trainer', this.trainerName)
           formData.append('module_class_id', 14)
 
-          this.$http.post('/lms/module/store', formData)
+          this.$http.post('/lms/module/update/10', formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -276,6 +263,17 @@ export default {
               }
             })
         }
+      })
+    },
+    loadForm() {
+      return this.$http.get('/lms/module/10').then(response => {
+        const { data } = response.data
+        this.moduleTitle = data.module_title
+        this.moduleSubtitle = data.module_subtitle
+        if (data.thumbnail) this.iconInitialFile = data.thumbnail
+        this.statusModule = data.module_status
+        this.trainerName = data.module_trainer
+        console.log(data)
       })
     },
   },

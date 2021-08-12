@@ -190,45 +190,25 @@ export default {
       minValue,
 
       trainerOptions: [
-        { title: 'Candra' },
-        { title: 'Candra Fakboy Komerce' },
+        { title: 'Sahfri Yanto', value: 1 },
+        { title: 'Ikhtiar Rahayu', value: 2 },
       ],
 
       statusKelasOptions: [
-        { title: 'Private' },
-        { title: 'Public' },
+        { title: 'Draft', value: 'draft' },
+        { title: 'Publish', value: 'publish' },
       ],
 
     }
   },
   computed: {
-    id() {
-      return this.$route.params.id || this.$route.query.id
-    },
-    idResign() {
-      return this.$route.params.user_id || this.$route.query.user_id
-    },
-    method() {
-      return this.editMode ? 'put' : 'post'
-    },
-    editMode() {
-      return this.id !== undefined
-    },
     successText() {
       return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
-    endpoint() {
-      const endpoint = 'docResign'
-      return `/${endpoint}`
-    },
   },
   mounted() {
-    this.isValid = ''
-    this.$http.get(`/talent/${this.id}`).then(response => {
-      const { data } = response.data
-      this.resultUserId = data.id
-    })
+
   },
   methods: {
     submit() {
@@ -236,49 +216,26 @@ export default {
         if (success) {
           this.submitErrors = ''
           this.loadingSubmit = true
-          const tab = 'talent-off'
 
-          const formData = {
-            user_id: this.resultUserId,
-            status_off: this.fieldPemutusan.value,
-            url_document: this.fieldURLDocument,
-            url_other: this.fieldURLDocumentOther,
-          }
+          const formData = new FormData()
+          formData.append('lesson_title')
 
-          this.$http.post(this.endpoint, formData)
-            .then(async response => {
-              if (response.data.success !== undefined && !response.data.success) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Failed',
-                    text: response.data.message,
-                    variant: 'danger',
-                    icon: 'AlertCircleIcon',
-                  },
-                }, { timeout: 2500 })
-
-                return
-              }
-
-              const { data } = response
-
-              if (!this.selfRegister && !this.editProfileMode) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Success',
-                    text: this.successText,
-                    variant: 'success',
-                    attachment: 'CheckIcon',
-                  },
-                }, { timeout: 2500 })
-              }
-
-              this.$emit('on-submit', data)
-              this.$router.push({ name: this.$route.meta.navActiveLink, query: { tab } })
+          this.$http.post('/lms/module/store', formData)
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  text: this.successText,
+                  variant: 'success',
+                  icon: 'CheckIcon',
+                },
+              }, { timeout: 2500 })
+              this.$router.push({ name: this.$route.meta.navActiveLink })
             })
             .catch(error => {
+              this.loadingSubmit = false
+
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(error.response.data.data).map(
@@ -287,11 +244,11 @@ export default {
                 )
               }
             })
-            .finally(() => {
-              this.loadingSubmit = false
-            })
         }
       })
+    },
+    loadModul() {
+      return this.$http.get()
     },
   },
 }

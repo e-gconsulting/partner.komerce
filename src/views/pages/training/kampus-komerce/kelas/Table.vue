@@ -85,15 +85,18 @@
               variant="flat-info"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeModul }"
+              :to="{ name: $route.meta.routeModul, params: { class_id: data.item.class_id } }"
             >
               <feather-icon
                 icon="SettingsIcon"
               />
             </b-button>
             <b-button
+              v-if="hasActionEdit"
               variant="flat-warning"
               class="btn-icon"
+              tag="router-link"
+              :to="{ name: $route.meta.routeEdit, params: { class_id: data.item.class_id } }"
             >
               <feather-icon
                 icon="EditIcon"
@@ -177,7 +180,7 @@ export default {
             },
             {
               publish: 'light-success',
-              private: 'light-danger',
+              draft: 'light-danger',
             },
           ],
         },
@@ -188,17 +191,11 @@ export default {
   computed: {
     tableFields() {
       const fields = [...this.fields]
-      // if (this.hasActionEdit || this.hasActionDelete) {
-      //   fields.push({ key: 'action', label: 'Aksi', class: 'col-action' })
-      // }
       return fields
     },
-    // hasActionDelete() {
-    //   return this.endpointDelete !== undefined
-    // },
-    // hasActionEdit() {
-    //   return this.$route.meta.routeEdit !== undefined
-    // },
+    hasActionEdit() {
+      return this.$route.meta.routeEdit !== undefined
+    },
   },
   mounted() {
     this.$http.get('/lms/class/list').then(response => {

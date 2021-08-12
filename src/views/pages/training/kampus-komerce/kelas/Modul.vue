@@ -75,13 +75,14 @@
 
           <template #cell(module_status)="data">
             <b-badge
-              :variant="data.field.badge[data.item]"
+              v-if="data.field.badge"
+              :variant="data.field.badge[1][data.value]"
             >
-              {{ data.field.badge[data.item] }}
+              {{ data.field.badge[0][data.value] }}
             </b-badge>
           </template>
 
-          <template #cell(action)>
+          <template #cell(action)="data">
             <b-button
               variant="flat-info"
               class="btn-icon"
@@ -95,6 +96,8 @@
             <b-button
               variant="flat-warning"
               class="btn-icon"
+              tag="router-link"
+              :to="{ name: $route.meta.routeEdit }"
             >
               <feather-icon
                 icon="EditIcon"
@@ -103,6 +106,7 @@
             <b-button
               variant="flat-danger"
               class="btn-icon"
+              @click="confirmDelete(data)"
             >
               <feather-icon
                 icon="Trash2Icon"
@@ -149,20 +153,38 @@ export default {
     return {
       loading: false,
       classSkill: '',
+
+      classId: this.$route.params.class_id,
+
+      endpointDelete: '/lms/module/delete/:module_id',
+
+      deletedIds: [],
+
+      nextTodoId: 2,
+      perPage: 10,
+      pageOptions: [5, 10, 20],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+
       fields: [
         { key: 'module', label: 'Modul' },
-        { key: 'module.modul_trainer', label: 'Trainer' },
+        { key: 'module.module_trainer', label: 'Trainer' },
         {
           key: 'module.module_status',
           label: 'Status',
           badge: [
             {
               publish: 'Publish',
-              private: 'Private',
+              draft: 'Draft',
             },
             {
               publish: 'light-success',
-              private: 'light-danger',
+              draft: 'light-danger',
             },
           ],
         },
@@ -178,37 +200,70 @@ export default {
     },
   },
   mounted() {
-    this.$http.get('/lms/module/list/3').then(response => {
+    this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
       const { data } = response.data
-      this.classSkill = data[0].class_skill
+      console.log({ ...data })
       console.log(data)
     })
   },
   methods: {
     tableProvider() {
-      return this.$http.get('/lms/module/list/3').then(response => {
+      return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
         const { data } = response.data
         return data
       })
     },
     loadClass() {
-      return this.$http.get('/lms/module/list/3').then(response => {
+      return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
         const { data } = response.data
         this.classSkill = response.data.data.class_skill
-        console.log(data)
         return data
       })
     },
-    // isDeleted(id) {
-    //   return this.deletedIds.includes(id)
-    // },
-    // rowClass(item, type) {
-    //   const colorClass = 'table-danger'
-    //   if (!item || type !== 'row') { return }
+    confirmDelete(data) {
+      console.log(data)
+      this.$swal({
+        title: 'Anda yakin?',
+        text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.delete(data)
+        }
+      })
+    },
+    delete(data) {
+      console.log(data)
+      this.loading = true
+      const endpoint = this.endpointDelete.replace(/:module_id/g, data.item.module.module_id)
+      console.log(endpoint)
 
-    //   // eslint-disable-next-line consistent-return
-    //   if (this.isDeleted(item.id)) { return colorClass }
-    // },
+      this.$http.delete(endpoint)
+        .then(() => {
+          this.deletedIds.push(data.item.module.module_id)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    isDeleted(id) {
+      console.log(id)
+      return this.deletedIds.includes(id)
+    },
+    rowClass(item, type) {
+      const colorClass = 'table-danger'
+      if (!item || type !== 'row') { return }
+
+      // eslint-disable-next-line consistent-return
+      if (this.isDeleted(item.class_id)) { return colorClass }
+    },
   },
 }
 </script>

@@ -19,7 +19,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="Skill"
+                    name="class_skill"
                     rules="required"
                   >
                     <v-select
@@ -41,7 +41,7 @@
                     <b-col>
                       <validation-provider
                         #default="{ errors }"
-                        name="Cover Kelas"
+                        name="class_img"
                       >
                         <b-form-file
                           v-model="iconFile"
@@ -67,7 +67,7 @@
                     <b-col>
                       <validation-provider
                         #default="{ errors }"
-                        name="Deskripsi Video"
+                        name="class_trailer_description"
                         rules="required"
                       >
                         <b-form-textarea
@@ -88,7 +88,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="Video Pengantar"
+                    name="class_trailer_url"
                     rules="required"
                   >
                     <b-form-input
@@ -107,7 +107,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="Status Kelas"
+                    name="class_status"
                     rules="required"
                   >
                     <v-select
@@ -242,25 +242,25 @@ export default {
         if (success) {
           this.loadingSubmit = true
 
-          const formData = {
-            class_skill: this.skill.value,
-            class_img: this.iconFile,
-            class_trailer_url: this.videoPengantar,
-            class_trailer_description: this.descriptionVideo,
-            class_status: this.statusClass.value,
-          }
+          // const formData = {
+          //   class_skill: this.skill.value,
+          //   class_status: this.statusClass.value,
+          //   class_trailer_description: this.descriptionVideo,
+          //   class_trailer_url: this.videoPengantar,
+          //   class_img: this.iconFile,
+          // }
 
-          console.log(formData)
+          // console.log(formData)
 
-          // const formData = new FormData()
-          // formData.append('class_skill', this.skill.value)
-          // formData.append('class_img', this.iconFile)
-          // formData.append('skill_level', 'Beginner')
-          // formData.append('class_trailer_url', this.videoPengantar)
-          // formData.append('class_trailer_description', this.descriptionVideo)
-          // formData.append('class_status', this.statusClass.value)
+          const formData = new FormData()
+          formData.append('class_skill', this.skill.value)
+          formData.append('class_img', this.iconFile)
+          formData.append('skill_level', 'Beginner')
+          formData.append('class_trailer_url', this.videoPengantar)
+          formData.append('class_trailer_description', this.descriptionVideo)
+          formData.append('class_status', this.statusClass.value)
 
-          this.$http.post('/lms/class/store', formData, { 'Content-Type': 'multipart/form-data' })
+          this.$http.post('/lms/class/store', formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,

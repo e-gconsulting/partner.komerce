@@ -1,7 +1,7 @@
 <template>
   <b-card-actions
     ref="formCard"
-    :title="`${editMode ? 'Edit' : 'Add'} ${$route.meta.name.singular}`"
+    title="Edit Kelas"
     no-actions
   >
     <b-row>
@@ -14,93 +14,17 @@
             <b-row>
               <b-col md="12">
                 <b-form-group
-                  label="Judul"
+                  label="Skill"
                   label-cols-md="4"
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="Judul"
-                    rules="required"
-                  >
-                    <b-form-input
-                      v-model="moduleTitle"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Subjudul"
-                  label-cols-md="4"
-                >
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Subjudul"
-                    rules="required"
-                  >
-                    <b-form-input
-                      v-model="moduleSubtitle"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Thumbnail"
-                  label-cols-md="4"
-                >
-                  <b-form-row>
-                    <b-col>
-                      <validation-provider
-                        #default="{ errors }"
-                        name="Thumbnail"
-                        rules="required"
-                      >
-                        <b-form-file
-                          v-model="thumbnail"
-                          :state="errors.length > 0 ? false:null"
-                          :placeholder="iconInitialFile ?
-                            iconInitialFile.split('/').pop()
-                            : `Pilih atau drop file disini...`"
-                          drop-placeholder="Drop file disini..."
-                          accept="image/*"
-                        />
-                        <small class="text-danger">{{ errors[0] }}</small>
-                      </validation-provider>
-                    </b-col>
-                    <b-col
-                      v-if="iconFile || iconInitialFile"
-                      cols="auto"
-                    >
-                      <b-button
-                        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                        v-b-tooltip.hover.top="'Lihat File'"
-                        variant="gradient-secondary"
-                        class="btn-icon"
-                        target="_blank"
-                        :href="iconFile ? fileUrl(iconFile) : iconInitialFile"
-                      >
-                        <feather-icon icon="FileIcon" />
-                      </b-button>
-                    </b-col>
-                  </b-form-row>
-                </b-form-group>
-              </b-col>
-              <b-col md="12">
-                <b-form-group
-                  label="Status Modul"
-                  label-cols-md="4"
-                >
-                  <validation-provider
-                    #default="{ errors }"
-                    name="Status Modul"
+                    name="class_skill"
                     rules="required"
                   >
                     <v-select
-                      v-model="statusModule"
-                      :options="statusKelasOptions"
+                      v-model="skill"
+                      :options="skillOptions"
                       label="title"
                       :state="errors.length > 0 ? false:null"
                     />
@@ -110,16 +34,86 @@
               </b-col>
               <b-col md="12">
                 <b-form-group
-                  label="Trainer"
+                  label="Cover Kelas"
+                  label-cols-md="4"
+                >
+                  <b-form-row>
+                    <b-col>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="class_img"
+                      >
+                        <b-form-file
+                          v-model="imageFile"
+                          :state="errors.length > 0 ? false:null"
+                          :placeholder="imageInitialFile ?
+                            imageInitialFile.split('/').pop()
+                            : `Pilih atau drop file disini...`"
+                          drop-placeholder="Drop file disini..."
+                          accept="image/*"
+                        />
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-col>
+                  </b-form-row>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group
+                  label="Deskripsi Video"
+                  label-cols-md="4"
+                >
+                  <b-form-row>
+                    <b-col>
+                      <validation-provider
+                        #default="{ errors }"
+                        name="class_trailer_description"
+                        rules="required"
+                      >
+                        <b-form-textarea
+                          v-model="descriptionVideo"
+                          placeholder="Textarea"
+                          rows="3"
+                          :state="errors.length > 0 ? false:null"
+                        />
+                      </validation-provider>
+                    </b-col>
+                  </b-form-row>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group
+                  label="Video Pengantar"
                   label-cols-md="4"
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="Trainer"
+                    name="class_trailer_url"
                     rules="required"
                   >
                     <b-form-input
-                      v-model="trainerName"
+                      v-model="videoPengantar"
+                      label="title"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group
+                  label="Status Kelas"
+                  label-cols-md="4"
+                >
+                  <validation-provider
+                    #default="{ errors }"
+                    name="class_status"
+                    rules="required"
+                  >
+                    <v-select
+                      v-model="statusClass"
+                      :options="statusKelasOptions"
+                      label="title"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -131,7 +125,7 @@
                 class="mt-2"
               >
                 <b-button
-                  :variant="editMode ? 'warning' : 'primary'"
+                  variant="primary"
                   type="submit"
                   class="mr-50"
                   :disabled="loadingSubmit"
@@ -165,7 +159,7 @@ import {
   BFormFile,
   VBTooltip,
   BFormRow,
-  // BFormTextarea,
+  BFormTextarea,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import { required, min } from '@validations'
@@ -191,51 +185,46 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    // BFormTextarea,
+    BFormTextarea,
     vSelect,
   },
   data() {
     return {
-      id: this.$route.params.id,
+      classId: this.$route.params.class_id,
       loadingSubmit: false,
       submitErrors: '',
 
       required,
       min,
 
-      moduleTitle: '',
-      moduleSubtitle: '',
-      thumbnail: [],
-      statusModule: '',
-      trainerName: '',
-
       name: '',
-      iconFile: null,
-      iconInitialFile: null,
+      imageFile: null,
+      imageInitialFile: null,
+
+      skill: '',
+      descriptionVideo: '',
+      videoPengantar: '',
+      statusClass: '',
+
+      skillOptions: [
+        { title: 'Advertiser', value: 'Advertiser' },
+        { title: 'Customer Service', value: 'Customer Service' },
+        { title: 'Admin Marketplace', value: 'Admin Marketplace' },
+      ],
 
       statusKelasOptions: [
         { title: 'Draft', value: 'draft' },
-        { title: 'Publish', value: 'Publish' },
+        { title: 'Publish', value: 'publish' },
       ],
     }
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
     },
   },
   mounted() {
-    if (this.editMode) this.loadForm()
-    console.log(this.moduleTitle)
-    console.log(this.moduleSubtitle)
-    console.log(this.thumbnail)
-    console.log(this.statusModule)
-    console.log(this.trainerName)
-    // this.$http.get('/lms/module/list/14').then(response => {
-    //   const { data } = response
-    //   console.log(data)
-    // })
+    this.loadForm()
   },
   methods: {
     submit() {
@@ -244,14 +233,16 @@ export default {
           this.loadingSubmit = true
 
           const formData = new FormData()
-          formData.append('module_title', this.moduleTitle)
-          formData.append('module_subtitle', this.moduleSubtitle)
-          formData.append('module_thumbnail', this.thumbnail)
-          formData.append('module_status', this.statusModule.value)
-          formData.append('module_trainer', this.trainerName)
-          formData.append('module_class_id', 14)
+          formData.append('_method', 'put')
+          formData.append('class_skill', this.skill.value)
+          formData.append('class_img', this.imageFile)
+          formData.append('class_trailer_url', this.videoPengantar)
+          formData.append('class_trailer_description', this.descriptionVideo)
+          formData.append('class_status', this.statusClass.value)
 
-          this.$http.post('/lms/module/store', formData)
+          console.log(formData)
+
+          this.$http.post('/lms/class/update/14', formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -278,6 +269,17 @@ export default {
         }
       })
     },
+    loadForm() {
+      return this.$http.get(`/lms/class/${this.classId}`).then(response => {
+        const { data } = response.data
+        this.skill = data.class_name
+        if (data.class_img) this.imageInitialFile = data.class_img
+        this.descriptionVideo = data.class_trailer_description
+        this.videoPengantar = data.class_trailer_url
+        this.statusClass = data.class_status
+      })
+    },
+    fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },
 }
 </script>

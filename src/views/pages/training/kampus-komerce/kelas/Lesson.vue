@@ -189,7 +189,7 @@ export default {
     },
   },
   mounted() {
-    this.$http.get('/lms/lesson/list/2').then(response => {
+    this.$http.get('/lms/lesson/list/10').then(response => {
       const { data } = response.data
       this.moduleTitle = data[0].module_title
       this.moduleSubtitle = data[0].module_subtitle
@@ -202,13 +202,13 @@ export default {
   },
   methods: {
     tableProvider() {
-      return this.$http.get('/lms/lesson/list/2').then(response => {
+      return this.$http.get('/lms/lesson/list/10').then(response => {
         const { data } = response.data
         return data
       })
     },
     loadModule() {
-      return this.$http.get('/lms/module/list/3').then(response => {
+      return this.$http.get('/lms/module/list/10').then(response => {
         const { data } = response.data
         return data
       })
