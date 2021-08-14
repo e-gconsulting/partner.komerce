@@ -36,6 +36,12 @@
                   :fields="fields"
                   :items="items"
                   :show-empty="!loading"
+                  :per-page="perPage"
+                  :current-page="currentPage"
+                  :sort-by.sync="sortBy"
+                  :sort-desc.sync="sortDesc"
+                  :filter="filter"
+                  :filter-included-fields="filterOn"
                   :tbody-tr-class="rowClass"
                   :busy.sync="loading"
                 >
@@ -300,16 +306,25 @@ export default {
     }
   },
   computed: {
+    id() {
+      return this.$route.params.id || this.$route.query.id
+    },
+    method() {
+      return this.editMode ? 'put' : 'post'
+    },
+    editMode() {
+      return this.id !== undefined
+    },
     successText() {
       return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
+    endpoint() {
+      const endpoint = 'docResign'
+      return `/${endpoint}`
+    },
   },
   mounted() {
-    this.$http.get('/lms/lesson/quiz/13').then(response => {
-      const { data } = response
-      console.log(data)
-    })
     this.initTrHeight()
   },
   created() {

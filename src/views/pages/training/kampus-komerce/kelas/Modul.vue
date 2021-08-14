@@ -64,13 +64,13 @@
           :busy.sync="loading"
         >
 
-          <template #cell(module)="data">
-            <h4>{{ data.item.module.module_title }}</h4>
-            <p>{{ data.item.module.module_subtitle }}</p>
+          <template #cell(modules)="data">
+            <h4>{{ data.item.module_title }}</h4>
+            <p>{{ data.item.module_subtitle }}</p>
           </template>
 
           <template #cell(module_trainer)="data">
-            <span>{{ data.item }}</span>
+            <span>{{ data.item.module_trainer }}</span>
           </template>
 
           <template #cell(module_status)="data">
@@ -87,7 +87,7 @@
               variant="flat-info"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeLesson }"
+              :to="{ name: $route.meta.routeLesson, params: { module_id: data.item.module_id } }"
             >
               <feather-icon
                 icon="SettingsIcon"
@@ -172,10 +172,10 @@ export default {
       filterOn: [],
 
       fields: [
-        { key: 'module', label: 'Modul' },
-        { key: 'module.module_trainer', label: 'Trainer' },
+        { key: 'modules', label: 'Modul' },
+        { key: 'module_trainer', label: 'Trainer' },
         {
-          key: 'module.module_status',
+          key: 'module_status',
           label: 'Status',
           badge: [
             {
@@ -202,22 +202,26 @@ export default {
   mounted() {
     this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
       const { data } = response.data
-      console.log({ ...data })
+      console.log(data.modules)
+    })
+    this.$http.get('/lms/lesson/list/32').then(response => {
+      const { data } = response.data
       console.log(data)
     })
+    console.log(this.loadClass())
   },
   methods: {
     tableProvider() {
       return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
         const { data } = response.data
-        return data
+        return data.modules
       })
     },
     loadClass() {
       return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
         const { data } = response.data
-        this.classSkill = response.data.data.class_skill
-        return data
+        // this.classSkill = data[0].class_skill
+        return data.modules
       })
     },
     confirmDelete(data) {

@@ -11,7 +11,7 @@
     <div class="pb-1">
       <b-card-actions
         ref="formCard"
-        title="Add Lesson"
+        title="Edit Lesson"
         no-actions
         no-body
       >
@@ -210,6 +210,8 @@ export default {
   },
   data() {
     return {
+      lessonId: this.$route.params.lesson_id,
+
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
@@ -222,6 +224,7 @@ export default {
       moduleTitle: '',
       videoDescription: '',
       videoUrl: '',
+
       lessonThumbnail: null,
       imageInitialFile: null,
 
@@ -248,6 +251,7 @@ export default {
       const { data } = response
       console.log(data)
     })
+    this.loadForm()
   },
   methods: {
     submit() {
@@ -257,6 +261,7 @@ export default {
           this.loadingSubmit = true
 
           const formData = new FormData()
+          formData.append('_method', 'put')
           formData.append('lesson_title', this.lessonTitle)
           formData.append('lesson_thumbnail', this.lessonThumbnail)
           formData.append('lesson_video_description', this.videoDescription)
@@ -264,7 +269,7 @@ export default {
           formData.append('lesson_module_id', 32)
           formData.append('lesson_status', 'publish')
 
-          this.$http.post('/lms/lesson/store', formData)
+          this.$http.post(`/lms/lesson/update/${this.lessonId}`, formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -290,8 +295,14 @@ export default {
         }
       })
     },
-    loadModul() {
-      return this.$http.get()
+    loadForm() {
+      return this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
+        const { data } = response.data
+        this.lessonTitle = data.lesson_title
+        this.videoDescription = data.lesson_video_description
+        this.videoUrl = data.lesson_video_url
+        if (data.lesson_thumbnail) this.imageInitialFile = data.lesson_thumbnail
+      })
     },
   },
 }

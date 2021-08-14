@@ -88,29 +88,31 @@
           :busy.sync="loading"
         >
 
-          <template #cell(lesson_title)="data">
+          <template #cell(lesson)="data">
             <b-form-row>
               <b-col cols="auto">
                 <b-avatar
                   size="md"
                   rounded="sm"
-                  :src="data.item.lesson.lesson_thumbnail"
+                  :src="data.item.lesson_thumbnail"
                 />
               </b-col>
               <b-col class="d-flex align-items-center pr-5">
                 <div>
                   <b-card-title class="mb-1 mt-50">
-                    <h5>{{ data.item.lesson.lesson_title }}</h5>
+                    <h5>{{ data.item.lesson_title }}</h5>
                   </b-card-title>
                 </div>
               </b-col>
             </b-form-row>
           </template>
 
-          <template #cell(action)>
+          <template #cell(action)="data">
             <b-button
               variant="flat-warning"
               class="btn-icon"
+              tag="router-link"
+              :to="{ name: $route.meta.routeEdit, params: { lesson_id: data.item.lesson_id } }"
             >
               <feather-icon
                 icon="EditIcon"
@@ -119,6 +121,7 @@
             <b-button
               variant="flat-danger"
               class="btn-icon"
+              @click="confirmDelete(data)"
             >
               <feather-icon
                 icon="Trash2Icon"
@@ -169,8 +172,10 @@ export default {
 
   data() {
     return {
+      moduleId: this.$route.params.module_id,
+      classId: this.$route.params.class_id,
       fields: [
-        { key: 'lesson_title', label: 'Lesson' },
+        { key: 'lesson', label: 'Lesson' },
         { key: 'action', label: 'Aksi' },
       ],
 
@@ -179,7 +184,20 @@ export default {
       trainerName: '',
       moduleStatus: '',
 
+      nextTodoId: 2,
+      perPage: 10,
+      pageOptions: [5, 10, 20],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+
       loading: false,
+      deletedIds: [],
+      endpointDelete: '/lms/lesson/delete/:lesson_id',
     }
   },
   computed: {
@@ -189,29 +207,90 @@ export default {
     },
   },
   mounted() {
-    this.$http.get('/lms/lesson/list/10').then(response => {
+    this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
       const { data } = response.data
-      this.moduleTitle = data[0].module_title
-      this.moduleSubtitle = data[0].module_subtitle
-      this.trainerName = data[0].module_trainer_name
-      this.moduleStatus = data[0].module_status
       console.log(data)
-      return data
     })
-    console.log(this.loadModule())
+    // console.log(this.loadModule())
+    // console.log(this.trainerName)
+    this.loadModule()
+    this.loadLesson()
+    console.log(this.moduleId)
+    console.log(this.classId)
+    this.$http.get('/lms/lesson/quiz/13').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
   },
   methods: {
+    test(data) {
+      console.log(data)
+      console.log(this.moduleId)
+    },
     tableProvider() {
-      return this.$http.get('/lms/lesson/list/10').then(response => {
+      return this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
         const { data } = response.data
-        return data
+        return data.lesson
       })
     },
     loadModule() {
-      return this.$http.get('/lms/module/list/10').then(response => {
+      return this.$http.get('/lms/module/32').then(response => {
         const { data } = response.data
+        this.moduleStatus = data.module_status
+        this.moduleTitle = data.module_title
+        this.moduleSubtitle = data.module_subtitle
+        this.trainerName = data.module_trainer
         return data
       })
+    },
+    loadLesson() {
+      return this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
+        const { data } = response
+        return data
+      })
+    },
+    confirmDelete(data) {
+      console.log(data)
+      this.$swal({
+        title: 'Anda yakin?',
+        text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.delete(data)
+        }
+      })
+    },
+    delete(data) {
+      console.log(data)
+      this.loading = true
+      const endpoint = this.endpointDelete.replace(/:lesson_id/g, data.item.lesson_id)
+      console.log(endpoint)
+
+      this.$http.delete(endpoint)
+        .then(() => {
+          this.deletedIds.push(data.item.lesson_id)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    isDeleted(id) {
+      return this.deletedIds.includes(id)
+    },
+    rowClass(item, type) {
+      const colorClass = 'table-danger'
+      if (!item || type !== 'row') { return }
+
+      // eslint-disable-next-line consistent-return
+      if (this.isDeleted(item.lesson_id)) { return colorClass }
     },
   },
 }

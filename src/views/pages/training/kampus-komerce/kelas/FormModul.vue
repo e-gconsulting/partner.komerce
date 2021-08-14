@@ -249,7 +249,7 @@ export default {
           formData.append('module_thumbnail', this.thumbnail)
           formData.append('module_status', this.statusModule.value)
           formData.append('module_trainer', this.trainerName)
-          formData.append('module_class_id', 14)
+          formData.append('module_class_id', 18)
 
           this.$http.post('/lms/module/store', formData)
             .then(() => {
