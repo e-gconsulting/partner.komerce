@@ -288,9 +288,9 @@ export default {
           {},
           {
             params: {
-              division_id: this.divisionId,
               position_name: search,
               page: 1,
+              limit: 1000,
               sort: 'name',
               direction: 'asc',
             },
