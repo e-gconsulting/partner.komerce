@@ -2,7 +2,7 @@
   <ul>
     <component
       :is="resolveNavItemComponent(item)"
-      v-for="item in items"
+      v-for="item in filteredItems"
       :key="item.header || item.title"
       :item="item"
     />
@@ -28,9 +28,81 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      user: {},
+      menus: [],
+    }
+  },
+  computed: {
+    filteredItems() {
+      const visibleMenus = this.menus.map(menu => {
+        const isAvailableMenuFilter = this.items.filter(
+          item => item.title === menu.name,
+        )
+
+        let isAvailableMenu = isAvailableMenuFilter[0]
+        isAvailableMenu = { ...isAvailableMenu, visible: !!isAvailableMenu }
+
+        // level 2
+        if (isAvailableMenu.children) {
+          isAvailableMenu.children.forEach((child, index) => {
+            isAvailableMenu.children[index].visible = !!menu.childrens.find(
+              val => val.name === child.title,
+            )
+
+            // level 3
+            if (child.children) {
+              menu.childrens.forEach(menu1 => {
+                isAvailableMenu.children[index].children.forEach(
+                  (child2, index3) => {
+                    const visible = !!menu1.childrens.find(
+                      val2 => val2.name === child2.title,
+                    )
+
+                    isAvailableMenu.children[index].children[
+                      index3
+                    ].visible = visible
+                  },
+                )
+              })
+            }
+          })
+        }
+        return isAvailableMenu
+      })
+
+      return this.user.role_name === 'Management'
+        ? visibleMenus
+        : this.items.map(item => ({
+          ...item,
+          // level 2
+          children: item.children?.map(child => ({
+            ...child,
+            visible: true,
+            // level 3
+            children: child.children?.map(child2 => ({
+              ...child2,
+              visible: true,
+            })),
+          })),
+          visible: true,
+        }))
+    },
+  },
+  created() {
+    this.user = this.$store.state.auth.userData
+    const positionId = this.user.position_id
+    this.$http
+      .get(
+        `menu/getMyMenuAndAccess?komerce_application_id=4&position_id=${positionId}`,
+      )
+      .then(({ data }) => {
+        this.menus = data.data
+      })
+  },
   setup() {
     provide('openGroups', ref([]))
-
     return {
       resolveNavItemComponent,
     }

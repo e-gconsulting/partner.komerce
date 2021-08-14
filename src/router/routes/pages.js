@@ -10,6 +10,16 @@ export default [
     },
   },
   {
+    path: '/unauthenticated',
+    name: 'unauthenticated',
+    component: () => import('@/views/error/Error401.vue'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+      action: 'read',
+    },
+  },
+  {
     path: '/verified',
     name: 'verified',
     component: () => import('@/views/pages/authentication/EmailVerified.vue'),
