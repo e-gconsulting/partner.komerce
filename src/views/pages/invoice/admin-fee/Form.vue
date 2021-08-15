@@ -23,7 +23,7 @@
                       :reduce="option => option.id"
                       :options="positionItems"
                       placeholder="Ketik untuk mencari..."
-                      @search="onSearchPosition"
+                      :filterable="true"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -272,24 +272,14 @@ export default {
     if (this.editMode) await this.loadForm()
   },
   methods: {
-    onSearchPosition(search, loading) {
-      if (search.length) {
-        this.searchPosition(loading, search, this)
-      }
-    },
-    searchPosition: _.debounce((loading, search, that) => {
-      loading(true)
-      that.loadPositions(search).finally(() => loading(false))
-    }, 500),
-    loadPositions(search) {
+    loadPositions() {
       return this.$http
         .post(
           '/position/pagination',
           {},
           {
             params: {
-              position_name: search,
-              page: 1,
+              is_division_external: 1,
               limit: 1000,
               sort: 'name',
               direction: 'asc',
