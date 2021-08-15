@@ -480,6 +480,22 @@ export default {
             }))
             this.wasGetTalent = true
           })
+          .catch(error => {
+            if (!error.response?.data.status) {
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    text: error.response.data.message,
+                    variant: 'danger',
+                    attachment: 'AlertTriangleIcon',
+                  },
+                },
+                { timeout: 2500 },
+              )
+            }
+          })
       }
     },
     validateTalents() {

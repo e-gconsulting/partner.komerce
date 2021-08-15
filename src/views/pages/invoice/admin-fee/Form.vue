@@ -24,17 +24,7 @@
                       :options="positionItems"
                       placeholder="Ketik untuk mencari..."
                       @search="onSearchPosition"
-                    >
-                      <li
-                        v-if="hasMorePosition"
-                        slot="list-footer"
-                        class="
-                          vs__dropdown-option vs__dropdown-option--disabled
-                        "
-                      >
-                        <feather-icon icon="MoreHorizontalIcon" size="16" />
-                      </li>
-                    </v-select>
+                    />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
@@ -298,10 +288,9 @@ export default {
           {},
           {
             params: {
-              division_id: this.divisionId,
               position_name: search,
               page: 1,
-              limit: 5,
+              limit: 1000,
               sort: 'name',
               direction: 'asc',
             },
