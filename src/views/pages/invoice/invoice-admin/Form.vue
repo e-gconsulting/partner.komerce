@@ -470,6 +470,20 @@ export default {
             `/invoice/admin/getInvoiceAdminEstimation?partner_id=${this.partner.partner_detail.id}&period=${invoicePeriod}`,
           )
           .then(res => {
+            if (!res?.data.status) {
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    text: res.data.message,
+                    variant: 'danger',
+                    attachment: 'AlertTriangleIcon',
+                  },
+                },
+                { timeout: 2500 },
+              )
+            }
             const { talent_admin_fee } = res.data.data
             this.talents = talent_admin_fee.map(value => ({
               user_id: value.talent_user.id,
