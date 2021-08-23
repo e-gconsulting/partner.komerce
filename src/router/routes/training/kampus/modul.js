@@ -29,7 +29,7 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/create',
+    path: '/kelas/modul/create/:class_id',
     name: 'modul-create',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/FormModul.vue'),
     meta: {
@@ -53,7 +53,7 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/edit',
+    path: '/kelas/modul/edit/:module_id',
     name: 'module-edit',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/EditModule.vue'),
     meta: {

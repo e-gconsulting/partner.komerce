@@ -19,10 +19,10 @@
                 no-body
               >
                 <h4 class="ml-2">
-                  Advertiser
+                  {{ className }}
                 </h4>
                 <p class="ml-2">
-                  Modul 1 (Default)
+                  {{ moduleName }} - ({{ moduleSubname }})
                 </p>
                 <b-table
                   ref="table"
@@ -34,7 +34,7 @@
                   :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
                   :fields="fields"
-                  :items="items"
+                  :items="tableProvider"
                   :show-empty="!loading"
                   :tbody-tr-class="rowClass"
                   :busy.sync="loading"
@@ -47,23 +47,26 @@
                         md="3"
                         class="pt-1"
                       >
-                        <p>{{ data.value.value }}</p>
+                        <p>{{ data.item.question }}</p>
                       </b-col>
                       <b-col
                         md="9"
                         class="mt-50"
                       >
                         <v-select
-                          v-model="data.value.value"
+                          v-model="data.item.question"
+                          :options="data.item.answer"
+                          label="answer"
                         />
                       </b-col>
                     </b-row>
                   </template>
 
-                  <template #cell(aksi)>
+                  <template #cell(aksi)="data">
                     <b-button
                       variant="flat-warning"
                       class="btn-icon"
+                      @click="addRow"
                     >
                       <feather-icon
                         icon="EditIcon"
@@ -72,6 +75,7 @@
                     <b-button
                       variant="flat-danger"
                       class="btn-icon"
+                      @click="test(data)"
                     >
                       <feather-icon
                         icon="Trash2Icon"
@@ -80,107 +84,24 @@
                   </template>
 
                 </b-table>
+                <b-button
+                  variant="danger"
+                  pill
+                  class="ml-2 mb-2"
+                >
+                  Submit
+                </b-button>
               </b-card-actions>
             </b-col>
-            <b-col md="4">
-              <b-card-actions
-                ref="formCard"
-                title="Add Question"
-                no-actions
-              >
-                <b-form
-                  class="mt-2"
-                  @submit.prevent
-                >
-                  <b-row>
-
-                    <!-- question -->
-                    <b-col cols="12">
-                      <b-form-group
-                        label="Question"
-                      >
-                        <b-form-textarea
-                          v-model="questions"
-                        />
-                      </b-form-group>
-                    </b-col>
-
-                    <!-- Answer -->
-                    <b-col
-                      cols="12"
-                      class="mt-1"
-                    >
-                      <b-form-group
-                        label="Answer"
-                      >
-                        <b-row>
-                          <b-col md="9">
-                            <b-form-input
-                              v-model="answer"
-                            />
-                          </b-col>
-                          <b-col md="3">
-                            <b-row>
-                              <b-col
-                                md="4"
-                                class="d-flex justify-content-center align-items-center"
-                              >
-                                <b-form-checkbox
-                                  v-model="selected"
-                                  class="ml-2"
-                                />
-                              </b-col>
-                              <b-col md="2">
-                                <b-button
-                                  variant="flat-danger"
-                                  class="btn-icon"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </b-col>
-                        </b-row>
-                      </b-form-group>
-                      <b-form-group>
-                        <b-row>
-                          <b-col md="9">
-                            <b-form-input
-                              v-model="answer2"
-                            />
-                          </b-col>
-                          <b-col md="3">
-                            <b-row>
-                              <b-col
-                                md="4"
-                                class="d-flex justify-content-center align-items-center"
-                              >
-                                <b-form-checkbox
-                                  v-model="selected"
-                                  class="ml-2"
-                                />
-                              </b-col>
-                              <b-col md="2">
-                                <b-button
-                                  variant="flat-success"
-                                  class="btn-icon"
-                                >
-                                  <feather-icon
-                                    icon="PlusIcon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </b-col>
-                        </b-row>
-                      </b-form-group>
-                    </b-col>
-
-                  </b-row>
-                </b-form>
-              </b-card-actions>
+            <b-col
+              md="4"
+            >
+              <question-item
+                @remove="removeRow(index)"
+                @childToParent="testParent"
+                @childToParent2="testParent2"
+              />
+              {{ rows }}
             </b-col>
           </b-row>
         </div>
@@ -193,9 +114,9 @@
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 // import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BFormInput,
-  BFormGroup,
-  BForm,
+  // BFormInput,
+  // BFormGroup,
+  // BForm,
   BRow,
   BCol,
   BButton,
@@ -210,10 +131,10 @@ import {
   //   BCardTitle,
   //   BCardBody,
   // BFormRadioGroup,
-  BFormTextarea,
+  // BFormTextarea,
   BTable,
   // BBadge,
-  BFormCheckbox,
+  // BFormCheckbox,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -224,6 +145,8 @@ import vSelect from 'vue-select'
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
+// import MyItem from './MyItem.vue'
+import QuestionItem from './QuestionItem.vue'
 
 export default {
   directives: {
@@ -232,10 +155,10 @@ export default {
   components: {
     // ValidationProvider,
     // ValidationObserver,
-    BFormInput,
-    BFormGroup,
-    BFormTextarea,
-    BForm,
+    // BFormInput,
+    // BFormGroup,
+    // BFormTextarea,
+    // BForm,
     // BFormRow,
     BRow,
     BCol,
@@ -257,7 +180,9 @@ export default {
     BTable,
     // BBadge,
     // BProgress,
-    BFormCheckbox,
+    // BFormCheckbox,
+    // MyItem,
+    QuestionItem,
   },
   mixins: [heightTransition],
   data() {
@@ -266,36 +191,32 @@ export default {
       loadingSubmit: false,
       submitErrors: '',
 
+      className: '',
+      moduleName: '',
+      moduleSubname: '',
+
       required,
       min,
       minValue,
-
-      trainerOptions: [
-        { title: 'Candra' },
-        { title: 'Candra Fakboy Komerce' },
-      ],
-
-      statusKelasOptions: [
-        { title: 'Private' },
-        { title: 'Public' },
-      ],
-
       fields: [
-        // A virtual column that doesn't exist in items
-        // A column that needs custom formatting
         { key: 'question', label: 'Question' },
         { key: 'aksi' },
-        // A regular column
-      ],
-      items: [
-        { question: { value: 'Question 1' } },
-        { question: { value: 'Question 2' } },
       ],
 
-      questions: 'Apa yang di maksud dengan facebook ads',
+      rows: [{ row: '' }],
 
-      answer: 'a. test',
-      answer2: 'b. testing',
+      dataLocal: [],
+
+      itemQuestion: [],
+
+      edumoLessonId: '',
+
+      answerItem: [],
+
+      tableItems: [],
+
+      answer: '',
+      questions: '',
 
     }
   },
@@ -304,57 +225,97 @@ export default {
       return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
+    tableFileds() {
+      const fields = [...this.fields]
+      return fields
+    },
   },
   mounted() {
-    this.$http.get('/lms/lesson/quiz/13').then(response => {
-      const { data } = response
+    this.$http.get('/lms/lesson/quiz/28').then(response => {
+      const { data } = response.data
       console.log(data)
     })
-    this.initTrHeight()
-  },
-  created() {
-    window.addEventListener('resize', this.initTrHeight)
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.initTrHeight)
+    this.$http.get('/lms/module/list/27').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
+    this.loadQuiz()
   },
   methods: {
-    // add question
-    repeateAgain() {
-      this.items.push({
-        id: this.nextTodoId += this.nextTodoId,
+    test(data) {
+      console.log(data.item.answer)
+    },
+    testParent(value) {
+      this.questions = value
+    },
+    testParent2(value) {
+      this.answer = value
+      const localStorage = {
+        type: 'module',
+        ref_id: this.edumoLessonId,
+        question: this.questions,
+        question_type: 'text',
+        answer: this.answer,
+      }
+      // console.log(this.tableItem.push(localStorage))
+      // console.log(this.tableItem)
+      this.tableItem.push(localStorage)
+    },
+    tableProvider() {
+      return this.$http.get('/lms/lesson/quiz/28').then(response => {
+        const { data } = response.data
+        this.dataLocal.push(data.question)
+        this.tableItem = data.question
+        return this.tableItem
       })
+    },
+    loadQuiz() {
+      this.$http.get('/lms/lesson/quiz/28').then(response => {
+        const { data } = response.data
+        console.log(data.question)
+      })
+      this.$http.get('/lms/module/45').then(response => {
+        const { data } = response.data
+        this.moduleName = data.module_title
+        this.moduleSubname = data.module_subtitle
+      })
+      this.$http.get('/lms/module/list/27').then(response => {
+        const { data } = response.data
+        this.className = data.class_skill
+      })
+      this.$http.get('/lms/lesson/28').then(response => {
+        const { data } = response.data
+        this.edumoLessonId = data.edumo_lesson_id
+        console.log(this.edumoLessonId)
+      })
+    },
+    addQuestion() {
+      const formData = new FormData()
+      formData.append('type', 'module')
+      formData.append('ref_id', this.edumoLessonId)
+      formData.append('question', 'candra adalah wibu meresahkan komerce')
+      formData.append('question_type', 'text')
+      formData.append('answers', this.answerItem)
 
-      this.$nextTick(() => {
-        this.trAddHeight(this.$refs.row[0].offsetHeight)
-      })
+      console.log(formData)
     },
-    removeItem(index) {
-      this.items.splice(index, 1)
-      this.trTrimHeight(this.$refs.row[0].offsetHeight)
+    fieldAnswer() {
+
     },
-    initTrHeight() {
-      this.trSetHeight(null)
-      this.$nextTick(() => {
-        this.trSetHeight(this.$refs.form.scrollHeight)
-      })
+    addRow() {
+      this.rows.splice(0, 1, { row: '' })
     },
-    // end
+
+    removeRow(index) {
+      this.rows.splice(index, 1)
+    },
     submit() {
       this.$refs.formRules.validate().then(success => {
         if (success) {
           this.submitErrors = ''
           this.loadingSubmit = true
-          const tab = 'talent-off'
 
-          const formData = {
-            user_id: this.resultUserId,
-            status_off: this.fieldPemutusan.value,
-            url_document: this.fieldURLDocument,
-            url_other: this.fieldURLDocumentOther,
-          }
-
-          this.$http.post(this.endpoint, formData)
+          this.$http.post(this.endpoint)
             .then(async response => {
               if (response.data.success !== undefined && !response.data.success) {
                 this.$toast({
@@ -385,7 +346,6 @@ export default {
               }
 
               this.$emit('on-submit', data)
-              this.$router.push({ name: this.$route.meta.navActiveLink, query: { tab } })
             })
             .catch(error => {
               if (error.response.status === 422) {
@@ -406,11 +366,14 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
-.repeater-form {
-  overflow: hidden;
-  transition: .35s height;
-}
+// [dir] .vs__clear {
+//   display: none;
+// }
+
+// [dir] .vs__dropdown-menu {
+//   pointer-event: none;
+// }
 </style>

@@ -92,15 +92,15 @@
           :empty-filtered-text="`Tidak ada hasil untuk kata kunci ${filter}`"
 
           :show-empty="!loading"
-          :fields="fields"
-          :items="items"
+          :items="tableProvider"
+          :fields="tableFields"
         >
 
-          <template #cell(id)="data">
-            <span>{{ data.value.value }}</span>
+          <template #cell(student_user_id)="data">
+            <span>{{ data.item.student_user_id }}</span>
           </template>
 
-          <template #cell(data_diri)="data">
+          <template #cell(student_name)="data">
             <b-row class="mt-1">
               <b-col cols="auto">
                 <b-avatar
@@ -108,26 +108,27 @@
                 />
               </b-col>
               <b-col cols="auto">
-                <span>{{ data.value.value }}</span>
+                <span>{{ data.item.student_name }}</span>
                 <p>Maung@gmail.aing</p>
               </b-col>
             </b-row>
           </template>
 
-          <template #cell(percentage)="data">
-            <span>{{ data.value.value }}</span>
+          <template #cell(student_score)="data">
+            <span>{{ data.item.student_score }}</span>
           </template>
 
-          <template #cell(tanggal_gabung_kelas)="data">
-            <span>{{ data.value.value }}</span>
+          <template #cell(student_joined_at)="data">
+            <span>{{ data.item.student_join_at }}</span>
           </template>
 
-          <template #cell(action)>
+          <template #cell(action)="data">
             <b-button
               variant="flat-info"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeDetail }"
+              :to="{ name: $route.name.routeDetail }"
+              @click="test(data)"
             >
               <feather-icon
                 icon="EyeIcon"
@@ -141,6 +142,7 @@
 </template>
 
 <script>
+import { dateFormat } from '@core/mixins/ui/date'
 import {
   BButton,
   BRow,
@@ -152,6 +154,7 @@ import {
   VBTooltip,
   BTable,
   BAvatar,
+  BOverlay,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
@@ -172,26 +175,34 @@ export default {
     BCardActions,
     BTable,
     BAvatar,
+    BOverlay,
   },
+  mixins: [dateFormat],
   data() {
     return {
+      loading: false,
+
       filterPositionId: 1,
       filterPositionItems: [],
 
       fields: [
-        { key: 'id', label: 'ID' },
-        { key: 'data_diri', label: 'Data Diri' },
-        { key: 'percentage', label: 'Percentage' },
-        { key: 'tanggal_gabung_kelas', label: 'Tanggal Gabung Kelas' },
+        { key: 'student_user_id', label: 'ID' },
+        { key: 'student_name', label: 'Data Diri' },
+        { key: 'student_score', label: 'Percentage' },
+        {
+          key: 'student_joined_at',
+          label: 'Tanggal Gabung Kelas',
+          formatter: value => this.dateFormat(value, 'dd mmm yyyy'),
+        },
         { key: 'action', label: 'Aksi' },
       ],
-
-      items: [
-        {
-          id: { value: 1 }, data_diri: { value: 'Maung' }, percentage: { value: '90%' }, tanggal_gabung_kelas: { value: '01 Januari 2021' },
-        },
-      ],
     }
+  },
+  computed: {
+    tableFields() {
+      const fields = [...this.fields]
+      return fields
+    },
   },
   watch: {
     filterPositionId() {
@@ -200,8 +211,18 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
+    this.$http.get('/lms/report/student').then(response => {
+      const { data } = response.data
+      console.log(data[0].join)
+    })
   },
   methods: {
+    tableProvider() {
+      return this.$http.get('/lms/report/student').then(response => {
+        const { data } = response.data
+        return data[0].join.student
+      })
+    },
     loadFilterPositions() {
       return this.$http.post('/position', {}, {
         params: {

@@ -242,16 +242,6 @@ export default {
         if (success) {
           this.loadingSubmit = true
 
-          // const formData = {
-          //   class_skill: this.skill.value,
-          //   class_status: this.statusClass.value,
-          //   class_trailer_description: this.descriptionVideo,
-          //   class_trailer_url: this.videoPengantar,
-          //   class_img: this.iconFile,
-          // }
-
-          // console.log(formData)
-
           const formData = new FormData()
           formData.append('class_skill', this.skill.value)
           formData.append('class_img', this.iconFile)

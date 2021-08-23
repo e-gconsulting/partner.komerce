@@ -4,26 +4,33 @@
       md="6"
     >
       <h4>Customer Service</h4>
-      <b-row class="mt-2">
-        <b-col>
-          <span>Student</span>
-        </b-col>
-        <b-col>
-          <h5 class="text-danger">
-            4.520
+      <b-col
+        cols="12"
+        class="mt-1 p-0"
+      >
+        <b-form-group
+          label="Student"
+          label-cols-md="6"
+          class="mb-0"
+        >
+          <h5 class="text-danger mt-50">
+            2.500
           </h5>
-        </b-col>
-      </b-row>
-      <b-row class="mt-50">
-        <b-col>
-          <span>Lulus</span>
-        </b-col>
-        <b-col>
-          <h5 class="text-danger ml-50">
-            3.800
+        </b-form-group>
+      </b-col>
+      <b-col
+        cols="12"
+        class="p-0"
+      >
+        <b-form-group
+          label="Lulus"
+          label-cols-md="6"
+        >
+          <h5 class="text-danger mt-50">
+            1.200
           </h5>
-        </b-col>
-      </b-row>
+        </b-form-group>
+      </b-col>
     </b-col>
 
     <b-col md="6">
@@ -43,6 +50,7 @@
 import {
   BRow,
   BCol,
+  BFormGroup,
 } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 
@@ -51,6 +59,7 @@ export default {
     BRow,
     BCol,
     VueApexCharts,
+    BFormGroup,
   },
   data() {
     return {

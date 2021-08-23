@@ -50,7 +50,9 @@
                   label="Nama lengkap"
                   label-cols-md="4"
                 >
-                  <b-form-input />
+                  <b-form-input
+                    v-model="name"
+                  />
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -59,6 +61,7 @@
                   label-cols-md="4"
                 >
                   <b-form-radio-group
+                    v-model="gender"
                     :options="genderOptions"
                     class="mt-50"
                   />
@@ -73,7 +76,9 @@
                     class="form-control"
                     :config="{ altInput: true, altFormat: 'j F Y', dateFormat: 'Y-m-d',}"
                   /> -->
-                  <b-form-input />
+                  <b-form-input
+                    v-model="birthdate"
+                  />
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -82,6 +87,7 @@
                   label-cols-md="4"
                 >
                   <b-form-radio-group
+                    v-model="married"
                     :options="marriedOptions"
                     class="mt-50"
                   />
@@ -97,6 +103,7 @@
                   label-cols-md="4"
                 >
                   <v-select
+                    v-model="provinceId"
                     label="name"
                     placeholder="Ketik untuk mencari..."
                   />
@@ -108,6 +115,7 @@
                   label-cols-md="4"
                 >
                   <v-select
+                    v-model="regencyId"
                     label="name"
                     placeholder="Ketik untuk mencari..."
                   />
@@ -119,6 +127,7 @@
                   label-cols-md="4"
                 >
                   <v-select
+                    v-model="districtId"
                     label="name"
                     placeholder="Ketik untuk mencari..."
                   />
@@ -126,10 +135,12 @@
               </b-col>
               <b-col md="12">
                 <b-form-group
-                  label="Provinsi"
+                  label="Detail Alamat"
                   label-cols-md="4"
                 >
-                  <b-form-input />
+                  <b-form-input
+                    v-model="address"
+                  />
                 </b-form-group>
               </b-col>
 
@@ -142,6 +153,7 @@
                   label-cols-md="4"
                 >
                   <v-select
+                    v-model="education"
                     label="name"
                     placeholder="Ketik untuk mencari..."
                   />
@@ -153,7 +165,8 @@
                   label-cols-md="4"
                 >
                   <b-form-radio-group
-                    :options="kerjaOptions"
+                    v-model="experienced"
+                    :options="experienceStatusOptions"
                     class="mt-50"
                   />
                 </b-form-group>
@@ -164,6 +177,8 @@
                   label-cols-md="4"
                 >
                   <v-select
+                    v-model="experienceYear"
+                    :options="experienceYearOptions"
                     label="name"
                     placeholder="Ketik untuk mencari..."
                   />
@@ -178,7 +193,9 @@
                   label="No HP"
                   label-cols-md="4"
                 >
-                  <b-form-input />
+                  <b-form-input
+                    v-model="contact"
+                  />
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -186,7 +203,9 @@
                   label="Email"
                   label-cols-md="4"
                 >
-                  <b-form-input />
+                  <b-form-input
+                    v-model="email"
+                  />
                 </b-form-group>
               </b-col>
 
@@ -198,7 +217,9 @@
                   label="Nilai"
                   label-cols-md="4"
                 >
-                  <b-form-input />
+                  <b-form-input
+                    v-model="score"
+                  />
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -206,7 +227,9 @@
                   label="Sertifikat"
                   label-cols-md="4"
                 >
-                  <b-form-input />
+                  <b-form-input
+                    v-model="certificate"
+                  />
                 </b-form-group>
               </b-col>
 
@@ -272,6 +295,27 @@ export default {
   },
   data() {
     return {
+      name: '',
+      gender: '',
+      birthdate: '',
+      married: '',
+
+      provinceId: '',
+      regencyId: '',
+      districtId: '',
+      address: '',
+
+      education: '',
+      experienced: '',
+      experienceYear: '',
+
+      contact: '',
+      email: '',
+
+      score: '',
+      certificate: '',
+
+      studentId: this.$route.params.student_id,
       genderOptions: [
         { text: 'Laki-laki', value: 1 },
         { text: 'Perempuan', value: 2 },
@@ -282,11 +326,47 @@ export default {
         { text: 'Belum Menikah', value: 2 },
       ],
 
-      kerjaOptions: [
-        { text: 'Iya', value: 1 },
-        { text: 'Tidak Ada', value: 2 },
+      experienceStatusOptions: [
+        { text: 'Ada', value: 1 },
+        { text: 'Tidak ada', value: 0 },
+      ],
+      experienceYearOptions: [
+        { text: '< 1 year', value: '< 1 year' },
+        { text: '1 year', value: '1 year' },
+        { text: '2 years', value: '2 years' },
+        { text: '3 years', value: '3 years' },
       ],
     }
+  },
+  mounted() {
+    console.log(this.studentId)
+    this.$http.get(`/lms/user/${this.studentId}`).then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
+    this.loadForm()
+  },
+  methods: {
+    loadForm() {
+      return this.$http.get(`/lms/user/${this.studentId}`).then(response => {
+        const { data } = response.data
+        this.name = data.user_fullname
+        this.gender = data.user_gender
+        this.birthdate = data.user_birth_date
+        this.married = data.user_martial_user
+        this.provinceId = data.user_province_id
+        this.regencyId = data.user_regency_id
+        this.districtId = data.user_district_id
+        this.address = data.user_address
+        this.education = data.user_education
+        this.experienced = data.user_work_experience
+        this.experienceYear = data.user_has_work_experience
+        this.contact = data.user_phone
+        this.email = data.user_email
+        this.score = data.user_course_score
+        this.certificate = data.user_certificate
+      })
+    },
   },
 }
 </script>

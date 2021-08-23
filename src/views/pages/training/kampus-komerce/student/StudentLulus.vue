@@ -89,45 +89,53 @@
           responsive
           class="position-relative"
           empty-text="Tidak ada data untuk ditampilkan."
-          :empty-filtered-text="`Tidak ada hasil untuk kata kunci ${filter}`"
+          :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
           :show-empty="!loading"
-          :fields="fields"
-          :items="items"
+          :per-page="perPage"
+          :current-page="currentPage"
+          :items="tableProvider"
+          :fields="tableFields"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          :filter="filter"
+          :filter-included-fields="filterOn"
+          :tbody-tr-class="rowClass"
+          :busy.sync="loading"
         >
 
-          <template #cell(id)="data">
-            <span>{{ data.value.value }}</span>
+          <template #cell(student_user_id)="data">
+            <span>{{ data.item.student_user_id }}</span>
           </template>
 
-          <template #cell(data_diri)="data">
+          <template #cell(student_name)="data">
             <b-row class="mt-1">
               <b-col cols="auto">
-                <b-avatar
-                  class="mr-50"
-                />
+                <b-avatar />
               </b-col>
               <b-col cols="auto">
-                <span>{{ data.value.value }}</span>
+                <span>{{ data.value }}</span>
                 <p>Candra@gmail.aing</p>
               </b-col>
             </b-row>
           </template>
 
-          <template #cell(percentage)="data">
-            <span>{{ data.value.value }}</span>
+          <template #cell(student_score)="data">
+            <span>{{ data.value }}</span>
           </template>
 
-          <template #cell(tanggal_gabung_kelas)="data">
-            <span>{{ data.value.value }}</span>
+          <template #cell(student_finished_at)="data">
+            <span>{{ data.value }}</span>
           </template>
 
-          <template #cell(action)>
+          <template #cell(action)="data">
             <b-button
               variant="flat-warning"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeEdit }"
+              :to="{ name: $route.meta.routeEdit, params: { student_id: data.item.student_user_id } }"
+              @click="test(data)"
             >
               <feather-icon
                 icon="EditIcon"
@@ -141,6 +149,7 @@
 </template>
 
 <script>
+import { dateFormat } from '@core/mixins/ui/date'
 import {
   BButton,
   BRow,
@@ -152,6 +161,7 @@ import {
   VBTooltip,
   BTable,
   BAvatar,
+  BOverlay,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
@@ -172,26 +182,37 @@ export default {
     BCardActions,
     BTable,
     BAvatar,
+    BOverlay,
   },
+  mixins: [dateFormat],
   data() {
     return {
       filterPositionId: 1,
       filterPositionItems: [],
 
+      loading: false,
+
       fields: [
-        { key: 'id', label: 'ID' },
-        { key: 'data_diri', label: 'Data Diri' },
-        { key: 'percentage', label: 'Percentage' },
-        { key: 'tanggal_gabung_kelas', label: 'Tanggal Gabung Kelas' },
+        { key: 'student_user_id', label: 'ID' },
+        { key: 'student_name', label: 'Data Diri' },
+        { key: 'student_score', label: 'Nilai' },
+        {
+          key: 'student_finished_at',
+          label: 'Tanggal Lulus',
+          formatter: value => {
+            if (!value || value === '0000-00-00 00:00:00') return '-'
+            return this.dateFormat(value, 'dd mmmm yyyy')
+          },
+        },
         { key: 'action', label: 'Aksi' },
       ],
-
-      items: [
-        {
-          id: { value: 1 }, data_diri: { value: 'Candra Fakboy Komerce' }, percentage: { value: '80%' }, tanggal_gabung_kelas: { value: '01 Januari 2021' },
-        },
-      ],
     }
+  },
+  computed: {
+    tableFields() {
+      const fields = [...this.fields]
+      return fields
+    },
   },
   watch: {
     filterPositionId() {
@@ -200,8 +221,21 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
+    this.$http.get('/lms/report/student').then(response => {
+      const { data } = response.data
+      console.log(data[0].finish.student)
+    })
   },
   methods: {
+    test(data) {
+      console.log(data)
+    },
+    tableProvider() {
+      return this.$http.get('/lms/report/student').then(response => {
+        const { data } = response.data
+        return data[0].finish.student
+      })
+    },
     loadFilterPositions() {
       return this.$http.post('/position', {}, {
         params: {

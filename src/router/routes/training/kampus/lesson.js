@@ -30,7 +30,7 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/lesson/create',
+    path: '/kelas/modul/lesson/create/:module_id',
     name: 'create-lesson',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/FormLesson.vue'),
     meta: {

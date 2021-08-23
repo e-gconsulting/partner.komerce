@@ -196,7 +196,7 @@ export default {
   },
   data() {
     return {
-      id: this.$route.params.id,
+      id: this.$route.params.class_id,
       loadingSubmit: false,
       submitErrors: '',
 
@@ -215,7 +215,7 @@ export default {
 
       statusKelasOptions: [
         { title: 'Draft', value: 'draft' },
-        { title: 'Publish', value: 'Publish' },
+        { title: 'Publish', value: 'publish' },
       ],
     }
   },
@@ -232,6 +232,7 @@ export default {
     console.log(this.thumbnail)
     console.log(this.statusModule)
     console.log(this.trainerName)
+    console.log(this.id)
     // this.$http.get('/lms/module/list/14').then(response => {
     //   const { data } = response
     //   console.log(data)
@@ -249,7 +250,7 @@ export default {
           formData.append('module_thumbnail', this.thumbnail)
           formData.append('module_status', this.statusModule.value)
           formData.append('module_trainer', this.trainerName)
-          formData.append('module_class_id', 18)
+          formData.append('module_class_id', this.id)
 
           this.$http.post('/lms/module/store', formData)
             .then(() => {

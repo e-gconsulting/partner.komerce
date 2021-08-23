@@ -97,7 +97,7 @@
               variant="flat-warning"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeEdit }"
+              :to="{ name: $route.meta.routeEdit, params: { module_id: data.item.module_id } }"
             >
               <feather-icon
                 icon="EditIcon"
@@ -246,12 +246,12 @@ export default {
     delete(data) {
       console.log(data)
       this.loading = true
-      const endpoint = this.endpointDelete.replace(/:module_id/g, data.item.module.module_id)
+      const endpoint = this.endpointDelete.replace(/:module_id/g, data.item.module_id)
       console.log(endpoint)
 
       this.$http.delete(endpoint)
         .then(() => {
-          this.deletedIds.push(data.item.module.module_id)
+          this.deletedIds.push(data.item.module_id)
         })
         .finally(() => {
           this.loading = false
@@ -266,7 +266,7 @@ export default {
       if (!item || type !== 'row') { return }
 
       // eslint-disable-next-line consistent-return
-      if (this.isDeleted(item.class_id)) { return colorClass }
+      if (this.isDeleted(item.module_id)) { return colorClass }
     },
   },
 }

@@ -1,48 +1,43 @@
 <template>
   <b-row>
+    <h4 class="ml-1">
+      Customer Service
+    </h4>
     <b-col
-      md="6"
+      cols="12"
+      class="mt-1 p-0"
     >
-      <h4>Advertiser</h4>
-      <b-col
-        cols="12"
-        class="mt-1 p-0"
+      <b-form-group
+        label="Student"
+        label-cols-md="6"
+        class="mb-0"
       >
-        <b-form-group
-          label="Student"
-          label-cols-md="6"
-          class="mb-0"
-        >
-          <h5 class="text-danger mt-50">
-            2.500
-          </h5>
-        </b-form-group>
-      </b-col>
-      <b-col
-        cols="12"
-        class="p-0"
+        <h5 class="text-danger mt-50">
+          2.500
+        </h5>
+      </b-form-group>
+    </b-col>
+    <b-col
+      cols="12"
+      class="p-0"
+    >
+      <b-form-group
+        label="Lulus"
+        label-cols-md="6"
       >
-        <b-form-group
-          label="Lulus"
-          label-cols-md="6"
-        >
-          <h5 class="text-danger mt-50">
-            1.200
-          </h5>
-        </b-form-group>
-      </b-col>
+        <h5 class="text-danger mt-50">
+          1.200
+        </h5>
+      </b-form-group>
     </b-col>
-
-    <b-col md="6">
-      <div id="chart">
-        <vue-apex-charts
-          type="radialBar"
-          height="190"
-          :options="chartOptions"
-          :series="series"
-        />
-      </div>
-    </b-col>
+    <div id="chart">
+      <vue-apex-charts
+        type="radialBar"
+        height="190"
+        :options="chartOptions"
+        :series="series"
+      />
+    </div>
   </b-row>
 </template>
 
@@ -58,8 +53,8 @@ export default {
   components: {
     BRow,
     BCol,
-    VueApexCharts,
     BFormGroup,
+    VueApexCharts,
   },
   data() {
     return {
@@ -110,6 +105,12 @@ export default {
         labels: ['Progress Student'],
       },
     }
+  },
+  mounted() {
+    this.$http.get('/lms/dashboard').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
   },
 }
 </script>

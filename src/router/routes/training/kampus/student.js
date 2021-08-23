@@ -24,7 +24,7 @@ export default [
     },
   },
   {
-    path: '/student/lulus/detail',
+    path: '/student/lulus/detail/:student_id',
     name: 'detail-student-lulus',
     component: () => import('@/views/pages/training/kampus-komerce/student/DetailStudent.vue'),
     meta: {

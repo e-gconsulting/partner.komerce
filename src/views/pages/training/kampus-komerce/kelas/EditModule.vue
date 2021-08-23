@@ -61,8 +61,8 @@
                         <b-form-file
                           v-model="thumbnail"
                           :state="errors.length > 0 ? false:null"
-                          :placeholder="iconInitialFile ?
-                            iconInitialFile.split('/').pop()
+                          :placeholder="imageInitialFile ?
+                            imageInitialFile.split('/').pop()
                             : `Pilih atau drop file disini...`"
                           drop-placeholder="Drop file disini..."
                           accept="image/*"
@@ -181,7 +181,7 @@ export default {
   },
   data() {
     return {
-      id: this.$route.params.id,
+      id: this.$route.params.module_id,
       loadingSubmit: false,
       submitErrors: '',
 
@@ -195,12 +195,12 @@ export default {
       trainerName: '',
 
       name: '',
-      iconFile: null,
-      iconInitialFile: null,
+      imageFile: null,
+      imageInitialFile: null,
 
       statusKelasOptions: [
         { title: 'Draft', value: 'draft' },
-        { title: 'Publish', value: 'Publish' },
+        { title: 'Publish', value: 'publish' },
       ],
     }
   },
@@ -236,9 +236,9 @@ export default {
           formData.append('module_thumbnail', this.thumbnail)
           formData.append('module_status', this.statusModule.value)
           formData.append('module_trainer', this.trainerName)
-          formData.append('module_class_id', 14)
+          formData.append('module_class_id', this.id)
 
-          this.$http.post('/lms/module/update/10', formData)
+          this.$http.post(`/lms/module/update/${this.id}`, formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -266,11 +266,11 @@ export default {
       })
     },
     loadForm() {
-      return this.$http.get('/lms/module/10').then(response => {
+      return this.$http.get(`/lms/module/${this.id}`).then(response => {
         const { data } = response.data
         this.moduleTitle = data.module_title
         this.moduleSubtitle = data.module_subtitle
-        if (data.thumbnail) this.iconInitialFile = data.thumbnail
+        if (data.module_thumbnail) this.imageInitialFile = data.module_thumbnail
         this.statusModule = data.module_status
         this.trainerName = data.module_trainer
         console.log(data)
