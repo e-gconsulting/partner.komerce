@@ -10,6 +10,11 @@
           :key="item.class"
           cols="4"
         >
+          <!-- <button
+            @click="test(item)"
+          >
+            test
+          </button> -->
           <b-card>
             <b-row>
               <b-col
@@ -68,6 +73,7 @@
 
 <script>
 import {
+  // BButton,
   BRow,
   BCol,
   BCard,
@@ -81,6 +87,7 @@ import AnalyticsKelas from './AnalyticsKelas.vue'
 
 export default {
   components: {
+    // BButton,
     BRow,
     BCol,
     BCard,
@@ -144,20 +151,25 @@ export default {
     }
   },
   mounted() {
-    console.log(this.series)
     this.$http.get('/lms/dashboard').then(response => {
       const { data } = response
       console.log(data)
     })
     this.loadClass()
+    // this.loopSeries()
+    // console.log(this.series)
   },
   methods: {
+    test(item) {
+      console.log(item)
+    },
+    // loopSeries(value) {
+    //   console.log(value)
+    // },
     loadClass() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data
-        console.log(data.class[0].total_progress)
-        this.series = [data.class[0].total_progress]
-        console.log(this.series)
+        // data.class.forEach(this.loopSeries)
         this.itemRadial = data.class
       })
     },

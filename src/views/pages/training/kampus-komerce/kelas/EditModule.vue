@@ -56,10 +56,9 @@
                       <validation-provider
                         #default="{ errors }"
                         name="Thumbnail"
-                        rules="required"
                       >
                         <b-form-file
-                          v-model="thumbnail"
+                          v-model="imageFile"
                           :state="errors.length > 0 ? false:null"
                           :placeholder="imageInitialFile ?
                             imageInitialFile.split('/').pop()
@@ -233,7 +232,7 @@ export default {
           formData.append('_method', 'put')
           formData.append('module_title', this.moduleTitle)
           formData.append('module_subtitle', this.moduleSubtitle)
-          formData.append('module_thumbnail', this.thumbnail)
+          if (this.imageFile) formData.append('module_thumbnail', this.imageFile)
           formData.append('module_status', this.statusModule.value)
           formData.append('module_trainer', this.trainerName)
           formData.append('module_class_id', this.id)

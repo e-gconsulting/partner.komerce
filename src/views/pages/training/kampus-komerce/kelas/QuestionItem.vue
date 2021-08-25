@@ -139,8 +139,7 @@ export default {
 
       rows: [{ row: '' }],
 
-      answer: '',
-      questions: '',
+      fieldQuestion: [],
     }
   },
   methods: {
@@ -158,8 +157,7 @@ export default {
     },
     emitToParent() {
       this.$emit('emitToParent')
-      this.$emit('childToParent', this.questions)
-      this.$emit('childToParent2', this.answer)
+      this.$emit('childToParent', this.fieldQuestion)
     },
   },
 

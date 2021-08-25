@@ -60,7 +60,16 @@
         >
 
           <template #cell(class_name)="data">
-            <h4>{{ data.value }}</h4>
+            <div class="d-flex align-items-center">
+              <b-avatar
+                square
+                size="50px"
+                :src="data.item.class_img"
+              />
+              <h4 class="ml-1">
+                {{ data.item.class_name }}
+              </h4>
+            </div>
           </template>
 
           <template #cell(total_module)="data">
@@ -81,36 +90,38 @@
               v-if="isDeleted(data.class_id)"
               class="text-danger"
             >Deleted</span>
-            <b-button
-              variant="flat-info"
-              class="btn-icon"
-              tag="router-link"
-              :to="{ name: $route.meta.routeModul, params: { class_id: data.item.class_id } }"
-            >
-              <feather-icon
-                icon="SettingsIcon"
-              />
-            </b-button>
-            <b-button
-              v-if="hasActionEdit"
-              variant="flat-warning"
-              class="btn-icon"
-              tag="router-link"
-              :to="{ name: $route.meta.routeEdit, params: { class_id: data.item.class_id } }"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
-            <b-button
-              variant="flat-danger"
-              class="btn-icon"
-              @click="confirmDelete(data)"
-            >
-              <feather-icon
-                icon="Trash2Icon"
-              />
-            </b-button>
+            <div v-else>
+              <b-button
+                variant="flat-info"
+                class="btn-icon"
+                tag="router-link"
+                :to="{ name: $route.meta.routeModul, params: { class_id: data.item.class_id } }"
+              >
+                <feather-icon
+                  icon="SettingsIcon"
+                />
+              </b-button>
+              <b-button
+                v-if="hasActionEdit"
+                variant="flat-warning"
+                class="btn-icon"
+                tag="router-link"
+                :to="{ name: $route.meta.routeEdit, params: { class_id: data.item.class_id } }"
+              >
+                <feather-icon
+                  icon="EditIcon"
+                />
+              </b-button>
+              <b-button
+                variant="flat-danger"
+                class="btn-icon"
+                @click="confirmDelete(data)"
+              >
+                <feather-icon
+                  icon="Trash2Icon"
+                />
+              </b-button>
+            </div>
           </template>
         </b-table>
       </b-overlay>
@@ -124,13 +135,13 @@ import {
   BCard,
   BInputGroup,
   BInputGroupPrepend,
-  // BForm,
   BFormGroup,
   BFormInput,
   BOverlay,
   BBadge,
   BTable,
   BButton,
+  BAvatar,
 } from 'bootstrap-vue'
 
 export default {
@@ -139,13 +150,13 @@ export default {
     BCard,
     BInputGroup,
     BInputGroupPrepend,
-    // BForm,
     BFormGroup,
     BFormInput,
     BOverlay,
     BBadge,
     BTable,
     BButton,
+    BAvatar,
   },
 
   data() {
@@ -199,8 +210,10 @@ export default {
   },
   mounted() {
     this.$http.get('/lms/class/list').then(response => {
-      console.log(response.data.data)
+      const { data } = response
+      console.log(data)
     })
+    this.isDeleted()
   },
   methods: {
     tableProvider() {
@@ -209,7 +222,11 @@ export default {
         return data
       })
     },
+    refreshTable() {
+      this.$refs.table.refresh()
+    },
     confirmDelete(data) {
+      console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
@@ -224,14 +241,13 @@ export default {
       }).then(result => {
         if (result.value) {
           this.delete(data)
+          this.refreshTable()
         }
       })
     },
     delete(data) {
-      console.log(data)
       this.loading = true
       const endpoint = this.endpointDelete.replace(/:class_id/g, data.item.class_id)
-      console.log(endpoint)
 
       this.$http.delete(endpoint)
         .then(() => {
@@ -239,12 +255,16 @@ export default {
         })
         .finally(() => {
           this.loading = false
+          this.refreshTable()
         })
     },
     isDeleted(id) {
+      console.log(id)
       return this.deletedIds.includes(id)
     },
     rowClass(item, type) {
+      console.log(item)
+      console.log(type)
       const colorClass = 'table-danger'
       if (!item || type !== 'row') { return }
 

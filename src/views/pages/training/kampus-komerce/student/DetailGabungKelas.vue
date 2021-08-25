@@ -25,7 +25,7 @@
               md="2"
               class="mt-2"
             >
-              <h4>Maung</h4>
+              <h4>{{ fullname }}</h4>
               <span>Advertiser</span>
             </b-col>
           </b-row>
@@ -88,6 +88,7 @@ export default {
   },
   data() {
     return {
+      studentId: this.$route.params.student_id,
       fields: [
         { key: 'modul', label: 'Modul' },
         { key: 'status', label: 'Status' },
@@ -101,7 +102,25 @@ export default {
           nilai: { value: '100' },
         },
       ],
+
+      fullname: '',
+      username: '',
     }
+  },
+  mounted() {
+    this.loadStudent()
+    this.$http.get('/lms/report/student').then(response => {
+      const { data } = response.data
+      console.log(data[0].join)
+    })
+  },
+  methods: {
+    loadStudent() {
+      return this.$http.get(`/lms/user/${this.studentId}`).then(response => {
+        const { data } = response.data
+        this.fullname = data.user_fullname
+      })
+    },
   },
 
 }

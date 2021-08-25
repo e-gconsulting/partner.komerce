@@ -14,15 +14,15 @@
             <b-col md="8">
               <b-card-actions
                 ref="formCard"
-                title="Quiz"
+                title="Edit Quiz"
                 no-actions
                 no-body
               >
                 <h4 class="ml-2">
-                  Advertiser
+                  {{ className }}
                 </h4>
                 <p class="ml-2">
-                  Modul 1 (Default)
+                  {{ moduleName }} - ({{ moduleSubname }})
                 </p>
                 <b-table
                   ref="table"
@@ -34,14 +34,8 @@
                   :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
                   :fields="fields"
-                  :items="items"
+                  :items="tableProvider"
                   :show-empty="!loading"
-                  :per-page="perPage"
-                  :current-page="currentPage"
-                  :sort-by.sync="sortBy"
-                  :sort-desc.sync="sortDesc"
-                  :filter="filter"
-                  :filter-included-fields="filterOn"
                   :tbody-tr-class="rowClass"
                   :busy.sync="loading"
                 >
@@ -53,23 +47,26 @@
                         md="3"
                         class="pt-1"
                       >
-                        <p>{{ data.value.value }}</p>
+                        <p>{{ data.item.question }}</p>
                       </b-col>
                       <b-col
                         md="9"
                         class="mt-50"
                       >
                         <v-select
-                          v-model="data.value.value"
+                          v-model="data.item.question"
+                          :options="data.item.answer"
+                          label="answer"
                         />
                       </b-col>
                     </b-row>
                   </template>
 
-                  <template #cell(aksi)>
+                  <template #cell(aksi)="data">
                     <b-button
                       variant="flat-warning"
                       class="btn-icon"
+                      @click="editQuestions(data)"
                     >
                       <feather-icon
                         icon="EditIcon"
@@ -78,6 +75,7 @@
                     <b-button
                       variant="flat-danger"
                       class="btn-icon"
+                      @click="confirmDelete(data)"
                     >
                       <feather-icon
                         icon="Trash2Icon"
@@ -86,106 +84,127 @@
                   </template>
 
                 </b-table>
+                <b-button
+                  variant="danger"
+                  pill
+                  class="ml-2 mb-2"
+                >
+                  Submit
+                </b-button>
               </b-card-actions>
             </b-col>
-            <b-col md="4">
+
+            <!-- Form edit Questions -->
+            <b-col
+              md="4"
+            >
               <b-card-actions
                 ref="formCard"
-                title="Add Question"
+                title="Edit Question"
                 no-actions
               >
-                <b-form
-                  class="mt-2"
-                  @submit.prevent
-                >
-                  <b-row>
+                <validation-observer ref="formRules">
+                  <b-form
+                    class="mt-2"
+                    @submit.prevent
+                  >
+                    <b-row>
 
-                    <!-- question -->
-                    <b-col cols="12">
-                      <b-form-group
-                        label="Question"
-                      >
-                        <b-form-textarea
-                          v-model="questions"
-                        />
-                      </b-form-group>
-                    </b-col>
-
-                    <!-- Answer -->
-                    <b-col
-                      cols="12"
-                      class="mt-1"
-                    >
-                      <b-form-group
-                        label="Answer"
-                      >
-                        <b-row>
-                          <b-col md="9">
-                            <b-form-input
-                              v-model="answer"
+                      <!-- question -->
+                      <b-col cols="12">
+                        <b-form-group
+                          label="Question"
+                        >
+                          <validation-provider
+                            #default="{ errors }"
+                            name="Question"
+                          >
+                            <b-form-textarea
+                              v-model="questions"
+                              :state="errors.length > 0 ? false:null"
                             />
-                          </b-col>
-                          <b-col md="3">
-                            <b-row>
-                              <b-col
-                                md="4"
-                                class="d-flex justify-content-center align-items-center"
-                              >
-                                <b-form-checkbox
-                                  v-model="selected"
-                                  class="ml-2"
-                                />
-                              </b-col>
-                              <b-col md="2">
-                                <b-button
-                                  variant="flat-danger"
-                                  class="btn-icon"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </b-col>
-                        </b-row>
-                      </b-form-group>
-                      <b-form-group>
-                        <b-row>
-                          <b-col md="9">
-                            <b-form-input
-                              v-model="answer2"
-                            />
-                          </b-col>
-                          <b-col md="3">
-                            <b-row>
-                              <b-col
-                                md="4"
-                                class="d-flex justify-content-center align-items-center"
-                              >
-                                <b-form-checkbox
-                                  v-model="selected"
-                                  class="ml-2"
-                                />
-                              </b-col>
-                              <b-col md="2">
-                                <b-button
-                                  variant="flat-success"
-                                  class="btn-icon"
-                                >
-                                  <feather-icon
-                                    icon="PlusIcon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </b-col>
-                        </b-row>
-                      </b-form-group>
-                    </b-col>
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
 
-                  </b-row>
-                </b-form>
+                      <!-- Answer -->
+                      <b-col
+                        cols="12"
+                        class="mt-1"
+                      >
+                        <b-form-group
+                          label="Answer"
+                        >
+                          <b-row
+                            v-for="(answers, index) in answer"
+                            :key="`answers_${index}`"
+                            :class="answer.length > 1 ? 'mt-1' : ''"
+                          >
+                            <b-col md="9">
+                              <validation-provider
+                                #default="{ errors }"
+                                name="Answer"
+                              >
+                                <b-form-input
+                                  v-model="answers.answer"
+                                  :state="errors.length > 0 ? false:null"
+                                />
+                                <small class="text-danger">{{ errors[0] }}</small>
+                              </validation-provider>
+                            </b-col>
+                            <b-col md="3">
+                              <b-row>
+                                <b-col
+                                  md="4"
+                                  class="d-flex justify-content-center align-items-center"
+                                >
+                                  <b-form-checkbox
+                                    v-model="answers.correct_answer"
+                                    class="ml-2"
+                                  />
+                                  {{ testprop }}
+                                </b-col>
+                                <b-col
+                                  v-if="answer.length - 1"
+                                  md="2"
+                                >
+                                  <b-button
+                                    variant="flat-danger"
+                                    class="btn-icon"
+                                    @click="removeItem(index)"
+                                  >
+                                    <feather-icon
+                                      icon="Trash2Icon"
+                                    />
+                                  </b-button>
+                                </b-col>
+                              </b-row>
+                            </b-col>
+                          </b-row>
+                          <b-button
+                            class="mt-1"
+                            variant="flat-success"
+                            @click="addAnswer"
+                          >
+                            <feather-icon
+                              icon="PlusIcon"
+                            />
+                          </b-button>
+                        </b-form-group>
+                      </b-col>
+                      <b-col class="text-right mt-3">
+                        <b-button
+                          variant="danger"
+                          pill
+                          @click="submit"
+                        >
+                          Simpan
+                        </b-button>
+                      </b-col>
+                    </b-row>
+                  </b-form>
+                </validation-observer>
               </b-card-actions>
             </b-col>
           </b-row>
@@ -197,7 +216,7 @@
 
 <script>
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-// import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   BFormInput,
   BFormGroup,
@@ -205,27 +224,14 @@ import {
   BRow,
   BCol,
   BButton,
-  // BSpinner,
-  // BFormSelect,
-  // BFormFile,
-  // BAvatar,
-  // BFormRow,
   BOverlay,
-  //   BCard,
-  //   BCardText,
-  //   BCardTitle,
-  //   BCardBody,
-  // BFormRadioGroup,
   BFormTextarea,
   BTable,
-  // BBadge,
   BFormCheckbox,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import vSelect from 'vue-select'
-// import flatPickr from 'vue-flatpickr-component'
-// import Cleave from 'vue-cleave-component'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Ripple from 'vue-ripple-directive'
@@ -236,173 +242,195 @@ export default {
     Ripple,
   },
   components: {
-    // ValidationProvider,
-    // ValidationObserver,
+    ValidationProvider,
+    ValidationObserver,
     BFormInput,
     BFormGroup,
     BFormTextarea,
     BForm,
-    // BFormRow,
     BRow,
     BCol,
     BButton,
-    // BSpinner,
-    // BFormSelect,
-    // BFormFile,
-    // BAvatar,
-    // BFormRadioGroup,
     BOverlay,
-    // flatPickr,
     vSelect,
-    // Cleave,
     BCardActions,
-    // BCard,
-    // BCardTitle,
-    // BCardBody,
-    // BCardText,
     BTable,
-    // BBadge,
-    // BProgress,
     BFormCheckbox,
   },
   mixins: [heightTransition],
+  props: {
+    testprop: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
 
+      endpointDelete: '/lms/lesson/quiz/delete/:question_id',
+
+      deletedIds: [],
+
+      className: '',
+      moduleName: '',
+      moduleSubname: '',
+
       required,
       min,
       minValue,
-
-      trainerOptions: [
-        { title: 'Candra' },
-        { title: 'Candra Fakboy Komerce' },
-      ],
-
-      statusKelasOptions: [
-        { title: 'Private' },
-        { title: 'Public' },
-      ],
-
       fields: [
-        // A virtual column that doesn't exist in items
-        // A column that needs custom formatting
         { key: 'question', label: 'Question' },
         { key: 'aksi' },
-        // A regular column
-      ],
-      items: [
-        { question: { value: 'Question 1' } },
-        { question: { value: 'Question 2' } },
       ],
 
-      questions: 'Apa yang di maksud dengan facebook ads',
+      rows: [{ row: '' }],
 
-      answer: 'a. test',
-      answer2: 'b. testing',
+      dataLocal: [],
+
+      itemQuestion: [],
+
+      edumoLessonId: '',
+
+      tableItem: [{}],
+      newTable: null,
+
+      questions: '',
+      questionsId: '',
+
+      answer: [],
+      answerItem: [],
+
+      selected: 'yes',
+
+      test: [{ status: true }],
+
+      checked: [],
+
+      quizId: '',
 
     }
   },
   computed: {
-    id() {
-      return this.$route.params.id || this.$route.query.id
-    },
-    method() {
-      return this.editMode ? 'put' : 'post'
-    },
-    editMode() {
-      return this.id !== undefined
-    },
     successText() {
       return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
-    endpoint() {
-      const endpoint = 'docResign'
-      return `/${endpoint}`
+    tableFileds() {
+      const fields = [...this.fields]
+      return fields
     },
   },
   mounted() {
-    this.initTrHeight()
-  },
-  created() {
-    window.addEventListener('resize', this.initTrHeight)
-  },
-  destroyed() {
-    window.removeEventListener('resize', this.initTrHeight)
+    this.$http.get('/lms/lesson/quiz/28').then(response => {
+      const { data } = response.data
+      this.quizId = data.quiz_id
+      console.log(data)
+    })
+    this.$http.get('/lms/module/list/27').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
+    this.loadQuestions()
   },
   methods: {
-    // add question
-    repeateAgain() {
-      this.items.push({
-        id: this.nextTodoId += this.nextTodoId,
-      })
+    editQuestions(data) {
+      console.log(data)
+      this.questions = data.item.question
+      this.questionsId = data.item.id
+      this.answer = data.item.answer
+      console.log(this.questionsId)
+      console.log(this.quizId)
+    },
+    loadQuiz() {
 
-      this.$nextTick(() => {
-        this.trAddHeight(this.$refs.row[0].offsetHeight)
+    },
+    confirmDelete(data) {
+      console.log(data)
+      this.$swal({
+        title: 'Anda yakin?',
+        text: 'Hapus satu question dari tabel. Aksi ini tidak dapat di batalkan',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.delete(data)
+        }
       })
     },
-    removeItem(index) {
-      this.items.splice(index, 1)
-      this.trTrimHeight(this.$refs.row[0].offsetHeight)
-    },
-    initTrHeight() {
-      this.trSetHeight(null)
-      this.$nextTick(() => {
-        this.trSetHeight(this.$refs.form.scrollHeight)
+    delete(data) {
+      this.loading = true
+      const endpoint = this.endpointDelete.replace(/:question_id/g, data.item.id)
+
+      this.$http.delete(endpoint).then(() => {
+        this.deletedIds.push(data.item.id)
+      }).finally(() => {
+        this.loading = false
       })
     },
-    // end
+    isDeleted(id) {
+      return this.deletedIds.includes(id)
+    },
+    rowClass(item, type) {
+      const colorClass = 'table-danger'
+      if (!item || type !== 'row') { return }
+
+      // eslint-disable-next-line consistent-return
+      if (this.isDeleted(item.class_id)) { return colorClass }
+    },
     submit() {
+      const formDatas = {
+        quiz_id: this.quizId,
+        question_id: this.questionsId,
+        type: 'module',
+        ref_id: this.edumoLessonId,
+        question: this.questions,
+        question_type: 'text',
+        answers: this.answer,
+        answer_type: 'choices',
+      }
+
+      const formData = new FormData()
+      formData.append('_method', 'put')
+      formData.append('quiz_id', this.quizId)
+      formData.append('question_id', this.questionsId)
+      formData.append('type', 'module')
+      formData.append('ref_id', this.edumoLessonId)
+      formData.append('question', this.questions)
+      formData.append('question_type', 'text')
+      formData.append('answers', this.answer)
+      formData.append('answers_type', 'choices')
+
+      console.log(formDatas)
+
       this.$refs.formRules.validate().then(success => {
         if (success) {
           this.submitErrors = ''
           this.loadingSubmit = true
-          const tab = 'talent-off'
 
-          const formData = {
-            user_id: this.resultUserId,
-            status_off: this.fieldPemutusan.value,
-            url_document: this.fieldURLDocument,
-            url_other: this.fieldURLDocumentOther,
-          }
-
-          this.$http.post(this.endpoint, formData)
-            .then(async response => {
-              if (response.data.success !== undefined && !response.data.success) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Failed',
-                    text: response.data.message,
-                    variant: 'danger',
-                    icon: 'AlertCircleIcon',
-                  },
-                }, { timeout: 2500 })
-
-                return
-              }
-
-              const { data } = response
-
-              if (!this.selfRegister && !this.editProfileMode) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Success',
-                    text: this.successText,
-                    variant: 'success',
-                    attachment: 'CheckIcon',
-                  },
-                }, { timeout: 2500 })
-              }
-
-              this.$emit('on-submit', data)
-              this.$router.push({ name: this.$route.meta.navActiveLink, query: { tab } })
+          this.$http.post('/lms/lesson/quiz/update', formData)
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  text: this.successText,
+                  variant: 'success',
+                  icon: 'CheckIcon',
+                },
+              }, { timeout: 2500 })
             })
             .catch(error => {
+              this.loadingSubmit = false
+
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
                   Object.entries(error.response.data.data).map(
@@ -411,21 +439,51 @@ export default {
                 )
               }
             })
-            .finally(() => {
-              this.loadingSubmit = false
-            })
         }
       })
+    },
+    tableProvider() {
+      return this.$http.get('/lms/lesson/quiz/28').then(response => {
+        const { data } = response.data
+        return data.question
+      })
+    },
+    loadQuestions() {
+      this.$http.get('/lms/lesson/quiz/28').then(response => {
+        const { data } = response.data
+        console.log(data.question)
+      })
+      this.$http.get('/lms/module/45').then(response => {
+        const { data } = response.data
+        this.moduleName = data.module_title
+        this.moduleSubname = data.module_subtitle
+      })
+      this.$http.get('/lms/module/list/27').then(response => {
+        const { data } = response.data
+        this.className = data.class_skill
+      })
+      this.$http.get('/lms/lesson/28').then(response => {
+        const { data } = response.data
+        this.edumoLessonId = data.edumo_lesson_id
+      })
+    },
+    addAnswer() {
+      this.position += 1
+      this.answer.push({
+        answer: '', correct_answer: this.test[0].status, position: this.position,
+      })
+      this.test.push({ status: true })
+    },
+
+    removeItem(index) {
+      this.answer.splice(index, 1)
     },
   },
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
-.repeater-form {
-  overflow: hidden;
-  transition: .35s height;
-}
+
 </style>

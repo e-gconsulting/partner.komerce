@@ -19,7 +19,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="class_skill"
+                    name="Skill"
                     rules="required"
                   >
                     <v-select
@@ -41,7 +41,7 @@
                     <b-col>
                       <validation-provider
                         #default="{ errors }"
-                        name="class_img"
+                        name="Cover Kelas"
                       >
                         <b-form-file
                           v-model="imageFile"
@@ -67,7 +67,7 @@
                     <b-col>
                       <validation-provider
                         #default="{ errors }"
-                        name="class_trailer_description"
+                        name="Deskripsi Video"
                         rules="required"
                       >
                         <b-form-textarea
@@ -88,7 +88,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="class_trailer_url"
+                    name="Video Pengantar"
                     rules="required"
                   >
                     <b-form-input
@@ -107,7 +107,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="class_status"
+                    name="Status Kelas"
                     rules="required"
                   >
                     <v-select
@@ -235,14 +235,19 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('class_skill', this.skill.value)
-          formData.append('class_img', this.imageFile)
+          if (this.imageFile) formData.append('class_img', this.imageFile)
           formData.append('class_trailer_url', this.videoPengantar)
           formData.append('class_trailer_description', this.descriptionVideo)
           formData.append('class_status', this.statusClass.value)
 
           console.log(formData)
+          console.log(this.skill)
+          console.log(this.imageFile)
+          console.log(this.videoPengantar)
+          console.log(this.descriptionVideo)
+          console.log(this.statusClass)
 
-          this.$http.post('/lms/class/update/14', formData)
+          this.$http.post(`/lms/class/update/${this.classId}`, formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,

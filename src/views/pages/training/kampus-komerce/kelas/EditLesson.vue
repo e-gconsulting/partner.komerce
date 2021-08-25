@@ -139,7 +139,7 @@
                       type="submit"
                       class="mr-50"
                       :disabled="loadingSubmit"
-                      @click="submit"
+                      :to="{ name: $route.meta.routeEditQuiz }"
                     >
                       <b-spinner
                         v-if="loadingSubmit"

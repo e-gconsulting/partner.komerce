@@ -63,7 +63,7 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/lesson/create/quiz',
+    path: '/kelas/modul/lesson/quiz/create',
     name: 'add-quiz',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/AddQuiz.vue'),
     meta: {
@@ -98,10 +98,40 @@ export default [
     component: () => import('@/views/pages/training/kampus-komerce/kelas/EditLesson.vue'),
     meta: {
       name: pageName,
-      routeAddQuiz: 'add-quiz',
+      routeEditQuiz: 'edit-quiz',
       resource: 'Training',
       navActiveLink: 'lesson',
       action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Training',
+        },
+        {
+          text: 'Kelas',
+          route: 'kelas',
+        },
+        {
+          text: 'Manage Modul',
+        },
+        {
+          text: 'Manage Lesson',
+        },
+        {
+          text: 'Edit Lesson',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/kelas/modul/lesson/quiz/edit/:quiz_id',
+    name: 'edit-quiz',
+    component: () => import('@/views/pages/training/kampus-komerce/kelas/EditQuiz.vue'),
+    meta: {
+      name: 'Quiz',
+      resource: 'Training',
+      action: 'Manage',
+      navActiveLink: 'quiz',
       breadcrumb: [
         {
           text: 'Training',

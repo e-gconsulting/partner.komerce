@@ -127,8 +127,7 @@
               variant="flat-info"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.name.routeDetail }"
-              @click="test(data)"
+              :to="{ name: $route.meta.routeDetail, params: { student_id: data.item.student_user_id } }"
             >
               <feather-icon
                 icon="EyeIcon"

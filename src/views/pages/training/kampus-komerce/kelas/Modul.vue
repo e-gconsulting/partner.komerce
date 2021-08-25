@@ -7,7 +7,7 @@
         List Modul
       </h3>
       <h3
-        class="ml-2 mb-1 mt-2"
+        class="ml-2 mb-1"
       >
         {{ classSkill }}
       </h3>
@@ -202,7 +202,7 @@ export default {
   mounted() {
     this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
       const { data } = response.data
-      console.log(data.modules)
+      console.log(data)
     })
     this.$http.get('/lms/lesson/list/32').then(response => {
       const { data } = response.data
@@ -220,7 +220,7 @@ export default {
     loadClass() {
       return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
         const { data } = response.data
-        // this.classSkill = data[0].class_skill
+        this.classSkill = data.class_skill
         return data.modules
       })
     },

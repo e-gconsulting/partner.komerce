@@ -980,6 +980,8 @@ export default {
 
           if (this.imageFile) formData.append('photo_profile_url', this.imageFile)
 
+          console.log(this.imageFile)
+
           this.$http.post(this.endpoint, formData)
             .then(async response => {
               if (response.data.success !== undefined && !response.data.success) {

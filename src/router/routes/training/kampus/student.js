@@ -48,7 +48,7 @@ export default [
     },
   },
   {
-    path: '/student/gabung-kelas/detail',
+    path: '/student/gabung-kelas/detail/:student_id',
     name: 'detail-gabung-kelas',
     component: () => import('@/views/pages/training/kampus-komerce/student/DetailGabungKelas.vue'),
     meta: {

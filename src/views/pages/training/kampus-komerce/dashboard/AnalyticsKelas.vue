@@ -212,11 +212,11 @@ export default {
 
       // Analytics
       series: [{
-        name: 'series1',
-        data: [31, 40, 28, 51, 42, 109, 100],
+        name: 'Gabung Kelas',
+        data: [],
       }, {
-        name: 'series2',
-        data: [11, 32, 45, 32, 34, 52, 41],
+        name: 'Jumlah Student Lulus',
+        data: [],
       }],
       chartOptions: {
         chart: {
@@ -296,6 +296,9 @@ export default {
     }
   },
   computed: {
+    isCart() {
+      return this.myChart()
+    },
     isCustom() {
       return this.range === 5
     },
@@ -367,36 +370,14 @@ export default {
       },
     },
   },
+  watch: {
+    loadSeries() {
+      this.myChart()
+    },
+  },
   mounted() {
+    this.loadChart()
     this.loadStudent()
-    this.$http.post('/dashboard/talentSummaryGraph').then(response => {
-      const { data } = response.data
-      // this.series = [
-      //   {
-      //     name: 'Registered',
-      //     data: this.getValues(data.registered),
-      //   },
-      //   {
-      //     name: 'Training',
-      //     data: this.getValues(data.training),
-      //   },
-      // ]
-      console.log(data)
-    })
-    this.$http.get('/lms/dashboard').then(response => {
-      const { data } = response.data
-      // this.series = [
-      //   {
-      //     name: 'Gabung Kelas',
-      //     data: this.getValues(data.cart[0].lines),
-      //   },
-      //   {
-      //     name: 'Lulus',
-      //     data: this.getValues(data.cart[0].lines),
-      //   },
-      // ]
-      console.log(data.cart)
-    })
   },
   methods: {
     loadStudent() {
@@ -407,6 +388,20 @@ export default {
         this.certificateDownload = data.certificate_downloaded
         return data
       })
+    },
+    loadChart() {
+      return this.$http.get('/lms/dashboard').then(response => {
+        const { data } = response.data
+        data.cart[0].lines.forEach(this.myChart)
+        console.log(data.cart[0].lines)
+      })
+    },
+    myChart(value) {
+      this.series[1].data.push(value.cart_finished)
+      this.series[0].data.push(value.cart_joined)
+      console.log(this.series[0].data)
+      console.log(this.series)
+      console.log(value)
     },
     kFormatter,
     getIsoDate(date) {
