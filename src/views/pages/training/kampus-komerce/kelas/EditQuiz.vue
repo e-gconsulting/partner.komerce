@@ -266,6 +266,7 @@ export default {
   },
   data() {
     return {
+      lessonId: this.$route.params.lesson_id,
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
@@ -327,7 +328,7 @@ export default {
     this.editQuestions()
   },
   mounted() {
-    this.$http.get('/lms/lesson/quiz/28').then(response => {
+    this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
       const { data } = response.data
       this.quizId = data.quiz_id
       console.log(data)
@@ -451,7 +452,7 @@ export default {
       })
     },
     tableProvider() {
-      return this.$http.get('/lms/lesson/quiz/28').then(response => {
+      return this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         return data.question
       })

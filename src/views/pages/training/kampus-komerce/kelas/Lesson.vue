@@ -36,6 +36,7 @@
             size="80px"
             rounded="sm"
             class="mt-2 ml-2"
+            :src="thumbnailModule"
           />
         </b-col>
         <b-col class="d-flex align-items-center pr-5">
@@ -184,6 +185,8 @@ export default {
       trainerName: '',
       moduleStatus: '',
 
+      thumbnailModule: null,
+
       nextTodoId: 2,
       perPage: 10,
       pageOptions: [5, 10, 20],
@@ -207,17 +210,11 @@ export default {
     },
   },
   mounted() {
-    this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
-    // console.log(this.loadModule())
-    // console.log(this.trainerName)
     this.loadModule()
     this.loadLesson()
     console.log(this.moduleId)
     console.log(this.classId)
-    this.$http.get('/lms/lesson/quiz/13').then(response => {
+    return this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
       const { data } = response.data
       console.log(data)
     })
@@ -234,12 +231,13 @@ export default {
       })
     },
     loadModule() {
-      return this.$http.get('/lms/module/32').then(response => {
+      return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
         const { data } = response.data
         this.moduleStatus = data.module_status
         this.moduleTitle = data.module_title
         this.moduleSubtitle = data.module_subtitle
         this.trainerName = data.module_trainer
+        this.thumbnailModule = data.module_thumbnail
         return data
       })
     },

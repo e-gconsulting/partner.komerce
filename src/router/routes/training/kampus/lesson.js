@@ -7,6 +7,7 @@ export default [
     component: () => import('@/views/pages/training/kampus-komerce/kelas/Lesson.vue'),
     meta: {
       name: pageName,
+      navActiveLink: 'kelas',
       routeCreate: 'create-lesson',
       routeEdit: 'lesson-edit',
       resource: 'Training',
@@ -63,7 +64,7 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/lesson/quiz/create',
+    path: '/kelas/modul/lesson/quiz/create/:lesson_id',
     name: 'add-quiz',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/AddQuiz.vue'),
     meta: {

@@ -179,8 +179,16 @@ export default {
       filterOn: [],
 
       fields: [
-        { key: 'class_name', label: 'Kelas' },
-        { key: 'total_module', label: 'Total Modul' },
+        {
+          key: 'class_name',
+          label: 'Kelas',
+        },
+        {
+          key: 'total_module',
+          label: 'Total Modul',
+          thClass: 'text-center',
+          tdClass: 'text-center',
+        },
         {
           key: 'class_status',
           label: 'Status',
@@ -194,8 +202,10 @@ export default {
               draft: 'light-danger',
             },
           ],
+          thClass: 'text-center',
+          tdClass: 'text-center',
         },
-        { key: 'action', label: 'Aksi' },
+        { key: 'action', label: 'Aksi', class: 'col-action' },
       ],
     }
   },

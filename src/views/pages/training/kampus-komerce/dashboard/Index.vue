@@ -146,16 +146,9 @@ export default {
     }
   },
   mounted() {
-    this.$http.get('/lms/dashboard').then(response => {
-      const { data } = response.data
-      console.log(data.class)
-    })
     this.loadClass()
   },
   methods: {
-    test(item) {
-      console.log(item)
-    },
     loadClass() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data

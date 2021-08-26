@@ -197,6 +197,14 @@ export default {
     endDate: {
       type: String,
     },
+    // eslint-disable-next-line vue/require-default-prop
+    joinedClass: {
+      type: Number,
+    },
+    // eslint-disable-next-line vue/require-default-prop
+    lulus: {
+      type: Number,
+    },
   },
   data() {
     return {
@@ -211,13 +219,16 @@ export default {
       ],
 
       // Analytics
-      series: [{
-        name: 'Gabung Kelas',
-        data: [],
-      }, {
-        name: 'Jumlah Student Lulus',
-        data: [],
-      }],
+      series: [
+        {
+          name: 'Daftar Kelas',
+          data: [],
+        },
+        {
+          name: 'Jumlah Student Lulus',
+          data: [],
+        },
+      ],
       chartOptions: {
         chart: {
           height: 350,
@@ -240,8 +251,14 @@ export default {
           },
         },
         xaxis: {
-          type: 'datetime',
-          categories: ['2018-09-19T00:00:00.000Z', '2018-09-19T01:30:00.000Z', '2018-09-19T02:30:00.000Z', '2018-09-19T03:30:00.000Z', '2018-09-19T04:30:00.000Z', '2018-09-19T05:30:00.000Z', '2018-09-19T06:30:00.000Z'],
+          labels: {
+            datetimeFormatter: {
+              year: 'yyyy',
+              month: 'MMM \'yy',
+              day: 'dd MMM',
+              hour: 'HH:mm',
+            },
+          },
         },
         yaxis: {
           min: 0,
@@ -296,9 +313,6 @@ export default {
     }
   },
   computed: {
-    isCart() {
-      return this.myChart()
-    },
     isCustom() {
       return this.range === 5
     },
@@ -369,13 +383,14 @@ export default {
         this.date = value[0] === value[1] ? value[0] : value
       },
     },
-  },
-  watch() {
-    this.myChart()
+    getSeries() {
+      return this.getDataSeries()
+    },
   },
   mounted() {
     this.loadChart()
     this.loadStudent()
+    this.getValues()
   },
   methods: {
     loadStudent() {
@@ -390,16 +405,23 @@ export default {
     loadChart() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data
-        data.cart[0].lines.forEach(this.myChart)
-        console.log(data.cart[0].lines)
+        // this.series = [
+        //   {
+        //     name: 'Daftar Kelas',
+        //     data: this.getValues(data.cart[0].lines),
+        //   },
+        //   {
+        //     name: 'Jumlah Student Lulus',
+        //     data: this.getValues(data.cart[0].lines),
+        //   },
+        // ]
+        data.cart[0].lines.forEach(this.getDataSeries)
+        console.log(this.series)
       })
     },
-    myChart(value) {
-      this.series[1].data.push(value.cart_finished)
-      this.series[0].data.push(value.cart_joined)
-      console.log(this.series[0].data)
-      console.log(this.series)
-      console.log(value)
+    getDataSeries(data) {
+      this.series[0].data.push(data.cart_joined)
+      this.series[1].data.push(data.cart_finished)
     },
     kFormatter,
     getIsoDate(date) {
@@ -409,17 +431,17 @@ export default {
       return `${date.getFullYear()}-${month}-${day}`
     },
     getValues(data) {
-      const results = data.map(item => ({ x: item.cart_date, y: item.cart_joined }))
+      // const results = data.map(item => ({ x: item.cart_date, y: item.cart_joined }))
 
-      if (results.map(item => item.x).indexOf(this.startDate) === -1) {
-        results.unshift({ x: this.startDate, y: null })
-      }
+      // if (results.map(item => item.x).indexOf(this.startDate) === -1) {
+      //   results.unshift({ x: this.startDate, y: null })
+      // }
 
-      if (results.map(item => item.x).indexOf(this.endDate) === -1) {
-        results.push({ x: this.endDate, y: null })
-      }
-
-      return results
+      // if (results.map(item => item.x).indexOf(this.endDate) === -1) {
+      //   results.push({ x: this.endDate, y: null })
+      // }
+      console.log(data)
+      return data
     },
   },
 }
