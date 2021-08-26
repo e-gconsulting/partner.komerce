@@ -365,6 +365,7 @@ export default {
       },
 
       sharingFee: {},
+      sharingFee2: {},
       invoice_id: 0,
       invoice_no: 0,
       invoicePeriod: '',
@@ -451,8 +452,12 @@ export default {
   methods: {
     getSharingFee() {
       this.$http.get('talentSharingFee').then(res => {
+        // const data = res.data
+        // this.sharingFee = data
         const data = res.data?.data[0]
         this.sharingFee = data
+        const data2 = res.data?.data[1]
+        this.sharingFee2 = data2
       })
     },
     talentChanged(index) {
@@ -466,12 +471,24 @@ export default {
 
             talent.total_net_salary = percentageCutFee > this.sharingFee.max_nominal_sharing_fee
               ? talent.total_gross_salary
-                  - this.sharingFee.max_nominal_sharing_fee
-              : talent.total_gross_salary - percentageCutFee
+                  - this.sharingFee.max_nominal_sharing_fee - this.sharingFee2.sharing_fee_value
+              : talent.total_gross_salary - percentageCutFee - this.sharingFee2.sharing_fee_value
             break
 
           default:
-            talent.total_net_salary = talent.total_gross_salary - this.sharingFee.sharing_fee_value
+            talent.total_net_salary = talent.total_gross_salary - this.sharingFee2.sharing_fee_value
+            // talent.total_net_salary = talent.total_gross_salary - finalDisburst
+            break
+        }
+      } else if (talent.total_gross_salary >= this.sharingFee2.minimum_income) {
+        // talent.total_net_salary = talent.total_gross_salary
+        switch (this.sharingFee2.sharing_fee_type) {
+          case 'rp':
+            talent.total_net_salary = talent.total_gross_salary - this.sharingFee2.sharing_fee_value
+            break
+
+          default:
+            // talent.total_net_salary = talent.total_gross_salary - finalDisburst
             break
         }
       } else {
