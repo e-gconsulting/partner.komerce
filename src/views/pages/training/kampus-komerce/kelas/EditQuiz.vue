@@ -315,13 +315,16 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      // eslint-disable-next-line quotes
+      return `Satu Quiz berhasil diperbaharui`
     },
     tableFileds() {
       const fields = [...this.fields]
       return fields
     },
+  },
+  watch() {
+    this.editQuestions()
   },
   mounted() {
     this.$http.get('/lms/lesson/quiz/28').then(response => {
@@ -341,11 +344,6 @@ export default {
       this.questions = data.item.question
       this.questionsId = data.item.id
       this.answer = data.item.answer
-      console.log(this.questionsId)
-      console.log(this.quizId)
-    },
-    loadQuiz() {
-
     },
     confirmDelete(data) {
       console.log(data)
@@ -386,8 +384,12 @@ export default {
       // eslint-disable-next-line consistent-return
       if (this.isDeleted(item.class_id)) { return colorClass }
     },
+    refreshTable() {
+      this.$refs.table.refresh()
+    },
     submit() {
       const formDatas = {
+        _method: 'put',
         quiz_id: this.quizId,
         question_id: this.questionsId,
         type: 'module',
@@ -395,28 +397,33 @@ export default {
         question: this.questions,
         question_type: 'text',
         answers: this.answer,
-        answer_type: 'choices',
+        answers_type: 'choices',
       }
 
-      const formData = new FormData()
-      formData.append('_method', 'put')
-      formData.append('quiz_id', this.quizId)
-      formData.append('question_id', this.questionsId)
-      formData.append('type', 'module')
-      formData.append('ref_id', this.edumoLessonId)
-      formData.append('question', this.questions)
-      formData.append('question_type', 'text')
-      formData.append('answers', this.answer)
-      formData.append('answers_type', 'choices')
+      // const formData = new FormData()
+      // formData.append('_method', 'put')
+      // formData.append('quiz_id', this.quizId)
+      // formData.append('question_id', this.questionsId)
+      // formData.append('type', 'module')
+      // formData.append('ref_id', this.edumoLessonId)
+      // formData.append('question', this.questions)
+      // formData.append('question_type', 'text')
+      // formData.append('answers', this.answer)
+      // formData.append('answers_type', 'choices')
 
       console.log(formDatas)
+      console.log(this.quizId)
+      console.log(this.questionsId)
+      console.log(this.edumoLessonId)
+      console.log(this.questions)
+      console.log(this.answer)
 
       this.$refs.formRules.validate().then(success => {
         if (success) {
           this.submitErrors = ''
           this.loadingSubmit = true
 
-          this.$http.post('/lms/lesson/quiz/update', formData)
+          this.$http.post('/lms/lesson/quiz/update', formDatas)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -427,6 +434,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
+              this.refreshTable()
             })
             .catch(error => {
               this.loadingSubmit = false

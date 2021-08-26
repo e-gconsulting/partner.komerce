@@ -282,6 +282,8 @@ export default {
         this.descriptionVideo = data.class_trailer_description
         this.videoPengantar = data.class_trailer_url
         this.statusClass = data.class_status
+        console.log(this.skill)
+        console.log(this.statusClass)
       })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),

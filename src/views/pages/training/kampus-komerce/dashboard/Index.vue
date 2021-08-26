@@ -10,11 +10,6 @@
           :key="item.class"
           cols="4"
         >
-          <!-- <button
-            @click="test(item)"
-          >
-            test
-          </button> -->
           <b-card>
             <b-row>
               <b-col
@@ -100,7 +95,7 @@ export default {
   },
   data() {
     return {
-      series: [45],
+      series: [],
       colors: ['#ff0000'],
       chartOptions: {
         chart: {
@@ -152,26 +147,24 @@ export default {
   },
   mounted() {
     this.$http.get('/lms/dashboard').then(response => {
-      const { data } = response
-      console.log(data)
+      const { data } = response.data
+      console.log(data.class)
     })
     this.loadClass()
-    // this.loopSeries()
-    // console.log(this.series)
   },
   methods: {
     test(item) {
       console.log(item)
     },
-    // loopSeries(value) {
-    //   console.log(value)
-    // },
     loadClass() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data
-        // data.class.forEach(this.loopSeries)
+        data.class.forEach(this.dataProgress)
         this.itemRadial = data.class
       })
+    },
+    dataProgress(data) {
+      this.series.push(data.total_progress)
     },
   },
 

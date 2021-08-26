@@ -87,7 +87,7 @@
 
           <template #cell(action)="data">
             <span
-              v-if="isDeleted(data.class_id)"
+              v-if="isDeleted(data.item.class_id)"
               class="text-danger"
             >Deleted</span>
             <div v-else>

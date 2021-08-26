@@ -57,7 +57,7 @@ export default [
     name: 'module-edit',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/EditModule.vue'),
     meta: {
-      name: pageName,
+      name: pageName.plural,
       navActiveLink: 'kelas',
       resource: 'Training',
       action: 'manage',

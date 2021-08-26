@@ -102,9 +102,13 @@
                     name="Trainer"
                     rules="required"
                   >
-                    <b-form-input
-                      v-model="trainerName"
+                    <v-select
+                      v-model="trainerId"
+                      label="name"
+                      :reduce="option => option.id"
+                      :options="trainerItems"
                       :state="errors.length > 0 ? false:null"
+                      :filterable="false"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -115,7 +119,7 @@
                 class="mt-2"
               >
                 <b-button
-                  :variant="editMode ? 'warning' : 'primary'"
+                  variant="primary"
                   type="submit"
                   class="mr-50"
                   :disabled="loadingSubmit"
@@ -191,7 +195,8 @@ export default {
       moduleSubtitle: '',
       thumbnail: [],
       statusModule: '',
-      trainerName: '',
+      trainerId: '',
+      trainerItems: [],
 
       name: '',
       imageFile: null,
@@ -205,12 +210,10 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
     },
   },
   mounted() {
-    if (this.editMode) this.loadForm()
     console.log(this.moduleTitle)
     console.log(this.moduleSubtitle)
     console.log(this.thumbnail)
@@ -221,6 +224,12 @@ export default {
       console.log(data)
     })
     this.loadForm()
+    this.loadTrainer()
+    this.$http.get('/lms/trainer').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
+    console.log(this.trainerId)
   },
   methods: {
     submit() {
@@ -233,7 +242,7 @@ export default {
           formData.append('module_title', this.moduleTitle)
           formData.append('module_subtitle', this.moduleSubtitle)
           if (this.imageFile) formData.append('module_thumbnail', this.imageFile)
-          formData.append('module_status', this.statusModule.value)
+          formData.append('module_status', this.statusModule)
           formData.append('module_trainer', this.trainerName)
           formData.append('module_class_id', this.id)
 
@@ -271,9 +280,16 @@ export default {
         this.moduleSubtitle = data.module_subtitle
         if (data.module_thumbnail) this.imageInitialFile = data.module_thumbnail
         this.statusModule = data.module_status
-        this.trainerName = data.module_trainer
+
         console.log(data)
       })
+    },
+    loadTrainer() {
+      return this.$http.get('/lms/trainer')
+        .then(async response => {
+          const { data } = response.data
+          this.trainerItems = data
+        })
     },
   },
 }

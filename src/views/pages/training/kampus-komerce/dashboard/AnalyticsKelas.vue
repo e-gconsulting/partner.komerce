@@ -370,10 +370,8 @@ export default {
       },
     },
   },
-  watch: {
-    loadSeries() {
-      this.myChart()
-    },
+  watch() {
+    this.myChart()
   },
   mounted() {
     this.loadChart()
