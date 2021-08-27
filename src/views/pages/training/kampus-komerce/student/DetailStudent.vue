@@ -32,6 +32,7 @@
                       <b-avatar
                         size="86px"
                         class="mr-3"
+                        :src="imageFile"
                       />
                     </div>
                   </b-col>
@@ -40,7 +41,20 @@
                       label="Foto profil"
                       label-cols-md="12"
                     >
-                      <b-form-file />
+                      <validation-provider
+                        #default="{ errors }"
+                        name="Foto Profil"
+                      >
+                        <b-form-file
+                          v-model="imageFile"
+                          :state="errors.length > 0 ? false:null"
+                          :placeholder="imageInitialFile ?
+                            imageInitialFile.split('/').pop()
+                            : `Pilih atau drop file disini...`"
+                          drop-placeholder="Drop file disini..."
+                          accept="image/*"
+                        />
+                      </validation-provider>
                     </b-form-group>
                   </b-col>
                 </b-form-row>
@@ -253,6 +267,7 @@
 </template>
 
 <script>
+import { ValidationProvider } from 'vee-validate'
 import {
   BRow,
   BCol,
@@ -289,12 +304,15 @@ export default {
     vSelect,
     BOverlay,
     // flatPickr,
+    ValidationProvider,
   },
   directives: {
     Ripple,
   },
   data() {
     return {
+      imageFile: null,
+      imageInitialFile: null,
       name: '',
       gender: '',
       birthdate: '',
@@ -350,17 +368,18 @@ export default {
     loadForm() {
       return this.$http.get(`/lms/user/${this.studentId}`).then(response => {
         const { data } = response.data
+        this.imageFile = data.user_img
         this.name = data.user_fullname
         this.gender = data.user_gender
         this.birthdate = data.user_birth_date
-        this.married = data.user_martial_user
-        this.provinceId = data.user_province_id
-        this.regencyId = data.user_regency_id
-        this.districtId = data.user_district_id
+        this.married = data.user_martial_status
+        this.provinceId = data.user_province
+        this.regencyId = data.user_regency
+        this.districtId = data.user_district
         this.address = data.user_address
         this.education = data.user_education
-        this.experienced = data.user_work_experience
-        this.experienceYear = data.user_has_work_experience
+        this.experienced = data.user_has_work_experience
+        this.experienceYear = data.user_work_experience
         this.contact = data.user_phone
         this.email = data.user_email
         this.score = data.user_course_score

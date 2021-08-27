@@ -51,7 +51,7 @@
                     type="radialBar"
                     height="190"
                     :options="chartOptions"
-                    :series="series"
+                    :series="[item.total_progress]"
                   />
                 </div>
               </b-col>
@@ -75,20 +75,13 @@ import {
   BFormGroup,
 } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
-// import AdvertiserRadial from './AdvertiserRadial.vue'
-// import CustomerServiceRadial from './CustomerServiceRadial.vue'
-// import AdmRadial from './AdmRadial.vue'
 import AnalyticsKelas from './AnalyticsKelas.vue'
 
 export default {
   components: {
-    // BButton,
     BRow,
     BCol,
     BCard,
-    // AdvertiserRadial,
-    // CustomerServiceRadial,
-    // AdmRadial,
     AnalyticsKelas,
     BFormGroup,
     VueApexCharts,
@@ -152,12 +145,8 @@ export default {
     loadClass() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data
-        data.class.forEach(this.dataProgress)
         this.itemRadial = data.class
       })
-    },
-    dataProgress(data) {
-      this.series.push(data.total_progress)
     },
   },
 

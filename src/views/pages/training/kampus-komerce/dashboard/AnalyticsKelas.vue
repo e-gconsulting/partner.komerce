@@ -405,24 +405,25 @@ export default {
     loadChart() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data
-        // this.series = [
-        //   {
-        //     name: 'Daftar Kelas',
-        //     data: this.getValues(data.cart[0].lines),
-        //   },
-        //   {
-        //     name: 'Jumlah Student Lulus',
-        //     data: this.getValues(data.cart[0].lines),
-        //   },
-        // ]
-        data.cart[0].lines.forEach(this.getDataSeries)
+        this.series = [
+          {
+            name: 'Daftar Kelas',
+            data: this.getValues(data.cart[0].lines),
+          },
+          {
+            name: 'Jumlah Student Lulus',
+            data: this.getValues(data.cart[0].lines),
+          },
+        ]
+        console.log(this.getValues(data.cart[0].lines))
+        // data.cart[0].lines.forEach(this.getDataSeries)
         console.log(this.series)
       })
     },
-    getDataSeries(data) {
-      this.series[0].data.push(data.cart_joined)
-      this.series[1].data.push(data.cart_finished)
-    },
+    // getDataSeries(data) {
+    //   this.series[0].data.push(data.cart_joined)
+    //   this.series[1].data.push(data.cart_finished)
+    // },
     kFormatter,
     getIsoDate(date) {
       const month = (date.getMonth() + 1).toString().padStart(2, '0')
@@ -440,7 +441,6 @@ export default {
       // if (results.map(item => item.x).indexOf(this.endDate) === -1) {
       //   results.push({ x: this.endDate, y: null })
       // }
-      console.log(data)
       return data
     },
   },

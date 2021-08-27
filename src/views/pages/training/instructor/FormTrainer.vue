@@ -1,7 +1,7 @@
 <template>
   <b-card-actions
     ref="formCard"
-    :title="`${editMode ? 'Ubah' : 'Add'} Trainer`"
+    :title="`${editMode ? 'Edit' : 'Add'} Trainer`"
     no-actions
   >
     <b-row>
@@ -456,7 +456,7 @@ export default {
   },
   computed: {
     method() {
-      return this.editMode ? 'post' : 'post'
+      return this.editMode ? 'put' : 'post'
     },
     editMode() {
       return this.id !== undefined
@@ -467,7 +467,7 @@ export default {
     },
     endpoint() {
       const endpoint = '/lms/trainer'
-      return this.editMode ? `${endpoint}/update` : `${endpoint}/store`
+      return this.editMode ? `${endpoint}/update/${this.id}` : `${endpoint}/store`
     },
   },
   async mounted() {
@@ -504,13 +504,16 @@ export default {
           formData.append('bank_name', this.bankName)
           formData.append('bank_account_number', this.bankAccountNumber)
           formData.append('bank_account_name', this.bankAccountName)
-          formData.append('province_id', this.provinceId)
-          formData.append('regency_id', this.regencyId)
-          formData.append('district_id', this.districtId)
+          formData.append('province_id', this.provinceId.id)
+          formData.append('regency_id', this.regencyId.id)
+          formData.append('district_id', this.districtId.id)
           formData.append('address', this.address)
           formData.append('npwp', this.npwp)
 
           if (this.cvFile) formData.append('cv', this.cvFile)
+          console.log(this.provinceId)
+          console.log(this.regencyId)
+          console.log(this.districtId)
 
           // const formDatas = {
           //   name: this.name,
@@ -571,9 +574,9 @@ export default {
           this.bankAccountNumber = data[0].bank_account_number
           this.bankAccountName = data[0].bank_account_name
           this.npwp = data[0].npwp
-          this.provinceId = data[0].province.name
-          this.regencyId = data[0].regency_id.name
-          this.districtId = data[0].district_id.name
+          this.provinceId = data[0].province
+          this.regencyId = data[0].regency
+          this.districtId = data[0].district
           this.address = data[0].address
 
           if (data[0].cv) this.cvInitialFile = data[0].cv
