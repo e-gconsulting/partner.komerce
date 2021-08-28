@@ -40,7 +40,7 @@ export default [
         },
         {
           text: pageName.plural,
-          route: 'invoice-admin',
+          route: 'invoice-talent',
         },
         {
           text: 'Detail',

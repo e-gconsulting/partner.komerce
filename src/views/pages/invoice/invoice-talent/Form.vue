@@ -242,7 +242,7 @@
               type="button"
               class="mr-50"
               tag="router-link"
-              :to="{ name: 'invoice-admin' }"
+              :to="{ name: 'invoice-talent' }"
             >
               Kembali
             </b-button>
