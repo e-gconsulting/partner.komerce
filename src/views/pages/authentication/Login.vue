@@ -1,6 +1,5 @@
 <template>
   <div class="auth-wrapper auth-v2">
-
     <b-row class="auth-inner m-0">
       <!-- Left Text-->
       <b-col
@@ -13,7 +12,6 @@
           backgroundPositionX: 'center',
         }"
       >
-
         <!-- Brand logo-->
         <b-link class="brand-logo d-none d-lg-flex">
           <b-img
@@ -35,44 +33,25 @@
       <!-- /Left Text-->
 
       <!-- Login-->
-      <b-col
-        lg="4"
-        class="d-flex align-items-center auth-bg px-2 p-lg-5"
-      >
-
+      <b-col lg="4" class="d-flex align-items-center auth-bg px-2 p-lg-5">
         <!-- Brand logo-->
         <b-link class="brand-logo d-flex d-lg-none">
-          <b-img
-            :src="appLogoImage"
-            alt="logo"
-            style="width: 36px"
-          />
+          <b-img :src="appLogoImage" alt="logo" style="width: 36px" />
           <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
             {{ appName }}
           </h2>
         </b-link>
         <!-- /Brand logo-->
 
-        <b-col
-          sm="8"
-          md="6"
-          lg="12"
-          class="px-xl-2 mx-auto"
-        >
-          <b-card-title
-            class="mb-1 font-weight-bold"
-            title-tag="h2"
-          >
+        <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
+          <b-card-title class="mb-1 font-weight-bold" title-tag="h2">
             Masuk
           </b-card-title>
           <b-card-text class="mb-2">
             Silahkan masuk menggunakan akun Anda
           </b-card-text>
 
-          <b-alert
-            variant="danger"
-            :show="!!error"
-          >
+          <b-alert variant="danger" :show="!!error">
             <div class="alert-body">
               <span>{{ error }}</span>
               <b-link
@@ -86,19 +65,10 @@
           </b-alert>
 
           <!-- form -->
-          <validation-observer
-            ref="loginForm"
-            #default="{invalid}"
-          >
-            <b-form
-              class="auth-login-form mt-2"
-              @submit.prevent="login"
-            >
+          <validation-observer ref="loginForm" #default="{ invalid }">
+            <b-form class="auth-login-form mt-2" @submit.prevent="login">
               <!-- email -->
-              <b-form-group
-                label="Username atau Email"
-                label-for="login-email"
-              >
+              <b-form-group label="Username atau Email" label-for="login-email">
                 <validation-provider
                   #default="{ errors }"
                   label="Username atau Email"
@@ -108,7 +78,7 @@
                   <b-form-input
                     id="login-email"
                     v-model="usernameEmail"
-                    :state="errors.length > 0 ? false:null"
+                    :state="errors.length > 0 ? false : null"
                     name="login-email"
                     placeholder="john@mail.com"
                   />
@@ -120,7 +90,7 @@
               <b-form-group>
                 <div class="d-flex justify-content-between">
                   <label for="login-password">Password</label>
-                  <b-link :to="{name:'auth-forgot-password'}">
+                  <b-link :to="{ name: 'auth-forgot-password' }">
                     <small>Lupa Password?</small>
                   </b-link>
                 </div>
@@ -132,12 +102,12 @@
                 >
                   <b-input-group
                     class="input-group-merge"
-                    :class="errors.length > 0 ? 'is-invalid':null"
+                    :class="errors.length > 0 ? 'is-invalid' : null"
                   >
                     <b-form-input
                       id="login-password"
                       v-model="password"
-                      :state="errors.length > 0 ? false:null"
+                      :state="errors.length > 0 ? false : null"
                       class="form-control-merge"
                       :type="passwordFieldType"
                       name="login-password"
@@ -173,17 +143,14 @@
                 block
                 :disabled="invalid || loading"
               >
-                <b-spinner
-                  v-if="loading"
-                  small
-                />
+                <b-spinner v-if="loading" small />
                 Masuk
               </b-button>
             </b-form>
           </validation-observer>
         </b-col>
       </b-col>
-    <!-- /Login-->
+      <!-- /Login-->
     </b-row>
   </div>
 </template>
@@ -192,7 +159,22 @@
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BRow, BCol, BAlert, BLink, BFormGroup, BFormInput, BInputGroupAppend, BInputGroup, BFormCheckbox, BCardText, BCardTitle, BImg, BForm, BSpinner, BButton, VBTooltip,
+  BRow,
+  BCol,
+  BAlert,
+  BLink,
+  BFormGroup,
+  BFormInput,
+  BInputGroupAppend,
+  BInputGroup,
+  BFormCheckbox,
+  BCardText,
+  BCardTitle,
+  BImg,
+  BForm,
+  BSpinner,
+  BButton,
+  VBTooltip,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
@@ -273,11 +255,12 @@ export default {
           this.error = ''
           this.userId = ''
 
-          useJwt.login({
-            username_email: this.usernameEmail,
-            password: this.password,
-            login_from: 'website',
-          })
+          useJwt
+            .login({
+              username_email: this.usernameEmail,
+              password: this.password,
+              login_from: 'website',
+            })
             .then(response => {
               if (response.data.status === false) {
                 this.error = response.data.message
@@ -286,7 +269,8 @@ export default {
                 useJwt.setToken(response.data.data.token)
                 this.getUser(response.data.data)
               }
-            }).catch(() => {
+            })
+            .catch(() => {
               this.loading = false
             })
         }
@@ -295,9 +279,10 @@ export default {
     getUser(userData) {
       this.userId = userData.id
 
-      this.$http.post('/user/get-profile', {
-        user_id: this.userId,
-      })
+      this.$http
+        .post('/user/get-profile', {
+          user_id: this.userId,
+        })
         .then(async response => {
           let ability = []
 
@@ -305,7 +290,7 @@ export default {
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
-          if (!['ADMIN', 'PARTNER', 'SDM'].includes(role)) {
+          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
             return
@@ -313,35 +298,62 @@ export default {
 
           if (['PARTNER', 'SDM'].includes(role)) {
             if (!userData.email_verified_at) {
-              this.error = 'Email belum terverifikasi, harap periksa email Anda.'
+              // eslint-disable-next-line operator-linebreak
+              this.error =
+                'Email belum terverifikasi, harap periksa email Anda.'
               this.showResendEmailVerification = true
               this.logout()
               return
             }
           }
 
-          if (role === 'ADMIN') {
-            ability = [
-              { action: 'read', subject: 'Dashboard' },
-              { action: 'manage', subject: 'Training' },
-              { action: 'manage', subject: 'Management' },
-              { action: 'manage', subject: 'MasterData' },
-              { action: 'manage', subject: 'Partner' },
-              { action: 'manage', subject: 'Position' },
-              { action: 'manage', subject: 'Talent' },
-              { action: 'manage', subject: 'Training' },
-              { action: 'manage', subject: 'Division' },
-            ]
-          } else if (role === 'PARTNER') {
-            ability = [
-              { action: 'manage', subject: 'TalentPool' },
-              { action: 'manage', subject: 'PartnerProfile' },
-            ]
-          } else if (role === 'SDM') {
-            ability = [
-              { action: 'read', subject: 'TalentHome' },
-              { action: 'manage', subject: 'TalentProfile' },
-            ]
+          switch (role) {
+            case 'ADMIN':
+              ability = [
+                { action: 'read', subject: 'Dashboard' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Management' },
+                { action: 'manage', subject: 'MasterData' },
+                { action: 'manage', subject: 'Partner' },
+                { action: 'manage', subject: 'Position' },
+                { action: 'manage', subject: 'Talent' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Division' },
+                { action: 'manage', subject: 'Invoice' },
+                { action: 'manage', subject: 'Assignment' },
+                { action: 'manage', subject: 'JobRoleSetting' },
+              ]
+              break
+            case 'MANAGEMENT':
+              ability = [
+                { action: 'read', subject: 'Dashboard' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Management' },
+                { action: 'manage', subject: 'MasterData' },
+                { action: 'manage', subject: 'Partner' },
+                { action: 'manage', subject: 'Position' },
+                { action: 'manage', subject: 'Talent' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Division' },
+                { action: 'manage', subject: 'Invoice' },
+                { action: 'manage', subject: 'Assignment' },
+                { action: 'manage', subject: 'JobRoleSetting' },
+              ]
+              break
+            case 'PARTNER':
+              ability = [
+                { action: 'manage', subject: 'TalentPool' },
+                { action: 'manage', subject: 'PartnerProfile' },
+              ]
+              break
+            case 'SDM':
+              ability = [
+                { action: 'read', subject: 'TalentHome' },
+                { action: 'manage', subject: 'TalentProfile' },
+              ]
+              break
+            default:
+              break
           }
 
           if (role === 'PARTNER') {
@@ -359,7 +371,8 @@ export default {
           localStorage.setItem('userData', JSON.stringify(data))
           this.$store.commit('auth/UPDATE_USER_DATA', data)
 
-          this.$router.replace(getHomeRouteForLoggedInUser(role))
+          this.$router
+            .replace(getHomeRouteForLoggedInUser(role))
             .then(() => {})
             .catch(error => {
               this.$refs.loginForm.setErrors(error.response.data.error)
@@ -373,7 +386,8 @@ export default {
       this.showResendEmailVerification = false
       this.error = ''
 
-      this.$http.get(`/resend_verification_email/${this.userId}`)
+      this.$http
+        .get(`/resend_verification_email/${this.userId}`)
         .then(() => {
           this.userId = ''
 
@@ -390,15 +404,16 @@ export default {
         .catch(() => {})
     },
     getPartnerProfile(userId) {
-      return this.$http.get(`/user/partner/get-profile/${userId}`)
+      return this.$http
+        .get(`/user/partner/get-profile/${userId}`)
         .then(response => response.data.data[0])
         .finally(() => {
           this.loading = false
         })
     },
     logout() {
-      useJwt.logout({
-      })
+      useJwt
+        .logout({})
         .then(() => {
           // Remove userData from localStorage
           // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token

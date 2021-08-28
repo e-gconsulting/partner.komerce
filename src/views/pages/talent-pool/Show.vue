@@ -1,8 +1,5 @@
 <template>
-  <b-card-actions
-    ref="formCard"
-    no-actions
-  >
+  <b-card-actions ref="formCard" no-actions>
     <b-row class="mb-2">
       <b-col>
         <h4>Profil Talent</h4>
@@ -14,36 +11,21 @@
           :disabled="loadingWishlist"
           @click="wishlistToggle"
         >
-          <feather-icon
-            icon="HeartIcon"
-            :class="{ 'filled': isWishlist() }"
-          />
+          <feather-icon icon="HeartIcon" :class="{ filled: isWishlist() }" />
         </b-button>
-        <b-button
-          variant="primary"
-          class="btn-icon"
-          @click="confirmSend"
-        >
-          <feather-icon
-            class="mr-25"
-            icon="UserCheckIcon"
-          />
+        <b-button variant="primary" class="btn-icon" @click="confirmSend">
+          <feather-icon class="mr-25" icon="UserCheckIcon" />
           Rekrut
         </b-button>
       </b-col>
     </b-row>
     <b-row class="mb-5">
-      <b-col
-        md="6"
-      >
+      <b-col md="6">
         <!-- form -->
         <validation-observer ref="formRules">
           <b-form>
             <b-row>
-              <b-col
-                class="pb-2"
-                md="12"
-              >
+              <b-col class="pb-2" md="12">
                 <b-form-row>
                   <b-col cols="4">
                     <div class="text-center mr-md-1">
@@ -87,33 +69,21 @@
                   </b-col>
                 </b-form-row>
               </b-col>
-              <b-col
-                md="12"
-                class="pb-2"
-              >
-                <h3 class="my-2">
-                  Training
-                </h3>
+              <b-col md="12" class="pb-2">
+                <h3 class="my-2">Training</h3>
 
                 <div
                   v-if="loadingTrainingProgram || !name"
                   class="d-flex align-items-center"
                 >
-                  <b-spinner
-                    class="mr-50"
-                    small
-                  />
+                  <b-spinner class="mr-50" small />
                   Loading..
                 </div>
                 <div
                   v-else-if="!trainingProgramItems.length"
                   class="d-flex align-items-center text-secondary"
                 >
-                  <feather-icon
-                    icon="InfoIcon"
-                    class="mr-50"
-                    size="16"
-                  />
+                  <feather-icon icon="InfoIcon" class="mr-50" size="16" />
                   Belum mengikuti training
                 </div>
                 <app-timeline>
@@ -121,42 +91,44 @@
                     v-for="item in trainingProgramItems"
                     :key="`trainingProgram-${item.id}`"
                     :title="`Telah lulus training ${item.name}`"
-                    :subtitle="`Lulus pada ${dateFormat(item.end_date, 'mmmm yyyy')}`"
+                    :subtitle="`Lulus pada ${dateFormat(
+                      item.end_date,
+                      'mmmm yyyy'
+                    )}`"
                     variant="primary"
                   />
                 </app-timeline>
               </b-col>
               <b-col md="12">
-                <h3 class="my-2">
-                  Pengalaman
-                </h3>
+                <h3 class="my-2">Pengalaman</h3>
 
                 <div
                   v-if="loadingExperience || !name"
                   class="d-flex align-items-center"
                 >
-                  <b-spinner
-                    class="mr-50"
-                    small
-                  />
+                  <b-spinner class="mr-50" small />
                   Loading..
                 </div>
                 <div
                   v-else-if="!experienceItems.length"
                   class="d-flex align-items-center text-secondary"
                 >
-                  <feather-icon
-                    icon="InfoIcon"
-                    class="mr-50"
-                    size="16"
-                  />
+                  <feather-icon icon="InfoIcon" class="mr-50" size="16" />
                   Belum ada pengalaman
                 </div>
                 <app-timeline>
                   <app-timeline-item
                     v-for="item in experienceItems"
                     :key="`experience-${item.id}`"
-                    :title="item.partner_category || item.position ? `${item.partner_category ? `Menangani produk ${item.partner_category.partner_category_name} sebagai ` : ''}${item.position.position_name}` : ''"
+                    :title="
+                      item.partner_category || item.position
+                        ? `${
+                            item.partner_category
+                              ? `Menangani produk ${item.partner_category.partner_category_name} sebagai `
+                              : ''
+                          }${item.position.position_name}`
+                        : ''
+                    "
                     :subtitle="dateRangeFormat(item.start_at, item.end_at)"
                     variant="primary"
                   />
@@ -167,7 +139,15 @@
         </validation-observer>
       </b-col>
       <b-col>
-        <div class="d-flex align-items-center card-subtitle justify-content-end mt-1">
+        <div
+          class="
+            d-flex
+            align-items-center
+            card-subtitle
+            justify-content-end
+            mt-1
+          "
+        >
           <span class="text-muted mr-50">Rating:</span>
           <h4 class="mb-0">
             {{ rating }}
@@ -373,7 +353,8 @@ export default {
       return this.id !== undefined
     },
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
+      return this.editMode
+        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
@@ -394,8 +375,7 @@ export default {
         ]
       }
 
-      if (this.statusInitial === 'hired'
-      || this.statusInitial === 'nonJob') {
+      if (this.statusInitial === 'hired' || this.statusInitial === 'nonJob') {
         return [
           { text: 'Hired', value: 'hired' },
           { text: 'Non Job', value: 'nonJob' },
@@ -410,7 +390,10 @@ export default {
       ]
     },
     partnerProfileIncomplete() {
-      return this.$store.state.auth.userData.role_name.toUpperCase() === 'PARTNER' && !this.$store.state.auth.userData.nik
+      return (
+        this.$store.state.auth.userData.role_name.toUpperCase() === 'PARTNER'
+        && !this.$store.state.auth.userData.nik
+      )
     },
   },
   watch: {
@@ -432,7 +415,10 @@ export default {
     if (this.editMode && !this.partnerProfileIncomplete) this.loadWishlistItems()
 
     if (!this.editMode || !this.positionItems.length) this.loadPositions()
-    if (!this.selfRegister && (!this.editMode || !this.workingSpaceItems.length)) this.loadWorkingSpaces()
+    if (
+      !this.selfRegister
+      && (!this.editMode || !this.workingSpaceItems.length)
+    ) this.loadWorkingSpaces()
     if (!this.selfRegister && (!this.editMode || !this.partnerItems.length)) this.loadPartners()
     if (!this.selfRegister && (!this.editMode || !this.staffItems.length)) this.loadStaffs()
   },
@@ -490,18 +476,22 @@ export default {
 
           if (this.imageFile) formData.append('photo_profile_url', this.imageFile)
 
-          this.$http.post(this.endpoint, formData)
+          this.$http
+            .post(this.endpoint, formData)
             .then(response => {
               if (response.data.status !== undefined && !response.data.status) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Failed',
-                    text: response.data.message,
-                    variant: 'danger',
-                    icon: 'AlertCircleIcon',
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failed',
+                      text: response.data.message,
+                      variant: 'danger',
+                      icon: 'AlertCircleIcon',
+                    },
                   },
-                }, { timeout: 2500 })
+                  { timeout: 2500 },
+                )
 
                 return
               }
@@ -509,15 +499,18 @@ export default {
               const { data } = response
 
               if (!this.selfRegister) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Success',
-                    text: this.successText,
-                    variant: 'success',
-                    attachment: 'CheckIcon',
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Success',
+                      text: this.successText,
+                      variant: 'success',
+                      attachment: 'CheckIcon',
+                    },
                   },
-                }, { timeout: 2500 })
+                  { timeout: 2500 },
+                )
               }
 
               this.$emit('on-submit', data)
@@ -527,9 +520,9 @@ export default {
 
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
-                  Object.entries(error.response.data.data).map(
-                    ([key, value]) => [key, value[0]],
-                  ),
+                  Object.entries(
+                    error.response.data.data,
+                  ).map(([key, value]) => [key, value[0]]),
                 )
               }
             })
@@ -539,7 +532,8 @@ export default {
     loadForm() {
       this.$refs.formCard.showLoading = true
 
-      return this.$http.get(this.endpoint)
+      return this.$http
+        .get(this.endpoint)
         .then(async response => {
           const { data } = response.data
 
@@ -579,7 +573,9 @@ export default {
           }
 
           if (data.position_id) {
-            this.positionItems = [{ id: data.position_id, position_name: data.position_name }]
+            this.positionItems = [
+              { id: data.position_id, position_name: data.position_name },
+            ]
             this.positionId = data.position_id
             this.loadPositions(data.position_name)
           }
@@ -587,7 +583,9 @@ export default {
           this.statusInitial = data.talent.status
 
           if (data.office_id) {
-            this.workingSpaceItems = [{ id: data.office_id, office_name: data.office_name }]
+            this.workingSpaceItems = [
+              { id: data.office_id, office_name: data.office_name },
+            ]
             this.workingSpaceId = data.office_id
             this.loadWorkingSpaces(data.office_name)
           }
@@ -621,12 +619,13 @@ export default {
         })
     },
     loadProvincies() {
-      return this.$http.get('/region/province', {
-        params: {
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/province', {
+          params: {
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.provinceItems = data
@@ -635,13 +634,14 @@ export default {
     loadExperiences() {
       this.loadingExperience = true
 
-      return this.$http.get('/experience', {
-        params: {
-          talent_id: this.id,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/experience', {
+          params: {
+            talent_id: this.id,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
           this.experienceItems = data
@@ -654,14 +654,15 @@ export default {
     loadtrainingPrograms() {
       this.loadingTrainingProgram = true
 
-      return this.$http.get('/trainingProgram', {
-        params: {
-          talent_id: this.id,
-          sort: 'name',
-          direction: 'asc',
-          status: 'graduated',
-        },
-      })
+      return this.$http
+        .get('/trainingProgram', {
+          params: {
+            talent_id: this.id,
+            sort: 'name',
+            direction: 'asc',
+            status: 'graduated',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
           this.trainingProgramItems = data
@@ -672,26 +673,28 @@ export default {
         })
     },
     loadRegencies() {
-      return this.$http.get('/region/regency', {
-        params: {
-          province_id: this.provinceId,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/regency', {
+          params: {
+            province_id: this.provinceId,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.regencyItems = data
         })
     },
     loadDistricts() {
-      return this.$http.get('/region/district', {
-        params: {
-          regency_id: this.regencyId,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/region/district', {
+          params: {
+            regency_id: this.regencyId,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data
           this.districtItems = data
@@ -707,15 +710,20 @@ export default {
       that.loadPositions(search).finally(() => loading(false))
     }, 500),
     loadPositions(search) {
-      return this.$http.post('/position/pagination', {}, {
-        params: {
-          position_name: search,
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .post(
+          '/position/pagination',
+          {},
+          {
+            params: {
+              position_name: search,
+              page: 1,
+              limit: 5,
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
         .then(async response => {
           const { data } = response.data.data
           this.positionItems = Object.keys(data).map(key => data[key])
@@ -732,15 +740,20 @@ export default {
       that.loadWorkingSpaces(search).finally(() => loading(false))
     }, 500),
     loadWorkingSpaces(search) {
-      return this.$http.post('/office/pagination', {}, {
-        params: {
-          office_name: search,
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .post(
+          '/office/pagination',
+          {},
+          {
+            params: {
+              office_name: search,
+              page: 1,
+              limit: 5,
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
         .then(async response => {
           const { data } = response.data.data
           this.hasMoreWorkingSpace = response.data.data.total > data.length
@@ -757,15 +770,16 @@ export default {
       that.loadPartners(search).finally(() => loading(false))
     }, 500),
     loadPartners(search) {
-      return this.$http.get('/user/partner/pagination', {
-        params: {
-          name: search,
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/user/partner/pagination', {
+          params: {
+            name: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
           for (let i = 0; i < data.length; i += 1) {
@@ -785,15 +799,16 @@ export default {
       that.loadStaffs(search).finally(() => loading(false))
     }, 500),
     loadStaffs(search) {
-      return this.$http.get('/staff', {
-        params: {
-          keyword: search,
-          page: 1,
-          limit: 5,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get('/staff', {
+          params: {
+            keyword: search,
+            page: 1,
+            limit: 5,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
           this.hasMoreStaff = response.data.data.total > data.length
@@ -808,7 +823,8 @@ export default {
       return new File([blob], filename, { type: blob.type })
     },
     capitalize(value) {
-      return value.toLowerCase()
+      return value
+        .toLowerCase()
         .split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
@@ -828,7 +844,7 @@ export default {
       const weekDays = 7
       const weekToleranceDays = weekDays - 2
 
-      const dateDiff = ((endAt ? endDate : new Date()) - startDate)
+      const dateDiff = (endAt ? endDate : new Date()) - startDate
       let dayDiff = Math.ceil(dateDiff / (24 * 60 * 60 * 1000))
       let text = ''
 
@@ -881,7 +897,8 @@ export default {
     confirmSend() {
       this.$swal({
         title: 'Anda yakin?',
-        html: 'Anda akan diarahkan ke kontak <b>Staff Growth</b> WhatsApp kami untuk penjelasan lebih lanjut tentang arus perekrutan.<br><br>Silakan klik tombol di bawah untuk diarahkan secara otomatis ke WhatsApp atau hubungi <b>+6283 8653 60055</b>',
+        html:
+          'Anda akan diarahkan ke kontak <b>Staff Growth</b> WhatsApp kami untuk penjelasan lebih lanjut tentang arus perekrutan.<br><br>Silakan klik tombol di bawah untuk diarahkan secara otomatis ke WhatsApp atau hubungi <b>+6283 8653 60055</b>',
         showCancelButton: true,
         confirmButtonText: 'Kirim Whatsapp',
         customClass: {
@@ -896,7 +913,8 @@ export default {
       })
     },
     send() {
-      let city = this.$store.state.auth.userData.partner_detail.district?.regency?.name ?? this.$store.state.auth.userData.partner_detail.city_name
+      let city = this.$store.state.auth.userData.partner_detail.district?.regency
+        ?.name ?? this.$store.state.auth.userData.partner_detail.city_name
       city = city ? ` dari ${city.toLowerCase()}` : ''
       const message = `Halo, Saya ${this.$store.state.auth.userData.full_name}${city}, mau hire talent dengan nama ${this.name} dengan talent id ${this.id}, bisa tolong dibantu?`
 
@@ -910,36 +928,44 @@ export default {
     loadWishlistItems() {
       this.loadingWishlist = true
 
-      return this.$http.get('/wishlist', {
-        params: {
-          partner_id: this.$store.state.auth.userData.partner_detail.id,
-        },
-      }).then(response => {
-        const { data } = response.data.data
-        this.total = response.data.data.total
-        this.wishlistItems = data
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: 'Unable to load the wishlist data. Please try again later or contact support.',
-            variant: 'danger',
+      return this.$http
+        .get('/wishlist', {
+          params: {
+            partner_id: this.$store.state.auth.userData.partner_detail.id,
           },
         })
-      }).finally(() => {
-        this.loadingWishlist = false
-      })
+        .then(response => {
+          const { data } = response.data.data
+          this.total = response.data.data.total
+          this.wishlistItems = data
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text:
+                'Unable to load the wishlist data. Please try again later or contact support.',
+              variant: 'danger',
+            },
+          })
+        })
+        .finally(() => {
+          this.loadingWishlist = false
+        })
     },
     isWishlist() {
-      return this.wishlistItems.map(item => item.talent.id).includes(this.talentId)
+      return this.wishlistItems
+        .map(item => item.talent.id)
+        .includes(this.talentId)
     },
     wishlistToggle() {
       if (this.partnerProfileIncomplete) {
         this.$swal({
           title: 'Lengkapi Profil',
-          text: 'Untuk dapat menambahkan talent ke wishlist, harap lengkapi profil Anda.',
+          text:
+            'Untuk dapat menambahkan talent ke wishlist, harap lengkapi profil Anda.',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonText: 'Lengkapi Profil',
@@ -966,75 +992,95 @@ export default {
     wishlist() {
       this.wishlistItems.push({ talent: { id: this.talentId } })
 
-      this.$http.post('/wishlist', {
-        partner_id: this.$store.state.auth.userData.partner_detail.id,
-        talent_id: this.talentId,
-      })
+      this.$http
+        .post('/wishlist', {
+          partner_id: this.$store.state.auth.userData.partner_detail.id,
+          talent_id: this.talentId,
+        })
         .then(response => {
           const dataRes = response.data.data
 
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              text: 'Satu talent telah ditambahkan ke dalam wishlist',
-              variant: 'success',
-              icon: 'CheckIcon',
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                text: 'Satu talent telah ditambahkan ke dalam wishlist',
+                variant: 'success',
+                icon: 'CheckIcon',
+              },
             },
-          }, { timeout: 2500 })
+            { timeout: 2500 },
+          )
 
-          const index = this.wishlistItems.map(item => item.talent.id).indexOf(this.talentId)
+          const index = this.wishlistItems
+            .map(item => item.talent.id)
+            .indexOf(this.talentId)
           this.wishlistItems[index] = dataRes
         })
         .catch(error => {
-          const index = this.wishlistItems.map(item => item.talent.id).indexOf(this.talentId)
+          const index = this.wishlistItems
+            .map(item => item.talent.id)
+            .indexOf(this.talentId)
           this.wishlistItems.splice(index, 1)
 
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failed',
-              text: error.response.data.message,
-              variant: 'danger',
-              icon: 'AlertCircleIcon',
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text: error.response.data.message,
+                variant: 'danger',
+                icon: 'AlertCircleIcon',
+              },
             },
-          }, { timeout: 2500 })
+            { timeout: 2500 },
+          )
         })
     },
     unWishlist() {
-      const index = this.wishlistItems.map(item => item.talent.id).indexOf(this.talentId)
+      const index = this.wishlistItems
+        .map(item => item.talent.id)
+        .indexOf(this.talentId)
       const wishlist = this.wishlistItems[index]
 
       if (!wishlist.id) return
 
       this.wishlistItems.splice(index, 1)
 
-      this.$http.delete(`/wishlist/${wishlist.id}`, {
-        _method: 'put',
-      })
+      this.$http
+        .delete(`/wishlist/${wishlist.id}`, {
+          _method: 'put',
+        })
         .then(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              text: 'Satu talent telah dihapus dari wishlist',
-              variant: 'success',
-              icon: 'CheckIcon',
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                text: 'Satu talent telah dihapus dari wishlist',
+                variant: 'success',
+                icon: 'CheckIcon',
+              },
             },
-          }, { timeout: 2500 })
+            { timeout: 2500 },
+          )
         })
         .catch(error => {
           this.wishlistItems.push(wishlist)
 
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failed',
-              text: error.response.data.message,
-              variant: 'danger',
-              icon: 'AlertCircleIcon',
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                text: error.response.data.message,
+                variant: 'danger',
+                icon: 'AlertCircleIcon',
+              },
             },
-          }, { timeout: 2500 })
+            { timeout: 2500 },
+          )
         })
     },
   },
