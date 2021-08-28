@@ -19,7 +19,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="class_skill"
+                    name="Skill"
                     rules="required"
                   >
                     <v-select
@@ -41,7 +41,7 @@
                     <b-col>
                       <validation-provider
                         #default="{ errors }"
-                        name="class_img"
+                        name="Cover Kelas"
                       >
                         <b-form-file
                           v-model="iconFile"
@@ -67,7 +67,7 @@
                     <b-col>
                       <validation-provider
                         #default="{ errors }"
-                        name="class_trailer_description"
+                        name="Deskripsi Video"
                         rules="required"
                       >
                         <b-form-textarea
@@ -88,11 +88,30 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="class_trailer_url"
+                    name="Video Pengantar"
                     rules="required"
                   >
                     <b-form-input
                       v-model="videoPengantar"
+                      label="title"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+              <b-col md="12">
+                <b-form-group
+                  label="Link Group Telegram"
+                  label-cols-md="4"
+                >
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Link Group Telegram"
+                    rules="required"
+                  >
+                    <b-form-input
+                      v-model="linkTelegram"
                       label="title"
                       :state="errors.length > 0 ? false:null"
                     />
@@ -107,7 +126,7 @@
                 >
                   <validation-provider
                     #default="{ errors }"
-                    name="class_status"
+                    name="Status Kelas"
                     rules="required"
                   >
                     <v-select
@@ -204,6 +223,7 @@ export default {
       skill: '',
       descriptionVideo: '',
       videoPengantar: '',
+      linkTelegram: '',
       statusClass: '',
 
       skillOptions: [
@@ -214,7 +234,6 @@ export default {
 
       statusKelasOptions: [
         { title: 'Draft', value: 'draft' },
-        { title: 'Publish', value: 'publish' },
       ],
     }
   },
@@ -248,6 +267,7 @@ export default {
           formData.append('skill_level', 'Beginner')
           formData.append('class_trailer_url', this.videoPengantar)
           formData.append('class_trailer_description', this.descriptionVideo)
+          formData.append('class_group', this.linkTelegram)
           formData.append('class_status', this.statusClass.value)
 
           this.$http.post('/lms/class/store', formData)

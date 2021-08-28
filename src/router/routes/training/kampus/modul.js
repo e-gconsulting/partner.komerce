@@ -33,7 +33,7 @@ export default [
     name: 'modul-create',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/FormModul.vue'),
     meta: {
-      name: pageName,
+      name: pageName.plural,
       navActiveLink: 'kelas',
       resource: 'Training',
       action: 'manage',

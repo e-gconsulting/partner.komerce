@@ -1,7 +1,7 @@
 <template>
   <b-card-actions
     ref="formCard"
-    :title="`${editMode ? 'Edit' : 'Add'} ${$route.meta.name.singular}`"
+    title="Add Module"
     no-actions
   >
     <b-row>
@@ -118,9 +118,13 @@
                     name="Trainer"
                     rules="required"
                   >
-                    <b-form-input
-                      v-model="trainerName"
+                    <v-select
+                      v-model="trainerId"
+                      label="name"
+                      :reduce="option => option.id"
+                      :options="trainerItems"
                       :state="errors.length > 0 ? false:null"
+                      :filterable="false"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -207,7 +211,9 @@ export default {
       moduleSubtitle: '',
       thumbnail: [],
       statusModule: '',
-      trainerName: '',
+
+      trainerId: '',
+      trainerItems: [],
 
       name: '',
       iconFile: null,
@@ -233,10 +239,7 @@ export default {
     console.log(this.statusModule)
     console.log(this.trainerName)
     console.log(this.id)
-    // this.$http.get('/lms/module/list/14').then(response => {
-    //   const { data } = response
-    //   console.log(data)
-    // })
+    this.loadTrainer()
   },
   methods: {
     submit() {
@@ -249,7 +252,7 @@ export default {
           formData.append('module_subtitle', this.moduleSubtitle)
           formData.append('module_thumbnail', this.thumbnail)
           formData.append('module_status', this.statusModule.value)
-          formData.append('module_trainer', this.trainerName)
+          formData.append('module_trainer', this.trainerId)
           formData.append('module_class_id', this.id)
 
           this.$http.post('/lms/module/store', formData)
@@ -263,7 +266,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
-              this.$router.push({ name: this.$route.meta.navActiveLink })
+              this.$router.push({ name: this.$route.meta.name })
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -278,6 +281,13 @@ export default {
             })
         }
       })
+    },
+    loadTrainer() {
+      return this.$http.get('/lms/trainer')
+        .then(async response => {
+          const { data } = response.data
+          this.trainerItems = data
+        })
     },
   },
 }

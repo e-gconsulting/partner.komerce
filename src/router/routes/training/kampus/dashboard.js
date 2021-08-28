@@ -7,6 +7,7 @@ export default [
     component: () => import('@/views/pages/training/kampus-komerce/dashboard/Index.vue'),
     meta: {
       name: pageName,
+      studentLulus: 'student',
       resource: 'Training',
       action: 'manage',
       breadcrumb: [

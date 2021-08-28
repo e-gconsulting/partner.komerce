@@ -51,7 +51,7 @@
                     type="radialBar"
                     height="190"
                     :options="chartOptions"
-                    :series="[item.total_progress]"
+                    :series="[Math.round(item.total_progress)]"
                   />
                 </div>
               </b-col>
@@ -62,7 +62,9 @@
     </b-col>
 
     <!-- Analytics Kelas -->
-    <analytics-kelas />
+    <analytics-kelas
+      ref="analyticKelas"
+    />
   </b-row>
 </template>
 

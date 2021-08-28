@@ -206,6 +206,8 @@ export default {
       videoPengantar: '',
       statusClass: '',
 
+      edumoClassId: '',
+
       skillOptions: [
         { title: 'Advertiser', value: 'Advertiser' },
         { title: 'Customer Service', value: 'Customer Service' },
@@ -234,6 +236,7 @@ export default {
 
           const formData = new FormData()
           formData.append('_method', 'put')
+          formData.append('edumo_class_id', this.edumoClassId)
           formData.append('class_skill', this.skill.value)
           if (this.imageFile) formData.append('class_img', this.imageFile)
           formData.append('class_trailer_url', this.videoPengantar)
@@ -277,13 +280,14 @@ export default {
     loadForm() {
       return this.$http.get(`/lms/class/${this.classId}`).then(response => {
         const { data } = response.data
+        console.log(data)
         this.skill = data.class_name
         if (data.class_img) this.imageInitialFile = data.class_img
         this.descriptionVideo = data.class_trailer_description
         this.videoPengantar = data.class_trailer_url
         this.statusClass = data.class_status
-        console.log(this.skill)
-        console.log(this.statusClass)
+        this.edumoClassId = data.edumo_class_id
+        console.log(this.edumoClassId)
       })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),

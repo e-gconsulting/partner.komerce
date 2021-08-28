@@ -145,6 +145,8 @@
           <b-button
             variant="outline-primary"
             class="rounded"
+            tag="router-link"
+            :to="{ name: $route.meta.studentLulus, query: { tab: 'student-lulus' } }"
           >
             Lihat Detail
           </b-button>
@@ -222,11 +224,17 @@ export default {
       series: [
         {
           name: 'Daftar Kelas',
-          data: [],
+          data: [{
+            x: '',
+            y: 0,
+          }],
         },
         {
           name: 'Jumlah Student Lulus',
-          data: [],
+          data: [{
+            x: '',
+            y: 0,
+          }],
         },
       ],
       chartOptions: {
@@ -252,11 +260,8 @@ export default {
         },
         xaxis: {
           labels: {
-            datetimeFormatter: {
-              year: 'yyyy',
-              month: 'MMM \'yy',
-              day: 'dd MMM',
-              hour: 'HH:mm',
+            formatter(value) {
+              return value
             },
           },
         },
@@ -383,8 +388,21 @@ export default {
         this.date = value[0] === value[1] ? value[0] : value
       },
     },
-    getSeries() {
-      return this.getDataSeries()
+  },
+  watch: {
+    startDate: {
+      immediate: true,
+      handler() {
+        if (!this.isCustom) {
+          this.customDate = [this.startDate, this.endDate]
+        }
+      },
+    },
+    endDate() {
+      this.$nextTick(() => {
+        this.loadChart()
+        this.filterDashboard()
+      })
     },
   },
   mounted() {
@@ -405,25 +423,23 @@ export default {
     loadChart() {
       return this.$http.get('/lms/dashboard').then(response => {
         const { data } = response.data
-        this.series = [
-          {
-            name: 'Daftar Kelas',
-            data: this.getValues(data.cart[0].lines),
-          },
-          {
-            name: 'Jumlah Student Lulus',
-            data: this.getValues(data.cart[0].lines),
-          },
-        ]
-        console.log(this.getValues(data.cart[0].lines))
-        // data.cart[0].lines.forEach(this.getDataSeries)
+        data.cart[0].lines.forEach(this.getDataSeries)
         console.log(this.series)
       })
     },
-    // getDataSeries(data) {
-    //   this.series[0].data.push(data.cart_joined)
-    //   this.series[1].data.push(data.cart_finished)
-    // },
+    filterDashboard() {
+      return this.$http.get('/lms/dashboard/filter-cart', {
+        start_date: this.startDate,
+        end_date: this.endDate,
+      }).then(async response => {
+        const { data } = response.data
+        data.cart[0].lines.forEach(this.getDataSeries)
+      })
+    },
+    getDataSeries(data) {
+      this.series[0].data.push({ x: data.cart_date, y: data.cart_joined })
+      this.series[1].data.push({ x: data.cart_date, y: data.cart_finished })
+    },
     kFormatter,
     getIsoDate(date) {
       const month = (date.getMonth() + 1).toString().padStart(2, '0')

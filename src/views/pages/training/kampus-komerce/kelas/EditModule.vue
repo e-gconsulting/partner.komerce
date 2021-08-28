@@ -280,6 +280,7 @@ export default {
         this.moduleSubtitle = data.module_subtitle
         if (data.module_thumbnail) this.imageInitialFile = data.module_thumbnail
         this.statusModule = data.module_status
+        this.trainerId = data.module_trainer
 
         console.log(data)
       })

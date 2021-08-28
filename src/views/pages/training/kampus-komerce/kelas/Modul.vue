@@ -204,10 +204,6 @@ export default {
       const { data } = response.data
       console.log(data)
     })
-    this.$http.get('/lms/lesson/list/32').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
     console.log(this.loadClass())
   },
   methods: {
