@@ -37,6 +37,7 @@
                           <b-form-input
                             v-model="moduleTitle"
                             :state="errors.length > 0 ? false:null"
+                            disabled
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
                         </validation-provider>
@@ -88,7 +89,10 @@
                       </b-form-group>
                     </b-col>
                   </b-col>
-                  <b-col md="12">
+                  <b-col
+                    md="12"
+                    class="mb-2"
+                  >
                     <b-col md="8">
                       <b-form-group
                         label="Deskripsi Video"
@@ -99,10 +103,10 @@
                           #default="{ errors }"
                           name="Deskripsi Video"
                         >
-                          <b-form-textarea
-                            id="textarea-default"
+                          <ckeditor
                             v-model="videoDescription"
-                            rows="3"
+                            :editor="editor"
+                            :config="editorConfig"
                             :state="errors.length > 0 ? false:null"
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
@@ -139,7 +143,7 @@
                       type="submit"
                       class="mr-50"
                       :disabled="loadingSubmit"
-                      :to="{ name: $route.meta.routeAddQuiz }"
+                      @click.prevent="submit"
                     >
                       <b-spinner
                         v-if="loadingSubmit"
@@ -169,43 +173,32 @@ import {
   BCol,
   BButton,
   BSpinner,
-  // BFormSelect,
   BFormFile,
-  // BAvatar,
-  // BFormRow,
   BOverlay,
-  // BFormRadioGroup,
-  BFormTextarea,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-// import vSelect from 'vue-select'
-// import flatPickr from 'vue-flatpickr-component'
-// import Cleave from 'vue-cleave-component'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
-// const regexUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+import Vue from 'vue'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+
+Vue.use(CKEditor)
+
 export default {
   components: {
     ValidationProvider,
     ValidationObserver,
     BFormInput,
     BFormGroup,
-    BFormTextarea,
     BForm,
-    // BFormRow,
     BRow,
     BCol,
     BButton,
     BSpinner,
-    // BFormSelect,
     BFormFile,
-    // BAvatar,
-    // BFormRadioGroup,
     BOverlay,
-    // flatPickr,
-    // vSelect,
-    // Cleave,
     BCardActions,
   },
   data() {
@@ -213,6 +206,8 @@ export default {
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
+      moduleId: this.$route.params.module_id,
+      lessonId: this.$route.params.lesson_id,
 
       required,
       min,
@@ -235,6 +230,12 @@ export default {
         { title: 'Publish', value: 'publish' },
       ],
 
+      editor: ClassicEditor,
+      editorData: '<p>Content of the editor.</p>',
+      editorConfig: {
+        // The configuration of the editor.
+      },
+
     }
   },
   computed: {
@@ -244,9 +245,10 @@ export default {
     },
   },
   mounted() {
-    this.$http.get('/lms/lesson/13').then(response => {
-      const { data } = response
+    this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
+      const { data } = response.data
       console.log(data)
+      this.moduleTitle = `${data.module_title} - ${data.module_subtitle}`
     })
   },
   methods: {
@@ -261,7 +263,7 @@ export default {
           formData.append('lesson_thumbnail', this.lessonThumbnail)
           formData.append('lesson_video_description', this.videoDescription)
           formData.append('lesson_video_url', this.videoUrl)
-          formData.append('lesson_module_id', 32)
+          formData.append('lesson_module_id', this.moduleId)
           formData.append('lesson_status', 'publish')
 
           this.$http.post('/lms/lesson/store', formData)
@@ -275,6 +277,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
+              this.$router.push({ name: this.$route.meta.routeAddQuiz, params: { lesson_id: this.lessonId } })
             })
             .catch(error => {
               this.loadingSubmit = false

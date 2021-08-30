@@ -70,10 +70,10 @@
                         name="Deskripsi Video"
                         rules="required"
                       >
-                        <b-form-textarea
+                        <ckeditor
                           v-model="descriptionVideo"
-                          placeholder="Textarea"
-                          rows="3"
+                          :editor="editor"
+                          :config="editorConfig"
                           :state="errors.length > 0 ? false:null"
                         />
                       </validation-provider>
@@ -159,13 +159,18 @@ import {
   BFormFile,
   VBTooltip,
   BFormRow,
-  BFormTextarea,
+  // BFormTextarea,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import { required, min } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
+import Vue from 'vue'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+
+Vue.use(CKEditor)
 
 export default {
   directives: {
@@ -185,7 +190,7 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    BFormTextarea,
+    // BFormTextarea,
     vSelect,
   },
   data() {
@@ -218,6 +223,12 @@ export default {
         { title: 'Draft', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
+
+      editor: ClassicEditor,
+      editorData: '<p>Content of the editor.</p>',
+      editorConfig: {
+        // The configuration of the editor.
+      },
     }
   },
   computed: {
@@ -237,11 +248,11 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('edumo_class_id', this.edumoClassId)
-          formData.append('class_skill', this.skill.value)
+          if (this.skill.value) formData.append('class_skill', this.skill.value)
           if (this.imageFile) formData.append('class_img', this.imageFile)
           formData.append('class_trailer_url', this.videoPengantar)
           formData.append('class_trailer_description', this.descriptionVideo)
-          formData.append('class_status', this.statusClass.value)
+          if (this.statusClass.value) formData.append('class_status', this.statusClass.value)
 
           console.log(formData)
           console.log(this.skill)

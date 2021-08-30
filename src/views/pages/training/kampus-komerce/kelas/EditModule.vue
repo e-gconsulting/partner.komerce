@@ -84,7 +84,7 @@
                   >
                     <v-select
                       v-model="statusModule"
-                      :options="statusKelasOptions"
+                      :options="statusModuleOptions"
                       label="title"
                       :state="errors.length > 0 ? false:null"
                     />
@@ -153,7 +153,6 @@ import {
   BFormFile,
   VBTooltip,
   BFormRow,
-  // BFormTextarea,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import { required, min } from '@validations'
@@ -179,12 +178,12 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    // BFormTextarea,
     vSelect,
   },
   data() {
     return {
       id: this.$route.params.module_id,
+      classId: this.$route.params.class_id,
       loadingSubmit: false,
       submitErrors: '',
 
@@ -202,7 +201,7 @@ export default {
       imageFile: null,
       imageInitialFile: null,
 
-      statusKelasOptions: [
+      statusModuleOptions: [
         { title: 'Draft', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
@@ -210,15 +209,17 @@ export default {
   },
   computed: {
     successText() {
-      return `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
+      return `Satu ${this.$route.meta.name} berhasil diperbaharui`
     },
   },
   mounted() {
+    console.log(this.id)
+    console.log(this.classId)
     console.log(this.moduleTitle)
     console.log(this.moduleSubtitle)
     console.log(this.thumbnail)
     console.log(this.statusModule)
-    console.log(this.trainerName)
+    console.log(this.trainerId)
     this.$http.get('/lms/module/list/14').then(response => {
       const { data } = response
       console.log(data)
@@ -242,9 +243,15 @@ export default {
           formData.append('module_title', this.moduleTitle)
           formData.append('module_subtitle', this.moduleSubtitle)
           if (this.imageFile) formData.append('module_thumbnail', this.imageFile)
-          formData.append('module_status', this.statusModule)
-          formData.append('module_trainer', this.trainerName)
+          if (this.statusModule.value) formData.append('module_status', this.statusModule.value)
+          formData.append('module_trainer', this.trainerId.id)
           formData.append('module_class_id', this.id)
+
+          console.log(this.moduleTitle)
+          console.log(this.moduleSubtitle)
+          console.log(this.imageFile)
+          console.log(this.statusModule)
+          console.log(this.trainerId)
 
           this.$http.post(`/lms/module/update/${this.id}`, formData)
             .then(() => {
@@ -257,7 +264,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
-              this.$router.push({ name: this.$route.meta.navActiveLink })
+              this.$router.push({ name: this.$route.meta.name })
             })
             .catch(error => {
               this.loadingSubmit = false

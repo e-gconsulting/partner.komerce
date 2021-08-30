@@ -260,6 +260,7 @@ export default {
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
+      lessonId: this.$route.params.lesson_id,
 
       endpointDelete: '/lms/lesson/quiz/delete/:question_id',
 
@@ -312,11 +313,7 @@ export default {
     },
   },
   mounted() {
-    this.$http.get('/lms/lesson/quiz/28').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
-    this.$http.get('/lms/module/list/27').then(response => {
+    this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
       const { data } = response.data
       console.log(data)
     })
@@ -408,7 +405,7 @@ export default {
       })
     },
     tableProvider() {
-      return this.$http.get('/lms/lesson/quiz/28').then(response => {
+      return this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         return data.question
       })
@@ -450,11 +447,4 @@ export default {
 <style lang="scss" scoped>
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
-// [dir] .vs__clear {
-//   display: none;
-// }
-
-// [dir] .vs__dropdown-menu {
-//   pointer-event: none;
-// }
 </style>

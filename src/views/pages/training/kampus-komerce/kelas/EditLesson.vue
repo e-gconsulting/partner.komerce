@@ -99,10 +99,11 @@
                           #default="{ errors }"
                           name="Deskripsi Video"
                         >
-                          <b-form-textarea
-                            id="textarea-default"
+
+                          <ckeditor
                             v-model="videoDescription"
-                            rows="3"
+                            :editor="editor"
+                            :config="editorConfig"
                             :state="errors.length > 0 ? false:null"
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
@@ -175,7 +176,7 @@ import {
   // BFormRow,
   BOverlay,
   // BFormRadioGroup,
-  BFormTextarea,
+  // BFormTextarea,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -184,28 +185,25 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 // import Cleave from 'vue-cleave-component'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
-// const regexUrl = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(:[0-9]+)?|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+import Vue from 'vue'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+
+Vue.use(CKEditor)
+
 export default {
   components: {
     ValidationProvider,
     ValidationObserver,
     BFormInput,
     BFormGroup,
-    BFormTextarea,
     BForm,
-    // BFormRow,
     BRow,
     BCol,
     BButton,
     BSpinner,
-    // BFormSelect,
     BFormFile,
-    // BAvatar,
-    // BFormRadioGroup,
     BOverlay,
-    // flatPickr,
-    // vSelect,
-    // Cleave,
     BCardActions,
   },
   data() {
@@ -237,6 +235,12 @@ export default {
         { title: 'Draft', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
+
+      editor: ClassicEditor,
+      editorData: '<p>Content of the editor.</p>',
+      editorConfig: {
+        // The configuration of the editor.
+      },
 
     }
   },

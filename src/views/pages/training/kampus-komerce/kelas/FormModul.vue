@@ -169,7 +169,6 @@ import {
   BFormFile,
   VBTooltip,
   BFormRow,
-  // BFormTextarea,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import { required, min } from '@validations'
@@ -195,7 +194,6 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    // BFormTextarea,
     vSelect,
   },
   data() {
@@ -227,8 +225,7 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return `Satu ${this.$route.meta.name} berhasil ditambah`
     },
   },
   mounted() {

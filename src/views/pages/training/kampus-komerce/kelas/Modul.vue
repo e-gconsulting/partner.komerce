@@ -125,7 +125,6 @@ import {
   BCard,
   BInputGroup,
   BInputGroupPrepend,
-  // BForm,
   BFormGroup,
   BFormInput,
   BOverlay,
@@ -133,6 +132,7 @@ import {
   BTable,
   BButton,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -140,7 +140,6 @@ export default {
     BCard,
     BInputGroup,
     BInputGroupPrepend,
-    // BForm,
     BFormGroup,
     BFormInput,
     BOverlay,
@@ -204,13 +203,24 @@ export default {
       const { data } = response.data
       console.log(data)
     })
-    console.log(this.loadClass())
+    this.loadClass()
   },
   methods: {
     tableProvider() {
       return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
         const { data } = response.data
         return data.modules
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Unable to load the table data. Please try again later or contact support.',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     loadClass() {

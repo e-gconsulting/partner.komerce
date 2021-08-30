@@ -143,6 +143,7 @@ import {
   BButton,
   BAvatar,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -223,6 +224,10 @@ export default {
       const { data } = response
       console.log(data)
     })
+    this.$http.get('/lms/class/21').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
     this.isDeleted()
   },
   methods: {
@@ -230,6 +235,17 @@ export default {
       return this.$http.get('/lms/class/list').then(response => {
         const { data } = response.data
         return data
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Unable to load the table data. Please try again later or contact support.',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     refreshTable() {
@@ -269,12 +285,9 @@ export default {
         })
     },
     isDeleted(id) {
-      console.log(id)
       return this.deletedIds.includes(id)
     },
     rowClass(item, type) {
-      console.log(item)
-      console.log(type)
       const colorClass = 'table-danger'
       if (!item || type !== 'row') { return }
 

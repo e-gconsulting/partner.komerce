@@ -401,17 +401,6 @@ export default {
         answers_type: 'choices',
       }
 
-      // const formData = new FormData()
-      // formData.append('_method', 'put')
-      // formData.append('quiz_id', this.quizId)
-      // formData.append('question_id', this.questionsId)
-      // formData.append('type', 'module')
-      // formData.append('ref_id', this.edumoLessonId)
-      // formData.append('question', this.questions)
-      // formData.append('question_type', 'text')
-      // formData.append('answers', this.answer)
-      // formData.append('answers_type', 'choices')
-
       console.log(formDatas)
       console.log(this.quizId)
       console.log(this.questionsId)
@@ -458,7 +447,7 @@ export default {
       })
     },
     loadQuestions() {
-      this.$http.get('/lms/lesson/quiz/28').then(response => {
+      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         console.log(data.question)
       })
@@ -471,7 +460,7 @@ export default {
         const { data } = response.data
         this.className = data.class_skill
       })
-      this.$http.get('/lms/lesson/28').then(response => {
+      this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
       })

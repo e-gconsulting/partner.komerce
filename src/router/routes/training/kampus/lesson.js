@@ -50,11 +50,9 @@ export default [
         },
         {
           text: 'Manage Modul',
-          route: 'modul',
         },
         {
           text: 'Manage Lesson',
-          route: 'manage-lesson',
         },
         {
           text: 'Add Lesson',

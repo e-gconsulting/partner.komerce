@@ -89,7 +89,7 @@
           :busy.sync="loading"
         >
 
-          <template #cell(lesson)="data">
+          <template #cell(lessons)="data">
             <b-form-row>
               <b-col cols="auto">
                 <b-avatar
@@ -113,7 +113,7 @@
               variant="flat-warning"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeEdit, params: { lesson_id: data.item.lesson_id } }"
+              :to="{ name: $route.meta.routeEdit, params: { lesson_id: data.item.lesson_id, module_id: moduleId } }"
             >
               <feather-icon
                 icon="EditIcon"
@@ -152,6 +152,7 @@ import {
   BCardTitle,
   BAvatar,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -176,7 +177,7 @@ export default {
       moduleId: this.$route.params.module_id,
       classId: this.$route.params.class_id,
       fields: [
-        { key: 'lesson', label: 'Lesson' },
+        { key: 'lessons', label: 'Lesson' },
         { key: 'action', label: 'Aksi' },
       ],
 
@@ -227,7 +228,18 @@ export default {
     tableProvider() {
       return this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
         const { data } = response.data
-        return data.lesson
+        return data.lessons
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Unable to load the table data. Please try again later or contact support.',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     loadModule() {

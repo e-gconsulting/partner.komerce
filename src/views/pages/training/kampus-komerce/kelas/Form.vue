@@ -58,7 +58,10 @@
                   </b-form-row>
                 </b-form-group>
               </b-col>
-              <b-col md="12">
+              <b-col
+                md="12"
+                class="mb-2"
+              >
                 <b-form-group
                   label="Deskripsi Video"
                   label-cols-md="4"
@@ -70,10 +73,11 @@
                         name="Deskripsi Video"
                         rules="required"
                       >
-                        <b-form-textarea
+
+                        <ckeditor
                           v-model="descriptionVideo"
-                          placeholder="Textarea"
-                          rows="3"
+                          :editor="editor"
+                          :config="editorConfig"
                           :state="errors.length > 0 ? false:null"
                         />
                       </validation-provider>
@@ -178,13 +182,17 @@ import {
   BFormFile,
   VBTooltip,
   BFormRow,
-  BFormTextarea,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import { required, min } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
+import Vue from 'vue'
+import CKEditor from '@ckeditor/ckeditor5-vue2'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+
+Vue.use(CKEditor)
 
 export default {
   directives: {
@@ -204,7 +212,6 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    BFormTextarea,
     vSelect,
   },
   data() {
@@ -235,6 +242,12 @@ export default {
       statusKelasOptions: [
         { title: 'Draft', value: 'draft' },
       ],
+
+      editor: ClassicEditor,
+      editorData: '<p>Content of the editor.</p>',
+      editorConfig: {
+        // The configuration of the editor.
+      },
     }
   },
   computed: {
