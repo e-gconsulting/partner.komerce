@@ -60,15 +60,15 @@
         >
           <b-form-group>
             <b-button
-              :variant="filterPositionId === item.id ? 'primary' : 'flat-dark'"
+              :variant="filterPositionId === item.class_id ? 'primary' : 'flat-dark'"
               class="text-nowrap"
               :class="{'mr-2': index === (filterPositionItems.length - 1)}"
-              :pressed="filterPositionId === item.id"
+              :pressed="filterPositionId === item.class_id"
               pill
               size="sm"
-              @click="selectPosition(item.id)"
+              @click="selectPosition(item.class_id)"
             >
-              {{ item.position_name }}
+              {{ item.class_name }}
             </b-button>
           </b-form-group>
         </div>
@@ -92,17 +92,8 @@
           :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
           :show-empty="!loading"
-          :per-page="perPage"
-          :current-page="currentPage"
           :items="tableProvider"
           :fields="tableFields"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :sort-direction="sortDirection"
-          :filter="filter"
-          :filter-included-fields="filterOn"
-          :tbody-tr-class="rowClass"
-          :busy.sync="loading"
         >
 
           <template #cell(student_user_id)="data">
@@ -125,7 +116,7 @@
             <span>{{ data.value }}</span>
           </template>
 
-          <template #cell(student_finished_at)="data">
+          <template #cell(student_finish_at)="data">
             <span>{{ data.value }}</span>
           </template>
 
@@ -193,19 +184,34 @@ export default {
       loading: false,
 
       fields: [
-        { key: 'student_user_id', label: 'ID' },
-        { key: 'student_name', label: 'Data Diri' },
-        { key: 'student_score', label: 'Nilai' },
         {
-          key: 'student_finished_at',
-          label: 'Tanggal Lulus',
-          formatter: value => {
-            if (!value || value === '0000-00-00 00:00:00') return '-'
-            return this.dateFormat(value, 'dd mmmm yyyy')
-          },
+          key: 'student_user_id',
+          label: 'ID',
         },
-        { key: 'action', label: 'Aksi' },
+        {
+          key: 'student_name',
+          label: 'Data Diri',
+        },
+        {
+          key: 'student_score',
+          label: 'Nilai',
+          thClass: 'text-center',
+          tdClass: 'text-center',
+        },
+        {
+          key: 'student_finish_at',
+          label: 'Tanggal Lulus',
+          thClass: 'text-center',
+          tdClass: 'text-center',
+        },
+        {
+          key: 'action',
+          label: 'Aksi',
+          class: 'col-action',
+        },
       ],
+
+      dataStudent: null,
     }
   },
   computed: {
@@ -223,7 +229,7 @@ export default {
     this.loadFilterPositions()
     this.$http.get('/lms/report/student').then(response => {
       const { data } = response.data
-      console.log(data[0].finish.student)
+      console.log(data)
     })
   },
   methods: {
@@ -233,11 +239,16 @@ export default {
     tableProvider() {
       return this.$http.get('/lms/report/student').then(response => {
         const { data } = response.data
-        return data[0].finish.student
+        data.finished.forEach(this.myArray)
+        return this.dataStudent
       })
     },
+    myArray(data) {
+      this.dataStudent = data.student
+      return data.student
+    },
     loadFilterPositions() {
-      return this.$http.post('/position', {}, {
+      return this.$http.get('/lms/class/list', {}, {
         params: {
           is_division_external: 1,
           sort: 'name',

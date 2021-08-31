@@ -47,6 +47,7 @@
                       >
                         <b-form-file
                           v-model="imageFile"
+                          disabled
                           :state="errors.length > 0 ? false:null"
                           :placeholder="imageInitialFile ?
                             imageInitialFile.split('/').pop()
@@ -66,6 +67,7 @@
                 >
                   <b-form-input
                     v-model="name"
+                    disabled
                   />
                 </b-form-group>
               </b-col>
@@ -77,6 +79,7 @@
                   <b-form-radio-group
                     v-model="gender"
                     :options="genderOptions"
+                    disabled
                     class="mt-50"
                   />
                 </b-form-group>
@@ -92,6 +95,7 @@
                   /> -->
                   <b-form-input
                     v-model="birthdate"
+                    disabled
                   />
                 </b-form-group>
               </b-col>
@@ -103,6 +107,7 @@
                   <b-form-radio-group
                     v-model="married"
                     :options="marriedOptions"
+                    disabled
                     class="mt-50"
                   />
                 </b-form-group>
@@ -119,6 +124,7 @@
                   <v-select
                     v-model="provinceId"
                     label="name"
+                    disabled
                     placeholder="Ketik untuk mencari..."
                   />
                 </b-form-group>
@@ -131,6 +137,7 @@
                   <v-select
                     v-model="regencyId"
                     label="name"
+                    disabled
                     placeholder="Ketik untuk mencari..."
                   />
                 </b-form-group>
@@ -143,6 +150,7 @@
                   <v-select
                     v-model="districtId"
                     label="name"
+                    disabled
                     placeholder="Ketik untuk mencari..."
                   />
                 </b-form-group>
@@ -154,6 +162,7 @@
                 >
                   <b-form-input
                     v-model="address"
+                    disabled
                   />
                 </b-form-group>
               </b-col>
@@ -169,6 +178,7 @@
                   <v-select
                     v-model="education"
                     label="name"
+                    disabled
                     placeholder="Ketik untuk mencari..."
                   />
                 </b-form-group>
@@ -181,6 +191,7 @@
                   <b-form-radio-group
                     v-model="experienced"
                     :options="experienceStatusOptions"
+                    disabled
                     class="mt-50"
                   />
                 </b-form-group>
@@ -194,6 +205,7 @@
                     v-model="experienceYear"
                     :options="experienceYearOptions"
                     label="name"
+                    disabled
                     placeholder="Ketik untuk mencari..."
                   />
                 </b-form-group>
@@ -209,6 +221,7 @@
                 >
                   <b-form-input
                     v-model="contact"
+                    disabled
                   />
                 </b-form-group>
               </b-col>
@@ -219,6 +232,7 @@
                 >
                   <b-form-input
                     v-model="email"
+                    disabled
                   />
                 </b-form-group>
               </b-col>
@@ -231,9 +245,17 @@
                   label="Nilai"
                   label-cols-md="4"
                 >
-                  <b-form-input
-                    v-model="score"
-                  />
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Certificate"
+                  >
+                    <b-form-input
+                      v-model="score"
+                      disabled
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
@@ -273,7 +295,6 @@ import {
   BCol,
   BFormGroup,
   BFormInput,
-  // BFormCheckbox,
   BForm,
   BButton,
   BFormRadioGroup,
@@ -284,7 +305,6 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-// import flatPickr from 'vue-flatpickr-component'
 import vSelect from 'vue-select'
 
 export default {
@@ -293,7 +313,6 @@ export default {
     BCol,
     BFormGroup,
     BFormInput,
-    // BFormCheckbox,
     BForm,
     BButton,
     BCardActions,
@@ -303,7 +322,6 @@ export default {
     BFormFile,
     vSelect,
     BOverlay,
-    // flatPickr,
     ValidationProvider,
   },
   directives: {

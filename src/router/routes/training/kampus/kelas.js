@@ -28,7 +28,7 @@ export default [
     name: 'kelas-create',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/Form.vue'),
     meta: {
-      name: pageName,
+      name: pageName.plural,
       navActiveLink: 'kelas',
       resource: 'Training',
       action: 'manage',

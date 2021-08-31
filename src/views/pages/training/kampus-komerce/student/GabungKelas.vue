@@ -60,15 +60,16 @@
         >
           <b-form-group>
             <b-button
-              :variant="filterPositionId === item.id ? 'primary' : 'flat-dark'"
+              v-model="classSkillJoin"
+              :variant="filterPositionId === item.class_id ? 'primary' : 'flat-dark'"
               class="text-nowrap"
               :class="{'mr-2': index === (filterPositionItems.length - 1)}"
-              :pressed="filterPositionId === item.id"
+              :pressed="filterPositionId === item.class_name"
               pill
               size="sm"
-              @click="selectPosition(item.id)"
+              @click="selectPosition(item.class_name)"
             >
-              {{ item.position_name }}
+              {{ item.class_name }}
             </b-button>
           </b-form-group>
         </div>
@@ -97,7 +98,7 @@
         >
 
           <template #cell(student_user_id)="data">
-            <span>{{ data.item.student_user_id }}</span>
+            <span>{{ data.value }}</span>
           </template>
 
           <template #cell(student_name)="data">
@@ -109,16 +110,16 @@
               </b-col>
               <b-col cols="auto">
                 <span>{{ data.item.student_name }}</span>
-                <p>Maung@gmail.aing</p>
+                <p>{{ data.item.student_email }}</p>
               </b-col>
             </b-row>
           </template>
 
           <template #cell(student_score)="data">
-            <span>{{ data.item.student_score }}</span>
+            <span>{{ Math.round(data.item.student_score)+'%' }}</span>
           </template>
 
-          <template #cell(student_joined_at)="data">
+          <template #cell(student_join_at)="data">
             <span>{{ data.item.student_join_at }}</span>
           </template>
 
@@ -184,17 +185,41 @@ export default {
       filterPositionId: 1,
       filterPositionItems: [],
 
+      classSkillJoin: '',
+
       fields: [
-        { key: 'student_user_id', label: 'ID' },
-        { key: 'student_name', label: 'Data Diri' },
-        { key: 'student_score', label: 'Percentage' },
         {
-          key: 'student_joined_at',
-          label: 'Tanggal Gabung Kelas',
-          formatter: value => this.dateFormat(value, 'dd mmm yyyy'),
+          key: 'student_user_id',
+          label: 'ID',
         },
-        { key: 'action', label: 'Aksi' },
+        {
+          key: 'student_name',
+          label: 'Data Diri',
+        },
+        {
+          key: 'student_score',
+          label: 'Percentage',
+          thClass: 'text-center',
+          tdClass: 'text-center',
+        },
+        {
+          key: 'student_join_at',
+          label: 'Tanggal Gabung Kelas',
+          thClass: 'text-center',
+          tdClass: 'text-center',
+          formatter: value => {
+            const date = String(new Date(value))
+            this.dateFormat(date, 'dd mmmmm yyyy')
+          },
+        },
+        {
+          key: 'action',
+          label: 'Aksi',
+          class: 'col-action',
+        },
       ],
+
+      dataStudent: null,
     }
   },
   computed: {
@@ -210,20 +235,28 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
-    this.$http.get('/lms/report/student').then(response => {
-      const { data } = response.data
-      console.log(data[0].join)
-    })
   },
   methods: {
+    tes(data) {
+      console.log(data)
+    },
     tableProvider() {
-      return this.$http.get('/lms/report/student').then(response => {
+      return this.$http.get('/lms/report/student', {
+        params: {
+          class_skill_join: 'customer service',
+        },
+      }).then(response => {
         const { data } = response.data
-        return data[0].join.student
+        data.joined.forEach(this.myArray)
+        return this.dataStudent
       })
     },
+    myArray(data) {
+      this.dataStudent = data.student
+      return data.student
+    },
     loadFilterPositions() {
-      return this.$http.post('/position', {}, {
+      return this.$http.get('/lms/class/list', {}, {
         params: {
           is_division_external: 1,
           sort: 'name',
@@ -233,6 +266,7 @@ export default {
         .then(async response => {
           const { data } = response.data
           this.filterPositionItems = Object.keys(data).map(key => data[key])
+          console.log(this.filterPositionItems)
         })
     },
     selectPosition(id) {

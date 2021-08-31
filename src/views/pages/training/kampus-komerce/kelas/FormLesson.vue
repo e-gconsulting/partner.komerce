@@ -207,7 +207,6 @@ export default {
       loadingSubmit: false,
       submitErrors: '',
       moduleId: this.$route.params.module_id,
-      lessonId: this.$route.params.lesson_id,
 
       required,
       min,
@@ -240,16 +239,12 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return 'Satu lesson berhasil ditambah'
     },
   },
   mounted() {
-    this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
-      const { data } = response.data
-      console.log(data)
-      this.moduleTitle = `${data.module_title} - ${data.module_subtitle}`
-    })
+    this.loadModul()
+    console.log(this.lessonId)
   },
   methods: {
     submit() {
@@ -277,7 +272,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
-              this.$router.push({ name: this.$route.meta.routeAddQuiz, params: { lesson_id: this.lessonId } })
+              this.$router.push({ name: this.$route.meta.routeBack, params: { module_id: this.moduleId } })
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -294,7 +289,11 @@ export default {
       })
     },
     loadModul() {
-      return this.$http.get()
+      return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
+        const { data } = response.data
+        console.log(data)
+        this.moduleTitle = `${data.module_title} - ${data.module_subtitle}`
+      })
     },
   },
 }

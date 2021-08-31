@@ -28,6 +28,7 @@
               type="search"
               placeholder="Cari..."
               debounce="500"
+              @change="search"
             />
           </b-input-group>
         </b-form-group>
@@ -206,8 +207,15 @@ export default {
     this.loadClass()
   },
   methods: {
+    refreshTable() {
+      this.$refs.table.refresh()
+    },
     tableProvider() {
-      return this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
+      return this.$http.get(`/lms/module/list/filter/${this.classId}`, {
+        params: {
+          filter_title: this.filter,
+        },
+      }).then(response => {
         const { data } = response.data
         return data.modules
       }).catch(() => {

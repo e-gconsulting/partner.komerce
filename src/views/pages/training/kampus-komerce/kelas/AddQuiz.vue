@@ -304,8 +304,7 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return `Satu ${this.$route.meta.name} berhasil ditambah`
     },
     tableFileds() {
       const fields = [...this.fields]
@@ -408,23 +407,34 @@ export default {
       return this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         return data.question
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Tidak ada Quiz untuk Lesson ini',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     loadQuiz() {
-      this.$http.get('/lms/lesson/quiz/28').then(response => {
+      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         console.log(data.question)
       })
-      this.$http.get('/lms/module/45').then(response => {
+      this.$http.get('/lms/module/12').then(response => {
         const { data } = response.data
         this.moduleName = data.module_title
         this.moduleSubname = data.module_subtitle
       })
-      this.$http.get('/lms/module/list/27').then(response => {
+      this.$http.get('/lms/module/list/21').then(response => {
         const { data } = response.data
         this.className = data.class_skill
       })
-      this.$http.get('/lms/lesson/28').then(response => {
+      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
       })

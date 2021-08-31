@@ -26,12 +26,12 @@
               class="mt-2"
             >
               <h4>{{ fullname }}</h4>
-              <span>Advertiser</span>
+              <span>{{ className }}</span>
             </b-col>
           </b-row>
           <b-row>
             <p class="mt-2 ml-5">
-              Tanggal Gabung Kelas: 01 Januari 2021
+              Tanggal Gabung Kelas: {{ joinAt }}
             </p>
           </b-row>
           <b-table
@@ -43,21 +43,21 @@
             empty-text="Tidak ada data untuk ditampilkan."
             :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
-            :fields="fields"
-            :items="items"
+            :fields="tableFields"
+            :items="tableProvider"
           >
 
-            <template #cell(modul)="data">
-              <h4>{{ data.value.value }}</h4>
-              <p>Belajar Facebook Ads Pemula</p>
+            <template #cell(modules)="data">
+              <h4>{{ data.item.module_title }}</h4>
+              <p>{{ data.item.module_subtitle }}</p>
             </template>
 
-            <template #cell(status)="data">
-              <span>{{ data.value.value }}</span>
+            <template #cell(module_status)="data">
+              <span>{{ data.value }}</span>
             </template>
 
-            <template #cell(nilai)="data">
-              <span>{{ data.value.value }}</span>
+            <template #cell(user_module_score)="data">
+              <span>{{ data.value }}</span>
             </template>
 
           </b-table>
@@ -69,6 +69,7 @@
 
 <script>
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
+import { dateFormat } from '@core/mixins/ui/date'
 import {
   BRow,
   BOverlay,
@@ -86,26 +87,26 @@ export default {
     BAvatar,
     BTable,
   },
+  mixins: [dateFormat],
   data() {
     return {
       studentId: this.$route.params.student_id,
       fields: [
-        { key: 'modul', label: 'Modul' },
-        { key: 'status', label: 'Status' },
-        { key: 'nilai', label: 'Nilai' },
-      ],
-
-      items: [
-        {
-          modul: { value: 'Modul 1' },
-          status: { value: 'Selesei' },
-          nilai: { value: '100' },
-        },
+        { key: 'modules', label: 'Modul' },
+        { key: 'module_status', label: 'Status' },
+        { key: 'user_module_score', label: 'Nilai' },
       ],
 
       fullname: '',
-      username: '',
+      className: '',
+      joinAt: '',
     }
+  },
+  computed: {
+    tableFields() {
+      const field = [...this.fields]
+      return field
+    },
   },
   mounted() {
     this.loadStudent()
@@ -113,12 +114,24 @@ export default {
       const { data } = response.data
       console.log(data[0].join)
     })
+    this.$http.get(`/lms/module/moduleByStudent/${this.studentId}`).then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
   },
   methods: {
-    loadStudent() {
-      return this.$http.get(`/lms/user/${this.studentId}`).then(response => {
+    tableProvider() {
+      return this.$http.get(`/lms/module/moduleByStudent/${this.studentId}`).then(response => {
         const { data } = response.data
-        this.fullname = data.user_fullname
+        return data.modules
+      })
+    },
+    loadStudent() {
+      return this.$http.get(`/lms/module/moduleByStudent/${this.studentId}`).then(response => {
+        const { data } = response.data
+        this.fullname = data.user_name
+        this.className = data.class_skill
+        this.joinAt = data.class_join_at
       })
     },
   },

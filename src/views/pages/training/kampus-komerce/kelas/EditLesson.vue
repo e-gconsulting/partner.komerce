@@ -246,15 +246,10 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return 'Satu lesson berhasil diperbaharui'
     },
   },
   mounted() {
-    this.$http.get('/lms/lesson/13').then(response => {
-      const { data } = response
-      console.log(data)
-    })
     this.loadForm()
   },
   methods: {

@@ -221,10 +221,6 @@ export default {
   },
   mounted() {
     this.$http.get('/lms/class/list').then(response => {
-      const { data } = response
-      console.log(data)
-    })
-    this.$http.get('/lms/class/21').then(response => {
       const { data } = response.data
       console.log(data)
     })

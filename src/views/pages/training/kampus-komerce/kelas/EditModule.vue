@@ -264,7 +264,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
-              this.$router.push({ name: this.$route.meta.name })
+              this.$router.push({ name: this.$route.meta.navActiveLink })
             })
             .catch(error => {
               this.loadingSubmit = false

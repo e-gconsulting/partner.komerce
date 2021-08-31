@@ -233,7 +233,7 @@ export default {
   },
   computed: {
     successText() {
-      return `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
+      return 'Satu Kelas berhasil di perbaharui'
     },
   },
   mounted() {
@@ -247,7 +247,7 @@ export default {
 
           const formData = new FormData()
           formData.append('_method', 'put')
-          formData.append('edumo_class_id', this.edumoClassId)
+          // formData.append('edumo_class_id', this.edumoClassId)
           if (this.skill.value) formData.append('class_skill', this.skill.value)
           if (this.imageFile) formData.append('class_img', this.imageFile)
           formData.append('class_trailer_url', this.videoPengantar)

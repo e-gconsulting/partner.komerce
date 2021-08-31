@@ -53,11 +53,18 @@
                         md="9"
                         class="mt-50"
                       >
-                        <v-select
-                          v-model="data.item.question"
-                          :options="data.item.answer"
-                          label="answer"
-                        />
+                        <b-dropdown
+                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                          variant="outline-secondary"
+                          :text="data.item.question"
+                        >
+                          <b-dropdown-item
+                            v-for="(dataAnswer, index) in data.item.answer"
+                            :key="index + 1"
+                          >
+                            {{ dataAnswer.answer }}
+                          </b-dropdown-item>
+                        </b-dropdown>
                       </b-col>
                     </b-row>
                   </template>
@@ -228,10 +235,12 @@ import {
   BFormTextarea,
   BTable,
   BFormCheckbox,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Ripple from 'vue-ripple-directive'
@@ -252,10 +261,12 @@ export default {
     BCol,
     BButton,
     BOverlay,
-    vSelect,
+    // vSelect,
     BCardActions,
     BTable,
     BFormCheckbox,
+    BDropdown,
+    BDropdownItem,
   },
   mixins: [heightTransition],
   props: {
@@ -451,12 +462,12 @@ export default {
         const { data } = response.data
         console.log(data.question)
       })
-      this.$http.get('/lms/module/45').then(response => {
+      this.$http.get('/lms/module/1').then(response => {
         const { data } = response.data
         this.moduleName = data.module_title
         this.moduleSubname = data.module_subtitle
       })
-      this.$http.get('/lms/module/list/27').then(response => {
+      this.$http.get('/lms/module/list/1').then(response => {
         const { data } = response.data
         this.className = data.class_skill
       })
