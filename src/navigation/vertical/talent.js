@@ -5,7 +5,7 @@ export default [
     tagVariant: 'light-warning',
     children: [
       {
-        title: 'Kuesioner',
+        title: 'Kuisioner',
         icon: 'MessageSquareIcon',
         route: 'questionnaires',
         resource: 'Talent',

@@ -35,9 +35,9 @@ import training from './training'
 import talent from './talent'
 import partner from './partner'
 import management from './management'
-import division from './division'
-import position from './position'
 import masterData from './master-data'
+import assignment from './assignment'
+import settingAndPrivacy from './setting-and-privacy'
 
 // Partner
 import talentPool from './talent-pool'
@@ -51,8 +51,8 @@ export default [
   ...partner,
   ...management,
   ...masterData,
-  ...division,
-  ...position,
+  ...assignment,
+  ...settingAndPrivacy,
 
   ...talentPool,
   ...wishlist,

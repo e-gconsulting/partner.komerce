@@ -22,6 +22,7 @@ import '@/libs/vue-select'
 import '@/libs/tour'
 import '@/libs/maps'
 import '@/libs/geocoder'
+import '@/libs/filters'
 
 // Axios Mock Adapter
 import '@/@fake-db/db'
