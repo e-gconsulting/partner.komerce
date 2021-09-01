@@ -22,7 +22,7 @@
                   {{ className }}
                 </h4>
                 <p class="ml-2">
-                  {{ moduleName }} - ({{ moduleSubname }})
+                  {{ moduleName }} - ( {{ moduleSubname }} )
                 </p>
                 <b-table
                   ref="table"
@@ -209,6 +209,10 @@
                           pill
                           @click="submit"
                         >
+                          <b-spinner
+                            v-if="loadingSubmit"
+                            small
+                          />
                           Simpan
                         </b-button>
                       </b-col>
@@ -240,6 +244,7 @@ import {
   BFormCheckbox,
   BDropdown,
   BDropdownItem,
+  BSpinner,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -270,11 +275,12 @@ export default {
     BFormCheckbox,
     BDropdown,
     BDropdownItem,
+    BSpinner,
   },
   mixins: [heightTransition],
   data() {
     return {
-      lessonId: null,
+      lessonId: this.$route.params.lesson_id,
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
@@ -435,6 +441,7 @@ export default {
                 },
               }, { timeout: 2500 })
               this.refreshTable()
+              this.loadingSubmit = false
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -451,9 +458,20 @@ export default {
       })
     },
     tableProvider() {
-      return this.$http.get('/lms/lesson/quiz/1').then(response => {
+      return this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         return data.question
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Tidak ada Quiz untuk Lesson ini',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     loadQuestions() {
@@ -461,6 +479,7 @@ export default {
         const { data } = response.data
         this.quizId = data.quiz_id
         this.moduleName = data.module_title
+        this.moduleSubname = data.module_subtitle
         this.className = data.class_skill
         this.lessonId = data.lesson_id
         this.getEdumoId()

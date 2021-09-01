@@ -129,18 +129,6 @@ export default {
       },
     }
   },
-  mounted() {
-    return this.$http.get('/lms/dashboard/filter-cart', {
-      params: {
-        start_date: this.startDate,
-        end_date: this.endDate,
-      },
-    })
-      .then(async response => {
-        const { data } = response.data
-        console.log(data)
-      })
-  },
   methods: {
     loadChart() {
       return this.$http.get('/lms/dashboard/filter-cart', {

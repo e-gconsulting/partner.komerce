@@ -184,23 +184,14 @@
         </b-row>
         <b-row class="mt-1">
           <b-col>
-            <b-avatar-group size="32px">
+            <b-avatar-group
+              v-for="(item, index) in listStudentFinish"
+              :key="index + 1"
+              size="32px"
+            >
               <b-avatar
                 class="pull-up"
-              />
-              <b-avatar
-                class="pull-up"
-                variant="primary"
-              />
-              <b-avatar
-                class="pull-up"
-              />
-              <b-avatar
-                class="pull-up"
-                variant="danger"
-              />
-              <b-avatar
-                class="pull-up"
+                :src="item.student_image"
               />
             </b-avatar-group>
           </b-col>
@@ -330,6 +321,7 @@ export default {
       studentFinished: 0,
       studentJoined: 0,
       certificateDownload: 0,
+      listStudentFinish: [],
     }
   },
   computed: {
@@ -423,6 +415,7 @@ export default {
     this.loadClass()
     this.$refs.analyticsTalent.loadChart()
     this.loadStudent()
+    this.loadListStudentFinish()
   },
   methods: {
     loadStudent() {
@@ -440,6 +433,20 @@ export default {
         this.itemRadial = data.class
       })
     },
+    loadListStudentFinish() {
+      this.$http.get('/lms/report/student').then(response => {
+        const { data } = response.data
+        data.finished.forEach(this.myListArray)
+      })
+    },
+    myListArray(data) {
+      this.listStudentFinish = data.student
+      console.log(this.listStudentFinish)
+      // data.student.forEach(this.myListStudentFinish)
+    },
+    // myListStudentFinish(data) {
+    //   console.log(data)
+    // },
     kFormatter,
     getIsoDate(date) {
       const month = (date.getMonth() + 1).toString().padStart(2, '0')

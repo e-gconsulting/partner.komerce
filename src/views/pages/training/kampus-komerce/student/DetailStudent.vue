@@ -265,6 +265,7 @@
                 >
                   <b-form-input
                     v-model="certificate"
+                    disabled
                   />
                 </b-form-group>
               </b-col>
