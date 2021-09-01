@@ -180,7 +180,7 @@
             <validation-provider
               #default="{ errors }"
               :name="`Total Gaji Talent ke-${index + 1}`"
-              rules="required|min_value:1000"
+              rules="required"
             >
               <b-form-input
                 v-model="talent.total_gross_salary"
@@ -197,7 +197,7 @@
             <validation-provider
               #default="{ errors }"
               :name="`Gaji Bersih Talent ke-${index + 1}`"
-              rules="required|min_value:1000"
+              rules="required"
             >
               <b-form-input
                 v-model="talent.total_net_salary"
