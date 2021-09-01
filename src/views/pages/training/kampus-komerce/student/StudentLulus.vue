@@ -47,7 +47,7 @@
           class="text-right"
         >
           <h4 class="mr-2">
-            240 Student
+            Total: {{ totalStudent }} Student
           </h4>
         </b-col>
       </b-row>
@@ -55,7 +55,7 @@
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
         <div
           v-for="(item, index) in filterPositionItems"
-          :key="`filter-position-${item.id}`"
+          :key="`filter-position-${item.class_id}`"
           class="mr-50"
         >
           <b-form-group>
@@ -63,10 +63,10 @@
               :variant="filterPositionId === item.class_id ? 'primary' : 'flat-dark'"
               class="text-nowrap"
               :class="{'mr-2': index === (filterPositionItems.length - 1)}"
-              :pressed="filterPositionId === item.class_id"
+              :pressed="filterPositionId === item.class_name"
               pill
               size="sm"
-              @click="selectPosition(item.class_id)"
+              @click="selectPosition(item)"
             >
               {{ item.class_name }}
             </b-button>
@@ -94,6 +94,7 @@
           :show-empty="!loading"
           :items="tableProvider"
           :fields="tableFields"
+          :busy.sync="loading"
         >
 
           <template #cell(student_user_id)="data">
@@ -103,11 +104,13 @@
           <template #cell(student_name)="data">
             <b-row class="mt-1">
               <b-col cols="auto">
-                <b-avatar />
+                <b-avatar
+                  :src="data.item.student_image"
+                />
               </b-col>
               <b-col cols="auto">
                 <span>{{ data.value }}</span>
-                <p>Candra@gmail.aing</p>
+                <p>{{ data.item.student_email }}</p>
               </b-col>
             </b-row>
           </template>
@@ -156,6 +159,7 @@ import {
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   directives: {
@@ -180,6 +184,7 @@ export default {
     return {
       filterPositionId: 1,
       filterPositionItems: [],
+      filterClassId: 'Customer Service',
 
       loading: false,
 
@@ -212,6 +217,9 @@ export default {
       ],
 
       dataStudent: null,
+      filter: null,
+      filterOn: [],
+      totalStudent: 0,
     }
   },
   computed: {
@@ -237,15 +245,34 @@ export default {
       console.log(data)
     },
     tableProvider() {
-      return this.$http.get('/lms/report/student').then(response => {
+      return this.$http.get('/lms/report/student', {
+        params: {
+          class_skill_join: this.filterClassId,
+        },
+      }).then(response => {
         const { data } = response.data
         data.finished.forEach(this.myArray)
         return this.dataStudent
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: '',
+            icon: 'AlertCircleIcon',
+            text: 'Tidak ada data Student yang di tampilkan.',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     myArray(data) {
       this.dataStudent = data.student
+      this.totalStudent = data.total_student_Finish
       return data.student
+    },
+    refreshTable() {
+      this.$refs.table.refresh()
     },
     loadFilterPositions() {
       return this.$http.get('/lms/class/list', {}, {
@@ -260,9 +287,10 @@ export default {
           this.filterPositionItems = Object.keys(data).map(key => data[key])
         })
     },
-    selectPosition(id) {
-      this.filterPositionId = id
-      return id
+    selectPosition(data) {
+      this.filterPositionId = data.class_id
+      this.filterClassId = data.class_name
+      return data
     },
   },
 }

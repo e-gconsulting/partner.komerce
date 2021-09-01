@@ -31,7 +31,6 @@
                   responsive
                   class="position-relative"
                   empty-text="Tidak ada data untuk ditampilkan."
-                  :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
                   :fields="fields"
                   :items="tableProvider"
@@ -249,12 +248,6 @@ export default {
     BFormCheckbox,
   },
   mixins: [heightTransition],
-  props: {
-    testprop: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
       loading: false,
@@ -312,10 +305,6 @@ export default {
     },
   },
   mounted() {
-    this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
     this.loadQuiz()
   },
   methods: {
@@ -421,22 +410,29 @@ export default {
       })
     },
     loadQuiz() {
-      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
+      this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
-        console.log(data.question)
+        this.lessonId = data.lesson_id
+        this.getEdumoId()
+        this.getModule()
+        console.log(data)
       })
-      this.$http.get('/lms/module/12').then(response => {
-        const { data } = response.data
-        this.moduleName = data.module_title
-        this.moduleSubname = data.module_subtitle
-      })
-      this.$http.get('/lms/module/list/21').then(response => {
-        const { data } = response.data
-        this.className = data.class_skill
-      })
-      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
+    },
+    getEdumoId() {
+      this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
+        this.moduleId = data.lesson_module_id
+        console.log(this.edumoLessonId)
+      })
+    },
+    getModule() {
+      this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
+        const { data } = response.data
+        // this.moduleName = data.module_title
+        // this.moduleSubname = data.module_subtitle
+        // this.className = data.class_skill
+        console.log(data)
       })
     },
     addAnswer() {

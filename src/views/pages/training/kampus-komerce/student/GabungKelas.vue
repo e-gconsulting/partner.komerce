@@ -47,7 +47,7 @@
           class="text-right"
         >
           <h4 class="mr-2">
-            240 Student
+            Total: {{ totalStudent }} Student
           </h4>
         </b-col>
       </b-row>
@@ -55,7 +55,7 @@
       <div class="mb-1 pl-2 d-flex overflow-x-scroll overflow-y-hidden">
         <div
           v-for="(item, index) in filterPositionItems"
-          :key="`filter-position-${item.id}`"
+          :key="`filter-position-${item.class_id}`"
           class="mr-50"
         >
           <b-form-group>
@@ -67,7 +67,7 @@
               :pressed="filterPositionId === item.class_name"
               pill
               size="sm"
-              @click="selectPosition(item.class_name)"
+              @click="selectPosition(item)"
             >
               {{ item.class_name }}
             </b-button>
@@ -95,6 +95,7 @@
           :show-empty="!loading"
           :items="tableProvider"
           :fields="tableFields"
+          :busy.sync="loading"
         >
 
           <template #cell(student_user_id)="data">
@@ -106,6 +107,7 @@
               <b-col cols="auto">
                 <b-avatar
                   class="mr-50"
+                  :src="data.item.student_img"
                 />
               </b-col>
               <b-col cols="auto">
@@ -157,6 +159,7 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
 
 export default {
@@ -183,6 +186,7 @@ export default {
       loading: false,
 
       filterPositionId: 1,
+      filterClassId: 'Customer Service',
       filterPositionItems: [],
 
       classSkillJoin: '',
@@ -220,6 +224,9 @@ export default {
       ],
 
       dataStudent: null,
+      filter: null,
+      filterOn: [],
+      totalStudent: 0,
     }
   },
   computed: {
@@ -235,6 +242,14 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
+    this.$http.get('/lms/report/student', {
+      params: {
+        class_skill_join: this.filterClassId,
+      },
+    }).then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
   },
   methods: {
     tes(data) {
@@ -243,17 +258,32 @@ export default {
     tableProvider() {
       return this.$http.get('/lms/report/student', {
         params: {
-          class_skill_join: 'customer service',
+          class_skill_join: this.filterClassId,
         },
       }).then(response => {
         const { data } = response.data
         data.joined.forEach(this.myArray)
         return this.dataStudent
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: '',
+            icon: 'AlertCircleIcon',
+            text: 'Tidak ada data Student yang di tampilkan.',
+            variant: 'danger',
+          },
+        })
+        return []
       })
     },
     myArray(data) {
       this.dataStudent = data.student
+      this.totalStudent = data.total_student_join
       return data.student
+    },
+    refreshTable() {
+      this.$refs.table.refresh()
     },
     loadFilterPositions() {
       return this.$http.get('/lms/class/list', {}, {
@@ -269,9 +299,10 @@ export default {
           console.log(this.filterPositionItems)
         })
     },
-    selectPosition(id) {
-      this.filterPositionId = id
-      return id
+    selectPosition(data) {
+      this.filterPositionId = data.class_id
+      this.filterClassId = data.class_name
+      return data
     },
   },
 }

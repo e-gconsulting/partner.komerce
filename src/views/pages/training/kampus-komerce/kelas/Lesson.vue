@@ -124,6 +124,17 @@
             >Deleted</span>
             <div v-else>
               <b-button
+                variant="flat-info"
+                class="btn-icon"
+                tag="router-link"
+                :to="{ name: $route.meta.routeAddQuiz, params: { lesson_id: data.item.lesson_id }, }"
+              >
+                <feather-icon
+                  icon="PlusIcon"
+                />
+                <span>Add Quiz</span>
+              </b-button>
+              <b-button
                 variant="flat-warning"
                 class="btn-icon"
                 tag="router-link"

@@ -354,6 +354,7 @@ export default {
   },
   mounted() {
     this.loadQuestions()
+    console.log(this.lessonId)
   },
   methods: {
     editQuestions(data) {
@@ -475,7 +476,7 @@ export default {
       })
     },
     loadQuestions() {
-      this.$http.get('/lms/lesson/quiz/1').then(response => {
+      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.quizId = data.quiz_id
         this.moduleName = data.module_title

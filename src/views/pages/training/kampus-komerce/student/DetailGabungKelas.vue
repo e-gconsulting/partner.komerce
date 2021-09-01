@@ -19,10 +19,10 @@
           <b-row>
             <b-avatar
               size="70px"
-              class="mt-1 ml-4"
+              class="mt-50 ml-4"
+              :src="imageFile"
             />
             <b-col
-              md="2"
               class="mt-2"
             >
               <h4>{{ fullname }}</h4>
@@ -41,7 +41,6 @@
             responsive
             class="position-relative"
             empty-text="Tidak ada data untuk ditampilkan."
-            :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
             :fields="tableFields"
             :items="tableProvider"
@@ -100,6 +99,8 @@ export default {
       fullname: '',
       className: '',
       joinAt: '',
+      imageFile: null,
+      loading: false,
     }
   },
   computed: {
@@ -110,14 +111,6 @@ export default {
   },
   mounted() {
     this.loadStudent()
-    this.$http.get('/lms/report/student').then(response => {
-      const { data } = response.data
-      console.log(data[0].join)
-    })
-    this.$http.get(`/lms/module/moduleByStudent/${this.studentId}`).then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
   },
   methods: {
     tableProvider() {
@@ -132,6 +125,7 @@ export default {
         this.fullname = data.user_name
         this.className = data.class_skill
         this.joinAt = data.class_join_at
+        this.imageFile = data.user_img
       })
     },
   },
