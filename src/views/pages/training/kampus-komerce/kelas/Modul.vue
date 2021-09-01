@@ -28,7 +28,6 @@
               type="search"
               placeholder="Cari..."
               debounce="500"
-              @change="search"
             />
           </b-input-group>
         </b-form-group>
@@ -84,35 +83,41 @@
           </template>
 
           <template #cell(action)="data">
-            <b-button
-              variant="flat-info"
-              class="btn-icon"
-              tag="router-link"
-              :to="{ name: $route.meta.routeLesson, params: { module_id: data.item.module_id } }"
-            >
-              <feather-icon
-                icon="SettingsIcon"
-              />
-            </b-button>
-            <b-button
-              variant="flat-warning"
-              class="btn-icon"
-              tag="router-link"
-              :to="{ name: $route.meta.routeEdit, params: { module_id: data.item.module_id } }"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
-            <b-button
-              variant="flat-danger"
-              class="btn-icon"
-              @click="confirmDelete(data)"
-            >
-              <feather-icon
-                icon="Trash2Icon"
-              />
-            </b-button>
+            <span
+              v-if="isDeleted(data.item.class_id)"
+              class="text-danger"
+            >Deleted</span>
+            <div v-else>
+              <b-button
+                variant="flat-info"
+                class="btn-icon"
+                tag="router-link"
+                :to="{ name: $route.meta.routeLesson, params: { module_id: data.item.module_id } }"
+              >
+                <feather-icon
+                  icon="SettingsIcon"
+                />
+              </b-button>
+              <b-button
+                variant="flat-warning"
+                class="btn-icon"
+                tag="router-link"
+                :to="{ name: $route.meta.routeEdit, params: { module_id: data.item.module_id } }"
+              >
+                <feather-icon
+                  icon="EditIcon"
+                />
+              </b-button>
+              <b-button
+                variant="flat-danger"
+                class="btn-icon"
+                @click="confirmDelete(data)"
+              >
+                <feather-icon
+                  icon="Trash2Icon"
+                />
+              </b-button>
+            </div>
           </template>
         </b-table>
       </b-overlay>

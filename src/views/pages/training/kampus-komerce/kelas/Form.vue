@@ -1,7 +1,7 @@
 <template>
   <b-card-actions
     ref="formCard"
-    :title="`${editMode ? 'Edit' : 'Add'} ${$route.meta.name.singular}`"
+    title="Add Kelas"
     no-actions
   >
     <b-row>
@@ -26,6 +26,7 @@
                       v-model="skill"
                       :options="skillOptions"
                       label="title"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -42,6 +43,7 @@
                       <validation-provider
                         #default="{ errors }"
                         name="Cover Kelas"
+                        rules="required"
                       >
                         <b-form-file
                           v-model="iconFile"
@@ -93,7 +95,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Video Pengantar"
-                    rules="required"
+                    rules="required|url"
                   >
                     <b-form-input
                       v-model="videoPengantar"
@@ -112,7 +114,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Link Group Telegram"
-                    rules="required"
+                    rules="required|url"
                   >
                     <b-form-input
                       v-model="linkTelegram"
@@ -137,6 +139,7 @@
                       v-model="statusClass"
                       :options="statusKelasOptions"
                       label="title"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -252,8 +255,7 @@ export default {
   },
   computed: {
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
-        : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
+      return 'Satu Kelas berhasil ditambah'
     },
   },
   mounted() {
@@ -281,7 +283,7 @@ export default {
           formData.append('class_trailer_url', this.videoPengantar)
           formData.append('class_trailer_description', this.descriptionVideo)
           formData.append('class_group', this.linkTelegram)
-          formData.append('class_status', this.statusClass.value)
+          if (this.statusClass) formData.append('class_status', this.statusClass.value)
 
           this.$http.post('/lms/class/store', formData)
             .then(() => {

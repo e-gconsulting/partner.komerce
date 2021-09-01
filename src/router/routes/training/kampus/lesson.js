@@ -124,7 +124,7 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/lesson/quiz/edit/:quiz_id',
+    path: '/kelas/modul/lesson/quiz/edit',
     name: 'edit-quiz',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/EditQuiz.vue'),
     meta: {

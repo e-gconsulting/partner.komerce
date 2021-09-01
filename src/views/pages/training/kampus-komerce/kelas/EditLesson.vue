@@ -37,6 +37,7 @@
                           <b-form-input
                             v-model="moduleTitle"
                             :state="errors.length > 0 ? false:null"
+                            disabled
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
                         </validation-provider>
@@ -131,6 +132,30 @@
                       </b-form-group>
                     </b-col>
                   </b-col>
+                  <b-col md="12">
+                    <b-col md="8">
+                      <b-form-group
+                        label="Status Lesson"
+                        label-cols-md="4"
+                        class="ml-2"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Status Lesson"
+                          rules="required"
+                        >
+                          <v-select
+                            v-model="statusLesson"
+                            :options="statusLessonOptions"
+                            label="title"
+                            :searchable="false"
+                            :state="errors.length > 0 ? false:null"
+                          />
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                  </b-col>
                   <b-col
                     md="12"
                     class="mt-2 ml-2 mb-2"
@@ -140,7 +165,7 @@
                       type="submit"
                       class="mr-50"
                       :disabled="loadingSubmit"
-                      :to="{ name: $route.meta.routeEditQuiz, params: { lesson_id: lessonId } }"
+                      :to="{ name: $route.meta.routeEditQuiz, params: { lesson_id: idLessonToQuiz } }"
                     >
                       <b-spinner
                         v-if="loadingSubmit"
@@ -180,7 +205,7 @@ import {
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-// import vSelect from 'vue-select'
+import vSelect from 'vue-select'
 // import flatPickr from 'vue-flatpickr-component'
 // import Cleave from 'vue-cleave-component'
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -205,10 +230,12 @@ export default {
     BFormFile,
     BOverlay,
     BCardActions,
+    vSelect,
   },
   data() {
     return {
       lessonId: this.$route.params.lesson_id,
+      moduleId: null,
 
       loading: false,
       loadingSubmit: false,
@@ -236,6 +263,15 @@ export default {
         { title: 'Publish', value: 'publish' },
       ],
 
+      statusLesson: '',
+
+      idLessonToQuiz: null,
+
+      statusLessonOptions: [
+        { title: 'Draft', value: 'draft' },
+        { title: 'Publish', value: 'publish' },
+      ],
+
       editor: ClassicEditor,
       editorData: '<p>Content of the editor.</p>',
       editorConfig: {
@@ -251,6 +287,7 @@ export default {
   },
   mounted() {
     this.loadForm()
+    this.getId()
   },
   methods: {
     submit() {
@@ -265,7 +302,7 @@ export default {
           formData.append('lesson_thumbnail', this.lessonThumbnail)
           formData.append('lesson_video_description', this.videoDescription)
           formData.append('lesson_video_url', this.videoUrl)
-          formData.append('lesson_module_id', 32)
+          formData.append('lesson_module_id', this.moduleId)
           formData.append('lesson_status', 'publish')
 
           this.$http.post(`/lms/lesson/update/${this.lessonId}`, formData)
@@ -301,6 +338,22 @@ export default {
         this.videoDescription = data.lesson_video_description
         this.videoUrl = data.lesson_video_url
         if (data.lesson_thumbnail) this.imageInitialFile = data.lesson_thumbnail
+      })
+    },
+    getId() {
+      return this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
+        const { data } = response.data
+        this.statusLesson = data.lesson_status
+        console.log(data)
+        this.moduleId = data.lesson_module_id
+        this.idLessonToQuiz = this.lessonId
+        this.loadModul()
+      })
+    },
+    loadModul() {
+      return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
+        const { data } = response.data
+        this.moduleTitle = `${data.module_title} - ${data.module_subtitle}`
       })
     },
   },

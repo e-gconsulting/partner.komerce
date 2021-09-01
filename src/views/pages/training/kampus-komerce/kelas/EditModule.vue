@@ -86,6 +86,7 @@
                       v-model="statusModule"
                       :options="statusModuleOptions"
                       label="title"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -107,6 +108,7 @@
                       label="name"
                       :reduce="option => option.id"
                       :options="trainerItems"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                       :filterable="false"
                     />

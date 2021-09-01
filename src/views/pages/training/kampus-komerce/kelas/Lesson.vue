@@ -47,7 +47,7 @@
               </h5>
             </b-card-title>
             <b-badge
-              variant="light-success"
+              :variant="moduleStatus === 'publish' ? 'light-success' : 'light-primary'"
             >
               {{ moduleStatus }}
             </b-badge>
@@ -108,36 +108,42 @@
             </b-form-row>
           </template>
 
+          <template #cell(lesson_status)="data">
+            <b-badge
+              v-if="data.field.badge"
+              :variant="data.field.badge[1][data.value]"
+            >
+              {{ data.field.badge[0][data.value] }}
+            </b-badge>
+          </template>
+
           <template #cell(action)="data">
-            <b-button
-              variant="flat-success"
-              class="btn-icon"
-              :to="{ name: $route.meta.routeAddQuiz, params: { lesson_id: data.item.lesson_id, module_id: moduleId } }"
-            >
-              <feather-icon
-                icon="PlusIcon"
-              />
-              Add Quiz
-            </b-button>
-            <b-button
-              variant="flat-warning"
-              class="btn-icon"
-              tag="router-link"
-              :to="{ name: $route.meta.routeEdit, params: { lesson_id: data.item.lesson_id, module_id: moduleId } }"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
-            <b-button
-              variant="flat-danger"
-              class="btn-icon"
-              @click="confirmDelete(data)"
-            >
-              <feather-icon
-                icon="Trash2Icon"
-              />
-            </b-button>
+            <span
+              v-if="isDeleted(data.item.class_id)"
+              class="text-danger"
+            >Deleted</span>
+            <div v-else>
+              <b-button
+                variant="flat-warning"
+                class="btn-icon"
+                tag="router-link"
+                :to="{ name: $route.meta.routeEdit, params: { lesson_id: data.item.lesson_id }, }"
+              >
+                <feather-icon
+                  icon="EditIcon"
+                />
+              </b-button>
+              <b-button
+                v-if="data.item.lesson_status === 'draft'"
+                variant="flat-danger"
+                class="btn-icon"
+                @click="confirmDelete(data)"
+              >
+                <feather-icon
+                  icon="Trash2Icon"
+                />
+              </b-button>
+            </div>
           </template>
         </b-table>
       </b-overlay>
@@ -185,10 +191,25 @@ export default {
   data() {
     return {
       moduleId: this.$route.params.module_id,
-      classId: this.$route.params.class_id,
       fields: [
         { key: 'lessons', label: 'Lesson' },
-        { key: 'action', label: 'Aksi', class: 'col-action' },
+        {
+          key: 'lesson_status',
+          label: 'Status',
+          badge: [
+            {
+              publish: 'Publish',
+              draft: 'Draft',
+            },
+            {
+              publish: 'light-success',
+              draft: 'light-danger',
+            },
+          ],
+          thClass: 'text-center',
+          tdClass: 'text-center',
+        },
+        { key: 'action', label: 'Aksi' },
       ],
 
       moduleTitle: '',
@@ -222,13 +243,15 @@ export default {
   },
   mounted() {
     this.loadModule()
-    this.loadLesson()
-    console.log(this.moduleId)
-    console.log(this.classId)
-    return this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
-      const { data } = response.data
+    this.$http.get(`/lms/lesson/list/filter/${this.moduleId}`, {
+      params: {
+        filter_title: this.filter,
+      },
+    }).then(response => {
+      const { data } = response
       console.log(data)
     })
+    console.log(this.moduleId)
   },
   methods: {
     refreshTable() {
@@ -267,12 +290,6 @@ export default {
         this.moduleSubtitle = data.module_subtitle
         this.trainerName = data.module_trainer.name
         this.thumbnailModule = data.module_thumbnail
-        return data
-      })
-    },
-    loadLesson() {
-      return this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
-        const { data } = response
         return data
       })
     },

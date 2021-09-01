@@ -102,6 +102,7 @@
                       v-model="statusModule"
                       :options="statusKelasOptions"
                       label="title"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -125,6 +126,7 @@
                       :options="trainerItems"
                       :state="errors.length > 0 ? false:null"
                       :filterable="false"
+                      :searchable="false"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -135,7 +137,7 @@
                 class="mt-2"
               >
                 <b-button
-                  :variant="editMode ? 'warning' : 'primary'"
+                  variant="primary"
                   type="submit"
                   class="mr-50"
                   :disabled="loadingSubmit"

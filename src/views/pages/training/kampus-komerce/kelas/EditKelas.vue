@@ -26,6 +26,7 @@
                       v-model="skill"
                       :options="skillOptions"
                       label="title"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
@@ -42,6 +43,7 @@
                       <validation-provider
                         #default="{ errors }"
                         name="Cover Kelas"
+                        rules="required"
                       >
                         <b-form-file
                           v-model="imageFile"
@@ -89,7 +91,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Video Pengantar"
-                    rules="required"
+                    rules="required|url"
                   >
                     <b-form-input
                       v-model="videoPengantar"
@@ -114,6 +116,7 @@
                       v-model="statusClass"
                       :options="statusKelasOptions"
                       label="title"
+                      :searchable="false"
                       :state="errors.length > 0 ? false:null"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>

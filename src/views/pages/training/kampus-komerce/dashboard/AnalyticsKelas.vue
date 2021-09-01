@@ -129,24 +129,37 @@ export default {
       },
     }
   },
-  methods: {
-    loadChart() {
-      return this.$http.get('/lms/dashboard', {
+  mounted() {
+    return this.$http.get('/lms/dashboard/filter-cart', {
+      params: {
         start_date: this.startDate,
         end_date: this.endDate,
+      },
+    })
+      .then(async response => {
+        const { data } = response.data
+        console.log(data)
+      })
+  },
+  methods: {
+    loadChart() {
+      return this.$http.get('/lms/dashboard/filter-cart', {
+        params: {
+          start_date: this.startDate,
+          end_date: this.endDate,
+        },
       })
         .then(async response => {
           const { data } = response.data
-          console.log(data.cart[0].lines)
 
           this.series = [
             {
               name: 'Daftar Kelas',
-              data: this.getValues(data.cart[0].lines.join),
+              data: this.getValues(data[0].lines.joined),
             },
             {
               name: 'Jumlah Student Lulus',
-              data: this.getValues(data.cart[0].lines.finish),
+              data: this.getValues(data[0].lines.finished),
             },
           ]
         })

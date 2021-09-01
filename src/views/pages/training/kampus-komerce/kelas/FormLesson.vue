@@ -54,6 +54,7 @@
                         <validation-provider
                           #default="{ errors }"
                           name="Judul"
+                          rules="required"
                         >
                           <b-form-input
                             v-model="lessonTitle"
@@ -74,6 +75,7 @@
                         <validation-provider
                           #default="{ errors }"
                           name="Thumbnail"
+                          rules="required"
                         >
                           <b-form-file
                             v-model="lessonThumbnail"
@@ -102,6 +104,7 @@
                         <validation-provider
                           #default="{ errors }"
                           name="Deskripsi Video"
+                          rules="required"
                         >
                           <ckeditor
                             v-model="videoDescription"
@@ -124,9 +127,34 @@
                         <validation-provider
                           #default="{ errors }"
                           name="Video"
+                          rules="required|url"
                         >
                           <b-form-input
                             v-model="videoUrl"
+                            :state="errors.length > 0 ? false:null"
+                          />
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                  </b-col>
+                  <b-col md="12">
+                    <b-col md="8">
+                      <b-form-group
+                        label="Status Lesson"
+                        label-cols-md="4"
+                        class="ml-2"
+                      >
+                        <validation-provider
+                          #default="{ errors }"
+                          name="Status Lesson"
+                          rules="required"
+                        >
+                          <v-select
+                            v-model="statusLesson"
+                            :options="statusLessonOptions"
+                            label="title"
+                            :searchable="false"
                             :state="errors.length > 0 ? false:null"
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
@@ -165,6 +193,7 @@
 <script>
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import vSelect from 'vue-select'
 import {
   BFormInput,
   BFormGroup,
@@ -200,6 +229,7 @@ export default {
     BFormFile,
     BOverlay,
     BCardActions,
+    vSelect,
   },
   data() {
     return {
@@ -224,7 +254,9 @@ export default {
         { title: 'Ikhtiar Rahayu', value: 2 },
       ],
 
-      statusKelasOptions: [
+      statusLesson: '',
+
+      statusLessonOptions: [
         { title: 'Draft', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
@@ -244,7 +276,7 @@ export default {
   },
   mounted() {
     this.loadModul()
-    console.log(this.lessonId)
+    console.log(this.moduleId)
   },
   methods: {
     submit() {
@@ -259,7 +291,7 @@ export default {
           formData.append('lesson_video_description', this.videoDescription)
           formData.append('lesson_video_url', this.videoUrl)
           formData.append('lesson_module_id', this.moduleId)
-          formData.append('lesson_status', 'publish')
+          formData.append('lesson_status', this.statusLesson.value)
 
           this.$http.post('/lms/lesson/store', formData)
             .then(() => {

@@ -31,11 +31,15 @@
                   responsive
                   class="position-relative"
                   empty-text="Tidak ada data untuk ditampilkan."
-                  :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
-                  :fields="fields"
-                  :items="tableProvider"
                   :show-empty="!loading"
+                  :per-page="perPage"
+                  :current-page="currentPage"
+                  :items="tableProvider"
+                  :fields="tableFileds"
+                  :sort-by.sync="sortBy"
+                  :sort-desc.sync="sortDesc"
+                  :sort-direction="sortDirection"
                   :tbody-tr-class="rowClass"
                   :busy.sync="loading"
                 >
@@ -170,7 +174,6 @@
                                     v-model="answers.correct_answer"
                                     class="ml-2"
                                   />
-                                  {{ testprop }}
                                 </b-col>
                                 <b-col
                                   v-if="answer.length - 1"
@@ -269,18 +272,21 @@ export default {
     BDropdownItem,
   },
   mixins: [heightTransition],
-  props: {
-    testprop: {
-      type: Array,
-      required: true,
-    },
-  },
   data() {
     return {
-      lessonId: this.$route.params.lesson_id,
+      lessonId: null,
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
+
+      nextTodoId: 2,
+      perPage: 10,
+      pageOptions: [5, 10, 20],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
 
       endpointDelete: '/lms/lesson/quiz/delete/:question_id',
 
@@ -335,19 +341,12 @@ export default {
       return fields
     },
   },
-  watch() {
-    this.editQuestions()
+  watch: {
+    editQuest() {
+      this.editQuestions()
+    },
   },
   mounted() {
-    this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
-      const { data } = response.data
-      this.quizId = data.quiz_id
-      console.log(data)
-    })
-    this.$http.get('/lms/module/list/27').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
     this.loadQuestions()
   },
   methods: {
@@ -452,28 +451,27 @@ export default {
       })
     },
     tableProvider() {
-      return this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
+      return this.$http.get('/lms/lesson/quiz/1').then(response => {
         const { data } = response.data
         return data.question
       })
     },
     loadQuestions() {
-      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
+      this.$http.get('/lms/lesson/quiz/1').then(response => {
         const { data } = response.data
-        console.log(data.question)
-      })
-      this.$http.get('/lms/module/1').then(response => {
-        const { data } = response.data
+        this.quizId = data.quiz_id
         this.moduleName = data.module_title
-        this.moduleSubname = data.module_subtitle
-      })
-      this.$http.get('/lms/module/list/1').then(response => {
-        const { data } = response.data
         this.className = data.class_skill
+        this.lessonId = data.lesson_id
+        this.getEdumoId()
+        console.log(data)
       })
+    },
+    getEdumoId() {
       this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
+        console.log(this.edumoLessonId)
       })
     },
     addAnswer() {
