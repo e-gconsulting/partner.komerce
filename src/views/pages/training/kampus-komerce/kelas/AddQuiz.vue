@@ -52,11 +52,18 @@
                         md="9"
                         class="mt-50"
                       >
-                        <v-select
-                          v-model="data.item.question"
-                          :options="data.item.answer"
-                          label="answer"
-                        />
+                        <b-dropdown
+                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                          variant="outline-secondary"
+                          :text="data.item.question"
+                        >
+                          <b-dropdown-item
+                            v-for="(dataAnswer, index) in data.item.answer"
+                            :key="index + 1"
+                          >
+                            {{ dataAnswer.answer }}
+                          </b-dropdown-item>
+                        </b-dropdown>
                       </b-col>
                     </b-row>
                   </template>
@@ -153,7 +160,6 @@
                                     v-model="answers.correct_answer"
                                     class="ml-2"
                                   />
-                                  {{ testprop }}
                                 </b-col>
                                 <b-col
                                   v-if="answer.length - 1"
@@ -187,8 +193,12 @@
                         <b-button
                           variant="danger"
                           pill
-                          @click="submit"
+                          @click.prevent="submit"
                         >
+                          <b-spinner
+                            v-if="loadingSubmit"
+                            small
+                          />
                           Simpan
                         </b-button>
                       </b-col>
@@ -218,10 +228,13 @@ import {
   BFormTextarea,
   BTable,
   BFormCheckbox,
+  BSpinner,
+  BDropdown,
+  BDropdownItem,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Ripple from 'vue-ripple-directive'
@@ -242,10 +255,13 @@ export default {
     BCol,
     BButton,
     BOverlay,
-    vSelect,
+    // vSelect,
     BCardActions,
     BTable,
     BFormCheckbox,
+    BSpinner,
+    BDropdown,
+    BDropdownItem,
   },
   mixins: [heightTransition],
   data() {
@@ -254,6 +270,7 @@ export default {
       loadingSubmit: false,
       submitErrors: '',
       lessonId: this.$route.params.lesson_id,
+      classId: null,
 
       endpointDelete: '/lms/lesson/quiz/delete/:question_id',
 
@@ -359,6 +376,15 @@ export default {
       formData.append('answers', this.answer)
       formData.append('answer_type', 'choices')
 
+      const formDatas = {
+        type: 'module',
+        ref_id: this.edumoLessonId,
+        question: this.questions,
+        questions_type: 'text',
+        answers: this.answer,
+        answer_type: 'choices',
+      }
+
       console.log(formData)
 
       this.$refs.formRules.validate().then(success => {
@@ -366,7 +392,7 @@ export default {
           this.submitErrors = ''
           this.loadingSubmit = true
 
-          this.$http.post('/lms/lesson/quiz/store', formData)
+          this.$http.post('/lms/lesson/quiz/store', formDatas)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -377,6 +403,8 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
+              this.refreshTable()
+              this.loadingSubmit = false
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -409,12 +437,14 @@ export default {
         return []
       })
     },
+    refreshTable() {
+      this.$refs.table.refresh()
+    },
     loadQuiz() {
       this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.lessonId = data.lesson_id
         this.getEdumoId()
-        this.getModule()
         console.log(data)
       })
     },
@@ -423,15 +453,32 @@ export default {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
         this.moduleId = data.lesson_module_id
+        this.getModule()
+        console.log(this.moduleId)
         console.log(this.edumoLessonId)
       })
     },
     getModule() {
-      this.$http.get(`/lms/lesson/list/${this.moduleId}`).then(response => {
+      this.$http.get(`/lms/lesson/list/filter/${this.moduleId}`).then(response => {
         const { data } = response.data
-        // this.moduleName = data.module_title
-        // this.moduleSubname = data.module_subtitle
-        // this.className = data.class_skill
+        this.moduleName = data.module_title
+        this.moduleSubname = data.module_subtitle
+        this.getIdClass()
+        console.log(data)
+      })
+    },
+    getIdClass() {
+      return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
+        const { data } = response.data
+        this.classId = data.module_class_id
+        console.log(data)
+        this.loadClass()
+      })
+    },
+    loadClass() {
+      return this.$http.get(`/lms/class/${this.classId}`).then(response => {
+        const { data } = response.data
+        this.className = data.class_name
         console.log(data)
       })
     },
