@@ -277,6 +277,8 @@
                   type="submit"
                   variant="primary"
                   class="mr-1 mt-3"
+                  tag="router-link"
+                  :to="{ name: $route.meta.navActiveLink, query: { tab: 'student-lulus' } }"
                 >
                   Submit
                 </b-button>

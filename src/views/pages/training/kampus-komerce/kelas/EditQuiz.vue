@@ -74,24 +74,30 @@
                   </template>
 
                   <template #cell(aksi)="data">
-                    <b-button
-                      variant="flat-warning"
-                      class="btn-icon"
-                      @click="editQuestions(data)"
-                    >
-                      <feather-icon
-                        icon="EditIcon"
-                      />
-                    </b-button>
-                    <b-button
-                      variant="flat-danger"
-                      class="btn-icon"
-                      @click="confirmDelete(data)"
-                    >
-                      <feather-icon
-                        icon="Trash2Icon"
-                      />
-                    </b-button>
+                    <span
+                      v-if="isDeleted(data.item.id)"
+                      class="text-danger"
+                    >Deleted</span>
+                    <div v-else>
+                      <b-button
+                        variant="flat-warning"
+                        class="btn-icon"
+                        @click="editQuestions(data)"
+                      >
+                        <feather-icon
+                          icon="EditIcon"
+                        />
+                      </b-button>
+                      <b-button
+                        variant="flat-danger"
+                        class="btn-icon"
+                        @click="confirmDelete(data)"
+                      >
+                        <feather-icon
+                          icon="Trash2Icon"
+                        />
+                      </b-button>
+                    </div>
                   </template>
 
                 </b-table>
@@ -99,6 +105,8 @@
                   variant="danger"
                   pill
                   class="ml-2 mb-2"
+                  tag="router-link"
+                  :to="{ name: $route.meta.routeBack, params: { module_id: moduleId } }"
                 >
                   Submit
                 </b-button>
@@ -335,6 +343,8 @@ export default {
 
       quizId: '',
 
+      moduleId: 0,
+
     }
   },
   computed: {
@@ -400,7 +410,7 @@ export default {
       if (!item || type !== 'row') { return }
 
       // eslint-disable-next-line consistent-return
-      if (this.isDeleted(item.class_id)) { return colorClass }
+      if (this.isDeleted(item.id)) { return colorClass }
     },
     refreshTable() {
       this.$refs.table.refresh()
@@ -483,6 +493,7 @@ export default {
         this.moduleSubname = data.module_subtitle
         this.className = data.class_skill
         this.lessonId = data.lesson_id
+        this.moduleId = data.module_id
         this.getEdumoId()
         console.log(data)
       })

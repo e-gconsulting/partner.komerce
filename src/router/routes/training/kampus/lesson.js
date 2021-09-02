@@ -68,6 +68,7 @@ export default [
     component: () => import('@/views/pages/training/kampus-komerce/kelas/AddQuiz.vue'),
     meta: {
       name: 'Quiz',
+      routeBack: 'manage-lesson',
       resource: 'Training',
       action: 'Manage',
       navActiveLink: 'quiz',
@@ -124,11 +125,12 @@ export default [
     },
   },
   {
-    path: '/kelas/modul/lesson/quiz/edit',
+    path: '/kelas/modul/lesson/quiz/edit/:lesson_id',
     name: 'edit-quiz',
     component: () => import('@/views/pages/training/kampus-komerce/kelas/EditQuiz.vue'),
     meta: {
       name: 'Quiz',
+      routeBack: 'manage-lesson',
       resource: 'Training',
       action: 'Manage',
       navActiveLink: 'quiz',

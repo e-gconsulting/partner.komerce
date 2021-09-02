@@ -8,6 +8,7 @@ export default [
     meta: {
       name: pageName,
       studentLulus: 'student',
+      detailLulus: 'detail-student-lulus',
       resource: 'Training',
       action: 'manage',
       breadcrumb: [

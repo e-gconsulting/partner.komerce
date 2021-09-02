@@ -3,7 +3,10 @@
     <h2 class="ml-1 mb-1">
       Kampus Komerce
     </h2>
-    <b-col cols="12">
+    <b-col
+      cols="12"
+      class="radial-class"
+    >
       <b-row>
         <b-col
           v-for="item in itemRadial"
@@ -61,7 +64,73 @@
       </b-row>
     </b-col>
 
-    <b-col cols="12">
+    <!-- Responsive -->
+    <b-col
+      cols="12"
+      class="radial-class-responsive"
+    >
+      <b-row>
+        <b-col
+          v-for="item in itemRadial"
+          :key="item.class"
+          cols="12"
+        >
+          <b-card>
+            <b-row>
+              <b-col
+                md="6"
+              >
+                <h4>{{ item.class_skill }}</h4>
+                <b-col
+                  cols="12"
+                  class="mt-1 p-0"
+                >
+                  <b-form-group
+                    label="Student"
+                    label-cols-md="6"
+                    class="mb-0"
+                  >
+                    <h5 class="text-danger mt-50">
+                      {{ item.total_student_joined }}
+                    </h5>
+                  </b-form-group>
+                </b-col>
+                <b-col
+                  cols="12"
+                  class="p-0"
+                >
+                  <b-form-group
+                    label="Lulus"
+                    label-cols-md="6"
+                  >
+                    <h5 class="text-danger mt-50">
+                      {{ item.total_class_finished }}
+                    </h5>
+                  </b-form-group>
+                </b-col>
+              </b-col>
+
+              <b-col>
+                <div id="chart">
+                  <vue-apex-charts
+                    type="radialBar"
+                    height="190"
+                    :options="chartOptions"
+                    :series="[Math.round(item.total_progress)]"
+                  />
+                </div>
+              </b-col>
+            </b-row>
+          </b-card>
+        </b-col>
+      </b-row>
+    </b-col>
+    <!-- end responsive -->
+
+    <b-col
+      cols="12"
+      class="item-student"
+    >
       <b-card>
         <b-row>
           <b-col>
@@ -83,7 +152,7 @@
                       />
                     </b-avatar>
                   </b-col>
-                  <b-col class="d-flex align-items-center pr-5">
+                  <b-col class="d-flex align-items-center">
                     <div>
                       <b-card-title class="mb-1">
                         <h5 class="text-dark">
@@ -162,6 +231,114 @@
         </b-row>
       </b-card>
     </b-col>
+    <!-- responsive -->
+    <b-col
+      cols="12"
+      class="item-student-responsive"
+    >
+      <b-card>
+        <b-row>
+          <b-col cols="12">
+            <b-row>
+              <b-card-header
+                header-bg-variant="light-secondary"
+                class="mr-1"
+              >
+                <b-form-row>
+                  <b-col cols="12">
+                    <b-avatar
+                      size="lg"
+                      rounded="sm"
+                      variant="light-info"
+                    >
+                      <feather-icon
+                        icon="UsersIcon"
+                        size="20"
+                      />
+                    </b-avatar>
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    <div>
+                      <b-card-title class="mb-1">
+                        <h5 class="text-dark">
+                          Daftar Kelas
+                        </h5>
+                      </b-card-title>
+                      <b-card-sub-title class="h4">
+                        <span class="text-info">
+                          {{ studentJoined }}
+                        </span>
+                      </b-card-sub-title>
+                    </div>
+                  </b-col>
+                </b-form-row>
+              </b-card-header>
+
+              <b-card-header header-bg-variant="light-secondary">
+                <b-form-row>
+                  <b-col cols="12">
+                    <b-avatar
+                      size="lg"
+                      rounded="sm"
+                      variant="light-warning"
+                    >
+                      <feather-icon
+                        icon="UserCheckIcon"
+                        size="20"
+                      />
+                    </b-avatar>
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    <div>
+                      <b-card-title class="mb-1">
+                        <h5 class="text-dark">
+                          Jumlah Student Lulus
+                        </h5>
+                      </b-card-title>
+                      <b-card-sub-title class="h4">
+                        <span class="text-warning">
+                          {{ studentFinished }}
+                        </span>
+                      </b-card-sub-title>
+                    </div>
+                  </b-col>
+                </b-form-row>
+              </b-card-header>
+            </b-row>
+          </b-col>
+
+          <b-col
+            cols="auto"
+            class="mt-2"
+          >
+            <b-form-select
+              v-model="range"
+              :options="rangeOptions"
+              class="mb-50 mb-md-0"
+            />
+          </b-col>
+          <b-col
+            cols="auto"
+            md="auto"
+            class="mt-2"
+          >
+            <b-card
+              class="mb-0"
+              no-body
+            >
+              <flat-pickr
+                v-if="isCustom"
+                v-model="customDate"
+                class="form-control"
+                placeholder="Pilih tanggal"
+                :config="{ mode: 'range', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+              />
+            </b-card>
+          </b-col>
+        </b-row>
+      </b-card>
+    </b-col>
+    <!-- end responsive -->
 
     <!-- Analytics Kelas -->
     <analytics-kelas
@@ -192,6 +369,8 @@
               <b-avatar
                 class="pull-up"
                 :src="item.student_image"
+                tag="router-link"
+                :to="{ name: $route.meta.detailLulus, params: { student_id: item.student_user_id } }"
               />
             </b-avatar-group>
           </b-col>
@@ -463,4 +642,6 @@ export default {
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
 @import '~@core/scss/vue/libs/chart-apex.scss';
+@import '~@core/css/style.css';
+@import '~@core/css/responsive.css';
 </style>

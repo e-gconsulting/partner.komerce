@@ -69,15 +69,21 @@
                   </template>
 
                   <template #cell(aksi)="data">
-                    <b-button
-                      variant="flat-danger"
-                      class="btn-icon"
-                      @click="confirmDelete(data)"
-                    >
-                      <feather-icon
-                        icon="Trash2Icon"
-                      />
-                    </b-button>
+                    <span
+                      v-if="isDeleted(data.item.id)"
+                      class="text-danger"
+                    >Deleted</span>
+                    <div v-else>
+                      <b-button
+                        variant="flat-danger"
+                        class="btn-icon"
+                        @click="confirmDelete(data)"
+                      >
+                        <feather-icon
+                          icon="Trash2Icon"
+                        />
+                      </b-button>
+                    </div>
                   </template>
 
                 </b-table>
@@ -85,6 +91,8 @@
                   variant="danger"
                   pill
                   class="ml-2 mb-2"
+                  tag="router-link"
+                  :to="{ name: $route.meta.routeBack, params: { module_id: moduleId } }"
                 >
                   Submit
                 </b-button>
@@ -309,6 +317,7 @@ export default {
       test: [{ status: true }],
 
       checked: [],
+      moduleId: 0,
 
     }
   },
@@ -365,7 +374,7 @@ export default {
       if (!item || type !== 'row') { return }
 
       // eslint-disable-next-line consistent-return
-      if (this.isDeleted(item.class_id)) { return colorClass }
+      if (this.isDeleted(item.id)) { return colorClass }
     },
     submit() {
       const formData = new FormData()
@@ -463,6 +472,7 @@ export default {
         const { data } = response.data
         this.moduleName = data.module_title
         this.moduleSubname = data.module_subtitle
+        this.moduleId = data.module_id
         this.getIdClass()
         console.log(data)
       })

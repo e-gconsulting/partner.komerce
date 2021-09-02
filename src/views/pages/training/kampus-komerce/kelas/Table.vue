@@ -179,6 +179,9 @@ export default {
       filter: null,
       filterOn: [],
 
+      keyword: '',
+      fieldSearch: [],
+
       fields: [
         {
           key: 'class_name',
@@ -220,15 +223,15 @@ export default {
     },
   },
   mounted() {
-    this.$http.get('/lms/class/list').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
     this.isDeleted()
   },
   methods: {
     tableProvider() {
-      return this.$http.get('/lms/class/list').then(response => {
+      return this.$http.get('/lms/class/list', {
+        params: {
+          search: this.filter,
+        },
+      }).then(response => {
         const { data } = response.data
         return data
       }).catch(() => {
