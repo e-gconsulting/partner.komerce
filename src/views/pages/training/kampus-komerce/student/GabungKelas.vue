@@ -312,7 +312,7 @@ export default {
           tdClass: 'text-center',
           formatter: value => {
             if (!value || value === '00-00-0000') return '-'
-            return value
+            return this.dateFormat(String(value), 'dd mmmm yyyy')
           },
         },
         {

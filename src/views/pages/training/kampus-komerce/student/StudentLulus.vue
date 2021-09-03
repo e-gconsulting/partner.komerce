@@ -297,8 +297,20 @@ export default {
           tdClass: 'text-center',
           formatter: value => {
             if (!value || value === '00-00-0000') return '-'
-            console.log(value)
-            return this.dateFormat('09-03-2021', 'dd mmmm yyyy')
+            value.split('')
+            const newFormat = []
+            newFormat.push(value[6])
+            newFormat.push(value[7])
+            newFormat.push(value[8])
+            newFormat.push(value[9])
+            newFormat.push(value[2])
+            newFormat.push(value[3])
+            newFormat.push(value[4])
+            newFormat.push(value[5])
+            newFormat.push(value[0])
+            newFormat.push(value[1])
+            newFormat.join('')
+            return this.dateFormat(newFormat, 'dd mmmm yyyy')
           },
         },
         {
