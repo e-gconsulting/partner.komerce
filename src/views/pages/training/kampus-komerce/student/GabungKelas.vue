@@ -65,7 +65,7 @@
                     label="Percentage"
                   >
                     <b-form-input
-                      v-model="percent"
+                      v-model="percentageStudent"
                       label="title"
                       @input="filterPercent"
                     />
@@ -82,12 +82,46 @@
                     title="Tanggal"
                   >
                     <flat-pickr
-                      v-model="customDate"
+                      v-model="startDate"
                       class="form-control"
-                      placeholder="Pilih tanggal"
-                      :config="{ mode: 'range', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                      placeholder="Start Date"
+                      :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                      @on-change="tableProvider"
                     />
                   </b-card>
+                </b-col>
+                <b-col
+                  cols="auto"
+                  md="auto"
+                  class="mt-2"
+                >
+                  <b-card
+                    class="mb-0 mt-50"
+                    no-body
+                    title="Tanggal"
+                  >
+                    <flat-pickr
+                      v-model="endDate"
+                      class="form-control"
+                      placeholder="End Date"
+                      :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                      @on-change="tableProvider"
+                    />
+                  </b-card>
+                </b-col>
+                <b-col
+                  cols="auto"
+                  md="auto"
+                  class="mt-2"
+                >
+                  <b-button
+                    variant="primary"
+                    size="sm"
+                    class="mt-1"
+                    @click="clearDate"
+                  >
+                    Clear Date
+                  </b-button>
                 </b-col>
               </b-row>
             </b-card>
@@ -162,13 +196,20 @@
             </b-row>
           </template>
 
-          <template #cell(student_score)="data">
-            <span>{{ Math.round(data.item.student_score)+'%' }}</span>
+          <template #cell(student_percentage)="data">
+            <span>{{ data.item.student_percentage+'%' }}</span>
           </template>
 
-          <template #cell(student_join_at)="data">
+          <!-- <template #cell(student_join_at)="data">
             <span>{{ data.item.student_join_at }}</span>
-          </template>
+            <b-button
+              variant="primary"
+              size="sm"
+              @click="cek(data.item.student_join_at)"
+            >
+              cek
+            </b-button>
+          </template> -->
 
           <template #cell(action)="data">
             <b-button
@@ -210,8 +251,8 @@ import {
   // BFormSelect,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Ripple from 'vue-ripple-directive'
+
 // import vSelect from 'vue-select'
 
 export default {
@@ -259,12 +300,10 @@ export default {
           label: 'Data Diri',
         },
         {
-          key: 'student_score',
+          key: 'student_percentage',
           label: 'Percentage',
           thClass: 'text-center',
           tdClass: 'text-center',
-          sortable: true,
-          sortByFormatted: true,
         },
         {
           key: 'student_join_at',
@@ -272,8 +311,8 @@ export default {
           thClass: 'text-center',
           tdClass: 'text-center',
           formatter: value => {
-            const date = String(new Date(value))
-            this.dateFormat(date, 'dd mmmmm yyyy')
+            if (!value || value === '00-00-0000') return '-'
+            return value
           },
         },
         {
@@ -288,95 +327,16 @@ export default {
       filterOn: [],
       totalStudent: 0,
 
-      customDate: null,
-      range: 6,
-      rangeOptions: [
-        { text: 'Real Time', value: 6 },
-        { text: 'Hari ini', value: 0 },
-        { text: 'Kemarin', value: 1 },
-        { text: 'Minggu ini', value: 2 },
-        { text: 'Bulan ini', value: 3 },
-        { text: 'Tahun ini', value: 4 },
-        { text: 'Kustom', value: 5 },
-      ],
-
+      startDate: null,
+      endDate: null,
       percent: '',
+      percentageStudent: null,
     }
   },
   computed: {
     tableFields() {
       const fields = [...this.fields]
       return fields
-    },
-    isCustom() {
-      return this.range === 5
-    },
-    startDate() {
-      if (this.isCustom) {
-        return Array.isArray(this.customDate)
-          ? this.customDate[0]
-          : this.customDate.split(' to ')[0]
-      }
-
-      let date = new Date()
-      const previousDays = 1
-
-      if (this.range === 0) {
-        date.setDate(date.getDate() - previousDays)
-      } else if (this.range === 1) {
-        date.setDate(date.getDate() - 1 - previousDays)
-      } else if (this.range === 2) {
-        const day = date.getDay()
-        const diff = date.getDate() - day + (day === 0 ? -6 : 1)
-        date = new Date(date.setDate(diff))
-      } else if (this.range === 3) {
-        date = new Date(date.getFullYear(), date.getMonth(), 1)
-      } else if (this.range === 4) {
-        date = new Date(date.getFullYear(), 0, 1)
-      }
-
-      return this.getIsoDate(date)
-    },
-    endDate() {
-      if (this.isCustom) {
-        if (Array.isArray(this.customDate)) {
-          return this.customDate.length > 1 ? this.customDate[1] : this.customDate[0]
-        }
-
-        const dates = this.customDate.split(' to ')
-        return dates.length > 1 ? dates[1] : dates[0]
-      }
-
-      let date = new Date()
-      const nextDays = 1
-
-      if (this.range === 0) {
-        date.setDate(date.getDate() + nextDays)
-      } else if (this.range === 1) {
-        date.setDate(date.getDate() - 1 + nextDays)
-      } else if (this.range === 2) {
-        const day = date.getDay()
-        const diff = date.getDate() - day + (day === 0 ? -6 : 1) + 6
-        date = new Date(date.setDate(diff))
-      } else if (this.range === 3) {
-        date = new Date(date.getFullYear(), date.getMonth() + 1, 0)
-      } else if (this.range === 4) {
-        date = new Date(date.getFullYear() + 1, 0, 0)
-      }
-
-      return this.getIsoDate(date)
-    },
-    dates: {
-      get() {
-        if (!this.customDate) {
-          return []
-        }
-
-        return this.customDate.split(' to ')
-      },
-      set(value) {
-        this.date = value[0] === value[1] ? value[0] : value
-      },
     },
   },
   watch: {
@@ -386,22 +346,28 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
-    console.log(this.startDate)
-    console.log(this.endDate)
   },
   methods: {
+    tes() {
+      this.tableProvider()
+    },
+    clearDate() {
+      this.startDate = null
+      this.endDate = null
+    },
     filterPercent() {
       this.tableProvider()
     },
+    cek(data) {
+      console.log(data)
+    },
     tableProvider() {
-      // const start = this.startDate
-      // const end = this.endDate
       return this.$http.get('/lms/report/student', {
         params: {
           class_skill_join: this.filterClassId,
           search_join: this.filter,
-          // dateFrom: start,
-          // dateTo: end,
+          dateFrom: this.startDate,
+          dateTo: this.endDate,
         },
       }).then(response => {
         const { data } = response.data
@@ -409,20 +375,17 @@ export default {
         this.refreshTable()
         return this.dataStudent
       }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: '',
-            icon: 'AlertCircleIcon',
-            text: 'Tidak ada data Student yang di tampilkan.',
-            variant: 'danger',
-          },
-        })
-        return []
+        this.refreshTable()
+        this.dataStudent = []
+        return this.dataStudent
       })
     },
     myArray(data) {
-      this.dataStudent = data.student
+      if (this.percentageStudent) {
+        this.dataStudent = data.student.filter(item => item.student_percentage === Number(this.percentageStudent))
+      } else {
+        this.dataStudent = data.student
+      }
       this.totalStudent = data.total_student_join
       return this.dataStudent
     },
@@ -440,7 +403,6 @@ export default {
         .then(async response => {
           const { data } = response.data
           this.filterPositionItems = Object.keys(data).map(key => data[key])
-          console.log(this.filterPositionItems)
         })
     },
     selectPosition(data) {
