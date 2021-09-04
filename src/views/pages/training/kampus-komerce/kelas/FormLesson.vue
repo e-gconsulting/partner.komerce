@@ -276,7 +276,7 @@ export default {
   },
   mounted() {
     this.loadModul()
-    console.log(this.moduleId)
+    // console.log(this.moduleId)
   },
   methods: {
     submit() {
@@ -323,7 +323,7 @@ export default {
     loadModul() {
       return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
         const { data } = response.data
-        console.log(data)
+        // console.log(data)
         this.moduleTitle = `${data.module_title} - ${data.module_subtitle}`
       })
     },

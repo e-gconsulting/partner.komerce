@@ -362,11 +362,11 @@
         <b-row class="mt-1">
           <b-col>
             <b-avatar-group
-              v-for="(item, index) in listStudentFinish"
-              :key="index + 1"
               size="32px"
             >
               <b-avatar
+                v-for="(item, index) in listStudentFinish"
+                :key="index + 1"
                 class="pull-up"
                 :src="item.student_image"
                 tag="router-link"
@@ -620,12 +620,7 @@ export default {
     },
     myListArray(data) {
       this.listStudentFinish = data.student
-      console.log(this.listStudentFinish)
-      // data.student.forEach(this.myListStudentFinish)
     },
-    // myListStudentFinish(data) {
-    //   console.log(data)
-    // },
     kFormatter,
     getIsoDate(date) {
       const month = (date.getMonth() + 1).toString().padStart(2, '0')

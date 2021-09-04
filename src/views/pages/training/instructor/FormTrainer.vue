@@ -472,22 +472,22 @@ export default {
   },
   async mounted() {
     if (this.editMode) {
-      console.log(this.method)
+      // console.log(this.method)
       this.loadProvincies()
       this.loadRegencies()
       this.loadDistricts()
       this.loadForm()
       return
     }
-    this.$http.get('/lms/trainer').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
+    // this.$http.get('/lms/trainer').then(response => {
+    //   const { data } = response.data
+    //   console.log(data)
+    // })
 
     this.loadProvincies()
     this.loadRegencies()
     this.loadDistricts()
-    console.log(this.method)
+    // console.log(this.method)
   },
   methods: {
     submit() {
@@ -511,9 +511,9 @@ export default {
           formData.append('npwp', this.npwp)
 
           if (this.cvFile) formData.append('cv', this.cvFile)
-          console.log(this.provinceId)
-          console.log(this.regencyId)
-          console.log(this.districtId)
+          // console.log(this.provinceId)
+          // console.log(this.regencyId)
+          // console.log(this.districtId)
 
           // const formDatas = {
           //   name: this.name,

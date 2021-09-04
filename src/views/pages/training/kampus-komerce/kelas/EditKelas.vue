@@ -257,12 +257,12 @@ export default {
           formData.append('class_trailer_description', this.descriptionVideo)
           if (this.statusClass.value) formData.append('class_status', this.statusClass.value)
 
-          console.log(formData)
-          console.log(this.skill)
-          console.log(this.imageFile)
-          console.log(this.videoPengantar)
-          console.log(this.descriptionVideo)
-          console.log(this.statusClass)
+          // console.log(formData)
+          // console.log(this.skill)
+          // console.log(this.imageFile)
+          // console.log(this.videoPengantar)
+          // console.log(this.descriptionVideo)
+          // console.log(this.statusClass)
 
           this.$http.post(`/lms/class/update/${this.classId}`, formData)
             .then(() => {
@@ -294,14 +294,14 @@ export default {
     loadForm() {
       return this.$http.get(`/lms/class/${this.classId}`).then(response => {
         const { data } = response.data
-        console.log(data)
+        // console.log(data)
         this.skill = data.class_name
         if (data.class_img) this.imageInitialFile = data.class_img
         this.descriptionVideo = data.class_trailer_description
         this.videoPengantar = data.class_trailer_url
         this.statusClass = data.class_status
         this.edumoClassId = data.edumo_class_id
-        console.log(this.edumoClassId)
+        // console.log(this.edumoClassId)
       })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),

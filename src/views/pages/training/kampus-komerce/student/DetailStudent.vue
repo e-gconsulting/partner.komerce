@@ -378,11 +378,11 @@ export default {
     }
   },
   mounted() {
-    console.log(this.studentId)
-    this.$http.get(`/lms/user/${this.studentId}`).then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
+    // console.log(this.studentId)
+    // this.$http.get(`/lms/user/${this.studentId}`).then(response => {
+    //   const { data } = response.data
+    //   console.log(data)
+    // })
     this.loadForm()
   },
   methods: {

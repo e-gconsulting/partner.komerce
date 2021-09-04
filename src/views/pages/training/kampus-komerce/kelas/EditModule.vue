@@ -215,24 +215,24 @@ export default {
     },
   },
   mounted() {
-    console.log(this.id)
-    console.log(this.classId)
-    console.log(this.moduleTitle)
-    console.log(this.moduleSubtitle)
-    console.log(this.thumbnail)
-    console.log(this.statusModule)
-    console.log(this.trainerId)
-    this.$http.get('/lms/module/list/14').then(response => {
-      const { data } = response
-      console.log(data)
-    })
+    // console.log(this.id)
+    // console.log(this.classId)
+    // console.log(this.moduleTitle)
+    // console.log(this.moduleSubtitle)
+    // console.log(this.thumbnail)
+    // console.log(this.statusModule)
+    // console.log(this.trainerId)
+    // this.$http.get('/lms/module/list/14').then(response => {
+    //   const { data } = response
+    //   console.log(data)
+    // })
     this.loadForm()
     this.loadTrainer()
-    this.$http.get('/lms/trainer').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
-    console.log(this.trainerId)
+    // this.$http.get('/lms/trainer').then(response => {
+    //   const { data } = response.data
+    //   console.log(data)
+    // })
+    // console.log(this.trainerId)
   },
   methods: {
     submit() {
@@ -249,11 +249,11 @@ export default {
           formData.append('module_trainer', this.trainerId.id)
           formData.append('module_class_id', this.id)
 
-          console.log(this.moduleTitle)
-          console.log(this.moduleSubtitle)
-          console.log(this.imageFile)
-          console.log(this.statusModule)
-          console.log(this.trainerId)
+          // console.log(this.moduleTitle)
+          // console.log(this.moduleSubtitle)
+          // console.log(this.imageFile)
+          // console.log(this.statusModule)
+          // console.log(this.trainerId)
 
           this.$http.post(`/lms/module/update/${this.id}`, formData)
             .then(() => {
@@ -291,7 +291,7 @@ export default {
         this.statusModule = data.module_status
         this.trainerId = data.module_trainer
 
-        console.log(data)
+        // console.log(data)
       })
     },
     loadTrainer() {

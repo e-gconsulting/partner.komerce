@@ -254,24 +254,24 @@ export default {
   },
   mounted() {
     this.loadModule()
-    this.$http.get(`/lms/lesson/list/filter/${this.moduleId}`, {
-      params: {
-        filter_title: this.filter,
-      },
-    }).then(response => {
-      const { data } = response
-      console.log(data)
-    })
-    console.log(this.moduleId)
+    // this.$http.get(`/lms/lesson/list/filter/${this.moduleId}`, {
+    //   params: {
+    //     filter_title: this.filter,
+    //   },
+    // }).then(response => {
+    //   const { data } = response
+    //   console.log(data)
+    // })
+    // console.log(this.moduleId)
   },
   methods: {
     refreshTable() {
       this.$refs.table.refresh()
     },
-    test(data) {
-      console.log(data)
-      console.log(this.moduleId)
-    },
+    // test(data) {
+    //   console.log(data)
+    //   console.log(this.moduleId)
+    // },
     tableProvider() {
       return this.$http.get(`/lms/lesson/list/filter/${this.moduleId}`, {
         params: {
@@ -305,7 +305,7 @@ export default {
       })
     },
     confirmDelete(data) {
-      console.log(data)
+      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
@@ -324,10 +324,10 @@ export default {
       })
     },
     delete(data) {
-      console.log(data)
+      // console.log(data)
       this.loading = true
       const endpoint = this.endpointDelete.replace(/:lesson_id/g, data.item.lesson_id)
-      console.log(endpoint)
+      // console.log(endpoint)
 
       this.$http.delete(endpoint)
         .then(() => {

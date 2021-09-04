@@ -251,7 +251,7 @@ export default {
       this.$refs.table.refresh()
     },
     confirmDelete(data) {
-      console.log(data)
+      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,

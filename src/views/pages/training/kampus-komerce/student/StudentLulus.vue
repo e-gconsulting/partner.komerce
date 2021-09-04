@@ -310,7 +310,7 @@ export default {
             newFormat.push(value[0])
             newFormat.push(value[1])
             newFormat.join('')
-            return this.dateFormat(newFormat, 'dd mmmm yyyy')
+            return this.dateFormat(newFormat.join(''), 'dd mmmm yyyy')
           },
         },
         {

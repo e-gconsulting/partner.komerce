@@ -312,7 +312,21 @@ export default {
           tdClass: 'text-center',
           formatter: value => {
             if (!value || value === '00-00-0000') return '-'
-            return this.dateFormat(String(value), 'dd mmmm yyyy')
+            value.split('')
+            const newFormat = []
+            newFormat.push(value[6])
+            newFormat.push(value[7])
+            newFormat.push(value[8])
+            newFormat.push(value[9])
+            newFormat.push(value[2])
+            newFormat.push(value[3])
+            newFormat.push(value[4])
+            newFormat.push(value[5])
+            newFormat.push(value[0])
+            newFormat.push(value[1])
+            newFormat.join('')
+            // console.log(newFormat)
+            return this.dateFormat(String(newFormat.join('')), 'dd mmmm yyyy')
           },
         },
         {
@@ -358,9 +372,9 @@ export default {
     filterPercent() {
       this.tableProvider()
     },
-    cek(data) {
-      console.log(data)
-    },
+    // cek(data) {
+    //   console.log(data)
+    // },
     tableProvider() {
       return this.$http.get('/lms/report/student', {
         params: {

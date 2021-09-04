@@ -41,21 +41,21 @@ export default [
       },
       {
         title: 'Kampus Komerce',
-        icon: 'CalendarIcon',
+        icon: 'LayersIcon',
         route: 'kampus-komerce',
         resource: 'Training',
         action: 'manage',
         children: [
           {
             title: 'Dashboard',
-            icon: 'MonitorIcon',
+            icon: 'GridIcon',
             route: 'dashboard-kampus-komerce',
             resource: 'Training',
             action: 'manage',
           },
           {
             title: 'Kelas',
-            icon: 'MonitorIcon',
+            icon: 'HardDriveIcon',
             route: 'kelas',
             resource: 'Training',
             action: 'manage',

@@ -25,14 +25,14 @@ export default {
     }
   },
   mounted() {
-    this.$http.get('/lms/trainer').then(response => {
-      const { data } = response
-      console.log(data)
-    })
-    this.$http.get('/lms/trainer/4').then(response => {
-      const { data } = response.data
-      console.log(data[0])
-    })
+    // this.$http.get('/lms/trainer').then(response => {
+    //   const { data } = response
+    //   console.log(data)
+    // })
+    // this.$http.get('/lms/trainer/4').then(response => {
+    //   const { data } = response.data
+    //   console.log(data[0])
+    // })
   },
 }
 </script>

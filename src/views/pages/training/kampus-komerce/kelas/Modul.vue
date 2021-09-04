@@ -205,10 +205,10 @@ export default {
     },
   },
   mounted() {
-    this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
+    // this.$http.get(`/lms/module/list/${this.classId}`).then(response => {
+    //   const { data } = response.data
+    //   console.log(data)
+    // })
     this.loadClass()
   },
   methods: {
@@ -244,7 +244,7 @@ export default {
       })
     },
     confirmDelete(data) {
-      console.log(data)
+      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
@@ -263,10 +263,10 @@ export default {
       })
     },
     delete(data) {
-      console.log(data)
+      // console.log(data)
       this.loading = true
       const endpoint = this.endpointDelete.replace(/:module_id/g, data.item.module_id)
-      console.log(endpoint)
+      // console.log(endpoint)
 
       this.$http.delete(endpoint)
         .then(() => {
@@ -277,7 +277,7 @@ export default {
         })
     },
     isDeleted(id) {
-      console.log(id)
+      // console.log(id)
       return this.deletedIds.includes(id)
     },
     rowClass(item, type) {

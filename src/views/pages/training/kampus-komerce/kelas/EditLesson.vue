@@ -166,6 +166,7 @@
                       class="mr-50"
                       :disabled="loadingSubmit"
                       :to="{ name: $route.meta.routeEditQuiz, params: { lesson_id: idLessonToQuiz } }"
+                      @click.prevent="submit"
                     >
                       <b-spinner
                         v-if="loadingSubmit"
@@ -344,7 +345,7 @@ export default {
       return this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.statusLesson = data.lesson_status
-        console.log(data)
+        // console.log(data)
         this.moduleId = data.lesson_module_id
         this.idLessonToQuiz = this.lessonId
         this.loadModul()

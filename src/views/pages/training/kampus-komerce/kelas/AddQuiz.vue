@@ -49,7 +49,7 @@
                         <p>{{ data.item.question }}</p>
                       </b-col>
                       <b-col
-                        md="9"
+                        md="auto"
                         class="mt-50"
                       >
                         <b-dropdown
@@ -334,11 +334,11 @@ export default {
     this.loadQuiz()
   },
   methods: {
-    tes(data) {
-      console.log(data)
-    },
+    // tes(data) {
+    //   console.log(data)
+    // },
     confirmDelete(data) {
-      console.log(data)
+      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: 'Hapus satu question dari tabel. Aksi ini tidak dapat di batalkan',
@@ -394,7 +394,7 @@ export default {
         answer_type: 'choices',
       }
 
-      console.log(formData)
+      // console.log(formData)
 
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -454,7 +454,7 @@ export default {
         const { data } = response.data
         this.lessonId = data.lesson_id
         this.getEdumoId()
-        console.log(data)
+        // console.log(data)
       })
     },
     getEdumoId() {
@@ -463,8 +463,8 @@ export default {
         this.edumoLessonId = data.edumo_lesson_id
         this.moduleId = data.lesson_module_id
         this.getModule()
-        console.log(this.moduleId)
-        console.log(this.edumoLessonId)
+        // console.log(this.moduleId)
+        // console.log(this.edumoLessonId)
       })
     },
     getModule() {
@@ -474,14 +474,14 @@ export default {
         this.moduleSubname = data.module_subtitle
         this.moduleId = data.module_id
         this.getIdClass()
-        console.log(data)
+        // console.log(data)
       })
     },
     getIdClass() {
       return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
         const { data } = response.data
         this.classId = data.module_class_id
-        console.log(data)
+        // console.log(data)
         this.loadClass()
       })
     },
@@ -489,7 +489,7 @@ export default {
       return this.$http.get(`/lms/class/${this.classId}`).then(response => {
         const { data } = response.data
         this.className = data.class_name
-        console.log(data)
+        // console.log(data)
       })
     },
     addAnswer() {

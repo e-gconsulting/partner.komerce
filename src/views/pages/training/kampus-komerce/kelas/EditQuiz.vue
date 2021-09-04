@@ -364,17 +364,17 @@ export default {
   },
   mounted() {
     this.loadQuestions()
-    console.log(this.lessonId)
+    // console.log(this.lessonId)
   },
   methods: {
     editQuestions(data) {
-      console.log(data)
+      // console.log(data)
       this.questions = data.item.question
       this.questionsId = data.item.id
       this.answer = data.item.answer
     },
     confirmDelete(data) {
-      console.log(data)
+      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: 'Hapus satu question dari tabel. Aksi ini tidak dapat di batalkan',
@@ -428,12 +428,12 @@ export default {
         answers_type: 'choices',
       }
 
-      console.log(formDatas)
-      console.log(this.quizId)
-      console.log(this.questionsId)
-      console.log(this.edumoLessonId)
-      console.log(this.questions)
-      console.log(this.answer)
+      // console.log(formDatas)
+      // console.log(this.quizId)
+      // console.log(this.questionsId)
+      // console.log(this.edumoLessonId)
+      // console.log(this.questions)
+      // console.log(this.answer)
 
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -495,14 +495,14 @@ export default {
         this.lessonId = data.lesson_id
         this.moduleId = data.module_id
         this.getEdumoId()
-        console.log(data)
+        // console.log(data)
       })
     },
     getEdumoId() {
       this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
-        console.log(this.edumoLessonId)
+        // console.log(this.edumoLessonId)
       })
     },
     addAnswer() {
