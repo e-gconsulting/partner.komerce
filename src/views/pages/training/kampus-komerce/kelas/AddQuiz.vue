@@ -197,11 +197,17 @@
                           </b-button>
                         </b-form-group>
                       </b-col>
+                      <b-col class="mt-1 ml-50">
+                        <small class="text-danger">
+                          Checklist satu untuk jawaban yang benar
+                        </small>
+                      </b-col>
                       <b-col class="text-right mt-3">
                         <b-button
                           variant="danger"
                           pill
-                          @click.prevent="submit"
+                          :disabled="answer.filter(item => item.correct_answer).length === 0 || answer.filter(item => item.correct_answer === true).length > 1"
+                          @click="cekValid"
                         >
                           <b-spinner
                             v-if="loadingSubmit"
@@ -314,10 +320,12 @@ export default {
 
       selected: 'yes',
 
-      test: [{ status: true }],
+      test: [{ status: false }],
 
       checked: [],
       moduleId: 0,
+
+      trueAnswer: [],
 
     }
   },
@@ -334,9 +342,9 @@ export default {
     this.loadQuiz()
   },
   methods: {
-    // tes(data) {
-    //   console.log(data)
-    // },
+    cekValid() {
+      console.log(this.answer)
+    },
     confirmDelete(data) {
       // console.log(data)
       this.$swal({

@@ -91,7 +91,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Video Pengantar"
-                    rules="required|url"
+                    rules="required"
                   >
                     <b-form-input
                       v-model="videoPengantar"

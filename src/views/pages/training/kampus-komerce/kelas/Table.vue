@@ -57,6 +57,7 @@
           :filter-included-fields="filterOn"
           :tbody-tr-class="rowClass"
           :busy.sync="loading"
+          :sort-compare="myCompare"
         >
 
           <template #cell(class_name)="data">
@@ -192,6 +193,7 @@ export default {
           label: 'Total Modul',
           thClass: 'text-center',
           tdClass: 'text-center',
+          sortable: true,
         },
         {
           key: 'class_status',

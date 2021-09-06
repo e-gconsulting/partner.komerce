@@ -95,7 +95,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Video Pengantar"
-                    rules="required|url"
+                    rules="required"
                   >
                     <b-form-input
                       v-model="videoPengantar"
@@ -114,7 +114,7 @@
                   <validation-provider
                     #default="{ errors }"
                     name="Link Group Telegram"
-                    rules="required|url"
+                    rules="required"
                   >
                     <b-form-input
                       v-model="linkTelegram"

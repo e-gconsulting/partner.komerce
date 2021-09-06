@@ -127,7 +127,7 @@
                         <validation-provider
                           #default="{ errors }"
                           name="Video"
-                          rules="required|url"
+                          rules="required"
                         >
                           <b-form-input
                             v-model="videoUrl"
