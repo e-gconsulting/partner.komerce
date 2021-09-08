@@ -49,13 +49,13 @@
                         <p>{{ data.item.question }}</p>
                       </b-col>
                       <b-col
-                        md="auto"
+                        md="9"
                         class="mt-50"
                       >
                         <b-dropdown
                           v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                           variant="outline-secondary"
-                          :text="data.item.question"
+                          :text="data.item.question.length > 45 ? data.item.question.substr(0, 45)+'...' : data.item.question"
                         >
                           <b-dropdown-item
                             v-for="(dataAnswer, index) in data.item.answer"
@@ -207,7 +207,7 @@
                           variant="danger"
                           pill
                           :disabled="answer.filter(item => item.correct_answer).length === 0 || answer.filter(item => item.correct_answer === true).length > 1"
-                          @click="cekValid"
+                          @click.prevent="submit"
                         >
                           <b-spinner
                             v-if="loadingSubmit"
@@ -248,7 +248,6 @@ import {
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-// import vSelect from 'vue-select'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Ripple from 'vue-ripple-directive'
@@ -269,7 +268,6 @@ export default {
     BCol,
     BButton,
     BOverlay,
-    // vSelect,
     BCardActions,
     BTable,
     BFormCheckbox,
@@ -346,7 +344,6 @@ export default {
       console.log(this.answer)
     },
     confirmDelete(data) {
-      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: 'Hapus satu question dari tabel. Aksi ini tidak dapat di batalkan',
@@ -401,8 +398,6 @@ export default {
         answers: this.answer,
         answer_type: 'choices',
       }
-
-      // console.log(formData)
 
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -462,7 +457,6 @@ export default {
         const { data } = response.data
         this.lessonId = data.lesson_id
         this.getEdumoId()
-        // console.log(data)
       })
     },
     getEdumoId() {
@@ -471,8 +465,6 @@ export default {
         this.edumoLessonId = data.edumo_lesson_id
         this.moduleId = data.lesson_module_id
         this.getModule()
-        // console.log(this.moduleId)
-        // console.log(this.edumoLessonId)
       })
     },
     getModule() {
@@ -482,14 +474,12 @@ export default {
         this.moduleSubname = data.module_subtitle
         this.moduleId = data.module_id
         this.getIdClass()
-        // console.log(data)
       })
     },
     getIdClass() {
       return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
         const { data } = response.data
         this.classId = data.module_class_id
-        // console.log(data)
         this.loadClass()
       })
     },
@@ -497,7 +487,6 @@ export default {
       return this.$http.get(`/lms/class/${this.classId}`).then(response => {
         const { data } = response.data
         this.className = data.class_name
-        // console.log(data)
       })
     },
     addAnswer() {

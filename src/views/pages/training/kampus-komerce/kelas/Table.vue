@@ -57,7 +57,6 @@
           :filter-included-fields="filterOn"
           :tbody-tr-class="rowClass"
           :busy.sync="loading"
-          :sort-compare="myCompare"
         >
 
           <template #cell(class_name)="data">
@@ -193,7 +192,6 @@ export default {
           label: 'Total Modul',
           thClass: 'text-center',
           tdClass: 'text-center',
-          sortable: true,
         },
         {
           key: 'class_status',
@@ -226,6 +224,10 @@ export default {
   },
   mounted() {
     this.isDeleted()
+    this.$http.get('/lms/module/list/filter/1').then(response => {
+      const { data } = response.data
+      console.log(data)
+    })
   },
   methods: {
     tableProvider() {
@@ -253,7 +255,6 @@ export default {
       this.$refs.table.refresh()
     },
     confirmDelete(data) {
-      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,

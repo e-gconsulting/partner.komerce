@@ -10,7 +10,6 @@
   >
     <div class="pb-1">
       <b-card-actions
-        ref="formCard"
         title="Edit Lesson"
         no-actions
         no-body
@@ -19,7 +18,7 @@
           <b-col
             md="11"
           >
-            <!-- form edit talent -->
+            <!-- form -->
             <validation-observer ref="formRules">
               <b-form>
                 <b-row>
@@ -165,8 +164,7 @@
                       type="submit"
                       class="mr-50"
                       :disabled="loadingSubmit"
-                      :to="{ name: $route.meta.routeEditQuiz, params: { lesson_id: idLessonToQuiz } }"
-                      @click.prevent="submit"
+                      @click="submit"
                     >
                       <b-spinner
                         v-if="loadingSubmit"
@@ -187,7 +185,7 @@
 
 <script>
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
-import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import {
   BFormInput,
   BFormGroup,
@@ -196,19 +194,12 @@ import {
   BCol,
   BButton,
   BSpinner,
-  // BFormSelect,
   BFormFile,
-  // BAvatar,
-  // BFormRow,
   BOverlay,
-  // BFormRadioGroup,
-  // BFormTextarea,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import vSelect from 'vue-select'
-// import flatPickr from 'vue-flatpickr-component'
-// import Cleave from 'vue-cleave-component'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Vue from 'vue'
@@ -254,11 +245,6 @@ export default {
       lessonThumbnail: null,
       imageInitialFile: null,
 
-      trainerOptions: [
-        { title: 'Sahfri Yanto', value: 1 },
-        { title: 'Ikhtiar Rahayu', value: 2 },
-      ],
-
       statusKelasOptions: [
         { title: 'Draft', value: 'draft' },
         { title: 'Publish', value: 'publish' },
@@ -300,14 +286,15 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('lesson_title', this.lessonTitle)
-          formData.append('lesson_thumbnail', this.lessonThumbnail)
+          if (this.lessonThumbnail) formData.append('lesson_thumbnail', this.lessonThumbnail)
           formData.append('lesson_video_description', this.videoDescription)
           formData.append('lesson_video_url', this.videoUrl)
           formData.append('lesson_module_id', this.moduleId)
           formData.append('lesson_status', 'publish')
 
           this.$http.post(`/lms/lesson/update/${this.lessonId}`, formData)
-            .then(() => {
+            .then(response => {
+              const { data } = response
               this.$toast({
                 component: ToastificationContent,
                 props: {
@@ -317,6 +304,13 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
+              console.log(data)
+              if (data.message === 'Lesson with the same lesson tes already exists.' || data.message === 'Lesson no data.') {
+                this.$router.push({ name: this.$route.meta.routeAddQuiz, params: { lesson_id: this.idLessonToQuiz } })
+              }
+              if (data.message !== 'Lesson with the same lesson tes already exists.') {
+                this.$router.push({ name: this.$route.meta.routeEditQuiz, params: { lesson_id: this.idLessonToQuiz } })
+              }
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -345,7 +339,6 @@ export default {
       return this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.statusLesson = data.lesson_status
-        // console.log(data)
         this.moduleId = data.lesson_module_id
         this.idLessonToQuiz = this.lessonId
         this.loadModul()

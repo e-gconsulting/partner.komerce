@@ -258,18 +258,6 @@ export default {
       return 'Satu Kelas berhasil ditambah'
     },
   },
-  mounted() {
-    if (this.editMode) this.loadForm()
-    // console.log(this.skill)
-    // console.log(this.coverKelas)
-    // console.log(this.descriptionVideo)
-    // console.log(this.videoPengantar)
-    // console.log(this.statusClass)
-    // this.$http.get('/lms/class/list').then(response => {
-    //   const { data } = response
-    //   console.log(data)
-    // })
-  },
   methods: {
     submit() {
       this.$refs.formRules.validate().then(success => {

@@ -43,6 +43,9 @@ import masterData from './master-data'
 import talentPool from './talent-pool'
 import wishlist from './wishlist'
 
+// Product
+import produk from './produk'
+
 // Array of sections
 export default [
   ...dashboard,
@@ -53,6 +56,7 @@ export default [
   ...masterData,
   ...division,
   ...position,
+  ...produk,
 
   ...talentPool,
   ...wishlist,

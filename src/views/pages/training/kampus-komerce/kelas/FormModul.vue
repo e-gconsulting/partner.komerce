@@ -232,12 +232,6 @@ export default {
   },
   mounted() {
     if (this.editMode) this.loadForm()
-    // console.log(this.moduleTitle)
-    // console.log(this.moduleSubtitle)
-    // console.log(this.thumbnail)
-    // console.log(this.statusModule)
-    // console.log(this.trainerName)
-    // console.log(this.id)
     this.loadTrainer()
   },
   methods: {

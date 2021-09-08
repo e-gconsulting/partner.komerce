@@ -235,12 +235,10 @@ import {
   BCollapse,
   VBToggle,
   BCard,
-  // BFormSelect,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
 import flatPickr from 'vue-flatpickr-component'
-// import vSelect from 'vue-select'
 
 export default {
   directives: {
@@ -262,9 +260,7 @@ export default {
     BOverlay,
     BCollapse,
     BCard,
-    // BFormSelect,
     flatPickr,
-    // vSelect,
   },
   mixins: [dateFormat],
   data() {
@@ -346,12 +342,6 @@ export default {
     this.loadFilterPositions()
   },
   methods: {
-    // filterScore() {
-    //   console.log('tes')
-    //   console.log(this.dataStudent.filter(item => item.student_score === Number(this.scoreStudent)))
-    //   this.dataStudent.filter(item => item.student_score === Number(this.scoreStudent))
-    //   this.refreshTable()
-    // },
     clearDate() {
       this.startDate = null
       this.endDate = null

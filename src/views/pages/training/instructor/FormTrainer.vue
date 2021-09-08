@@ -12,7 +12,7 @@
         <validation-observer ref="formRules">
           <b-form>
             <b-row>
-              <b-col
+              <!-- <b-col
                 class="pb-2"
                 md="12"
               >
@@ -48,7 +48,7 @@
                     </b-form-group>
                   </b-col>
                 </b-form-row>
-              </b-col>
+              </b-col> -->
               <b-col md="12">
                 <b-form-group
                   label="Nama Lengkap"
@@ -367,7 +367,7 @@ import {
   BFormRow,
   VBTooltip,
   BFormTextarea,
-  BAvatar,
+  // BAvatar,
 } from 'bootstrap-vue'
 import { required, min } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -399,7 +399,7 @@ export default {
     vSelect,
     Cleave,
     BFormTextarea,
-    BAvatar,
+    // BAvatar,
   },
   data() {
     return {
@@ -472,22 +472,16 @@ export default {
   },
   async mounted() {
     if (this.editMode) {
-      // console.log(this.method)
       this.loadProvincies()
       this.loadRegencies()
       this.loadDistricts()
       this.loadForm()
       return
     }
-    // this.$http.get('/lms/trainer').then(response => {
-    //   const { data } = response.data
-    //   console.log(data)
-    // })
 
     this.loadProvincies()
     this.loadRegencies()
     this.loadDistricts()
-    // console.log(this.method)
   },
   methods: {
     submit() {
@@ -511,26 +505,6 @@ export default {
           formData.append('npwp', this.npwp)
 
           if (this.cvFile) formData.append('cv', this.cvFile)
-          // console.log(this.provinceId)
-          // console.log(this.regencyId)
-          // console.log(this.districtId)
-
-          // const formDatas = {
-          //   name: this.name,
-          //   skill_id: this.skillId,
-          //   cv: this.cvFile,
-          //   phone: this.phone,
-          //   email: this.email,
-          //   bank_name: this.bankName,
-          //   bank_account_number: this.bankAccountNumber,
-          //   bank_account_name: this.bankAccountName,
-          //   npwp: this.npwp,
-          //   province_id: this.provinceId,
-          //   regency_id: this.regencyId,
-          //   address: this.address,
-          // }
-
-          // console.log(formDatas)
 
           this.$http.post(this.endpoint, formData)
             .then(() => {

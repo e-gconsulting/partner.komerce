@@ -43,7 +43,6 @@
                       <validation-provider
                         #default="{ errors }"
                         name="Cover Kelas"
-                        rules="required"
                       >
                         <b-form-file
                           v-model="imageFile"
@@ -162,7 +161,6 @@ import {
   BFormFile,
   VBTooltip,
   BFormRow,
-  // BFormTextarea,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import { required, min } from '@validations'
@@ -193,7 +191,6 @@ export default {
     BCol,
     BButton,
     BSpinner,
-    // BFormTextarea,
     vSelect,
   },
   data() {
@@ -250,19 +247,11 @@ export default {
 
           const formData = new FormData()
           formData.append('_method', 'put')
-          // formData.append('edumo_class_id', this.edumoClassId)
           if (this.skill.value) formData.append('class_skill', this.skill.value)
           if (this.imageFile) formData.append('class_img', this.imageFile)
           formData.append('class_trailer_url', this.videoPengantar)
           formData.append('class_trailer_description', this.descriptionVideo)
           if (this.statusClass.value) formData.append('class_status', this.statusClass.value)
-
-          // console.log(formData)
-          // console.log(this.skill)
-          // console.log(this.imageFile)
-          // console.log(this.videoPengantar)
-          // console.log(this.descriptionVideo)
-          // console.log(this.statusClass)
 
           this.$http.post(`/lms/class/update/${this.classId}`, formData)
             .then(() => {
@@ -294,14 +283,12 @@ export default {
     loadForm() {
       return this.$http.get(`/lms/class/${this.classId}`).then(response => {
         const { data } = response.data
-        // console.log(data)
         this.skill = data.class_name
         if (data.class_img) this.imageInitialFile = data.class_img
         this.descriptionVideo = data.class_trailer_description
         this.videoPengantar = data.class_trailer_url
         this.statusClass = data.class_status
         this.edumoClassId = data.edumo_class_id
-        // console.log(this.edumoClassId)
       })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),

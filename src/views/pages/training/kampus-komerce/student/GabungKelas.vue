@@ -248,12 +248,9 @@ import {
   BCollapse,
   VBToggle,
   BCard,
-  // BFormSelect,
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
-
-// import vSelect from 'vue-select'
 
 export default {
   directives: {
@@ -274,10 +271,8 @@ export default {
     BAvatar,
     BOverlay,
     BCollapse,
-    // vSelect,
     BCard,
     flatPickr,
-    // BFormSelect,
   },
   mixins: [dateFormat],
   data() {
@@ -325,7 +320,6 @@ export default {
             newFormat.push(value[0])
             newFormat.push(value[1])
             newFormat.join('')
-            // console.log(newFormat)
             return this.dateFormat(String(newFormat.join('')), 'dd mmmm yyyy')
           },
         },
@@ -372,9 +366,6 @@ export default {
     filterPercent() {
       this.tableProvider()
     },
-    // cek(data) {
-    //   console.log(data)
-    // },
     tableProvider() {
       return this.$http.get('/lms/report/student', {
         params: {

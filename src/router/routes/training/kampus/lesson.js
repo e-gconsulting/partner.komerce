@@ -100,6 +100,7 @@ export default [
     meta: {
       name: pageName,
       routeEditQuiz: 'edit-quiz',
+      routeAddQuiz: 'add-quiz',
       resource: 'Training',
       navActiveLink: 'lesson',
       action: 'manage',

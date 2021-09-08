@@ -60,7 +60,7 @@
                         <b-dropdown
                           v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                           variant="outline-secondary"
-                          :text="data.item.question"
+                          :text="data.item.question.length > 45 ? data.item.question.substr(0, 45)+'...' : data.item.question"
                         >
                           <b-dropdown-item
                             v-for="(dataAnswer, index) in data.item.answer"
@@ -211,10 +211,16 @@
                           </b-button>
                         </b-form-group>
                       </b-col>
+                      <b-col class="mt-1 ml-50">
+                        <small class="text-danger">
+                          Checklist satu untuk jawaban yang benar
+                        </small>
+                      </b-col>
                       <b-col class="text-right mt-3">
                         <b-button
                           variant="danger"
                           pill
+                          :disabled="answer.filter(item => item.correct_answer).length === 0 || answer.filter(item => item.correct_answer === true).length > 1"
                           @click="submit"
                         >
                           <b-spinner
@@ -253,10 +259,10 @@ import {
   BDropdown,
   BDropdownItem,
   BSpinner,
+  VBModal,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-// import vSelect from 'vue-select'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import 'cleave.js/dist/addons/cleave-phone.id'
 import Ripple from 'vue-ripple-directive'
@@ -264,6 +270,7 @@ import { heightTransition } from '@core/mixins/ui/transition'
 
 export default {
   directives: {
+    'b-modal': VBModal,
     Ripple,
   },
   components: {
@@ -277,7 +284,6 @@ export default {
     BCol,
     BButton,
     BOverlay,
-    // vSelect,
     BCardActions,
     BTable,
     BFormCheckbox,
@@ -337,7 +343,7 @@ export default {
 
       selected: 'yes',
 
-      test: [{ status: true }],
+      test: [{ status: false }],
 
       checked: [],
 
@@ -364,17 +370,14 @@ export default {
   },
   mounted() {
     this.loadQuestions()
-    // console.log(this.lessonId)
   },
   methods: {
     editQuestions(data) {
-      // console.log(data)
       this.questions = data.item.question
       this.questionsId = data.item.id
       this.answer = data.item.answer
     },
     confirmDelete(data) {
-      // console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: 'Hapus satu question dari tabel. Aksi ini tidak dapat di batalkan',
@@ -427,13 +430,6 @@ export default {
         answers: this.answer,
         answers_type: 'choices',
       }
-
-      // console.log(formDatas)
-      // console.log(this.quizId)
-      // console.log(this.questionsId)
-      // console.log(this.edumoLessonId)
-      // console.log(this.questions)
-      // console.log(this.answer)
 
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -488,21 +484,20 @@ export default {
     loadQuestions() {
       this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
         const { data } = response.data
-        this.quizId = data.quiz_id
+        console.log(data)
         this.moduleName = data.module_title
         this.moduleSubname = data.module_subtitle
         this.className = data.class_skill
         this.lessonId = data.lesson_id
         this.moduleId = data.module_id
+        this.quizId = data.quiz_id
         this.getEdumoId()
-        // console.log(data)
       })
     },
     getEdumoId() {
       this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
-        // console.log(this.edumoLessonId)
       })
     },
     addAnswer() {
