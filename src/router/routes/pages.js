@@ -59,4 +59,13 @@ export default [
       redirectIfLoggedIn: true,
     },
   },
+  {
+    path: '/kompship/daftar',
+    name: 'kompship-daftar',
+    component: () => import('@/views/pages/authentication/RegisterKompship'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
 ]

@@ -199,7 +199,7 @@ export default {
           badge: [
             {
               publish: 'Publish',
-              draft: 'Draft',
+              draft: 'Private',
             },
             {
               publish: 'light-success',

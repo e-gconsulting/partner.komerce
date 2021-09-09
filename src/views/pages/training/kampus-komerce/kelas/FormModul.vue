@@ -220,7 +220,7 @@ export default {
       iconInitialFile: null,
 
       statusKelasOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
     }

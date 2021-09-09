@@ -82,6 +82,7 @@
                           :config="editorConfig"
                           :state="errors.length > 0 ? false:null"
                         />
+                        <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
                     </b-col>
                   </b-form-row>
@@ -243,7 +244,7 @@ export default {
       ],
 
       statusKelasOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
       ],
 
       editor: ClassicEditor,

@@ -111,6 +111,7 @@
               <b-button
                 variant="flat-danger"
                 class="btn-icon"
+                :disabled="data.item.length < 1"
                 @click="confirmDelete(data)"
               >
                 <feather-icon
@@ -185,7 +186,7 @@ export default {
           badge: [
             {
               publish: 'Publish',
-              draft: 'Draft',
+              draft: 'Private',
             },
             {
               publish: 'light-success',
