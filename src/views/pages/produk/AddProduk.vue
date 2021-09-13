@@ -199,10 +199,15 @@
             class="ml-5"
           >
             <b-col class="d-flex align-items-center">
-              <b-form-input
-                placeholder="1000"
-              />
-              <span class="ml-1">gram</span>
+              <b-input-group class="input-group-merge">
+                <b-form-input
+                  id="hi-first-name"
+                  placeholder="1000"
+                />
+                <b-input-group-append is-text>
+                  cm
+                </b-input-group-append>
+              </b-input-group>
             </b-col>
           </b-form-group>
         </b-col>
@@ -218,22 +223,37 @@
               class="d-flex align-items-center"
             >
               <b-col class="d-flex align-items-center">
-                <b-form-input
-                  placeholder="P"
-                />
-                <span class="ml-50">cm</span>
+                <b-input-group class="input-group-merge">
+                  <b-form-input
+                    id="hi-first-name"
+                    placeholder="P"
+                  />
+                  <b-input-group-append is-text>
+                    cm
+                  </b-input-group-append>
+                </b-input-group>
               </b-col>
               <b-col class="d-flex align-items-center">
-                <b-form-input
-                  placeholder="L"
-                />
-                <span class="ml-50">cm</span>
+                <b-input-group class="input-group-merge">
+                  <b-form-input
+                    id="hi-first-name"
+                    placeholder="L"
+                  />
+                  <b-input-group-append is-text>
+                    cm
+                  </b-input-group-append>
+                </b-input-group>
               </b-col>
               <b-col class="d-flex align-items-center">
-                <b-form-input
-                  placeholder="T"
-                />
-                <span class="ml-50">cm</span>
+                <b-input-group class="input-group-merge">
+                  <b-form-input
+                    id="hi-first-name"
+                    placeholder="T"
+                  />
+                  <b-input-group-append is-text>
+                    cm
+                  </b-input-group-append>
+                </b-input-group>
               </b-col>
             </b-row>
           </b-form-group>
@@ -306,6 +326,8 @@ import {
   BFormTextarea,
   BTable,
   BFormCheckbox,
+  BInputGroupAppend,
+  BInputGroup,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
@@ -322,6 +344,8 @@ export default {
     BFormTextarea,
     BTable,
     BFormCheckbox,
+    BInputGroupAppend,
+    BInputGroup,
   },
   directives: {
     Ripple,

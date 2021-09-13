@@ -368,7 +368,7 @@ export default {
   data() {
     return {
       endpointGetAll: '/staff',
-      endpointDelete: '/staff/:id',
+      endpointDelete: '/user/delete/:id',
       fields: [
         {
           key: 'staff.id', sortKey: 'id', label: 'Id', sortable: true, sortDirection: 'desc',
@@ -481,6 +481,7 @@ export default {
       this.$refs.table.refresh()
     },
     confirmDelete(data) {
+      console.log(data)
       this.$swal({
         title: 'Anda yakin?',
         text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
@@ -500,10 +501,11 @@ export default {
     },
     delete(data) {
       this.loading = true
-      const endpoint = this.endpointDelete.replace(/:id/g, this.getId(data.item))
+      const endpoint = this.endpointDelete.replace(/:id/g, data.item.id)
+      console.log(endpoint)
 
       this.$http({
-        method: this.deleteMethod,
+        method: 'get',
         url: endpoint,
       })
         .then(response => {
@@ -521,7 +523,7 @@ export default {
             return
           }
 
-          this.deletedIds.push(this.getId(data.item))
+          this.deletedIds.push(data.item.id)
         })
         .finally(() => {
           this.loading = false

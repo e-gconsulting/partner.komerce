@@ -53,4 +53,23 @@ export default [
       ],
     },
   },
+  {
+    path: '/detail-order',
+    name: 'detail-order',
+    component: () => import('@/views/pages/customer/DetailOrder.vue'),
+    meta: {
+      name: 'Detail Order',
+      resource: 'Position',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: pageName.plural,
+        },
+        {
+          text: 'Detail order',
+          active: true,
+        },
+      ],
+    },
+  },
 ]

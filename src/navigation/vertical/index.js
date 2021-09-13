@@ -45,6 +45,7 @@ import wishlist from './wishlist'
 
 // Product
 import produk from './produk'
+import settingKompship from './setting-kompship'
 
 // Array of sections
 export default [
@@ -57,6 +58,7 @@ export default [
   ...division,
   ...position,
   ...produk,
+  ...settingKompship,
 
   ...talentPool,
   ...wishlist,
