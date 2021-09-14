@@ -16,8 +16,10 @@ import position from './routes/position'
 import talentPool from './routes/talent-pool'
 import parentProfile from './routes/partner-profile'
 import wishlist from './routes/wishlist'
+
 import produk from './routes/produk/index'
 import customer from './routes/customer/index'
+import settingKompship from './routes/setting-kompship/index'
 
 Vue.use(VueRouter)
 
@@ -37,8 +39,10 @@ const router = new VueRouter({
     ...management,
     ...division,
     ...position,
+
     ...produk,
     ...customer,
+    ...settingKompship,
 
     ...talentPool,
     ...parentProfile,
