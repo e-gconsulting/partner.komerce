@@ -1,5 +1,22 @@
 <template>
   <b-card>
+
+    <b-modal
+      ref="modal-primary"
+      ok-only
+      ok-title="Accept"
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+      <b-card-text>
+        Biscuit chocolate cake gummies. Lollipop I love macaroon bear claw caramels. I love marshmallow tiramisu I love
+        fruitcake I love gummi bears. Carrot cake topping liquorice. Pudding caramels liquorice sweet I love. Donut powder
+        cupcake ice cream tootsie roll jelly.
+      </b-card-text>
+    </b-modal>
+
+    <!-- {{ tes() }} -->
     <b-col cols="12">
       <h4>
         <strong>Pengaturan Rekening Bank</strong>
@@ -94,9 +111,11 @@ import {
   BFormGroup,
   BFormInput,
   BButton,
+  BModal,
+  VBModal,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
-import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
+import Ripple from 'vue-ripple-directive'
 
 export default {
   components: {
@@ -107,8 +126,35 @@ export default {
     BForm,
     BFormGroup,
     BFormInput,
-    FeatherIcon,
     BButton,
+    BModal,
+  },
+  directives: {
+    'b-modal': VBModal,
+    Ripple,
+  },
+  mounted() {
+    this.showModal()
+  },
+  methods: {
+    showModal() {
+      this.$refs['modal-primary'].show()
+    },
+    tes() {
+      this.$swal({
+        title: 'Verifikasi PIN',
+        text: 'Mohon verifikasi identitas kamu dengan memasukan PIN',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Kembali',
+        confirmButtonText: 'Konfirmasi',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-primary ml-1',
+        },
+        buttonsStyling: false,
+      })
+    },
   },
 
 }
