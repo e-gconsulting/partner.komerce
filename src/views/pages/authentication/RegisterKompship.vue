@@ -97,7 +97,7 @@
     </b-col>
     <b-col
       cols="6"
-      class="wrapper-preview-dashboard-kompship p-5 d-flex justify-content-center align-items-center"
+      class="wrapper-preview-dashboard-kompship d-flex justify-content-center align-items-center"
     >
       <b-img
         src="@core/assets/image/prev-dash.png"

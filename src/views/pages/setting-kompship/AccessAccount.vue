@@ -48,6 +48,7 @@
                 type="reset"
                 variant="outline-primary"
                 class="mr-1"
+                @click="tes()"
               >
                 Hapus
               </b-button>
@@ -345,6 +346,22 @@ export default {
         },
       ],
     }
+  },
+  methods: {
+    tes() {
+      this.$swal({
+        text: 'Kamu yakin ingin hapus akun ?',
+        icon: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Batal',
+        confirmButtonText: 'Hapus',
+        customClass: {
+          confirmButton: 'btn btn-outline-primary',
+          cancelButton: 'btn btn-primary ml-1',
+        },
+        buttonsStyling: false,
+      })
+    },
   },
 
 }
