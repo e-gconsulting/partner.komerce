@@ -209,7 +209,7 @@
               </template>
               <template #cell(action)="data">
                 <span
-                  v-if="isDeleted(getId(data.item))"
+                  v-if="isDeleted(data.item.id)"
                   class="text-danger"
                 >Deleted</span>
                 <div v-else>
@@ -368,7 +368,7 @@ export default {
   data() {
     return {
       endpointGetAll: '/staff',
-      endpointDelete: '/staff/:id',
+      endpointDelete: '/user/delete/:id',
       fields: [
         {
           key: 'staff.id', sortKey: 'id', label: 'Id', sortable: true, sortDirection: 'desc',
@@ -436,7 +436,7 @@ export default {
         url: this.endpointGetAll,
         params: {
           ...this.filters,
-          [this.keywordKey]: this.filter,
+          keyword: this.filter,
           page: this.currentPage,
           limit: this.perPage,
           sort_by: this.sortBy,
@@ -454,7 +454,7 @@ export default {
         url: this.endpointGetAll,
         params: {
           ...this.filters,
-          [this.keywordKey]: this.filter,
+          keyword: this.filter,
           page: this.currentPage,
           limit: this.perPage,
           sort_by: this.sortBy,
@@ -500,10 +500,10 @@ export default {
     },
     delete(data) {
       this.loading = true
-      const endpoint = this.endpointDelete.replace(/:id/g, this.getId(data.item))
+      const endpoint = this.endpointDelete.replace(/:id/g, data.item.id)
 
       this.$http({
-        method: this.deleteMethod,
+        method: 'get',
         url: endpoint,
       })
         .then(response => {
@@ -521,7 +521,7 @@ export default {
             return
           }
 
-          this.deletedIds.push(this.getId(data.item))
+          this.deletedIds.push(data.item.id)
         })
         .finally(() => {
           this.loading = false
@@ -535,7 +535,7 @@ export default {
       if (!item || type !== 'row') { return }
 
       // eslint-disable-next-line consistent-return
-      if (this.isDeleted(this.getId(item))) { return colorClass }
+      if (this.isDeleted(item.id)) { return colorClass }
     },
     getId(item) {
       return item.staff?.id || item.id
