@@ -6,3 +6,25 @@ Resource:
 https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/guide/#usage-of-b-card-code-component
 https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/demo-1/dashboard/ecommerce
 https://pixinvent.com/demo/vuexy-vuejs-admin-dashboard-template/documentation/guide
+
+## Required
+Node ver. 14.x
+Npm ver. 6.x
+Yarn ver. 1.22.x
+
+## Install
+```sh
+yarn
+cp .env.sample .env
+```
+
+## Run Project
+### For yarn
+```sh
+yarn serve
+```
+
+### For npm
+```sh
+npm run serve
+```

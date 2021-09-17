@@ -8,6 +8,14 @@ export default [
     action: 'read',
   },
   {
+    title: 'Dashboard Baru',
+    icon: 'PieChartIcon',
+    tagVariant: 'light-warning',
+    route: 'dashboard-baru',
+    resource: 'Dashboard',
+    action: 'read',
+  },
+  {
     title: 'Home',
     icon: 'PieChartIcon',
     tagVariant: 'light-warning',

@@ -9,6 +9,15 @@ export default [
     },
   },
   {
+    path: '/dashboard-baru',
+    name: 'dashboard-baru',
+    component: () => import('@/views/pages/dashboard-cod/Index'),
+    meta: {
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
     path: '/dashboard',
     name: 'partner-home',
     component: () => import('@/views/pages/dashboard/PartnerHome'),
