@@ -1,5 +1,40 @@
 <template>
   <b-card>
+    <!-- Dialog Konfirmasi Non Kompship -->
+    <!-- <b-modal
+      ref="modal-konfirmasi-nonkompship"
+      no-close-on-backdrop
+      hide-header-close
+      ok-only
+      hide-header
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+
+      <b-col class="d-flex justify-content-center mt-50">
+        <h4>
+          <strong>Buat PIN</strong>
+        </h4>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-1">
+        <small>
+          <strong>Amankan uang kamu di Kompship menggunakan PIN</strong>
+        </small>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-1">
+        <b-button
+          v-b-modal.modal-confirm-create-new-pin
+          variant="primary"
+        >
+          Buat PIN
+        </b-button>
+      </b-col>
+    </b-modal> -->
+    {{ konfirmasiNonKompship() }}
+
     <b-row class="d-flex align-items-center mt-1">
       <b-col>
         <h5>
@@ -245,7 +280,23 @@ export default {
       ],
     }
   },
+  // mounted() {
+  //   this.showModal()
+  // },
   methods: {
+    konfirmasiNonKompship() {
+      this.$swal({
+        text: 'Ketika menggunakan pengiriman Non Kompship kamu harus menambahkan ekspedisi dan mengaktifkannya agar dapat menambahkan order',
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonText: 'oke',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-primary ml-1',
+        },
+        buttonsStyling: false,
+      })
+    },
     confirmDelete(data) {
       console.log(data)
       this.$swal({

@@ -39,6 +39,7 @@ export default [
         icon: 'ArchiveIcon',
         resource: 'Position',
         action: 'manage',
+        route: 'kompship-pin',
       },
       {
         title: 'Ekspedisi',
