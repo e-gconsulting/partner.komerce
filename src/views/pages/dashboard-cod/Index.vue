@@ -28,7 +28,7 @@
     <b-row class="match-height">
       <b-col lg="6">
         <b-card no-body>
-          <b-card-header>
+          <b-card-header class="custom-card-header">
             <b-row style="width: 100%;">
               <b-col
                 md="12"
@@ -41,6 +41,7 @@
                   <b-button
                     variant="outline"
                     class="button-custom"
+                    @click="toPage('ekspedisi')"
                   >
                     <feather-icon
                       icon="ChevronRightIcon"
@@ -54,24 +55,26 @@
           <b-card-body>
             <b-row class="select-form">
               <b-col
-                md="3"
+                md="2"
               />
               <b-col
                 md="3"
               />
               <b-col
                 md="3"
+                class="mb-50 mb-xs-1"
               >
                 <b-form-select
-                  v-model="selectedKurir"
+                  v-model="selectedEkspedisi.kurir"
                   :options="optionsKurir"
                 />
               </b-col>
               <b-col
-                md="3"
+                md="4"
+                class="custom-selected-filter"
               >
                 <b-form-select
-                  v-model="selectedBulan"
+                  v-model="selectedEkspedisi.bulan"
                   :options="optionsBulan"
                 />
               </b-col>
@@ -100,13 +103,15 @@
               <div class="d-flex align-items-center justify-content-end">
                 <b-button-group>
                   <b-button
-                    variant="outline-primary"
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
                     @click="choosenFilterTop('cod', 'filterTopEkspedisi')"
                   >
                     COD
                   </b-button>
                   <b-button
-                    variant="outline-primary"
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
                     @click="choosenFilterTop('ncod', 'filterTopEkspedisi')"
                   >
                     Non-COD
@@ -147,7 +152,7 @@
     <b-row class="match-height">
       <b-col lg="6">
         <b-card no-body>
-          <b-card-header>
+          <b-card-header class="custom-card-header">
             <b-row style="width: 100%;">
               <b-col
                 md="12"
@@ -160,6 +165,7 @@
                   <b-button
                     variant="outline"
                     class="button-custom"
+                    @click="toPage('partner')"
                   >
                     <feather-icon
                       icon="ChevronRightIcon"
@@ -173,24 +179,17 @@
           <b-card-body>
             <b-row class="select-form">
               <b-col
-                md="3"
+                md="4"
               />
               <b-col
-                md="3"
+                md="4"
               />
               <b-col
-                md="3"
+                md="4"
+                class="custom-selected-filter"
               >
                 <b-form-select
-                  v-model="selectedKurir"
-                  :options="optionsKurir"
-                />
-              </b-col>
-              <b-col
-                md="3"
-              >
-                <b-form-select
-                  v-model="selectedBulan"
+                  v-model="selectedPartner.bulan"
                   :options="optionsBulan"
                 />
               </b-col>
@@ -219,13 +218,15 @@
               <div class="d-flex align-items-center justify-content-end">
                 <b-button-group>
                   <b-button
-                    variant="outline-primary"
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
                     @click="choosenFilterTop('cod', 'filterTopPartner')"
                   >
                     COD
                   </b-button>
                   <b-button
-                    variant="outline-primary"
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
                     @click="choosenFilterTop('ncod', 'filterTopPartner')"
                   >
                     Non-COD
@@ -289,7 +290,7 @@ import Ripple from 'vue-ripple-directive'
 
 import { kFormatter } from '@core/utils/filter'
 import store from '@/store/index'
-import { $themeColors } from '@themeConfig'
+// import { $themeColors } from '@themeConfig'
 import { areaChartOptions } from './chartOptions'
 // import flatPickr from 'vue-flatpickr-component'
 // import AnalyticsTalent from './AnalyticsTalent.vue'
@@ -325,20 +326,8 @@ export default {
   },
   data() {
     return {
-      customDate: null,
-      range: 2,
-      total: -1,
       dir: false,
       alertshow: false,
-      items: [],
-      rangeOptions: [
-        { text: 'Hari ini', value: 0 },
-        { text: 'Kemarin', value: 1 },
-        { text: 'Minggu ini', value: 2 },
-        { text: 'Bulan ini', value: 3 },
-        { text: 'Tahun ini', value: 4 },
-        { text: 'Kustom', value: 5 },
-      ],
       rows: [],
       searchTerm: '',
       dashboardReport: {
@@ -357,16 +346,21 @@ export default {
       },
       filterTopEkspedisi: '',
       filterTopPartner: '',
-      selectedKurir: null,
-      selectedBulan: null,
+      selectedEkspedisi: {
+        kurir: null,
+        bulan: null,
+      },
+      selectedPartner: {
+        bulan: null,
+      },
       optionsKurir: [
-        { value: null, text: 'Select' },
+        { value: null, text: 'Pilih Kurir' },
         { value: 'JNE', text: 'JNE' },
         { value: 'JNT', text: 'JNT' },
         { value: 'Sicepat', text: 'Sicepat' },
       ],
       optionsBulan: [
-        { value: null, text: 'Select' },
+        { value: null, text: 'Pilih Bulan' },
         { value: 'Januari', text: 'Januari' },
         { value: 'Febuari', text: 'Febuari' },
         { value: 'Maret', text: 'Maret' },
@@ -385,7 +379,6 @@ export default {
   computed: {
     chartOptionsComputed() {
       const options = JSON.parse(JSON.stringify(areaChartOptions))
-      options.theme.monochrome.color = $themeColors.primary
       return options
     },
     direction() {
@@ -401,42 +394,95 @@ export default {
   },
   watch: {
     filterTopEkspedisi: {
-      immediate: true,
+      // immediate: true,
       handler() {
-        this.fetchData('filterTopEkspedisi')
+        this.fetchData({ filterTopEkspedisi: this.filterTopEkspedisi })
       },
     },
     filterTopPartner: {
-      immediate: true,
+      // immediate: true,
       handler() {
-        this.fetchData('filterTopPartner')
+        this.fetchData({ filterTopPartner: this.filterTopPartner })
+      },
+    },
+    selectedEkspedisi: {
+      deep: true,
+      // immediate: true,
+      handler() {
+        this.fetchData(this.selectedEkspedisi)
+      },
+    },
+    selectedPartner: {
+      deep: true,
+      // immediate: true,
+      handler() {
+        this.fetchData(this.selectedPartner)
       },
     },
   },
   mounted() {
     //
   },
+  created() {
+    this.fetchData()
+    // check data from API when there is withdrawal pending/process in api
+    // get data for series performa expedisi and performa partner
+    // get data for select option kurir
+    // get data for select option bulan or just hardcode
+  },
   methods: {
     kFormatter,
     choosenFilterTop(val, type = '') {
       this[type] = val
     },
-    fetchData(params) {
+    async fetchData(params) {
       // change this endpoint
-      this.$http.get('https://jsonplaceholder.typicode.com/posts', { params: { q: this[params] } })
-        .then(data => {
-          const newParseData = data.data.map(x => {
-            const dt = {
-              title: x.title,
-              body: x.body.substring(0, 15),
-            }
-            return dt
+      const endpoint = 'https://jsonplaceholder.typicode.com/posts'
+      if (params) {
+        this.$http.get(endpoint, { params: { ...params } })
+          .then(data => {
+            const newParseData = data.data.map(x => {
+              const dt = {
+                title: x.title,
+                body: x.body.substring(0, 15),
+              }
+              return dt
+            })
+            this.rows = newParseData
           })
-          this.rows = newParseData
+          .catch(e => {
+            console.log('error', e)
+          })
+      } else {
+        this.$http.get(endpoint)
+          .then(data => {
+            const newParseData = data.data.map(x => {
+              const dt = {
+                title: x.title,
+                body: x.body.substring(0, 15),
+              }
+              return dt
+            })
+            this.rows = newParseData
+          })
+          .catch(e => {
+            console.log('error', e)
+          })
+      }
+    },
+    objectToQueryString(obj = {}) {
+      const str = []
+      Object.keys(obj)
+        .map(x => {
+          str.push(`${encodeURIComponent(x)}=${encodeURIComponent(obj[x])}`)
+          return str
         })
-        .catch(e => {
-          console.log('error', e)
-        })
+      return str.join('&')
+    },
+    toPage(params = '') {
+      console.log(params)
+      // make sure to pass params on router base for changing page
+      this.$router.push('/')
     },
   },
 }
@@ -446,8 +492,21 @@ export default {
 @import '~@core/scss/vue/libs/chart-apex.scss';
 </style>
 <style lang="scss" scoped>
+.custom-card-header{
+  padding-right: 8px;
+}
+.btn-custom-topcodnoncod{
+  @media only screen and (max-width: 390px) {
+    padding: 10px;
+  }
+}
+.custom-selected-filter{
+  @media only screen and (min-width: 780px) {
+    padding-left: 0px;
+  }
+}
 .dashboard-report-wrapper{
-  padding-right: 0;
+  padding-right: 0px;
 }
 .button-custom{
   padding: 0;

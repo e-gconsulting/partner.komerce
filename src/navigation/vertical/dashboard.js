@@ -1,7 +1,7 @@
 export default [
   {
     title: 'Dashboard',
-    icon: 'PieChartIcon',
+    icon: 'HomeIcon',
     tagVariant: 'light-warning',
     route: 'dashboard-analytics',
     resource: 'Dashboard',
@@ -9,7 +9,7 @@ export default [
   },
   {
     title: 'Dashboard Baru',
-    icon: 'PieChartIcon',
+    icon: 'HomeIcon',
     tagVariant: 'light-warning',
     route: 'dashboard-baru',
     resource: 'Dashboard',

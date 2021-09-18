@@ -51,14 +51,6 @@ export const areaChartOptions = {
     x: { show: false },
   },
   color: ['#08A0F7', '#34A770'],
-  theme: {
-    monochrome: {
-      enabled: true,
-      color: '#08A0F7',
-      shadeTo: 'light',
-      shadeIntensity: 0.65,
-    },
-  },
 }
 
 export const lineChartOptions = {

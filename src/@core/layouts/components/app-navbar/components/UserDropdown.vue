@@ -6,8 +6,8 @@
   >
     <template #button-content>
       <div class="d-sm-flex d-none user-nav">
-        <p class="user-name font-weight-bolder mb-0">
-          {{ $store.state.auth.userData.full_name || $store.state.auth.userData.username }}
+        <p class="user-name font-weight-bolder mb-0 color-dark">
+          {{ greetingsTime }} {{ $store.state.auth.userData.full_name || $store.state.auth.userData.username }}
         </p>
         <span class="user-status">{{ $store.state.auth.userData.role }}</span>
       </div>
@@ -104,6 +104,29 @@ export default {
       if (this.$store.state.auth.userData.role_name.toUpperCase() === 'SDM') return 'talent-profile'
       if (this.$store.state.auth.userData.role_name.toUpperCase() === 'PARTNER') return 'partner-profile'
       return ''
+    },
+    greetingsTime() {
+      const date = new Date()
+      let dateChange = null
+      let str = ''
+      if ((date.getUTCHours() - date.getHours()) !== 0) {
+        dateChange = date.getHours()
+      } else {
+        dateChange = (8 + date.getHours())
+      }
+
+      if (dateChange < 4) {
+        str = 'Selamat Malam,'
+      } else if (dateChange < 11) {
+        str = 'Selamat Pagi,'
+      } else if (dateChange < 16) {
+        str = 'Selamat Siang,'
+      } else if (dateChange < 20) {
+        str = 'Selamat Sore,'
+      } else {
+        str = 'Selamat Malam,'
+      }
+      return str
     },
   },
   methods: {
