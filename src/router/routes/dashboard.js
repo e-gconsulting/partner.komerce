@@ -1,6 +1,15 @@
 export default [
   {
     path: '/',
+    name: 'cod-dashboard',
+    component: () => import('@/views/pages/dashboard-cod/Index'),
+    meta: {
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
+    path: '/dashboard-lama',
     name: 'dashboard-analytics',
     component: () => import('@/views/pages/dashboard/Index'),
     meta: {
@@ -9,9 +18,18 @@ export default [
     },
   },
   {
-    path: '/dashboard-baru',
-    name: 'dashboard-baru',
-    component: () => import('@/views/pages/dashboard-cod/Index'),
+    path: '/pencairan',
+    name: 'cod-pencairan',
+    component: () => import('@/views/pages/pencairan/Index'),
+    meta: {
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
+    path: '/pendapatan',
+    name: 'cod-pendapatan',
+    component: () => import('@/views/pages/pendapatan/Index'),
     meta: {
       resource: 'Dashboard',
       action: 'read',

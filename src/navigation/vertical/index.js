@@ -35,6 +35,8 @@ import training from './training'
 import talent from './talent'
 import partner from './partner'
 import management from './management'
+import membership from './membership'
+import ekspedisi from './ekspedisi'
 import masterData from './master-data'
 import assignment from './assignment'
 import settingAndPrivacy from './setting-and-privacy'
@@ -46,6 +48,8 @@ import wishlist from './wishlist'
 // Array of sections
 export default [
   ...dashboard,
+  ...membership,
+  ...ekspedisi,
   ...training,
   ...talent,
   ...partner,

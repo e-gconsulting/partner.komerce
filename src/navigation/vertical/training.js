@@ -1,5 +1,13 @@
 export default [
   {
+    title: 'Dashboard Lama',
+    icon: 'HomeIcon',
+    tagVariant: 'light-warning',
+    route: 'dashboard-analytics',
+    resource: 'Dashboard',
+    action: 'read',
+  },
+  {
     title: 'Training',
     icon: 'BookOpenIcon',
     tagVariant: 'light-warning',
