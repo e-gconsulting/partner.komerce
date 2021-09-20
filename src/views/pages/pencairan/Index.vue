@@ -104,46 +104,45 @@
               <b-table-simple responsive>
                 <b-thead>
                   <b-tr>
-                    <b-th sticky-column>
-                      Sticky Column Header
-                    </b-th>
-                    <b-th>Heading 1</b-th>
-                    <b-th>Heading 2</b-th>
-                    <b-th>Heading 3</b-th>
-                    <b-th>Heading 4</b-th>
+                    <b-th>Nama</b-th>
+                    <b-th>Nama Bank</b-th>
+                    <b-th>No Rekening</b-th>
+                    <b-th>Nominal</b-th>
+                    <b-th>Status</b-th>
                   </b-tr>
                 </b-thead>
                 <b-tbody>
-                  <b-tr>
-                    <b-th sticky-column>
-                      Sticky Column Row Header
-                    </b-th>
-                    <b-td>Cell</b-td>
-                    <b-td>Cell</b-td>
-                    <b-td>Cell</b-td>
-                    <b-td>Cell</b-td>
-                  </b-tr>
-                  <b-tr>
-                    <b-th sticky-column>
-                      Sticky Column Row Header
-                    </b-th>
-                    <b-td>Cell</b-td>
-                    <b-td>Cell</b-td>
-                    <b-td>Cell</b-td>
-                    <b-td>Cell</b-td>
+                  <b-tr
+                    v-for="row in rowsTable"
+                    :key="row.userId"
+                  >
+                    <b-td
+                      class="font-weight-bolder"
+                    >
+                      <span>
+                        {{ row.name }}
+                      </span>
+                      <br>
+                      <span>
+                        {{ row.email }}
+                      </span>
+                    </b-td>
+                    <b-td>
+                      {{ row.bankName }}
+                    </b-td>
+                    <b-td>{{ row.bankNo }}</b-td>
+                    <b-td
+                      class="font-weight-bolder"
+                    >
+                      {{ row.nominal }}
+                    </b-td>
+                    <b-td
+                      :class="colorStatus(row.status)"
+                    >
+                      {{ row.status }}
+                    </b-td>
                   </b-tr>
                 </b-tbody>
-                <b-tfoot>
-                  <b-tr>
-                    <b-th sticky-column>
-                      Sticky Column Footer
-                    </b-th>
-                    <b-th>Heading 1</b-th>
-                    <b-th>Heading 2</b-th>
-                    <b-th>Heading 3</b-th>
-                    <b-th>Heading 4</b-th>
-                  </b-tr>
-                </b-tfoot>
               </b-table-simple>
             </b-col>
 
@@ -178,7 +177,7 @@ import {
   BTh,
   BTr,
   BTd,
-  BTfoot,
+  // BTfoot,
   BInputGroup,
   BInputGroupPrepend,
   BDropdown,
@@ -213,7 +212,7 @@ export default {
     BTh,
     BTr,
     BTd,
-    BTfoot,
+    // BTfoot,
     BInputGroup,
     BFormGroup,
     BDropdownForm,
@@ -251,6 +250,35 @@ export default {
         { value: 'Aktif', text: 'Aktif' },
         { value: 'Tidak Aktif', text: 'Tidak Aktif' },
       ],
+      rowsTable: [
+        {
+          userId: 1,
+          name: 'Hanif Muflihul',
+          email: 'hallobusiness@gmail.com',
+          bankName: 'Bank Mandiri',
+          bankNo: 9000021233213,
+          nominal: 4500000,
+          status: 'Perlu disetujui',
+        },
+        {
+          userId: 11,
+          name: 'Terry Siphron',
+          email: 'hallobusiness@gmail.com',
+          bankName: 'Bank Mandiri',
+          bankNo: 9000021233213,
+          nominal: 5000000,
+          status: 'Sedang direview',
+        },
+        {
+          userId: 21,
+          name: 'Kadin Franci',
+          email: 'hallobusiness@gmail.com',
+          bankName: 'Bank Mandiri',
+          bankNo: 9000021233213,
+          nominal: 5000000,
+          status: 'Disetujui',
+        },
+      ],
     }
   },
   computed: {
@@ -269,10 +297,8 @@ export default {
   created() {
     this.loadDataAwal = false
     // this.fetchData()
-    // check data from API when there is withdrawal pending/process in api
-    // get data for series performa expedisi and performa partner
-    // get data for select option kurir
-    // get data for select option bulan or just hardcode
+    // get data tabel pencairan
+    // get data for select option status
   },
   methods: {
     kFormatter,
@@ -282,6 +308,26 @@ export default {
     onClickTerapkanFilterDropdown() {
       // Close the dropdown and (by passing true) return focus to the toggle button
       this.$refs.dropdownFilter.hide(true)
+    },
+    colorStatus(status) {
+      let classStatusColor = ''
+      switch (status) {
+        case 'Perlu disetujui':
+          // #FF6A3A
+          classStatusColor = 'colorStatusPrimary'
+          break
+        case 'Sedang direview':
+          // #FBA63C
+          classStatusColor = 'colorStatusWarning'
+          break
+        case 'Disetujui':
+          // #34A770
+          classStatusColor = 'colorStatusSuccess'
+          break
+        default:
+          break
+      }
+      return classStatusColor
     },
     async fetchData(params) {
       // change this endpoint
@@ -337,5 +383,14 @@ export default {
   @media only screen and (max-width: 390px) {
     padding: 10px;
   }
+}
+.colorStatusPrimary{
+  color: #FF6A3A;
+}
+.colorStatusSuccess{
+  color: #34A770;
+}
+.colorStatusWarning{
+  color: #FBA63C;
 }
 </style>
