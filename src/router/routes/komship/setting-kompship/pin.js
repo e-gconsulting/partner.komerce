@@ -2,10 +2,10 @@ export default [
   {
     path: '/setting-kompship/pin',
     name: 'kompship-pin',
-    component: () => import('@/views/pages/setting-kompship/Pin.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/Pin.vue'),
     meta: {
       name: 'PIN',
-      resource: 'Position',
+      resource: 'Setting Komship',
       breadcrumb: [
         {
           text: 'Pengaturan',

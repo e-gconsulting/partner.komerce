@@ -4,10 +4,10 @@ export default [
   {
     path: '/setting-kompship/profile',
     name: 'kompship-profile',
-    component: () => import('@/views/pages/setting-kompship/Profile.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/Profile.vue'),
     meta: {
       name: pageName.singular,
-      resource: 'Position',
+      resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
         {

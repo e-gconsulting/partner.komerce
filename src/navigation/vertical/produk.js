@@ -1,17 +1,22 @@
 export default [
   {
     title: 'Produk',
-    icon: 'ArchiveIcon',
-    tagVariant: 'light-warning',
+    icon: 'BriefcaseIcon',
+    resource: 'Produk',
+    action: 'manage',
     children: [
       {
         title: 'Tambah Produk',
-        route: 'staffs',
+        icon: 'PlusIcon',
+        resource: 'Produk',
+        route: 'add-produk',
         action: 'manage',
       },
       {
         title: 'Data Produk',
-        route: 'data-product',
+        icon: 'ArchiveIcon',
+        resource: 'Produk',
+        route: 'data-produk',
         action: 'manage',
       },
     ],

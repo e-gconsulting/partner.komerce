@@ -4,11 +4,12 @@ export default [
   {
     path: '/info-customer',
     name: 'info-customer',
-    component: () => import('@/views/pages/customer/InfoCustomer.vue'),
+    component: () => import('@/views/pages/komship/customer/InfoCustomer.vue'),
     meta: {
       name: pageName,
       routeDetail: 'detail-customer',
-      resource: 'Position',
+      navActiveLink: 'info-customer',
+      resource: 'Customer',
       action: 'manage',
       breadcrumb: [
         {
@@ -21,10 +22,11 @@ export default [
   {
     path: '/data-customer',
     name: 'data-customer',
-    component: () => import('@/views/pages/customer/DataCustomer.vue'),
+    component: () => import('@/views/pages/komship/customer/DataCustomer.vue'),
     meta: {
       name: pageName,
-      resource: 'Position',
+      navActiveLink: 'data-customer',
+      resource: 'Customer',
       action: 'manage',
       breadcrumb: [
         {
@@ -37,10 +39,12 @@ export default [
   {
     path: '/info-customer/detail-customer',
     name: 'detail-customer',
-    component: () => import('@/views/pages/customer/DetailCustomer.vue'),
+    component: () => import('@/views/pages/komship/customer/DetailCustomer.vue'),
     meta: {
       name: pageName,
-      resource: 'Position',
+      navActiveLink: 'info-customer',
+      routeDetailOrder: 'detail-order',
+      resource: 'Customer',
       action: 'manage',
       breadcrumb: [
         {
@@ -56,10 +60,11 @@ export default [
   {
     path: '/detail-order',
     name: 'detail-order',
-    component: () => import('@/views/pages/customer/DetailOrder.vue'),
+    component: () => import('@/views/pages/komship/customer/DetailOrder.vue'),
     meta: {
       name: 'Detail Order',
-      resource: 'Position',
+      navActiveLink: 'info-customer',
+      resource: 'Customer',
       action: 'manage',
       breadcrumb: [
         {

@@ -4,10 +4,10 @@ export default [
   {
     path: '/setting-kompship/rekening-bank',
     name: 'kompship-rekening-bank',
-    component: () => import('@/views/pages/setting-kompship/RekeningBank.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/RekeningBank.vue'),
     meta: {
       name: pageName.singular,
-      resource: 'Position',
+      resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
         {

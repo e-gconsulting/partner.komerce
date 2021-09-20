@@ -129,6 +129,8 @@
           <b-button
             size="sm"
             variant="flat-info"
+            tag="router-link"
+            :to="{ name: $route.meta.routeDetailOrder }"
           >
             Lihat Detail
           </b-button>

@@ -334,8 +334,17 @@ export default {
             ]
           } else if (role === 'PARTNER') {
             ability = [
-              { action: 'manage', subject: 'TalentPool' },
+              { action: 'manage', subject: 'Komship TalentPool' },
+              { action: 'manage', subject: 'Komship Wishlist' },
               { action: 'manage', subject: 'PartnerProfile' },
+              { action: 'read', subject: 'Dashboard Komship' },
+              { action: 'manage', subject: 'Customer' },
+              { action: 'manage', subject: 'Produk' },
+              { action: 'manage', subject: 'Order' },
+              { action: 'manage', subject: 'Pickup' },
+              { action: 'manage', subject: 'Keuangan' },
+              { action: 'manage', subject: 'Setting Komship' },
+              { action: 'manage', subject: 'Hiring' },
             ]
           } else if (role === 'SDM') {
             ability = [

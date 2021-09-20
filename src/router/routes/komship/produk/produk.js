@@ -4,11 +4,11 @@ export default [
   {
     path: '/produk',
     name: 'data-produk',
-    component: () => import('@/views/pages/produk/DataProduk.vue'),
+    component: () => import('@/views/pages/komship/produk/DataProduk.vue'),
     meta: {
       name: pageName,
       routeCreate: 'add-produk',
-      resource: 'Position',
+      resource: 'Produk',
       action: 'manage',
       breadcrumb: [
         {
@@ -21,10 +21,10 @@ export default [
   {
     path: '/add-produk',
     name: 'add-produk',
-    component: () => import('@/views/pages/produk/AddProduk.vue'),
+    component: () => import('@/views/pages/komship/produk/AddProduk.vue'),
     meta: {
       name: pageName,
-      resource: 'Position',
+      resource: 'Produk',
       action: 'manage',
       breadcrumb: [
         {

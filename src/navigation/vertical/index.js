@@ -43,9 +43,15 @@ import masterData from './master-data'
 import talentPool from './talent-pool'
 import wishlist from './wishlist'
 
-// Product
+// Komship
+import dashboardKompship from './dashboard-kompship'
 import produk from './produk'
+import order from './order'
+import pickup from './pickup'
+import customer from './customer'
 import settingKompship from './setting-kompship'
+import keuangan from './keuangan'
+import hiring from './hiring'
 
 // Array of sections
 export default [
@@ -57,8 +63,15 @@ export default [
   ...masterData,
   ...division,
   ...position,
+
+  ...dashboardKompship,
   ...produk,
+  ...order,
+  ...pickup,
+  ...customer,
   ...settingKompship,
+  ...keuangan,
+  ...hiring,
 
   ...talentPool,
   ...wishlist,

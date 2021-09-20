@@ -17,9 +17,15 @@ import talentPool from './routes/talent-pool'
 import parentProfile from './routes/partner-profile'
 import wishlist from './routes/wishlist'
 
-import produk from './routes/produk/index'
-import customer from './routes/customer/index'
-import settingKompship from './routes/setting-kompship/index'
+// komship
+import dashboardKompship from './routes/komship/dashboard/index'
+import produk from './routes/komship/produk/index'
+import order from './routes/komship/order/index'
+import pickup from './routes/komship/pickup/index'
+import customer from './routes/komship/customer/index'
+import settingKompship from './routes/komship/setting-kompship/index'
+import keuangan from './routes/komship/keuangan/index'
+import hiring from './routes/komship/hiring/index'
 
 Vue.use(VueRouter)
 
@@ -40,9 +46,14 @@ const router = new VueRouter({
     ...division,
     ...position,
 
+    ...dashboardKompship,
     ...produk,
+    ...order,
+    ...pickup,
     ...customer,
     ...settingKompship,
+    ...keuangan,
+    ...hiring,
 
     ...talentPool,
     ...parentProfile,

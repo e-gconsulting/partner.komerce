@@ -4,11 +4,11 @@ export default [
   {
     path: '/setting-kompship/pickup',
     name: 'kompship-pickup',
-    component: () => import('@/views/pages/setting-kompship/Pickup.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/Pickup.vue'),
     meta: {
       name: pageName.singular,
       routeEdit: 'edit-pickup',
-      resource: 'Position',
+      resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
         {
@@ -21,11 +21,11 @@ export default [
   {
     path: '/setting-kompship/pickup/edit',
     name: 'edit-pickup',
-    component: () => import('@/views/pages/setting-kompship/EditPickup.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/EditPickup.vue'),
     meta: {
       name: pageName.singular,
       navActiveLink: 'kompship-pickup',
-      resource: 'Position',
+      resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
         {
