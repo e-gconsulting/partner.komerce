@@ -134,14 +134,15 @@ export default {
       useJwt.logout({
       })
         .then(() => {
-          // Remove userData from localStorage
-          // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
-          localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
-          localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
+          // // Remove userData from localStorage
+          // // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
+          // localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
+          // localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
 
-          // Remove userData from localStorage
-          localStorage.removeItem('userData')
-
+          // // Remove userData from localStorage
+          // localStorage.removeItem('userData')
+          // Reset Local storage
+          localStorage.clear()
           // Reset ability
           this.$ability.update(initialAbility)
 

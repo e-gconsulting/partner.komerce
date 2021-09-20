@@ -17,6 +17,7 @@ Yarn ver. 1.22.x
 yarn
 cp .env.sample .env
 ```
+**NOTE : for production key NODE_ENV in .env file must be change to "production"**
 
 ## Run Project
 ### For yarn

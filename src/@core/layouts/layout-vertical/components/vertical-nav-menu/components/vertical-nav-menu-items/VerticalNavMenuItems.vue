@@ -93,13 +93,16 @@ export default {
   created() {
     this.user = this.$store.state.auth.userData
     const positionId = this.user.position_id
-    this.$http
-      .get(
-        `menu/getMyMenuAndAccess?komerce_application_id=4&position_id=${positionId}`,
-      )
-      .then(({ data }) => {
-        this.menus = data.data
-      })
+    if (!this.$store.state.menuaccess.userMenuAccess.length) {
+      this.$http
+        .get(
+          `menu/getMyMenuAndAccess?komerce_application_id=4&position_id=${positionId}`,
+        )
+        .then(({ data }) => {
+          this.menus = data.data
+          this.$store.commit('menuaccess/UPDATE_USER_MENU_ACCESS', data.data)
+        })
+    }
   },
   setup() {
     provide('openGroups', ref([]))
