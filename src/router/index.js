@@ -18,6 +18,8 @@ import management from './routes/management/index'
 import membership from './routes/membership/index'
 import ekspedisi from './routes/ekspedisi/index'
 import division from './routes/division'
+import penarikan from './routes/penarikan'
+import pendapatan from './routes/pendapatan'
 import position from './routes/position'
 import talentPool from './routes/talent-pool'
 import parentProfile from './routes/partner-profile'
@@ -36,6 +38,8 @@ const router = new VueRouter({
   },
   routes: [
     ...dashboard,
+    ...penarikan,
+    ...pendapatan,
     ...membership,
     ...ekspedisi,
     ...pages,

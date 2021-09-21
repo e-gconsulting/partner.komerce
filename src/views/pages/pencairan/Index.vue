@@ -8,9 +8,9 @@
               md="12"
               class="dashboard-report-wrapper"
             >
-              <h4 class="card-title">
+              <h3 class="card-title">
                 Antrian Penarikan
-              </h4>
+              </h3>
             </b-col>
           </b-row>
         </b-card-header>
@@ -137,9 +137,17 @@
                       {{ row.nominal }}
                     </b-td>
                     <b-td
-                      :class="colorStatus(row.status)"
+                      style="cursor: pointer;"
                     >
-                      {{ row.status }}
+                      <b-link
+                        :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: row.status.replace(' ','-') } }"
+                      >
+                        <span
+                          :class="colorStatus(row.status)"
+                        >
+                          {{ row.status }}
+                        </span>
+                      </b-link>
                     </b-td>
                   </b-tr>
                 </b-tbody>
@@ -168,6 +176,7 @@ import {
   BRow,
   BCol,
   BCard,
+  BLink,
   BFormInput,
   BFormGroup,
   BDropdownForm,
@@ -177,27 +186,17 @@ import {
   BTh,
   BTr,
   BTd,
-  // BTfoot,
   BInputGroup,
   BInputGroupPrepend,
   BDropdown,
-  // BDropdownItem,
-  // BAlert,
   BButton,
-  // BAvatar,
   BSpinner,
   BCardBody,
-  // BListGroup,
   BCardHeader,
   BFormSelect,
-  // BButtonGroup,
-  // BListGroupItem,
 } from 'bootstrap-vue'
-// import VueApexCharts from 'vue-apexcharts'
 import Ripple from 'vue-ripple-directive'
 
-// import store from '@/store/index'
-// import { $themeColors } from '@themeConfig'
 import { kFormatter } from '@core/utils/filter'
 
 export default {
@@ -205,6 +204,7 @@ export default {
     BRow,
     BCol,
     BCard,
+    BLink,
     BFormInput,
     BTableSimple,
     BThead,
@@ -212,24 +212,16 @@ export default {
     BTh,
     BTr,
     BTd,
-    // BTfoot,
     BInputGroup,
     BFormGroup,
     BDropdownForm,
     BInputGroupPrepend,
     BDropdown,
-    // BDropdownItem,
-    // BAlert,
     BButton,
-    // BAvatar,
     BSpinner,
     BCardBody,
-    // BListGroup,
     BFormSelect,
     BCardHeader,
-    // BButtonGroup,
-    // VueApexCharts,
-    // BListGroupItem,
   },
   directives: {
     Ripple,

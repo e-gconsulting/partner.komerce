@@ -18,24 +18,6 @@ export default [
     },
   },
   {
-    path: '/pencairan',
-    name: 'cod-pencairan',
-    component: () => import('@/views/pages/pencairan/Index'),
-    meta: {
-      resource: 'Dashboard',
-      action: 'read',
-    },
-  },
-  {
-    path: '/pendapatan',
-    name: 'cod-pendapatan',
-    component: () => import('@/views/pages/pendapatan/Index'),
-    meta: {
-      resource: 'Dashboard',
-      action: 'read',
-    },
-  },
-  {
     path: '/dashboard',
     name: 'partner-home',
     component: () => import('@/views/pages/dashboard/PartnerHome'),
