@@ -8,13 +8,8 @@
     rounded="sm"
     class="p-2"
   >
-    <b-row
-      v-if="!loading || experienceItems.length"
-      class="mb-5"
-    >
-      <b-col
-        md="6"
-      >
+    <b-row v-if="!loading || experienceItems.length" class="mb-5">
+      <b-col md="6">
         <!-- form -->
         <validation-observer ref="formRules">
           <b-form>
@@ -22,9 +17,7 @@
               <b-col md="12">
                 <b-row>
                   <b-col>
-                    <h3 class="mb-2">
-                      Pengalaman
-                    </h3>
+                    <h3 class="mb-2">Pengalaman</h3>
                   </b-col>
                   <b-col cols="auto">
                     <b-button
@@ -42,11 +35,7 @@
                   v-if="!experienceItems.length"
                   class="d-flex align-items-center text-secondary"
                 >
-                  <feather-icon
-                    icon="InfoIcon"
-                    class="mr-50"
-                    size="16"
-                  />
+                  <feather-icon icon="InfoIcon" class="mr-50" size="16" />
                   Belum ada pengalaman
                 </div>
                 <app-timeline class="mt-1">
@@ -57,27 +46,30 @@
                   >
                     <b-form-row>
                       <b-col col>
-                        <h6>{{ item.partner_category || item.position ? `${item.partner_category ? `Menangani produk ${item.partner_category.partner_category_name} sebagai ` : ''}${item.position.position_name}` : '' }}</h6>
+                        <h6>
+                          {{
+                            item.partner_category || item.position
+                              ? `${
+                                  item.partner_category
+                                    ? `Menangani produk ${item.partner_category.partner_category_name} sebagai `
+                                    : ''
+                                }${item.position.position_name}`
+                              : ''
+                          }}
+                        </h6>
                       </b-col>
                       <b-col cols="auto">
                         <div v-if="isDeleted(item.id)">
-                          <h6
-                            class="text-danger"
-                          >Deleted</h6>
+                          <h6 class="text-danger">Deleted</h6>
                         </div>
-                        <div
-                          v-else
-                          class="mt-n50"
-                        >
+                        <div v-else class="mt-n50">
                           <b-button
                             class="btn-icon mr-25"
                             size="sm"
                             variant="flat-warning"
                             @click="setupModal(item)"
                           >
-                            <feather-icon
-                              icon="EditIcon"
-                            />
+                            <feather-icon icon="EditIcon" />
                           </b-button>
                           <b-button
                             class="btn-icon"
@@ -85,9 +77,7 @@
                             variant="flat-danger"
                             @click="confirmDelete(item)"
                           >
-                            <feather-icon
-                              icon="Trash2Icon"
-                            />
+                            <feather-icon icon="Trash2Icon" />
                           </b-button>
                         </div>
                       </b-col>
@@ -101,9 +91,7 @@
         </validation-observer>
       </b-col>
     </b-row>
-    <div v-else>
-      <br><br><br><br><br>
-    </div>
+    <div v-else><br /><br /><br /><br /><br /></div>
     <b-modal
       id="form-modal"
       ref="formModal"
@@ -120,10 +108,7 @@
     >
       <validation-observer ref="formRules">
         <b-form @submit.stop.prevent="submit">
-          <b-form-group
-            label="Posisi"
-            label-cols-md="12"
-          >
+          <b-form-group label="Posisi" label-cols-md="12">
             <validation-provider
               #default="{ errors }"
               name="Posisi"
@@ -134,7 +119,7 @@
                 label="position_name"
                 :reduce="option => option.id"
                 :options="positionItems"
-                :state="errors.length > 0 ? false:null"
+                :state="errors.length > 0 ? false : null"
                 placeholder="Ketik untuk mencari..."
               >
                 <li
@@ -142,19 +127,13 @@
                   slot="list-footer"
                   class="vs__dropdown-option vs__dropdown-option--disabled"
                 >
-                  <feather-icon
-                    icon="MoreHorizontalIcon"
-                    size="16"
-                  />
+                  <feather-icon icon="MoreHorizontalIcon" size="16" />
                 </li>
               </v-select>
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
           </b-form-group>
-          <b-form-group
-            label="Sektor bisnis"
-            label-cols-md="12"
-          >
+          <b-form-group label="Sektor bisnis" label-cols-md="12">
             <validation-provider
               #default="{ errors }"
               name="Sektor bisnis"
@@ -165,32 +144,34 @@
                 label="partner_category_name"
                 :reduce="option => option.id"
                 :options="partnerCategoryItems"
-                :state="errors.length > 0 ? false:null"
+                :state="errors.length > 0 ? false : null"
                 transition=""
                 placeholder="Ketik untuk mencari..."
               />
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
           </b-form-group>
-          <b-form-group
-            label="Tanggal mulai"
-            label-cols-md="12"
-          >
+          <b-form-group label="Tanggal mulai" label-cols-md="12">
             <flat-pickr
               v-model="startDate"
               class="form-control"
-              :config="{ altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+              :config="{
+                altInput: true,
+                altFormat: 'j/n/Y',
+                dateFormat: 'Y-m-d',
+              }"
             />
             <small class="text-danger">{{ submitErrors.start_at }}</small>
           </b-form-group>
-          <b-form-group
-            label="Tanggal selesai"
-            label-cols-md="12"
-          >
+          <b-form-group label="Tanggal selesai" label-cols-md="12">
             <flat-pickr
               v-model="endDate"
               class="form-control"
-              :config="{ altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+              :config="{
+                altInput: true,
+                altFormat: 'j/n/Y',
+                dateFormat: 'Y-m-d',
+              }"
             />
             <small class="text-danger">{{ submitErrors.start_at }}</small>
           </b-form-group>
@@ -211,7 +192,9 @@ import {
   BCol,
   BButton,
   BSpinner,
-  BOverlay, BModal, BFormRow,
+  BOverlay,
+  BModal,
+  BFormRow,
 } from 'bootstrap-vue'
 import { required, min, minValue } from '@validations'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -279,7 +262,8 @@ export default {
       return this.experienceId
     },
     successText() {
-      return this.editMode ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
+      return this.editMode
+        ? `Satu ${this.$route.meta.name.singular} berhasil diperbaharui`
         : `Satu ${this.$route.meta.name.singular} berhasil ditambah`
     },
     endpoint() {
@@ -313,13 +297,14 @@ export default {
   },
   methods: {
     loadForm() {
-      return this.$http.get(this.endpoint, {
-        params: {
-          talent_id: this.talent.talent.id,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .get(this.endpoint, {
+          params: {
+            talent_id: this.talent.talent.id,
+            sort: 'name',
+            direction: 'asc',
+          },
+        })
         .then(async response => {
           const { data } = response.data.data
 
@@ -327,12 +312,11 @@ export default {
         })
     },
     loadTalent() {
-      return this.$http.get(`/talent/${this.id}`)
-        .then(async response => {
-          const { data } = response.data
+      return this.$http.get(`/talent/${this.id}`).then(async response => {
+        const { data } = response.data
 
-          this.talent = data
-        })
+        this.talent = data
+      })
     },
     setupModal(data) {
       this.positionId = Number(data.position_id)
@@ -386,17 +370,21 @@ export default {
 
           if (this.editMode) Object.assign(data, { id: this.id })
 
-          this.$http.post(this.endpointSubmit, data)
+          this.$http
+            .post(this.endpointSubmit, data)
             .then(() => {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  text: this.successText,
-                  variant: 'success',
-                  icon: 'CheckIcon',
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    text: this.successText,
+                    variant: 'success',
+                    icon: 'CheckIcon',
+                  },
                 },
-              }, { timeout: 2500 })
+                { timeout: 2500 },
+              )
 
               this.$nextTick(() => {
                 this.$refs.formModal.toggle()
@@ -411,9 +399,9 @@ export default {
             .catch(error => {
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
-                  Object.entries(error.response.data.data).map(
-                    ([key, value]) => [key, value[0]],
-                  ),
+                  Object.entries(
+                    error.response.data.data,
+                  ).map(([key, value]) => [key, value[0]]),
                 )
               }
             })
@@ -424,25 +412,35 @@ export default {
       })
     },
     loadPartnerCategories() {
-      return this.$http.post('/partnerCategory', {}, {
-        params: {
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .post(
+          '/partnerCategory',
+          {},
+          {
+            params: {
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
         .then(async response => {
           const { data } = response.data
           this.partnerCategoryItems = data
         })
     },
     loadPositions() {
-      return this.$http.post('/position', {}, {
-        params: {
-          is_division_external: 1,
-          sort: 'name',
-          direction: 'asc',
-        },
-      })
+      return this.$http
+        .post(
+          '/position',
+          {},
+          {
+            params: {
+              is_division_external: 1,
+              sort: 'name',
+              direction: 'asc',
+            },
+          },
+        )
         .then(async response => {
           const { data } = response.data
           this.positionItems = Object.keys(data).map(key => data[key])
@@ -463,7 +461,7 @@ export default {
       const weekDays = 7
       const weekToleranceDays = weekDays - 2
 
-      const dateDiff = ((endAt ? endDate : new Date()) - startDate)
+      const dateDiff = (endAt ? endDate : new Date()) - startDate
       let dayDiff = Math.ceil(dateDiff / (24 * 60 * 60 * 1000))
       let text = ''
 
@@ -516,7 +514,8 @@ export default {
     confirmDelete(data) {
       this.$swal({
         title: 'Anda yakin?',
-        text: 'Hapus satu pengalaman dari daftar. Aksi ini tidak dapat dibatalkan.',
+        text:
+          'Hapus satu pengalaman dari daftar. Aksi ini tidak dapat dibatalkan.',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Ya, Hapus!',
@@ -535,7 +534,8 @@ export default {
       this.loading = true
       const endpoint = this.endpointDelete.replace(/:id/g, data.id)
 
-      this.$http.delete(endpoint)
+      this.$http
+        .delete(endpoint)
         .then(() => {
           this.deletedIds.push(data.id)
 

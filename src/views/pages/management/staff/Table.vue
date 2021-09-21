@@ -209,7 +209,7 @@
               </template>
               <template #cell(action)="data">
                 <span
-                  v-if="isDeleted(getId(data.item))"
+                  v-if="isDeleted(data.item.id)"
                   class="text-danger"
                 >Deleted</span>
                 <div v-else>
@@ -436,7 +436,7 @@ export default {
         url: this.endpointGetAll,
         params: {
           ...this.filters,
-          [this.keywordKey]: this.filter,
+          keyword: this.filter,
           page: this.currentPage,
           limit: this.perPage,
           sort_by: this.sortBy,
@@ -454,7 +454,7 @@ export default {
         url: this.endpointGetAll,
         params: {
           ...this.filters,
-          [this.keywordKey]: this.filter,
+          keyword: this.filter,
           page: this.currentPage,
           limit: this.perPage,
           sort_by: this.sortBy,
@@ -502,7 +502,6 @@ export default {
     delete(data) {
       this.loading = true
       const endpoint = this.endpointDelete.replace(/:id/g, data.item.id)
-      console.log(endpoint)
 
       this.$http({
         method: 'get',
@@ -537,7 +536,7 @@ export default {
       if (!item || type !== 'row') { return }
 
       // eslint-disable-next-line consistent-return
-      if (this.isDeleted(this.getId(item))) { return colorClass }
+      if (this.isDeleted(item.id)) { return colorClass }
     },
     getId(item) {
       return item.staff?.id || item.id

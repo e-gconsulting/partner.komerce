@@ -1,0 +1,103 @@
+<template>
+  <b-modal
+    id="confirmation-modal"
+    ref="confirmationModal"
+    title="Check Detail"
+    :ok-title="loadingSubmit ? 'Submitting..' : 'Submit'"
+    :ok-disabled="loadingSubmit"
+    ok-variant="primary"
+    cancel-variant="light"
+    @ok="save"
+    size="xl"
+    centered
+  >
+    <div class="alert alert-danger p-2">
+      *Silahkan cek kembali detail assignment yang kamu buat. Pastikan semua
+      sudah benar. Data yang sudah dikirim
+      <b class="text-danger">tidak bisa di edit</b> kembali.
+    </div>
+    <b-row>
+      <b-col md="6">
+        <b-row class="mb-1">
+          <b-col md="6"> No SK </b-col>
+          <b-col md="6">
+            <b>{{ sk_number }}</b>
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col md="6"> Dokumen </b-col>
+          <b-col md="6">
+            <a :href="document_url" target="_blank"
+              ><b>{{ document_url }}</b></a
+            >
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col md="6"> Tanggal </b-col>
+          <b-col md="6">
+            <b>{{ release_date | date }}</b>
+          </b-col>
+        </b-row>
+      </b-col>
+    </b-row>
+    <b-row>
+      <b-col md="1">
+        <b>List Talent</b>
+      </b-col>
+      <b-col md="2">
+        <b>Team Lead</b>
+      </b-col>
+      <b-col md="2">
+        <b>Kantor</b>
+      </b-col>
+    </b-row>
+    <b-row class="mt-1" v-for="(assignment, index) in assignments" :key="index">
+      <b-col md="2" offset-md="1">
+        {{ assignment.staff ? assignment.staff.full_name : '-' }}
+      </b-col>
+      <b-col md="2">
+        {{ assignment.office ? assignment.office.office_name : '-' }}
+      </b-col>
+      <b-col md="1" />
+      <b-col md="12">
+        <hr />
+      </b-col>
+    </b-row>
+  </b-modal>
+</template>
+
+<script>
+import { BRow, BCol, BModal } from 'bootstrap-vue'
+
+export default {
+  props: {
+    sk_number: {
+      type: String,
+    },
+    document_url: {
+      type: String,
+    },
+    release_date: {
+      type: String,
+    },
+    loadingSubmit: {
+      type: Boolean,
+    },
+    save: {
+      type: Function,
+    },
+    assignments: {
+      type: Array,
+    },
+  },
+  components: { BRow, BCol, BModal },
+  methods: {
+    show() {
+      this.$refs.confirmationModal.show()
+    },
+  },
+}
+</script>
+
+<style>
+</style>
