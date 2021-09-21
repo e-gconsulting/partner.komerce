@@ -17,81 +17,129 @@
           <h3 class="ml-5 mb-2">
             Daftar
           </h3>
-          <b-form
-            class="ml-5"
-            @submit.prevent
+
+          <validation-observer
+            ref="loginForm"
+            #default="{invalid}"
           >
-            <b-row>
+            <b-form
+              class="ml-5"
+              @submit.prevent="login"
+            >
+              <b-row>
 
-              <!-- first name -->
-              <b-col cols="8">
-                <b-form-group
-                  label="Nama Lengkap"
-                >
-                  <b-form-input
-                    id="v-first-name"
-                    placeholder="Nama Lengkap"
-                  />
-                </b-form-group>
-              </b-col>
-
-              <!-- email -->
-              <b-col cols="8">
-                <b-form-group
-                  label="Email"
-                  label-for="v-email"
-                >
-                  <b-form-input
-                    id="v-email"
-                    type="email"
-                    placeholder="Email"
-                  />
-                </b-form-group>
-              </b-col>
-
-              <!-- password -->
-              <b-col cols="8">
-                <b-form-group
-                  label="Password"
-                  label-for="v-password"
-                >
-                  <b-form-input
-                    id="v-password"
-                    type="password"
-                    placeholder="Password"
-                  />
-                </b-form-group>
-              </b-col>
-
-              <!-- checkbox -->
-              <b-col cols="12">
-                <b-form-group>
-                  <b-form-checkbox
-                    id="checkbox-3"
-                    name="checkbox-3"
-                    value="Remember_me"
+                <!-- full name -->
+                <b-col cols="8">
+                  <b-form-group
+                    label="Nama Lengkap"
                   >
-                    Saya setuju dengan syarat dan ketentuan Kompship
-                  </b-form-checkbox>
-                </b-form-group>
-              </b-col>
-
-              <!-- submit -->
-              <b-col cols="12">
-                <b-col md="6">
-                  <div class="demo-inline-spacing">
-                    <b-button
-                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                      block
-                      variant="primary"
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Nama Lengkap"
+                      rules="required"
                     >
-                      Daftar
-                    </b-button>
-                  </div>
+                      <b-form-input
+                        v-model="fullname"
+                        placeholder="Nama Lengkap"
+                        :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                        name="fullname"
+                      />
+                    </validation-provider>
+                  </b-form-group>
                 </b-col>
-              </b-col>
-            </b-row>
-          </b-form>
+
+                <!-- email -->
+                <b-col cols="8">
+                  <b-form-group
+                    label="Email"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Email"
+                      rules="required|email"
+                    >
+                      <b-form-input
+                        v-model="userEmail"
+                        type="email"
+                        placeholder="Email"
+                        :state="errors.length > 0 || submitErrors.email ? false:null"
+                      />
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
+
+                <!-- password -->
+                <b-col cols="8">
+                  <b-form-group>
+                    <div class="d-flex justify-content-between">
+                      <label for="login-password">Password</label>
+                    </div>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Password"
+                      vid="password"
+                      rules="required"
+                    >
+                      <b-input-group
+                        class="input-group-merge"
+                        :class="errors.length > 0 ? 'is-invalid':null"
+                      >
+                        <b-form-input
+                          id="login-password"
+                          v-model="userPassword"
+                          :state="errors.length > 0 || submitErrors.password ? false:null"
+                          class="form-control-merge"
+                          :type="passwordFieldType"
+                          name="login-password"
+                        />
+                        <b-input-group-append is-text>
+                          <feather-icon
+                            class="cursor-pointer"
+                            :icon="passwordToggleIcon"
+                            @click="togglePasswordVisibility"
+                          />
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small class="text-danger">{{ errors[0] || submitErrors.password }}</small>
+                    </validation-provider>
+                  </b-form-group>
+
+                </b-col>
+
+                <!-- checkbox -->
+                <b-col cols="12">
+                  <b-form-group>
+                    <b-form-checkbox
+                      v-model="agree"
+                    >
+                      Saya setuju dengan syarat dan ketentuan Kompship
+                    </b-form-checkbox>
+                  </b-form-group>
+                </b-col>
+
+                <!-- submit -->
+                <b-col cols="12">
+                  <b-col md="6">
+                    <div class="demo-inline-spacing">
+                      <b-button
+                        type="submit"
+                        variant="primary"
+                        block
+                        :disabled="invalid || loading"
+                      >
+                        <b-spinner
+                          v-if="loading"
+                          small
+                        />
+                        Daftar
+                      </b-button>
+                    </div>
+                  </b-col>
+                </b-col>
+              </b-row>
+            </b-form>
+          </validation-observer>
+
         </b-col>
       </b-col>
     </b-col>
@@ -107,6 +155,9 @@
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import { required, email } from '@validations'
 import {
   BCol,
   BNavbarBrand,
@@ -114,10 +165,12 @@ import {
   BRow,
   BFormGroup,
   BFormInput,
+  BInputGroup,
+  BInputGroupAppend,
   BFormCheckbox,
   BForm,
   BButton,
-  // BCard,
+  BSpinner,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
@@ -129,13 +182,48 @@ export default {
     BRow,
     BFormGroup,
     BFormInput,
+    BInputGroup,
+    BInputGroupAppend,
     BFormCheckbox,
     BForm,
     BButton,
-    // BCard,
+    ValidationObserver,
+    ValidationProvider,
+    BSpinner,
   },
   directives: {
     Ripple,
+  },
+  mixins: [togglePasswordVisibility],
+  data() {
+    return {
+      agree: '',
+      fullname: '',
+      userEmail: '',
+      userPassword: '',
+      loading: false,
+
+      submitErrors: '',
+
+      required,
+      email,
+    }
+  },
+  computed: {
+    passwordToggleIcon() {
+      return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+    },
+  },
+  methods: {
+    login() {
+      console.log(this.fullname)
+      console.log(this.userEmail)
+      console.log(this.userPassword)
+      if (this.agree === '') {
+        this.agree = false
+      }
+      console.log(this.agree)
+    },
   },
 }
 </script>
