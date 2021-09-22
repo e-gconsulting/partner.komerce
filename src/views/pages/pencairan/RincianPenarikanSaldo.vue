@@ -13,6 +13,7 @@
                   variant="primary"
                   size="sm"
                   class="mr-50 btn-custom"
+                  @click="$router.go(-1)"
                 >
                   <feather-icon
                     size="2x"
@@ -160,60 +161,94 @@
             <b-col
               lg="12"
             >
-              <b-table-simple responsive>
-                <b-thead>
-                  <b-tr>
-                    <b-th>Nama</b-th>
-                    <b-th>Nama Bank</b-th>
-                    <b-th>No Rekening</b-th>
-                    <b-th>Nominal</b-th>
-                    <b-th>Status</b-th>
-                  </b-tr>
-                </b-thead>
-                <b-tbody>
-                  <b-tr
-                    v-for="row in rowsTable"
-                    :key="row.userId"
-                  >
-                    <b-td
-                      class="font-weight-bolder"
-                    >
-                      <span>
-                        {{ row.name }}
-                      </span>
-                      <br>
-                      <span>
-                        {{ row.email }}
-                      </span>
-                    </b-td>
-                    <b-td>
-                      {{ row.bankName }}
-                    </b-td>
-                    <b-td>{{ row.bankNo }}</b-td>
-                    <b-td
-                      class="font-weight-bolder"
-                    >
-                      {{ row.nominal }}
-                    </b-td>
-                    <b-td
-                      style="cursor: pointer;"
-                    >
-                      <!-- <b-link
-                        :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: row.status.replace(' ','-') } }"
-                      > -->
-                      <span
-                        :class="colorStatus(row.status)"
-                      >
-                        {{ row.status }}
-                      </span>
-                      <!-- </b-link> -->
-                    </b-td>
-                  </b-tr>
-                </b-tbody>
-              </b-table-simple>
+              <b-table
+                striped
+                hover
+                responsive
+                :per-page="perPage"
+                :current-page="currentPage"
+                :items="items"
+                :busy="isLoadTable"
+                :fields="fields"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :sort-direction="sortDirection"
+                :filter="filter"
+                :filter-included-fields="filterOn"
+                @filtered="onFiltered"
+              >
+                <template #cell(status)="data">
+                  <b-badge :variant="status[1][data.value]">
+                    {{ status[0][data.value] }}
+                  </b-badge>
+                </template>
+                <!-- A virtual composite column -->
+                <template #cell(transreturn)="data">
+                  <b>
+                    {{ data.item.trans }}
+                  </b>
+                  <br>
+                  <span class="text-secondary">
+                    {{ data.item.trans_return }}
+                  </span>
+                </template>
+                <template #table-busy>
+                  <div class="text-center text-danger my-2">
+                    <b-spinner
+                      class="align-middle"
+                    />
+                    <strong>Loading...</strong>
+                  </div>
+                </template>
+              </b-table>
+            </b-col>
+            <b-col
+              cols="12"
+            >
+              <div class="d-flex justify-content-between">
+                <b-form-group
+                  class="mb-0"
+                >
+                  <label class="d-inline-block text-sm-left mr-0">Per page</label>
+                  <b-form-select
+                    id="perPageSelect"
+                    v-model="perPage"
+                    size="sm"
+                    :options="pageOptions"
+                    class="w-50"
+                  />
+                </b-form-group>
+                <b-pagination
+                  v-model="currentPage"
+                  :total-rows="totalRows"
+                  :per-page="perPage"
+                  align="center"
+                  size="sm"
+                  class="my-0"
+                />
+              </div>
             </b-col>
           </b-row>
 
+          <div class="d-flex justify-content-end mt-2">
+            <b-button
+              variant="outline-primary"
+              class="mr-1"
+            >
+              Review
+            </b-button>
+            <b-button
+              variant="outline-warning"
+              class="mr-1"
+            >
+              Transfer Manual
+            </b-button>
+            <b-button
+              variant="primary"
+            >
+              Transfer Sekarang
+            </b-button>
+          </div>
         </b-card-body>
       </b-card>
     </div>
@@ -236,14 +271,18 @@ import {
   BCol,
   BCard,
   // BFormInput,
-  // BFormGroup,
+  BFormGroup,
   // BDropdownForm,
-  BTableSimple,
-  BThead,
-  BTbody,
-  BTh,
-  BTr,
-  BTd,
+  BBadge,
+  // BAvatar,
+  BTable,
+  BPagination,
+  // BTableSimple,
+  // BThead,
+  // BTbody,
+  // BTh,
+  // BTr,
+  // BTd,
   // BInputGroup,
   // BInputGroupPrepend,
   // BDropdown,
@@ -251,7 +290,7 @@ import {
   BSpinner,
   BCardBody,
   BCardHeader,
-  // BFormSelect,
+  BFormSelect,
 } from 'bootstrap-vue'
 
 export default {
@@ -260,21 +299,25 @@ export default {
     BCol,
     BCard,
     // BFormInput,
-    BTableSimple,
-    BThead,
-    BTbody,
-    BTh,
-    BTr,
-    BTd,
+    BBadge,
+    // BAvatar,
+    BTable,
+    BPagination,
+    // BTableSimple,
+    // BThead,
+    // BTbody,
+    // BTh,
+    // BTr,
+    // BTd,
     // BInputGroup,
-    // BFormGroup,
+    BFormGroup,
     // BDropdownForm,
     // BInputGroupPrepend,
     // BDropdown,
     BButton,
     BSpinner,
     BCardBody,
-    // BFormSelect,
+    BFormSelect,
     BCardHeader,
   },
   filters: {
@@ -334,14 +377,95 @@ export default {
           status: 'Disetujui',
         },
       ],
+      isLoadTable: false,
+      perPage: 5,
+      pageOptions: [3, 5, 10],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: '',
+      },
+      fields: [
+        {
+          key: 'id',
+          label: 'Id',
+        },
+        {
+          key: 'tgl',
+          label: 'Tanggal',
+          sortable: true,
+        },
+        // A virtual column made up from two fields
+        {
+          key: 'transreturn',
+          label: 'Transaksi',
+        },
+        {
+          key: 'nom_trans',
+          label: 'Nilai Transaksi',
+        },
+        {
+          key: 'ongkir',
+          label: 'Ongkos Kirim',
+        },
+        {
+          key: 'cod_cost',
+          label: 'Biaya COD',
+        },
+        {
+          key: 'saldo',
+          label: 'Saldo',
+        },
+      ],
+      items: [
+        {
+          id: 1,
+          tgl: '12-08-2021',
+          trans: 'Transfer Bank',
+          trans_return: 'Return',
+          nom_trans: 'Rp100.000',
+          ongkir: 'Rp7.500',
+          ongkir_return: 'Rp3.500',
+          cod_cost: 'Rp2.500',
+          saldo: '+Rp89.700',
+        },
+        {
+          id: 2,
+          tgl: '12-02-2022',
+          trans: 'Transfer Bank',
+          trans_return: 'Return',
+          nom_trans: 'Rp100.000',
+          ongkir: 'Rp7.500',
+          ongkir_return: 'Rp3.500',
+          cod_cost: 'Rp2.500',
+          saldo: '-Rp7.500',
+        },
+      ],
     }
+  },
+  computed: {
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => ({ text: f.label, value: f.key }))
+    },
   },
   mounted() {
     this.loadDataAwal = false
+    // Set the initial number of items
+    this.totalRows = this.items.length
     //
   },
   created() {
-    // this.fetchData()
+    this.fetchData()
     // get data tabel detail pencairan
     // get data for select option status
   },
@@ -365,6 +489,41 @@ export default {
           break
       }
       return classStatusColor
+    },
+    info(item, index, button) {
+      this.infoModal.title = `Row index: ${index}`
+      this.infoModal.content = JSON.stringify(item, null, 2)
+      this.$root.$emit('bv::show::modal', this.infoModal.id, button)
+    },
+    resetInfoModal() {
+      this.infoModal.title = ''
+      this.infoModal.content = ''
+    },
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
+    async fetchData() {
+      this.isLoadTable = true
+      const endpoint = 'https://jsonplaceholder.typicode.com/posts'
+      this.$http.get(endpoint)
+        .then(data => {
+          const newParseData = data.data.map(x => {
+            const dt = {
+              title: x.title,
+              body: x.body.substring(0, 15),
+            }
+            return dt
+          })
+          return newParseData
+        })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.isLoadTable = false
+        })
     },
   },
 }
