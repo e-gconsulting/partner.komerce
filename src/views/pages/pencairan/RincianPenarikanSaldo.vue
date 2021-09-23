@@ -228,29 +228,144 @@
                 />
               </div>
             </b-col>
+            <b-col
+              v-if="catatanReview !== ''"
+              lg="12"
+            >
+              <div class="catatan-review p-1 mt-1">
+                <h4
+                  class="mb-2"
+                >
+                  Catatan :
+                </h4>
+                <p>
+                  {{ catatanReview }}
+                </p>
+              </div>
+            </b-col>
           </b-row>
 
           <div class="d-flex justify-content-end mt-2">
             <b-button
-              variant="outline-primary"
-              class="mr-1"
+              v-b-modal.modal-review
+              variant="outline-danger"
+              class="mr-1 btn-custom-bottom"
             >
               Review
             </b-button>
             <b-button
-              variant="outline-warning"
-              class="mr-1"
+              variant="outline-primary"
+              class="mr-1 btn-custom-bottom"
+              to="/pencairan/upload-bukti-transfer"
+              exact
             >
               Transfer Manual
             </b-button>
             <b-button
+              v-b-modal.modal-transfer-sekarang
               variant="primary"
+              class="btn-custom-bottom"
             >
               Transfer Sekarang
             </b-button>
           </div>
         </b-card-body>
       </b-card>
+      <b-modal
+        id="modal-review"
+        ref="modal-review"
+        ok-title="Selesai"
+        cancel-title="Batal"
+        centered
+        hide-header-close
+        size="lg"
+        title="Buat Catatan Penarikan"
+        @show="resetModalReview"
+      >
+        <div>
+          <form
+            ref="form-review"
+            @submit.stop.prevent="handleSubmitReview"
+          >
+            <b-form-group
+              label=""
+              label-for="catatan-penarikan-textarea"
+              invalid-feedback="Silahkan isi catatan"
+              :state="catatanReviewState"
+            >
+              <b-form-textarea
+                id="catatan-penarikan-textarea"
+                v-model="catatanReview"
+                debounce="300"
+                placeholder="Berikan catatan kamu untuk partner dalam penarikan"
+                rows="8"
+                :state="catatanReviewState"
+                required
+              />
+            </b-form-group>
+          </form>
+        </div>
+        <template #modal-footer>
+          <div class="w-100 d-flex justify-content-end">
+            <b-button
+              variant="outline-primary"
+              class="mr-1 btn-custom-footer-modal text-center"
+              @click="resetModalReview"
+            >
+              Batal
+            </b-button>
+            <b-button
+              variant="primary"
+              class="btn-custom-footer-modal text-center"
+              @click="handleOkReview"
+            >
+              Selesai
+            </b-button>
+          </div>
+        </template>
+      </b-modal>
+
+      <b-modal
+        id="modal-transfer-sekarang"
+        ref="modal-transfer-sekarang"
+        centered
+        hide-header-close
+        hide-footer
+        size="md"
+        @show="resetModalReview"
+      >
+        <div class="text-center">
+          <div class="pt-3 transfersekarang-wrapper">
+            <span
+              class="text-24-bold"
+              style="color: #222222;"
+            >
+              Apakah kamu yakin ingin mentransfer nominal penarikan saldo?
+            </span>
+            <span
+              class="text-16-normal"
+              style="color: #222222;"
+            >
+              Pilih jawaban anda sekarang!
+            </span>
+            <b-button
+              variant="primary"
+              class="btn-custom-footer-transfer-skrng text-center"
+              @click="handleOkTransNow"
+            >
+              Yakin
+            </b-button>
+            <b-button
+              variant="outline-primary"
+              class="mr-1 btn-custom-footer-transfer-skrng text-center"
+              style="border-color: transparent;"
+              @click="resetModalTransNow"
+            >
+              Tidak
+            </b-button>
+          </div>
+        </div>
+      </b-modal>
     </div>
 
     <div
@@ -270,6 +385,8 @@ import {
   BRow,
   BCol,
   BCard,
+  BModal,
+  BFormTextarea,
   // BFormInput,
   BFormGroup,
   // BDropdownForm,
@@ -298,6 +415,8 @@ export default {
     BRow,
     BCol,
     BCard,
+    BModal,
+    BFormTextarea,
     // BFormInput,
     BBadge,
     // BAvatar,
@@ -377,6 +496,8 @@ export default {
           status: 'Disetujui',
         },
       ],
+      catatanReview: '',
+      catatanReviewState: null,
       isLoadTable: false,
       perPage: 5,
       pageOptions: [3, 5, 10],
@@ -458,6 +579,14 @@ export default {
         .map(f => ({ text: f.label, value: f.key }))
     },
   },
+  watch: {
+    catatanReview: {
+      immediate: true,
+      handler() {
+        this.fetchDataCatatanReview()
+      },
+    },
+  },
   mounted() {
     this.loadDataAwal = false
     // Set the initial number of items
@@ -470,6 +599,50 @@ export default {
     // get data for select option status
   },
   methods: {
+    fetchDataCatatanReview() {
+      // calling api for catatan review
+    },
+    checkFormValidity() {
+      const valid = this.$refs['form-review'].checkValidity()
+      this.catatanReviewState = valid
+      return valid
+    },
+    resetModalReview() {
+      this.catatanReview = ''
+      this.catatanReviewState = null
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-review')
+      })
+    },
+    handleOkReview(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault()
+      // Trigger submit handler
+      this.handleSubmitReview()
+    },
+    handleSubmitReview() {
+      // Exit when the form isn't valid
+      if (!this.checkFormValidity()) {
+        return
+      }
+      // calling api for submit review
+      // then hide modal
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-review')
+      })
+    },
+    resetModalTransNow() {
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-review')
+      })
+    },
+    handleOkTransNow() {
+      // Trigger submit handler calling api for transfer
+      // hide modal
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-review')
+      })
+    },
     colorStatus(status) {
       let classStatusColor = ''
       switch (status) {
@@ -556,6 +729,24 @@ export default {
   width: 56px;
   height: 56px;
 }
+.btn-custom-bottom{
+  padding: 16px 24px;
+}
+.btn-custom-footer-modal{
+  width: 275px;
+  height: 56px;
+}
+.transfersekarang-wrapper{
+  display: grid;
+  margin: 0px 16px 52px;
+  justify-items: center;
+  grid-gap: 20px 0px;
+}
+.btn-custom-footer-transfer-skrng{
+  width: 274px;
+  height: 56px;
+  border-radius: 12px;
+}
 .table-custom{
   border: none;
 }
@@ -564,6 +755,11 @@ td{
 }
 .td-custom{
   width: 200px;
+}
+.catatan-review{
+  height: 127px;
+  border: 1px solid #C4C4C4;
+  border-radius: 12px;
 }
 .text-bukti-transfer{
   font-weight: 600;

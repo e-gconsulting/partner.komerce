@@ -338,9 +338,17 @@ body {
   letter-spacing: 0.5px;
   color: #444444;
 }
-.text-18-normal{
+.text-16-normal{
   font-style: normal;
-  font-weight: normal;
+  font-weight: 500;
+  font-size: 16px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #444444;
+}
+.text-16-bld{
+  font-style: normal;
+  font-weight: 600;
   font-size: 16px !important;
   line-height: 150%;
   letter-spacing: 0.5px;
