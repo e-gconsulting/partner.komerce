@@ -7,6 +7,11 @@ export default {
   resetPasswordEndpoint: '/forget_password',
   logoutEndpoint: '/logout',
 
+  // Komship
+  registerKomshipEndpoint: '/v1/register',
+  loginKomshipEndpoint: '/v1/login',
+  logoutKomshipEndpoint: '/v1/logout',
+
   // This will be prefixed in authorization header with token
   // e.g. Authorization: Bearer <token>
   tokenType: 'Bearer',

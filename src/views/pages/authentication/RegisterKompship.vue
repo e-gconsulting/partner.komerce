@@ -105,6 +105,42 @@
                   </b-form-group>
 
                 </b-col>
+                <b-col cols="8">
+                  <b-form-group>
+                    <div class="d-flex justify-content-between">
+                      <label for="login-password">Konfirmasi Password</label>
+                    </div>
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Password"
+                      vid="password"
+                      rules="required"
+                    >
+                      <b-input-group
+                        class="input-group-merge"
+                        :class="errors.length > 0 ? 'is-invalid':null"
+                      >
+                        <b-form-input
+                          id="login-password-konfirm"
+                          v-model="userPassword"
+                          :state="errors.length > 0 || submitErrors.password ? false:null"
+                          class="form-control-merge"
+                          :type="passwordFieldType"
+                          name="login-password"
+                        />
+                        <b-input-group-append is-text>
+                          <feather-icon
+                            class="cursor-pointer"
+                            :icon="passwordToggleIcon"
+                            @click="togglePasswordVisibility"
+                          />
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small class="text-danger">{{ errors[0] || submitErrors.password }}</small>
+                    </validation-provider>
+                  </b-form-group>
+
+                </b-col>
 
                 <!-- checkbox -->
                 <b-col cols="12">
@@ -158,6 +194,7 @@
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
+import useJwt from '@/auth/jwt/useJwt'
 import {
   BCol,
   BNavbarBrand,
@@ -207,6 +244,8 @@ export default {
 
       required,
       email,
+
+      data: [],
     }
   },
   computed: {
@@ -223,6 +262,47 @@ export default {
         this.agree = false
       }
       console.log(this.agree)
+      this.$refs.loginForm.validate().then(success => {
+        if (success) {
+          this.loading = true
+          this.error = ''
+
+          useJwt.registerKomship({
+            full_name: this.fullname,
+            email: this.userEmail,
+            password: this.userPassword,
+            password_confirmation: this.userPassword,
+          })
+            .then(response => {
+              if (response.data.status === false) {
+                this.error = response.data.message
+                this.loading = false
+              } else {
+                this.$router.push({ name: 'auth-login' })
+
+                this.$swal({
+                  title: 'Pendaftaran berhasil',
+                  text: 'Harap periksa email anda untuk verifikasi akun Anda.',
+                  icon: 'success',
+                  confirmButtonText: 'Mengerti',
+                  customClass: {
+                    confirmButton: 'btn btn-primary',
+                  },
+                })
+              }
+            }).catch(error => {
+              this.loading = false
+
+              if (error.response.status === 422) {
+                this.submitErrors = Object.fromEntries(
+                  Object.entries(error.response.data.data).map(
+                    ([key, value]) => [key, value[0]],
+                  ),
+                )
+              }
+            })
+        }
+      })
     },
   },
 }

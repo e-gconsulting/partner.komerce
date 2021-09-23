@@ -115,6 +115,7 @@
               <b-button
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="outline-info"
+                @click="tesAdd"
               >
                 <feather-icon
                   icon="PlusIcon"
@@ -382,6 +383,11 @@ export default {
         },
       ],
     }
+  },
+  methods: {
+    tesAdd() {
+      console.log('tes')
+    },
   },
 }
 </script>

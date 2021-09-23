@@ -106,6 +106,14 @@ export default class JwtService {
     return this.axiosIns.post(this.jwtConfig.registerPartnerEndpoint, ...args)
   }
 
+  registerKomship(...args) {
+    return this.axiosIns.post(this.jwtConfig.registerKomshipEndpoint, ...args)
+  }
+
+  loginKomship(...args) {
+    return this.axiosIns.post(this.jwtConfig.loginKomshipEndpoint, ...args)
+  }
+
   registerTalent(...args) {
     return this.axiosIns.post(this.jwtConfig.registerTalentEndpoint, ...args)
   }

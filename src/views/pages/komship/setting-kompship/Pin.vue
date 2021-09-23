@@ -38,6 +38,7 @@
         <b-button
           v-b-modal.modal-confirm-create-new-pin
           variant="primary"
+          @click="cekCreate"
         >
           Buat PIN
         </b-button>
@@ -594,15 +595,27 @@ export default {
   directives: {
     'b-modal': VBModal,
   },
+  data() {
+    return {
+      dataPin: null,
+    }
+  },
   mounted() {
     this.showModal()
   },
   methods: {
+    cekCreate() {
+      console.log(this.$http.post('/v1/pin/store').then(response => {
+        const { data } = response
+        console.log(data)
+      }))
+    },
     onChange(v) {
       console.log('onChange ', v)
     },
     onComplete(v) {
       console.log('onComplete ', v)
+      this.dataPin = v
     },
     showModal() {
       this.$refs['create-pin'].show()
