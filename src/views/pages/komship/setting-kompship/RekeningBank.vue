@@ -33,9 +33,14 @@
         />
       </b-col>
 
+      <b-col class="text-center mt-1">
+        <small class="text-danger">{{ errorPin }}</small>
+      </b-col>
+
       <b-col class="d-flex justify-content-center mt-1">
         <b-button
           variant="primary"
+          @click="confirmPin"
         >
           Konfirmasi
         </b-button>
@@ -267,6 +272,7 @@
 
 <script>
 import CodeInput from 'vue-verification-code-input'
+import useJwt from '@/auth/jwt/useJwt'
 import {
   BRow,
   BCol,
@@ -280,6 +286,7 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
+import axios2 from './baseUrl2'
 
 export default {
   components: {
@@ -298,6 +305,14 @@ export default {
     'b-modal': VBModal,
     Ripple,
   },
+  data() {
+    return {
+      dataPin: null,
+      errorPin: '',
+
+      loadingSubmit: false,
+    }
+  },
   mounted() {
     this.showModal()
   },
@@ -306,24 +321,29 @@ export default {
       console.log('onChange ', v)
     },
     onComplete(v) {
+      this.dataPin = v
       console.log('onComplete ', v)
     },
     showModal() {
       this.$refs['modal-pin'].show()
     },
-    tes() {
-      this.$swal({
-        title: 'Verifikasi PIN',
-        text: 'Mohon verifikasi identitas kamu dengan memasukan PIN',
-        icon: 'warning',
-        showCancelButton: true,
-        cancelButtonText: 'Kembali',
-        confirmButtonText: 'Konfirmasi',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-primary ml-1',
-        },
-        buttonsStyling: false,
+    hideModal() {
+      this.$refs['modal-pin'].hide()
+    },
+    confirmPin() {
+      axios2.post('/v1/pin/auth', {
+        pin: this.dataPin,
+      },
+      {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        console.log(data)
+        if (data.is_set === true) {
+          this.hideModal()
+        } else {
+          this.errorPin = 'PIN tidak valid'
+        }
       })
     },
   },

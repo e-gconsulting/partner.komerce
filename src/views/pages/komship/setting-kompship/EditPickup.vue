@@ -2,7 +2,7 @@
   <b-card>
 
     <h4>
-      <strong>Pengaturan Alamat Penjemputan</strong>
+      <strong>Edit Alamat Penjemputan</strong>
     </h4>
 
     <b-row class="mt-3">

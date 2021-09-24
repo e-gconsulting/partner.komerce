@@ -157,7 +157,6 @@
 <script>
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import axios from 'axios'
 import {
   BRow,
   BCol,
@@ -246,19 +245,6 @@ export default {
       return this.sideImg
     },
   },
-  mounted() {
-    const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMGQyMzE4NTg0YWNmYTU4MGQxYjM1ZWM1NzczNTFlYThjYzY2ZTA4MjNhODdkMWZiODJlYjVlYWQxYTUxNzA1M2RhMjVmYTk0MGI2NzExMDEiLCJpYXQiOjE2MjczNjc3MjMsIm5iZiI6MTYyNzM2NzcyMywiZXhwIjoxNjU4OTAzNzIzLCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.Swq2EdjNWL7JrRZFu1Gh9x5ZHwo7jmCioZz4Z19IQB2rTIGUDyhkds276ZzPHh-pDwkrD2uEWhceOuXrKnlOwtvJOu3Kf3VymsabIKqJpb8e4dq76FWPbUD6k-WexL7QKQan9gH1LwoQey2nMKFi5hd7_3A9sFLRrQerqh3qugWdD7RqqYS3vYY9M3VqHf108w5iQa_GHkRx2KRv0PxRVRqofkTCBBf-Oc-kcvLkau8N6BVojkYDJ8Cl8uG5XcS0F1RjbNy6SuiuTyqq1BqaZmcasi87zwJEeuJSgdqBfnNch608impEBu9q_ON1kMIgK9LZvqL8_Uk1vP5qosUq39VgJj8qbFDpCKsKus6fjO78G-zeYbZ32D-s03QwPr9FkwoZXg_HaiyTDvsbTcgH63wU-Q7ycor8IgSKPsfkJN1OytohleJMWYOObiN-IKqKGbXnf85DnJrhZuOZB9tQdoq4fIXYx68LQgmiLSVemXUbHMtRmXbYWwAIFy3QexPRGtHxK8wCzqEH-whXh66RKBy31gf1Fu9wxHHEb95U_UfYYynbbDxapwurJHzgxUswdBWDNguNoAJZslZfwVMguAmgtylFvNYzIlEWkENTk5fcTNOJsmVWDYuO-QJyWwCStB7_a7jcPFHLqcs7pwu9cvV-X1__x0BgRD6E9VBfYQg'
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-    axios.post(
-      'https://devinternal.komerce.id/api/user',
-      config,
-    ).then(response => {
-      const { data } = response
-      console.log(data)
-    })
-  },
   methods: {
     login() {
       this.$refs.loginForm.validate().then(success => {
@@ -269,11 +255,10 @@ export default {
           this.userId = ''
 
           useJwt
-            .loginKomship({
+            .login({
               username_email: this.usernameEmail,
               password: this.password,
               login_from: 'website',
-              fcm_token: 'fMFJVmT_vCk:APA91bEwLh3_5dGKDFJI9M4ISZrqD9sOuN_mtYKxj85ZyaLaxo1sBIi9Iq8X5ZUieX5GyGDfkl_woikKVfJCp5j-U7MxNWDE5GlNg8E3IpnsP7GQARlsbcMsLmiM9eMD5xXYTSGXUUKS',
             })
             .then(response => {
               if (response.data.status === false) {
@@ -294,7 +279,7 @@ export default {
       this.userId = userData.id
 
       this.$http
-        .post('/v1/my-profile', {
+        .post('/user/get-profile', {
           user_id: this.userId,
         })
         .then(async response => {

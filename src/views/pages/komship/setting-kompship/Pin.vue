@@ -38,7 +38,6 @@
         <b-button
           v-b-modal.modal-confirm-create-new-pin
           variant="primary"
-          @click="cekCreate"
         >
           Buat PIN
         </b-button>
@@ -80,7 +79,7 @@
       <b-col class="d-flex justify-content-center mt-1">
         <b-button
           variant="primary"
-          @click="tesCreate()"
+          @click="confirmCreatePin"
         >
           Konfirmasi
         </b-button>
@@ -184,7 +183,7 @@
 
     </b-modal>
 
-    <!-- Modal New PIN -->
+    <!-- Modal Change New PIN -->
     <b-modal
       id="modal-new-pin"
       no-close-on-backdrop
@@ -572,6 +571,8 @@
 
 <script>
 import CodeInput from 'vue-verification-code-input'
+import useJwt from '@/auth/jwt/useJwt'
+// import axios from 'axios'
 import {
   BCard,
   BRow,
@@ -581,6 +582,7 @@ import {
   BModal,
   VBModal,
 } from 'bootstrap-vue'
+import axios2 from './baseUrl2'
 
 export default {
   components: {
@@ -602,13 +604,20 @@ export default {
   },
   mounted() {
     this.showModal()
+    // console.log(localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName))
+    console.log(useJwt.getToken())
   },
   methods: {
-    cekCreate() {
-      console.log(this.$http.post('/v1/pin/store').then(response => {
+    createPin() {
+      axios2.post('https://komshipdev.komerce.id/api/v1/pin/store', {
+        pin: this.dataPin,
+      },
+      {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response
         console.log(data)
-      }))
+      })
     },
     onChange(v) {
       console.log('onChange ', v)
@@ -633,18 +642,36 @@ export default {
         buttonsStyling: false,
       })
     },
-    tesCreate() {
-      this.$swal({
-        title: 'PIN Berhasil Dibuat',
-        text: 'Selamat kamu telah berhasil mengamankan saldo yang kamu miliki',
-        icon: 'success',
-        showCancelButton: false,
-        showConfirmButton: false,
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-primary ml-1',
-        },
-        buttonsStyling: false,
+    confirmCreatePin() {
+      axios2.get('https://komshipdev.komerce.id/api/v1/pin/check',
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response
+        console.log(data)
+        this.$swal({
+          title: 'PIN Berhasil Dibuat',
+          text: 'Selamat kamu telah berhasil mengamankan saldo yang kamu miliki',
+          icon: 'success',
+          showCancelButton: false,
+          showConfirmButton: false,
+          customClass: {
+            confirmButton: 'btn btn-primary',
+            cancelButton: 'btn btn-outline-primary ml-1',
+          },
+          buttonsStyling: false,
+        })
+      })
+    },
+    changePin() {
+      axios2.put('https://komshipdev.komerce.id/api/v1/pin/update', {
+        pin: this.dataPin,
+      },
+      {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response
+        console.log(data)
       })
     },
   },

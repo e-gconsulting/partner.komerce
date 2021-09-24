@@ -8,6 +8,7 @@ export default [
     meta: {
       name: pageName.singular,
       routeEdit: 'edit-pickup',
+      routeAdd: 'add-pickup',
       resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
@@ -29,10 +30,30 @@ export default [
       action: 'manage',
       breadcrumb: [
         {
-          text: pageName.plural,
+          text: pageName.singular,
         },
         {
           text: 'Edit',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/setting-kompship/pickup/add',
+    name: 'add-pickup',
+    component: () => import('@/views/pages/komship/setting-kompship/AddPickup.vue'),
+    meta: {
+      name: pageName.singular,
+      navActiveLink: 'kompship-pickup',
+      resource: 'Setting Komship',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: pageName.singular,
+        },
+        {
+          text: 'Add',
           active: true,
         },
       ],

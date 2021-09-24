@@ -2,13 +2,13 @@
   <b-card>
 
     <h4>
-      <strong>Pengaturan Alamat Penjemputan</strong>
+      <strong>Tambah Alamat Penjemputan</strong>
     </h4>
 
     <b-row class="mt-3">
       <b-col
         cols="10"
-        class="border"
+        class="border pb-1"
       >
 
         <b-row class="d-flex mt-50 mb-1">
@@ -16,24 +16,6 @@
             <h5>
               <strong>Alamat 1</strong>
             </h5>
-          </b-col>
-          <b-col
-            md="6"
-            class="d-flex justify-content-end align-items-center"
-          >
-            <span class="text-danger mr-50">
-              <strong>Alamat Utama</strong>
-            </span>
-            <b-button
-              variant="flat-dark"
-              class="btn-icon"
-              tag="router-link"
-              :to="{ name: $route.meta.routeEdit }"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
           </b-col>
         </b-row>
 
@@ -88,28 +70,47 @@
               </b-form-group>
             </b-col>
 
+            <b-col
+              md="10"
+            >
+              <b-form-group
+                label-cols-md="3"
+              >
+                <b-form-checkbox
+                  id="checkbox-2"
+                  name="checkbox-2"
+                  value="Remember_me"
+                >
+                  Jadikan sebagai alamat utama
+                </b-form-checkbox>
+              </b-form-group>
+            </b-col>
+
+            <!-- submit and reset -->
+            <b-col
+              md="12"
+              class="d-flex justify-content-end mt-2"
+            >
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                type="submit"
+                variant="outline-primary"
+                class="mr-1"
+              >
+                Hapus
+              </b-button>
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                type="reset"
+                variant="primary"
+                class="mr-1"
+              >
+                Simpan
+              </b-button>
+            </b-col>
+
           </b-row>
         </b-form>
-      </b-col>
-    </b-row>
-
-    <b-row class="mt-1">
-      <b-col md="10">
-        <div class="demo-inline-spacing">
-          <b-button
-            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-            block
-            variant="outline-primary"
-            tag="router-link"
-            :to="{ name: $route.meta.routeAdd }"
-          >
-            <feather-icon
-              icon="PlusIcon"
-              class="mr-50"
-            />
-            <span class="align-middle">Tambahkan Alamat</span>
-          </b-button>
-        </div>
       </b-col>
     </b-row>
 
@@ -127,6 +128,7 @@ import {
   BFormInput,
   BFormTextarea,
   BButton,
+  BFormCheckbox,
 } from 'bootstrap-vue'
 
 export default {
@@ -141,6 +143,7 @@ export default {
     BFormTextarea,
     vSelect,
     BButton,
+    BFormCheckbox,
   },
 
 }
