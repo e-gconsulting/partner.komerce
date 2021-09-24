@@ -36,10 +36,10 @@
               <span v-else>{{ data.value }}</span>
             </template>
             <template #cell(max_nominal_sharing_fee)="data">
-              <span v-if="data.item.sharing_fee_type == 'rp'">{{
+              <!-- <span v-if="data.item.sharing_fee_type == 'rp'">{{
                 data.value | rupiah
-              }}</span>
-              <span v-else>{{ data.value }}</span>
+              }}</span> -->
+              <span>{{ data.value | rupiah }}</span>
             </template>
             <template #cell(action)="data">
               <div>
