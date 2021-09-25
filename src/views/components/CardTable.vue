@@ -1,7 +1,10 @@
 <template>
   <b-row>
     <b-col cols="12">
-      <b-card :class="{ 'has-button-floating': hasActionCreate }" no-body>
+      <b-card
+        :class="{ 'has-button-floating': hasActionCreate }"
+        no-body
+      >
         <div class="card-header">
           <b-card-title>{{ $route.meta.name.plural }}</b-card-title>
 
@@ -21,13 +24,19 @@
               class="mr-50"
               @click="showFilter"
             >
-              <feather-icon icon="FilterIcon" class="mr-50" />
+              <feather-icon
+                icon="FilterIcon"
+                class="mr-50"
+              />
               Filter
             </b-button>
 
             <!-- filter -->
             <b-form-group class="mb-0">
-              <b-input-group class="input-group-merge" size="sm">
+              <b-input-group
+                class="input-group-merge"
+                size="sm"
+              >
                 <b-input-group-prepend is-text>
                   <feather-icon icon="SearchIcon" />
                 </b-input-group-prepend>
@@ -78,7 +87,10 @@
                   v-if="data.item.photo_profile_url !== undefined"
                   cols="auto"
                 >
-                  <b-avatar :src="data.item.photo_profile_url" class="mr-50" />
+                  <b-avatar
+                    :src="data.item.photo_profile_url"
+                    class="mr-50"
+                  />
                 </b-col>
                 <b-col class="d-flex align-items-center">
                   {{ data.value }}
@@ -87,14 +99,20 @@
             </template>
             <template #cell(name)="data">
               <b-form-row>
-                <b-col v-if="data.item.icon !== undefined" cols="auto">
+                <b-col
+                  v-if="data.item.icon !== undefined"
+                  cols="auto"
+                >
                   <b-avatar
                     :src="data.item.icon"
                     class="mr-50"
                     variant="light-secondary"
                     rounded="lg"
                   >
-                    <feather-icon v-if="!data.item.icon" icon="ImageIcon" />
+                    <feather-icon
+                      v-if="!data.item.icon"
+                      icon="ImageIcon"
+                    />
                   </b-avatar>
                 </b-col>
                 <b-col class="d-flex align-items-center">
@@ -108,7 +126,10 @@
                   v-if="data.item.photo_profile_url !== undefined"
                   cols="auto"
                 >
-                  <b-avatar :src="data.item.photo_profile_url" class="mr-50" />
+                  <b-avatar
+                    :src="data.item.photo_profile_url"
+                    class="mr-50"
+                  />
                 </b-col>
                 <b-col class="d-flex align-items-center">
                   {{ data.value }}
@@ -127,10 +148,16 @@
             </template>
             <!-- start admin fee components -->
             <template #cell(admin_fee_discount_type)="data">
-              <b-badge variant="success" v-if="data.value == 'rp'"
-                >Nominal Rupiah</b-badge
+              <b-badge
+                v-if="data.value == 'rp'"
+                variant="success"
+              >Nominal Rupiah</b-badge>
+              <b-badge
+                v-else
+                variant="primary"
               >
-              <b-badge variant="primary" v-else>Presentase %</b-badge>
+                Presentase %
+              </b-badge>
             </template>
             <template #cell(admin_fee_talent_admin_fee_discounts)="data">
               <b-button
@@ -181,9 +208,10 @@
               <span v-else>{{ data.value }}</span>
             </template>
             <template #cell(action)="data">
-              <span v-if="isDeleted(getId(data.item))" class="text-danger"
-                >Deleted</span
-              >
+              <span
+                v-if="isDeleted(getId(data.item))"
+                class="text-danger"
+              >Deleted</span>
               <div v-else>
                 <b-button
                   v-if="hasActionShow"
@@ -257,10 +285,16 @@
               class="mb-0"
             >
               <template #prev-text>
-                <feather-icon icon="ChevronLeftIcon" size="18" />
+                <feather-icon
+                  icon="ChevronLeftIcon"
+                  size="18"
+                />
               </template>
               <template #next-text>
-                <feather-icon icon="ChevronRightIcon" size="18" />
+                <feather-icon
+                  icon="ChevronRightIcon"
+                  size="18"
+                />
               </template>
             </b-pagination>
           </div>

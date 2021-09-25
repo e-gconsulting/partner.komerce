@@ -21,6 +21,7 @@
             class="ml-2"
           >
             <b-form-input
+              v-model="fullname"
               placeholder="Nama Lengkap"
             />
           </b-form-group>
@@ -33,6 +34,7 @@
             class="ml-2"
           >
             <b-form-input
+              v-model="username"
               placeholder="Username"
             />
           </b-form-group>
@@ -40,12 +42,12 @@
 
         <b-col cols="8">
           <b-form-group
-            label="Nama Lengkap"
+            label="Jenis Kelamin"
             label-cols-md="3"
             class="ml-2"
           >
             <b-form-radio-group
-              v-model="selected"
+              v-model="jenisKelamin"
               :options="options"
               class="demo-inline-spacing mb-1"
               value-field="value"
@@ -62,6 +64,7 @@
             class="ml-2"
           >
             <b-form-input
+              v-model="noHP"
               placeholder="Nomer HP"
             />
           </b-form-group>
@@ -74,6 +77,7 @@
             class="ml-2"
           >
             <b-form-input
+              v-model="email"
               placeholder="Email"
             />
           </b-form-group>
@@ -86,7 +90,7 @@
             class="ml-2"
           >
             <b-form-textarea
-              id="textarea-default"
+              v-model="address"
               placeholder="Alamat"
               rows="3"
             />
@@ -109,6 +113,16 @@
             class="ml-2"
           >
             <label for="uploadLogo">
+              <b-avatar
+                :src="logoFile"
+                variant="light-primary"
+                size="50px"
+              />
+            </label>
+            <label
+              v-if="logoFile === null"
+              for="uploadLogo"
+            >
               <feather-icon
                 icon="PlusCircleIcon"
                 size="50"
@@ -128,6 +142,7 @@
             class="ml-2"
           >
             <b-form-input
+              v-model="nameBusiness"
               placeholder="Nama Bisnis"
             />
           </b-form-group>
@@ -204,9 +219,12 @@ import {
   BFormRadioGroup,
   BFormTextarea,
   BFormFile,
+  BAvatar,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
+import useJwt from '@/auth/jwt/useJwt'
+import axios2 from './baseUrl2'
 
 export default {
   components: {
@@ -221,18 +239,71 @@ export default {
     BFormTextarea,
     vSelect,
     BFormFile,
+    BAvatar,
   },
   directives: {
     Ripple,
   },
   data() {
     return {
-      selected: 1,
+      fullname: '',
+      username: '',
+      jenisKelamin: null,
+      noHP: '',
+      email: '',
+      address: '',
+      logoFile: null,
+      nameBusiness: '',
+      location: '',
+      sektorBusiness: '',
+      typeBusiness: '',
+
       options: [
-        { text: 'Laki-laki', value: 1 },
-        { text: 'Perempuan' },
+        {
+          text: 'Laki-laki', value: 'Laki-laki',
+        },
+        {
+          text: 'Perempuan', value: 'Perempuan',
+        },
       ],
     }
+  },
+  mounted() {
+    axios2.post('/v1/my-profile',
+      {
+
+      },
+      {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+      const { data } = response
+      console.log(data)
+    })
+    this.loadProfile()
+  },
+  methods: {
+    loadProfile() {
+      axios2.post('/v1/my-profile',
+        {
+
+        },
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response.data
+        this.fullname = data.user_fullname
+        this.username = data.user_name
+        this.jenisKelamin = data.user_gender
+        this.noHP = data.user_phone
+        this.email = data.user_email
+        this.address = data.user_address
+        this.logoFile = data.user_img
+        // this.nameBusiness =
+        // this.location =
+        // this.sektorBusiness =
+        // this.typeBusiness =
+      })
+    },
   },
 
 }
