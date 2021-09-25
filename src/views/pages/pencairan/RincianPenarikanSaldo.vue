@@ -332,6 +332,7 @@
         hide-header-close
         hide-footer
         size="md"
+        no-stacking
         @show="resetModalReview"
       >
         <div class="text-center">
@@ -366,6 +367,71 @@
           </div>
         </div>
       </b-modal>
+
+      <b-modal
+        id="modal-transfer-berhasil"
+        ref="modal-transfer-berhasil"
+        centered
+        hide-header-close
+        hide-footer
+        size="md"
+      >
+        <div class="text-center">
+          <div class="pt-3 transfersekarang-wrapper">
+            <b-img
+              :src="require('@/assets/images/elements/transfer-success.png')"
+              height="142"
+              width="150"
+              alt="Transfer-saldo-berhasil"
+            />
+            <span
+              class="text-24-bold"
+              style="font-seze: 20px;color: #222222;"
+            >
+              Transfer Saldo Berhasil!
+            </span>
+            <b-button
+              variant="primary"
+              class="btn-custom-footer-transfer-berhasil text-center"
+              @click="handleOkTransBerhasil"
+            >
+              Oke
+            </b-button>
+          </div>
+        </div>
+      </b-modal>
+      <b-modal
+        id="modal-transfer-gagal"
+        ref="modal-transfer-gagal"
+        centered
+        hide-header-close
+        hide-footer
+        size="md"
+      >
+        <div class="text-center">
+          <div class="pt-3 transfersekarang-wrapper">
+            <b-img
+              :src="require('@/assets/images/elements/transfer-fail.png')"
+              height="142"
+              width="150"
+              alt="Transfer-saldo-berhasil"
+            />
+            <span
+              class="text-24-bold"
+              style="font-seze: 20px;color: #222222;"
+            >
+              Transfer Saldo Gagal!
+            </span>
+            <b-button
+              variant="primary"
+              class="btn-custom-footer-transfer-berhasil text-center"
+              @click="handleOkTransGagal"
+            >
+              Oke
+            </b-button>
+          </div>
+        </div>
+      </b-modal>
     </div>
 
     <div
@@ -387,7 +453,7 @@ import {
   BCard,
   BModal,
   BFormTextarea,
-  // BFormInput,
+  BImg,
   BFormGroup,
   // BDropdownForm,
   BBadge,
@@ -412,6 +478,7 @@ import {
 
 export default {
   components: {
+    BImg,
     BRow,
     BCol,
     BCard,
@@ -638,9 +705,21 @@ export default {
     },
     handleOkTransNow() {
       // Trigger submit handler calling api for transfer
+      // if success display modal transfer berhasil
+      // this.$bvModal.show('modal-transfer-berhasil')
+      // if fail display modal transfer fail
+      this.$bvModal.show('modal-transfer-gagal')
+    },
+    handleOkTransBerhasil() {
       // hide modal
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-transfer-sekarang')
+        this.$bvModal.hide('modal-transfer-berhasil')
+      })
+    },
+    handleOkTransGagal() {
+      // hide modal
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-transfer-gagal')
       })
     },
     colorStatus(status) {
@@ -744,6 +823,11 @@ export default {
 }
 .btn-custom-footer-transfer-skrng{
   width: 274px;
+  height: 56px;
+  border-radius: 12px;
+}
+.btn-custom-footer-transfer-berhasil{
+  width: 120px;
   height: 56px;
   border-radius: 12px;
 }
