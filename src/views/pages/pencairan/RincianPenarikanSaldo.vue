@@ -357,8 +357,8 @@
             </b-button>
             <b-button
               variant="outline-primary"
-              class="mr-1 btn-custom-footer-transfer-skrng text-center"
-              style="border-color: transparent;"
+              class="btn-custom-footer-transfer-skrng text-center"
+              style="border-color: unset;"
               @click="resetModalTransNow"
             >
               Tidak
@@ -633,14 +633,14 @@ export default {
     },
     resetModalTransNow() {
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-review')
+        this.$bvModal.hide('modal-transfer-sekarang')
       })
     },
     handleOkTransNow() {
       // Trigger submit handler calling api for transfer
       // hide modal
       this.$nextTick(() => {
-        this.$bvModal.hide('modal-review')
+        this.$bvModal.hide('modal-transfer-sekarang')
       })
     },
     colorStatus(status) {
