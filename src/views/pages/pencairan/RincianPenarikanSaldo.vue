@@ -539,6 +539,9 @@ export default {
   data() {
     return {
       loadDataAwal: true,
+      catatanReview: '',
+      catatanReviewState: null,
+      isLoadTable: false,
       rowsTable: [
         {
           userId: 1,
@@ -568,9 +571,6 @@ export default {
           status: 'Disetujui',
         },
       ],
-      catatanReview: '',
-      catatanReviewState: null,
-      isLoadTable: false,
       perPage: 5,
       pageOptions: [3, 5, 10],
       totalRows: 1,

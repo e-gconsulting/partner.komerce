@@ -11,7 +11,7 @@ export default [
   {
     path: '/pencairan/upload-bukti-transfer',
     name: 'cod-penarikan-upload-bukti-transfer',
-    component: () => import('@/views/pages/pencairan/UploadBuktiTranser'),
+    component: () => import('@/views/pages/pencairan/UploadBuktiTransfer'),
     meta: {
       navActiveLink: 'cod-pencairan',
       resource: 'Dashboard',
