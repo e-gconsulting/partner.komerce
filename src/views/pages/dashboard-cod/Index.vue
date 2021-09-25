@@ -1,31 +1,31 @@
 <template>
   <section id="dashboard-cod">
-    <b-row class="match-height mb-md-1">
-      <b-col>
-        <h3 class="mb-50 mb-md-1">
-          Dashboard
-        </h3>
-        <div>
-          <b-alert
-            v-if="alertshow"
-            show
-            variant="warning"
-            class="d-flex justify-content-between align-items-center px-1 wrapper-warning-pemintaan-saldo"
-          >
-            <span class="text-warning-pemintaan-saldo">
-              Anda masih memiliki permintaan penarikan saldo, segera cek sekarang!
-            </span>
-            <b-button
-              variant="gradient-warning"
-              class="btn-warning-pemintaan-saldo"
-            >
-              <span>11</span>
-            </b-button>
-          </b-alert>
-        </div>
-      </b-col>
-    </b-row>
     <div v-if="!loadDataAwal">
+      <b-row class="match-height mb-md-1">
+        <b-col>
+          <h3 class="mb-50 mb-md-1">
+            Dashboard
+          </h3>
+          <div>
+            <b-alert
+              v-if="alertshow"
+              show
+              variant="warning"
+              class="d-flex justify-content-between align-items-center px-1 wrapper-warning-pemintaan-saldo"
+            >
+              <span class="text-warning-pemintaan-saldo">
+                Anda masih memiliki permintaan penarikan saldo, segera cek sekarang!
+              </span>
+              <b-button
+                variant="gradient-warning"
+                class="btn-warning-pemintaan-saldo"
+              >
+                <span>11</span>
+              </b-button>
+            </b-alert>
+          </div>
+        </b-col>
+      </b-row>
       <b-row class="match-height">
         <b-col lg="6">
           <b-card no-body>
@@ -42,7 +42,7 @@
                     <b-button
                       variant="outline"
                       class="button-custom"
-                      @click="toPage('ekspedisi')"
+                      @click="toPage('/performa-ekspedisi')"
                     >
                       <feather-icon
                         icon="ChevronRightIcon"
@@ -166,7 +166,7 @@
                     <b-button
                       variant="outline"
                       class="button-custom"
-                      @click="toPage('partner')"
+                      @click="toPage('/pendapatan')"
                     >
                       <feather-icon
                         icon="ChevronRightIcon"
@@ -486,9 +486,8 @@ export default {
       return str.join('&')
     },
     toPage(params = '') {
-      console.log(params)
       // make sure to pass params on router base for changing page
-      this.$router.push('/')
+      this.$router.push(params)
     },
   },
 }

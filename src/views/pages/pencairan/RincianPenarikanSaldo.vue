@@ -137,14 +137,16 @@
               <div class="d-flex align-items-center">
                 <span class="text-16-normal">
                   Nominal Penarikan Saldo:
-                  <span class="text-16-normal font-weight-bolder">
-                    Rp5.000.000
-                  </span>
+                  <span
+                    ref="nominalPenarikanSaldo"
+                    class="text-16-normal font-weight-bolder"
+                  >Rp5.000.000</span>
                 </span>
                 <b-button
                   variant="outline-success"
                   size="sm"
                   class="btn-icon btn-custom-details"
+                  @click="handleCopyNominalPenarikanSaldo()"
                 >
                   <feather-icon icon="CopyIcon" />
                 </b-button>
@@ -475,6 +477,7 @@ import {
   BCardHeader,
   BFormSelect,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -505,6 +508,8 @@ export default {
     BCardBody,
     BFormSelect,
     BCardHeader,
+    // eslint-disable-next-line vue/no-unused-components
+    ToastificationContent,
   },
   filters: {
     // capitalize: value => {
@@ -666,6 +671,31 @@ export default {
     // get data for select option status
   },
   methods: {
+    selectText(element) {
+      let range
+      if (document.selection) {
+        // IE
+        range = document.body.createTextRange()
+        range.moveToElementText(element)
+        range.select()
+      } else if (window.getSelection) {
+        range = document.createRange()
+        range.selectNode(element)
+        window.getSelection().removeAllRanges()
+        window.getSelection().addRange(range)
+      }
+    },
+    handleCopyNominalPenarikanSaldo() {
+      this.selectText(this.$refs.nominalPenarikanSaldo)
+      document.execCommand('copy')
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: 'Success copy to clipboard',
+          icon: 'BellIcon',
+        },
+      })
+    },
     fetchDataCatatanReview() {
       // calling api for catatan review
     },
