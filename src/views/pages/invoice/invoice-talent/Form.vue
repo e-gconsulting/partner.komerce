@@ -212,7 +212,7 @@
                 :state="errors.length > 0 || submitErrors.name ? false : null"
                 class="mt-1 form-control"
                 :disabled="disabledInput"
-                @change.native="talentChanged(index)"
+                @blur.native="talentChanged(index)"
               />
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
