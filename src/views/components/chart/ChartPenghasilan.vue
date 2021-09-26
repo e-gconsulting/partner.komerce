@@ -1,8 +1,8 @@
 <template>
   <canvas
     ref="myChart"
-    width="500"
-    height="350"
+    :width="width"
+    :height="height"
   />
 </template>
 
@@ -11,6 +11,14 @@ import { Chart } from 'chart.js'
 
 export default {
   name: 'ChartPenghasilan',
+  props: {
+    width: {
+      default: 500,
+    },
+    height: {
+      default: 350,
+    },
+  },
   data() {
     return {
       chart: null,
