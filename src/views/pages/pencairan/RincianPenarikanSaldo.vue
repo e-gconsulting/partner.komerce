@@ -335,7 +335,6 @@
         hide-footer
         size="md"
         no-stacking
-        @show="resetModalReview"
       >
         <div class="text-center">
           <div class="pt-3 transfersekarang-wrapper">

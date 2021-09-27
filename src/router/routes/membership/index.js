@@ -9,6 +9,16 @@ export default [
     },
   },
   {
+    path: '/data-partner/:id/detail',
+    name: 'cod-data-partner-detail',
+    component: () => import('@/views/pages/membership/data-partner/Detail'),
+    meta: {
+      navActiveLink: 'cod-data-partner',
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
     path: '/arsip-partner',
     name: 'cod-arsip-partner',
     component: () => import('@/views/pages/membership/arsip-partner/Index'),
