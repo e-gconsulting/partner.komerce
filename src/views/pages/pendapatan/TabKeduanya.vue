@@ -35,13 +35,8 @@
         :filter-included-fields="filterOn"
         @filtered="onFiltered"
       >
-        <template #cell(status)="data">
-          <b-badge :variant="status[1][data.value]">
-            {{ status[0][data.value] }}
-          </b-badge>
-        </template>
         <!-- A virtual composite column -->
-        <template #cell(transreturn)="data">
+        <!-- <template #cell(transreturn)="data">
           <b>
             {{ data.item.trans }}
           </b>
@@ -49,7 +44,7 @@
           <span class="text-secondary">
             {{ data.item.trans_return }}
           </span>
-        </template>
+        </template> -->
         <template #table-busy>
           <div class="text-center text-danger my-2">
             <b-spinner
@@ -65,7 +60,7 @@
 
 <script>
 import {
-  BBadge,
+  // BBadge,
   BTable,
   BSpinner,
 } from 'bootstrap-vue'
@@ -74,7 +69,7 @@ import flatPickr from 'vue-flatpickr-component'
 
 export default {
   components: {
-    BBadge,
+    // BBadge,
     BTable,
     BSpinner,
     vSelect,
@@ -82,39 +77,10 @@ export default {
   },
   data() {
     return {
-      rangeDate: '2021-09-01 to 2021-09-03',
+      rangeDate: '2021-09-01 to ',
       selected: { title: 'JNE' },
       option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'SiCepat' }],
       isLoadTable: false,
-      rowsTable: [
-        {
-          userId: 1,
-          name: 'Hanif Muflihul',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 4500000,
-          status: 'Perlu disetujui',
-        },
-        {
-          userId: 11,
-          name: 'Terry Siphron',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Sedang direview',
-        },
-        {
-          userId: 21,
-          name: 'Kadin Franci',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Disetujui',
-        },
-      ],
       perPage: 5,
       pageOptions: [3, 5, 10],
       totalRows: 1,
@@ -129,60 +95,47 @@ export default {
         title: '',
         content: '',
       },
-      fields: [
-        {
-          key: 'id',
-          label: 'Id',
-        },
-        {
-          key: 'tgl',
-          label: 'Tanggal',
-          sortable: true,
-        },
-        // A virtual column made up from two fields
-        {
-          key: 'transreturn',
-          label: 'Transaksi',
-        },
-        {
-          key: 'nom_trans',
-          label: 'Nilai Transaksi',
-        },
-        {
-          key: 'ongkir',
-          label: 'Ongkos Kirim',
-        },
-        {
-          key: 'cod_cost',
-          label: 'Biaya COD',
-        },
-        {
-          key: 'saldo',
-          label: 'Saldo',
-        },
-      ],
       items: [
         {
           id: 1,
-          tgl: '12-08-2021',
-          trans: 'Transfer Bank',
-          trans_return: 'Return',
-          nom_trans: 'Rp100.000',
-          ongkir: 'Rp7.500',
-          ongkir_return: 'Rp3.500',
-          cod_cost: 'Rp2.500',
-          saldo: '+Rp89.700',
+          name: 'Skylar Korsgaard',
+          city: 'Yogyakarta',
+          noncod_profit: 'Rp 9.000.000',
+          cod_profit: 'Rp 3.000.000',
         },
         {
           id: 2,
-          tgl: '12-02-2022',
-          trans: 'Transfer Bank',
-          trans_return: 'Return',
-          nom_trans: 'Rp100.000',
-          ongkir: 'Rp7.500',
-          ongkir_return: 'Rp3.500',
-          cod_cost: 'Rp2.500',
-          saldo: '-Rp7.500',
+          name: 'Kaylynn Dorwart',
+          city: 'Jakarta',
+          noncod_profit: 'Rp 6.000.000',
+          cod_profit: 'Rp 2.000.000',
+        },
+      ],
+      fields: [
+        {
+          key: 'name',
+          label: 'Nama',
+          sortable: true,
+        },
+        {
+          key: 'city',
+          label: 'Kota',
+          sortable: true,
+        },
+        // A virtual column made up from two fields
+        // {
+        //   key: 'transreturn',
+        //   label: 'Transaksi',
+        // },
+        {
+          key: 'noncod_profit',
+          label: 'Profit Non COD',
+          sortable: true,
+        },
+        {
+          key: 'cod_profit',
+          label: 'Profit COD',
+          sortable: true,
         },
       ],
     }
@@ -216,26 +169,6 @@ export default {
   methods: {
     async fetchData() {
       // change this endpoint
-    },
-    colorStatus(status) {
-      let classStatusColor = ''
-      switch (status) {
-        case 'Perlu disetujui':
-          // #FF6A3A
-          classStatusColor = 'colorStatusPrimary'
-          break
-        case 'Sedang direview':
-          // #FBA63C
-          classStatusColor = 'colorStatusWarning'
-          break
-        case 'Disetujui':
-          // #34A770
-          classStatusColor = 'colorStatusSuccess'
-          break
-        default:
-          break
-      }
-      return classStatusColor
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering

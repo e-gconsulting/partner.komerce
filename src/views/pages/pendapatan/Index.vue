@@ -46,6 +46,8 @@
           <b-tabs
             content-class="mt-1"
             class="mt-1"
+            active-nav-item-class="font-weight-bold text-danger"
+            active-tab-class="font-weight-bold text-danger"
             justified
           >
             <!-- This tabs content will always be mounted -->
