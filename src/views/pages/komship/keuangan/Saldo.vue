@@ -21,7 +21,7 @@
             {{ formatRupiah(saldo) }}
           </div>
           <div class="card-footer d-flex justify-content-around bg-orange text-white rounded-16 py-9">
-            <a class="d-flex flex-column justify-content-center align-items-center">
+            <a class="d-flex flex-column justify-content-center align-items-center" @click="showTopUpModal()">
               <img
                 src="@/assets/images/icons/send-square.svg"
                 alt="Top Up"
@@ -30,7 +30,7 @@
                 Top Up
               </p>
             </a>
-            <a class="d-flex flex-column justify-content-center align-items-center">
+            <a class="d-flex flex-column justify-content-center align-items-center" @click="showModal()">
               <img
                 src="@/assets/images/icons/receive-square.svg"
                 alt="Tarik Saldo"
@@ -39,7 +39,7 @@
                 Tarik Saldo
               </p>
             </a>
-            <a class="d-flex flex-column justify-content-center align-items-center">
+            <a href="/keuangan/saldo/detail" class="d-flex text-reset flex-column justify-content-center align-items-center">
               <img
                 src="@/assets/images/icons/document-text.svg"
                 alt="Detail"
@@ -111,7 +111,7 @@
               <b-form-group class="mr-1 mb-0">
                 <FlatPickr
                   v-model="dateSaldo"
-                  class="form-control"
+                  class="form-control w-20e"
                   :config="configSaldo"
                 />
               </b-form-group>
@@ -160,7 +160,9 @@
                     {{ riwayat.sisaSaldo == null ? '-' : formatRupiah(riwayat.sisaSaldo) }}
                   </td>
                   <td>
-                    Lihat Detail
+                    <a :href="'/keuangan/saldo/rincian/' + riwayatPenarikans.indexOf(riwayat)" class="text-info">
+                      Lihat Detail
+                    </a>
                   </td>
                 </tr>
               </tbody>
@@ -169,21 +171,119 @@
         </div>
       </div>
     </div>
+    <b-modal id="modalTopUp" centered>
+      <p class="text-center h-text-lg">
+        Top Up Saldo
+      </p>
+      <form id="formTopUp">
+        <div class="row align-items-center my-2">
+          <div class="col-4">
+            <p class="font-weight-bold h-text-sm mb-0">
+              Nominal
+            </p>
+          </div>
+          <div class="col-8">
+            <input type="number" name="nominal" id="nominal" class="form-control" required>
+          </div>
+        </div>
+      </form>
+      <template #modal-footer>
+        <button class="btn btn-outline-primary rounded-lg" @click="$bvModal.hide('modalTopUp')">Batal</button>
+        <button class="btn btn-primary rounded-lg" @click="topUpSaldo()">Top Up Sekarang</button>
+      </template>
+    </b-modal>
+    <b-modal id="modal-keuangan" body-class="p-1" hide-header hide-footer centered no-close-on-backdrop no-close-on-esc>
+      <a href="#" @click="closeModal()">
+        <img
+          src="@/assets/images/icons/close-circle.svg"
+          height="18"
+          width="18"
+          alt="close"
+          class="float-right"
+        >
+      </a>
+      <div class="p-1">
+        <p class="text-center h-text-lg mb-2" id="modal-title">{{ modalTitle }}</p>
+        <div v-if="stepNow === 0">
+          <form ref="form1" class="row" @submit.stop.prevent="handleSubmit(1)">
+            <div class="col-5 mb-1">
+              <p class="h-text-sm h-text-dark mb-0">Nominal</p>
+            </div>
+            <b-form-group class="col-7 mb-1" invalid-feedback="Nominal is required" :state="nominalState">
+              <b-form-input
+                id="nominal-input"
+                v-model="nominal"
+                type="tel"
+                data-type="currency"
+                required
+                class="h-text-sm h-text-dark"
+                :state="nominalState"
+                @keyup="formatCurrency(false)"
+                @blur="formatCurrency(true)"
+              />
+            </b-form-group>
+            <div class="col-5 mb-1">
+              <p class="h-text-sm h-text-dark mb-0">Rekening Tujuan</p>
+            </div>
+            <b-form-group class="col-7 mb-1" invalid-feedback="Rekening tujuan is required" :state="rekTujuanState">
+              <b-form-select v-model="selectedRekTujuan" class="h-text-sm h-text-dark" :options="rekTujuanOptions" required></b-form-select>
+            </b-form-group>
+            <div class="col-12 text-right mt-3 mb-1">
+              <button type="button" class="btn btn-outline-primary" @click="closeModal()">Batal</button>
+              <button type="submit" class="btn btn-primary ml-2">Ajukan Penarikan</button>
+            </div>
+          </form>
+        </div>
+        <div v-if="stepNow === 1">
+          <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
+            <p class="text-center">Mohon verifikasi identitas kamu dengan memasukan PIN</p>
+            <div id="divOuter" class="m-auto">
+              <div id="divInner">
+                <input id="input2" type="tel" maxlength="6" required v-model="pin" @keydown="stopCarret" @keyup="stopCarret"/>
+              </div>
+            </div>
+            <div class="col-12 mt-3 mb-1">
+              <div class="text-center">
+                <button type="submit" class="btn btn-primary d-block m-auto">Konfirmasi</button>
+                <button type="button" class="btn btn-link mt-1" @click="modalBack()">Kembali</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div v-if="stepNow === 2" class="text-center">
+          <img src="@/assets/images/icons/success.svg" alt="success">
+          <p class="mt-2 h-text-md text-center">Penarikan Saldo Berhasil</p>
+          <p class="h-text-dark font-weight-bold">
+            Saldo sebesar {{ formatRupiah(nominal) }} akan segera dikirim ke rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam 1x24 jam
+          </p>
+        </div>
+      </div>
+    </b-modal>
   </div>
 </template>
 
 <script>
-import { BFormGroup } from 'bootstrap-vue'
+import {
+  BFormGroup,
+  BModal,
+  BFormInput,
+  BFormSelect,
+} from 'bootstrap-vue'
 import FlatPickr from 'vue-flatpickr-component'
 
 import 'flatpickr/dist/flatpickr.css'
+import { formatDate } from '@/@core/utils/filter'
 
 export default {
   components: {
     BFormGroup,
+    BModal,
+    BFormInput,
+    BFormSelect,
     FlatPickr,
   },
   data() {
+    const dateNow = new Date()
     return {
       saldo: 8500000,
       saldoPending: 4200000,
@@ -192,7 +292,7 @@ export default {
         bank: 'Mandiri',
         noRek: '********2334',
       },
-      dateSaldo: null,
+      dateSaldo: `${formatDate(dateNow.setDate(dateNow.getDate() - 30))} to ${formatDate(Date.now())}`,
       configSaldo: {
         mode: 'range',
       },
@@ -251,6 +351,36 @@ export default {
           sisaSaldo: null,
         },
       ],
+      clientKey: 'VT-client-yrHf-c8Sxr-ck8tx',
+      snapToken: '31f5ef26-5121-44e9-97b5-f469039bf6cf',
+      modalTitle: null,
+      stepNow: 0,
+      nominal: '',
+      nominalState: null,
+      selectedRekTujuan: null,
+      rekTujuanOptions: [
+        { value: '1', text: 'Bank Mandiri - 124567890' },
+        { value: '2', text: 'Bank BCA - 124567890' },
+        { value: '3', text: 'Bank BNI - 124567890' },
+      ],
+      rekTujuanState: null,
+      pin: '',
+      obj: null,
+    }
+  },
+  mounted() {
+    if (!window.snapScriptLoaded) {
+      const snapScriptEl = document.createElement('script')
+      snapScriptEl.setAttribute(
+        'src',
+        'https://app.sandbox.midtrans.com/snap/snap.js',
+      )
+      snapScriptEl.setAttribute(
+        'data-client-key',
+        this.clientKey,
+      )
+      document.head.appendChild(snapScriptEl)
+      window.snapScriptLoaded = 1
     }
   },
   methods: {
@@ -259,6 +389,153 @@ export default {
     },
     formatRupiah(x) {
       return `Rp ${this.formatRibuan(x)}`
+    },
+    showTopUpModal() {
+      this.$bvModal.show('modalTopUp')
+    },
+    topUpSaldo() {
+      window.snap.pay(this.snapToken, {
+        onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
+        onPending: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
+        onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
+      })
+    },
+    formatDate(date) {
+      const d = new Date(date)
+      let month = '' + (d.getMonth() + 1) // eslint-disable-line
+      let day = '' + d.getDate() // eslint-disable-line
+      const year = d.getFullYear()
+
+      if (month.length < 2) {
+        month = '0' + month // eslint-disable-line
+      }
+      if (day.length < 2) {
+        day = '0' + day // eslint-disable-line
+      }
+
+      return [year, month, day].join('-')
+    },
+    formatNumber(n) {
+      return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    showModal() {
+      this.resetModal()
+      this.$bvModal.show('modal-keuangan')
+    },
+    closeModal() {
+      this.$bvModal.hide('modal-keuangan')
+    },
+    checkFormValidity(step) {
+      let valid = null
+
+      switch (step) {
+        case 1:
+          valid = this.$refs.form1.checkValidity()
+          this.nominalState = valid
+          this.rekTujuanState = valid
+          break
+        case 2:
+          valid = this.$refs.form2.checkValidity()
+          break
+        default:
+          break
+      }
+      return valid
+    },
+    resetModal() {
+      this.stepNow = 0
+      this.modalTitle = 'Penarikan Saldo'
+      this.nominal = ''
+      this.nominalState = null
+      this.pin = ''
+      this.pinState = null
+      this.selectedRekTujuan = null
+    },
+    modalBack() {
+      const nominalBefore = this.nominal
+      const rekTujuanBefore = this.selectedRekTujuan
+      this.resetModal()
+      this.nominal = nominalBefore
+      this.selectedRekTujuan = rekTujuanBefore
+    },
+    handleSubmit(step) {
+      if (!this.checkFormValidity(step)) {
+        return
+      }
+
+      switch (step) {
+        case 1:
+          this.$nextTick(() => {
+            this.stepNow = 1
+            this.modalTitle = 'Verifikasi PIN'
+          })
+          break
+        case 2:
+          this.$nextTick(() => {
+            this.stepNow = 2
+            this.modalTitle = null
+          })
+          break
+        default:
+          break
+      }
+    },
+    formatCurrency(blur) {
+      const input = document.getElementById('nominal-input')
+      let inputVal = input.value
+
+      if (inputVal === '' || inputVal === 'Rp' || inputVal === 'Rp ') { return }
+
+      const originalLen = inputVal.length
+      let caretPos = input.selectionStart
+
+      if (inputVal.indexOf(',') >= 0) {
+        const decimalPos = inputVal.indexOf(',')
+        let leftSide = inputVal.substring(0, decimalPos)
+        let rightSide = inputVal.substring(decimalPos)
+
+        leftSide = this.formatNumber(leftSide)
+        rightSide = this.formatNumber(rightSide)
+
+        if (blur) {
+          rightSide += '00'
+        }
+        rightSide = rightSide.substring(0, 2)
+        inputVal = 'Rp ' + leftSide + ',' + rightSide // eslint-disable-line
+      } else {
+        inputVal = this.formatNumber(inputVal)
+        inputVal = 'Rp ' + inputVal // eslint-disable-line
+
+        if (blur) {
+          inputVal += ',00'
+        }
+      }
+
+      input.value = inputVal
+
+      const updatedLen = inputVal.length
+      caretPos = updatedLen - originalLen + caretPos
+      input.setSelectionRange(caretPos, caretPos)
+    },
+    stopCarret() {
+      const obj = document.getElementById('input2')
+      if (obj.value.length > 5) {
+        this.setCaretPosition(obj, 0)
+      }
+    },
+    setCaretPosition(elem, caretPos) {
+      if (elem != null) {
+        if (elem.createTextRange) {
+          const range = elem.createTextRange()
+          range.move('character', caretPos)
+          range.select()
+        } else if (elem.selectionStart) {
+          elem.focus()
+          elem.setSelectionRange(caretPos, caretPos)
+        } else {
+          elem.focus()
+        }
+      }
     },
   },
 }
@@ -349,5 +626,29 @@ export default {
 }
 .h-border-bottom {
   border-bottom: 2px solid #C2C2C2 !important;
+}
+.w-20e {
+  width: 20em;
+}
+#input2 {
+  padding-left: 15px;
+  letter-spacing: 42px;
+  border: none !important;
+  outline: none !important;
+  background-image: linear-gradient(to left, black 70%, rgba(255, 255, 255, 0) 0%);
+  background-position: bottom;
+  background-size: 50px 2px;
+  background-repeat: repeat-x;
+  background-position-x: 35px;
+  width: 300px;
+  min-width: 300px;
+}
+#divInner{
+  left: 0;
+  position: sticky;
+}
+#divOuter{
+  width: 288px;
+  overflow: hidden;
 }
 </style>

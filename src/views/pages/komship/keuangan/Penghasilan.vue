@@ -98,13 +98,33 @@
                   :clearable="false"
                 />
               </b-form-group>
-              <b-form-group class="w-50 mb-0">
-                <FlatPickr
-                  v-model="datePenghasilan"
-                  class="form-control bg-white"
-                  :config="configPenghasilan"
-                />
-              </b-form-group>
+              <div class="dropdown w-50 mb-0">
+                <b-dropdown id="dropdown-1" ref="dropdown" variant="outline-secondary" dropright class="rounded w-100" no-caret>
+                  <template #button-content>
+                    <span>{{ customDate }}</span>
+                  </template>
+                  <div class="d-flex flex-nowrap">
+                    <div>
+                      <b-dropdown-item v-for="val in dropDownValues" :key="val.value" :active="selectedCstDate === val.value ? true : null">
+                        <b-form>
+                          <div @click.stop="selectCstDate(val.value)">{{ val.text }}</div>
+                        </b-form>
+                      </b-dropdown-item>
+                    </div>
+                    <div class="border-left">
+                      <flat-pickr
+                        v-model="customDate"
+                        :config="cstDateCfg"
+                      />
+                      <p v-if="err" class="small text-danger ml-2">Silahkan memilih tanggal</p>
+                      <div class="text-right mt-3">
+                        <button class="btn btn-secondary" @click="closeDropdown(true)">Cancel</button>
+                        <button class="btn btn-success mx-1" @click="closeDropdown(false)">Apply</button>
+                      </div>
+                    </div>
+                  </div>
+                </b-dropdown>
+              </div>
             </div>
           </div>
           <div class="card-body">
@@ -221,7 +241,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">
-                        Ongkis Kirim
+                        Ongkos Kirim
                       </div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
@@ -383,7 +403,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">
-                        Ongkis Kirim
+                        Ongkos Kirim
                       </div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
@@ -423,7 +443,7 @@
 </template>
 
 <script>
-import { BFormGroup } from 'bootstrap-vue'
+import { BFormGroup, BDropdown, BDropdownItem } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import FlatPickr from 'vue-flatpickr-component'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
@@ -433,6 +453,8 @@ import 'flatpickr/dist/flatpickr.css'
 export default {
   components: {
     BFormGroup,
+    BDropdown,
+    BDropdownItem,
     vSelect,
     FlatPickr,
     ChartPenghasilan,
@@ -467,11 +489,28 @@ export default {
         ongkirBersih: 199666000,
         biayaCod: 199666000,
       },
-      datePenghasilan: null,
-      configPenghasilan: {
+      dropDownValues: [
+        { text: '7 Hari Terakhir', value: -7 },
+        { text: '30 Hari Terakhir', value: -30 },
+        { text: 'Bulan ini', value: 30 },
+      ],
+      selectedCstDateBefore: -7,
+      selectedCstDate: -7,
+      customDate: null,
+      dateNow: null,
+      cstDateCfg: {
         mode: 'range',
+        inline: true,
+        altFormat: 'M j, Y',
+        altInput: true,
+        altInputClass: 'd-none',
       },
+      err: false,
     }
+  },
+  mounted() {
+    this.dateNow = new Date()
+    this.customDate = `${this.formatDate(this.dateNow.setDate(this.dateNow.getDate() - 7))} to ${this.formatDate(Date.now())}`
   },
   methods: {
     formatRibuan(x) {
@@ -479,6 +518,41 @@ export default {
     },
     formatRupiah(x) {
       return `Rp ${this.formatRibuan(x)}`
+    },
+    selectCstDate(val) {
+      this.dateNow = new Date()
+      this.selectedCstDateBefore = this.selectedCstDate
+      this.selectedCstDate = val
+      this.customDate = `${this.formatDate(this.dateNow.setDate(this.dateNow.getDate() + val))} to ${this.formatDate(Date.now())}`
+    },
+    closeDropdown(batal) {
+      this.err = false
+      this.dateNow = new Date()
+
+      if (batal) {
+        this.customDate = `${this.formatDate(this.dateNow.setDate(this.dateNow.getDate() + this.selectedCstDateBefore))} to ${this.formatDate(Date.now())}`
+        this.selectedCstDate = this.selectedCstDateBefore
+        this.$refs.dropdown.hide(true)
+      } else if (this.customDate) {
+        this.$refs.dropdown.hide(true)
+      } else {
+        this.err = true
+      }
+    },
+    formatDate(date) {
+      const d = new Date(date)
+      let month = '' + (d.getMonth() + 1) // eslint-disable-line
+      let day = '' + d.getDate() // eslint-disable-line
+      const year = d.getFullYear()
+
+      if (month.length < 2) {
+          month = '0' + month // eslint-disable-line
+      }
+      if (day.length < 2) {
+          day = '0' + day // eslint-disable-line
+      }
+
+      return [year, month, day].join('-')
     },
   },
 }
@@ -556,6 +630,10 @@ export default {
 }
 .h-5-5 {
   height: 5.5em;
+}
+.flatpickr-calendar {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
 }
 </style>
 <style lang="scss">
