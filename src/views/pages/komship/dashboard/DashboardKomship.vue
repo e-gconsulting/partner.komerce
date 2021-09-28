@@ -412,18 +412,37 @@
                 alt="Info"
               >
             </div>
-            <b-form-group class="w-30 mb-0">
-              <v-select
-                v-model="selectedPerformaCS"
-                label="Real Time"
-                dir="ltr"
-                :options="optionsPerformaCS"
-                :clearable="false"
-              />
-            </b-form-group>
+            <div class="dropdown w-30 text-end">
+              <b-dropdown id="dropdown-1" ref="dropdown" variant="light" :text="selectedCstDate" class="w-100">
+                <div :class="selectedCstDate === 'Custom Tanggal' ? 'd-flex flex-nowrap' : ''">
+                  <div>
+                    <b-dropdown-item-button v-for="val in dropDownValues" :key="val" :active="selectedCstDate === val ? true : null">
+                      <b-form>
+                        <div v-if="val === 'Custom Tanggal'" @click.stop="selectCstDate(val)">{{ val }}</div>
+                        <div v-else @click="selectCstDate(val)">{{ val }}</div>
+                      </b-form>
+                    </b-dropdown-item-button>
+                  </div>
+                  <div v-if="selectedCstDate === 'Custom Tanggal'" class="border-left">
+                    <flat-pickr
+                      v-model="customDate"
+                      :config="cstDateCfg"
+                    />
+                    <p v-if="err" class="small text-danger ml-2">Silahkan memilih tanggal</p>
+                    <div class="text-right mt-3">
+                      <button class="btn btn-secondary" @click="closeDropdown(true)">Cancel</button>
+                      <button class="btn btn-success mx-1" @click="closeDropdown(false)">Apply</button>
+                    </div>
+                  </div>
+                </div>
+              </b-dropdown>
+            </div>
           </div>
           <div class="card-body">
-            <ChartPerforma/>
+            <ChartPerforma :categoriesProp="realTimeCategories" :seriesProp="realTimeSeries" :class="selectedCstDate !== 'Real Time' ? 'd-none' : 'd-block'"/>
+            <ChartPerforma :categoriesProp="last7DaysCategories" :seriesProp="realTimeSeries" :class="selectedCstDate !== '7 Hari Terakhir' ? 'd-none' : 'd-block'"/>
+            <ChartPerforma :categoriesProp="last30DaysCategories" :seriesProp="realTimeSeries" :class="selectedCstDate !== '30 Hari Terakhir' ? 'd-none' : 'd-block'"/>
+            <ChartPerforma :categoriesProp="realTimeCategories" :seriesProp="realTimeSeries" :class="selectedCstDate !== 'Custom Tanggal' ? 'd-none' : 'd-block'"/>
           </div>
         </div>
       </div>
@@ -480,17 +499,28 @@
 </template>
 
 <script>
-import { BFormGroup } from 'bootstrap-vue'
+import {
+  BFormGroup,
+  BDropdown,
+  BDropdownItemButton,
+  BForm,
+} from 'bootstrap-vue'
 import vSelect from 'vue-select'
+import flatPickr from 'vue-flatpickr-component'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
+import 'flatpickr/dist/flatpickr.css'
 
 export default {
   components: {
     BFormGroup,
+    BDropdown,
+    BDropdownItemButton,
+    BForm,
     ChartPenghasilan,
     ChartPerforma,
     vSelect,
+    flatPickr,
   },
   data() {
     return {
@@ -600,9 +630,36 @@ export default {
       optionsChart: ['COD (Bayar di tempat)', 'Transfer Bank'],
       selectedProdukTerlaris: 'Bulan Ini',
       optionsProdukTerlaris: ['Bulan Ini', '7 Hari Terakhir'],
-      selectedPerformaCS: 'Real Time',
-      optionsPerformaCS: ['Real Time', '7 Hari Terakhir', '30 Hari Terakhir', 'Custom Tanggal'],
+      dropDownValues: ['Real Time', '7 Hari Terakhir', '30 Hari Terakhir', 'Custom Tanggal'],
+      selectedCstDateBefore: null,
+      selectedCstDate: 'Real Time',
+      customDate: Date.now(),
+      cstDateCfg: {
+        mode: 'range',
+        inline: true,
+        altFormat: 'M j, Y',
+        altInput: true,
+        altInputClass: 'd-none',
+      },
+      err: false,
       blurred: false,
+      realTimeCategories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+      last7DaysCategories: ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
+      last30DaysCategories: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 30],
+      realTimeSeries: [
+        {
+          name: 'Leads',
+          data: [70, 74, 71, 75, 80, 73, 76],
+        },
+        {
+          name: 'Order',
+          data: [50, 52, 55, 52, 54, 52, 51],
+        },
+        {
+          name: 'Pcs',
+          data: [21, 28, 22, 24, 28, 26, 27],
+        },
+      ],
     }
   },
   methods: {
@@ -624,6 +681,23 @@ export default {
         },
         buttonsStyling: false,
       })
+    },
+    selectCstDate(val) {
+      this.selectedCstDateBefore = this.selectedCstDate
+      this.selectedCstDate = val
+    },
+    closeDropdown(batal) {
+      this.err = false
+
+      if (batal) {
+        this.customDate = null
+        this.selectedCstDate = this.selectedCstDateBefore
+        this.$refs.dropdown.hide(true)
+      } else if (this.customDate) {
+        this.$refs.dropdown.hide(true)
+      } else {
+        this.err = true
+      }
     },
   },
 }
@@ -781,6 +855,9 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.dropdown-item {
+  width: 100% !important;
 }
 </style>
 <style lang="scss">
