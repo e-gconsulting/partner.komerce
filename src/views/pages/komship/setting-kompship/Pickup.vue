@@ -5,7 +5,11 @@
       <strong>Pengaturan Alamat Penjemputan</strong>
     </h4>
 
-    <b-row class="mt-3">
+    <b-row
+      v-for="(data, index) in dataAddress"
+      :key="index + 1"
+      class="mt-3"
+    >
       <b-col
         cols="10"
         class="border"
@@ -14,21 +18,24 @@
         <b-row class="d-flex mt-50 mb-1">
           <b-col md="6">
             <h5>
-              <strong>Alamat 1</strong>
+              <strong>Alamat {{ index+1 }}</strong>
             </h5>
           </b-col>
           <b-col
             md="6"
             class="d-flex justify-content-end align-items-center"
           >
-            <span class="text-danger mr-50">
+            <span
+              v-if="data.is_default === 1"
+              class="text-danger mr-50"
+            >
               <strong>Alamat Utama</strong>
             </span>
             <b-button
               variant="flat-dark"
               class="btn-icon"
               tag="router-link"
-              :to="{ name: $route.meta.routeEdit }"
+              :to="{ name: $route.meta.routeEdit, params: { id: data.address_id } }"
             >
               <feather-icon
                 icon="EditIcon"
@@ -45,7 +52,9 @@
                 label="Nama Alamat"
                 label-cols-md="3"
               >
-                <b-form-input />
+                <b-form-input
+                  v-model="data.address_name"
+                />
               </b-form-group>
             </b-col>
 
@@ -54,7 +63,11 @@
                 label="Kode Post/Kecamatan"
                 label-cols-md="3"
               >
-                <v-select />
+                <v-select
+                  v-model="codeOrigin"
+                  :options="itemsOrigin"
+                  label="label"
+                />
               </b-form-group>
             </b-col>
 
@@ -64,6 +77,7 @@
                 label-cols-md="3"
               >
                 <b-form-textarea
+                  v-model="data.address_detail"
                   placeholder="Alamat Detail"
                   rows="3"
                 />
@@ -75,7 +89,9 @@
                 label="Nama PIC"
                 label-cols-md="3"
               >
-                <b-form-input />
+                <b-form-input
+                  v-model="data.pic"
+                />
               </b-form-group>
             </b-col>
 
@@ -84,7 +100,9 @@
                 label="No. HP"
                 label-cols-md="3"
               >
-                <b-form-input />
+                <b-form-input
+                  v-model="data.phone"
+                />
               </b-form-group>
             </b-col>
 
@@ -97,7 +115,6 @@
       <b-col md="10">
         <div class="demo-inline-spacing">
           <b-button
-            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
             block
             variant="outline-primary"
             tag="router-link"
@@ -118,6 +135,7 @@
 
 <script>
 import vSelect from 'vue-select'
+import useJwt from '@/auth/jwt/useJwt'
 import {
   BCard,
   BRow,
@@ -128,6 +146,7 @@ import {
   BFormTextarea,
   BButton,
 } from 'bootstrap-vue'
+import axios2 from './baseUrl2'
 
 export default {
 
@@ -141,6 +160,43 @@ export default {
     BFormTextarea,
     vSelect,
     BButton,
+  },
+  data() {
+    return {
+      dataAddress: [],
+
+      itemsOrigin: [],
+      codeOrigin: [],
+    }
+  },
+  mounted() {
+    this.getAddress()
+  },
+  methods: {
+    getAddress() {
+      axios2.get('/v1/address', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        data.forEach(this.myLoop)
+        this.dataAddress = data
+      })
+    },
+    myLoop(data) {
+      this.codeOrigin.push(data.origin_code)
+      this.loadOrigin(this.codeOrigin)
+    },
+    loadOrigin(value) {
+      console.log(value)
+
+      axios2.get(`/v1/origin?search=${value}`,
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response.data
+        console.log(data)
+      })
+    },
   },
 
 }

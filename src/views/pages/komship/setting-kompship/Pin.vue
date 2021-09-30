@@ -106,7 +106,7 @@
             class="mr-1"
             src="@core/assets/image/icon-on-page-pin.png"
           />
-          <div>
+          <div class="mt-50">
             <h4>
               <strong>PIN</strong>
             </h4>
@@ -121,8 +121,8 @@
       >
         <b-row>
           <b-button
-            v-b-modal.modal-change-pin
             variant="primary"
+            @click="changePin"
           >
             Ganti PIN
           </b-button>
@@ -142,7 +142,7 @@
 
     <!-- Modal Change PIN -->
     <b-modal
-      id="modal-change-pin"
+      ref="modal-change-pin"
       no-close-on-backdrop
       hide-header-close
       ok-only
@@ -172,10 +172,14 @@
         />
       </b-col>
 
+      <b-col class="d-flex justify-content-center mt-2">
+        <small class="text-danger">{{ errorConfirmPin }}</small>
+      </b-col>
+
       <b-col class="d-flex justify-content-center mt-1">
         <b-button
-          v-b-modal.modal-new-pin
           variant="primary"
+          @click="confirmChangePin"
         >
           Konfirmasi
         </b-button>
@@ -185,7 +189,7 @@
 
     <!-- Modal Change New PIN -->
     <b-modal
-      id="modal-new-pin"
+      ref="modal-new-pin"
       no-close-on-backdrop
       hide-header-close
       ok-only
@@ -217,10 +221,10 @@
 
       <b-col class="d-flex justify-content-center mt-1">
         <b-button
-          v-b-modal.modal-confirm-new-pin
           variant="primary"
+          @click="isMatchChangePin"
         >
-          Konfirmasi
+          Ganti PIN
         </b-button>
       </b-col>
 
@@ -228,7 +232,7 @@
 
     <!-- Konfirmasi New PIN -->
     <b-modal
-      id="modal-confirm-new-pin"
+      ref="modal-confirm-new-pin"
       no-close-on-backdrop
       hide-header-close
       ok-only
@@ -258,10 +262,14 @@
         />
       </b-col>
 
+      <b-col class="d-flex justify-content-center mt-2">
+        <small class="text-danger">{{ errorMatchesPin }}</small>
+      </b-col>
+
       <b-col class="d-flex justify-content-center mt-1">
         <b-button
           variant="primary"
-          @click="tes()"
+          @click="submitChangePin"
         >
           Konfirmasi
         </b-button>
@@ -313,9 +321,9 @@
         <b-col md="6">
           <div class="demo-inline-spacing">
             <b-button
-              v-b-modal.modal-forgot-email-pin
               block
               variant="outline-primary"
+              @click="forgotPinByEmail"
             >
               Email
             </b-button>
@@ -349,16 +357,33 @@
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
-        <CodeInput
-          :loading="false"
-          class="input"
-          @change="onChange"
-          @complete="onComplete"
-        />
+        <div style="display: flex; flex-direction: row;">
+          <vue-otp-input
+            ref="otpInput"
+            input-classes="otp-input"
+            separator="-"
+            :num-inputs="4"
+            :should-auto-focus="true"
+            :is-input-num="true"
+            @on-change="handleOnChange"
+            @on-complete="handleOnComplete"
+          />
+        </div>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
-        <small>Kirim Ulang(59)</small>
+        <div v-if="countOtp > 1">
+          <small>Kirim Ulang({{ countOtp }})</small>
+        </div>
+        <div v-else>
+          <b-button
+            variant="flat-primary"
+            size="sm"
+            class="btn-icon"
+          >
+            Kirim Ulang
+          </b-button>
+        </div>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
@@ -446,7 +471,7 @@
 
     <!-- By Email -->
     <b-modal
-      id="modal-forgot-email-pin"
+      ref="modal-forgot-email-pin"
       no-close-on-backdrop
       hide-header-close
       ok-only
@@ -468,16 +493,34 @@
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
-        <CodeInput
-          :loading="false"
-          class="input"
-          @change="onChange"
-          @complete="onComplete"
-        />
+        <div style="display: flex; flex-direction: row;">
+          <vue-otp-input
+            ref="otpInput"
+            input-classes="otp-input"
+            separator="-"
+            :num-inputs="4"
+            :should-auto-focus="true"
+            :is-input-num="true"
+            @on-change="handleOnChange"
+            @on-complete="handleOnComplete"
+          />
+        </div>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
-        <small>Kirim Ulang(59)</small>
+        <div v-if="countOtp > 0">
+          <small>Kirim Ulang({{ countOtp }})</small>
+        </div>
+        <div v-else>
+          <b-button
+            variant="flat-primary"
+            size="sm"
+            class="btn-icon"
+            @click="sendOtpAgain"
+          >
+            Kirim Ulang
+          </b-button>
+        </div>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
@@ -582,6 +625,7 @@ import {
   BModal,
   VBModal,
 } from 'bootstrap-vue'
+import VueOtpInput from '@bachdgvn/vue-otp-input'
 import axios2 from './baseUrl2'
 
 export default {
@@ -593,6 +637,7 @@ export default {
     BImg,
     CodeInput,
     BModal,
+    VueOtpInput,
   },
   directives: {
     'b-modal': VBModal,
@@ -600,14 +645,28 @@ export default {
   data() {
     return {
       dataPin: null,
+
+      errorConfirmPin: '',
+      errorMatchesPin: '',
+
+      matchesPin: null,
+
+      countOtp: 10,
+      sendOtpEmail: false,
     }
   },
   mounted() {
     this.showModal()
-    // console.log(localStorage.getItem(useJwt.jwtConfig.storageTokenKeyName))
-    console.log(useJwt.getToken())
   },
   methods: {
+    // Handle OTP
+    handleOnComplete(value) {
+      console.log('OTP completed: ', value)
+    },
+    handleOnChange(value) {
+      console.log('OTP changed: ', value)
+    },
+    // ==================================================================
     createPin() {
       axios2.post('https://komshipdev.komerce.id/api/v1/pin/store', {
         pin: this.dataPin,
@@ -621,13 +680,23 @@ export default {
     },
     onChange(v) {
       console.log('onChange ', v)
+      this.dataPin = v
     },
     onComplete(v) {
       console.log('onComplete ', v)
       this.dataPin = v
     },
     showModal() {
-      this.$refs['create-pin'].show()
+      axios2.get('/v1/pin/check', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        if (data.is_set === true) {
+          this.$refs['create-pin'].hide()
+        } else {
+          this.$refs['create-pin'].show()
+        }
+      })
     },
     tes() {
       this.$swal({
@@ -664,20 +733,99 @@ export default {
       })
     },
     changePin() {
-      axios2.put('https://komshipdev.komerce.id/api/v1/pin/update', {
+      this.$refs['modal-change-pin'].show()
+    },
+    confirmChangePin() {
+      axios2.post('/v1/pin/auth', {
         pin: this.dataPin,
       },
       {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
+        const { data } = response.data
+        if (data.is_match === true) {
+          this.$refs['modal-new-pin'].show()
+          this.$refs['modal-change-pin'].hide()
+        } else {
+          this.errorConfirmPin = 'PIN tidak valid'
+        }
+        console.log(data)
+      })
+    },
+    isMatchChangePin() {
+      const formData = new FormData()
+      formData.append('_method', 'put')
+      formData.append('pin', this.dataPin)
+
+      axios2.post('/v1/pin/update', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response
+        console.log(data)
+        if (data.status === 'success') {
+          this.$refs['modal-confirm-new-pin'].show()
+          this.$refs['modal-new-pin'].hide()
+          this.matchesPin = this.dataPin
+        }
+      })
+    },
+    submitChangePin() {
+      if (this.matchesPin === this.dataPin) {
+        this.tes()
+      } else {
+        this.errorMatchesPin = 'PIN tidak valid'
+      }
+    },
+    countDownTimerOtp() {
+      if (this.countOtp > 0) {
+        setTimeout(() => {
+          this.countOtp -= 1
+          this.countDownTimerOtp()
+        }, 1000)
+      }
+    },
+    forgotPinByEmail() {
+      this.$refs['modal-forgot-email-pin'].show()
+      const formData = new FormData()
+      formData.append('_method', 'post')
+      axios2.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response
         console.log(data)
       })
+      this.countDownTimerOtp()
+    },
+    sendOtpAgain() {
+      this.countOtp = 10
+      const formData = new FormData()
+      formData.append('_method', 'post')
+      axios2.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response
+        console.log(data)
+      })
+      this.countDownTimerOtp()
     },
   },
 }
 </script>
 
 <style>
-
+  [dir] .otp-input {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    margin: 0 10px;
+    font-size: 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  [dir] .otp-input::-webkit-inner-spin-button,
+  [dir] .otp-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 </style>

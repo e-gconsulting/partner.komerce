@@ -20,7 +20,7 @@ export default [
     },
   },
   {
-    path: '/setting-kompship/pickup/edit',
+    path: '/setting-kompship/pickup/:id/edit',
     name: 'edit-pickup',
     component: () => import('@/views/pages/komship/setting-kompship/EditPickup.vue'),
     meta: {

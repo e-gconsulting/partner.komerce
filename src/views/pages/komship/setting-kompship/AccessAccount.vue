@@ -85,7 +85,9 @@
             <b-form-group
               label="Nama"
             >
-              <b-form-input />
+              <b-form-input
+                v-model="name"
+              />
             </b-form-group>
           </b-col>
 
@@ -111,7 +113,10 @@
 
           <b-col cols="12">
             <b-form-group>
-              <b-form-checkbox>
+              <b-form-checkbox
+                v-model="allAccessApps"
+                @change="cekAllApps"
+              >
                 <h5>
                   <strong>Akses Aplikasi</strong>
                 </h5>
@@ -122,7 +127,9 @@
                 class="mt-1"
               >
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="addOrderApps"
+                  >
                     Tambah Order
                   </b-form-checkbox>
                 </b-form-group>
@@ -130,7 +137,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="dataOrderApps"
+                  >
                     Data Order
                   </b-form-checkbox>
                 </b-form-group>
@@ -145,7 +154,10 @@
 
           <b-col cols="12">
             <b-form-group>
-              <b-form-checkbox>
+              <b-form-checkbox
+                v-model="allAccessWeb"
+                @change="cekAllWeb"
+              >
                 <h5>
                   <strong>Akses Website</strong>
                 </h5>
@@ -157,16 +169,20 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
-                    Tambah Order
+                  <b-form-checkbox
+                    v-model="addProdukWeb"
+                  >
+                    Tambah Produk
                   </b-form-checkbox>
                 </b-form-group>
               </b-col>
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
-                    Data Order
+                  <b-form-checkbox
+                    v-model="dataProdukWeb"
+                  >
+                    Data Produk
                   </b-form-checkbox>
                 </b-form-group>
               </b-col>
@@ -177,7 +193,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="addOrderWeb"
+                  >
                     Tambah Order
                   </b-form-checkbox>
                 </b-form-group>
@@ -185,7 +203,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="dataOrderWeb"
+                  >
                     Data Order
                   </b-form-checkbox>
                 </b-form-group>
@@ -197,7 +217,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="ajukanPickup"
+                  >
                     Ajukan Pickup
                   </b-form-checkbox>
                 </b-form-group>
@@ -205,7 +227,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="historyPickup"
+                  >
                     Riwayat Pickup
                   </b-form-checkbox>
                 </b-form-group>
@@ -217,7 +241,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="penghasilan"
+                  >
                     Penghasilan
                   </b-form-checkbox>
                 </b-form-group>
@@ -225,7 +251,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="saldo"
+                  >
                     Saldo
                   </b-form-checkbox>
                 </b-form-group>
@@ -237,7 +265,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="settingProfile"
+                  >
                     Edit Profile
                   </b-form-checkbox>
                 </b-form-group>
@@ -245,7 +275,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="accessAccount"
+                  >
                     Akses Akun
                   </b-form-checkbox>
                 </b-form-group>
@@ -253,7 +285,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="addressPickup"
+                  >
                     Alamat Pickup
                   </b-form-checkbox>
                 </b-form-group>
@@ -261,7 +295,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="settingRekening"
+                  >
                     Rekening Bank
                   </b-form-checkbox>
                 </b-form-group>
@@ -269,7 +305,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="settingPin"
+                  >
                     PIN
                   </b-form-checkbox>
                 </b-form-group>
@@ -277,7 +315,9 @@
 
               <b-col cols="12">
                 <b-form-group>
-                  <b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="settingEkspedisi"
+                  >
                     Ekspedisi
                   </b-form-checkbox>
                 </b-form-group>
@@ -288,6 +328,21 @@
 
         </b-row>
       </b-form>
+      <template #modal-footer>
+        <b-row class="align-items-center w-100">
+          <b-col
+            cols="12"
+            class="d-flex justify-content-end"
+          >
+            <b-button
+              variant="primary"
+              @click="addAccount"
+            >
+              Simpan
+            </b-button>
+          </b-col>
+        </b-row>
+      </template>
     </b-modal>
 
   </b-card>
@@ -328,6 +383,28 @@ export default {
   },
   data() {
     return {
+
+      allAccessApps: false,
+      allAccessWeb: false,
+
+      addOrderApps: false,
+      dataOrderApps: false,
+
+      addProdukWeb: false,
+      dataProdukWeb: false,
+      addOrderWeb: false,
+      dataOrderWeb: false,
+      ajukanPickup: false,
+      historyPickup: false,
+      penghasilan: false,
+      saldo: false,
+      settingProfile: false,
+      accessAccount: false,
+      addressPickup: false,
+      settingRekening: false,
+      settingPin: false,
+      settingEkspedisi: false,
+
       fields: [
         {
           key: 'name', label: 'Nama',
@@ -346,9 +423,14 @@ export default {
           access: 'Akses aplikasi, Orderku, Penghasi...',
         },
       ],
+
+      name: '',
     }
   },
   methods: {
+    addAccount() {
+      this.items.push({ name: this.name, access: 'Tambah Produk' })
+    },
     tes() {
       this.$swal({
         text: 'Kamu yakin ingin hapus akun ?',
@@ -362,6 +444,48 @@ export default {
         },
         buttonsStyling: false,
       })
+    },
+    cekAllApps() {
+      if (this.allAccessApps === true) {
+        this.addOrderApps = true
+        this.dataOrderApps = true
+      } else {
+        this.addOrderApps = false
+        this.dataOrderApps = false
+      }
+    },
+    cekAllWeb() {
+      if (this.allAccessWeb === true) {
+        this.addProdukWeb = true
+        this.dataProdukWeb = true
+        this.addOrderWeb = true
+        this.dataOrderWeb = true
+        this.ajukanPickup = true
+        this.historyPickup = true
+        this.penghasilan = true
+        this.saldo = true
+        this.settingProfile = true
+        this.accessAccount = true
+        this.addressPickup = true
+        this.settingRekening = true
+        this.settingPin = true
+        this.settingEkspedisi = true
+      } else {
+        this.addProdukWeb = false
+        this.dataProdukWeb = false
+        this.addOrderWeb = false
+        this.dataOrderWeb = false
+        this.ajukanPickup = false
+        this.historyPickup = false
+        this.penghasilan = false
+        this.saldo = false
+        this.settingProfile = false
+        this.accessAccount = false
+        this.addressPickup = false
+        this.settingRekening = false
+        this.settingPin = false
+        this.settingEkspedisi = false
+      }
     },
   },
 

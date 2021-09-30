@@ -189,6 +189,8 @@ import {
   BPopover,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import useJwt from '@/auth/jwt/useJwt'
+import axios2 from '../setting-kompship/baseUrl2'
 
 export default {
   components: {
@@ -263,6 +265,19 @@ export default {
         },
       ],
     }
+  },
+  mounted() {
+    this.tableProvider()
+  },
+  methods: {
+    tableProvider() {
+      axios2.get('/v1/product', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        console.log(data)
+      })
+    },
   },
 }
 </script>

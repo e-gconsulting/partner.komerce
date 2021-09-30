@@ -50,8 +50,10 @@
             label-cols-md="2"
           >
             <b-button
+              v-if="isVariation === false"
               v-ripple.400="'rgba(113, 102, 240, 0.15)'"
               variant="outline-info"
+              @click="addVariation"
             >
               <feather-icon
                 icon="PlusIcon"
@@ -61,6 +63,7 @@
             </b-button>
 
             <b-form-group
+              v-if="isVariation === true"
               label="Variasi 1"
               label-cols-md="2"
               class="mt-1"
@@ -76,14 +79,49 @@
                 </b-form-group>
               </b-col>
 
-              <b-col cols="8">
+              <b-col
+                cols="8"
+              >
                 <b-form-group
                   label="Pilihan"
                   label-cols-md="3"
                 >
-                  <b-form-input
-                    placeholder="Masukan pilihan variasi"
-                  />
+                  <b-row
+                    v-for="(data, index) in formChoices"
+                    :key="index + 1"
+                    class="d-flex align-items-center justify-content-center"
+                  >
+                    <b-col
+                      class="pt-0 pr-0 pb-0 mb-1"
+                    >
+                      <b-input-group>
+                        <b-form-input
+                          placeholder="Masukan Pilihan Variasi"
+                        />
+                        <b-input-group-append is-text>
+                          <feather-icon
+                            icon="AlignJustifyIcon"
+                          />
+                        </b-input-group-append>
+                      </b-input-group>
+                    </b-col>
+                    <b-col
+                      v-if="formChoices.length > 1"
+                      md="auto"
+                      class="mb-1"
+                    >
+                      <b-button
+                        class="btn-icon"
+                        variant="light-dark"
+                        size="sm"
+                        @click="removeChoices(index)"
+                      >
+                        <feather-icon
+                          icon="Trash2Icon"
+                        />
+                      </b-button>
+                    </b-col>
+                  </b-row>
                 </b-form-group>
               </b-col>
 
@@ -95,6 +133,7 @@
                   <b-button
                     v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                     variant="outline-info"
+                    @click="addChoices"
                   >
                     <feather-icon
                       icon="PlusIcon"
@@ -108,24 +147,7 @@
             </b-form-group>
 
             <b-form-group
-              label="Variasi 2"
-              label-cols-md="2"
-              class="mt-1"
-            >
-              <b-button
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="outline-info"
-                @click="tesAdd"
-              >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Tambahkan Variasi</span>
-              </b-button>
-            </b-form-group>
-
-            <b-form-group
+              v-if="isVariation === true"
               label="Info Variasi"
               label-cols-md="2"
               class="mt-2"
@@ -155,13 +177,12 @@
             </b-form-group>
 
             <b-form-group
+              v-if="isVariation === true"
               label="Daftar Variasi"
               label-cols-md="2"
               class="mt-2"
             >
               <b-table
-                :items="items"
-                :fields="fields"
                 class="border"
               >
 
@@ -353,40 +374,25 @@ export default {
   },
   data() {
     return {
-      selected: ['A'],
-      fields: [
-        { key: 'name', label: 'Nama' },
-        { key: 'ukuran', label: 'Ukuran' },
-        { key: 'price', label: 'Harga' },
-        { key: 'stok', label: 'Stok' },
-        { key: 'action', label: 'Aksi' },
-      ],
 
-      items: [
-        {
-          name: 'Hijau',
-          ukuran: 'L',
-          price: 'Rp. 9000',
-          stok: 9,
-        },
-        {
-          name: 'Hijau',
-          ukuran: 'XL',
-          price: 'Rp. 1000',
-          stok: 9,
-        },
-        {
-          name: 'Kuning',
-          ukuran: 'XL',
-          price: 'Rp. 9000',
-          stok: 9,
-        },
-      ],
+      isVariation: false,
+      formChoices: [{ form: '' }],
+
+      selected: ['A'],
     }
   },
   methods: {
     tesAdd() {
       console.log('tes')
+    },
+    addVariation() {
+      this.isVariation = true
+    },
+    addChoices() {
+      this.formChoices.push({ form: '' })
+    },
+    removeChoices(index) {
+      this.formChoices.splice(index, 1)
     },
   },
 }

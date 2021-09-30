@@ -127,12 +127,125 @@
           <b-button
             class="btn-icon"
             variant="flat-dark"
-            @click="editRekening(data.bank_account_id)"
+            @click="editRekening(data)"
           >
             <feather-icon
               icon="EditIcon"
             />
           </b-button>
+        </b-col>
+      </b-row>
+
+      <validation-observer ref="formEdit">
+        <b-form>
+          <b-row>
+            <b-col cols="10">
+              <b-form-group
+                label="Nama Bank"
+                label-cols-md="3"
+              >
+                <validation-provider
+                  #default="{errors}"
+                  name="Nama Bank"
+                  rules="required"
+                >
+                  <div v-if="addForm === true">
+                    <b-form-input
+                      v-model="data.bank_name"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </div>
+                  <div v-if="editMode === true">
+                    <b-form-input
+                      v-model="bankName"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </div>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+
+            <b-col cols="10">
+              <b-form-group
+                label="No Rekening"
+                label-cols-md="3"
+              >
+                <div v-if="addForm === true">
+                  <b-form-input
+                    v-model="data.account_no"
+                  />
+                </div>
+                <div v-else>
+                  <b-form-input
+                    v-model="accountNo"
+                  />
+                </div>
+              </b-form-group>
+            </b-col>
+
+            <b-col cols="10">
+              <b-form-group
+                label="Nama"
+                label-cols-md="3"
+              >
+                <div v-if="addForm === true">
+                  <b-form-input
+                    v-model="data.account_name"
+                  />
+                </div>
+                <div v-else>
+                  <b-form-input
+                    v-model="accountName"
+                  />
+                </div>
+              </b-form-group>
+            </b-col>
+
+            <!-- Edit Rekening -->
+            <b-col
+              v-if="editRek === data.bank_account_id"
+              md="12"
+              class="d-flex justify-content-end mt-1 pb-1"
+            >
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                type="submit"
+                variant="outline-primary"
+                class="mr-1"
+                @click.prevent="confirmDelete(data)"
+              >
+                Hapus
+              </b-button>
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                type="reset"
+                variant="primary"
+                class="mr-1"
+                @click="submitEditRekening"
+              >
+                Simpan
+              </b-button>
+            </b-col>
+
+          </b-row>
+        </b-form>
+      </validation-observer>
+    </b-col>
+
+    <!-- Add Rekening -->
+    <b-col
+      v-if="fieldActionAddRekening === true"
+      md="10"
+      class="border ml-1 mt-2"
+    >
+
+      <b-row class="d-flex align-items-center mb-1">
+        <b-col>
+          <h5>
+            <strong>Tambah Rekening</strong>
+          </h5>
         </b-col>
       </b-row>
 
@@ -144,16 +257,9 @@
               label="Nama Bank"
               label-cols-md="3"
             >
-              <div v-if="addForm === false">
-                <b-form-input
-                  v-model="data.bank_name"
-                />
-              </div>
-              <div v-else>
-                <b-form-input
-                  v-model="bankName"
-                />
-              </div>
+              <b-form-input
+                v-model="bankName"
+              />
             </b-form-group>
           </b-col>
 
@@ -162,16 +268,9 @@
               label="No Rekening"
               label-cols-md="3"
             >
-              <div v-if="addForm === false">
-                <b-form-input
-                  v-model="data.account_no"
-                />
-              </div>
-              <div v-else>
-                <b-form-input
-                  v-model="accountNo"
-                />
-              </div>
+              <b-form-input
+                v-model="accountNo"
+              />
             </b-form-group>
           </b-col>
 
@@ -180,21 +279,13 @@
               label="Nama"
               label-cols-md="3"
             >
-              <div v-if="addForm === false">
-                <b-form-input
-                  v-model="data.account_name"
-                />
-              </div>
-              <div v-else>
-                <b-form-input
-                  v-model="accountName"
-                />
-              </div>
+              <b-form-input
+                v-model="accountName"
+              />
             </b-form-group>
           </b-col>
 
           <b-col
-            v-if="editMode === data.bank_account_id"
             md="12"
             class="d-flex justify-content-end mt-1 pb-1"
           >
@@ -203,7 +294,7 @@
               type="submit"
               variant="outline-primary"
               class="mr-1"
-              @click="removeFormRekening(index)"
+              @click="cancelAddRekening"
             >
               Hapus
             </b-button>
@@ -212,13 +303,11 @@
               type="reset"
               variant="primary"
               class="mr-1"
-              @click="createRekening"
+              @click.prevent="createRekening"
             >
               Simpan
             </b-button>
           </b-col>
-
-          <!-- Add Rekening -->
 
         </b-row>
       </b-form>
@@ -249,6 +338,8 @@
 
 <script>
 import CodeInput from 'vue-verification-code-input'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { required } from '@validations'
 import useJwt from '@/auth/jwt/useJwt'
 import {
   BRow,
@@ -277,6 +368,8 @@ export default {
     BButton,
     BModal,
     CodeInput,
+    ValidationObserver,
+    ValidationProvider,
   },
   directives: {
     'b-modal': VBModal,
@@ -286,15 +379,22 @@ export default {
     return {
       dataPin: null,
       errorPin: '',
-      addForm: false,
+      addForm: true,
 
-      editMode: null,
+      editRek: null,
+
+      // Validation
+      required,
 
       bankName: '',
       accountNo: '',
       accountName: '',
 
+      editMode: false,
+
       formRekening: [{ row: '' }],
+
+      fieldActionAddRekening: false,
 
       loadingSubmit: false,
       submitAction: false,
@@ -311,7 +411,6 @@ export default {
       }).then(response => {
         const { data } = response.data
         console.log(data)
-        console.log(data.at(-1))
         this.formRekening = data
       })
     },
@@ -330,8 +429,59 @@ export default {
       })
     },
     editRekening(data) {
-      this.editMode = data
-      console.log(data)
+      this.editRek = data.bank_account_id
+      this.bankName = data.bank_name
+      this.accountNo = data.account_no
+      this.accountName = data.account_name
+      this.editMode = true
+      this.addForm = false
+      console.log(this.bankName)
+      console.log(this.accountNo)
+      console.log(this.accountName)
+    },
+    submitEditRekening() {
+      const formData = new FormData()
+      formData.append('_method', 'put')
+      formData.append('bank_name', this.bankName)
+      formData.append('account_name', this.accountName)
+      formData.append('account_no', this.accountNo)
+      console.log(this.bankName)
+      console.log(this.accountNo)
+      console.log(this.accountName)
+
+      axios2.post('/v1/bank-account/update/2463', formData,
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response
+        console.log(data)
+      })
+    },
+    confirmDelete(data) {
+      this.$swal({
+        title: 'Anda yakin?',
+        text: 'Ingin hapus satu rekening ?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus!',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-outline-danger ml-1',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.delete(data)
+        }
+      })
+    },
+    delete(data) {
+      axios2.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      })
+        .then(response => {
+          console.log(response)
+        })
     },
     onChange(v) {
       console.log('onChange ', v)
@@ -355,7 +505,7 @@ export default {
       }).then(response => {
         const { data } = response.data
         console.log(data)
-        if (data.is_set === true) {
+        if (data.is_match === true) {
           this.hideModal()
         } else {
           this.errorPin = 'PIN tidak valid'
@@ -363,7 +513,10 @@ export default {
       })
     },
     addRekening() {
-      this.formRekening.push({ form: '' })
+      this.fieldActionAddRekening = true
+    },
+    cancelAddRekening() {
+      this.fieldActionAddRekening = false
     },
     removeFormRekening(index) {
       this.formRekening.splice(index, 1)
