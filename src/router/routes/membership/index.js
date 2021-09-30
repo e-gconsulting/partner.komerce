@@ -19,6 +19,16 @@ export default [
     },
   },
   {
+    path: '/data-partner/:id/detail/riwayat-penarikan',
+    name: 'cod-data-partner-detail-riwayat-penarikan',
+    component: () => import('@/views/pages/membership/data-partner/RiwayatPenarikan'),
+    meta: {
+      navActiveLink: 'cod-data-partner',
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
     path: '/arsip-partner',
     name: 'cod-arsip-partner',
     component: () => import('@/views/pages/membership/arsip-partner/Index'),

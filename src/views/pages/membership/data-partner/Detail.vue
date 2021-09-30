@@ -176,7 +176,7 @@
                   block
                   variant="outline-primary"
                   class="btn-custom--editakseslayanan"
-                  @click="$router.go(-1)"
+                  @click="$router.push(`/data-partner/${$route.params.id}/detail/riwayat-penarikan`)"
                 >
                   Lihat Riwayat
                 </b-button>
@@ -256,6 +256,7 @@ import {
   BRow,
   BCol,
   BForm,
+  BModal,
   BFormInput,
   BFormGroup,
   BFormCheckbox,
@@ -272,6 +273,7 @@ export default {
     BRow,
     BCol,
     BForm,
+    BModal,
     BFormInput,
     BFormGroup,
     BFormCheckbox,
