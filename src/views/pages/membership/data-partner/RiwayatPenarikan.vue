@@ -25,7 +25,8 @@
           <div class="d-flex justify-content-end">
             <flat-pickr
               v-model="rangeDate"
-              class="form-control"
+              class="form-control my-1"
+              style="width: 200px;"
               :config="{ mode: 'range'}"
             />
           </div>
