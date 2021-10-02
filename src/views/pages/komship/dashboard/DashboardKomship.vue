@@ -412,18 +412,25 @@
                 alt="Info"
               >
             </div>
-            <b-form-group class="w-30 mb-0">
-              <v-select
-                v-model="selectedPerformaCS"
-                label="Real Time"
-                dir="ltr"
-                :options="optionsPerformaCS"
-                :clearable="false"
-              />
-            </b-form-group>
+            <date-range-picker
+              ref="picker"
+              :locale-data="locale"
+              v-model="dateRange"
+              :ranges="ranges"
+              class="w-25"
+            >
+                <template v-slot:input="picker" style="min-width: 350px;">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span>{{ getRange(picker.startDate, picker.endDate) }}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                  </div>
+                </template>
+            </date-range-picker>
           </div>
           <div class="card-body">
-            <ChartPerforma/>
+            <ChartPerforma :seriesProp="series" :categoriesProp="categories"/>
           </div>
         </div>
       </div>
@@ -482,17 +489,35 @@
 <script>
 import { BFormGroup } from 'bootstrap-vue'
 import vSelect from 'vue-select'
+import moment from 'moment'
+import DateRangePicker from 'vue2-daterange-picker'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   components: {
     BFormGroup,
     ChartPenghasilan,
     ChartPerforma,
+    DateRangePicker,
     vSelect,
   },
   data() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const last7 = new Date()
+    last7.setDate(today.getDate() - 7)
+    last7.setHours(0, 0, 0, 0)
+
+    const last30 = new Date()
+    last30.setDate(today.getDate() - 30)
+    last30.setHours(0, 0, 0, 0)
+
+    const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+    const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+
     return {
       saldo: 8000000,
       saldoPending: 3000000,
@@ -600,9 +625,44 @@ export default {
       optionsChart: ['COD (Bayar di tempat)', 'Transfer Bank'],
       selectedProdukTerlaris: 'Bulan Ini',
       optionsProdukTerlaris: ['Bulan Ini', '7 Hari Terakhir'],
-      selectedPerformaCS: 'Real Time',
-      optionsPerformaCS: ['Real Time', '7 Hari Terakhir', '30 Hari Terakhir', 'Custom Tanggal'],
+      dropDownValues: ['Real Time', '7 Hari Terakhir', '30 Hari Terakhir', 'Custom Tanggal'],
+      selectedCstDateBefore: null,
+      selectedCstDate: 'Real Time',
+      customDate: Date.now(),
+      cstDateCfg: {
+        mode: 'range',
+        inline: true,
+        altFormat: 'M j, Y',
+        altInput: true,
+        altInputClass: 'd-none',
+      },
+      err: false,
       blurred: false,
+      dateRange: {
+        startDate: today,
+        endDate: today,
+      },
+      picker: {
+        startDate: today,
+        endDate: today,
+      },
+      locale: {
+        format: 'dd/mm/yyyy',
+      },
+      ranges: {
+        'Real Time': [today, today],
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan Ini': [firstDateOfMonth, lastDateOfMonth],
+        'Custom Tanggal': [null, null],
+      },
+      today,
+      last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
+      series: [],
+      categories: ['abc', 'def', 'ghi', 'jkl'],
     }
   },
   methods: {
@@ -624,6 +684,110 @@ export default {
         },
         buttonsStyling: false,
       })
+    },
+    selectCstDate(val) {
+      this.selectedCstDateBefore = this.selectedCstDate
+      this.selectedCstDate = val
+    },
+    closeDropdown(batal) {
+      this.err = false
+
+      if (batal) {
+        this.customDate = null
+        this.selectedCstDate = this.selectedCstDateBefore
+        this.$refs.dropdown.hide(true)
+      } else if (this.customDate) {
+        this.$refs.dropdown.hide(true)
+      } else {
+        this.err = true
+      }
+    },
+    formatDate(d) {
+      return moment(d).format('D MMM YYYY')
+    },
+    getRange(first, last) {
+      if (moment(first).format('l') === moment(this.today).format('l') && moment(last).format('l') === moment(this.today).format('l')) {
+        this.changeData(1)
+        return 'Real Time'
+      } else if (moment(first).format('l') === moment(this.last7).format('l') && moment(last).format('l') === moment(this.today).format('l')) { // eslint-disable-line
+        this.changeData(2)
+        return '7 Hari Terakhir'
+      } else if (moment(first).format('l') === moment(this.last30).format('l') && moment(last).format('l') === moment(this.today).format('l')) {
+        this.changeData(3)
+        return '30 Hari Terakhir'
+      } else if (moment(first).format('l') === moment(this.firstDateOfMonth).format('l') && moment(last).format('l') === moment(this.lastDateOfMonth).format('l')) {
+        this.changeData(4)
+        return 'Bulan Ini'
+      } else {
+        this.changeData(5)
+        return 'Custom Tanggal'
+      }
+    },
+    changeData(val) {
+      const lcategories = []
+      switch (val) {
+        case 1:
+          this.series = [
+            {
+              name: 'Leads',
+              data: ['24', '23', '27', '20', '25', '28', '21'],
+            },
+            {
+              name: 'Orders',
+              data: ['14', '13', '17', '20', '15', '18', '11'],
+            },
+            {
+              name: 'Pcs',
+              data: ['4', '3', '7', '10', '5', '8', '1'],
+            },
+          ]
+          this.categories = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00']
+          break
+        case 2:
+          this.series = [
+            {
+              name: 'Leads',
+              data: ['2400000', '2300000', '2700000', '2000000', '2500000', '2800000', '2100000'],
+            },
+            {
+              name: 'Orders',
+              data: ['1400000', '1300000', '1700000', '2000000', '1500000', '1800000', '1100000'],
+            },
+            {
+              name: 'Pcs',
+              data: ['400000', '300000', '700000', '1000000', '500000', '800000', '100000'],
+            },
+          ]
+          this.categories = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
+          break
+        case 3:
+        case 4:
+        case 5:
+          this.series = [
+            {
+              name: 'Leads',
+              data: ['24', '23', '27', '20', '25', '28', '21', '24', '23', '27', '20', '25', '28', '21', '24'],
+            },
+            {
+              name: 'Orders',
+              data: ['14', '13', '17', '20', '15', '18', '11', '14', '13', '17', '20', '15', '18', '11', '14'],
+            },
+            {
+              name: 'Pcs',
+              data: ['4', '3', '7', '10', '5', '8', '1', '4', '3', '7', '10', '5', '8', '1', '4'],
+            },
+          ]
+          for (let i = 0; i < 29; i++) { //eslint-disable-line
+            if (i % 2 !== 0) {
+              lcategories.push(`${i}`)
+            }
+          }
+          lcategories.push('30')
+          this.categories = lcategories
+          break
+        default:
+          break
+      }
     },
   },
 }
@@ -781,6 +945,9 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+.dropdown-item {
+  width: 100% !important;
 }
 </style>
 <style lang="scss">
