@@ -1,9 +1,10 @@
 <template>
   <VueApexcharts
-    width="650"
+    width="700"
     type="area"
+    ref="myChart"
     :options="options"
-    :series="seriesProp"
+    :series="series"
   ></VueApexcharts>
 </template>
 
@@ -11,7 +12,7 @@
 import VueApexcharts from 'vue-apexcharts'
 
 export default {
-  name: 'ChartPerformaApex',
+  name: 'ChartPerforma',
   components: {
     VueApexcharts,
   },
@@ -31,15 +32,34 @@ export default {
           toolbar: {
             show: false,
           },
+          stacked: true,
         },
         fill: {
           colors: ['#08A0F7', '#34A770', '#F95031'],
         },
         colors: ['#08A0F7', '#34A770', '#F95031'],
         xaxis: {
-          categories: this.categoriesProp,
+          categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
           tooltip: {
             enabled: false,
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: value => {
+              let formatedVal = 0
+
+              if (Math.abs(Number(value)) >= 1.0e9) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e9} Mn`
+              } else if (Math.abs(Number(value)) >= 1.0e6) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e6} Jt`
+              } else if (Math.abs(Number(value)) >= 1.0e3) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e3} Rb`
+              } else {
+                formatedVal = Math.abs(Number(value))
+              }
+              return `${formatedVal}`
+            },
           },
         },
         dataLabels: {
@@ -49,7 +69,30 @@ export default {
           curve: 'smooth',
         },
       },
+      series: [
+        {
+          name: 'Leads',
+          data: ['24', '23', '27', '20', '25', '28', '21'],
+        },
+        {
+          name: 'Orders',
+          data: ['14', '13', '17', '20', '15', '18', '11'],
+        },
+        {
+          name: 'Pcs',
+          data: ['4', '3', '7', '10', '5', '8', '1'],
+        },
+      ],
     }
+  },
+  watch: {
+    seriesProp() {
+      this.$refs.myChart.updateSeries(this.seriesProp)
+    },
+    categoriesProp() {
+      this.options.xaxis.categories = this.categoriesProp
+      this.$refs.myChart.updateOptions(this.options)
+    },
   },
 }
 </script>
