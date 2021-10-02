@@ -1,269 +1,120 @@
 <template>
-  <section id="dashboard-cod">
-    <b-row class="match-height mb-md-1">
-      <b-col>
-        <h3 class="mb-50 mb-md-1">
-          Dashboard
-        </h3>
-        <div>
-          <b-alert
-            v-if="alertshow"
-            show
-            variant="warning"
-            class="d-flex justify-content-between align-items-center px-1 wrapper-warning-pemintaan-saldo"
-          >
-            <span class="text-warning-pemintaan-saldo">
-              Anda masih memiliki permintaan penarikan saldo, segera cek sekarang!
-            </span>
-            <b-button
-              variant="gradient-warning"
-              class="btn-warning-pemintaan-saldo"
-            >
-              <span>11</span>
-            </b-button>
-          </b-alert>
-        </div>
-      </b-col>
-    </b-row>
+  <section id="cod-pendapatan">
     <div v-if="!loadDataAwal">
-      <b-row class="match-height">
-        <b-col lg="6">
-          <b-card no-body>
-            <b-card-header class="custom-card-header">
-              <b-row style="width: 100%;">
-                <b-col
-                  md="12"
-                  class="dashboard-report-wrapper"
+      <b-card no-body>
+        <b-card-body>
+          <div class="wrapper__performa">
+            <h3
+              class="text-24-bold"
+              style="color: #222222;"
+            >
+              Mengatur Besaran Biaya
+            </h3>
+          </div>
+          <div class="wrappertab__content">
+            <div
+              class="d-flex justify-content-end"
+            >
+              <!-- filter -->
+              <b-form-group class="mb-0">
+                <b-input-group
+                  class="input-group-merge"
                 >
-                  <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-50 mb-sm-0">
-                      Perfoma Ekspedisi
-                    </h4>
+                  <b-input-group-prepend is-text>
+                    <feather-icon icon="SearchIcon" />
+                  </b-input-group-prepend>
+                  <b-form-input
+                    id="filterSearch"
+                    v-model="search"
+                    type="search"
+                    placeholder="Search..."
+                    debounce="500"
+                    @input="onChange"
+                  />
+                </b-input-group>
+              </b-form-group>
+            </div>
+            <div class="mt-2">
+              <b-table
+                striped
+                hover
+                responsive
+                :per-page="perPage"
+                :current-page="currentPage"
+                :items="items"
+                :busy="isLoadTable"
+                :fields="fields"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :sort-direction="sortDirection"
+                :filter="filter"
+                :filter-included-fields="filterOn"
+                @filtered="onFiltered"
+              >
+                <template #cell(editExpedition)="data">
+                  <b-button
+                    variant="flat-default"
+                    @click="editExpedition(data.item.id)"
+                  >
+                    <feather-icon icon="EditIcon" />
+                  </b-button>
+                </template>
+                <template #table-busy>
+                  <div class="text-center text-danger my-2">
+                    <b-spinner
+                      class="align-middle"
+                    />
+                    <strong>Loading...</strong>
+                  </div>
+                </template>
+              </b-table>
+            </div>
+
+            <b-modal
+              id="modal-konfirmasi-arsip"
+              ref="modal-konfirmasi-arsip"
+              centered
+              hide-header-close
+              hide-footer
+              size="md"
+            >
+              <div class="text-center">
+                <div class="konfirmasiarsip-wrapper">
+                  <span
+                    class="text-24-bold"
+                    style="color: #222222;font-size: 20px;"
+                  >
+                    Konfirmasi Arsip
+                  </span>
+                  <span
+                    class="text-16-bold mb-2 mt-1"
+                    style="color: #222222;"
+                  >
+                    Apakah kamu yakin untuk memindah data membership ini ke arsip? Jika iya, silahkan klik Lanjutkan!
+                  </span>
+                  <div class="d-flex justify-content-center">
                     <b-button
-                      variant="outline"
-                      class="button-custom"
-                      @click="toPage('ekspedisi')"
+                      variant="outline-primary"
+                      class="btn-konfirmasi-arsip text-center mr-1"
+                      @click="resetModalKonfimasi"
                     >
-                      <feather-icon
-                        icon="ChevronRightIcon"
-                      />
+                      Batal
+                    </b-button>
+                    <b-button
+                      variant="primary"
+                      class="btn-konfirmasi-arsip text-center"
+                      @click="arsipkanPartner()"
+                    >
+                      Arsipkan
                     </b-button>
                   </div>
-                </b-col>
-              </b-row>
-            </b-card-header>
-
-            <b-card-body>
-              <b-row class="select-form">
-                <b-col
-                  md="2"
-                />
-                <b-col
-                  md="3"
-                />
-                <b-col
-                  md="3"
-                  class="mb-50 mb-xs-1"
-                >
-                  <b-form-select
-                    v-model="selectedEkspedisi.kurir"
-                    :options="optionsKurir"
-                  />
-                </b-col>
-                <b-col
-                  md="4"
-                  class="custom-selected-filter"
-                >
-                  <b-form-select
-                    v-model="selectedEkspedisi.bulan"
-                    :options="optionsBulan"
-                  />
-                </b-col>
-              </b-row>
-              <div style="transform: translateY(-35px);">
-                <vue-apex-charts
-                  type="area"
-                  height="400"
-                  :options="chartOptionsComputed"
-                  :series="dashboardReport.subscribersGained.series"
-                />
-              </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-        <b-col lg="6">
-          <b-card no-body>
-            <b-card-header>
-              <div
-                class="d-flex justify-content-between align-items-center"
-                style="width: 100%;"
-              >
-                <h4 class="card-title mb-50 mb-sm-0">
-                  Top Ekspedisi
-                </h4>
-                <div class="d-flex align-items-center justify-content-end">
-                  <b-button-group>
-                    <b-button
-                      variant="outline-secondary"
-                      class="btn-custom-topcodnoncod"
-                      @click="choosenFilterTop('cod', 'filterTopEkspedisi')"
-                    >
-                      COD
-                    </b-button>
-                    <b-button
-                      variant="outline-secondary"
-                      class="btn-custom-topcodnoncod"
-                      @click="choosenFilterTop('ncod', 'filterTopEkspedisi')"
-                    >
-                      Non-COD
-                    </b-button>
-                  </b-button-group>
                 </div>
               </div>
-            </b-card-header>
-            <b-card-body>
-              <div class="tbl-dashboard-top">
-                <b-list-group v-if="rows.length > 0">
-                  <b-list-group-item
-                    v-for="row in rows"
-                    :key="row.title"
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="d-flex justify-content-between">
-                      <b-avatar
-                        :src="row.avatar || 'https://via.placeholder.com/52x52'"
-                        class="mr-1"
-                      />
-                      <span class="text-top-each-item">{{ row.title.substring(0,5) }}</span>
-                    </div>
-                    <span class="total-top-each-item">
-                      {{ row.body }}
-                    </span>
-                  </b-list-group-item>
-                </b-list-group>
-                <span v-else>
-                  No Data
-                </span>
-              </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
+            </b-modal>
 
-      <b-row class="match-height">
-        <b-col lg="6">
-          <b-card no-body>
-            <b-card-header class="custom-card-header">
-              <b-row style="width: 100%;">
-                <b-col
-                  md="12"
-                  class="dashboard-report-wrapper"
-                >
-                  <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="card-title mb-50 mb-sm-0">
-                      Perfoma Partner
-                    </h4>
-                    <b-button
-                      variant="outline"
-                      class="button-custom"
-                      @click="toPage('partner')"
-                    >
-                      <feather-icon
-                        icon="ChevronRightIcon"
-                      />
-                    </b-button>
-                  </div>
-                </b-col>
-              </b-row>
-            </b-card-header>
-
-            <b-card-body>
-              <b-row class="select-form">
-                <b-col
-                  md="4"
-                />
-                <b-col
-                  md="4"
-                />
-                <b-col
-                  md="4"
-                  class="custom-selected-filter"
-                >
-                  <b-form-select
-                    v-model="selectedPartner.bulan"
-                    :options="optionsBulan"
-                  />
-                </b-col>
-              </b-row>
-              <div style="transform: translateY(-35px);">
-                <vue-apex-charts
-                  type="area"
-                  height="400"
-                  :options="chartOptionsComputed"
-                  :series="dashboardReport.subscribersGained.series"
-                />
-              </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-        <b-col lg="6">
-          <b-card no-body>
-            <b-card-header>
-              <div
-                class="d-flex justify-content-between align-items-center"
-                style="width: 100%;"
-              >
-                <h4 class="card-title mb-50 mb-sm-0">
-                  Top Partner
-                </h4>
-                <div class="d-flex align-items-center justify-content-end">
-                  <b-button-group>
-                    <b-button
-                      variant="outline-secondary"
-                      class="btn-custom-topcodnoncod"
-                      @click="choosenFilterTop('cod', 'filterTopPartner')"
-                    >
-                      COD
-                    </b-button>
-                    <b-button
-                      variant="outline-secondary"
-                      class="btn-custom-topcodnoncod"
-                      @click="choosenFilterTop('ncod', 'filterTopPartner')"
-                    >
-                      Non-COD
-                    </b-button>
-                  </b-button-group>
-                </div>
-              </div>
-            </b-card-header>
-            <b-card-body>
-              <div class="tbl-dashboard-top">
-                <b-list-group v-if="rows.length > 0">
-                  <b-list-group-item
-                    v-for="row in rows"
-                    :key="row.title"
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="d-flex justify-content-between">
-                      <b-avatar
-                        :src="row.avatar || 'https://via.placeholder.com/52x52'"
-                        class="mr-1"
-                      />
-                      <span class="text-top-each-item">{{ row.title.substring(0,5) }}</span>
-                    </div>
-                    <span class="total-top-each-item">
-                      {{ row.body }}
-                    </span>
-                  </b-list-group-item>
-                </b-list-group>
-                <span v-else>
-                  No Data
-                </span>
-              </div>
-            </b-card-body>
-          </b-card>
-        </b-col>
-      </b-row>
+          </div>
+        </b-card-body>
+      </b-card>
     </div>
 
     <div
@@ -280,150 +131,128 @@
 
 <script>
 import {
-  BRow,
-  BCol,
-  BCard,
-  BAlert,
   BButton,
-  BAvatar,
-  BSpinner,
+  BCard,
   BCardBody,
-  BListGroup,
-  BCardHeader,
-  BFormSelect,
-  BButtonGroup,
-  BListGroupItem,
+  BTable,
+  BModal,
+  BSpinner,
+  BFormGroup,
+  BFormInput,
+  BInputGroup,
+  BInputGroupPrepend,
 } from 'bootstrap-vue'
-import VueApexCharts from 'vue-apexcharts'
-import Ripple from 'vue-ripple-directive'
-
-import store from '@/store/index'
-// import { $themeColors } from '@themeConfig'
-import { kFormatter } from '@core/utils/filter'
-import { areaChartOptions } from './chartOptions'
 
 export default {
   components: {
-    BRow,
-    BCol,
-    BCard,
-    BAlert,
     BButton,
-    BAvatar,
+    BTable,
+    BModal,
+    BCard,
     BSpinner,
     BCardBody,
-    BListGroup,
-    BFormSelect,
-    BCardHeader,
-    BButtonGroup,
-    VueApexCharts,
-    BListGroupItem,
-  },
-  directives: {
-    Ripple,
+    BFormGroup,
+    BFormInput,
+    BInputGroup,
+    BInputGroupPrepend,
   },
   data() {
     return {
-      dir: false,
-      alertshow: false,
+      search: '',
+      modalData: '',
       loadDataAwal: true,
-      rows: [],
-      searchTerm: '',
-      dashboardReport: {
-        subscribersGained: {
-          series: [
-            {
-              name: 'COD',
-              data: [28, 40, 36, 52, 38, 60, 55, 28, 40, 36, 52, 38, 60, 55, 28, 40, 36, 52, 38, 60, 55, 28, 40, 36, 52, 38, 60, 55, 22, 44],
-            },
-            {
-              name: 'Non - COD',
-              data: [55, 35, 78, 65, 57, 72, 81, 55, 35, 78, 65, 57, 72, 81, 55, 35, 78, 65, 57, 72, 81, 55, 35, 78, 65, 57, 72, 81, 24, 12],
-            },
-          ],
+      isLoadTable: false,
+      perPage: 5,
+      pageOptions: [3, 5, 10],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+      items: [
+        {
+          id: 1,
+          expedition_name: 'JNE',
+          cb_from_expd: '28%',
+          cod_from_expd: '2.5%',
+          cb_to_user: '25%',
+          cod_to_user: '2.8%',
         },
-      },
-      filterTopEkspedisi: '',
-      filterTopPartner: '',
-      selectedEkspedisi: {
-        kurir: null,
-        bulan: null,
-      },
-      selectedPartner: {
-        bulan: null,
-      },
-      optionsKurir: [
-        { value: null, text: 'Pilih Kurir' },
-        { value: 'JNE', text: 'JNE' },
-        { value: 'JNT', text: 'JNT' },
-        { value: 'Sicepat', text: 'Sicepat' },
+        {
+          id: 2,
+          expedition_name: 'J&T',
+          cb_from_expd: '28%',
+          cod_from_expd: '2.5%',
+          cb_to_user: '25%',
+          cod_to_user: '2.8%',
+        },
+        {
+          id: 3,
+          expedition_name: 'SiCepat',
+          cb_from_expd: '28%',
+          cod_from_expd: '2.5%',
+          cb_to_user: '25%',
+          cod_to_user: '2.8%',
+        },
       ],
-      optionsBulan: [
-        { value: null, text: 'Pilih Bulan' },
-        { value: 'Januari', text: 'Januari' },
-        { value: 'Febuari', text: 'Febuari' },
-        { value: 'Maret', text: 'Maret' },
-        { value: 'April', text: 'April' },
-        { value: 'Mei', text: 'Mei' },
-        { value: 'Juni', text: 'Juni' },
-        { value: 'Juli', text: 'Juli' },
-        { value: 'Agustus', text: 'Agustus' },
-        { value: 'September', text: 'September' },
-        { value: 'Oktober', text: 'Oktober' },
-        { value: 'November', text: 'November' },
-        { value: 'Desember', text: 'Desember' },
+      fields: [
+        // A virtual column made up from two fields
+        {
+          key: 'expedition_name',
+          label: 'Nama Ekspedisi',
+        },
+        {
+          key: 'cb_from_expd',
+          label: 'Cashback',
+          sortable: true,
+        },
+        {
+          key: 'cod_from_expd',
+          label: 'Biaya COD',
+          sortable: true,
+        },
+        {
+          key: 'cb_to_user',
+          label: 'Cashback',
+        },
+        {
+          key: 'cod_to_user',
+          label: 'Biaya COD',
+        },
+        {
+          key: 'editExpedition',
+          label: '',
+        },
       ],
     }
   },
   computed: {
-    chartOptionsComputed() {
-      const options = JSON.parse(JSON.stringify(areaChartOptions))
-      return options
-    },
-    direction() {
-      if (store.state.appConfig.isRTL) {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.dir = true
-        return this.dir
-      }
-      // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-      this.dir = false
-      return this.dir
+    sortOptions() {
+      // Create an options list from our fields
+      return this.fields
+        .filter(f => f.sortable)
+        .map(f => ({ text: f.label, value: f.key }))
     },
   },
   watch: {
-    filterTopEkspedisi: {
-      // immediate: true,
-      handler() {
-        this.fetchData({ filterTopEkspedisi: this.filterTopEkspedisi })
-      },
-    },
-    filterTopPartner: {
-      // immediate: true,
-      handler() {
-        this.fetchData({ filterTopPartner: this.filterTopPartner })
-      },
-    },
-    selectedEkspedisi: {
-      deep: true,
-      // immediate: true,
-      handler() {
-        this.fetchData(this.selectedEkspedisi)
-      },
-    },
-    selectedPartner: {
-      deep: true,
-      // immediate: true,
-      handler() {
-        this.fetchData(this.selectedPartner)
+    search: {
+      handler(val) {
+        // calling api
+        console.log(val)
       },
     },
   },
   mounted() {
-    //
+    // Set the initial number of items
+    // items set after calling api
+    this.totalRows = this.items.length
   },
   created() {
-    this.loadDataAwal = true
+    setTimeout(() => {
+      this.loadDataAwal = false
+    }, 1000)
     this.fetchData()
     // check data from API when there is withdrawal pending/process in api
     // get data for series performa expedisi and performa partner
@@ -431,173 +260,62 @@ export default {
     // get data for select option bulan or just hardcode
   },
   methods: {
-    kFormatter,
-    choosenFilterTop(val, type = '') {
-      this[type] = val
-    },
-    async fetchData(params) {
+    async fetchData() {
       // change this endpoint
-      const endpoint = 'https://jsonplaceholder.typicode.com/posts'
-      if (params) {
-        this.$http.get(endpoint, { params: { ...params } })
-          .then(data => {
-            const newParseData = data.data.map(x => {
-              const dt = {
-                title: x.title,
-                body: x.body.substring(0, 15),
-              }
-              return dt
-            })
-            this.rows = newParseData
-          })
-          .catch(e => {
-            console.log('error', e)
-          })
-          .finally(() => {
-            this.loadDataAwal = false
-          })
-      } else {
-        this.$http.get(endpoint)
-          .then(data => {
-            const newParseData = data.data.map(x => {
-              const dt = {
-                title: x.title,
-                body: x.body.substring(0, 15),
-              }
-              return dt
-            })
-            this.rows = newParseData
-          })
-          .catch(e => {
-            console.log('error', e)
-          })
-          .finally(() => {
-            this.loadDataAwal = false
-          })
-      }
     },
-    objectToQueryString(obj = {}) {
-      const str = []
-      Object.keys(obj)
-        .map(x => {
-          str.push(`${encodeURIComponent(x)}=${encodeURIComponent(obj[x])}`)
-          return str
-        })
-      return str.join('&')
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
     },
-    toPage(params = '') {
-      console.log(params)
-      // make sure to pass params on router base for changing page
-      this.$router.push('/')
+    onChange() {
+      //
+    },
+    editExpedition(val) {
+      console.log(val)
+    },
+    detailPartner(val) {
+      // to page validasi exact partner
+      this.$router.push(`/data-partner/${val}/detail`)
+    },
+    arsipkanBtnPartner(val) {
+      this.modalData = val
+    },
+    arsipkanPartner() {
+      console.log(this.modalData)
+      // open modal konfirmasi
+      // if klik ok
+      // calling api archiveing data
+      // hide modal konfirmasi
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-konfirmasi-arsip')
+      })
+      // refresh tabel
+      // fetchData
+    },
+    resetModalKonfimasi() {
+      this.$nextTick(() => {
+        this.$bvModal.hide('modal-konfirmasi-arsip')
+      })
     },
   },
 }
 </script>
 
-<style lang="scss">
-@import '~@core/scss/vue/libs/chart-apex.scss';
-</style>
 <style lang="scss" scoped>
-.custom-card-header{
-  padding-right: 8px;
-}
-.btn-custom-topcodnoncod{
-  @media only screen and (max-width: 390px) {
-    padding: 10px;
-  }
-}
-.custom-selected-filter{
-  @media only screen and (min-width: 780px) {
-    padding-left: 0px;
-  }
-}
-.dashboard-report-wrapper{
-  padding-right: 0px;
-}
-.button-custom{
-  padding: 0;
-  margin: 0;
+.wrappertab__content{
   display: grid;
-  align-items: center;
-  justify-content: center;
-  width: 27px;
-  height: 27px;
-  border: 1.5px solid #222222;
 }
-.dashboard-title{
-  letter-spacing: 0.5px;
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: 600;
-  font-size: 32px;
-  line-height: 150%;
-  color: #222222;
+.konfirmasiarsip-wrapper{
+  display: grid;
+  margin: 0px 16px 52px;
+  justify-items: center;
+  grid-gap: 20px 0px;
 }
-.tbl-dashboard-top{
-  height: 350px;
-  padding-bottom: 16px;
-  overflow-y: scroll;
-}
-.card-dashboard{
-  padding: 16px 0px;
-}
-.select-form{
-  position: relative;
-  z-index: 10000;
-  @media screen  {
-    //
-  }
-}
-.total-top-each-item{
-  font-style: normal;
-  font-weight: 600;
-  font-size: 18px;
-  font-family: Poppins;
-  line-height: 150%;
-  letter-spacing: 0.5px;
-  color: #34A770;
-  padding-right: 10px;
-  text-align: right;
-  display: inline-block;
-}
-.text-top-each-item{
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 150%;
-  letter-spacing: 0.5px;
-  color: #444444;
-}
-.wrapper-warning-pemintaan-saldo{
-  background: #FBA63C !important;
-  border-radius: 16px;
-  height: 62px;
-}
-.text-warning-pemintaan-saldo{
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: normal;
-  font-size: 20px;
-  line-height: 150%;
-  letter-spacing: 0.5px;
-  color: #FFFFFF;
-}
-.btn-warning-pemintaan-saldo{
-  width: 46px;
-  height: 46px;
-  padding: 0px;
-  // background: #FFFFFF;
-  // opacity: 0.4;
+.btn-konfirmasi-arsip{
+  text-align: center;
+  width: 178px;
+  height: 56px;
   border-radius: 12px;
-  & span{
-    font-family: Poppins;
-    font-style: normal;
-    font-weight: 500;
-    font-size: 24px;
-    line-height: 150%;
-    color: #FFFFFF;
-    letter-spacing: 0.5px;
-  }
 }
 </style>
