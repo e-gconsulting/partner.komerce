@@ -7,7 +7,7 @@
             <b-button
               variant="primary"
               size="sm"
-              class="mr-50 btn-custom"
+              class="mr-2 btn-custom"
               @click="$router.go(-1)"
             >
               <feather-icon
@@ -24,12 +24,34 @@
           </div>
           <div class="d-flex justify-content-end">
             <b-button
+              v-if="enableForm"
+              key="enableFormKey"
               variant="primary"
               size="sm"
               class="mr-50 btn-custom btn-custom--edit"
-              @click="$router.go(-1)"
+              @click="toogleFormEdit"
             >Edit
             </b-button>
+            <div
+              v-else
+              key="enableFormKey"
+              class="d-flex"
+            >
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                class="mr-1 btn-custom btn-custom--edit"
+                @click="toogleFormEdit"
+              >Batal
+              </b-button>
+              <b-button
+                variant="primary"
+                size="sm"
+                class="btn-custom btn-custom--edit"
+                @click="simpanFormEdit"
+              >Simpan
+              </b-button>
+            </div>
           </div>
 
           <div>
@@ -50,6 +72,7 @@
                     <b-form-input
                       id="name"
                       v-model="name"
+                      :readonly="enableForm"
                       placeholder="Masukkan Nama"
                     />
                   </b-form-group>
@@ -63,6 +86,7 @@
                     <b-form-input
                       id="email"
                       type="email"
+                      :readonly="enableForm"
                       placeholder="Masukkan Email"
                     />
                   </b-form-group>
@@ -75,6 +99,7 @@
                   >
                     <b-form-input
                       id="h-username"
+                      :readonly="enableForm"
                       placeholder="Username"
                     />
                   </b-form-group>
@@ -88,6 +113,7 @@
                     <b-form-input
                       id="nohp"
                       type="number"
+                      :readonly="enableForm"
                       placeholder="No Handphone"
                     />
                   </b-form-group>
@@ -129,7 +155,7 @@
                         <span class="mr-1">
                           <img
                             :src="require('@/assets/images/logo/logo.png')"
-                            :title="itm"
+                            :title="'komerce'"
                             alt="logo"
                             width="29px"
                             height="29px"
@@ -287,6 +313,7 @@ export default {
   data() {
     return {
       loadDataAwal: true,
+      enableForm: true,
       name: '',
       listCheckBox: [
         { text: 'Hiring', value: 'hiring' },
@@ -329,6 +356,12 @@ export default {
       this.$nextTick(() => {
         this.$bvModal.hide('modal-edit-akseslayanan')
       })
+    },
+    simpanFormEdit() {
+      // calling api for simpan data
+    },
+    toogleFormEdit() {
+      this.enableForm = !this.enableForm
     },
   },
 }

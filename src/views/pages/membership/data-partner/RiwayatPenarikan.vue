@@ -7,7 +7,7 @@
             <b-button
               variant="primary"
               size="sm"
-              class="mr-50 btn-custom"
+              class="mr-2 btn-custom"
               @click="$router.push(`/data-partner/${$route.params.id}/detail`)"
             >
               <feather-icon
@@ -47,15 +47,20 @@
             @filtered="onFiltered"
           >
             <!-- A virtual composite column -->
-            <!-- <template #cell(transreturn)="data">
-              <b>
-                {{ data.item.trans }}
-              </b>
-              <br>
-              <span class="text-secondary">
-                {{ data.item.trans_return }}
+            <template #cell(status)="data">
+              <span
+                :class="colorStatus(data.item.status)"
+              >
+                {{ data.item.status }}
               </span>
-            </template> -->
+            </template>
+            <template #cell(nominal)="data">
+              <span
+                class="colorStatusSuccess"
+              >
+                {{ data.item.nominal }}
+              </span>
+            </template>
             <template #table-busy>
               <div class="text-center text-danger my-2">
                 <b-spinner
@@ -91,7 +96,6 @@ import {
   // BFormGroup,
   // BFormCheckbox,
   // BListGroup,
-  // BListGroupItem,
   BButton,
   BTable,
   BCard,
@@ -109,7 +113,6 @@ export default {
     // BFormGroup,
     // BFormCheckbox,
     // BListGroup,
-    // BListGroupItem,
     flatPickr,
     BButton,
     BTable,
@@ -146,7 +149,15 @@ export default {
           bank_name: 'Mandiri',
           bank_no: '900001234123',
           nominal: '4.500.000',
-          status: 'Disetujui',
+          status: 'Sedang direview',
+        },
+        {
+          id: 3,
+          tanggal: '10 September 2021',
+          bank_name: 'Mandiri',
+          bank_no: '900001234123',
+          nominal: '4.500.000',
+          status: 'Perlu disetujui',
         },
       ],
       fields: [
@@ -188,7 +199,7 @@ export default {
   watch: {
     rangeDate: {
       handler(val) {
-        // calling api
+        // calling api for table and update data table
         if (val.indexOf('to') !== -1) {
           const [startDate, endDate] = val.split(' to ')
           console.log({ startDate, endDate })
@@ -276,5 +287,14 @@ export default {
       height: 56px;
     }
   }
+}
+.colorStatusPrimary{
+  color: #FF6A3A;
+}
+.colorStatusSuccess{
+  color: #34A770;
+}
+.colorStatusWarning{
+  color: #FBA63C;
 }
 </style>
