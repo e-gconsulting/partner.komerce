@@ -108,13 +108,32 @@
               Riwayat Penarikan Saldo
             </div>
             <div class="d-flex justify-content-end">
-              <b-form-group class="mr-1 mb-0">
-                <FlatPickr
-                  v-model="dateSaldo"
-                  class="form-control w-20e"
-                  :config="configSaldo"
-                />
-              </b-form-group>
+              <date-range-picker
+                  ref="picker"
+                  :locale-data="locale"
+                  v-model="dateRange"
+                  :ranges="ranges"
+                  :opens="'left'"
+                  class="w-100 mr-1"
+              >
+                  <template v-slot:input="picker" style="min-width: 350px;">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="mr-2">{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 2V5" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 2V5" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M3.5 9.08984H20.5" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.6947 13.7002H15.7037" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.6947 16.7002H15.7037" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M11.9955 13.7002H12.0045" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M11.9955 16.7002H12.0045" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.29431 13.7002H8.30329" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.29431 16.7002H8.30329" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                  </template>
+              </date-range-picker>
               <a href="#" class="btn btn-outline-primary">
                 Export
               </a>
@@ -171,20 +190,38 @@
         </div>
       </div>
     </div>
-    <b-modal id="modalTopUp" centered>
-      <p class="text-center h-text-lg">
-        Top Up Saldo
-      </p>
+    <b-modal id="modalTopUp" centered hide-header>
+      <a href="#" @click="closeModal()">
+        <img
+          src="@/assets/images/icons/close-circle.svg"
+          height="18"
+          width="18"
+          alt="close"
+          class="float-right"
+        >
+      </a>
+      <div class="p-1">
+        <p class="text-center h-text-lg mb-2">Top Up Saldo</p>
+      </div>
       <form id="formTopUp">
         <div class="row align-items-center my-2">
           <div class="col-4">
-            <p class="font-weight-bold h-text-sm mb-0">
+            <p class="font-weight-bold h-text-sm h-text-dark mb-0">
               Nominal
             </p>
           </div>
-          <div class="col-8">
-            <input type="number" name="nominal" id="nominal" class="form-control" required>
-          </div>
+          <b-form-group class="col-8 mb-0" invalid-feedback="Nominal is required">
+            <b-form-input
+              id="nominal-topup"
+              v-model="nominalTopUp"
+              type="tel"
+              data-type="currency"
+              required
+              class="h-text-sm h-text-dark"
+              @keyup="formatCurrency(false, 'nominal-topup')"
+              @blur="formatCurrency(true, 'nominal-topup')"
+            />
+          </b-form-group>
         </div>
       </form>
       <template #modal-footer>
@@ -205,7 +242,7 @@
       <div class="p-1">
         <p class="text-center h-text-lg mb-2" id="modal-title">{{ modalTitle }}</p>
         <div v-if="stepNow === 0">
-          <form ref="form1" class="row" @submit.stop.prevent="handleSubmit(1)">
+          <form ref="form1" class="row align-items-center" @submit.stop.prevent="handleSubmit(1)">
             <div class="col-5 mb-1">
               <p class="h-text-sm h-text-dark mb-0">Nominal</p>
             </div>
@@ -218,8 +255,8 @@
                 required
                 class="h-text-sm h-text-dark"
                 :state="nominalState"
-                @keyup="formatCurrency(false)"
-                @blur="formatCurrency(true)"
+                @keyup="formatCurrency(false, 'nominal-input')"
+                @blur="formatCurrency(true, 'nominal-input')"
               />
             </b-form-group>
             <div class="col-5 mb-1">
@@ -228,7 +265,7 @@
             <b-form-group class="col-7 mb-1" invalid-feedback="Rekening tujuan is required" :state="rekTujuanState">
               <b-form-select v-model="selectedRekTujuan" class="h-text-sm h-text-dark" :options="rekTujuanOptions" required></b-form-select>
             </b-form-group>
-            <div class="col-12 text-right mt-3 mb-1">
+            <div class="col-12 text-right mt-3">
               <button type="button" class="btn btn-outline-primary" @click="closeModal()">Batal</button>
               <button type="submit" class="btn btn-primary ml-2">Ajukan Penarikan</button>
             </div>
@@ -236,13 +273,13 @@
         </div>
         <div v-if="stepNow === 1">
           <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
-            <p class="text-center">Mohon verifikasi identitas kamu dengan memasukan PIN</p>
-            <div id="divOuter" class="m-auto">
-              <div id="divInner">
-                <input id="input2" type="tel" maxlength="6" required v-model="pin" @keydown="stopCarret" @keyup="stopCarret"/>
-              </div>
-            </div>
-            <div class="col-12 mt-3 mb-1">
+            <p class="text-center h-text-dark font-weight-bold mb-3">Mohon verifikasi identitas kamu dengan memasukan PIN</p>
+            <PincodeInput
+              v-model="pin"
+              :length="6"
+              class="font-weight-bold h-text-dark"
+            />
+            <div class="col-12 mt-2">
               <div class="text-center">
                 <button type="submit" class="btn btn-primary d-block m-auto">Konfirmasi</button>
                 <button type="button" class="btn btn-link mt-1" @click="modalBack()">Kembali</button>
@@ -263,16 +300,18 @@
 </template>
 
 <script>
+import moment from 'moment'
 import {
   BFormGroup,
   BModal,
   BFormInput,
   BFormSelect,
 } from 'bootstrap-vue'
-import FlatPickr from 'vue-flatpickr-component'
+import DateRangePicker from 'vue2-daterange-picker'
+import PincodeInput from 'vue-pincode-input'
 
-import 'flatpickr/dist/flatpickr.css'
-import { formatDate } from '@/@core/utils/filter'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+// import { formatDate } from '@/@core/utils/filter'
 
 export default {
   components: {
@@ -280,10 +319,24 @@ export default {
     BModal,
     BFormInput,
     BFormSelect,
-    FlatPickr,
+    DateRangePicker,
+    PincodeInput,
   },
   data() {
-    const dateNow = new Date()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const last7 = new Date()
+    last7.setDate(today.getDate() - 7)
+    last7.setHours(0, 0, 0, 0)
+
+    const last30 = new Date()
+    last30.setDate(today.getDate() - 30)
+    last30.setHours(0, 0, 0, 0)
+
+    const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+    const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+
     return {
       saldo: 8500000,
       saldoPending: 4200000,
@@ -292,10 +345,27 @@ export default {
         bank: 'Mandiri',
         noRek: '********2334',
       },
-      dateSaldo: `${formatDate(dateNow.setDate(dateNow.getDate() - 30))} to ${formatDate(Date.now())}`,
-      configSaldo: {
-        mode: 'range',
+      dateRange: {
+        startDate: today,
+        endDate: today,
       },
+      picker: {
+        startDate: today,
+        endDate: today,
+      },
+      locale: {
+        format: 'dd/mm/yyyy',
+      },
+      ranges: {
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan Ini': [firstDateOfMonth, lastDateOfMonth],
+      },
+      today,
+      last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
       tableTitles: ['Tanggal', 'Tujuan Penarikan', 'Status', 'Saldo', 'Jumlah Penarikan', 'Sisa Saldo', 'Rincian'],
       riwayatPenarikans: [
         {
@@ -355,6 +425,7 @@ export default {
       snapToken: '31f5ef26-5121-44e9-97b5-f469039bf6cf',
       modalTitle: null,
       stepNow: 0,
+      nominalTopUp: '',
       nominal: '',
       nominalState: null,
       selectedRekTujuan: null,
@@ -382,6 +453,7 @@ export default {
       document.head.appendChild(snapScriptEl)
       window.snapScriptLoaded = 1
     }
+    this.alertFail()
   },
   methods: {
     formatRibuan(x) {
@@ -400,20 +472,8 @@ export default {
         onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
       })
     },
-    formatDate(date) {
-      const d = new Date(date)
-      let month = '' + (d.getMonth() + 1) // eslint-disable-line
-      let day = '' + d.getDate() // eslint-disable-line
-      const year = d.getFullYear()
-
-      if (month.length < 2) {
-        month = '0' + month // eslint-disable-line
-      }
-      if (day.length < 2) {
-        day = '0' + day // eslint-disable-line
-      }
-
-      return [year, month, day].join('-')
+    formatDate(d) {
+      return moment(d).format('D MMM YYYY')
     },
     formatNumber(n) {
       return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
@@ -423,6 +483,7 @@ export default {
       this.$bvModal.show('modal-keuangan')
     },
     closeModal() {
+      this.$bvModal.hide('modalTopUp')
       this.$bvModal.hide('modal-keuangan')
     },
     checkFormValidity(step) {
@@ -480,8 +541,8 @@ export default {
           break
       }
     },
-    formatCurrency(blur) {
-      const input = document.getElementById('nominal-input')
+    formatCurrency(blur, el) {
+      const input = document.getElementById(el)
       let inputVal = input.value
 
       if (inputVal === '' || inputVal === 'Rp' || inputVal === 'Rp ') { return }
@@ -536,6 +597,19 @@ export default {
           elem.focus()
         }
       }
+    },
+    alertFail() {
+      this.$swal({
+        title: '<span class="font-weight-bold h4">Maaf sedang ada gangguan,<br>coba lagi nanti</span>',
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+        },
+        buttonsStyling: false,
+      })
     },
   },
 }
@@ -650,5 +724,27 @@ export default {
 #divOuter{
   width: 288px;
   overflow: hidden;
+}
+.btn-primary {
+  background-color: #F95031 !important;
+}
+.btn-outline-primary {
+  border-color: #F95031 !important;
+}
+.vue-pincode-input-wrapper {
+  width: 100%;
+  justify-content: center;
+}
+input.vue-pincode-input {
+  border-radius: 0;
+  box-shadow: none !important;
+  border-bottom: 3px solid #222222;
+  margin-left: 5px;
+  margin-right: 5px;
+  max-width: 67px;
+}
+.reportrange-text {
+  background-color: #F1F2F6 !important;
+  display: flex;
 }
 </style>

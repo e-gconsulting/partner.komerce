@@ -3260,7 +3260,7 @@ core-js@3.8.1, core-js@^3.3.2, core-js@^3.4.4, core-js@^3.6.5:
   resolved "https://registry.npmjs.org/core-js/-/core-js-3.8.1.tgz"
   integrity sha512-9Id2xHY1W7m8hCl8NkhQn5CufmF/WuR30BTRewvCXc1aZd3kMECwNZ69ndLbekKfakw9Rf2Xyc+QR6E7Gg+obg==
 
-core-js@^2.4.0:
+core-js@^2.4.0, core-js@^2.6.5:
   version "2.6.12"
   resolved "https://registry.npmjs.org/core-js/-/core-js-2.6.12.tgz"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
@@ -4628,12 +4628,7 @@ flat-cache@^2.0.1:
     rimraf "2.6.3"
     write "1.0.3"
 
-flatpickr@^4.6.6:
-  version "4.6.9"
-  resolved "https://registry.npmjs.org/flatpickr/-/flatpickr-4.6.9.tgz"
-  integrity sha512-F0azNNi8foVWKSF+8X+ZJzz8r9sE1G4hl06RyceIaLvyltKvDl6vqk9Lm/6AUUCi5HWaIjiUbk7UpeE/fOXOpw==
-
-flatpickr@^4.6.9:
+flatpickr@^4.6.6, flatpickr@^4.6.9:
   version "4.6.9"
   resolved "https://registry.yarnpkg.com/flatpickr/-/flatpickr-4.6.9.tgz#9a13383e8a6814bda5d232eae3fcdccb97dc1499"
   integrity sha512-F0azNNi8foVWKSF+8X+ZJzz8r9sE1G4hl06RyceIaLvyltKvDl6vqk9Lm/6AUUCi5HWaIjiUbk7UpeE/fOXOpw==
@@ -9678,6 +9673,13 @@ vue-perfect-scrollbar@0.2.1:
   resolved "https://registry.npmjs.org/vue-perfect-scrollbar/-/vue-perfect-scrollbar-0.2.1.tgz"
   integrity sha512-45rOonNrZaKX0mu0N9v422+c3Ngm8iTnVAP0N2iUwPfWZJds4S6eRGdmiNbrVFqmUc8IfRNI0Dpa3Zk8ntjaZQ==
 
+vue-pincode-input@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/vue-pincode-input/-/vue-pincode-input-0.4.0.tgz#9f4f162e2171ff268cd146570520f8d48d5e14fb"
+  integrity sha512-A1DtG9J+o5AhdxRcgmuW8xxh7w5+GGVd6Di1J3n12xI99qSyKm9kBNJx4AzrNDgzr2TwUbleAdw7YTy3B68ohQ==
+  dependencies:
+    core-js "^2.6.5"
+
 vue-prism-component@1.1.1:
   version "1.1.1"
   resolved "https://registry.npmjs.org/vue-prism-component/-/vue-prism-component-1.1.1.tgz"
@@ -9779,6 +9781,13 @@ vue-verification-code-input@^1.0.0:
   integrity sha512-BY6YKCwBE+3Y3vO3/3ic0ycEabicmOTPdl9oZrLpx6PVdebVAOKCHs6s2taeHmg862AMaGWWBSnJ5z8m8dM10A==
   dependencies:
     core-js "^3.3.2"
+    vue "^2.6.10"
+
+vue2-daterange-picker@^0.6.6:
+  version "0.6.6"
+  resolved "https://registry.yarnpkg.com/vue2-daterange-picker/-/vue2-daterange-picker-0.6.6.tgz#2b5815967ccc466e2e56e5c2a49138eb2534046a"
+  integrity sha512-VPgMHhVTNts1HkLYP/bDHk3DlV62x8RSEI3Q/03iPZyGa3LezKbkJeZvXm9YyB+5UQWDSxE1BX/kvWlr7DvZ+A==
+  dependencies:
     vue "^2.6.10"
 
 vue2-google-maps@^0.10.7:

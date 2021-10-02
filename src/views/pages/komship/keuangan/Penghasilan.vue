@@ -98,33 +98,20 @@
                   :clearable="false"
                 />
               </b-form-group>
-              <div class="dropdown w-50 mb-0">
-                <b-dropdown id="dropdown-1" ref="dropdown" variant="outline-secondary" dropright class="rounded w-100" no-caret>
-                  <template #button-content>
-                    <span>{{ customDate }}</span>
+              <date-range-picker
+                  ref="picker"
+                  :locale-data="locale"
+                  v-model="dateRange"
+                  :ranges="ranges"
+                  :opens="'left'"
+                  class="w-50"
+              >
+                  <template v-slot:input="picker" style="min-width: 350px;">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
+                    </div>
                   </template>
-                  <div class="d-flex flex-nowrap">
-                    <div>
-                      <b-dropdown-item v-for="val in dropDownValues" :key="val.value" :active="selectedCstDate === val.value ? true : null">
-                        <b-form>
-                          <div @click.stop="selectCstDate(val.value)">{{ val.text }}</div>
-                        </b-form>
-                      </b-dropdown-item>
-                    </div>
-                    <div class="border-left">
-                      <flat-pickr
-                        v-model="customDate"
-                        :config="cstDateCfg"
-                      />
-                      <p v-if="err" class="small text-danger ml-2">Silahkan memilih tanggal</p>
-                      <div class="text-right mt-3">
-                        <button class="btn btn-secondary" @click="closeDropdown(true)">Cancel</button>
-                        <button class="btn btn-success mx-1" @click="closeDropdown(false)">Apply</button>
-                      </div>
-                    </div>
-                  </div>
-                </b-dropdown>
-              </div>
+              </date-range-picker>
             </div>
           </div>
           <div class="card-body">
@@ -161,7 +148,6 @@
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
-                        class="ml-1"
                       >
                     </div>
                     <div class="info-card-body-text">
@@ -323,7 +309,6 @@
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
-                        class="ml-1"
                       >
                     </div>
                     <div class="info-card-body-text">
@@ -443,23 +428,35 @@
 </template>
 
 <script>
-import { BFormGroup, BDropdown, BDropdownItem } from 'bootstrap-vue'
+import moment from 'moment'
+import { BFormGroup } from 'bootstrap-vue'
 import vSelect from 'vue-select'
-import FlatPickr from 'vue-flatpickr-component'
+import DateRangePicker from 'vue2-daterange-picker'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
-
-import 'flatpickr/dist/flatpickr.css'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   components: {
     BFormGroup,
-    BDropdown,
-    BDropdownItem,
+    DateRangePicker,
     vSelect,
-    FlatPickr,
     ChartPenghasilan,
   },
   data() {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const last7 = new Date()
+    last7.setDate(today.getDate() - 7)
+    last7.setHours(0, 0, 0, 0)
+
+    const last30 = new Date()
+    last30.setDate(today.getDate() - 30)
+    last30.setHours(0, 0, 0, 0)
+
+    const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+    const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+
     return {
       cashback: 4460000,
       penghasilan7Hari: 400200100,
@@ -489,28 +486,28 @@ export default {
         ongkirBersih: 199666000,
         biayaCod: 199666000,
       },
-      dropDownValues: [
-        { text: '7 Hari Terakhir', value: -7 },
-        { text: '30 Hari Terakhir', value: -30 },
-        { text: 'Bulan ini', value: 30 },
-      ],
-      selectedCstDateBefore: -7,
-      selectedCstDate: -7,
-      customDate: null,
-      dateNow: null,
-      cstDateCfg: {
-        mode: 'range',
-        inline: true,
-        altFormat: 'M j, Y',
-        altInput: true,
-        altInputClass: 'd-none',
+      dateRange: {
+        startDate: today,
+        endDate: today,
       },
-      err: false,
+      picker: {
+        startDate: today,
+        endDate: today,
+      },
+      locale: {
+        format: 'dd/mm/yyyy',
+      },
+      ranges: {
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan Ini': [firstDateOfMonth, lastDateOfMonth],
+      },
+      today,
+      last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
     }
-  },
-  mounted() {
-    this.dateNow = new Date()
-    this.customDate = `${this.formatDate(this.dateNow.setDate(this.dateNow.getDate() - 7))} to ${this.formatDate(Date.now())}`
   },
   methods: {
     formatRibuan(x) {
@@ -519,40 +516,8 @@ export default {
     formatRupiah(x) {
       return `Rp ${this.formatRibuan(x)}`
     },
-    selectCstDate(val) {
-      this.dateNow = new Date()
-      this.selectedCstDateBefore = this.selectedCstDate
-      this.selectedCstDate = val
-      this.customDate = `${this.formatDate(this.dateNow.setDate(this.dateNow.getDate() + val))} to ${this.formatDate(Date.now())}`
-    },
-    closeDropdown(batal) {
-      this.err = false
-      this.dateNow = new Date()
-
-      if (batal) {
-        this.customDate = `${this.formatDate(this.dateNow.setDate(this.dateNow.getDate() + this.selectedCstDateBefore))} to ${this.formatDate(Date.now())}`
-        this.selectedCstDate = this.selectedCstDateBefore
-        this.$refs.dropdown.hide(true)
-      } else if (this.customDate) {
-        this.$refs.dropdown.hide(true)
-      } else {
-        this.err = true
-      }
-    },
-    formatDate(date) {
-      const d = new Date(date)
-      let month = '' + (d.getMonth() + 1) // eslint-disable-line
-      let day = '' + d.getDate() // eslint-disable-line
-      const year = d.getFullYear()
-
-      if (month.length < 2) {
-          month = '0' + month // eslint-disable-line
-      }
-      if (day.length < 2) {
-          day = '0' + day // eslint-disable-line
-      }
-
-      return [year, month, day].join('-')
+    formatDate(d) {
+      return moment(d).format('D MMM YYYY')
     },
   },
 }
@@ -631,9 +596,9 @@ export default {
 .h-5-5 {
   height: 5.5em;
 }
-.flatpickr-calendar {
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
+.reportrange-text {
+  background-color: #fff !important;
+  display: flex;
 }
 </style>
 <style lang="scss">

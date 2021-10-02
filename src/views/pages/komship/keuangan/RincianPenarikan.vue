@@ -48,6 +48,11 @@
                   scope="col"
                 >
                   {{ title }}
+                  <img
+                    v-if="tableTitles.indexOf(title) == 3 || tableTitles.indexOf(title) == 4"
+                    src="@/assets/images/icons/info-circle-dark.svg"
+                    alt="Info"
+                  >
                 </th>
               </tr>
             </thead>
