@@ -51,6 +51,24 @@
                 :filter-included-fields="filterOn"
                 @filtered="onFiltered"
               >
+                <template #thead-top="">
+                  <b-tr>
+                    <b-th
+                      variant="default"
+                      class="text-center"
+                    >Ekpedisi</b-th>
+                    <b-th
+                      variant="default"
+                      class="text-center"
+                      colspan="2"
+                    >Dari Ekspedisi</b-th>
+                    <b-th
+                      variant="default"
+                      class="text-center"
+                      colspan="2"
+                    >Ke Pengguna</b-th>
+                  </b-tr>
+                </template>
                 <template #cell(editExpedition)="data">
                   <b-button
                     variant="flat-default"
@@ -132,6 +150,8 @@
 <script>
 import {
   BButton,
+  BTh,
+  BTr,
   BCard,
   BCardBody,
   BTable,
@@ -147,6 +167,8 @@ export default {
   components: {
     BButton,
     BTable,
+    BTh,
+    BTr,
     BModal,
     BCard,
     BSpinner,
