@@ -1,6 +1,14 @@
 export default [
   {
-    title: 'Dashboard',
+    title: 'Dashboard Admin',
+    icon: 'HomeIcon',
+    tagVariant: 'light-warning',
+    route: 'dashboard-analytics',
+    resource: 'Dashboard',
+    action: 'read',
+  },
+  {
+    title: 'Dashboard COD',
     icon: 'HomeIcon',
     tagVariant: 'light-warning',
     route: 'cod-dashboard',
