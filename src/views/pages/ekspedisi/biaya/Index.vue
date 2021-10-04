@@ -131,6 +131,14 @@
             </b-modal>
 
           </div>
+          <b-button
+            variant="gradient-danger"
+            size="lg"
+            class="btn-icon rounded-circle btn-float-custom"
+            @click="$router.push('/biaya-ekspedisi/tambah')"
+          >
+            <feather-icon icon="PlusIcon" />
+          </b-button>
         </b-card-body>
       </b-card>
     </div>
@@ -294,11 +302,7 @@ export default {
       //
     },
     editExpedition(val) {
-      console.log(val)
-    },
-    detailPartner(val) {
-      // to page validasi exact partner
-      this.$router.push(`/data-partner/${val}/detail`)
+      this.$router.push(`/biaya-ekspedisi/${val}/edit`)
     },
     arsipkanBtnPartner(val) {
       this.modalData = val
@@ -339,5 +343,10 @@ export default {
   width: 178px;
   height: 56px;
   border-radius: 12px;
+}
+.btn-float-custom{
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
 }
 </style>
