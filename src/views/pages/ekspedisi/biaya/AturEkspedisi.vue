@@ -19,7 +19,7 @@
               class="text-24-bold"
               style="color: #222222;"
             >
-              Edit Besaran Biaya
+              {{ $route.meta.type === 'add' ? 'Menambahkan Ekspedisi' : 'Edit Besaran Biaya' }}
             </h4>
           </div>
           <div class="d-flex justify-content-end">

@@ -11,9 +11,10 @@ export default [
   {
     path: '/biaya-ekspedisi/tambah',
     name: 'cod-biaya-ekspedisi-tambah',
-    component: () => import('@/views/pages/ekspedisi/biaya/Tambah'),
+    component: () => import('@/views/pages/ekspedisi/biaya/AturEkspedisi'),
     meta: {
       navActiveLink: 'cod-biaya-ekspedisi',
+      type: 'add',
       resource: 'Dashboard',
       action: 'read',
     },
@@ -21,7 +22,7 @@ export default [
   {
     path: '/biaya-ekspedisi/:id/edit',
     name: 'cod-biaya-ekspedisi-edit',
-    component: () => import('@/views/pages/ekspedisi/biaya/Edit'),
+    component: () => import('@/views/pages/ekspedisi/biaya/AturEkspedisi'),
     meta: {
       navActiveLink: 'cod-biaya-ekspedisi',
       resource: 'Dashboard',
