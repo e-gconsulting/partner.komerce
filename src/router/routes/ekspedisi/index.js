@@ -25,6 +25,7 @@ export default [
     component: () => import('@/views/pages/ekspedisi/biaya/AturEkspedisi'),
     meta: {
       navActiveLink: 'cod-biaya-ekspedisi',
+      type: 'edit',
       resource: 'Dashboard',
       action: 'read',
     },

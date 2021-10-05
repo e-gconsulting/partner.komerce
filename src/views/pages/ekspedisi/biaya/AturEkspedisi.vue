@@ -22,115 +22,143 @@
               {{ $route.meta.type === 'add' ? 'Menambahkan Ekspedisi' : 'Edit Besaran Biaya' }}
             </h4>
           </div>
-          <div class="d-flex justify-content-end">
-            <b-button
-              v-if="enableForm"
-              key="enableFormKey"
-              variant="primary"
-              size="sm"
-              class="mr-50 btn-custom btn-custom--edit"
-              @click="toogleFormEdit"
-            >Edit
-            </b-button>
-            <div
-              v-else
-              key="enableFormKey"
-              class="d-flex"
-            >
-              <b-button
-                variant="outline-primary"
-                size="sm"
-                class="mr-1 btn-custom btn-custom--edit"
-                @click="toogleFormEdit"
-              >Batal
-              </b-button>
-              <b-button
-                variant="primary"
-                size="sm"
-                class="btn-custom btn-custom--edit"
-                @click="simpanFormEdit"
-              >Simpan
-              </b-button>
+          <b-form @submit.prevent="submitData()">
+            <div class="d-flex justify-content-end mb-1">
+              <div
+                class="d-flex"
+              >
+                <b-button
+                  variant="outline-primary"
+                  size="sm"
+                  class="mr-1 btn-custom btn-custom--edit"
+                  @click="$router.go(-1)"
+                >Batal
+                </b-button>
+                <b-button
+                  variant="primary"
+                  size="sm"
+                  class="btn-custom btn-custom--edit"
+                  @click="simpanFormEdit"
+                >Simpan
+                </b-button>
+              </div>
             </div>
-          </div>
 
-          <div>
-            <h3
-              class="font-weight-bolder"
-              style="font-size:20px;color:#222222;"
-            >
-              Informasi Pengguna
-            </h3>
-            <b-form @submit.prevent="submitData()">
+            <div>
+              <h3
+                class="font-weight-bolder"
+                style="font-size:20px;color:#222222;"
+              >
+                Ekspedisi
+              </h3>
               <b-row>
-                <b-col cols="9">
-                  <b-form-group
-                    label="Nama"
-                    label-for="name"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      id="name"
-                      v-model="name"
-                      :readonly="enableForm"
-                      placeholder="Masukkan Nama"
-                    />
-                  </b-form-group>
+                <b-col
+                  cols="2"
+                >
+                  <span>Nama Ekspedisi</span>
                 </b-col>
-                <b-col cols="9">
-                  <b-form-group
-                    label="Email"
-                    label-for="email"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      id="email"
-                      type="email"
-                      :readonly="enableForm"
-                      placeholder="Masukkan Email"
-                    />
-                  </b-form-group>
-                </b-col>
-                <b-col cols="9">
-                  <b-form-group
-                    label="Username"
-                    label-for="h-username"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      id="h-username"
-                      :readonly="enableForm"
-                      placeholder="Username"
-                    />
-                  </b-form-group>
-                </b-col>
-                <b-col cols="9">
-                  <b-form-group
-                    label="No Handphone"
-                    label-for="nohp"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      id="nohp"
-                      type="number"
-                      :readonly="enableForm"
-                      placeholder="No Handphone"
-                    />
-                  </b-form-group>
+                <b-col
+                  cols="3"
+                >
+                  <b-form-input
+                    id="name"
+                    v-model="name"
+                    placeholder="Masukkan Nama Ekspedisi"
+                  />
                 </b-col>
               </b-row>
+            </div>
 
-            </b-form>
-          </div>
+            <div>
+              <b-row>
+                <b-col cols="2">
+                  <h3
+                    class="font-weight-bolder"
+                    style="font-size:20px;color:#222222;"
+                  >
+                    Besaran Biaya
+                  </h3>
+                </b-col>
+                <b-col cols="2">
+                  <h3
+                    class="font-weight-bolder"
+                    style="font-size:18px;color:#222222;"
+                  >
+                    Dari Ekspedisi
+                  </h3>
+                </b-col>
+                <b-col cols="2">
+                  <h3
+                    class="font-weight-bolder"
+                    style="font-size:18px;color:#222222;"
+                  >
+                    Ke Pengguna
+                  </h3>
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col
+                  cols="2"
+                >
+                  <span>Cashback</span>
+                </b-col>
+                <b-col
+                  cols="2"
+                >
+                  <b-form-input
+                    id="name"
+                    v-model="name"
+                    placeholder="Masukkan Data"
+                  />
+                </b-col>
+                <b-col
+                  cols="2"
+                >
+                  <b-form-input
+                    id="name"
+                    v-model="name"
+                    placeholder="Masukkan Data"
+                  />
+                </b-col>
+              </b-row>
+              <b-row>
+                <b-col
+                  cols="2"
+                >
+                  <span>Biaya COD</span>
+                </b-col>
+                <b-col
+                  cols="2"
+                >
+                  <b-form-input
+                    id="name"
+                    v-model="name"
+                    placeholder="Masukkan Data"
+                  />
+                </b-col>
+                <b-col
+                  cols="2"
+                >
+                  <b-form-input
+                    id="name"
+                    v-model="name"
+                    placeholder="Masukkan Data"
+                  />
+                </b-col>
+              </b-row>
+            </div>
+          </b-form>
 
           <div class="mt-1">
             <h4
               class="font-weight-bolder"
               style="font-size: 20px;color: #222222;"
             >
-              Informasi Membership Pengguna
+              Penjemputan Barang
             </h4>
-            <b-row>
+            <b-row
+              class="mt-1 align-items-center"
+            >
               <b-col
                 md="3"
               >
@@ -138,48 +166,17 @@
                   class="text-18-normal"
                   style="color: #222222;"
                 >
-                  Layanan yang digunakan
+                  Maksimal Penjemputan
                 </span>
               </b-col>
               <b-col
-                md="6"
+                md="3"
               >
-                <div
-                  style="display: grid;grid-row-gap:1rem;"
-                >
-                  <b-list-group>
-                    <b-list-group-item class="d-flex justify-content-between align-items-center">
-                      <div
-                        class="d-flex align-items-center"
-                      >
-                        <span class="mr-1">
-                          <img
-                            :src="require('@/assets/images/logo/logo.png')"
-                            :title="'komerce'"
-                            alt="logo"
-                            width="29px"
-                            height="29px"
-                            style="border-radius: 15px;"
-                          >
-                        </span>
-                        <span>Hiring</span>
-                      </div>
-                      <span
-                        class="text-16-normal"
-                      >
-                        03 September 2021
-                      </span>
-                    </b-list-group-item>
-                  </b-list-group>
-                  <b-button
-                    v-b-modal.modal-edit-akseslayanan
-                    block
-                    variant="outline-primary"
-                    class="btn-custom--editakseslayanan"
-                  >
-                    Edit Akses Layanan
-                  </b-button>
-                </div>
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
               </b-col>
             </b-row>
             <b-row
@@ -192,7 +189,77 @@
                   class="text-18-normal"
                   style="color: #222222;"
                 >
-                  Riwayat Penarikan Saldo
+                  Kendaraan
+                </span>
+              </b-col>
+              <b-col
+                md="3"
+              >
+                <div class="d-flex justify-content-between">
+                  <div
+                    id="choicemotor"
+                    class="choiceTypeVehicle"
+                    @click="handleChoiceTypeVehicle('motor')"
+                  >
+                    <img
+                      :src="require('@/assets/images/elements/expedisimotor.png')"
+                      alt="motor"
+                      width="40px"
+                      height="26px"
+                    >
+                    <span>Motor</span>
+                  </div>
+
+                  <div
+                    id="choicemobil"
+                    class="choiceTypeVehicle"
+                    @click="handleChoiceTypeVehicle('mobil')"
+                  >
+                    <img
+                      :src="require('@/assets/images/elements/expedisimobil.png')"
+                      alt="mobil"
+                      width="54px"
+                      height="24px"
+                    >
+                    <span>Mobil</span>
+                  </div>
+
+                  <div
+                    id="choicetruk"
+                    class="choiceTypeVehicle"
+                    @click="handleChoiceTypeVehicle('truk')"
+                  >
+                    <img
+                      :src="require('@/assets/images/elements/expedisitruk.png')"
+                      alt="truk"
+                      width="34px"
+                      height="30px"
+                    >
+                    <span>Truk</span>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+          </div>
+
+          <div class="mt-1">
+            <h4
+              class="font-weight-bolder"
+              style="font-size: 20px;color: #222222;"
+            >
+              Pembatasan Daerah Akses COD
+            </h4>
+            <b-row
+              class="mt-1 align-items-center"
+            >
+              <b-col
+                md="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >
+                  Data Daerah Tanpa Akses
                 </span>
               </b-col>
               <b-col
@@ -204,7 +271,7 @@
                   class="btn-custom--editakseslayanan"
                   @click="$router.push(`/data-partner/${$route.params.id}/detail/riwayat-penarikan`)"
                 >
-                  Lihat Riwayat
+                  Lihat Data
                 </b-button>
               </b-col>
             </b-row>
@@ -286,8 +353,8 @@ import {
   BFormInput,
   BFormGroup,
   BFormCheckbox,
-  BListGroup,
-  BListGroupItem,
+  // BListGroup,
+  // BListGroupItem,
   BButton,
   BCard,
   BSpinner,
@@ -303,8 +370,8 @@ export default {
     BFormInput,
     BFormGroup,
     BFormCheckbox,
-    BListGroup,
-    BListGroupItem,
+    // BListGroup,
+    // BListGroupItem,
     BButton,
     BCard,
     BSpinner,
@@ -313,7 +380,6 @@ export default {
   data() {
     return {
       loadDataAwal: true,
-      enableForm: true,
       name: '',
       listCheckBox: [
         { text: 'Hiring', value: 'hiring' },
@@ -360,8 +426,11 @@ export default {
     simpanFormEdit() {
       // calling api for simpan data
     },
-    toogleFormEdit() {
-      this.enableForm = !this.enableForm
+    handleChoiceTypeVehicle(val) {
+      console.log(val)
+      const el = document.getElementById(`choice${val}`)
+      // make radio choice
+      el.style.border = '1px solid #F95031'
     },
   },
 }
@@ -386,5 +455,17 @@ export default {
       height: 56px;
     }
   }
+}
+.choiceTypeVehicle{
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+  grid-row-gap: 10px;
+  width: 70px;
+  height: 70px;
+  border: 1px solid #828282;
+  border-radius: 12px;
+  cursor: pointer;
 }
 </style>
