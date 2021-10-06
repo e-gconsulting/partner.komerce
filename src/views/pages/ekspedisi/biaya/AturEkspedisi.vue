@@ -53,7 +53,7 @@
               </h3>
               <b-row>
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <span>Nama Ekspedisi</span>
                 </b-col>
@@ -69,9 +69,9 @@
               </b-row>
             </div>
 
-            <div class="mt-1">
+            <div class="mt-2">
               <b-row>
-                <b-col cols="2">
+                <b-col cols="3">
                   <h3
                     class="font-weight-bolder"
                     style="font-size:20px;color:#222222;"
@@ -79,7 +79,7 @@
                     Besaran Biaya
                   </h3>
                 </b-col>
-                <b-col cols="2">
+                <b-col cols="3">
                   <h3
                     class="font-weight-bolder"
                     style="font-size:18px;color:#222222;"
@@ -87,7 +87,7 @@
                     Dari Ekspedisi
                   </h3>
                 </b-col>
-                <b-col cols="2">
+                <b-col cols="3">
                   <h3
                     class="font-weight-bolder"
                     style="font-size:18px;color:#222222;"
@@ -98,12 +98,12 @@
               </b-row>
               <b-row class="my-1">
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <span>Cashback</span>
                 </b-col>
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <b-form-input
                     id="name"
@@ -112,7 +112,7 @@
                   />
                 </b-col>
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <b-form-input
                     id="name"
@@ -123,12 +123,12 @@
               </b-row>
               <b-row>
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <span>Biaya COD</span>
                 </b-col>
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <b-form-input
                     id="name"
@@ -137,7 +137,7 @@
                   />
                 </b-col>
                 <b-col
-                  cols="2"
+                  cols="3"
                 >
                   <b-form-input
                     id="name"
@@ -149,7 +149,7 @@
             </div>
           </b-form>
 
-          <div class="mt-1">
+          <div class="mt-2">
             <h4
               class="font-weight-bolder"
               style="font-size: 20px;color: #222222;"
@@ -242,7 +242,7 @@
             </b-row>
           </div>
 
-          <div class="mt-1">
+          <div class="mt-2">
             <h4
               class="font-weight-bolder"
               style="font-size: 20px;color: #222222;"
@@ -253,7 +253,7 @@
               class="mt-1 align-items-center"
             >
               <b-col
-                md="3"
+                md="4"
               >
                 <span
                   class="text-18-normal"
@@ -274,6 +274,210 @@
                   Lihat Data
                 </b-button>
               </b-col>
+            </b-row>
+          </div>
+
+          <div class="mt-2">
+            <h4
+              class="font-weight-bolder"
+              style="font-size: 20px;color: #222222;"
+            >
+              Kriteria Ongkir
+            </h4>
+            <b-row
+              class="mt-1 align-items-center"
+            >
+              <b-col
+                md="3"
+              >
+                <span
+                  class="text-18-bold"
+                  style="color: #222222;"
+                >
+                  Kriteria 1
+                </span>
+              </b-col>
+            </b-row>
+            <b-row class="my-1">
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Daerah</span>
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Biaya</span>
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Pengiriman</span>
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Return</span>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                cols="3"
+              />
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+            </b-row>
+          </div>
+
+          <div class="mt-2">
+            <b-row
+              class="mt-1 align-items-center"
+            >
+              <b-col
+                md="3"
+              >
+                <span
+                  class="text-18-bold"
+                  style="color: #222222;"
+                >
+                  Kriteria 2
+                </span>
+              </b-col>
+            </b-row>
+            <b-row class="my-1">
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Daerah</span>
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Biaya</span>
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Pengiriman</span>
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <span
+                  class="text-18-normal"
+                  style="color: #222222;"
+                >Return</span>
+              </b-col>
+            </b-row>
+            <b-row>
+              <b-col
+                cols="3"
+              />
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+              <b-col
+                cols="3"
+              >
+                <b-form-input
+                  id="name"
+                  v-model="name"
+                  placeholder="Masukkan Data"
+                />
+              </b-col>
+            </b-row>
+            <b-row class="justify-content-end">
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                class="mt-1 btn-custom btn-custom--edit"
+                style="width: 261px;"
+                @click="saveKriteria"
+              >Save
+              </b-button>
             </b-row>
           </div>
 
@@ -387,6 +591,9 @@ export default {
     },
     handleChoiceTypeVehicle(val) {
       this.selectedExpedisi = val
+    },
+    saveKriteria() {
+      //
     },
   },
 }
