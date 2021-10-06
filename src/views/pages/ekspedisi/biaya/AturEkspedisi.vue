@@ -69,7 +69,7 @@
               </b-row>
             </div>
 
-            <div>
+            <div class="mt-1">
               <b-row>
                 <b-col cols="2">
                   <h3
@@ -96,7 +96,7 @@
                   </h3>
                 </b-col>
               </b-row>
-              <b-row>
+              <b-row class="my-1">
                 <b-col
                   cols="2"
                 >
@@ -279,56 +279,6 @@
 
         </b-card-body>
       </b-card>
-      <b-modal
-        id="modal-edit-akseslayanan"
-        ref="modal-edit-akseslayanan"
-        centered
-        hide-header
-        hide-header-close
-        hide-footer
-        size="md"
-        @show="checkAksesLayanan"
-      >
-        <div
-          style="display: grid; grid-row-gap: 1rem;"
-        >
-          <h3
-            class="text-24-bold"
-            style="color: #222222;"
-          >
-            Menambahkan Akses Layanan
-          </h3>
-          <b-form-group>
-            <b-form-checkbox
-              v-for="option in listCheckBox"
-              :key="option.value"
-              v-model="selectedCheckbox"
-              :value="option.value"
-              name="checkboxAksesLayanan"
-            >
-              {{ option.text }}
-            </b-form-checkbox>
-          </b-form-group>
-          <div
-            class="d-flex mt-1 justify-content-end"
-          >
-            <b-button
-              variant="outline-primary"
-              class="mr-1 btn-custom--editakseslayananbtn"
-              @click="hideModalAksesLayanan"
-            >
-              Batal
-            </b-button>
-            <b-button
-              variant="primary"
-              class="btn-custom--editakseslayananbtn"
-              @click="simpanDataAksesLayanan"
-            >
-              Simpan
-            </b-button>
-          </div>
-        </div>
-      </b-modal>
 
     </div>
 
@@ -349,10 +299,9 @@ import {
   BRow,
   BCol,
   BForm,
-  BModal,
   BFormInput,
-  BFormGroup,
-  BFormCheckbox,
+  // BFormGroup,
+  // BFormCheckbox,
   // BListGroup,
   // BListGroupItem,
   BButton,
@@ -366,10 +315,9 @@ export default {
     BRow,
     BCol,
     BForm,
-    BModal,
     BFormInput,
-    BFormGroup,
-    BFormCheckbox,
+    // BFormGroup,
+    // BFormCheckbox,
     // BListGroup,
     // BListGroupItem,
     BButton,
@@ -387,14 +335,25 @@ export default {
         { text: 'Hiring dan COD', value: 'hiringncod' },
         { text: 'Lainnya', value: 'lainny' },
       ],
-      selectedCheckbox: [],
+      selectedExpedisi: '',
     }
   },
   computed: {
     //
   },
   watch: {
-    //
+    selectedExpedisi: {
+      handler(val, val2) {
+        const el = document.getElementById(`choice${val}`)
+        const el2 = document.getElementById(`choice${val2}`)
+        if (val2) {
+          el.classList.add('activeChoice')
+          el2.classList.remove('activeChoice')
+        } else {
+          el.classList.add('activeChoice')
+        }
+      },
+    },
   },
   mounted() {
     //
@@ -427,10 +386,7 @@ export default {
       // calling api for simpan data
     },
     handleChoiceTypeVehicle(val) {
-      console.log(val)
-      const el = document.getElementById(`choice${val}`)
-      // make radio choice
-      el.style.border = '1px solid #F95031'
+      this.selectedExpedisi = val
     },
   },
 }
@@ -467,5 +423,11 @@ export default {
   border: 1px solid #828282;
   border-radius: 12px;
   cursor: pointer;
+}
+.activeChoice{
+  box-shadow: 0px 1px 10px 9px rgba(252,212,190,1);
+  -webkit-box-shadow: 0px 1px 10px 9px rgba(252,212,190,1);
+  -moz-box-shadow: 0px 1px 10px 9px rgba(252,212,190,1);
+  border: 1px solid #F95031;
 }
 </style>
