@@ -269,7 +269,7 @@
                   block
                   variant="outline-primary"
                   class="btn-custom--editakseslayanan"
-                  @click="$router.push(`/data-partner/${$route.params.id}/detail/riwayat-penarikan`)"
+                  @click="$router.push(`/biaya-ekspedisi/daerah-tanpa-akses`)"
                 >
                   Lihat Data
                 </b-button>

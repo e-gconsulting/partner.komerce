@@ -20,6 +20,17 @@ export default [
     },
   },
   {
+    path: '/biaya-ekspedisi/daerah-tanpa-akses',
+    name: 'cod-biaya-ekspedisi-daerah-tanpa-akses',
+    component: () => import('@/views/pages/ekspedisi/biaya/DaerahTanpaAksesCOD'),
+    meta: {
+      navActiveLink: 'cod-biaya-ekspedisi',
+      type: 'add',
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
     path: '/biaya-ekspedisi/:id/edit',
     name: 'cod-biaya-ekspedisi-edit',
     component: () => import('@/views/pages/ekspedisi/biaya/AturEkspedisi'),
