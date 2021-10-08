@@ -1,4 +1,4 @@
-district<template>
+<template>
   <section :class="'view-data-order-table-wrapper'">
     <b-table
       :ref="tableRefName"
@@ -462,7 +462,3 @@ export default {
 }
 
 </script>
-
-<style>
-
-</style>
