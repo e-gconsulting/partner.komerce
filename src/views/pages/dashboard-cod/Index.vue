@@ -447,7 +447,7 @@ export default {
                 body: x.body.substring(0, 15),
               }
               return dt
-            })
+            }).slice(0, 10)
             this.rows = newParseData
           })
           .catch(e => {
@@ -465,7 +465,7 @@ export default {
                 body: x.body.substring(0, 15),
               }
               return dt
-            })
+            }).slice(0, 10)
             this.rows = newParseData
           })
           .catch(e => {
@@ -533,7 +533,7 @@ export default {
   color: #222222;
 }
 .tbl-dashboard-top{
-  height: 350px;
+  height: 400px;
   padding-bottom: 16px;
   overflow-y: scroll;
 }
