@@ -30,6 +30,7 @@
                 block
                 variant="outline-primary"
                 class="btn-custom--editakseslayanan"
+                @click="handleImportExcelDaerahCOD"
               >
                 Import Excel / CSV
               </b-button>
@@ -53,7 +54,7 @@
               <b-dropdown
                 id="dropdown-search-tbl"
                 ref="dropdownFilter"
-                right
+                dropleft
                 no-caret
                 variant="primary"
               >
@@ -66,29 +67,39 @@
                   style="width: 417px;"
                 >
                   <b-form-group
-                    v-model="filterDropdown.name"
-                    label="Nama"
-                    label-for="dropdown-form-nama"
+                    v-model="filterDropdown.kota"
+                    label="Kota / Kabupaten"
+                    label-for="dropdown-form-kota"
                     @submit.stop.prevent
                   >
                     <b-form-input
-                      id="dropdown-form-nama"
+                      id="dropdown-form-kota"
                       size="lg"
-                      placeholder="Masukkan Nama"
+                      placeholder="Masukkan Kota / Kabupaten"
                     />
                   </b-form-group>
-
                   <b-form-group
-                    label="Status"
-                    label-for="dropdown-form-status"
+                    v-model="filterDropdown.camat"
+                    label="Kecamatan"
+                    label-for="dropdown-form-camat"
+                    @submit.stop.prevent
                   >
-                    <b-form-select
-                      id="dropdown-form-status"
-                      v-model="filterDropdown.selectedStatus"
+                    <b-form-input
+                      id="dropdown-form-camat"
                       size="lg"
-                      class="mb-2"
-                      :options="optionsStatus"
-                      placeholder="Pilih Status"
+                      placeholder="Masukkan Kecamatan"
+                    />
+                  </b-form-group>
+                  <b-form-group
+                    v-model="filterDropdown.kodepos"
+                    label="Kodepos"
+                    label-for="dropdown-form-kodepos"
+                    @submit.stop.prevent
+                  >
+                    <b-form-input
+                      id="dropdown-form-kodepos"
+                      size="lg"
+                      placeholder="Masukkan Kodepos"
                     />
                   </b-form-group>
                   <div class="d-flex justify-content-end">
@@ -118,10 +129,12 @@
               <b-table-simple responsive>
                 <b-thead>
                   <b-tr>
-                    <b-th>Nama</b-th>
-                    <b-th>Nama Bank</b-th>
-                    <b-th>No Rekening</b-th>
-                    <b-th>Nominal</b-th>
+                    <b-th>Provinsi</b-th>
+                    <b-th>Kabupaten</b-th>
+                    <b-th>Kecamatan</b-th>
+                    <b-th>Kelurahan</b-th>
+                    <b-th>Kodepos</b-th>
+                    <b-th />
                   </b-tr>
                 </b-thead>
                 <b-tbody>
@@ -133,29 +146,43 @@
                       class="font-weight-bolder"
                     >
                       <span>
-                        {{ row.name }}
-                      </span>
-                      <br>
-                      <span>
-                        {{ row.email }}
+                        {{ row.province }}
                       </span>
                     </b-td>
                     <b-td>
-                      {{ row.bankName }}
+                      {{ row.kabupaten }}
                     </b-td>
-                    <b-td>{{ row.bankNo }}</b-td>
-                    <b-td
-                      class="font-weight-bolder"
-                    >
-                      {{ row.nominal }}
+                    <b-td>
+                      {{ row.kecamatan }}
+                    </b-td>
+                    <b-td>
+                      {{ row.kelurahan }}
+                    </b-td>
+                    <b-td>{{ row.zipcode }}</b-td>
+                    <b-td>
+                      <b-button
+                        variant="primar-flat"
+                        size="sm"
+                        @click="deleteItem(row)"
+                      >
+                        <feather-icon
+                          icon="TrashIcon"
+                        />
+                      </b-button>
                     </b-td>
                   </b-tr>
                 </b-tbody>
               </b-table-simple>
+              <div
+                v-if="rowsTable.length === 0"
+                class="text-center"
+              >
+                <span>
+                  Sepertinya kamu belum menambahkan daerah yang tidak memiliki akses COD, Yuk mulai tambahkan sekarang!
+                </span>
+              </div>
             </b-col>
-
           </b-row>
-
         </b-card-body>
       </b-card>
 
@@ -189,7 +216,7 @@ import {
   BDropdownForm,
   BFormInput,
   BFormGroup,
-  BFormSelect,
+  // BFormSelect,
   BButton,
   BCard,
   BSpinner,
@@ -212,7 +239,7 @@ export default {
     BDropdownForm,
     BFormInput,
     BFormGroup,
-    BFormSelect,
+    // BFormSelect,
     BButton,
     BCard,
     BSpinner,
@@ -224,41 +251,18 @@ export default {
       rows: [],
       searchTerm: '',
       filterDropdown: {
-        name: '',
-        selectedStatus: null,
+        kota: '',
+        camat: '',
+        kodepos: '',
       },
-      optionsStatus: [
-        { value: null, text: 'Pilih Status' },
-        { value: 'Aktif', text: 'Aktif' },
-        { value: 'Tidak Aktif', text: 'Tidak Aktif' },
-      ],
       rowsTable: [
         {
-          userId: 1,
-          name: 'Hanif Muflihul',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 4500000,
-          status: 'Perlu disetujui',
-        },
-        {
-          userId: 11,
-          name: 'Terry Siphron',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Sedang direview',
-        },
-        {
-          userId: 21,
-          name: 'Kadin Franci',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Disetujui',
+          id: 1,
+          province: 'Jawa Tengah',
+          kabupaten: 'Purbalingga',
+          kecamatan: 'Padamara',
+          kelurahan: 'Padamara',
+          zipcode: 123451,
         },
       ],
     }
@@ -278,12 +282,18 @@ export default {
     }, 1000)
   },
   methods: {
+    handleImportExcelDaerahCOD() {
+      this.$router.push('/biaya-ekspedisi/daerah-tanpa-akses/upload')
+    },
     onClickResetFilterDropdown() {
       //
     },
     onClickTerapkanFilterDropdown() {
       // Close the dropdown and (by passing true) return focus to the toggle button
       this.$refs.dropdownFilter.hide(true)
+    },
+    deleteItem(row) {
+      console.log(row)
     },
   },
 }
@@ -315,5 +325,15 @@ export default {
   line-height: 150%;
   letter-spacing: 0.5px;
   color: #222222;
+}
+text-20{
+  width: 671px;
+  height: 60px;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #222222;
+  text-align: center;
 }
 </style>

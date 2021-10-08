@@ -31,6 +31,17 @@ export default [
     },
   },
   {
+    path: '/biaya-ekspedisi/daerah-tanpa-akses/upload',
+    name: 'cod-biaya-ekspedisi-daerah-tanpa-akses-upload',
+    component: () => import('@/views/pages/ekspedisi/biaya/UploadDokumen'),
+    meta: {
+      navActiveLink: 'cod-biaya-ekspedisi',
+      type: 'add',
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
     path: '/biaya-ekspedisi/:id/edit',
     name: 'cod-biaya-ekspedisi-edit',
     component: () => import('@/views/pages/ekspedisi/biaya/AturEkspedisi'),

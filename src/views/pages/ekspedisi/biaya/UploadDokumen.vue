@@ -3,11 +3,24 @@
     <div v-if="!loadDataAwal">
       <b-card no-body>
         <b-card-header>
-          <h4
-            class="card-title text-24-bold"
-          >
-            Persetujuan Penarikan
-          </h4>
+          <div class="d-flex align-items-center">
+            <b-button
+              variant="primary"
+              size="sm"
+              class="mr-2 btn-custom"
+              @click="$router.go(-1)"
+            >
+              <feather-icon
+                size="2x"
+                icon="ChevronLeftIcon"
+              />
+            </b-button>
+            <h4
+              class="card-title text-24-bold"
+            >
+              Dokumen Data Wilayah
+            </h4>
+          </div>
         </b-card-header>
         <b-card-body>
           <div class="mb-2 container-upload">
@@ -15,7 +28,7 @@
               class="text-24-bold text-center"
               style="font-size: 32px;color:#222222;"
             >
-              Upload Bukti Transfer
+              Upload Data Wilayah
             </h3>
             <b-card no-body>
               <b-card-body style="padding:0 inherit;">
@@ -28,7 +41,7 @@
                     id="filebuktitransfer"
                     ref="filebuktitransfer"
                     type="file"
-                    accept="image/*"
+                    accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                     multiple
                     name="filebuktitransfer"
                     style="display: none;"
@@ -45,7 +58,7 @@
                     class="text-16-normal mb-2"
                     style="color: #828282;"
                   >
-                    PNG, JPG dan JPEG file yang diperbolehkan
+                    Excel atau CSV file yang diperbolehkan
                   </span>
                   <span
                     class="text-24-bold mb-4"
@@ -341,6 +354,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.btn-custom{
+  border-radius: 16px;
+  width: 56px;
+  height: 56px;
+}
 .container-upload{
   display: grid;
   align-content: center;
