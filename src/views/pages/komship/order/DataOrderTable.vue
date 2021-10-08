@@ -1,4 +1,4 @@
-<template>
+district<template>
   <section :class="'view-data-order-table-wrapper'">
     <b-table
       :ref="tableRefName"
@@ -8,9 +8,49 @@
       class="view-data-order-table"
       responsive
     >
+      <template
+        v-if="currentView === 'send'"
+        #head(order_date)="data"
+      >
+        <div class="all-check-data-order">
+          <b-icon-check-circle-fill
+            v-if="isCheckedAll"
+            class="data-order-button-check"
+            aria-hidden="true"
+            @click="() => handleSelectOrder({}, false, true)"
+          />
+          <b-icon-circle
+            v-else
+            class="data-order-button-uncheck"
+            aria-hidden="true"
+            @click="() => handleSelectOrder({}, true, true)"
+          />
+          <span>{{ data.label }}</span>
+        </div>
+      </template>
+
       <template #cell(order_date)="dateData">
-        <div class="date-wrapper">{{ getDate(dateData.value) }}</div>
-        <div class="time-wrapper grey-text">{{ getTime(dateData.value) }}</div>
+        <div
+          v-if="currentView === 'send'"
+          class="all-check-data-order-item"
+        >
+          <b-icon-check-circle-fill
+            v-if="dateData.item.isChecked"
+            class="data-order-button-check"
+            aria-hidden="true"
+            @click="() => handleSelectOrder(dateData.item, false, false)"
+          />
+          <b-icon-circle
+            v-else
+            class="data-order-button-uncheck"
+            aria-hidden="true"
+            @click="() => handleSelectOrder(dateData.item, true, false)"
+          />
+        </div>
+        <div class="all-check-data-order-date-text">
+          <div class="date-wrapper">{{ getDate(dateData.value) }}</div>
+          <div class="time-wrapper grey-text">{{ getTime(dateData.value) }}</div>
+        </div>
       </template>
 
       <template #cell(customer_name)="nameCustomer">
@@ -178,8 +218,14 @@
         </b-popover>
       </template>
 
-      <template #cell(detail_address)="addressData">
+      <template #cell(district)="addressData">
         <div class="address-wrapper">{{ addressData.value }}</div>
+        <div
+          v-if="isUseDetailAddress"
+          class="address-details-wrapper"
+        >
+          {{ addressData.item.detail_address }}
+        </div>
       </template>
 
       <template #cell(airway_bill)="resiData">
@@ -223,6 +269,8 @@ import {
   BIconInfoCircle,
   BIconChevronUp,
   BIconChevronDown,
+  BIconCheckCircleFill,
+  BIconCircle,
   BPopover,
   BFormGroup,
   BCollapse,
@@ -236,6 +284,8 @@ export default {
     BIconChevronUp,
     BIconChevronDown,
     BIconInfoCircle,
+    BIconCheckCircleFill,
+    BIconCircle,
     BPopover,
     BFormGroup,
     BCollapse,
@@ -261,14 +311,20 @@ export default {
       type: String,
       default: '',
     },
+    isUseDetailAddress: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       openId: '',
+      selectedOrder: [],
+      isCheckedAll: false,
     }
   },
   mounted() {
-    this.setIsCloseValue()
+    this.setStartValue()
   },
   methods: {
     getDate(dateVal) {
@@ -322,9 +378,11 @@ export default {
     refreshTable() {
       this.$refs[this.tableRefName].refresh()
     },
-    setIsCloseValue() {
+    setStartValue() {
       for (let i = 0; i < this.items.length; i += 1) {
         if (this.items[i] && this.items[i].product && this.items[i].product.length && this.items[i].product.length > 0) {
+          this.items[i].isChecked = false
+
           for (let j = 0; j < this.items[i].product.length; j += 1) {
             this.items[i].product.isClose = true
           }
@@ -335,6 +393,70 @@ export default {
       this.items[indexData].product.isClose = !isClose
       this.$root.$emit('bv::toggle::collapse', `collapse${indexData}`)
       this.refreshTable()
+    },
+    updateCheckAllItem(isChecked) {
+      for (let i = 0; i < this.items.length; i += 1) {
+        if (this.items[i] && this.items[i].product && this.items[i].product.length && this.items[i].product.length > 0) {
+          if (isChecked) {
+            this.items[i].isChecked = true
+          } else {
+            this.items[i].isChecked = false
+          }
+        }
+      }
+
+      if (isChecked) {
+        this.selectedOrder = this.items
+        this.handleSubmitSelectedOrder()
+      }
+    },
+    handleCheckAllItem(isAdd) {
+      if (isAdd) {
+        this.updateCheckAllItem(true)
+      } else {
+        this.updateCheckAllItem(false)
+        this.selectedOrder = []
+        this.handleSubmitSelectedOrder()
+      }
+      this.isCheckedAll = !this.isCheckedAll
+    },
+    findObjInArr(itemArr, itemId) {
+      let index = -1
+      for (let i = 0; i < itemArr.length; i += 1) {
+        if (itemArr[i].order_id === itemId) {
+          index = i
+        }
+      }
+      return index
+    },
+    handleSelectOrder(singleItem, isAdd, isAll) {
+      const findItem = this.findObjInArr(this.items, singleItem.order_id)
+      if (isAll) {
+        this.handleCheckAllItem(isAdd)
+      } else if (!isAll && isAdd) {
+        const newSingleItem = singleItem
+        newSingleItem.isChecked = true
+        if (findItem > -1) {
+          this.items[findItem].isChecked = true
+          this.refreshTable()
+        }
+        this.selectedOrder.push(newSingleItem)
+        if (this.selectedOrder.length === this.items.length) this.isCheckedAll = true
+        this.handleSubmitSelectedOrder()
+      } else if (!isAll && !isAdd) {
+        if (findItem > -1) {
+          const findSelected = this.findObjInArr(this.selectedOrder, singleItem.order_id)
+          this.selectedOrder.splice(findSelected, 1)
+          this.items[findItem].isChecked = false
+
+          if (this.selectedOrder.length !== this.items.length) this.isCheckedAll = false
+          this.refreshTable()
+          this.handleSubmitSelectedOrder()
+        }
+      }
+    },
+    handleSubmitSelectedOrder() {
+      this.$emit('onSelectOrder', this.selectedOrder)
     },
   },
 }

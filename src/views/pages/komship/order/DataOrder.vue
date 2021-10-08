@@ -185,7 +185,7 @@ export default {
           { key: 'customer_name', label: 'Pelanggan' },
           { key: 'product', label: 'Produk' },
           { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'detail_address', label: 'Alamat' },
+          { key: 'district', label: 'Alamat' },
           { key: 'details', label: 'Rincian' },
         ]
       } else if (this.currentView === 'sent') {

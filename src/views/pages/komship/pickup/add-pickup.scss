@@ -1,0 +1,162 @@
+.add-pickup-input-main-wrapper .card-title {
+  font-weight: 600;
+  font-size: 24px;
+  color: #222222;
+}
+.add-pickup-input-title {
+  font-weight: 600;
+  font-size: 20px;
+  color: #222222;
+  margin-left: 50px;
+}
+.add-pickup-input-form-wrapper {
+  border-top: 1px solid #C2C2C2;
+  padding-top: 20px;
+  margin: 0 0 20px 50px;
+}
+.add-pickup-input-label label {
+  color: #222222;
+  font-weight: 600;
+  font-size: 20px;
+}
+.add-pickup-input-label .col {
+  font-weight: 500;
+  font-size: 18px;
+  color: #828282;
+}
+.add-pickup-input-address-name {
+  color: #222222;
+  font-weight: 600;
+  font-size: 20px;
+}
+.add-pickup-input-address-name-wrapper, .add-pickup-input-address-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+.add-pickup-input-address-name-wrapper {
+  max-width: 485px;
+  margin-right: 32px;
+}
+.add-pickup-input-address-icon {
+  font-size: 20px;
+  color: #222222;
+}
+.add-pickup-input-address-icon:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.add-pickup-input-date-label, .add-pickup-date-button {
+  display: inline-block;
+  vertical-align: middle;
+}
+.add-pickup-input-date-label {
+  margin-right: 17px;
+}
+.add-pickup-input-vehicle-btn-wrapper > button > span {
+  display: block;
+}
+
+#modal-6 .modal-dialog {
+  max-width: 80vw;
+  position: relative;
+}
+#modal-6 .modal-dialog-centered::before {
+  min-height: calc(100vh - 3.5rem);
+}
+#modal-6 .modal-dialog-centered .modal-content {
+  min-height: calc(100vh - 3.5rem);
+}
+.close-button-on-popup-pickup {
+  font-size: 20px;
+  color: #222222;
+  position: absolute;
+  top: 22px;
+  right: 22px;
+}
+.close-button-on-popup-pickup:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+.title-on-popup-pickup {
+  color: #222222;
+  font-weight: 600;
+  font-size: 24px;
+  text-align: center;
+}
+.submit-button-on-popup-pickup {
+  padding: 18px 47px;
+  position: absolute;
+  bottom: 12px;
+  right: 49px;
+}
+
+.add-pickup-input-notice-filled-button, .add-pickup-input-notice-filled-desc {
+  display: inline-block;
+  vertical-align: middle;
+}
+.add-pickup-input-notice-filled-button {
+  color: #08A0F7;
+  font-weight: 600;
+  font-size: 14px;
+  width: 97px;
+}
+.add-pickup-input-notice-filled-button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+.add-pickup-input-notice-filled-desc {
+  color: #222222;
+  font-weight: 600;
+  font-size: 16px;
+  width: calc(100% - 97px);
+  text-align: right;
+}
+.add-pickup-input-notice-filled-desc span {
+  font-size: 20px;
+}
+.add-pickup-submit-button-disabled {
+  pointer-events: none;
+}
+
+.modal-add-pickup-popup-success {
+  text-align: center;
+  padding: 29px 0;
+}
+.modal-add-pickup-popup-success .image-wrapper {
+  width: 100%;
+  margin: 0 0 20px;
+  text-align: center;
+}
+.modal-add-pickup-popup-success .image-wrapper img {
+  width: 150px;
+  display: block;
+  margin: 0 auto;
+}
+.modal-add-pickup-popup-success .text-wrapper {
+  font-weight: 600;
+  font-size: 20px;
+  color: #222222;
+  width: 100%;
+}
+.add-pickup-input-notice-notif .badge {
+  padding: 16px;
+}
+
+.hide {
+  display: none;
+}
+.org-button, .org-button:hover, .org-button:focus {
+  background-color: #F95031 !important;
+  border-color: #F95031 !important;
+  border-radius: 12px;
+  color: #FFFFFF !important;
+}
+.white-button, .white-button:hover, .white-button:focus {
+  background-color: #FFFFFF !important;
+  border-color: #F95031 !important;
+  border-radius: 12px;
+  color: #F95031 !important;
+}
+.vehicle-selected, .vehicle-selected:hover, .vehicle-selected:focus {
+  background-color: #FFECE9 !important;
+}

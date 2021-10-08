@@ -1,0 +1,60 @@
+.add-pickup-table-wrapper {
+  margin-top: 10px;
+}
+.add-pickup-table-title {
+  color: #222222;
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 50px;
+}
+.add-pickup-table-wrapper th {
+  background-color: transparent !important;
+  border: none;
+  border-bottom: 1px solid #C2C2C2 !important;
+}
+.add-pickup-table-wrapper th div {
+  font-weight: 600;
+  font-size: 16px;
+  color: #222222;
+}
+.add-pickup-table-wrapper .product-name-wrapper {
+  width: calc(100% - 72px);
+}
+.add-pickup-table-wrapper .product-name-content {
+  width: 100%;
+}
+.add-pickup-table-wrapper .product-name-text, .add-pickup-table-wrapper .product-name-variant-wrapper, .add-pickup-table-wrapper .product-name-qty {
+  font-weight: 600;
+  font-size: 16px;
+  color: #222222;
+}
+.add-pickup-header-table-qty {
+  max-width: 75px;
+  margin-left: auto;
+}
+.total-product-item-wrapper-on-pickup {
+  height: 60px;
+  max-width: 75px;
+  margin-left: auto;
+  text-align: center;
+}
+
+.add-pickup-input-notice-empty {
+  padding: 20px 0;
+}
+.add-pickup-input-notice-title, .add-pickup-input-notice-button {
+  display: inline-block;
+  vertical-align: middle;
+}
+.add-pickup-input-notice-title {
+  width: calc(100% - 140px);
+  color: #828282;
+  font-weight: 600;
+  font-size: 18px;
+}
+.add-pickup-input-notice-button {
+  width: 140px;
+}
+.add-pickup-input-submit-wrapper {
+  text-align: right;
+}
