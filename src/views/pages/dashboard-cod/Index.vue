@@ -533,7 +533,7 @@ export default {
   color: #222222;
 }
 .tbl-dashboard-top{
-  height: 400px;
+  height: 440px;
   padding-bottom: 16px;
   overflow-y: scroll;
 }
