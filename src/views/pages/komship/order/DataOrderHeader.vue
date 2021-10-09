@@ -2,10 +2,16 @@
   <div class="data-order-header-wrapper">
     <b-card-title class="mb-4">Data Order</b-card-title>
     <div class="data-order-floating-button-wrapper top-right">
-      <b-button v-if="currentView === 'send'" class="org-button header-button mid-part">Ajukan Pickup</b-button>
+      <b-button
+        v-if="currentView === 'send'"
+        class="org-button header-button mid-part"
+      >
+        Ajukan Pickup
+      </b-button>
       <b-dropdown
         id="dropdown-1"
         :text="dropdownText"
+        class="white-button"
         variant="outline-warning"
       >
         <b-dropdown-item
@@ -77,69 +83,18 @@
     <div class="data-order-filter-wrapper">
       <div class="search-bar">
         <b-form-input
+          v-model="searchFilterText"
           class="search-input"
           type="search"
           placeholder="Example"
-          v-model="searchFilterText"
           @input="updateSearchFilterText"
         />
         <div class="icon-magnify-glass"><b-icon-search /></div>
       </div>
-      <div
-        id="popoverDataOrder1"
-        class="org-button filter-button"
-        @click="handleShowFilter"
-      >
-        <b-icon-sliders />
-      </div>
+      <data-order-filter
+        @onFormSubmit="handleFilterFormSubmit"
+      />
     </div>
-
-    <b-popover
-      id="popoverDataOrder1"
-      ref="popoverDataOrder1"
-      target="popoverDataOrder1"
-      triggers="click"
-      placement="bottomleft"
-    >
-      <b-form-group
-        label="Tanggal"
-        label-for="dateInput"
-      >
-        <b-form-input
-          id="dateInput"
-          placeholder="1 Januari 2020 - 25 Agustus 2021"
-        />
-      </b-form-group>
-      <b-form-group
-        label="Produk"
-        label-for="productInput"
-      >
-        <b-form-input
-          id="productInput"
-          placeholder="Pilih produk"
-        />
-      </b-form-group>
-      <b-form-group
-        label="Metode Pembayaran"
-        label-for="metodeInput"
-      >
-        <b-form-input
-          id="metodeInput"
-          placeholder="COD"
-        />
-      </b-form-group>
-      <b-button
-        class="sm-gap-r"
-        variant="outline-warning"
-      >
-        Reset
-      </b-button>
-      <b-button
-        variant="warning"
-      >
-        Terapkan
-      </b-button>
-    </b-popover>
   </div>
 </template>
 
@@ -149,14 +104,12 @@ import {
   BButton,
   BNav,
   BNavItem,
-  BFormGroup,
   BFormInput,
   BIconSearch,
-  BIconSliders,
   BDropdown,
   BDropdownItem,
-  BPopover,
 } from 'bootstrap-vue'
+import DataOrderFilter from './DataOrderFilter.vue'
 
 export default {
   components: {
@@ -164,13 +117,11 @@ export default {
     BButton,
     BNav,
     BNavItem,
-    BFormGroup,
     BFormInput,
     BIconSearch,
-    BIconSliders,
     BDropdown,
     BDropdownItem,
-    BPopover,
+    DataOrderFilter,
   },
   data() {
     return {
@@ -200,8 +151,10 @@ export default {
     handleDropdown(val) {
       if (val) this.dropdownText = val === 'export' ? 'Export' : 'Import'
     },
-    handleShowFilter(val) {
-      this.$root.$emit('bv::show::popover', val.target.id)
+    handleFilterFormSubmit(valObj) {
+      if (valObj) {
+        this.filterForm = valObj
+      }
     },
   },
 }

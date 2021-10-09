@@ -193,7 +193,6 @@
           :ref="`popoverTable${totalData.item.order_id}`"
           :target="`popoverTable${totalData.item.order_id}`"
           triggers="click"
-          placement="top"
         >
           <div class="data-order-table-pop-over">
             <b-form-group

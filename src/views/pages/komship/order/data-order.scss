@@ -69,14 +69,17 @@
   left: 0;
   top: 0;
 }
-.data-order-filter-wrapper .search-bar, .data-order-filter-wrapper .filter-button {
+.data-order-filter-wrapper .search-bar {
   display: inline-block;
   margin-left: 1.742%;
 }
 .filter-button {
-  font-size: 19px;
-  padding: 1.22%;
   border-radius: 16px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .view-data-order-table {
@@ -110,9 +113,9 @@
   color: #FFFFFF !important;
   border-radius: 8px;
 }
-.white-button, .white-button:focus {
+.white-button, .white-button:focus, .white-button .btn-outline-warning, .white-button .btn-outline-warning:hover {
   background-color: #FFFFFF !important;
-  border-color: #FFFFFF !important;
+  border-color: #F95031 !important;
   color: #F95031 !important;
   border-radius: 8px;
 }
