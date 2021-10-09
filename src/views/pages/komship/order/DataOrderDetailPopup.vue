@@ -11,6 +11,11 @@
       @hidden="resetModal"
       @ok="handleOkModal"
     >
+      <template v-slot:modal-header-close>
+        <b-icon-x-circle
+          class="close-button-on-popup-input-resi"
+        />
+      </template>
       <div
         v-if="modalState === 'default'"
       >
@@ -139,7 +144,7 @@
     >
       <div class="modal-add-order-popup-success">
         <div class="image-wrapper">
-          <img src="https://s3-ap-southeast-1.amazonaws.com/www.theedgeproperty.com.sg/images/search_mobile.png">
+          <img src="@/assets/images/icons/success.svg">
         </div>
         <div class="text-wrapper">No Resi Berhasil di Tambahkan</div>
       </div>
@@ -152,6 +157,7 @@ import {
   BFormGroup,
   BFormInput,
   BModal,
+  BIconXCircle,
 } from 'bootstrap-vue'
 
 export default {
@@ -159,6 +165,7 @@ export default {
     BFormGroup,
     BFormInput,
     BModal,
+    BIconXCircle,
   },
   props: {
     detailOrder: {

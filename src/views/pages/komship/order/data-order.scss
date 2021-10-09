@@ -363,6 +363,7 @@
   display: flex;
   justify-content: center;
   position: relative;
+  background-color: transparent;
 }
 #modal-3___BV_modal_content_ .modal-header .modal-title {
   color: #222222;
@@ -374,6 +375,21 @@
   position: absolute;
   top: 0.8rem;
   right: 1.4rem;
+  box-shadow: unset !important;
+  border-radius: unset !important;
+  background: transparent !important;
+  transform: unset !important;
+}
+#modal-3___BV_modal_content_ .modal-header .close:hover {
+  transform: unset !important;
+}
+.close-button-on-popup-input-resi {
+  font-size: 20px;
+  color: #222222;
+}
+.close-button-on-popup-input-resi:hover {
+  cursor: pointer;
+  opacity: 0.8;
 }
 .data-order-modal-input-label label {
   color: #222222;
@@ -459,7 +475,6 @@
 
 .top-right {
   position: absolute;
-  // top: 1.5rem;
   top: 0;
   right: 1.5rem;
 }

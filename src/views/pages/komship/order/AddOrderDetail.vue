@@ -257,11 +257,12 @@
       ref="modalAddOrderPopUp"
       hide-footer
       hide-header
+      centered
       @hide="handleRedirectToDataOrder"
     >
       <div class="modal-add-order-popup-success">
         <div class="image-wrapper">
-          <img src="https://s3-ap-southeast-1.amazonaws.com/www.theedgeproperty.com.sg/images/search_mobile.png">
+          <img src="@/assets/images/icons/success.svg">
         </div>
         <div class="text-wrapper">Berhasil Tambah Order</div>
         <b-button

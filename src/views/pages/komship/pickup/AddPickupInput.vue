@@ -138,7 +138,7 @@
     >
       <div class="modal-add-pickup-popup-success">
         <div class="image-wrapper">
-          <img src="https://s3-ap-southeast-1.amazonaws.com/www.theedgeproperty.com.sg/images/search_mobile.png">
+          <img src="@/assets/images/icons/success.svg">
         </div>
         <div class="text-wrapper mb-3">Pengajuan Pickup Berhasil</div>
         <b-button
