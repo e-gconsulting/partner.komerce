@@ -341,7 +341,7 @@ export default {
       // caling api
       // this.$http.post(url,params,{})
       // back to rincian routes
-      this.$router.go(-1)
+      // this.$router.go(-1)
     },
     calculateSizeFile(size) {
       const sizesUnit = ['Bytes', 'KB', 'MB', 'GB', 'TB']
