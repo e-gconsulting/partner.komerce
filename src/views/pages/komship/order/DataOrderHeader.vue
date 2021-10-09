@@ -5,6 +5,7 @@
       <b-button
         v-if="currentView === 'send'"
         class="org-button header-button mid-part"
+        @click="handleAddPickupBtnClicked"
       >
         Ajukan Pickup
       </b-button>
@@ -155,6 +156,9 @@ export default {
       if (valObj) {
         this.filterForm = valObj
       }
+    },
+    handleAddPickupBtnClicked() {
+      this.$router.push('ajukan-pickup')
     },
   },
 }

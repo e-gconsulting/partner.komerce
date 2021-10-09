@@ -40,9 +40,9 @@
         class="add-pickup-input-label mb-2"
         label="Waktu Jemput"
         label-cols-md="3"
-        label-for="input-pickup-time"
+        label-for="input-pickup-time2"
       >
-        <div id="input-pickup-time">{{ getTime(items.pickup_date) }}</div>
+        <div id="input-pickup-time2">{{ getTime(items.pickup_date) }}</div>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"
