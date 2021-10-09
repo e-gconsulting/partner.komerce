@@ -41,23 +41,40 @@
           @context="onChangeDate"
         >
           <template v-slot:button-content>
-            <img src="@/assets/images/icons/date-picker-icon.svg" />
+            <img src="@/assets/images/icons/date-picker-icon.svg">
           </template>
         </b-form-datepicker>
       </b-form-group>
       <b-form-group
-        class="add-pickup-input-label mb-2"
+        class="add-pickup-input-label add-pickup-time-picker mb-2"
         label="Waktu Jemput"
         label-cols-md="3"
         label-for="input-pickup-time"
       >
-        <b-time
-          id="input-pickup-time"
-          ref="dt1"
-          v-model="timeValue"
-          locale="en"
-          @context="onChangeTime"
-        />
+        <b-input-group>
+          <b-form-input
+            id="input-pickup-time"
+            v-model="timeValueText"
+            type="text"
+            placeholder="09 : 00"
+          />
+          <b-input-group-append>
+            <b-form-timepicker
+              ref="dt1"
+              v-model="timeValue"
+              button-only
+              right
+              aria-controls="example-input"
+              locale="en"
+              :hour12="false"
+              @context="onChangeTime"
+            >
+              <template v-slot:button-content>
+                <b-icon-chevron-expand aria-hidden="true" />
+              </template>
+            </b-form-timepicker>
+          </b-input-group-append>
+        </b-input-group>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"
@@ -113,8 +130,8 @@
         Batal
       </b-button>
       <b-button
-        :class="`org-button ${this.selectedOrder.length === 0 ? 'add-pickup-submit-button-disabled' : ''}`"
-        :disabled="this.selectedOrder.length === 0"
+        :class="`org-button ${selectedOrder.length === 0 ? 'add-pickup-submit-button-disabled' : ''}`"
+        :disabled="selectedOrder.length === 0"
         @click="onSubmitForm"
       >
         Ajukan Pickup
@@ -158,7 +175,10 @@ import {
   BCardTitle,
   BFormGroup,
   BFormDatepicker,
-  BTime,
+  BFormInput,
+  BInputGroup,
+  BInputGroupAppend,
+  BFormTimepicker,
   BButton,
   BBadge,
   BModal,
@@ -166,6 +186,7 @@ import {
   BIconTruckFlatbed,
   BIconTruck,
   BIconPencilSquare,
+  BIconChevronExpand,
 } from 'bootstrap-vue'
 import AddPickupTable from './AddPickupTable.vue'
 import AddPickupPopup from './AddPickupPopup.vue'
@@ -175,7 +196,10 @@ export default {
     BCardTitle,
     BFormGroup,
     BFormDatepicker,
-    BTime,
+    BFormInput,
+    BInputGroup,
+    BInputGroupAppend,
+    BFormTimepicker,
     BButton,
     BBadge,
     BModal,
@@ -183,6 +207,7 @@ export default {
     BIconTruckFlatbed,
     BIconTruck,
     BIconPencilSquare,
+    BIconChevronExpand,
     AddPickupTable,
     AddPickupPopup,
   },
@@ -201,7 +226,8 @@ export default {
       selectedOrder: this.listSelected,
       dateValue: this.dateText,
       dateLabel: '',
-      timeValue: '',
+      timeValue: '09:00',
+      timeValueText: '09 : 00',
       chosenVehicle: '',
       fields: [
         { key: 'product', label: 'Produk' },
@@ -230,7 +256,14 @@ export default {
       }
     },
     onChangeTime(ctx) {
-      if (ctx) console.log('onChangeTime', ctx)
+      if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
+    },
+    getTimeFormatted(timeText) {
+      if (timeText) {
+        const splitTime = timeText.split(':')
+        return `${splitTime[0]} : ${splitTime[1]}`
+      }
+      return timeText
     },
     onEditAddress(events) {
       console.log('onEditAddress', events)
