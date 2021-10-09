@@ -185,7 +185,50 @@
           </b-row>
         </b-card-body>
       </b-card>
-
+      <b-modal
+        id="modal-delete-daerah"
+        ref="modal-delete-daerah"
+        centered
+        hide-header
+        hide-header-close
+        hide-footer
+        size="md"
+        no-stacking
+      >
+        <div class="text-center">
+          <div class="py-1 delete-daerah-wrapper">
+            <span
+              class="text-20-bold"
+              style="color: #222222;"
+            >
+              Hapus Wilayah Dari Daftar
+            </span>
+            <span
+              class="text-16-normal mb-3 mt-1"
+              style="color: #222222;"
+            >
+              Apakah kamu yakin untuk menghapus data wilayah tersebut dari daftar tanpa akses COD?
+            </span>
+            <div class="d-flex justify-content-center">
+              <b-button
+                variant="outline-primary"
+                class="btn-custom-modal-delete mr-1 text-center"
+                style="border-color: unset;"
+                @click="handleTidakModal"
+              >
+                Batal
+              </b-button>
+              <b-button
+                variant="primary"
+                class="btn-custom-modal-delete text-center"
+                @click="handleOkModal"
+              >
+                Lanjutkan
+              </b-button>
+            </div>
+          </div>
+        </div>
+      </b-modal>
     </div>
 
     <div
@@ -216,7 +259,7 @@ import {
   BDropdownForm,
   BFormInput,
   BFormGroup,
-  // BFormSelect,
+  BModal,
   BButton,
   BCard,
   BSpinner,
@@ -239,7 +282,7 @@ export default {
     BDropdownForm,
     BFormInput,
     BFormGroup,
-    // BFormSelect,
+    BModal,
     BButton,
     BCard,
     BSpinner,
@@ -293,7 +336,15 @@ export default {
       this.$refs.dropdownFilter.hide(true)
     },
     deleteItem(row) {
+      this.$bvModal.show('modal-delete-daerah')
       console.log(row)
+    },
+    handleOkModal() {
+      // calling api
+      this.$bvModal.hide('modal-delete-daerah')
+    },
+    handleTidakModal() {
+      this.$bvModal.hide('modal-delete-daerah')
     },
   },
 }
@@ -335,5 +386,8 @@ text-20{
   letter-spacing: 0.5px;
   color: #222222;
   text-align: center;
+}
+.delete-daerah-wrapper{
+  display: grid;
 }
 </style>
