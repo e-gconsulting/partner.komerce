@@ -13,9 +13,27 @@
           id="input-pickup-address"
           class="add-pickup-input-address-wrapper"
         >
-          <div class="add-pickup-input-address-name-wrapper">
-            <div class="add-pickup-input-address-name">Gudang XYZ</div>
-            <div class="add-pickup-input-address-desc">Jalan Raya Melebar penuh dengan sabar Aamiin</div>
+          <div
+            v-if="!isEditAddress"
+            class="add-pickup-input-address-name-wrapper"
+          >
+            <div class="add-pickup-input-address-name">{{ addressText }}</div>
+            <div class="add-pickup-input-address-desc">{{ addressDetailText }}</div>
+          </div>
+          <div
+            v-else
+            class="add-pickup-input-address-name-wrapper"
+          >
+            <b-form-input
+              v-model="addressText"
+              type="text"
+              class="add-pickup-input-address-input"
+            />
+            <b-form-input
+              v-model="addressDetailText"
+              type="text"
+              class="add-pickup-input-address-input add-pickup-input-address-input-details"
+            />
           </div>
           <div
             class="add-pickup-input-address-icon"
@@ -226,6 +244,9 @@ export default {
       selectedOrder: this.listSelected,
       dateValue: this.dateText,
       dateLabel: '',
+      isEditAddress: false,
+      addressText: 'Gudang XYZ',
+      addressDetailText: 'Jalan Raya Melebar penuh dengan sabar Aamiin',
       timeValue: '09:00',
       timeValueText: '09 : 00',
       chosenVehicle: '',
@@ -266,7 +287,7 @@ export default {
       return timeText
     },
     onEditAddress(events) {
-      console.log('onEditAddress', events)
+      if (events) this.isEditAddress = !this.isEditAddress
     },
     onChooseVehicle(vehicle) {
       if (vehicle) this.chosenVehicle = vehicle
