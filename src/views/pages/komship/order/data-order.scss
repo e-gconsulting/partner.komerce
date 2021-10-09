@@ -127,6 +127,16 @@
 .no-mg {
   margin: 0 !important;
 }
+.add-order-redirect-button {
+  padding: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 0px 12px 12px;
+  position: sticky;
+  position: -webkit-sticky;
+  left: 100%;
+  bottom: 2rem;
+}
 
 .view-data-order-table tr {
   position: relative;
@@ -241,9 +251,6 @@
   font-size: 20px;
   margin-left: 6px;
 }
-.minmax-button-wrapper {
-  text-align: right;
-}
 .data-order-table-pop-over label {
   color: #828282;
   font-weight: 500;
@@ -253,6 +260,15 @@
   font-weight: 600;
   font-size: 14px;
   color: #222222;
+}
+.view-data-order-table .b-table tr { /* set the row of the table to relative so it can be pointed by min-max button */
+  position: relative;
+}
+.minmax-button-wrapper { /* the min-max button */
+  text-align: right;
+  position: absolute;
+  right: 2rem;
+  bottom: 0.72rem;
 }
 
 .data-order-detail-wrapper {

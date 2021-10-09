@@ -1,37 +1,48 @@
 <template>
-  <b-card
-    class="data-order-main-wrapper"
-  >
-    <data-order-header
-      v-if="!isDetail"
-      :current-view="currentView"
-      @onUpdateView="updateCurrentView"
-      @onSearchFilter="updateSearchFilterText"
-    />
+  <div>
+    <b-card
+      class="data-order-main-wrapper"
+    >
+      <data-order-header
+        v-if="!isDetail"
+        :current-view="currentView"
+        @onUpdateView="updateCurrentView"
+        @onSearchFilter="updateSearchFilterText"
+      />
 
-    <data-order-table
-      v-if="!isDetail"
-      ref="tableDataOrderOne"
-      :fields="tableData.header"
-      :items="tableData.items"
-      :current-view="currentView"
-      :search-text="searchFilterText"
-      table-ref-name="tableDataOrder"
-      @onOpenDetailView="openDetailView"
-    />
+      <data-order-table
+        v-if="!isDetail"
+        ref="tableDataOrderOne"
+        :fields="tableData.header"
+        :items="tableData.items"
+        :current-view="currentView"
+        :search-text="searchFilterText"
+        table-ref-name="tableDataOrder"
+        @onOpenDetailView="openDetailView"
+      />
 
-    <data-order-detail
-      v-if="isDetail"
-      table-ref-name="tableDetailDataOrderOne"
-      :detail-order="detailOrderData"
-      @onExitDetailView="exitDetailView"
-    />
-  </b-card>
+      <data-order-detail
+        v-if="isDetail"
+        table-ref-name="tableDetailDataOrderOne"
+        :detail-order="detailOrderData"
+        @onExitDetailView="exitDetailView"
+      />
+
+    </b-card>
+    <b-button
+      class="org-button add-order-redirect-button"
+      @click="handleRedirectToAddOrder"
+    >
+      <b-icon-plus aria-true="hidden" />
+    </b-button>
+  </div>
 </template>
 
 <script>
 import {
   BCard,
+  BButton,
+  BIconPlus,
 } from 'bootstrap-vue'
 import DataOrderHeader from './DataOrderHeader.vue'
 import DataOrderTable from './DataOrderTable.vue'
@@ -40,6 +51,8 @@ import DataOrderDetail from './DataOrderDetail.vue'
 export default {
   components: {
     BCard,
+    BButton,
+    BIconPlus,
     DataOrderHeader,
     DataOrderTable,
     DataOrderDetail,
@@ -229,6 +242,9 @@ export default {
     exitDetailView() {
       this.isDetail = false
       this.detailOrderData = {}
+    },
+    handleRedirectToAddOrder() {
+      this.$router.push('add-order')
     },
     getProfile() {
       return this.$http
