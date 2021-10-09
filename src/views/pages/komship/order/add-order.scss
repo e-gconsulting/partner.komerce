@@ -15,8 +15,10 @@
   border: 1px solid #F95031 !important;
   color: #F95031;
 }
-.add-order-date-button button {
-  border: 1px solid #63666a !important;
+.add-order-date-button button, .add-order-date-button button:focus, .add-order-date-button button:hover {
+  border: none !important;
+  padding: 0;
+  background-color: transparent !important;
 }
 .add-order-dsc-title {
   font-weight: 600;
@@ -42,9 +44,6 @@
   color: #444444;
   font-weight: 500;
   font-size: 18px;
-}
-.add-order-date-button button {
-  padding: 0;
 }
 .add-order-product-input {
   width: 100%;

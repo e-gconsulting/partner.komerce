@@ -146,6 +146,15 @@
 .add-pickup-input-notice-notif .badge {
   padding: 16px;
 }
+.add-pickup-date-button button {
+  border: 1px solid #F95031 !important;
+  color: #F95031;
+}
+.add-pickup-date-button button, .add-pickup-date-button button:focus, .add-pickup-date-button button:hover {
+  border: none !important;
+  padding: 0;
+  background-color: transparent !important;
+}
 
 .hide {
   display: none;
@@ -161,6 +170,12 @@
   border-color: #F95031 !important;
   border-radius: 12px;
   color: #F95031 !important;
+}
+.vehicle-button, .vehicle-button:hover, .vehicle-button:focus {
+  background-color: #FFFFFF !important;
+  border-color: #828282 !important;
+  border-radius: 12px;
+  color: #222222 !important;
 }
 .vehicle-selected, .vehicle-selected:hover, .vehicle-selected:focus {
   background-color: #FFECE9 !important;

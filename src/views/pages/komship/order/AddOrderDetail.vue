@@ -1,14 +1,14 @@
 <template>
   <div class="add-order-main-wrapper">
     <b-button
-      class="next-button no-mg mb-4"
+      class="next-button no-mg"
       @click="onUpdateScreenViewParent"
     >
       <b-icon-chevron-left
         aria-hidden="true"
       />
     </b-button>
-    <b-card-title class="mb-4">Tambah Order</b-card-title>
+    <b-card-title class="mt-4 mb-4">Tambah Order</b-card-title>
     <div class="add-order-dsc-title top-right">Pengiriman Kompship</div>
     <section class="add-order-form mb-4">
       <b-form-group

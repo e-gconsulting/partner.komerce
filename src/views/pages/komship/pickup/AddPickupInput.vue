@@ -39,7 +39,11 @@
           class="add-pickup-date-button"
           button-only
           @context="onChangeDate"
-        />
+        >
+          <template v-slot:button-content>
+            <img src="@/assets/images/icons/date-picker-icon.svg" />
+          </template>
+        </b-form-datepicker>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"
@@ -66,21 +70,21 @@
           class="add-pickup-input-vehicle-btn-wrapper"
         >
           <b-button
-            :class="chosenVehicle === 'bike' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
+            :class="chosenVehicle === 'bike' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
             @click="() => onChooseVehicle('bike')"
           >
             <b-icon-bicycle aria-hidden="true" />
             <span>Motor</span>
           </b-button>
           <b-button
-            :class="chosenVehicle === 'car' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
+            :class="chosenVehicle === 'car' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
             @click="() => onChooseVehicle('car')"
           >
             <b-icon-truck-flatbed aria-hidden="true" />
             <span>Mobil</span>
           </b-button>
           <b-button
-            :class="chosenVehicle === 'truck' ? 'vehicle-selected white-button' : 'white-button'"
+            :class="chosenVehicle === 'truck' ? 'vehicle-selected white-button' : 'vehicle-button'"
             @click="() => onChooseVehicle('truck')"
           >
             <b-icon-truck aria-hidden="true" />

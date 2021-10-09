@@ -17,7 +17,11 @@
           class="add-order-date-button"
           button-only
           @context="onChangeDate"
-        />
+        >
+          <template v-slot:button-content>
+            <img src="@/assets/images/icons/date-picker-icon.svg" />
+          </template>
+        </b-form-datepicker>
       </b-form-group>
       <b-form-group
         class="add-order-label"
