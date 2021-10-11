@@ -29,117 +29,131 @@
               <b-row>
 
                 <!-- full name -->
-                <b-col cols="8">
-                  <b-form-group
-                    label="Nama Lengkap"
+                <b-col
+                  cols="8"
+                >
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Nama Lengkap"
+                    rules="required"
                   >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Nama Lengkap"
-                      rules="required"
-                    >
-                      <b-form-input
-                        v-model="fullname"
-                        placeholder="Nama Lengkap"
-                        :state="errors.length > 0 || submitErrors.fullname ? false:null"
-                        name="fullname"
-                      />
-                    </validation-provider>
-                  </b-form-group>
+                    <small class="text-danger mb-2"> {{ errors[0] }} </small>
+                    <div class="inputs">
+                      <div class="input">
+                        <b-form-input
+                          id="fullname"
+                          v-model="fullname"
+                          :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                          name="fullname"
+                          class="border-0 bg-light"
+                          required
+                        />
+                        <label for="fullname">
+                          Nama Lengkap
+                        </label>
+                      </div>
+                    </div>
+                  </validation-provider>
                 </b-col>
 
                 <!-- email -->
                 <b-col cols="8">
-                  <b-form-group
-                    label="Email"
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Email"
+                    rules="required|email"
                   >
-                    <validation-provider
-                      #default="{ errors }"
-                      name="Email"
-                      rules="required|email"
-                    >
-                      <b-form-input
-                        v-model="userEmail"
-                        type="email"
-                        placeholder="Email"
-                        :state="errors.length > 0 || submitErrors.email ? false:null"
-                      />
-                    </validation-provider>
-                  </b-form-group>
+                    <small class="text-danger"> {{ errors[0] }} </small>
+                    <div class="inputs">
+                      <div class="input">
+                        <b-form-input
+                          id="emailUser"
+                          v-model="userEmail"
+                          type="email"
+                          class="border-0 bg-light"
+                          :state="errors.length > 0 || submitErrors.email ? false:null"
+                          required
+                        />
+                        <label for="emailUser">
+                          Email
+                        </label>
+                      </div>
+                    </div>
+                  </validation-provider>
                 </b-col>
 
                 <!-- password -->
                 <b-col cols="8">
-                  <b-form-group>
-                    <div class="d-flex justify-content-between">
-                      <label for="login-password">Password</label>
-                    </div>
+                  <b-form-group class="form-group-password">
                     <validation-provider
-                      #default="{ errors }"
+                      #default="{errors}"
                       name="Password"
                       vid="password"
                       rules="required"
                     >
-                      <b-input-group
-                        class="input-group-merge"
-                        :class="errors.length > 0 ? 'is-invalid':null"
-                      >
+                      <small class="text-danger">{{ errors[0] }}</small>
+                      <div class="input d-flex">
                         <b-form-input
-                          id="login-password"
-                          v-model="userPassword"
-                          :state="errors.length > 0 || submitErrors.password ? false:null"
-                          class="form-control-merge"
+                          id="password"
+                          v-model="password"
                           :type="passwordFieldType"
-                          name="login-password"
+                          class="border-0 bg-light"
+                          :state="errors.length > 0 ? false:null"
+                          required
                         />
-                        <b-input-group-append is-text>
+                        <b-input-group-append
+                          is-text
+                          class="border-0 class-password"
+                        >
                           <feather-icon
-                            class="cursor-pointer"
                             :icon="passwordToggleIcon"
+                            class="cursor-pointer border-0 bg-light"
                             @click="togglePasswordVisibility"
                           />
                         </b-input-group-append>
-                      </b-input-group>
-                      <small class="text-danger">{{ errors[0] || submitErrors.password }}</small>
+                        <label for="password">Password</label>
+                      </div>
                     </validation-provider>
                   </b-form-group>
-
                 </b-col>
-                <b-col cols="8">
-                  <b-form-group>
-                    <div class="d-flex justify-content-between">
-                      <label for="login-password">Konfirmasi Password</label>
-                    </div>
+                <b-col
+                  cols="8"
+                >
+                  <b-form-group class="mb-2">
                     <validation-provider
-                      #default="{ errors }"
-                      name="Password"
+                      #default="{errors}"
+                      name="Konfirmasi Password"
                       vid="password"
                       rules="required"
                     >
-                      <b-input-group
-                        class="input-group-merge"
-                        :class="errors.length > 0 ? 'is-invalid':null"
-                      >
+                      <small class="text-danger">{{ errors[0] }}</small>
+                      <div class="input d-flex">
                         <b-form-input
-                          id="login-password-konfirm"
-                          v-model="userPassword"
-                          :state="errors.length > 0 || submitErrors.password ? false:null"
-                          class="form-control-merge"
+                          id="confirm-password"
+                          v-model="confirmPassword"
                           :type="passwordFieldType"
-                          name="login-password"
+                          class="border-0 bg-light"
+                          :state="errors.length > 0 || submitErrors.password ? false:null"
+                          required
                         />
-                        <b-input-group-append is-text>
+                        <b-input-group-append
+                          is-text
+                          class="border-0 bg-light"
+                        >
                           <feather-icon
-                            class="cursor-pointer"
                             :icon="passwordToggleIcon"
+                            class="cursor-pointer border-0"
                             @click="togglePasswordVisibility"
                           />
                         </b-input-group-append>
-                      </b-input-group>
-                      <small class="text-danger">{{ errors[0] || submitErrors.password }}</small>
+                        <label for="confirm-password">Confirm Password</label>
+                      </div>
                     </validation-provider>
                   </b-form-group>
 
+                  <b-form-group v-if="confirmPassword !== password">
+                    <small class="text-danger">*Pastikan konfirmasi password sama dengan password sebelumnya</small>
+                  </b-form-group>
                 </b-col>
 
                 <!-- checkbox -->
@@ -202,7 +216,7 @@ import {
   BRow,
   BFormGroup,
   BFormInput,
-  BInputGroup,
+  // BInputGroup,
   BInputGroupAppend,
   BFormCheckbox,
   BForm,
@@ -219,7 +233,7 @@ export default {
     BRow,
     BFormGroup,
     BFormInput,
-    BInputGroup,
+    // BInputGroup,
     BInputGroupAppend,
     BFormCheckbox,
     BForm,
@@ -318,4 +332,56 @@ export default {
   background: linear-gradient(147.38deg, rgba(231, 233, 242, 0.76) 0%, rgba(203, 206, 219, 0) 100%);
 }
 
+/* tes */
+
+[dir] .input{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin-bottom: 0.7rem;
+}
+
+[dir] .input input{
+    width: 100%;
+    height: 50px;
+    padding-top: 1.1rem;
+    padding-left: 9px;
+    outline: none;
+    border: 1px solid #8c8c8c;
+    border-radius: 3px;
+    transition: 0.2s;
+}
+
+[dir] .group-password {
+  flex-wrap: nowrap;
+}
+
+[dir] .form-group-password {
+  margin-bottom: 0px !important;
+}
+
+[dir] .input label{
+    position: absolute;
+    top: 30%;
+    left: 10px;
+    font-size: 1.1rem;
+    color: #000;
+    transition: 0.2s;
+}
+
+[dir] .input input:focus ~ label, .input input:valid ~ label{
+    top: 10%;
+    font-size: 0.8rem;
+    color: #000;
+}
+
+[dir] .input input:focus{
+    border-width: 2px;
+    border-color: #0A66C3;
+}
+
+[dir] .input-group-text {
+  border: 0;
+  background: #f6f6f6;
+}
 </style>

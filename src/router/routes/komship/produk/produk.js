@@ -8,6 +8,7 @@ export default [
     meta: {
       name: pageName,
       routeCreate: 'add-produk',
+      routeEdit: 'add-produk',
       resource: 'Produk',
       action: 'manage',
       breadcrumb: [

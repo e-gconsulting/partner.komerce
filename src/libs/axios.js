@@ -32,21 +32,6 @@ axiosIns.interceptors.response.use(
   }
 )
 
-const axiosIns2 = axios.create({
-  // You can add your headers here
-  headers: new Headers({
-    'Application-Name': 'Web Komerce',
-    'Access-Control-Allow-Origin': '*',
-  }),
-  // ================================
-  baseURL: 'https://komshipdev.komerce.id/api',
-  timeout: 14000,
-  // headers: {
-  //   'Application-Name': 'Web Komerce',
-  // },
-})
-
 Vue.prototype.$http = axiosIns
-Vue.prototype.$http2 = axiosIns2
 
 export default axiosIns

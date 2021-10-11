@@ -1,169 +1,277 @@
 <template>
-  <b-card>
-    <!-- Verivication PIN -->
-    <b-modal
-      ref="modal-pin"
-      no-close-on-backdrop
-      hide-header-close
-      ok-only
-      hide-header
-      modal-class="modal-primary"
-      centered
-      title="Primary Modal"
-    >
+  <b-overlay
+    variant="light"
+    :show="loading"
+    spinner-variant="primary"
+    blur="0"
+    opacity=".5"
+    rounded="sm"
+  >
+    <b-card>
+      <!-- Verivication PIN -->
+      <b-modal
+        ref="modal-pin"
+        no-close-on-backdrop
+        hide-header-close
+        ok-only
+        hide-header
+        modal-class="modal-primary"
+        centered
+        title="Primary Modal"
+      >
 
-      <b-col class="d-flex justify-content-center mt-50">
-        <h4>
-          <strong>Verifikasi PIN</strong>
-        </h4>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-3">
-        <small>
-          <strong>Mohon verifikasi identitas kamu dengan masukan PIN</strong>
-        </small>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-2">
-        <CodeInput
-          :loading="false"
-          class="input"
-          @change="onChange"
-          @complete="onComplete"
-        />
-      </b-col>
-
-      <b-col class="text-center mt-1">
-        <small class="text-danger">{{ errorPin }}</small>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-1">
-        <b-button
-          variant="primary"
-          @click="confirmPin"
-        >
-          Konfirmasi
-        </b-button>
-      </b-col>
-      <b-col class="d-flex justify-content-center mt-1">
-        <b-button
-          variant="outline-primary"
-        >
-          Kembali
-        </b-button>
-      </b-col>
-
-    </b-modal>
-
-    <!-- Verification No. HP -->
-    <b-modal
-      id="modal-hp"
-      no-close-on-backdrop
-      hide-header-close
-      ok-only
-      hide-header
-      modal-class="modal-primary"
-      centered
-    >
-
-      <b-col class="d-flex justify-content-center mt-50">
-        <h4>
-          <strong>Verifikasi No HP</strong>
-        </h4>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-3">
-        <small class="text-center">
-          <strong>Mohon verifikasi identitas kamu dengan memasukan Kode Verifikasi (OTP) yang dikirimkan via SMS ke No 085788888834</strong>
-        </small>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-2">
-        <CodeInput
-          :loading="false"
-          class="input"
-          @change="onChange"
-          @complete="onComplete"
-        />
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-1">
-        <b-button
-          variant="primary"
-        >
-          Konfirmasi
-        </b-button>
-      </b-col>
-      <b-col class="d-flex justify-content-center mt-1">
-        <b-button
-          variant="outline-primary"
-        >
-          Kembali
-        </b-button>
-      </b-col>
-
-    </b-modal>
-
-    <b-col cols="12">
-      <h4>
-        <strong>Pengaturan Rekening Bank</strong>
-      </h4>
-    </b-col>
-
-    <b-col
-      v-for="(data, index) in formRekening"
-      :key="index + 1"
-      md="10"
-      class="border ml-1 mt-2"
-    >
-
-      <b-row class="d-flex align-items-center mb-1">
-        <b-col>
-          <h5>
-            <strong>Rekening {{ index+1 }}</strong>
-          </h5>
+        <b-col class="d-flex justify-content-center mt-50">
+          <h4>
+            <strong>Verifikasi PIN</strong>
+          </h4>
         </b-col>
-        <b-col class="d-flex justify-content-end">
+
+        <b-col class="d-flex justify-content-center mt-3">
+          <small>
+            <strong>Mohon verifikasi identitas kamu dengan masukan PIN</strong>
+          </small>
+        </b-col>
+
+        <b-col class="d-flex justify-content-center mt-2">
+          <CodeInput
+            :loading="false"
+            class="input"
+            @change="onChange"
+            @complete="onComplete"
+          />
+        </b-col>
+
+        <b-col class="text-center mt-1">
+          <small class="text-danger">{{ errorPin }}</small>
+        </b-col>
+
+        <b-col class="d-flex justify-content-center mt-1">
           <b-button
-            class="btn-icon"
-            variant="flat-dark"
-            @click="editRekening(data)"
+            variant="primary"
+            @click="confirmPin"
           >
-            <feather-icon
-              icon="EditIcon"
-            />
+            Konfirmasi
           </b-button>
         </b-col>
-      </b-row>
+        <b-col class="d-flex justify-content-center mt-1">
+          <b-button
+            variant="outline-primary"
+          >
+            Kembali
+          </b-button>
+        </b-col>
 
-      <validation-observer ref="formEdit">
-        <b-form>
+      </b-modal>
+
+      <!-- Verification No. HP -->
+      <b-modal
+        id="modal-hp"
+        no-close-on-backdrop
+        hide-header-close
+        ok-only
+        hide-header
+        modal-class="modal-primary"
+        centered
+      >
+
+        <b-col class="d-flex justify-content-center mt-50">
+          <h4>
+            <strong>Verifikasi No HP</strong>
+          </h4>
+        </b-col>
+
+        <b-col class="d-flex justify-content-center mt-3">
+          <small class="text-center">
+            <strong>Mohon verifikasi identitas kamu dengan memasukan Kode Verifikasi (OTP) yang dikirimkan via SMS ke No 085788888834</strong>
+          </small>
+        </b-col>
+
+        <b-col class="d-flex justify-content-center mt-2">
+          <CodeInput
+            :loading="false"
+            class="input"
+            @change="onChange"
+            @complete="onComplete"
+          />
+        </b-col>
+
+        <b-col class="d-flex justify-content-center mt-1">
+          <b-button
+            variant="primary"
+          >
+            Konfirmasi
+          </b-button>
+        </b-col>
+        <b-col class="d-flex justify-content-center mt-1">
+          <b-button
+            variant="outline-primary"
+          >
+            Kembali
+          </b-button>
+        </b-col>
+
+      </b-modal>
+
+      <b-col cols="12">
+        <h4>
+          <strong>Pengaturan Rekening Bank</strong>
+        </h4>
+      </b-col>
+
+      <b-col
+        v-for="(data, index) in formRekening"
+        :key="index + 1"
+        md="10"
+        class="border ml-1 mt-2"
+      >
+
+        <b-row class="d-flex align-items-center mb-1">
+          <b-col>
+            <h5>
+              <strong>Rekening {{ index+1 }}</strong>
+            </h5>
+          </b-col>
+          <b-col class="d-flex justify-content-end">
+            <b-button
+              class="btn-icon"
+              variant="flat-dark"
+              @click="editRekening(data)"
+            >
+              <feather-icon
+                icon="EditIcon"
+              />
+            </b-button>
+          </b-col>
+        </b-row>
+
+        <validation-observer ref="formEdit">
+          <b-form>
+            <b-row>
+              <b-col cols="10">
+                <b-form-group
+                  label="Nama Bank"
+                  label-cols-md="3"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="Nama Bank"
+                    rules="required"
+                  >
+                    <div v-if="editMode === true && editIdRek === data.bank_account_id">
+                      <b-form-input
+                        v-model="bankName"
+                        :state="errors.length > 0 ? false:null"
+                      />
+                    </div>
+                    <div v-else>
+                      <b-form-input
+                        v-model="data.bank_name"
+                        :state="errors.length > 0 ? false:null"
+                        disabled
+                      />
+                    </div>
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
+
+              <b-col cols="10">
+                <b-form-group
+                  label="No Rekening"
+                  label-cols-md="3"
+                >
+                  <div v-if="editMode === true && editIdRek === data.bank_account_id">
+                    <b-form-input
+                      v-model="accountNo"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-form-input
+                      v-model="data.account_no"
+                      disabled
+                    />
+                  </div>
+                </b-form-group>
+              </b-col>
+
+              <b-col cols="10">
+                <b-form-group
+                  label="Nama"
+                  label-cols-md="3"
+                >
+                  <div v-if="editMode === true && editIdRek === data.bank_account_id">
+                    <b-form-input
+                      v-model="accountName"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-form-input
+                      v-model="data.account_name"
+                      disabled
+                    />
+                  </div>
+                </b-form-group>
+              </b-col>
+
+              <!-- Edit Rekening -->
+              <transition name="fade">
+                <b-col
+                  v-if="editIdRek === data.bank_account_id"
+                  md="12"
+                  class="d-flex justify-content-end mt-1 pb-1"
+                >
+                  <b-button
+                    v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                    type="submit"
+                    variant="outline-primary"
+                    class="mr-1"
+                    @click.prevent="confirmDelete(data)"
+                  >
+                    Hapus
+                  </b-button>
+                  <b-button
+                    v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                    type="reset"
+                    variant="primary"
+                    class="mr-1"
+                    @click="submitEditRekening"
+                  >
+                    Simpan
+                  </b-button>
+                </b-col>
+              </transition>
+
+            </b-row>
+          </b-form>
+        </validation-observer>
+      </b-col>
+
+      <!-- Add Rekening -->
+      <b-col
+        v-if="fieldActionAddRekening === true"
+        md="10"
+        class="border ml-1 mt-2"
+      >
+
+        <b-row class="d-flex align-items-center mb-1">
+          <b-col>
+            <h5>
+              <strong>Tambah Rekening</strong>
+            </h5>
+          </b-col>
+        </b-row>
+
+        <b-form @submit.prevent>
           <b-row>
+
             <b-col cols="10">
               <b-form-group
                 label="Nama Bank"
                 label-cols-md="3"
               >
-                <validation-provider
-                  #default="{errors}"
-                  name="Nama Bank"
-                  rules="required"
-                >
-                  <div v-if="addForm === true">
-                    <b-form-input
-                      v-model="data.bank_name"
-                      :state="errors.length > 0 ? false:null"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </div>
-                  <div v-if="editMode === true">
-                    <b-form-input
-                      v-model="bankName"
-                      :state="errors.length > 0 ? false:null"
-                    />
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </div>
-                </validation-provider>
+                <b-form-input
+                  v-model="bankName"
+                />
               </b-form-group>
             </b-col>
 
@@ -172,16 +280,9 @@
                 label="No Rekening"
                 label-cols-md="3"
               >
-                <div v-if="addForm === true">
-                  <b-form-input
-                    v-model="data.account_no"
-                  />
-                </div>
-                <div v-else>
-                  <b-form-input
-                    v-model="accountNo"
-                  />
-                </div>
+                <b-form-input
+                  v-model="accountNo"
+                />
               </b-form-group>
             </b-col>
 
@@ -190,22 +291,13 @@
                 label="Nama"
                 label-cols-md="3"
               >
-                <div v-if="addForm === true">
-                  <b-form-input
-                    v-model="data.account_name"
-                  />
-                </div>
-                <div v-else>
-                  <b-form-input
-                    v-model="accountName"
-                  />
-                </div>
+                <b-form-input
+                  v-model="accountName"
+                />
               </b-form-group>
             </b-col>
 
-            <!-- Edit Rekening -->
             <b-col
-              v-if="editRek === data.bank_account_id"
               md="12"
               class="d-flex justify-content-end mt-1 pb-1"
             >
@@ -214,7 +306,7 @@
                 type="submit"
                 variant="outline-primary"
                 class="mr-1"
-                @click.prevent="confirmDelete(data)"
+                @click="cancelAddRekening"
               >
                 Hapus
               </b-button>
@@ -223,7 +315,7 @@
                 type="reset"
                 variant="primary"
                 class="mr-1"
-                @click="submitEditRekening"
+                @click.prevent="createRekening"
               >
                 Simpan
               </b-button>
@@ -231,109 +323,30 @@
 
           </b-row>
         </b-form>
-      </validation-observer>
-    </b-col>
+      </b-col>
 
-    <!-- Add Rekening -->
-    <b-col
-      v-if="fieldActionAddRekening === true"
-      md="10"
-      class="border ml-1 mt-2"
-    >
-
-      <b-row class="d-flex align-items-center mb-1">
-        <b-col>
-          <h5>
-            <strong>Tambah Rekening</strong>
-          </h5>
-        </b-col>
-      </b-row>
-
-      <b-form @submit.prevent>
-        <b-row>
-
-          <b-col cols="10">
-            <b-form-group
-              label="Nama Bank"
-              label-cols-md="3"
-            >
-              <b-form-input
-                v-model="bankName"
-              />
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="10">
-            <b-form-group
-              label="No Rekening"
-              label-cols-md="3"
-            >
-              <b-form-input
-                v-model="accountNo"
-              />
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="10">
-            <b-form-group
-              label="Nama"
-              label-cols-md="3"
-            >
-              <b-form-input
-                v-model="accountName"
-              />
-            </b-form-group>
-          </b-col>
-
-          <b-col
-            md="12"
-            class="d-flex justify-content-end mt-1 pb-1"
+      <b-col
+        md="10"
+        class="ml-1 mt-1"
+      >
+        <div class="demo-inline-spacing">
+          <b-button
+            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+            block
+            variant="outline-primary"
+            @click="addRekening"
           >
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              type="submit"
-              variant="outline-primary"
-              class="mr-1"
-              @click="cancelAddRekening"
-            >
-              Hapus
-            </b-button>
-            <b-button
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              type="reset"
-              variant="primary"
-              class="mr-1"
-              @click.prevent="createRekening"
-            >
-              Simpan
-            </b-button>
-          </b-col>
+            <feather-icon
+              icon="PlusIcon"
+              class="mr-50"
+            />
+            <span class="align-middle">Tambahkan Rekening</span>
+          </b-button>
+        </div>
+      </b-col>
 
-        </b-row>
-      </b-form>
-    </b-col>
-
-    <b-col
-      md="10"
-      class="ml-1 mt-1"
-    >
-      <div class="demo-inline-spacing">
-        <b-button
-          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-          block
-          variant="outline-primary"
-          @click="addRekening"
-        >
-          <feather-icon
-            icon="PlusIcon"
-            class="mr-50"
-          />
-          <span class="align-middle">Tambahkan Rekening</span>
-        </b-button>
-      </div>
-    </b-col>
-
-  </b-card>
+    </b-card>
+  </b-overlay>
 </template>
 
 <script>
@@ -351,9 +364,11 @@ import {
   BButton,
   BModal,
   VBModal,
+  BOverlay,
 } from 'bootstrap-vue'
 // import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
+import { heightTransition } from '@core/mixins/ui/transition'
 import axios2 from './baseUrl2'
 
 export default {
@@ -370,18 +385,21 @@ export default {
     CodeInput,
     ValidationObserver,
     ValidationProvider,
+    BOverlay,
   },
   directives: {
     'b-modal': VBModal,
     Ripple,
   },
+  mixins: [heightTransition],
   data() {
     return {
+      loading: false,
       dataPin: null,
       errorPin: '',
       addForm: true,
 
-      editRek: null,
+      editIdRek: null,
 
       // Validation
       required,
@@ -429,7 +447,7 @@ export default {
       })
     },
     editRekening(data) {
-      this.editRek = data.bank_account_id
+      this.editIdRek = data.bank_account_id
       this.bankName = data.bank_name
       this.accountNo = data.account_no
       this.accountName = data.account_name
@@ -449,7 +467,7 @@ export default {
       console.log(this.accountNo)
       console.log(this.accountName)
 
-      axios2.post('/v1/bank-account/update/2463', formData,
+      axios2.post(`/v1/bank-account/update/${this.editIdRek}`, formData,
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {

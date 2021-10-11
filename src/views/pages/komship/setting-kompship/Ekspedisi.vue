@@ -1,39 +1,47 @@
 <template>
   <b-card>
     <!-- Dialog Konfirmasi Non Kompship -->
-    <!-- <b-modal
+    <b-modal
       ref="modal-konfirmasi-nonkompship"
       no-close-on-backdrop
       hide-header-close
-      ok-only
       hide-header
       modal-class="modal-primary"
       centered
       title="Primary Modal"
     >
 
-      <b-col class="d-flex justify-content-center mt-50">
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-1">
         <h4>
-          <strong>Buat PIN</strong>
+          Ketika menggunakan pengiriman Non Kompship kamu harus menambahkan ekspedisi dan mengaktifkannya agar dapat menambahkan order
         </h4>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
-        <small>
-          <strong>Amankan uang kamu di Kompship menggunakan PIN</strong>
-        </small>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-1">
-        <b-button
-          v-b-modal.modal-confirm-create-new-pin
-          variant="primary"
+      <template #modal-footer>
+        <b-col
+          md="12"
+          class="d-flex justify-content-center pb-2"
         >
-          Buat PIN
-        </b-button>
-      </b-col>
-    </b-modal> -->
-    {{ konfirmasiNonKompship() }}
+          <b-button
+            variant="primary"
+            @click="closeConfirmNonkomship"
+          >
+            Oke
+          </b-button>
+        </b-col>
+      </template>
+
+    </b-modal>
 
     <b-row class="d-flex align-items-center mt-1">
       <b-col>
@@ -43,65 +51,75 @@
       </b-col>
       <b-col class="d-flex justify-content-end">
         <b-form-checkbox
-          checked="true"
+          v-model="settingEkspedisi"
           class="custom-control-primary"
           name="check-button"
           switch
+          @change="switchSettingEkspedisi"
         />
       </b-col>
     </b-row>
 
     <b-row class="mt-2">
       <b-col>
-        <b-table
-          :fields="fieldsSendKompship"
-          :items="itemsSendKompship"
-          class="border"
+        <b-overlay
+          variant="light"
+          :show="loading"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
         >
+          <b-table
+            :fields="fieldsSendKompship"
+            :items="itemsSendKompship"
+            class="border"
+          >
 
-          <template #cell(send_kompship)>
+            <template #cell(send_kompship)>
 
-            <b-table
-              :fields="fields"
-              :items="items"
-            >
+              <b-table
+                :fields="fields"
+                :items="items"
+              >
 
-              <template #cell(name_ekspedisi)="data">
-                <b-col>
-                  <h5>
-                    {{ data.value }}
-                  </h5>
-                </b-col>
-              </template>
+                <template #cell(name_ekspedisi)="data">
+                  <b-col>
+                    <h5>
+                      {{ data.value }}
+                    </h5>
+                  </b-col>
+                </template>
 
-              <template #cell(status)>
-                <app-collapse
-                  accordion
-                  class="bg-dark"
-                >
-                  <app-collapse-item title="">
-                    J&T Exspress adalah perusahaan pengiriman ekspres yang menerapkan aperkembangan teknologi sebagai dasar dari sistemnya. Jaringan luas yang dimiliki oleh J&T Exspress memfasilitasi layanan- layanan ekspres untuk pelanggan di seluruh indonesia.
+                <template #cell(status)="data">
+                  <app-collapse
+                    accordion
+                    class="bg-dark"
+                  >
+                    <app-collapse-item title="">
+                      J&T Exspress adalah perusahaan pengiriman ekspres yang menerapkan aperkembangan teknologi sebagai dasar dari sistemnya. Jaringan luas yang dimiliki oleh J&T Exspress memfasilitasi layanan- layanan ekspres untuk pelanggan di seluruh indonesia.
 
-                    J&T Express tidak menerima cairan dan baterai untuk pengiriman yang melalui transportasi udara.
+                      J&T Express tidak menerima cairan dan baterai untuk pengiriman yang melalui transportasi udara.
 
-                    Customer Care : 021-8066-1888
-                    Website : http//jet.co.id
-                    Batasan
-                    Berat Maks : 50000gr
-                  </app-collapse-item>
-                </app-collapse>
-                <b-form-checkbox
-                  checked="true"
-                  class="custom-control-primary"
-                  name="check-button"
-                  switch
-                />
-              </template>
-            </b-table>
+                      Customer Care : 021-8066-1888
+                      Website : http//jet.co.id
+                      Batasan
+                      Berat Maks : 50000gr
+                    </app-collapse-item>
+                  </app-collapse>
+                  <b-form-checkbox
+                    class="custom-control-primary"
+                    name="check-button"
+                    switch
+                    @change="switchStatusEkspedisi(data)"
+                  />
+                </template>
+              </b-table>
 
-          </template>
+            </template>
 
-        </b-table>
+          </b-table>
+        </b-overlay>
       </b-col>
     </b-row>
 
@@ -115,7 +133,10 @@
       </b-col>
     </b-row>
 
-    <b-row class="mt-3">
+    <b-row
+      v-if="settingEkspedisi === false"
+      class="mt-3"
+    >
       <b-col>
         <b-table
           :fields="fieldsSendNonKompship"
@@ -141,7 +162,7 @@
               <template #cell(status)="data">
                 <b-row class="d-flex align-items-center">
                   <b-form-checkbox
-                    checked="true"
+                    v-model="statusEkspedisiNonKomship"
                     class="custom-control-primary"
                     name="check-button"
                     switch
@@ -161,33 +182,42 @@
               </template>
             </b-table>
 
-            <b-col class="mt-50">
-              <b-form
-                @submit.prevent
+            <transition name="fade">
+              <b-col
+                v-if="formAddEkspedisi === true"
+                class="mt-50"
               >
-                <b-row>
-                  <b-col cols="5">
-                    <v-select />
-                  </b-col>
-                </b-row>
-              </b-form>
-            </b-col>
-
-            <b-col class="mt-1">
-              <b-button
-                variant="primary"
-              >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Simpan</span>
-              </b-button>
-            </b-col>
+                <b-form
+                  @submit.prevent
+                >
+                  <b-row>
+                    <b-col md="5">
+                      <v-select />
+                    </b-col>
+                    <b-col
+                      md="12"
+                      class="mt-1"
+                    >
+                      <b-button
+                        variant="primary"
+                        @click="submitEkspedisi"
+                      >
+                        <feather-icon
+                          icon="PlusIcon"
+                          class="mr-50"
+                        />
+                        <span class="align-middle">Simpan</span>
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-form>
+              </b-col>
+            </transition>
 
             <b-col class="mt-2">
               <b-button
                 variant="outline-primary"
+                @click="addEkspedisi"
               >
                 <feather-icon
                   icon="PlusIcon"
@@ -210,6 +240,7 @@
 import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import vSelect from 'vue-select'
+import { heightTransition } from '@core/mixins/ui/transition'
 import {
   BCard,
   BRow,
@@ -218,6 +249,10 @@ import {
   BTable,
   BButton,
   BForm,
+  BModal,
+  VBModal,
+  BImg,
+  BOverlay,
 } from 'bootstrap-vue'
 
 export default {
@@ -232,10 +267,21 @@ export default {
     BButton,
     vSelect,
     BForm,
+    BModal,
+    BImg,
+    BOverlay,
   },
-
+  directives: {
+    'b-modal': VBModal,
+  },
+  mixins: [heightTransition],
   data() {
     return {
+
+      settingEkspedisi: false,
+      statusEkspedisiNonKomship: false,
+
+      formAddEkspedisi: false,
 
       fields: [
         {
@@ -278,24 +324,27 @@ export default {
           send_non_kompship: null,
         },
       ],
+      loading: false,
     }
   },
-  // mounted() {
-  //   this.showModal()
-  // },
+  mounted() {
+    this.$refs['modal-konfirmasi-nonkompship'].show()
+  },
   methods: {
-    konfirmasiNonKompship() {
-      this.$swal({
-        text: 'Ketika menggunakan pengiriman Non Kompship kamu harus menambahkan ekspedisi dan mengaktifkannya agar dapat menambahkan order',
-        icon: 'warning',
-        showCancelButton: false,
-        confirmButtonText: 'oke',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-primary ml-1',
-        },
-        buttonsStyling: false,
-      })
+    closeConfirmNonkomship() {
+      this.$refs['modal-konfirmasi-nonkompship'].hide()
+    },
+    switchSettingEkspedisi() {
+      if (this.settingEkspedisi === true) {
+        this.settingEkspedisi = true
+        this.statusEkspedisi = true
+      } else {
+        this.settingEkspedisi = false
+        this.statusEkspedisi = false
+      }
+    },
+    switchStatusEkspedisi(data) {
+      console.log(data)
     },
     confirmDelete(data) {
       console.log(data)
@@ -315,6 +364,12 @@ export default {
           this.delete(data)
         }
       })
+    },
+    submitEkspedisi() {
+      this.formAddEkspedisi = false
+    },
+    addEkspedisi() {
+      this.formAddEkspedisi = true
     },
   },
 }
