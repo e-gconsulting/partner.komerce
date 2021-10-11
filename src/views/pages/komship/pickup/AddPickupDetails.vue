@@ -62,6 +62,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    isOnboarding: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -90,6 +94,9 @@ export default {
       console.log('onSubmitPrint')
       if (values) this.printOption = values
       console.log('onSubmitPrint2222', this.printOption)
+      if (this.isOnboarding) {
+        this.$emit('onBoardingShow')
+      }
     },
   },
 }

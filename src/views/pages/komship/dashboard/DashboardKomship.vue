@@ -165,7 +165,7 @@
               :options="optionsChart"
               :clearable="false"
             />
-            <ChartPenghasilan class="mt-1"/>
+            <ChartPenghasilan class="mt-1" />
           </div>
         </div>
       </div>
@@ -292,10 +292,10 @@
             <div class="w-25">
               <b-form-group class="mb-0">
                 <v-select
+                  id="select_produk_terlaris"
                   v-model="selectedProdukTerlaris"
                   label="Bulan Ini"
                   dir="ltr"
-                  id="select_produk_terlaris"
                   :options="optionsProdukTerlaris"
                   :clearable="false"
                 />
@@ -423,7 +423,7 @@
             </b-form-group>
           </div>
           <div class="card-body">
-            <ChartPerforma/>
+            <ChartPerforma />
           </div>
         </div>
       </div>
@@ -471,11 +471,19 @@
           </div>
         </div>
       </div>
-      <div v-if="blurred" class="position-absolute pos-center text-center">
+      <div
+        v-if="blurred"
+        class="position-absolute pos-center text-center"
+      >
         <p class="h3 font-weight-bolder mb-2">Yuk, Hiring Talent Komerce agar kamu<br>dapat menggunakan fitur ini!</p>
         <button class="btn btn-outline-primary">Tutup</button>
       </div>
     </div>
+
+    <onboarding
+      ref="onboardingElement"
+      :current-stage="0"
+    />
   </div>
 </template>
 
@@ -484,6 +492,7 @@ import { BFormGroup } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
+import Onboarding from '../onboarding/Onboarding.vue'
 
 export default {
   components: {
@@ -491,9 +500,11 @@ export default {
     ChartPenghasilan,
     ChartPerforma,
     vSelect,
+    Onboarding,
   },
   data() {
     return {
+      isOnboarding: true,
       saldo: 8000000,
       saldoPending: 3000000,
       cashback: 2000000,
@@ -604,6 +615,9 @@ export default {
       optionsPerformaCS: ['Real Time', '7 Hari Terakhir', '30 Hari Terakhir', 'Custom Tanggal'],
       blurred: false,
     }
+  },
+  mounted() {
+    if (this.isOnboarding) this.$refs.onboardingElement.showModal()
   },
   methods: {
     formatRibuan(x) {

@@ -305,6 +305,7 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
+            @click="handlePublishButton"
           >
             Publish
           </b-button>
@@ -312,6 +313,11 @@
       </b-row>
 
     </b-form>
+
+    <onboarding
+      ref="onboardingElement"
+      :current-stage="2"
+    />
   </b-card-actions>
 </template>
 
@@ -331,6 +337,7 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
+import Onboarding from '../onboarding/Onboarding.vue'
 
 export default {
   components: {
@@ -346,12 +353,14 @@ export default {
     BFormCheckbox,
     BInputGroupAppend,
     BInputGroup,
+    Onboarding,
   },
   directives: {
     Ripple,
   },
   data() {
     return {
+      isOnboarding: true,
       selected: ['A'],
       fields: [
         { key: 'name', label: 'Nama' },
@@ -382,6 +391,11 @@ export default {
         },
       ],
     }
+  },
+  methods: {
+    handlePublishButton() {
+      if (this.isOnboarding) this.$refs.onboardingElement.showModal()
+    },
   },
 }
 </script>

@@ -11,7 +11,14 @@
     <add-pickup-details
       :class="currentView === 'details' ? '' : 'hide'"
       :list-selected="listSelected"
+      :is-onboarding="isOnboarding"
+      @onBoardingShow="handlePublishButton"
       @onBackButtonClicked="() => handleChangeCurrenView('input')"
+    />
+
+    <onboarding
+      ref="onboardingElement"
+      :current-stage="6"
     />
 
   </b-card>
@@ -23,15 +30,18 @@ import {
 } from 'bootstrap-vue'
 import AddPickupInput from './AddPickupInput.vue'
 import AddPickupDetails from './AddPickupDetails.vue'
+import Onboarding from '../onboarding/Onboarding.vue'
 
 export default {
   components: {
     BCard,
     AddPickupInput,
     AddPickupDetails,
+    Onboarding,
   },
   data() {
     return {
+      isOnboarding: true,
       currentView: 'input',
       listSelected: [],
       dummyItems: [
@@ -147,6 +157,9 @@ export default {
     },
     handleChangeCurrenView(values) {
       if (values) this.currentView = values
+    },
+    handlePublishButton() {
+      if (this.isOnboarding) this.$refs.onboardingElement.showModal()
     },
   },
 }

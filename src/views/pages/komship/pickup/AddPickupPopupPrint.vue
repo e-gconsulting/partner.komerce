@@ -95,14 +95,12 @@ export default {
     showModal() {
       this.$root.$emit('bv::show::modal', 'modal-8')
     },
-    onSelectOrder() {
-      this.$emit('onSubmitOption', this.selectedOptions)
-    },
     handleClosePopUp() {
       this.handleHidePopup()
     },
     handleSubmit() {
       this.handleHidePopup()
+      this.$emit('onSubmitOption', this.selectedOptions)
     },
     handleHidePopup() {
       this.$root.$emit('bv::hide::modal', 'modal-8')

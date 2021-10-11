@@ -239,7 +239,7 @@
         <b-button
           v-if="isCountButtonClicked"
           class="next-button"
-          @click="handleShowPopUp"
+          @click="handleSaveOrder"
         >
           Submit
         </b-button>
@@ -363,6 +363,10 @@ export default {
       type: Number,
       default: 30000,
     },
+    isOnboarding: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -416,6 +420,13 @@ export default {
       this.totalCostNumberFirst = countTotalPrice(this.listSelected)
       this.onUpdateAllPrice()
       this.onUpdateNettoPrice()
+    },
+    handleSaveOrder() {
+      if (this.isOnboarding) {
+        this.$emit('onBoardingShow')
+      } else {
+        this.handleShowPopUp()
+      }
     },
     handleShowPopUp() {
       this.$root.$emit('bv::show::modal', 'modal-2')

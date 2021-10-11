@@ -18,8 +18,15 @@
       :date-text="dateText"
       :screens="screens"
       :list-selected="listSelected"
+      :is-onboarding="isOnboarding"
+      @onBoardingShow="handlePublishButton"
       @onUpdateDate="updateDateText"
       @onUpdateScreenView="updateScreenView"
+    />
+
+    <onboarding
+      ref="onboardingElement"
+      :current-stage="4"
     />
   </b-card>
 </template>
@@ -28,18 +35,25 @@
 import {
   BCard,
 } from 'bootstrap-vue'
+// import useJwt from '@/auth/jwt/useJwt'
+// import axios2 from '../setting-kompship/baseUrl'
 import AddOrderInput from './AddOrderInput.vue'
 import AddOrderDetail from './AddOrderDetail.vue'
+import Onboarding from '../onboarding/Onboarding.vue'
 
 export default {
   components: {
     BCard,
     AddOrderInput,
     AddOrderDetail,
+    Onboarding,
   },
   data() {
     return {
+      isOnboarding: true,
       dateText: '',
+      profile: {},
+      test2: {},
       listSelected: [],
       screens: 'input',
       listProduct: [
@@ -141,14 +155,37 @@ export default {
       ],
     }
   },
-  async mounted() {
-    this.getProfile()
-    // this.loadWorkingSpaces()
-    // this.loadDivisions()
-    // this.loadBanks()
-    // if (this.editMode) await this.loadForm()
+  mounted() {
+    // const tokens1 = useJwt.getToken()
+    // console.log('tokeneoekke', tokens1)
+    // axios2.post('https://komshipdev.komerce.id/api/v1/my-profile',
+    //   {
+    //     headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+    //   }).then(response => {
+    //   const { data } = response
+    //   console.log('berhasil data', data)
+    //   this.profile = data
+    // }).catch(() => {
+    //   console.log('gagal')
+    // })
+
+    // this.getProfile()
+    // this.reload()
   },
   methods: {
+    // async reload() {
+    // this.test2 = await this.getOrder()
+    // await this.getProfile()
+    // this.loading = true
+    // this.currentPage = 1
+    //
+    // if (!this.partnerProfileIncomplete) {
+    //   this.wishlistItems = await this.loadWishlistItems()
+    // }
+    //
+    // this.items = await this.loadItems()
+    // this.loading = false
+    // },
     updateDateText(dateVal) {
       if (dateVal) this.dateText = dateVal
     },
@@ -158,20 +195,36 @@ export default {
     updateScreenView(value) {
       if (value) this.screens = value
     },
-    getProfile() {
-      return this.$http
-        .get('/v1/my-profile', {
-          // params: {
-          //   sort: 'name',
-          //   direction: 'asc',
-          // },
-        })
-        .then(async response => {
-          const { data } = response.data
-          console.log('berhasil data', data)
-          // this.provinceItems = data
-        })
+    handlePublishButton() {
+      if (this.isOnboarding) this.$refs.onboardingElement.showModal()
     },
+    // getProfile() {
+    //   axios2.post('https://komshipdev.komerce.id/api/v1/my-profile', {
+    //
+    //   },
+    //   { Authorization: `Bearer ${useJwt.getToken()}` })
+    //     .then(async response => {
+    //       const { data } = response
+    //       console.log('berhasil data', data)
+    //       this.profile = data
+    //     }).catch(() => {
+    //       console.log('gagal')
+    //     })
+    // },
+    // getOrder() {
+    //   console.log('this.profile', this.profile)
+    //   const partnerId = this.$store.state.auth.userData.id
+    //   axios2.get(`https://komshipdev.komerce.id/api/v1/order/${partnerId}`, {},
+    //     { Authorization: `Bearer ${useJwt.getToken()}` })
+    //     .then(response => response.json())
+    //     .then(async response => {
+    //       const { data } = response.data
+    //       console.log('berhasil data2', data)
+    //       // this.provinceItems = data
+    //     }).catch(() => {
+    //       console.log('gagal2')
+    //     })
+    // },
   },
 }
 </script>
