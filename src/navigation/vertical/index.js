@@ -31,33 +31,33 @@ tagVariant
 
 */
 import dashboard from './dashboard'
-import training from './training'
-import talent from './talent'
-import partner from './partner'
-import management from './management'
 import membership from './membership'
 import ekspedisi from './ekspedisi'
-import masterData from './master-data'
-import assignment from './assignment'
-import settingAndPrivacy from './setting-and-privacy'
+// import training from './training'
+// import talent from './talent'
+// import partner from './partner'
+// import management from './management'
+// import masterData from './master-data'
+// import assignment from './assignment'
+// import settingAndPrivacy from './setting-and-privacy'
 
 // Partner
-import talentPool from './talent-pool'
-import wishlist from './wishlist'
+// import talentPool from './talent-pool'
+// import wishlist from './wishlist'
 
 // Array of sections
 export default [
   ...dashboard,
   ...membership,
   ...ekspedisi,
-  ...training,
-  ...talent,
-  ...partner,
-  ...management,
-  ...masterData,
-  ...assignment,
-  ...settingAndPrivacy,
+  // ...training,
+  // ...talent,
+  // ...partner,
+  // ...management,
+  // ...masterData,
+  // ...assignment,
+  // ...settingAndPrivacy,
 
-  ...talentPool,
-  ...wishlist,
+  // ...talentPool,
+  // ...wishlist,
 ]

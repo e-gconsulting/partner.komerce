@@ -33,25 +33,43 @@
       <!-- /Left Text-->
 
       <!-- Login-->
-      <b-col lg="4" class="d-flex align-items-center auth-bg px-2 p-lg-5">
+      <b-col
+        lg="4"
+        class="d-flex align-items-center auth-bg px-2 p-lg-5"
+      >
         <!-- Brand logo-->
         <b-link class="brand-logo d-flex d-lg-none">
-          <b-img :src="appLogoImage" alt="logo" style="width: 36px" />
+          <b-img
+            :src="appLogoImage"
+            alt="logo"
+            style="width: 36px"
+          />
           <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
             {{ appName }}
           </h2>
         </b-link>
         <!-- /Brand logo-->
 
-        <b-col sm="8" md="6" lg="12" class="px-xl-2 mx-auto">
-          <b-card-title class="mb-1 font-weight-bold" title-tag="h2">
+        <b-col
+          sm="8"
+          md="6"
+          lg="12"
+          class="px-xl-2 mx-auto"
+        >
+          <b-card-title
+            class="mb-1 font-weight-bold"
+            title-tag="h2"
+          >
             Masuk
           </b-card-title>
           <b-card-text class="mb-2">
             Silahkan masuk menggunakan akun Anda
           </b-card-text>
 
-          <b-alert variant="danger" :show="!!error">
+          <b-alert
+            variant="danger"
+            :show="!!error"
+          >
             <div class="alert-body">
               <span>{{ error }}</span>
               <b-link
@@ -65,10 +83,19 @@
           </b-alert>
 
           <!-- form -->
-          <validation-observer ref="loginForm" #default="{ invalid }">
-            <b-form class="auth-login-form mt-2" @submit.prevent="login">
+          <validation-observer
+            ref="loginForm"
+            #default="{ invalid }"
+          >
+            <b-form
+              class="auth-login-form mt-2"
+              @submit.prevent="login"
+            >
               <!-- email -->
-              <b-form-group label="Username atau Email" label-for="login-email">
+              <b-form-group
+                label="Username atau Email"
+                label-for="login-email"
+              >
                 <validation-provider
                   #default="{ errors }"
                   label="Username atau Email"
@@ -143,7 +170,10 @@
                 block
                 :disabled="invalid || loading"
               >
-                <b-spinner v-if="loading" small />
+                <b-spinner
+                  v-if="loading"
+                  small
+                />
                 Masuk
               </b-button>
             </b-form>
@@ -260,6 +290,8 @@ export default {
               username_email: this.usernameEmail,
               password: this.password,
               login_from: 'website',
+              applicationType: 1,
+              fcm_token: 'fMFJVmT_vCk:APA91bEwLh3_5dGKDFJI9M4ISZrqD9sOuN_mtYKxj85ZyaLaxo1sBIi9Iq8X5ZUieX5GyGDfkl_woikKVfJCp5j-U7MxNWDE5GlNg8E3IpnsP7GQARlsbcMsLmiM9eMD5xXYTSGXUUKS',
             })
             .then(response => {
               if (response.data.status === false) {
@@ -278,110 +310,146 @@ export default {
     },
     getUser(userData) {
       this.userId = userData.id
+      const dataUser = { ...userData, role_name: userData.position_name.toUpperCase() }
+      const ability = [
+        { action: 'read', subject: 'Dashboard' },
+        { action: 'manage', subject: 'Training' },
+        { action: 'manage', subject: 'Management' },
+        { action: 'manage', subject: 'MasterData' },
+        { action: 'manage', subject: 'Partner' },
+        { action: 'manage', subject: 'Position' },
+        { action: 'manage', subject: 'Talent' },
+        { action: 'manage', subject: 'Training' },
+        { action: 'manage', subject: 'Division' },
+        { action: 'manage', subject: 'Invoice' },
+        { action: 'manage', subject: 'Assignment' },
+        { action: 'manage', subject: 'JobRoleSetting' },
+      ]
+      const role = dataUser.position_name.toUpperCase()
+      if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM'].includes(role)) {
+        this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
+        this.logout()
+        return
+      }
 
-      this.$http
-        .post('/user/get-profile', {
-          user_id: this.userId,
-        })
-        .then(async response => {
-          let ability = []
+      localStorage.setItem('userData', JSON.stringify(dataUser))
+      this.$ability.update(ability)
+      this.$store.commit('auth/UPDATE_USER_DATA', dataUser)
+      this.loading = false
 
-          let { data } = response.data
-          data = Array.isArray(data) ? data[0] : data
-          const role = data.role_name.toUpperCase()
-
-          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM'].includes(role)) {
-            this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
-            this.logout()
-            return
-          }
-
-          if (['PARTNER', 'SDM'].includes(role)) {
-            if (!userData.email_verified_at) {
-              // eslint-disable-next-line operator-linebreak
-              this.error =
-                'Email belum terverifikasi, harap periksa email Anda.'
-              this.showResendEmailVerification = true
-              this.logout()
-              return
-            }
-          }
-
-          switch (role) {
-            case 'ADMIN':
-              ability = [
-                { action: 'read', subject: 'Dashboard' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Management' },
-                { action: 'manage', subject: 'MasterData' },
-                { action: 'manage', subject: 'Partner' },
-                { action: 'manage', subject: 'Position' },
-                { action: 'manage', subject: 'Talent' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Division' },
-                { action: 'manage', subject: 'Invoice' },
-                { action: 'manage', subject: 'Assignment' },
-                { action: 'manage', subject: 'JobRoleSetting' },
-              ]
-              break
-            case 'MANAGEMENT':
-              ability = [
-                { action: 'read', subject: 'Dashboard' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Management' },
-                { action: 'manage', subject: 'MasterData' },
-                { action: 'manage', subject: 'Partner' },
-                { action: 'manage', subject: 'Position' },
-                { action: 'manage', subject: 'Talent' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Division' },
-                { action: 'manage', subject: 'Invoice' },
-                { action: 'manage', subject: 'Assignment' },
-                { action: 'manage', subject: 'JobRoleSetting' },
-              ]
-              break
-            case 'PARTNER':
-              ability = [
-                { action: 'manage', subject: 'TalentPool' },
-                { action: 'manage', subject: 'PartnerProfile' },
-              ]
-              break
-            case 'SDM':
-              ability = [
-                { action: 'read', subject: 'TalentHome' },
-                { action: 'manage', subject: 'TalentProfile' },
-              ]
-              break
-            default:
-              break
-          }
-
-          if (role === 'PARTNER') {
-            data = await this.getPartnerProfile(this.userId)
-
-            if (data.nik) {
-              ability.push({ action: 'manage', subject: 'DetailTalent' })
-              ability.push({ action: 'manage', subject: 'Wishlist' })
-            }
-          }
-
-          data.ability = ability
-          this.$ability.update(ability)
-
-          localStorage.setItem('userData', JSON.stringify(data))
-          this.$store.commit('auth/UPDATE_USER_DATA', data)
-
-          this.$router
-            .replace(getHomeRouteForLoggedInUser(role))
-            .then(() => {})
-            .catch(error => {
-              this.$refs.loginForm.setErrors(error.response.data.error)
-            })
-        })
-        .finally(() => {
-          this.loading = false
+      this.$router
+        .replace(getHomeRouteForLoggedInUser(role))
+        .then(() => {})
+        .catch(error => {
+          this.$refs.loginForm.setErrors(error.response.data.error)
         })
     },
+    // getUser(userData) {
+    //   this.userId = userData.id
+
+    //   this.$http
+    //     .post('/api/v1/my-profile', {
+    //       user_id: this.userId,
+    //     })
+    //     .then(async response => {
+    //       let ability = []
+
+    //       let { data } = response.data
+    //       data = Array.isArray(data) ? data[0] : data
+    //       const role = data.role_name.toUpperCase()
+
+    //       if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM'].includes(role)) {
+    //         this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
+    //         this.logout()
+    //         return
+    //       }
+
+    //       if (['PARTNER', 'SDM'].includes(role)) {
+    //         if (!userData.email_verified_at) {
+    //           // eslint-disable-next-line operator-linebreak
+    //           this.error =
+    //             'Email belum terverifikasi, harap periksa email Anda.'
+    //           this.showResendEmailVerification = true
+    //           this.logout()
+    //           return
+    //         }
+    //       }
+
+    //       switch (role) {
+    //         case 'ADMIN':
+    //           ability = [
+    //             { action: 'read', subject: 'Dashboard' },
+    //             { action: 'manage', subject: 'Training' },
+    //             { action: 'manage', subject: 'Management' },
+    //             { action: 'manage', subject: 'MasterData' },
+    //             { action: 'manage', subject: 'Partner' },
+    //             { action: 'manage', subject: 'Position' },
+    //             { action: 'manage', subject: 'Talent' },
+    //             { action: 'manage', subject: 'Training' },
+    //             { action: 'manage', subject: 'Division' },
+    //             { action: 'manage', subject: 'Invoice' },
+    //             { action: 'manage', subject: 'Assignment' },
+    //             { action: 'manage', subject: 'JobRoleSetting' },
+    //           ]
+    //           break
+    //         case 'MANAGEMENT':
+    //           ability = [
+    //             { action: 'read', subject: 'Dashboard' },
+    //             { action: 'manage', subject: 'Training' },
+    //             { action: 'manage', subject: 'Management' },
+    //             { action: 'manage', subject: 'MasterData' },
+    //             { action: 'manage', subject: 'Partner' },
+    //             { action: 'manage', subject: 'Position' },
+    //             { action: 'manage', subject: 'Talent' },
+    //             { action: 'manage', subject: 'Training' },
+    //             { action: 'manage', subject: 'Division' },
+    //             { action: 'manage', subject: 'Invoice' },
+    //             { action: 'manage', subject: 'Assignment' },
+    //             { action: 'manage', subject: 'JobRoleSetting' },
+    //           ]
+    //           break
+    //         case 'PARTNER':
+    //           ability = [
+    //             { action: 'manage', subject: 'TalentPool' },
+    //             { action: 'manage', subject: 'PartnerProfile' },
+    //           ]
+    //           break
+    //         case 'SDM':
+    //           ability = [
+    //             { action: 'read', subject: 'TalentHome' },
+    //             { action: 'manage', subject: 'TalentProfile' },
+    //           ]
+    //           break
+    //         default:
+    //           break
+    //       }
+
+    //       if (role === 'PARTNER') {
+    //         data = await this.getPartnerProfile(this.userId)
+
+    //         if (data.nik) {
+    //           ability.push({ action: 'manage', subject: 'DetailTalent' })
+    //           ability.push({ action: 'manage', subject: 'Wishlist' })
+    //         }
+    //       }
+
+    //       data.ability = ability
+    //       this.$ability.update(ability)
+
+    //       localStorage.setItem('userData', JSON.stringify(data))
+    //       this.$store.commit('auth/UPDATE_USER_DATA', data)
+
+    //       this.$router
+    //         .replace(getHomeRouteForLoggedInUser(role))
+    //         .then(() => {})
+    //         .catch(error => {
+    //           this.$refs.loginForm.setErrors(error.response.data.error)
+    //         })
+    //     })
+    //     .finally(() => {
+    //       this.loading = false
+    //     })
+    // },
     resendEmailVerification() {
       this.showResendEmailVerification = false
       this.error = ''

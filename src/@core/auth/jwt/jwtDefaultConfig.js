@@ -1,11 +1,11 @@
 export default {
   // Endpoints
-  loginEndpoint: '/login',
+  loginEndpoint: '/api/login',
   registerPartnerEndpoint: '/partner/register',
   registerTalentEndpoint: '/admin/talent/register',
-  refreshEndpoint: '/refresh_token',
-  resetPasswordEndpoint: '/forget_password',
-  logoutEndpoint: '/logout',
+  refreshEndpoint: '/api/refresh_token',
+  resetPasswordEndpoint: '/api/forget_password',
+  logoutEndpoint: '/api/logout',
 
   // This will be prefixed in authorization header with token
   // e.g. Authorization: Bearer <token>

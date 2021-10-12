@@ -25,7 +25,7 @@ import '@/libs/geocoder'
 import '@/libs/filters'
 
 // Axios Mock Adapter
-import '@/@fake-db/db'
+// import '@/@fake-db/db'
 
 // BSV Plugin Registration
 Vue.use(ToastPlugin)

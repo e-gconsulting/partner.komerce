@@ -346,8 +346,8 @@ export default {
       filterTopEkspedisi: '',
       filterTopPartner: '',
       selectedEkspedisi: {
-        kurir: null,
-        bulan: null,
+        shipper: null,
+        month: null,
       },
       selectedPartner: {
         bulan: null,
@@ -406,9 +406,9 @@ export default {
     },
     selectedEkspedisi: {
       deep: true,
-      // immediate: true,
+      immediate: true,
       handler() {
-        this.fetchData(this.selectedEkspedisi)
+        this.fetchDataChartExpedisi(this.selectedEkspedisi)
       },
     },
     selectedPartner: {
@@ -434,6 +434,19 @@ export default {
     kFormatter,
     choosenFilterTop(val, type = '') {
       this[type] = val
+    },
+    async fetchDataChartExpedisi(params) {
+      this.$apiKomshipdev.get('/api/v1/admin/dashboard/performance/shipping', { params })
+        .then(data => {
+          console.log(data)
+          // this.rows = newParseData
+        })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
     async fetchData(params) {
       // change this endpoint
