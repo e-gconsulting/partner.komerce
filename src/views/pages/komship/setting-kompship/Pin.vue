@@ -626,7 +626,7 @@ import {
   VBModal,
 } from 'bootstrap-vue'
 import VueOtpInput from '@bachdgvn/vue-otp-input'
-import axios2 from './baseUrl2'
+import httpKomship from '@/libs/http_komship'
 
 export default {
   components: {
@@ -668,7 +668,7 @@ export default {
     },
     // ==================================================================
     createPin() {
-      axios2.post('https://komshipdev.komerce.id/api/v1/pin/store', {
+      httpKomship.post('https://komshipdev.komerce.id/api/v1/pin/store', {
         pin: this.dataPin,
       },
       {
@@ -687,7 +687,7 @@ export default {
       this.dataPin = v
     },
     showModal() {
-      axios2.get('/v1/pin/check', {
+      httpKomship.get('/v1/pin/check', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -712,7 +712,7 @@ export default {
       })
     },
     confirmCreatePin() {
-      axios2.get('https://komshipdev.komerce.id/api/v1/pin/check',
+      httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check',
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {
@@ -736,7 +736,7 @@ export default {
       this.$refs['modal-change-pin'].show()
     },
     confirmChangePin() {
-      axios2.post('/v1/pin/auth', {
+      httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
       },
       {
@@ -757,7 +757,7 @@ export default {
       formData.append('_method', 'put')
       formData.append('pin', this.dataPin)
 
-      axios2.post('/v1/pin/update', formData, {
+      httpKomship.post('/v1/pin/update', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
@@ -788,7 +788,7 @@ export default {
       this.$refs['modal-forgot-email-pin'].show()
       const formData = new FormData()
       formData.append('_method', 'post')
-      axios2.post('v1/send-otp', formData, {
+      httpKomship.post('v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
@@ -800,7 +800,7 @@ export default {
       this.countOtp = 10
       const formData = new FormData()
       formData.append('_method', 'post')
-      axios2.post('v1/send-otp', formData, {
+      httpKomship.post('v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response

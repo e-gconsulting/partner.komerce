@@ -3,14 +3,8 @@ import Vue from 'vue'
 // axios
 import axios from 'axios'
 
-// BaseUrl Komship
 const axiosIns = axios.create({
   // You can add your headers here
-  // headers: new Headers({
-  //   'Application-Name': 'Web Komerce',
-  //   'Access-Control-Allow-Headers': 'localhost:8080',
-  // }),
-  // ================================
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 14000,
   headers: {
