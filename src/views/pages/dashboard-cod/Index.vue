@@ -298,6 +298,7 @@ import VueApexCharts from 'vue-apexcharts'
 import Ripple from 'vue-ripple-directive'
 
 import store from '@/store/index'
+import axioskomsipdev from '@/libs/axioskomsipdev'
 // import { $themeColors } from '@themeConfig'
 import { kFormatter } from '@core/utils/filter'
 import { areaChartOptions } from './chartOptions'
@@ -346,8 +347,8 @@ export default {
       filterTopEkspedisi: '',
       filterTopPartner: '',
       selectedEkspedisi: {
-        shipper: null,
-        month: null,
+        shipper: 'JNE',
+        month: `0${new Date().getMonth()}`,
       },
       selectedPartner: {
         bulan: null,
@@ -406,7 +407,7 @@ export default {
     },
     selectedEkspedisi: {
       deep: true,
-      immediate: true,
+      // immediate: true,
       handler() {
         this.fetchDataChartExpedisi(this.selectedEkspedisi)
       },
@@ -420,7 +421,10 @@ export default {
     },
   },
   mounted() {
-    //
+    this.fetchDataChartExpedisi(this.selectedEkspedisi)
+  },
+  beforeCreate() {
+    // window.location.reload()
   },
   created() {
     this.loadDataAwal = true
@@ -436,7 +440,7 @@ export default {
       this[type] = val
     },
     async fetchDataChartExpedisi(params) {
-      this.$apiKomshipdev.get('/api/v1/admin/dashboard/performance/shipping', { params })
+      axioskomsipdev.get('/api/v1/admin/dashboard/performance/shipping', { params: { shipper: params.shipper, month: params.month } })
         .then(data => {
           console.log(data)
           // this.rows = newParseData

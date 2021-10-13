@@ -14,19 +14,19 @@ import penarikan from './routes/penarikan'
 import pendapatan from './routes/pendapatan'
 import membership from './routes/membership/index'
 import ekspedisi from './routes/ekspedisi/index'
-// import training from './routes/training/index'
-// import talent from './routes/talent/index'
-// import partner from './routes/partner/index'
-// import masterData from './routes/master-data/index'
-// import management from './routes/management/index'
-// import division from './routes/division'
-// import position from './routes/position'
-// import talentPool from './routes/talent-pool'
-// import parentProfile from './routes/partner-profile'
-// import wishlist from './routes/wishlist'
-// import invoice from './routes/invoice'
-// import assignment from './routes/assignment'
-// import jobRoleSetting from './routes/job-role-setting'
+import training from './routes/training/index'
+import talent from './routes/talent/index'
+import partner from './routes/partner/index'
+import masterData from './routes/master-data/index'
+import management from './routes/management/index'
+import division from './routes/division'
+import position from './routes/position'
+import talentPool from './routes/talent-pool'
+import parentProfile from './routes/partner-profile'
+import wishlist from './routes/wishlist'
+import invoice from './routes/invoice'
+import assignment from './routes/assignment'
+import jobRoleSetting from './routes/job-role-setting'
 
 Vue.use(VueRouter)
 
@@ -43,20 +43,20 @@ const router = new VueRouter({
     ...membership,
     ...ekspedisi,
     ...pages,
-    // ...training,
-    // ...talent,
-    // ...partner,
-    // ...masterData,
-    // ...management,
-    // ...division,
-    // ...position,
-    // ...invoice,
-    // ...assignment,
+    ...training,
+    ...talent,
+    ...partner,
+    ...masterData,
+    ...management,
+    ...division,
+    ...position,
+    ...invoice,
+    ...assignment,
 
-    // ...talentPool,
-    // ...parentProfile,
-    // ...wishlist,
-    // ...jobRoleSetting,
+    ...talentPool,
+    ...parentProfile,
+    ...wishlist,
+    ...jobRoleSetting,
     {
       path: '*',
       redirect: 'error-404',
@@ -68,10 +68,12 @@ router.beforeEach((to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
 
   if (to.name === 'unauthenticated' || to.name === 'error-404') {
+    console.log('unauthenticated', isLoggedIn)
     return next()
   }
 
   if (!canNavigate(to) && !isLoggedIn) {
+    console.log('canNavigate', isLoggedIn)
     // Redirect to login if not logged in
     return next({ name: 'auth-login' })
   }
@@ -83,6 +85,7 @@ router.beforeEach((to, _, next) => {
     (!canNavigate(to) && isLoggedIn && !to.meta.preventRedirect)
   ) {
     const userData = getUserData()
+    console.log(userData)
     next(
       getHomeRouteForLoggedInUser(
         // eslint-disable-next-line comma-dangle

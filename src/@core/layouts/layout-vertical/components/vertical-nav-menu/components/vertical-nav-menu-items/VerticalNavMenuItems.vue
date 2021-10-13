@@ -36,44 +36,44 @@ export default {
   },
   computed: {
     filteredItems() {
-      const visibleMenus = this.menus.map(menu => {
-        const isAvailableMenuFilter = this.items.filter(
-          item => item.title === menu.name,
-        )
+      // const visibleMenus = this.menus.map(menu => {
+      //   const isAvailableMenuFilter = this.items.filter(
+      //     item => item.title === menu.name,
+      //   )
 
-        let isAvailableMenu = isAvailableMenuFilter[0]
-        isAvailableMenu = { ...isAvailableMenu, visible: !!isAvailableMenu }
+      //   let isAvailableMenu = isAvailableMenuFilter[0]
+      //   isAvailableMenu = { ...isAvailableMenu, visible: !!isAvailableMenu }
 
-        // level 2
-        if (isAvailableMenu.children) {
-          isAvailableMenu.children.forEach((child, index) => {
-            isAvailableMenu.children[index].visible = !!menu.childrens.find(
-              val => val.name === child.title,
-            )
+      //   // level 2
+      //   if (isAvailableMenu.children) {
+      //     isAvailableMenu.children.forEach((child, index) => {
+      //       isAvailableMenu.children[index].visible = !!menu.childrens.find(
+      //         val => val.name === child.title,
+      //       )
 
-            // level 3
-            if (child.children) {
-              menu.childrens.forEach(menu1 => {
-                isAvailableMenu.children[index].children.forEach(
-                  (child2, index3) => {
-                    const visible = !!menu1.childrens.find(
-                      val2 => val2.name === child2.title,
-                    )
+      //       // level 3
+      //       if (child.children) {
+      //         menu.childrens.forEach(menu1 => {
+      //           isAvailableMenu.children[index].children.forEach(
+      //             (child2, index3) => {
+      //               const visible = !!menu1.childrens.find(
+      //                 val2 => val2.name === child2.title,
+      //               )
 
-                    isAvailableMenu.children[index].children[
-                      index3
-                    ].visible = visible
-                  },
-                )
-              })
-            }
-          })
-        }
-        return isAvailableMenu
-      })
+      //               isAvailableMenu.children[index].children[
+      //                 index3
+      //               ].visible = visible
+      //             },
+      //           )
+      //         })
+      //       }
+      //     })
+      //   }
+      //   return isAvailableMenu
+      // })
 
       return this.user.role_name === 'Management'
-        ? visibleMenus
+        ? []
         : this.items.map(item => ({
           ...item,
           // level 2
