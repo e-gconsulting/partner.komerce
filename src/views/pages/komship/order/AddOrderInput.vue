@@ -79,6 +79,8 @@
       ref="modalVariationAddOrder"
       hide-footer
       hide-header
+      centered
+      no-close-on-backdrop
     >
       <div class="modal-add-order-variation">
         <b-form-group
@@ -251,8 +253,8 @@ export default {
     handleUpdateSelectedVariationInsideList(productData) {
       this.selectedItems = this.updateAllSelectedProduct(productData, this.selectedItems)
       /* reset the variable after update the variation option : when user click ok button on variation popup */
-      this.resetTmpContainerOnTable()
       this.$root.$emit('bv::hide::modal', 'modal-1')
+      this.resetTmpContainerOnTable()
       this.$refs.tableAddOrderOne.refreshTable()
     },
     onAddProduct(itemSelected) {

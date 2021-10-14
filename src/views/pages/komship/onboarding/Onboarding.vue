@@ -5,7 +5,7 @@
       hide-footer
       hide-header
       centered
-      @hide="preventClosing"
+      no-close-on-backdrop
     >
       <div
         v-if="currentStages === 0"
@@ -186,9 +186,6 @@ export default {
   methods: {
     showModal() {
       this.$root.$emit('bv::show::modal', 'modal-10')
-    },
-    preventClosing(bvModalEvent) {
-      if (bvModalEvent) bvModalEvent.preventDefault()
     },
     handleSubmitButtonClicked(currentStages) {
       if (this.currentStages === 6) {
