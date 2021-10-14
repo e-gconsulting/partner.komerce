@@ -66,7 +66,7 @@
                   class="mb-50 mb-xs-1"
                 >
                   <b-form-select
-                    v-model="selectedEkspedisi.kurir"
+                    v-model="selectedEkspedisi.shipper"
                     :options="optionsKurir"
                   />
                 </b-col>
@@ -75,7 +75,7 @@
                   class="custom-selected-filter"
                 >
                   <b-form-select
-                    v-model="selectedEkspedisi.bulan"
+                    v-model="selectedEkspedisi.month"
                     :options="optionsBulan"
                   />
                 </b-col>
@@ -84,8 +84,8 @@
                 <vue-apex-charts
                   type="area"
                   height="400"
-                  :options="chartOptionsComputed"
-                  :series="dashboardReport.subscribersGained.series"
+                  :options="categoriesChartShippingComp"
+                  :series="seriesChartshipping"
                 />
               </div>
             </b-card-body>
@@ -190,7 +190,7 @@
                   class="custom-selected-filter"
                 >
                   <b-form-select
-                    v-model="selectedPartner.bulan"
+                    v-model="selectedPartner.month"
                     :options="optionsBulan"
                   />
                 </b-col>
@@ -199,8 +199,8 @@
                 <vue-apex-charts
                   type="area"
                   height="400"
-                  :options="chartOptionsComputed"
-                  :series="dashboardReport.subscribersGained.series"
+                  :options="categoriesChartPartnerComp"
+                  :series="seriesChartpartner"
                 />
               </div>
             </b-card-body>
@@ -301,7 +301,6 @@ import store from '@/store/index'
 import axioskomsipdev from '@/libs/axioskomsipdev'
 // import { $themeColors } from '@themeConfig'
 import { kFormatter } from '@core/utils/filter'
-import { areaChartOptions } from './chartOptions'
 
 export default {
   components: {
@@ -330,20 +329,57 @@ export default {
       loadDataAwal: true,
       rows: [],
       searchTerm: '',
-      dashboardReport: {
-        subscribersGained: {
-          series: [
-            {
-              name: 'COD',
-              data: [28, 40, 36, 52, 38, 60, 55, 28, 40, 36, 52, 38, 60, 55, 28, 40, 36, 52, 38, 60, 55, 28, 40, 36, 52, 38, 60, 55, 22, 44],
-            },
-            {
-              name: 'Non - COD',
-              data: [55, 35, 78, 65, 57, 72, 81, 55, 35, 78, 65, 57, 72, 81, 55, 35, 78, 65, 57, 72, 81, 55, 35, 78, 65, 57, 72, 81, 24, 12],
-            },
-          ],
+      areaChartOptions: {
+        chart: {
+          type: 'area',
+          height: 350,
+          toolbar: {
+            show: false,
+          },
         },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: 'smooth',
+          width: 2,
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 0.9,
+            opacityFrom: 0.5,
+            opacityTo: 0.2,
+            stops: [0, 80, 100],
+          },
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'left',
+        },
+        xaxis: {
+          categories: [],
+          labels: {
+            show: true,
+            // formatter: val => `${val.toFixed(0)}`,
+          },
+        },
+        yaxis: {
+          show: true,
+          labels: {
+            show: true,
+            // formatter: val => `${val} Jt`,
+          },
+        },
+        tooltip: {
+          x: { show: false },
+        },
+        color: ['#08A0F7', '#34A770'],
       },
+      seriesChartshipping: [],
+      categoriesChartshipping: [],
+      seriesChartpartner: [],
+      categoriesChartpartner: [],
       filterTopEkspedisi: '',
       filterTopPartner: '',
       selectedEkspedisi: {
@@ -351,7 +387,7 @@ export default {
         month: `0${new Date().getMonth()}`,
       },
       selectedPartner: {
-        bulan: null,
+        month: null,
       },
       optionsKurir: [
         { value: null, text: 'Pilih Kurir' },
@@ -361,25 +397,41 @@ export default {
       ],
       optionsBulan: [
         { value: null, text: 'Pilih Bulan' },
-        { value: 'Januari', text: 'Januari' },
-        { value: 'Febuari', text: 'Febuari' },
-        { value: 'Maret', text: 'Maret' },
-        { value: 'April', text: 'April' },
-        { value: 'Mei', text: 'Mei' },
-        { value: 'Juni', text: 'Juni' },
-        { value: 'Juli', text: 'Juli' },
-        { value: 'Agustus', text: 'Agustus' },
-        { value: 'September', text: 'September' },
-        { value: 'Oktober', text: 'Oktober' },
-        { value: 'November', text: 'November' },
-        { value: 'Desember', text: 'Desember' },
+        { value: '01', text: 'Januari' },
+        { value: '02', text: 'Febuari' },
+        { value: '03', text: 'Maret' },
+        { value: '04', text: 'April' },
+        { value: '05', text: 'Mei' },
+        { value: '06', text: 'Juni' },
+        { value: '07', text: 'Juli' },
+        { value: '08', text: 'Agustus' },
+        { value: '09', text: 'September' },
+        { value: '10', text: 'Oktober' },
+        { value: '11', text: 'November' },
+        { value: '12', text: 'Desember' },
       ],
     }
   },
   computed: {
-    chartOptionsComputed() {
-      const options = JSON.parse(JSON.stringify(areaChartOptions))
-      return options
+    categoriesChartPartnerComp() {
+      const data = {
+        ...this.areaChartOptions,
+        xaxis: {
+          ...this.areaChartOptions.xaxis,
+          categories: this.categoriesChartpartner,
+        },
+      }
+      return data
+    },
+    categoriesChartShippingComp() {
+      const data = {
+        ...this.areaChartOptions,
+        xaxis: {
+          ...this.areaChartOptions.xaxis,
+          categories: this.categoriesChartshipping,
+        },
+      }
+      return data
     },
     direction() {
       if (store.state.appConfig.isRTL) {
@@ -409,19 +461,20 @@ export default {
       deep: true,
       // immediate: true,
       handler() {
-        this.fetchDataChartExpedisi(this.selectedEkspedisi)
+        this.fetchDataChartExpedisi(this.selectedEkspedisi, 'shipping')
       },
     },
     selectedPartner: {
       deep: true,
       // immediate: true,
       handler() {
-        this.fetchData(this.selectedPartner)
+        this.fetchDataChartExpedisi(this.selectedEkspedisi, 'partner')
       },
     },
   },
   mounted() {
-    this.fetchDataChartExpedisi(this.selectedEkspedisi)
+    this.fetchDataChartExpedisi(this.selectedEkspedisi, 'shipping')
+    this.fetchDataChartExpedisi(this.selectedEkspedisi, 'partner')
   },
   beforeCreate() {
     // window.location.reload()
@@ -439,11 +492,21 @@ export default {
     choosenFilterTop(val, type = '') {
       this[type] = val
     },
-    async fetchDataChartExpedisi(params) {
-      axioskomsipdev.get('/api/v1/admin/dashboard/performance/shipping', { params: { shipper: params.shipper, month: params.month } })
-        .then(data => {
-          console.log(data)
-          // this.rows = newParseData
+    async fetchDataChartExpedisi(params, type = '') {
+      axioskomsipdev.get(`/api/v1/admin/dashboard/performance/${type}`, { params: { shipper: params.shipper ?? 'JNE', month: params.month } })
+        .then(({ data }) => {
+          const mappinData = [
+            {
+              name: 'COD',
+              data: data.data.cod,
+            },
+            {
+              name: 'Non - COD',
+              data: data.data.non_cod,
+            },
+          ]
+          this[`categoriesChart${type}`] = data.data.categories
+          this[`seriesChart${type}`] = mappinData
         })
         .catch(e => {
           console.log('error', e)
