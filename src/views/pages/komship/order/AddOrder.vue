@@ -59,11 +59,9 @@ export default {
       listProduct: [
         {
           product_id: 1,
-          product_name: 'Jilbab Merah Maroon',
-          product_image: '',
-          is_variant: true,
-          price: 23000,
-          stock: 10,
+          product_name: 'Jilbab',
+          product_image: 'www.example.com/img/products/product-980312037.jpg',
+          is_variant: 1,
           variant: [
             {
               variant_id: 1,
@@ -71,86 +69,84 @@ export default {
               variant_option: [
                 {
                   option_id: 1,
-                  option_name: 'Merah',
+                  option_name: 'Biru',
+                  option_parent: null,
                 },
                 {
                   option_id: 2,
-                  option_name: 'Hijau',
-                },
-                {
-                  option_id: 3,
-                  option_name: 'Biru',
-                },
-                {
-                  option_id: 4,
-                  option_name: 'Coklat',
+                  option_name: 'Merah',
+                  option_parent: null,
                 },
               ],
             },
             {
-              variant_id: 2,
+              variant_id: 1,
               variant_name: 'Ukuran',
               variant_option: [
                 {
+                  option_id: 3,
+                  option_name: 'S',
+                  option_parent: 1,
+                },
+                {
+                  option_id: 4,
+                  option_name: 'M',
+                  option_parent: 1,
+                },
+                {
                   option_id: 5,
                   option_name: 'S',
+                  option_parent: 2,
                 },
                 {
                   option_id: 6,
                   option_name: 'M',
-                },
-                {
-                  option_id: 7,
-                  option_name: 'L',
-                },
-                {
-                  option_id: 8,
-                  option_name: 'XL',
+                  option_parent: 2,
                 },
               ],
             },
           ],
-
           product_variant: [
             {
               option_id: 3,
               name: 'Merah',
               price: 20,
-              stock: 10,
+              stock: 100,
               option_parent: 1,
             },
             {
               option_id: 4,
-              name: 'Hijau',
-              price: 40,
-              stock: 10,
+              name: 'Biru',
+              price: 20,
+              stock: 100,
               option_parent: 2,
             },
             {
               option_id: 5,
-              name: 'Biru',
-              price: 60,
-              stock: 10,
-              option_parent: 3,
+              name: 'Merah',
+              price: 20,
+              stock: 100,
+              option_parent: 1,
             },
             {
               option_id: 6,
-              name: 'Coklat',
-              price: 100,
-              stock: 10,
-              option_parent: 4,
+              name: 'Biru',
+              price: 20,
+              stock: 100,
+              option_parent: 2,
             },
           ],
+          price: 0,
+          stock: 0,
         },
         {
           product_id: 2,
-          product_name: 'Jilbab Hijau Toska',
-          product_image: '',
-          is_variant: false,
-          price: 23000,
-          stock: 10,
+          product_name: 'Jilbab Keche',
+          product_image: 'www.example.com/img/products/product-980312031.jpg',
+          is_variant: 0,
           variant: [],
-          product_variant: [],
+          price: 20000,
+          stock: 100,
         },
       ],
     }
@@ -169,7 +165,7 @@ export default {
     //   console.log('gagal')
     // })
 
-    // this.getProfile()
+    this.profile = this.getProfile()
     // this.reload()
   },
   methods: {
@@ -198,19 +194,17 @@ export default {
     handlePublishButton() {
       if (this.isOnboarding) this.$refs.onboardingElement.showModal()
     },
-    // getProfile() {
-    //   axios2.post('https://komshipdev.komerce.id/api/v1/my-profile', {
-    //
-    //   },
-    //   { Authorization: `Bearer ${useJwt.getToken()}` })
-    //     .then(async response => {
-    //       const { data } = response
-    //       console.log('berhasil data', data)
-    //       this.profile = data
-    //     }).catch(() => {
-    //       console.log('gagal')
-    //     })
-    // },
+    getProfile() {
+      // { Authorization: `Bearer ${useJwt.getToken()}` }
+      return this.$http.get('/v1/my-profile')
+        .then(async response => {
+          const { data } = response
+          console.log('berhasil data', data)
+          this.profile = data
+        }).catch(() => {
+          console.log('gagal')
+        })
+    },
     // getOrder() {
     //   console.log('this.profile', this.profile)
     //   const partnerId = this.$store.state.auth.userData.id

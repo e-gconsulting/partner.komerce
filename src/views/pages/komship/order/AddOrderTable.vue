@@ -9,77 +9,86 @@
     >
       <template
         v-if="!isEditable"
-        #head(total)="totalData"
+        #head(input)="totalData"
       >
         <div class="div-mid-text">{{ totalData.label }}</div>
       </template>
-      <template #cell(name)="nameData">
+      <template #cell(product_name)="nameData">
         <div class="add-product-name-wrapper">
           <div class="product-name-img-wrapper">
-            <img src="nameData.value.img">
+            <img :src="nameData.item.product_image">
           </div>
           <div class="product-name-desc">
-            <div class="product-name-text">{{ nameData.value.text }}</div>
+            <div class="product-name-text">{{ nameData.value }}</div>
             <b-button
-              v-if="isEditable && nameData.value.isVariation && nameData.value.selectedVariationData.length < 1"
+              v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
               class="product-name-button"
               variant="outline-primary"
-              @click="handleShowVariation(nameData.item.id, nameData.value.variation)"
+              @click="handleShowVariation(nameData.item)"
             >
               Pilih Variasi
             </b-button>
             <div
-              v-if="isEditable && nameData.value.selectedVarText"
+              v-if="isEditable && nameData.item.selectedVariationData.length > 0"
               class="variation-text-content"
             >
-              Variasi : {{ nameData.value.selectedVarText }}
+              Variasi : {{ genVariantText(nameData.item.selectedVariationData) }}
             </div>
             <div
-              v-if="!isEditable && nameData.value.selectedVarText"
+              v-if="!isEditable && nameData.item.selectedVariationData.length > 0"
               class="variation-text-content"
             >
-              Variasi : {{ nameData.value.selectedVarText }}
+              Variasi : {{ genVariantText(nameData.item.selectedVariationData) }}
             </div>
           </div>
         </div>
       </template>
 
-      <template #cell(total)="inputData">
+      <template #cell(price)="priceData">
+        {{ priceData.item.is_variant ? `Rp ${numberWithCommas(genPriceText(priceData.item.selectedVariationData))}` : `Rp ${numberWithCommas(priceData.value)}` }}
+      </template>
+
+      <template #cell(input)="inputData">
         <div class="add-product-total-wrapper">
           <div
             v-if="isEditable"
             class="product-total-input-wrapper"
           >
             <b-button
+              v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="minus-button"
               variant="outline-primary"
-              @click="addTotalItem(inputData.item, '-')"
+              @click="addTotalItem('-', inputData.index, inputData.item)"
             >
               -
             </b-button>
-            <div class="input-text">{{ inputData.value.input }}</div>
+            <div class="input-text">{{ inputData.value }}</div>
             <b-button
-              v-if="(inputData.value.isStockExist && (inputData.value.stock - inputData.value.input) > 0) || !inputData.value.isStockExist"
+              v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="plus-button"
               variant="outline-primary"
-              @click="addTotalItem(inputData.item, '+')"
+              @click="addTotalItem('+', inputData.index, inputData.item)"
             >
               +
             </b-button>
           </div>
           <div
-            v-if="isEditable && inputData.value.isStockExist"
+            v-if="isEditable && (inputData.item.is_variant ? inputData.item.stockDisplay > 0 : true)"
             class="product-stock-input"
           >
-            {{ "Stok tersedia: " + (inputData.value.isFirstAfterAdd ? (inputData.value.stock-1) : (inputData.value.stock - inputData.value.input)) }}
+            {{ `Stok tersedia: ${inputData.item.is_variant ? inputData.item.stockDisplay : inputData.item.stockDisplay}` }}
           </div>
           <div
             v-if="!isEditable"
             class="product-total-input-wrapper no-mg"
           >
-            <div class="input-text div-mid-text">{{ inputData.value.input }}</div>
+            <div class="input-text div-mid-text">{{ inputData.value }}</div>
           </div>
         </div>
+      </template>
+
+      <template #cell(subtotal)="subtotalData">
+        {{ subtotalData.item.is_variant ? `Rp ${numberWithCommas(genPriceText(subtotalData.item.selectedVariationData) * subtotalData.item.input)}` : `Rp ${numberWithCommas(subtotalData.item.price * subtotalData.item.input)}` }}
       </template>
     </b-table>
   </section>
@@ -114,15 +123,68 @@ export default {
       default: false,
     },
   },
+  mounted() {
+    // console.log('hello world', this.items)
+  },
   methods: {
-    addTotalItem(itemSelected, param) {
-      this.$emit('onAddTotalItem', itemSelected, param)
+    addTotalItem(param, itemSelectedIndex, itemSelected) {
+      this.$emit('onAddTotalItem', param, itemSelectedIndex, itemSelected)
     },
-    handleShowVariation(productId, selectedDataVariation) {
-      this.$emit('onShowPopUp', productId, selectedDataVariation)
+    handleShowVariation(selectedProduct) {
+      this.$emit('onShowPopUp', selectedProduct)
     },
     refreshTable() {
       this.$refs[this.tableRefName].refresh()
+    },
+    genVariantText(varArr) {
+      if (varArr && varArr.length && varArr.length > 0) {
+        let newText = ''
+        for (let i = 0; i < varArr.length; i += 1) {
+          newText += varArr[i].name + (i !== (varArr.length - 1) ? ', ' : '')
+        }
+        return newText
+      }
+      return ''
+    },
+    genPriceText(pointedVariant) {
+      if (pointedVariant && pointedVariant.length && pointedVariant.length > 0) {
+        let newPrice = 0
+        for (let j = 0; j < pointedVariant.length; j += 1) {
+          if (pointedVariant[j]) {
+            newPrice += pointedVariant[j].price
+          }
+        }
+        return newPrice
+      }
+      return 0
+    },
+    genStockText(pointedVariant) {
+      if (pointedVariant && pointedVariant.length && pointedVariant.length > 0) {
+        let newStock = 0
+        for (let j = 0; j < pointedVariant.length; j += 1) {
+          if (pointedVariant[j]) {
+            newStock += pointedVariant[j].stock
+          }
+        }
+        return newStock
+      }
+      return 0
+    },
+    numberWithCommas(x) {
+      if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
+      return x
+    },
+    checkStock(currentInput, nameToFind, variantList) {
+      if (variantList && variantList.length && variantList.length > 0 && nameToFind !== '') {
+        let isStockAvailable = false
+        for (let j = 0; j < variantList.length; j += 1) {
+          if (variantList[j] && variantList[j].name && variantList[j].name === nameToFind) {
+            isStockAvailable = ((variantList[j].stock - currentInput) > 0)
+          }
+        }
+        return isStockAvailable
+      }
+      return false
     },
   },
 }

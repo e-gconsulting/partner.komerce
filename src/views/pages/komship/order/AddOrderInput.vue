@@ -19,7 +19,7 @@
           @context="onChangeDate"
         >
           <template v-slot:button-content>
-            <img src="@/assets/images/icons/date-picker-icon.svg" />
+            <img src="@/assets/images/icons/date-picker-icon.svg">
           </template>
         </b-form-datepicker>
       </b-form-group>
@@ -82,16 +82,16 @@
     >
       <div class="modal-add-order-variation">
         <b-form-group
-          v-for="(selectedVar, indexVar) in selectedVariation"
+          v-for="(selectedVar, indexVar) in selectedVariation.variant"
           :key="indexVar+'selectedVar'"
         >
           <label :for="indexVar+'selectedVar'">{{ selectedVar.variant_name }}</label>
           <b-button
             v-for="(selectedVarItem, indexVarItem) in selectedVar.variant_option"
             :key="indexVarItem+'selectedVarItem'"
-            :class="'add-order-modal-header-item-button' + (selectedVar.indexSelected === indexVarItem ? ' add-order-modal-selected' : '')"
-            :disabled="(!selectedVarItem.isAvailable)"
-            @click="updateSelectedVariation(indexVarItem, indexVar)"
+            :class="'add-order-modal-header-item-button' + (findVariantIndex(selectedVarItem.option_name, selectedVariation.selectedVariationData) > -1 ? ' add-order-modal-selected' : '')"
+            :disabled="!checkStock(selectedVariation.input, selectedVarItem.option_name, selectedVariation.product_variant)"
+            @click="updateSelectedVariation(selectedVarItem)"
           >
             {{ selectedVarItem.option_name }}
           </b-button>
@@ -99,7 +99,7 @@
         <div class="add-order-variation-modal-submit">
           <b-button
             class="next-button"
-            @click="handleUpdateSelectedVariationInsideList()"
+            @click="() => handleUpdateSelectedVariationInsideList(selectedVariation)"
           >
             Ok
           </b-button>
@@ -132,11 +132,6 @@ function changeDate(dateString) {
   return dateString
 }
 
-function numberWithCommas(x) {
-  if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
-  return x
-}
-
 function checkSameById(itemId, listData) {
   const index = -1
   for (let i = 0; i < listData.length; i += 1) {
@@ -145,99 +140,17 @@ function checkSameById(itemId, listData) {
   return index
 }
 
-function updateIndexNumber(selectedItemsArr) {
-  if (selectedItemsArr && selectedItemsArr.length > 0) {
-    const newselectedItemsArr = selectedItemsArr
-    for (let i = 0; i < selectedItemsArr.length; i += 1) {
-      newselectedItemsArr[i].no = i + 1
-    }
-    return newselectedItemsArr
-  }
-  return selectedItemsArr
-}
-
-function genVarText(varArr) {
-  if (varArr && varArr.length && varArr.length > 0) {
-    let newText = ''
-    for (let i = 0; i < varArr.length; i += 1) {
-      newText += varArr[i].variant_option[varArr[i].indexSelected].option_name + (i !== (varArr.length - 1) ? ', ' : '')
-    }
-    return newText
-  }
-  return ''
-}
-
-function checkSameByName(itemName, listData) {
-  const index = -1
-  for (let i = 0; i < listData.length; i += 1) {
-    if (listData && listData[i] && listData[i].name && listData[i].name.text && listData[i].name.text === itemName) return i
-  }
-  return index
-}
-
-function checkSameByVariantId(itemId, listData) {
-  const index = -1
-  for (let i = 0; i < listData.length; i += 1) {
-    if (listData && listData[i] && listData[i].variantId && listData[i].variantId.length && listData[i].variantId.length > 0) {
-      return listData[i].variantId.indexOf(itemId)
-    }
-  }
-  return index
-}
-
-function checkSameByVariantNameId(itemName, itemId, listData) {
-  const index = -1
-  for (let i = 0; i < listData.length; i += 1) {
-    if (listData && listData[i] && listData[i].name && listData[i].name === itemName
-      && listData[i].option_parent && listData[i].option_parent === itemId
-    ) return i
-  }
-  return index
-}
-
-function updateSelectedProductVariant(productId, prodVarList, changedList, changedStockAmount, isDelete = false) {
-  let isContinue = false
-  if (prodVarList && prodVarList.length && prodVarList.length > 0
-    && changedList && changedList.length && changedList.length > 0
-    && productId && productId !== '' && changedStockAmount
-  ) {
-    const newChangedList = changedList
-    for (let j = 0; j < changedList.length; j += 1) {
-      if ((changedList[j] && changedList[j].variantId && changedList[j].variantId.indexOf(productId) > -1) || isDelete) {
-        isContinue = true
-      }
-      if (isContinue) {
-        for (let i = 0; i < prodVarList.length; i += 1) {
-          const selectedVariantIdx = prodVarList[i].indexSelected
-          const selectedVariant = prodVarList[i].variant_option[selectedVariantIdx]
-          const optionName = selectedVariant.option_name
-          const optionId = selectedVariant.option_id
-          const indexFindVarParent = checkSameByVariantNameId(optionName, optionId, changedList[j].variantList)
-
-          if (indexFindVarParent > -1) {
-            newChangedList[j].variantList[indexFindVarParent].stock += changedStockAmount
-          }
-        }
-      }
-    }
-    return newChangedList
-  }
-  return changedList
-}
-
-function setStatusButtonVariationPopUp(listData) {
+function countStock(listData) {
   if (listData && listData.length && listData.length > 0) {
-    const newListData = listData
+    let stockAmount = -1
     for (let i = 0; i < listData.length; i += 1) {
-      if (listData[i].variant_option && listData[i].variant_option.length && listData[i].variant_option.length > 0) {
-        for (let j = 0; j < listData[i].variant_option.length; j += 1) {
-          newListData[i].variant_option[j].isAvailable = true
-        }
+      if (listData[i].stock) {
+        stockAmount += listData[i].stock
       }
     }
-    return newListData
+    return stockAmount
   }
-  return listData
+  return -1
 }
 
 export default {
@@ -273,9 +186,9 @@ export default {
       dateLabel: '',
       fields: [
         { key: 'no', label: 'No' },
-        { key: 'name', label: 'Nama Produk' },
+        { key: 'product_name', label: 'Nama Produk' },
         { key: 'price', label: 'Harga Satuan' },
-        { key: 'total', label: 'Jumlah' },
+        { key: 'input', label: 'Jumlah' },
         { key: 'subtotal', label: 'Subtotal' },
       ],
       selectedItems: this.listSelected,
@@ -291,38 +204,52 @@ export default {
         this.$emit('onUpdateDate', ctx.activeYMD)
       }
     },
-    handleShowVariationPopUp(productId, selectedDataVariation) {
-      const container = selectedDataVariation
-      for (let i = 0; i < selectedDataVariation.length; i += 1) {
-        container[i].indexSelected = 0
-      }
-      this.selectedVariation = container
-      this.selectedProdukIndexOnModal = checkSameById(productId, this.selectedItems)
+    handleShowVariationPopUp(productData) {
+      this.selectedVariation = productData
       this.$root.$emit('bv::show::modal', 'modal-1')
     },
-    updateSelectedVariation(indexItem, variationItemIndex) {
+    findVariantIndex(variantName, variantList) {
+      if (variantList && variantList.length && variantList.length > 0 && variantName !== '') {
+        let variantIndex = -1
+        for (let j = 0; j < variantList.length; j += 1) {
+          if (variantList[j] && variantList[j].name && variantList[j].name === variantName) {
+            variantIndex = j
+          }
+        }
+        return variantIndex
+      }
+      return -1
+    },
+    updateSelectedVariation(variantSelected) {
       const currentSelectedVariation = this.selectedVariation
-      if (currentSelectedVariation && currentSelectedVariation[variationItemIndex]) {
-        currentSelectedVariation[variationItemIndex].indexSelected = indexItem
+      for (let i = 0; i < currentSelectedVariation.variant.length; i += 1) { /* loop on selected product */
+        if (currentSelectedVariation.variant[i] && currentSelectedVariation.variant[i] && variantSelected) {
+          if (currentSelectedVariation.variant[i].variant_option) {
+            for (let j = 0; j < currentSelectedVariation.variant[i].variant_option.length; j += 1) { /* loop on variant items of product */
+              const searchParentIndex = this.findVariantIndex(currentSelectedVariation.variant[i].variant_option[j].option_name, currentSelectedVariation.selectedVariationData)
+              if (currentSelectedVariation.variant[i].variant_option[j].option_name === variantSelected.option_name) {
+                const variantSelectedIndex = this.findVariantIndex(variantSelected.option_name, currentSelectedVariation.product_variant)
+                if (variantSelectedIndex > -1) {
+                  const variantIndexOnSelected = this.findVariantIndex(variantSelected.option_name, currentSelectedVariation.selectedVariationData)
+                  if (variantIndexOnSelected > -1) {
+                    currentSelectedVariation.selectedVariationData.splice(variantIndexOnSelected, 1)
+                    currentSelectedVariation.selectedVariationData.push({ ...currentSelectedVariation.product_variant[variantSelectedIndex] })
+                  } else if (variantIndexOnSelected < 0) {
+                    currentSelectedVariation.selectedVariationData.push({ ...currentSelectedVariation.product_variant[variantSelectedIndex] })
+                  }
+                }
+              } else if (searchParentIndex > -1) { /* allow only one variant selected */
+                currentSelectedVariation.selectedVariationData.splice(searchParentIndex, 1)
+              }
+            }
+          }
+        }
       }
       this.selectedVariation = currentSelectedVariation
       this.$forceUpdate()
     },
-    handleUpdateSelectedVariationInsideList() {
-      const currentSelectedVariation = this.selectedVariation
-      const crIdx = this.selectedProdukIndexOnModal
-      if (this.selectedItems && this.selectedItems[crIdx] && this.selectedItems[crIdx].name
-        && this.selectedItems[crIdx].name.variation && currentSelectedVariation && currentSelectedVariation.length > 0
-      ) {
-        this.selectedItems[crIdx].name.selectedVariationData = currentSelectedVariation
-        this.selectedItems[crIdx].name.selectedVarText = genVarText(currentSelectedVariation)
-        this.selectedItems[crIdx].total.isStockExist = true
-
-        const inputAmountToVarStock = (this.selectedItems[crIdx].total.input * -1)
-        this.selectedProductVariant = updateSelectedProductVariant(this.selectedItems[crIdx].id, this.selectedItems[crIdx].name.selectedVariationData, this.selectedProductVariant, inputAmountToVarStock)
-
-        this.onUpdateSelectedItemsOnParent()
-      }
+    handleUpdateSelectedVariationInsideList(productData) {
+      this.selectedItems = this.updateAllSelectedProduct(productData, this.selectedItems)
       /* reset the variable after update the variation option : when user click ok button on variation popup */
       this.resetTmpContainerOnTable()
       this.$root.$emit('bv::hide::modal', 'modal-1')
@@ -331,89 +258,105 @@ export default {
     onAddProduct(itemSelected) {
       if (itemSelected) {
         const currentIndex = this.selectedItems.length + 1
-        const findIndexByName = checkSameByName(itemSelected.product_name, this.selectedItems)
-
-        const container = {
-          id: `selectedProduct${itemSelected.product_id + (Math.floor(Math.random() * 100))}`,
-          no: currentIndex,
-          name: {
-            text: itemSelected.product_name,
-            isVariation: itemSelected.is_variant,
-            img: itemSelected.product_image,
-            selectedVariationData: [],
-            variation: setStatusButtonVariationPopUp(itemSelected.variant),
-            selectedVarText: '',
-          },
-          priceNumber: itemSelected.price,
-          price: `Rp ${numberWithCommas(itemSelected.price)}`,
-          subtotal: `Rp ${numberWithCommas(itemSelected.price)}`,
-          total: {
-            input: 1,
-            stock: itemSelected.stock,
-            isStockExist: !itemSelected.is_variant,
-            isFirstAfterAdd: true,
-          },
-        }
-        const variantContainer = {
-          id: `productVariantWrap${itemSelected.product_id + (Math.floor(Math.random() * 100))}`,
-          variantId: [container.id],
-          variantList: itemSelected.product_variant,
-        }
+        let container = {}
+        let selectedItemsContainer = []
+        container = itemSelected
+        selectedItemsContainer = this.selectedItems
+        container.no = currentIndex
+        container.id = `selectedProduct${itemSelected.product_id + (Math.floor(Math.random() * 1000))}`
+        container.selectedVariationData = []
+        container.input = 1
+        container.stockDisplay = itemSelected.stock
+        container.isStockExist = itemSelected.is_variant ? (countStock(itemSelected.product_variant) > 0) : (itemSelected.stock > 0)
 
         const findIndex = checkSameById(container.id, this.selectedItems)
-        if (findIndex < 0) this.selectedItems.push(container)
-
-        /* update selectedProductVariant for track the stock of the product with variant */
-        const findProdVarIndex = checkSameById(variantContainer.id, this.selectedProductVariant)
-        let itemId = -1
-        if (findIndexByName < 0 && findProdVarIndex < 0) {
-          this.selectedProductVariant.push(variantContainer)
-        } else if (findIndexByName > -1 && findProdVarIndex < 0) {
-          itemId = checkSameByVariantId(this.selectedItems[findIndexByName].id, this.selectedProductVariant)
-          if (itemId > -1) this.selectedProductVariant[itemId].variantId.push(container.id)
+        if (findIndex < 0) { /* push new item */
+          selectedItemsContainer.push({ ...container })
+        } else {
+          selectedItemsContainer.push({ ...container })
         }
-
-        this.onUpdateSelectedItemsOnParent()
-      }
-    },
-    onChangeSelectedProduct(itemSelected, param) {
-      if (itemSelected && param) {
-        const currentIndex = checkSameById(itemSelected.id, this.selectedItems)
-        const inputAmount = param === '+' ? (itemSelected.total.input + 1) : (itemSelected.total.input - 1)
-        const findIndexByName = checkSameByName(itemSelected.name.text, this.selectedItems)
-        const isRemoveItem = inputAmount === 0
-
-        let idIdx = -1
-        if (this.selectedProductVariant[findIndexByName] && this.selectedProductVariant[findIndexByName].variantId) {
-          idIdx = this.selectedProductVariant[findIndexByName].variantId.indexOf(itemSelected.id)
+        this.selectedItems = selectedItemsContainer
+        if (!itemSelected.is_variant) {
+          this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
         }
-
-        if (!isRemoveItem && currentIndex > -1) {
-          const price = itemSelected.priceNumber * inputAmount
-          const container = itemSelected
-          container.subtotal = `Rp ${numberWithCommas(price)}`
-          container.total.input = inputAmount
-          if (container.total.isFirstAfterAdd) container.total.isFirstAfterAdd = !container.total.isFirstAfterAdd
-          this.selectedItems[currentIndex] = container
-          const inputAmountToUpdateStock = param === '+' ? -1 : 1
-
-          if (container && container.name && !container.name.isVariation) {
-            this.selectedItems[currentIndex].total.stock = container.total.stock + inputAmountToUpdateStock
-          } else {
-            /* Update selected product variant */
-            this.selectedProductVariant = updateSelectedProductVariant(itemSelected.id, itemSelected.name.selectedVariationData, this.selectedProductVariant, inputAmountToUpdateStock)
-          }
-        } else if (isRemoveItem && currentIndex > -1) {
-          this.selectedItems.splice(currentIndex, 1)
-          this.selectedItems = updateIndexNumber(this.selectedItems)
-
-          /* Update selected product variant */
-          if (idIdx > -1) this.selectedProductVariant[findIndexByName].variantId.splice(idIdx, 1)
-          this.selectedProductVariant = updateSelectedProductVariant(itemSelected.id, itemSelected.name.selectedVariationData, this.selectedProductVariant, 1, true)
-        }
-
         this.onUpdateSelectedItemsOnParent()
         this.$refs.tableAddOrderOne.refreshTable()
+      }
+    },
+    updateAllSelectedProduct(newItemToPush, oldListSelected) {
+      if (newItemToPush && oldListSelected && oldListSelected.length && oldListSelected.length > 0) {
+        let newListSelected = oldListSelected
+        let sameStock = 0
+        for (let j = 0; j < newListSelected.length; j += 1) {
+          /* update the current selected list item */
+          if (newListSelected && newListSelected[j] && newListSelected[j].id && newListSelected[j].id === newItemToPush.id) {
+            /* update all stock based on variant */
+            if (newListSelected[j].is_variant && newListSelected[j].stockDisplay < 1 && newListSelected[j].stockDisplay === 0) {
+              newListSelected[j].stockDisplay = this.genStockByVariant(newListSelected[j].selectedVariationData)
+            }
+          }
+
+          /* generate same stock to set it later */
+          if (newListSelected[j].product_name === newItemToPush.product_name
+            && JSON.stringify(newListSelected[j].selectedVariationData) === JSON.stringify(newItemToPush.selectedVariationData)
+          ) {
+            sameStock += newListSelected[j].input
+          }
+        }
+        newListSelected = this.updateAllSameStock(sameStock, newItemToPush, newListSelected)
+        return newListSelected
+      }
+      return oldListSelected
+    },
+    updateAllSameStock(sameStock, newItemToPush, listData) {
+      const newListSelected = listData
+      for (let j = 0; j < listData.length; j += 1) {
+        /* update all same product with same stock */
+        const fullStock = newItemToPush.is_variant ? this.genStockByVariant(newListSelected[j].selectedVariationData) : newItemToPush.stock
+        if (newListSelected[j].product_name === newItemToPush.product_name
+          && JSON.stringify(newListSelected[j].selectedVariationData) === JSON.stringify(newItemToPush.selectedVariationData)
+        ) {
+          newListSelected[j].stockDisplay = fullStock - sameStock
+        }
+      }
+      return newListSelected
+    },
+    genStockByVariant(pointedVariant) {
+      if (pointedVariant && pointedVariant.length && pointedVariant.length > 0) {
+        let newStock = 0
+        for (let j = 0; j < pointedVariant.length; j += 1) {
+          if (pointedVariant[j]) {
+            newStock += pointedVariant[j].stock
+          }
+        }
+        return newStock
+      }
+      return 0
+    },
+    checkStock(currentInput, nameToFind, variantList) {
+      if (variantList && variantList.length && variantList.length > 0 && nameToFind !== '') {
+        let isStockAvailable = false
+        for (let j = 0; j < variantList.length; j += 1) {
+          if (variantList[j] && variantList[j].name && variantList[j].name === nameToFind) {
+            isStockAvailable = ((variantList[j].stock - currentInput) > 0)
+          }
+        }
+        return isStockAvailable
+      }
+      return false
+    },
+    onChangeSelectedProduct(param, itemSelectedIndex, itemSelected) {
+      if (itemSelected) {
+        let currentAmount = itemSelected.input
+        currentAmount = param === '-' ? (currentAmount - 1) : (currentAmount + 1)
+        if (currentAmount === 0) {
+          this.selectedItems.splice(itemSelectedIndex, 1)
+        } else {
+          this.selectedItems[itemSelectedIndex].input = currentAmount
+        }
+        /* update all product with same characteristics */
+        this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
+        this.onUpdateSelectedItemsOnParent()
       }
     },
     onUpdateSelectedItemsOnParent() {

@@ -312,12 +312,25 @@ function numberWithCommas(x) {
   return x
 }
 
+function genBasePrice(pointedVariant) {
+  if (pointedVariant && pointedVariant.length && pointedVariant.length > 0) {
+    let newPrice = 0
+    for (let j = 0; j < pointedVariant.length; j += 1) {
+      if (pointedVariant[j]) {
+        newPrice += pointedVariant[j].price
+      }
+    }
+    return newPrice
+  }
+  return 0
+}
+
 function countTotalPrice(listData) {
   if (listData && listData.length && listData.length > 0) {
     let totalPrice = 0
     for (let i = 0; i < listData.length; i += 1) {
-      const basePrice = listData[i].priceNumber
-      const subtotalPrice = basePrice * listData[i].total.input
+      const basePrice = listData[i].is_variant ? genBasePrice(listData[i].selectedVariationData) : listData[i].price
+      const subtotalPrice = basePrice * listData[i].input
       totalPrice += subtotalPrice
     }
     return totalPrice
@@ -389,9 +402,9 @@ export default {
       isCountButtonClicked: false,
       fields: [
         { key: 'no', label: 'No' },
-        { key: 'name', label: 'Nama Produk' },
+        { key: 'product_name', label: 'Nama Produk' },
         { key: 'price', label: 'Harga Satuan' },
-        { key: 'total', label: 'Jumlah' },
+        { key: 'input', label: 'Jumlah' },
         { key: 'subtotal', label: 'Subtotal' },
       ],
       selectedItems: this.listSelected,
