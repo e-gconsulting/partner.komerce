@@ -24,6 +24,16 @@ import invoice from './routes/invoice'
 import assignment from './routes/assignment'
 import jobRoleSetting from './routes/job-role-setting'
 
+// komship
+import dashboardKompship from './routes/komship/dashboard/index'
+import produk from './routes/komship/produk/index'
+import order from './routes/komship/order/index'
+import pickup from './routes/komship/pickup/index'
+import customer from './routes/komship/customer/index'
+import settingKompship from './routes/komship/setting-kompship/index'
+import keuangan from './routes/komship/keuangan/index'
+import hiring from './routes/komship/hiring/index'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -44,6 +54,15 @@ const router = new VueRouter({
     ...position,
     ...invoice,
     ...assignment,
+
+    ...dashboardKompship,
+    ...produk,
+    ...order,
+    ...pickup,
+    ...customer,
+    ...settingKompship,
+    ...keuangan,
+    ...hiring,
 
     ...talentPool,
     ...parentProfile,

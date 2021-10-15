@@ -25,7 +25,6 @@
           </h2>
         </b-link>
         <!-- /Brand logo-->
-
         <div
           class="w-100 d-lg-flex align-items-center justify-content-center px-5"
         />
@@ -342,8 +341,17 @@ export default {
               break
             case 'PARTNER':
               ability = [
-                { action: 'manage', subject: 'TalentPool' },
+                { action: 'manage', subject: 'Komship TalentPool' },
+                { action: 'manage', subject: 'Komship Wishlist' },
                 { action: 'manage', subject: 'PartnerProfile' },
+                { action: 'read', subject: 'Dashboard Komship' },
+                { action: 'manage', subject: 'Customer' },
+                { action: 'manage', subject: 'Produk' },
+                { action: 'manage', subject: 'Order' },
+                { action: 'manage', subject: 'Pickup' },
+                { action: 'manage', subject: 'Keuangan' },
+                { action: 'manage', subject: 'Setting Komship' },
+                { action: 'manage', subject: 'Hiring' },
               ]
               break
             case 'SDM':

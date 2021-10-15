@@ -43,6 +43,16 @@ import settingAndPrivacy from './setting-and-privacy'
 import talentPool from './talent-pool'
 import wishlist from './wishlist'
 
+// Komship
+import dashboardKompship from './dashboard-kompship'
+import produk from './produk'
+import order from './order'
+import pickup from './pickup'
+import customer from './customer'
+import settingKompship from './setting-kompship'
+import keuangan from './keuangan'
+import hiring from './hiring'
+
 // Array of sections
 export default [
   ...dashboard,
@@ -53,6 +63,15 @@ export default [
   ...masterData,
   ...assignment,
   ...settingAndPrivacy,
+
+  ...dashboardKompship,
+  ...produk,
+  ...order,
+  ...pickup,
+  ...customer,
+  ...settingKompship,
+  ...keuangan,
+  ...hiring,
 
   ...talentPool,
   ...wishlist,

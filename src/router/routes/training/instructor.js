@@ -1,10 +1,10 @@
-const pageName = { singular: 'Instructor', plural: 'Instructors' }
+const pageName = { singular: 'Trainer', plural: 'Trainer' }
 
 export default [
   {
     path: '/instructors',
     name: 'instructors',
-    component: () => import('@/views/pages/training/instructor/Table.vue'),
+    component: () => import('@/views/pages/training/instructor/TableTrainer.vue'),
     meta: {
       name: pageName,
       routeCreate: 'instructors-create',
@@ -25,7 +25,7 @@ export default [
   {
     path: '/instructors/create',
     name: 'instructors-create',
-    component: () => import('@/views/pages/training/instructor/Form.vue'),
+    component: () => import('@/views/pages/training/instructor/FormTrainer.vue'),
     meta: {
       name: pageName,
       navActiveLink: 'instructors',
@@ -49,7 +49,7 @@ export default [
   {
     path: '/instructors/:id/edit',
     name: 'instructors-edit',
-    component: () => import('@/views/pages/training/instructor/Form.vue'),
+    component: () => import('@/views/pages/training/instructor/FormTrainer.vue'),
     meta: {
       name: pageName,
       navActiveLink: 'instructors',

@@ -338,7 +338,7 @@
                 label="URL Lainnya"
               />
             </b-col>
-            <b-col>
+            <b-col v-if="urlOther">
               <a
                 target="_blank"
                 :href="urlOther"
@@ -350,6 +350,9 @@
                   type="button"
                 />
               </a>
+            </b-col>
+            <b-col v-else>
+              <h2>-</h2>
             </b-col>
           </b-row>
         </b-col>

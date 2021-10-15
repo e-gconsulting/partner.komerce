@@ -1,3 +1,20 @@
+@media only screen and (max-width: 1090px) {
+    [dir] .radial-class {
+        display: none;
+    }
+
+    [dir] .radial-class-responsive {
+        display: inline-block;
+    }
+}
+@media only screen and (max-width: 922px) {
+    [dir] .item-student {
+        display: none;
+    }
+    [dir] .item-student-responsive {
+        display: inline-block;
+    }
+}
 @media only screen and (max-width: 767px) {
     [dir] .sortir-talent-mobile {
         display: block;

@@ -30,7 +30,7 @@ const chartColors = {
     shade_200: '#06774f',
   },
   donut: {
-    series1: '#ffe700',
+    series1: '#000000',
     series2: '#00d4bd',
     series3: '#826bf8',
     series4: '#2b9bf4',

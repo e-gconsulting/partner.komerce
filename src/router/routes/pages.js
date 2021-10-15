@@ -70,11 +70,12 @@ export default [
     },
   },
   {
-    path: '/tesdev',
-    name: 'tes-dev',
-    component: () => import('@/views/pages/Tesdev.vue'),
+    path: '/kompship/daftar',
+    name: 'kompship-daftar',
+    component: () => import('@/views/pages/authentication/RegisterKompship'),
     meta: {
       layout: 'full',
+      resource: 'Auth',
     },
   },
 ]

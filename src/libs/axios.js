@@ -5,10 +5,15 @@ import axios from 'axios'
 
 const axiosIns = axios.create({
   // You can add your headers here
+  // headers: new Headers({
+  //   Authorization: `Bearer ${token}`,
+  // }),
   // ================================
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 14000,
-  headers: { 'Application-Name': 'Web Komerce' },
+  headers: {
+    'Application-Name': 'Web Komerce',
+  },
 })
 
 axiosIns.interceptors.response.use(
