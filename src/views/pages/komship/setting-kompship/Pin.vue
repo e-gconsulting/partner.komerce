@@ -788,8 +788,10 @@ export default {
       this.$refs['modal-forgot-email-pin'].show()
       const formData = new FormData()
       formData.append('_method', 'post')
-      httpKomship.post('v1/send-otp', formData, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: {
+          Authorization: `Bearer ${useJwt.getToken()}`,
+        },
       }).then(response => {
         const { data } = response
         console.log(data)

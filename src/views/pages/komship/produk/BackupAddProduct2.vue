@@ -137,14 +137,13 @@
                 <span class="align-middle">Tambahkan Variasi</span>
               </b-button>
 
-              <div
-                v-for="(items, index) in formVariation"
-                :key="index+1"
-              >
-                <transition name="fade">
+              <transition name="fade">
+                <div
+                  v-if="variationFields1 === true"
+                >
                   <b-form-group
                     v-if="isVariation === true"
-                    :label="`Variasi ${index+1}`"
+                    label="Variasi 1"
                     label-cols-md="2"
                     class="mt-1"
                   >
@@ -155,10 +154,10 @@
                       >
                         <validation-provider
                           #default="{errors}"
-                          :name="`Variasi ${index+1}`"
+                          name="Variasi 1"
                         >
                           <b-form-input
-                            v-model="items.val"
+                            v-model="variationName1"
                             placeholder="Masukan nama variasi"
                             :state="errors.length > 0 ? false:null"
                           />
@@ -177,7 +176,7 @@
                         <draggable v-model="myList1">
                           <transition-group name="fade">
                             <b-row
-                              v-for="(data, indexs) in formChoices"
+                              v-for="(data, indexs) in formChoices1"
                               :key="indexs + 1"
                               class="d-flex align-items-center justify-content-center"
                             >
@@ -204,7 +203,7 @@
                                 </validation-provider>
                               </b-col>
                               <b-col
-                                v-if="formChoices.length > 1"
+                                v-if="formChoices1.length > 1"
                                 md="auto"
                                 class="mb-1"
                               >
@@ -226,7 +225,7 @@
                     </b-col>
 
                     <b-col
-                      v-if="formChoices.length < 5"
+                      v-if="formChoices1.length < 5"
                       cols="8"
                     >
                       <b-form-group
@@ -247,12 +246,214 @@
                       </b-form-group>
                     </b-col>
                   </b-form-group>
-                </transition>
-              </div>
+                </div>
+              </transition>
+
+              <transition name="fade">
+                <div
+                  v-if="variationFields2 === true"
+                >
+                  <b-form-group
+                    v-if="isVariation === true"
+                    label="Variasi 2"
+                    label-cols-md="2"
+                    class="mt-1"
+                  >
+                    <b-col cols="8">
+                      <b-form-group
+                        label="Nama"
+                        label-cols-md="3"
+                      >
+                        <validation-provider
+                          #default="{errors}"
+                          name="Variasi 2"
+                        >
+                          <b-form-input
+                            v-model="variationName2"
+                            placeholder="Masukan nama variasi"
+                            :state="errors.length > 0 ? false:null"
+                          />
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+
+                    <b-col
+                      cols="8"
+                    >
+                      <b-form-group
+                        label="Pilihan"
+                        label-cols-md="3"
+                      >
+                        <draggable v-model="myList2">
+                          <transition-group name="fade">
+                            <b-row
+                              v-for="(data, indexs) in formChoices2"
+                              :key="indexs + 1"
+                              class="d-flex align-items-center justify-content-center"
+                            >
+                              <b-col
+                                class="pt-0 pr-0 pb-0 mb-1"
+                              >
+                                <b-input-group>
+                                  <b-form-input
+                                    v-model="data.choices"
+                                    placeholder="Masukan Pilihan Variasi"
+                                  />
+                                  <b-input-group-append is-text>
+                                    <feather-icon
+                                      icon="AlignJustifyIcon"
+                                    />
+                                  </b-input-group-append>
+                                </b-input-group>
+                              </b-col>
+                              <b-col
+                                v-if="formChoices2.length > 1"
+                                md="auto"
+                                class="mb-1"
+                              >
+                                <b-button
+                                  class="btn-icon"
+                                  variant="light-dark"
+                                  size="sm"
+                                  @click="removeChoices2(indexs)"
+                                >
+                                  <feather-icon
+                                    icon="Trash2Icon"
+                                  />
+                                </b-button>
+                              </b-col>
+                            </b-row>
+                          </transition-group>
+                        </draggable>
+                      </b-form-group>
+                    </b-col>
+
+                    <b-col
+                      v-if="formChoices2.length < 5"
+                      cols="8"
+                    >
+                      <b-form-group
+                        label=""
+                        label-cols-md="3"
+                      >
+                        <b-button
+                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                          variant="outline-info"
+                          @click="addChoices2"
+                        >
+                          <feather-icon
+                            icon="PlusIcon"
+                            class="mr-50"
+                          />
+                          <span class="align-middle">Tambahkan Pilihan</span>
+                        </b-button>
+                      </b-form-group>
+                    </b-col>
+                  </b-form-group>
+                </div>
+              </transition>
+
+              <transition name="fade">
+                <div
+                  v-if="variationFields3 === true"
+                >
+                  <b-form-group
+                    v-if="isVariation === true"
+                    label="Variasi 3"
+                    label-cols-md="2"
+                    class="mt-1"
+                  >
+                    <b-col cols="8">
+                      <b-form-group
+                        label="Nama"
+                        label-cols-md="3"
+                      >
+                        <b-form-input
+                          v-model="variationName3"
+                          placeholder="Masukan nama variasi"
+                        />
+                      </b-form-group>
+                    </b-col>
+
+                    <b-col
+                      cols="8"
+                    >
+                      <b-form-group
+                        label="Pilihan"
+                        label-cols-md="3"
+                      >
+                        <draggable v-model="myList3">
+                          <transition-group name="fade">
+                            <b-row
+                              v-for="(data, indexs) in formChoices3"
+                              :key="indexs + 1"
+                              class="d-flex align-items-center justify-content-center"
+                            >
+                              <b-col
+                                class="pt-0 pr-0 pb-0 mb-1"
+                              >
+                                <b-input-group>
+                                  <b-form-input
+                                    v-model="data.choices"
+                                    placeholder="Masukan Pilihan Variasi"
+                                  />
+                                  <b-input-group-append is-text>
+                                    <feather-icon
+                                      icon="AlignJustifyIcon"
+                                    />
+                                  </b-input-group-append>
+                                </b-input-group>
+                              </b-col>
+                              <b-col
+                                v-if="formChoices3.length > 1"
+                                md="auto"
+                                class="mb-1"
+                              >
+                                <b-button
+                                  class="btn-icon"
+                                  variant="light-dark"
+                                  size="sm"
+                                  @click="removeChoices3(indexs)"
+                                >
+                                  <feather-icon
+                                    icon="Trash2Icon"
+                                  />
+                                </b-button>
+                              </b-col>
+                            </b-row>
+                          </transition-group>
+                        </draggable>
+                      </b-form-group>
+                    </b-col>
+
+                    <b-col
+                      v-if="formChoices3.length < 5"
+                      cols="8"
+                    >
+                      <b-form-group
+                        label=""
+                        label-cols-md="3"
+                      >
+                        <b-button
+                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                          variant="outline-info"
+                          @click="addChoices3"
+                        >
+                          <feather-icon
+                            icon="PlusIcon"
+                            class="mr-50"
+                          />
+                          <span class="align-middle">Tambahkan Pilihan</span>
+                        </b-button>
+                      </b-form-group>
+                    </b-col>
+                  </b-form-group>
+                </div>
+              </transition>
 
               <transition name="fade">
                 <b-form-group
-                  v-if="isVariation === true && formVariation.length < 3"
+                  v-if="variationFields1 === true && activeAddChoices1 === true"
                   label="Tambah Variasi"
                   label-cols-md="2"
                   class="mt-1"
@@ -260,7 +461,28 @@
                   <b-button
                     v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                     variant="outline-info"
-                    @click="addVariationItems"
+                    @click="addVariationItems2"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      class="mr-50"
+                    />
+                    <span class="align-middle">Tambahkan Variasi</span>
+                  </b-button>
+                </b-form-group>
+              </transition>
+
+              <transition name="fade">
+                <b-form-group
+                  v-if="variationFields2 === true && activeAddChoices2 === true "
+                  label="Tambah Variasi"
+                  label-cols-md="2"
+                  class="mt-1"
+                >
+                  <b-button
+                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                    variant="outline-info"
+                    @click="addVariationItems3"
                   >
                     <feather-icon
                       icon="PlusIcon"
@@ -333,116 +555,246 @@
                   >
 
                     <template #cell(variant1)="data">
-                      <b-col
-                        cols="12"
-                      >
-                        <div
-                          v-for="(dataVariantOption, index) in data.item.variant1.option"
-                          :key="index+1"
+                      <div v-if="editMode === true && indexRow === data.index">
+                        <b-col
+                          cols="12"
+                          class="mb-50"
                         >
-                          {{ dataVariantOption.val }}
-                        </div>
-                      </b-col>
+                          <div
+                            v-for="(dataItem, index) in data.item"
+                            :key="index+1"
+                          >
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant1"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                <b-form-input
+                                  v-model="itemVariant.val"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </b-col>
+                      </div>
+                      <div v-else>
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
+                          <div
+                            v-for="(dataItem, index) in data.item"
+                            :key="index+1"
+                          >
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant1"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                {{ itemVariant.val }}
+                              </div>
+                            </div>
+                          </div>
+                        </b-col>
+                      </div>
                     </template>
 
                     <template #cell(variant2)="data">
-                      <b-col
-                        cols="12"
-                      >
-                        <div v-if="editMode === true && indexRow === data.index">
+                      <div v-if="editMode === true && indexRow === data.index">
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
                           <div
-                            v-for="(dataVariantOption, index) in data.item.variant2.option"
+                            v-for="(dataItem, index) in data.item"
                             :key="index+1"
                           >
-                            <b-form-input
-                              v-model="dataVariantOption.val"
-                              class="mb-50"
-                            />
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                <b-form-input
+                                  v-model="itemVariant.val"
+                                />
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div v-else>
+                        </b-col>
+                      </div>
+                      <div v-else>
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
                           <div
-                            v-for="(dataVariantOption, index) in data.item.variant2.option"
+                            v-for="(dataItem, index) in data.item"
                             :key="index+1"
                           >
-                            <b-row>
-                              {{ dataVariantOption.val }},
-                            </b-row>
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                {{ itemVariant.val }}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </b-col>
+                        </b-col>
+                      </div>
                     </template>
 
                     <template #cell(variant3)="data">
-                      <b-col cols="12">
-                        <div v-if="editMode === true && indexRow === data.index">
+                      <div v-if="editMode === true && indexRow === data.index">
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
                           <div
-                            v-for="(dataVariantOption, index) in data.item.variant3.option"
+                            v-for="(dataItem, index) in data.item"
                             :key="index+1"
                           >
-                            <b-form-input
-                              v-model="dataVariantOption.val"
-                              class="mb-50"
-                            />
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                <b-form-input
+                                  v-model="itemVariant.val"
+                                />
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div v-else>
+                        </b-col>
+                      </div>
+                      <div v-else>
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
                           <div
-                            v-for="(dataVariantOption, index) in data.item.variant3.option"
+                            v-for="(dataItem, index) in data.item"
                             :key="index+1"
                           >
-                            {{ dataVariantOption.val }}
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                {{ itemVariant.val }}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </b-col>
-                    </template>
-
-                    <template #cell(stock)="data">
-                      <b-col cols="12">
-                        <div v-if="editMode === true && indexRow === data.index">
-                          <div
-                            v-for="(dataVariantOption, index) in data.item.variant2.option"
-                            :key="index+1"
-                          >
-                            <b-form-input
-                              v-model="dataVariantOption.stock"
-                              class="mb-50"
-                            />
-                          </div>
-                        </div>
-                        <div v-else>
-                          <div
-                            v-for="(dataVariantOption, index) in data.item.variant2.option"
-                            :key="index+1"
-                          >
-                            {{ dataVariantOption.stock }}
-                          </div>
-                        </div>
-                      </b-col>
+                        </b-col>
+                      </div>
                     </template>
 
                     <template #cell(price)="data">
-                      <b-col cols="12">
-                        <div v-if="editMode === true && indexRow === data.index">
+                      <div v-if="editMode === true && indexRow === data.index">
+                        <b-col cols="12">
                           <div
-                            v-for="(dataVariantOption, index) in data.item.variant2.option"
+                            v-for="(dataItem, index) in data.item"
                             :key="index+1"
                           >
-                            <b-form-input
-                              v-model="dataVariantOption.price"
-                              class="mb-50"
-                            />
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                <b-form-input
+                                  v-model="itemVariant.price"
+                                />
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                        <div v-else>
+                        </b-col>
+                      </div>
+                      <div v-else>
+                        <b-col cols="12">
                           <div
-                            v-for="(dataVariantOption, index) in data.item.variant2.option"
+                            v-for="(dataItem, index) in data.item"
                             :key="index+1"
                           >
-                            {{ dataVariantOption.price }}
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                {{ itemVariant.price }}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </b-col>
+                        </b-col>
+                      </div>
+                    </template>
+
+                    <template #cell(stock)="data">
+                      <div v-if="editMode === true && indexRow === data.index">
+                        <b-col cols="12">
+                          <div
+                            v-for="(dataItem, index) in data.item"
+                            :key="index+1"
+                          >
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                <b-form-input
+                                  v-model="itemVariant.stock"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </b-col>
+                      </div>
+                      <div v-else>
+                        <b-col cols="12">
+                          <div
+                            v-for="(dataItem, index) in data.item"
+                            :key="index+1"
+                          >
+                            <div
+                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              :key="indexVariant+1"
+                            >
+                              <div
+                                v-for="(itemVariant, indexItem) in dataVariant"
+                                :key="indexItem+1"
+                              >
+                                {{ itemVariant.stock }}
+                              </div>
+                            </div>
+                          </div>
+                        </b-col>
+                      </div>
                     </template>
 
                     <template #cell(action)="data">
@@ -654,18 +1006,24 @@ export default {
   data() {
     return {
 
-      formVariation: [],
-
       loading: false,
 
       isVariation: false,
-      formChoices: [{ choices: null }],
+      formChoices1: [{ choices: null }],
+      formChoices2: [{ choices: null }],
+      formChoices3: [{ choices: null }],
 
       variationFields1: false,
+      variationFields2: false,
+      variationFields3: false,
 
       activeAddChoices1: false,
+      activeAddChoices2: false,
+      activeAddChoices3: false,
 
-      variationName: null,
+      variationName1: null,
+      variationName2: null,
+      variationName3: null,
 
       variantChoices1: null,
 
@@ -940,7 +1298,8 @@ export default {
         },
       ],
 
-      fieldStore: [],
+      // Data Store
+      variantOptions: [],
 
       // Validation
       required,
@@ -995,25 +1354,18 @@ export default {
   methods: {
     submitPublish() {
       const data = {
-        product_name: 'Jilbab',
-        sku: 'JBB-01',
-        description: '',
-        weight: 100,
-        length: 100,
-        width: 100,
-        height: 100,
         variant_option: [
           {
-            val: this.variationName1,
+            val: 'Warna',
             option: [
               {
-                val: this.formChoices1[0].choices,
+                val: 'Merah',
                 parent: null,
                 stock: null,
                 price: null,
               },
               {
-                val: this.formChoices1[1].choices,
+                val: 'Putih',
                 parent: null,
                 stock: null,
                 price: null,
@@ -1051,351 +1403,2509 @@ export default {
           },
         ],
       }
-      this.fieldStore.push(data)
+      this.variantOptions.push(data)
+      console.log(this.variantOptions)
     },
     createListVariation() {
-      this.variantItems.push({
-        variant1: {
-          option: [
-            {
-              val: this.formChoices1[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant2: {
-          option: [
-            {
-              val: this.formChoices2[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant3: {
-          option: [
-            {
-              val: this.formChoices3[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-      },
-      {
-        variant1: {
-          option: [
-            {
-              val: this.formChoices1[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant2: {
-          option: [
-            {
-              val: this.formChoices2[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant3: {
-          option: [
-            {
-              val: this.formChoices3[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-      },
-      {
-        variant1: {
-          option: [
-            {
-              val: this.formChoices1[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant2: {
-          option: [
-            {
-              val: this.formChoices2[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant3: {
-          option: [
-            {
-              val: this.formChoices3[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-      },
-      {
-        variant1: {
-          option: [
-            {
-              val: this.formChoices1[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant2: {
-          option: [
-            {
-              val: this.formChoices2[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant3: {
-          option: [
-            {
-              val: this.formChoices3[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-      },
-      {
-        variant1: {
-          option: [
-            {
-              val: this.formChoices1[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant2: {
-          option: [
-            {
-              val: this.formChoices2[0].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[1].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[2].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[3].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-            {
-              val: this.formChoices2[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-        variant3: {
-          option: [
-            {
-              val: this.formChoices3[4].choices,
-              parent: null,
-              stock: this.stock,
-              price: `Rp. ${this.price}`,
-            },
-          ],
-        },
-      })
-      this.fields.unshift({
-        key: 'variant1',
-        label: String(this.variationName1),
-      },
-      {
-        key: 'variant2',
-        label: String(this.variationName2),
-      },
-      {
-        key: 'variant3',
-        label: String(this.variationName3),
-      },
-      {
-        key: 'price',
-        label: 'Harga',
-      },
-      {
-        key: 'stock',
-        label: 'Stok',
-      },
-      {
-        key: 'action',
-        label: 'Aksi',
-        class: 'col-action',
-      })
+      // Per Row
+      // Variant 1
+      if (this.formChoices1[0] !== undefined) {
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+      }
+      if (this.formChoices1[1] !== undefined) {
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+      }
+      if (this.formChoices1[2] !== undefined) {
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+      }
+      if (this.formChoices1[3] !== undefined) {
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+      }
+      if (this.formChoices1[4] !== undefined) {
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+        this.variantItems.push([{
+          variant1: {
+            option: [
+              {
+                val: this.formChoices1[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        }])
+      }
+
+      // Variant 2
+      if (this.formChoices2[0] !== undefined && this.variantItems[0] !== undefined) {
+        this.variantItems[0].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[0] !== undefined) {
+        this.variantItems[0].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[0] !== undefined) {
+        this.variantItems[0].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[0] !== undefined) {
+        this.variantItems[0].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[0] !== undefined) {
+        this.variantItems[0].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[1] !== undefined) {
+        this.variantItems[1].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[1] !== undefined) {
+        this.variantItems[1].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[1] !== undefined) {
+        this.variantItems[1].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[1] !== undefined) {
+        this.variantItems[1].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[1] !== undefined) {
+        this.variantItems[1].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[2] !== undefined) {
+        this.variantItems[2].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[2] !== undefined) {
+        this.variantItems[2].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[2] !== undefined) {
+        this.variantItems[2].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[2] !== undefined) {
+        this.variantItems[2].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[2] !== undefined) {
+        this.variantItems[2].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[3] !== undefined) {
+        this.variantItems[3].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[3] !== undefined) {
+        this.variantItems[3].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[3] !== undefined) {
+        this.variantItems[3].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[3] !== undefined) {
+        this.variantItems[3].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[3] !== undefined) {
+        this.variantItems[3].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[4].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[4].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[4].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[4].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[4].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[5] !== undefined) {
+        this.variantItems[5].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[5] !== undefined) {
+        this.variantItems[5].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[5] !== undefined) {
+        this.variantItems[5].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[5] !== undefined) {
+        this.variantItems[5].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[5] !== undefined) {
+        this.variantItems[5].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[6] !== undefined) {
+        this.variantItems[6].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[6] !== undefined) {
+        this.variantItems[6].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[6] !== undefined) {
+        this.variantItems[6].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[6] !== undefined) {
+        this.variantItems[6].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[6] !== undefined) {
+        this.variantItems[6].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[7] !== undefined) {
+        this.variantItems[7].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[7] !== undefined) {
+        this.variantItems[7].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[7] !== undefined) {
+        this.variantItems[7].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[7] !== undefined) {
+        this.variantItems[7].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[7] !== undefined) {
+        this.variantItems[7].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[8] !== undefined) {
+        this.variantItems[8].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[8] !== undefined) {
+        this.variantItems[8].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[8] !== undefined) {
+        this.variantItems[8].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[8] !== undefined) {
+        this.variantItems[8].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[8] !== undefined) {
+        this.variantItems[8].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[9] !== undefined) {
+        this.variantItems[9].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[9] !== undefined) {
+        this.variantItems[9].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[9] !== undefined) {
+        this.variantItems[9].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[9] !== undefined) {
+        this.variantItems[9].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[9] !== undefined) {
+        this.variantItems[9].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[10] !== undefined) {
+        this.variantItems[10].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[10] !== undefined) {
+        this.variantItems[10].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[10] !== undefined) {
+        this.variantItems[10].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[10] !== undefined) {
+        this.variantItems[10].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[10] !== undefined) {
+        this.variantItems[10].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[11] !== undefined) {
+        this.variantItems[11].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[11] !== undefined) {
+        this.variantItems[11].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[11] !== undefined) {
+        this.variantItems[11].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[11] !== undefined) {
+        this.variantItems[11].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[11] !== undefined) {
+        this.variantItems[11].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[12] !== undefined) {
+        this.variantItems[12].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[12] !== undefined) {
+        this.variantItems[12].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[12] !== undefined) {
+        this.variantItems[12].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[12] !== undefined) {
+        this.variantItems[12].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[12] !== undefined) {
+        this.variantItems[12].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[13] !== undefined) {
+        this.variantItems[13].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[13] !== undefined) {
+        this.variantItems[13].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[13] !== undefined) {
+        this.variantItems[13].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[13] !== undefined) {
+        this.variantItems[13].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[13] !== undefined) {
+        this.variantItems[13].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[14] !== undefined) {
+        this.variantItems[14].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[14] !== undefined) {
+        this.variantItems[14].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[14].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[14] !== undefined) {
+        this.variantItems[14].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[14] !== undefined) {
+        this.variantItems[14].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[15] !== undefined) {
+        this.variantItems[15].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[15] !== undefined) {
+        this.variantItems[15].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[15] !== undefined) {
+        this.variantItems[15].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[15] !== undefined) {
+        this.variantItems[15].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[15] !== undefined) {
+        this.variantItems[15].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[16] !== undefined) {
+        this.variantItems[16].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[16] !== undefined) {
+        this.variantItems[16].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[16] !== undefined) {
+        this.variantItems[16].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[16] !== undefined) {
+        this.variantItems[16].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[16] !== undefined) {
+        this.variantItems[16].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[17] !== undefined) {
+        this.variantItems[17].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[17] !== undefined) {
+        this.variantItems[17].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[17] !== undefined) {
+        this.variantItems[17].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[17] !== undefined) {
+        this.variantItems[17].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[17] !== undefined) {
+        this.variantItems[17].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[18] !== undefined) {
+        this.variantItems[18].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[18] !== undefined) {
+        this.variantItems[18].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[18] !== undefined) {
+        this.variantItems[18].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[18] !== undefined) {
+        this.variantItems[18].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[18] !== undefined) {
+        this.variantItems[18].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[19] !== undefined) {
+        this.variantItems[19].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[19] !== undefined) {
+        this.variantItems[19].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[19] !== undefined) {
+        this.variantItems[19].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[19] !== undefined) {
+        this.variantItems[19].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[19] !== undefined) {
+        this.variantItems[19].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[20] !== undefined) {
+        this.variantItems[20].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[20] !== undefined) {
+        this.variantItems[20].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[20] !== undefined) {
+        this.variantItems[20].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[20] !== undefined) {
+        this.variantItems[20].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[20] !== undefined) {
+        this.variantItems[20].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[21] !== undefined) {
+        this.variantItems[21].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[21] !== undefined) {
+        this.variantItems[21].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[21] !== undefined) {
+        this.variantItems[21].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[21] !== undefined) {
+        this.variantItems[21].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[21] !== undefined) {
+        this.variantItems[21].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[22] !== undefined) {
+        this.variantItems[22].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[22] !== undefined) {
+        this.variantItems[22].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[22] !== undefined) {
+        this.variantItems[22].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[22] !== undefined) {
+        this.variantItems[22].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[22] !== undefined) {
+        this.variantItems[22].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[23] !== undefined) {
+        this.variantItems[23].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[23] !== undefined) {
+        this.variantItems[23].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[23] !== undefined) {
+        this.variantItems[23].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[23] !== undefined) {
+        this.variantItems[23].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[23] !== undefined) {
+        this.variantItems[23].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.formChoices2[0] !== undefined && this.variantItems[24] !== undefined) {
+        this.variantItems[24].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[1] !== undefined && this.variantItems[24] !== undefined) {
+        this.variantItems[24].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[2] !== undefined && this.variantItems[24] !== undefined) {
+        this.variantItems[24].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[3] !== undefined && this.variantItems[24] !== undefined) {
+        this.variantItems[24].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices2[4] !== undefined && this.variantItems[24] !== undefined) {
+        this.variantItems[24].push({
+          variant2: {
+            option: [
+              {
+                val: this.formChoices2[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      // Variant 3
+      if (this.formChoices3[0] !== undefined && this.variantItems[0] !== undefined) {
+        this.variantItems[0].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[5].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[10].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[15].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[20].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[0].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices3[1] !== undefined && this.variantItems[1] !== undefined) {
+        this.variantItems[1].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[6].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[11].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[16].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[21].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[1].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices3[2] !== undefined && this.variantItems[2] !== undefined) {
+        this.variantItems[2].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[7].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[12].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[17].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[22].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[2].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices3[3] !== undefined && this.variantItems[3] !== undefined) {
+        this.variantItems[3].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[8].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[13].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[18].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[23].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[3].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+      if (this.formChoices3[4] !== undefined && this.variantItems[4] !== undefined) {
+        this.variantItems[4].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[9].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[14].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[19].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+        this.variantItems[24].push({
+          variant3: {
+            option: [
+              {
+                val: this.formChoices3[4].choices,
+                parent: null,
+                stock: this.stock,
+                price: `Rp. ${this.price}`,
+              },
+            ],
+          },
+        })
+      }
+
+      if (this.variationName1 !== null) {
+        this.fields.push({
+          key: 'variant1',
+          label: String(this.variationName1),
+        })
+      }
+      if (this.variationName2 !== null) {
+        this.fields.push({
+          key: 'variant2',
+          label: String(this.variationName2),
+        })
+      }
+      if (this.variationName3 !== null) {
+        this.fields.push({
+          key: 'variant3',
+          label: String(this.variationName3),
+        })
+      }
+      if (this.price !== null) {
+        this.fields.push({
+          key: 'price',
+          label: 'Harga',
+        })
+      }
+      if (this.stock !== null) {
+        this.fields.push({
+          key: 'stock',
+          label: 'Stok',
+        })
+      }
       this.loading = true
       setTimeout(() => {
         this.loading = false
+        this.fields.push(
+          {
+            key: 'action',
+            label: 'Aksi',
+            class: 'col-action',
+          },
+        )
       }, 1000)
-
       console.log(this.variantItems)
-    },
-    myArrayChoices1(data) {
-      console.log(data.choices)
-    },
-    myArrayChoices2(data) {
-      console.log(data.choices)
-    },
-    myArrayChoices3(data) {
-      console.log(data.choices)
-    },
-    myArrayChoices4(data) {
-      console.log(data.choices)
-    },
-    myArrayChoices5(data) {
-      console.log(data.choices)
-    },
-    tesAdd() {
-      console.log('tes')
+      return this.variantItems
     },
     addVariation() {
       this.isVariation = true
-      this.formVariation.push({ val: '', option: [{ val: '' }] })
+      this.variationFields1 = true
+      this.activeAddChoices1 = true
     },
-    addVariationItems() {
-      this.formVariation.push({ val: '', option: [{ val: '' }] })
+    addVariationItems2() {
+      this.variationFields2 = true
+      this.activeAddChoices2 = true
+      this.activeAddChoices1 = false
+    },
+    addVariationItems3() {
+      this.variationFields3 = true
+      this.activeAddChoices3 = true
+      this.activeAddChoices2 = false
+    },
+    addVariationItems4() {
+      this.variationFields4 = true
+      this.activeAddChoices4 = true
+      this.activeAddChoices3 = false
+    },
+    addVariationItems5() {
+      this.variationFields5 = true
+      this.activeAddChoices5 = true
+      this.activeAddChoices4 = false
     },
     addChoices1() {
-      this.formChoices.push({ choices: null })
+      this.formChoices1.push({ choices: null })
+    },
+    addChoices2() {
+      this.formChoices2.push({ choices: null })
+    },
+    addChoices3() {
+      this.formChoices3.push({ choices: null })
+    },
+    addChoices4() {
+      this.formChoices4.push({ choices: null })
+    },
+    addChoices5() {
+      this.formChoices5.push({ choices: null })
     },
     removeChoices1(index) {
-      this.formChoices.splice(index, 1)
+      this.formChoices1.splice(index, 1)
+    },
+    removeChoices2(index) {
+      this.formChoices2.splice(index, 1)
+    },
+    removeChoices3(index) {
+      this.formChoices3.splice(index, 1)
+    },
+    removeChoices4(index) {
+      this.formChoices4.splice(index, 1)
+    },
+    removeChoices5(index) {
+      this.formChoices5.splice(index, 1)
     },
     editTable(data) {
       console.log(data.rowSelected)
