@@ -41,6 +41,7 @@
     "prismjs": "1.19.0",
     "swiper": "5.4.5",
     "uuid": "8.3.2",
+    "v-money": "^0.8.1",
     "validator": "^13.6.0",
     "vee-validate": "3.4.5",
     "vue": "2.6.12",

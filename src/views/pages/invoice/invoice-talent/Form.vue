@@ -17,7 +17,10 @@
         <b-row>
           <b-col md="6">
             <b-col md="12">
-              <b-form-group label="Status" label-cols-md="4">
+              <b-form-group
+                label="Status"
+                label-cols-md="4"
+              >
                 <validation-provider
                   #default="{ errors }"
                   name="Status"
@@ -38,7 +41,10 @@
               </b-form-group>
             </b-col>
             <b-col md="12">
-              <b-form-group label="No. Invoice" label-cols-md="4">
+              <b-form-group
+                label="No. Invoice"
+                label-cols-md="4"
+              >
                 <validation-provider
                   #default="{ errors }"
                   name="No Invoice"
@@ -57,7 +63,10 @@
               </b-form-group>
             </b-col>
             <b-col md="12">
-              <b-form-group label="Judul Invoice" label-cols-md="4">
+              <b-form-group
+                label="Judul Invoice"
+                label-cols-md="4"
+              >
                 <validation-provider
                   #default="{ errors }"
                   name="Judul Invoice"
@@ -76,7 +85,10 @@
               </b-form-group>
             </b-col>
             <b-col md="12">
-              <b-form-group label="Partner" label-cols-md="4">
+              <b-form-group
+                label="Partner"
+                label-cols-md="4"
+              >
                 <validation-provider
                   #default="{ errors }"
                   name="Partner"
@@ -87,16 +99,19 @@
                     label="label"
                     :options="partnerItems"
                     placeholder="Ketik untuk mencari..."
-                    @search="onSearchPartner"
                     :filterable="false"
                     :disabled="disabledInput"
+                    @search="onSearchPartner"
                   >
                     <li
                       v-if="hasMorePartner"
                       slot="list-footer"
                       class="vs__dropdown-option vs__dropdown-option--disabled"
                     >
-                      <feather-icon icon="MoreHorizontalIcon" size="16" />
+                      <feather-icon
+                        icon="MoreHorizontalIcon"
+                        size="16"
+                      />
                     </li>
                   </v-select>
                   <small class="text-danger">{{ errors[0] }}</small>
@@ -104,7 +119,10 @@
               </b-form-group>
             </b-col>
             <b-col md="12">
-              <b-form-group label="Periode" label-cols-md="4">
+              <b-form-group
+                label="Periode"
+                label-cols-md="4"
+              >
                 <validation-provider
                   #default="{ errors }"
                   name="Periode"
@@ -149,8 +167,14 @@
             <b>Status Disburse</b>
           </b-col>
         </b-row>
-        <b-row v-for="(talent, index) in talents" :key="`talent-${index}`">
-          <b-col md="2" offset-md="2">
+        <b-row
+          v-for="(talent, index) in talents"
+          :key="`talent-${index}`"
+        >
+          <b-col
+            md="2"
+            offset-md="2"
+          >
             <p class="mt-1">
               {{ talent.full_name }}
             </p>
@@ -182,13 +206,13 @@
               :name="`Total Gaji Talent ke-${index + 1}`"
               rules="required"
             >
-              <b-form-input
+              <money
                 v-model="talent.total_gross_salary"
+                v-bind="money"
                 :state="errors.length > 0 || submitErrors.name ? false : null"
-                type="number"
-                class="mt-1"
+                class="mt-1 form-control"
                 :disabled="disabledInput"
-                @change="talentChanged(index)"
+                @blur.native="talentChanged(index)"
               />
               <small class="text-danger">{{ errors[0] }}</small>
             </validation-provider>
@@ -199,11 +223,11 @@
               :name="`Gaji Bersih Talent ke-${index + 1}`"
               rules="required"
             >
-              <b-form-input
+              <money
                 v-model="talent.total_net_salary"
+                v-bind="money"
                 :state="errors.length > 0 || submitErrors.name ? false : null"
-                type="number"
-                class="mt-1"
+                class="mt-1 form-control"
                 disabled
               />
               <small class="text-danger">{{ errors[0] }}</small>
@@ -211,32 +235,48 @@
           </b-col>
           <b-col md="2 pt-2">
             <b-badge
+              v-if="talent.disbursement"
               :variant="
                 getDisbursementStyle(
                   talent.disbursement.disbursement_xendit_status
                 )
               "
-              v-if="talent.disbursement"
             >
               {{ talent.disbursement.disbursement_xendit_status }}
             </b-badge>
-            <b-badge variant="light-secondary" v-else> N/A </b-badge>
+            <b-badge
+              v-else
+              variant="light-secondary"
+            > N/A </b-badge>
           </b-col>
         </b-row>
-        <b-row class="mt-2" v-if="wasGetTalent && !talents.length">
-          <b-col offset-md="2" md="10">
+        <b-row
+          v-if="wasGetTalent && !talents.length"
+          class="mt-2"
+        >
+          <b-col
+            offset-md="2"
+            md="10"
+          >
             <h5>Data Talent tidak tersedia</h5>
           </b-col>
         </b-row>
         <b-row>
-          <b-col md="8" offset-md="2" class="mt-1">
+          <b-col
+            md="8"
+            offset-md="2"
+            class="mt-1"
+          >
             <h3>Total Tagihan</h3>
             <b class="text-danger">{{ totalFee | rupiah }}</b>
           </b-col>
         </b-row>
         <b-row>
-          <b-col md="12" class="mt-2">
-            <hr />
+          <b-col
+            md="12"
+            class="mt-2"
+          >
+            <hr>
             <b-button
               variant="outline-danger"
               type="button"
@@ -247,50 +287,62 @@
               Kembali
             </b-button>
             <b-button
+              v-show="!disabledInput"
               variant="info"
               type="submit"
               class="mr-50"
               :disabled="loadingSubmit"
               @click.prevent="submit('draft')"
-              v-show="!disabledInput"
             >
-              <b-spinner v-if="loadingSubmit" small />
+              <b-spinner
+                v-if="loadingSubmit"
+                small
+              />
               Save
             </b-button>
             <b-button
+              v-if="id && !disabledInput"
+              v-show="id && !disabledInput"
               variant="success"
               type="submit"
               class="mr-50"
               :disabled="loadingSubmit"
               @click.prevent="publish"
-              v-if="id && !disabledInput"
-              v-show="id && !disabledInput"
             >
-              <b-spinner v-if="loadingSubmit" small />
+              <b-spinner
+                v-if="loadingSubmit"
+                small
+              />
               Publish
             </b-button>
             <b-button
+              v-if="id && invoice_status == 1"
+              v-show="id && invoice_status == 1"
               variant="success"
               type="submit"
               class="mr-50"
               :disabled="loadingSubmit"
               @click.prevent="pay(2)"
-              v-if="id && invoice_status == 1"
-              v-show="id && invoice_status == 1"
             >
-              <b-spinner v-if="loadingSubmit" small />
+              <b-spinner
+                v-if="loadingSubmit"
+                small
+              />
               Lunaskan
             </b-button>
             <b-button
+              v-if="id && invoice_status == 1"
+              v-show="id && invoice_status == 1"
               variant="danger"
               type="submit"
               class="mr-50"
               :disabled="loadingSubmit"
               @click.prevent="pay(3)"
-              v-if="id && invoice_status == 1"
-              v-show="id && invoice_status == 1"
             >
-              <b-spinner v-if="loadingSubmit" small />
+              <b-spinner
+                v-if="loadingSubmit"
+                small
+              />
               Batalkan
             </b-button>
           </b-col>
@@ -321,6 +373,7 @@ import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
 import MonthSelectPlugin from 'flatpickr/dist/plugins/monthSelect/index'
 import 'flatpickr/dist/plugins/monthSelect/style.css'
+import { Money } from 'v-money'
 
 export default {
   directives: {
@@ -339,7 +392,7 @@ export default {
     BOverlay,
     BSpinner,
     BBadge,
-
+    Money,
     flatPickr,
     vSelect,
   },
@@ -375,6 +428,12 @@ export default {
       wasGetTalent: false,
       talents: [],
       invoice_status: '',
+      money: {
+        thousands: '.',
+        prefix: 'Rp ',
+        precision: 0,
+        masked: false,
+      },
     }
   },
   computed: {

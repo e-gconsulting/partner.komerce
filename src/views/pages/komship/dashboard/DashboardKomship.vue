@@ -617,6 +617,10 @@ export default {
     }
   },
   mounted() {
+    this.$http_komship.post('v1/my-profile').then(response => {
+      const { data } = response
+      console.log(data)
+    })
     if (this.isOnboarding) this.$refs.onboardingElement.showModal()
   },
   methods: {
