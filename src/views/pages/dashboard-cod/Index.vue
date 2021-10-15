@@ -113,7 +113,7 @@
                     <b-button
                       variant="outline-secondary"
                       class="btn-custom-topcodnoncod"
-                      @click="choosenFilterTop('ncod', 'filterTopEkspedisi')"
+                      @click="choosenFilterTop('non_cod', 'filterTopEkspedisi')"
                     >
                       Non-COD
                     </b-button>
@@ -123,10 +123,10 @@
             </b-card-header>
             <b-card-body>
               <div class="tbl-dashboard-top">
-                <b-list-group v-if="rows.length > 0">
+                <b-list-group v-if="topShipping.length > 0">
                   <b-list-group-item
-                    v-for="row in rows"
-                    :key="row.title"
+                    v-for="(row, index) in topShipping"
+                    :key="index"
                     class="d-flex justify-content-between align-items-center"
                   >
                     <div class="d-flex justify-content-between">
@@ -134,10 +134,10 @@
                         :src="row.avatar || 'https://via.placeholder.com/52x52'"
                         class="mr-1"
                       />
-                      <span class="text-top-each-item">{{ row.title.substring(0,5) }}</span>
+                      <span class="text-top-each-item">{{ row.shipping }}</span>
                     </div>
                     <span class="total-top-each-item">
-                      {{ row.body }}
+                      {{ row.profit }}
                     </span>
                   </b-list-group-item>
                 </b-list-group>
@@ -228,7 +228,7 @@
                     <b-button
                       variant="outline-secondary"
                       class="btn-custom-topcodnoncod"
-                      @click="choosenFilterTop('ncod', 'filterTopPartner')"
+                      @click="choosenFilterTop('non_cod', 'filterTopPartner')"
                     >
                       Non-COD
                     </b-button>
@@ -238,10 +238,10 @@
             </b-card-header>
             <b-card-body>
               <div class="tbl-dashboard-top">
-                <b-list-group v-if="rows.length > 0">
+                <b-list-group v-if="topPartner.length > 0">
                   <b-list-group-item
-                    v-for="row in rows"
-                    :key="row.title"
+                    v-for="(row, index) in topPartner"
+                    :key="index"
                     class="d-flex justify-content-between align-items-center"
                   >
                     <div class="d-flex justify-content-between">
@@ -249,10 +249,10 @@
                         :src="row.avatar || 'https://via.placeholder.com/52x52'"
                         class="mr-1"
                       />
-                      <span class="text-top-each-item">{{ row.title.substring(0,5) }}</span>
+                      <span class="text-top-each-item">{{ row.partner }}</span>
                     </div>
                     <span class="total-top-each-item">
-                      {{ row.body }}
+                      {{ row.profit }}
                     </span>
                   </b-list-group-item>
                 </b-list-group>
@@ -380,6 +380,10 @@ export default {
       categoriesChartshipping: [],
       seriesChartpartner: [],
       categoriesChartpartner: [],
+      topPartner: [],
+      topPartnerTemp: [],
+      topShipping: [],
+      topShippingTemp: [],
       filterTopEkspedisi: '',
       filterTopPartner: '',
       selectedEkspedisi: {
@@ -448,40 +452,41 @@ export default {
     filterTopEkspedisi: {
       // immediate: true,
       handler() {
-        this.fetchData({ filterTopEkspedisi: this.filterTopEkspedisi })
+        this.topShipping = this.topShippingTemp[this.filterTopEkspedisi]
       },
     },
     filterTopPartner: {
       // immediate: true,
       handler() {
-        this.fetchData({ filterTopPartner: this.filterTopPartner })
+        this.topPartner = this.topPartnerTemp[this.filterTopPartner]
       },
     },
     selectedEkspedisi: {
       deep: true,
       // immediate: true,
       handler() {
-        this.fetchDataChartExpedisi(this.selectedEkspedisi, 'shipping')
+        this.fetchDataChart(this.selectedEkspedisi, 'shipping')
       },
     },
     selectedPartner: {
       deep: true,
       // immediate: true,
       handler() {
-        this.fetchDataChartExpedisi(this.selectedEkspedisi, 'partner')
+        this.fetchDataChart(this.selectedEkspedisi, 'partner')
       },
     },
   },
   mounted() {
-    this.fetchDataChartExpedisi(this.selectedEkspedisi, 'shipping')
-    this.fetchDataChartExpedisi(this.selectedEkspedisi, 'partner')
+    this.fetchDataChart(this.selectedEkspedisi, 'shipping')
+    this.fetchDataChart(this.selectedEkspedisi, 'partner')
+    this.fetchDataTop('partner')
+    this.fetchDataTop('shipping')
   },
   beforeCreate() {
     // window.location.reload()
   },
   created() {
     this.loadDataAwal = true
-    this.fetchData()
     // check data from API when there is withdrawal pending/process in api
     // get data for series performa expedisi and performa partner
     // get data for select option kurir
@@ -492,7 +497,7 @@ export default {
     choosenFilterTop(val, type = '') {
       this[type] = val
     },
-    async fetchDataChartExpedisi(params, type = '') {
+    async fetchDataChart(params, type = '') {
       axioskomsipdev.get(`/api/v1/admin/dashboard/performance/${type}`, { params: { shipper: params.shipper ?? 'JNE', month: params.month } })
         .then(({ data }) => {
           const mappinData = [
@@ -515,46 +520,18 @@ export default {
           this.loadDataAwal = false
         })
     },
-    async fetchData(params) {
-      // change this endpoint
-      const endpoint = 'https://jsonplaceholder.typicode.com/posts'
-      if (params) {
-        this.$http.get(endpoint, { params: { ...params } })
-          .then(data => {
-            const newParseData = data.data.map(x => {
-              const dt = {
-                title: x.title,
-                body: x.body.substring(0, 15),
-              }
-              return dt
-            }).slice(0, 10)
-            this.rows = newParseData
-          })
-          .catch(e => {
-            console.log('error', e)
-          })
-          .finally(() => {
-            this.loadDataAwal = false
-          })
-      } else {
-        this.$http.get(endpoint)
-          .then(data => {
-            const newParseData = data.data.map(x => {
-              const dt = {
-                title: x.title,
-                body: x.body.substring(0, 15),
-              }
-              return dt
-            }).slice(0, 10)
-            this.rows = newParseData
-          })
-          .catch(e => {
-            console.log('error', e)
-          })
-          .finally(() => {
-            this.loadDataAwal = false
-          })
-      }
+    async fetchDataTop(type = '') {
+      axioskomsipdev.get(`/api/v1/admin/dashboard/top/${type}`)
+        .then(({ data }) => {
+          this[`top${type.charAt(0).toUpperCase()}${type.substring(1)}Temp`] = data.data
+          this[`top${type.charAt(0).toUpperCase()}${type.substring(1)}`] = data.data.cod
+        })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
     objectToQueryString(obj = {}) {
       const str = []
@@ -615,7 +592,7 @@ export default {
 .tbl-dashboard-top{
   height: 440px;
   padding-bottom: 16px;
-  overflow-y: scroll;
+  // overflow-y: scroll;
 }
 .card-dashboard{
   padding: 16px 0px;
