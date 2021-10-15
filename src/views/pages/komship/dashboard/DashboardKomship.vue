@@ -14,9 +14,10 @@ import httpKomship from '@/libs/http_komship'
 export default {
   components: { BCardActions },
   mounted() {
-    httpKomship.get('v1/bank-account', {
-      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-    }).then(response => {
+    httpKomship.post('v1/my-profile', {},
+      {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
       const { data } = response
       console.log(data)
     })

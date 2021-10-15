@@ -13,7 +13,6 @@ const axiosIns = axios.create({
   timeout: 14000,
   headers: {
     'Application-Name': 'Web Komerce',
-    'Access-Control-Allow-Headers': 'localhost:8080',
   },
 })
 
