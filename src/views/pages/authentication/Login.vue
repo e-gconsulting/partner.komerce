@@ -331,6 +331,7 @@ export default {
         this.logout()
         return
       }
+      dataUser.ability = ability
 
       localStorage.setItem('userData', JSON.stringify(dataUser))
       this.$ability.update(ability)

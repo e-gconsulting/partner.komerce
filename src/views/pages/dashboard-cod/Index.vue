@@ -338,7 +338,7 @@ export default {
           },
         },
         dataLabels: {
-          enabled: false,
+          enabled: true,
         },
         stroke: {
           curve: 'smooth',
@@ -374,6 +374,11 @@ export default {
         tooltip: {
           x: { show: false },
         },
+        plotOptions: {
+          area: {
+            fillTo: 'origin',
+          },
+        },
         color: ['#08A0F7', '#34A770'],
       },
       seriesChartshipping: [],
@@ -391,7 +396,7 @@ export default {
         month: `0${new Date().getMonth()}`,
       },
       selectedPartner: {
-        month: null,
+        month: `0${new Date().getMonth()}`,
       },
       optionsKurir: [
         { value: null, text: 'Pilih Kurir' },
@@ -472,13 +477,13 @@ export default {
       deep: true,
       // immediate: true,
       handler() {
-        this.fetchDataChart(this.selectedEkspedisi, 'partner')
+        this.fetchDataChart(this.selectedPartner, 'partner')
       },
     },
   },
   mounted() {
     this.fetchDataChart(this.selectedEkspedisi, 'shipping')
-    this.fetchDataChart(this.selectedEkspedisi, 'partner')
+    this.fetchDataChart(this.selectedPartner, 'partner')
     this.fetchDataTop('partner')
     this.fetchDataTop('shipping')
   },
@@ -498,20 +503,41 @@ export default {
       this[type] = val
     },
     async fetchDataChart(params, type = '') {
-      axioskomsipdev.get(`/api/v1/admin/dashboard/performance/${type}`, { params: { shipper: params.shipper ?? 'JNE', month: params.month } })
+      const paramsTemp = {}
+      if (type === 'partner') {
+        paramsTemp.month = params.month
+      } else {
+        paramsTemp.shipper = params.shipper
+        paramsTemp.month = params.month
+      }
+      axioskomsipdev.get(`/api/v1/admin/dashboard/performance/${type}`, { params: paramsTemp })
         .then(({ data }) => {
-          const mappinData = [
-            {
-              name: 'COD',
-              data: data.data.cod,
-            },
-            {
-              name: 'Non - COD',
-              data: data.data.non_cod,
-            },
-          ]
-          this[`categoriesChart${type}`] = data.data.categories
-          this[`seriesChart${type}`] = mappinData
+          if (Array.isArray(data.data)) {
+            this[`categoriesChart${type}`] = data.data.categories
+            this[`seriesChart${type}`] = [
+              {
+                name: 'COD',
+                data: [],
+              },
+              {
+                name: 'Non - COD',
+                data: [],
+              },
+            ]
+          } else {
+            const mappinData = [
+              {
+                name: 'COD',
+                data: data.data.cod,
+              },
+              {
+                name: 'Non - COD',
+                data: data.data.non_cod,
+              },
+            ]
+            this[`categoriesChart${type}`] = data.data.categories
+            this[`seriesChart${type}`] = mappinData
+          }
         })
         .catch(e => {
           console.log('error', e)
