@@ -513,7 +513,7 @@ export default {
       axioskomsipdev.get(`/api/v1/admin/dashboard/performance/${type}`, { params: paramsTemp })
         .then(({ data }) => {
           if (Array.isArray(data.data)) {
-            this[`categoriesChart${type}`] = data.data.categories
+            this[`categoriesChart${type}`] = []
             this[`seriesChart${type}`] = [
               {
                 name: 'COD',
