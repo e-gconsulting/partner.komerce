@@ -8,6 +8,7 @@
       :screens="screens"
       :list-product="listProduct"
       :list-selected="listSelected"
+      :profile="profile"
       @onUpdateDate="updateDateText"
       @onUpdateScreenView="updateScreenView"
       @onUpdateSelectedItems="updateSelectedItems"
@@ -19,6 +20,7 @@
       :screens="screens"
       :list-selected="listSelected"
       :is-onboarding="isOnboarding"
+      :profile="profile"
       @onBoardingShow="handlePublishButton"
       @onUpdateDate="updateDateText"
       @onUpdateScreenView="updateScreenView"
@@ -56,132 +58,112 @@ export default {
       test2: {},
       listSelected: [],
       screens: 'input',
+      loading: false,
       listProduct: [
-        {
-          product_id: 1,
-          product_name: 'Jilbab',
-          product_image: 'www.example.com/img/products/product-980312037.jpg',
-          is_variant: 1,
-          variant: [
-            {
-              variant_id: 1,
-              variant_name: 'Warna',
-              variant_option: [
-                {
-                  option_id: 1,
-                  option_name: 'Biru',
-                  option_parent: null,
-                },
-                {
-                  option_id: 2,
-                  option_name: 'Merah',
-                  option_parent: null,
-                },
-              ],
-            },
-            {
-              variant_id: 1,
-              variant_name: 'Ukuran',
-              variant_option: [
-                {
-                  option_id: 3,
-                  option_name: 'S',
-                  option_parent: 1,
-                },
-                {
-                  option_id: 4,
-                  option_name: 'M',
-                  option_parent: 1,
-                },
-                {
-                  option_id: 5,
-                  option_name: 'S',
-                  option_parent: 2,
-                },
-                {
-                  option_id: 6,
-                  option_name: 'M',
-                  option_parent: 2,
-                },
-              ],
-            },
-          ],
-          product_variant: [
-            {
-              option_id: 3,
-              name: 'Merah',
-              price: 20,
-              stock: 100,
-              option_parent: 1,
-            },
-            {
-              option_id: 4,
-              name: 'Biru',
-              price: 20,
-              stock: 100,
-              option_parent: 2,
-            },
-            {
-              option_id: 5,
-              name: 'Merah',
-              price: 20,
-              stock: 100,
-              option_parent: 1,
-            },
-            {
-              option_id: 6,
-              name: 'Biru',
-              price: 20,
-              stock: 100,
-              option_parent: 2,
-            },
-          ],
-          price: 0,
-          stock: 0,
-        },
-        {
-          product_id: 2,
-          product_name: 'Jilbab Keche',
-          product_image: 'www.example.com/img/products/product-980312031.jpg',
-          is_variant: 0,
-          variant: [],
-          price: 20000,
-          stock: 100,
-        },
+        // {
+        //   product_id: 1,
+        //   product_name: 'Jilbab',
+        //   product_image: 'www.example.com/img/products/product-980312037.jpg',
+        //   is_variant: 1,
+        //   variant: [
+        //     {
+        //       variant_id: 1,
+        //       variant_name: 'Warna',
+        //       variant_option: [
+        //         {
+        //           option_id: 1,
+        //           option_name: 'Biru',
+        //           option_parent: null,
+        //         },
+        //         {
+        //           option_id: 2,
+        //           option_name: 'Merah',
+        //           option_parent: null,
+        //         },
+        //       ],
+        //     },
+        //     {
+        //       variant_id: 1,
+        //       variant_name: 'Ukuran',
+        //       variant_option: [
+        //         {
+        //           option_id: 3,
+        //           option_name: 'S',
+        //           option_parent: 1,
+        //         },
+        //         {
+        //           option_id: 4,
+        //           option_name: 'M',
+        //           option_parent: 1,
+        //         },
+        //         {
+        //           option_id: 5,
+        //           option_name: 'S',
+        //           option_parent: 2,
+        //         },
+        //         {
+        //           option_id: 6,
+        //           option_name: 'M',
+        //           option_parent: 2,
+        //         },
+        //       ],
+        //     },
+        //   ],
+        //   product_variant: [
+        //     {
+        //       option_id: 3,
+        //       name: 'Merah',
+        //       price: 20,
+        //       stock: 100,
+        //       option_parent: 1,
+        //     },
+        //     {
+        //       option_id: 4,
+        //       name: 'Biru',
+        //       price: 20,
+        //       stock: 100,
+        //       option_parent: 2,
+        //     },
+        //     {
+        //       option_id: 5,
+        //       name: 'Merah',
+        //       price: 20,
+        //       stock: 100,
+        //       option_parent: 1,
+        //     },
+        //     {
+        //       option_id: 6,
+        //       name: 'Biru',
+        //       price: 20,
+        //       stock: 100,
+        //       option_parent: 2,
+        //     },
+        //   ],
+        //   price: 0,
+        //   stock: 0,
+        // },
+        // {
+        //   product_id: 2,
+        //   product_name: 'Jilbab Keche',
+        //   product_image: 'www.example.com/img/products/product-980312031.jpg',
+        //   is_variant: 0,
+        //   variant: [],
+        //   price: 20000,
+        //   stock: 100,
+        // },
       ],
     }
   },
   mounted() {
-    // const tokens1 = useJwt.getToken()
-    // console.log('tokeneoekke', tokens1)
-    // axios2.post('https://komshipdev.komerce.id/api/v1/my-profile',
-    //   {
-    //     headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-    //   }).then(response => {
-    //   const { data } = response
-    //   console.log('berhasil data', data)
-    //   this.profile = data
-    // }).catch(() => {
-    //   console.log('gagal')
-    // })
-
-    this.profile = this.getProfile()
-    // this.reload()
+    this.reload()
   },
   methods: {
-    // async reload() {
-    // this.test2 = await this.getOrder()
-    // await this.getProfile()
-    // this.loading = true
-    // this.currentPage = 1
-    //
-    // if (!this.partnerProfileIncomplete) {
-    //   this.wishlistItems = await this.loadWishlistItems()
-    // }
-    //
-    // this.items = await this.loadItems()
-    // this.loading = false
-    // },
+    async reload() {
+      this.loading = true
+      await this.getProfile()
+      await this.getListProductByPartner()
+      this.loading = false
+    },
     updateDateText(dateVal) {
       if (dateVal) this.dateText = dateVal
     },
@@ -195,30 +177,26 @@ export default {
       if (this.isOnboarding) this.$refs.onboardingElement.showModal()
     },
     getProfile() {
-      // { Authorization: `Bearer ${useJwt.getToken()}` }
-      return this.$http.get('/v1/my-profile')
-        .then(async response => {
-          const { data } = response
-          console.log('berhasil data', data)
-          this.profile = data
-        }).catch(() => {
-          console.log('gagal')
-        })
+      return this.$http_komship.post('v1/my-profile').then(response => {
+        const { data } = response.data
+        console.log('this.profile', data)
+        // return data
+        this.profile = data
+      }).catch(() => {
+        console.log('gagal2')
+      })
     },
-    // getOrder() {
-    //   console.log('this.profile', this.profile)
-    //   const partnerId = this.$store.state.auth.userData.id
-    //   axios2.get(`https://komshipdev.komerce.id/api/v1/order/${partnerId}`, {},
-    //     { Authorization: `Bearer ${useJwt.getToken()}` })
-    //     .then(response => response.json())
-    //     .then(async response => {
-    //       const { data } = response.data
-    //       console.log('berhasil data2', data)
-    //       // this.provinceItems = data
-    //     }).catch(() => {
-    //       console.log('gagal2')
-    //     })
-    // },
+    getListProductByPartner() {
+      const partnerId = this.profile.partner_id
+      return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
+        const { data } = response.data
+        console.log('this.product', data)
+        // return data
+        this.listProduct = data
+      }).catch(() => {
+        console.log('gagal2')
+      })
+    },
   },
 }
 </script>

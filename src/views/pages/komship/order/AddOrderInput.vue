@@ -1,7 +1,7 @@
 <template>
   <div class="add-order-main-wrapper">
     <b-card-title class="mb-4">Tambah Order</b-card-title>
-    <div class="add-order-dsc-title top-right">Pengiriman Kompship</div>
+    <div class="add-order-dsc-title top-right">{{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}</div>
     <section class="add-order-form mb-4">
       <b-form-group
         class="add-order-label mb-2"
@@ -68,6 +68,7 @@
         </b-button>
         <b-button
           class="next-button"
+          :disabled="disableSubmitBtn"
           @click="onUpdateScreenViewParent"
         >
           Lanjutkan
@@ -173,6 +174,10 @@ export default {
       type: String,
       default: '',
     },
+    profile: {
+      type: Object,
+      default: () => {},
+    },
     listProduct: {
       type: Array,
       default: () => [],
@@ -197,7 +202,11 @@ export default {
       selectedVariation: [],
       selectedProductVariant: [],
       selectedProdukIndexOnModal: -1,
+      disableSubmitBtn: true,
     }
+  },
+  mounted() {
+    console.log('profile', this.profile)
   },
   methods: {
     onChangeDate(ctx) {
@@ -255,6 +264,8 @@ export default {
       /* reset the variable after update the variation option : when user click ok button on variation popup */
       this.$root.$emit('bv::hide::modal', 'modal-1')
       this.resetTmpContainerOnTable()
+      this.onUpdateSelectedItemsOnParent()
+      this.checkValidButton()
       this.$refs.tableAddOrderOne.refreshTable()
     },
     onAddProduct(itemSelected) {
@@ -282,6 +293,7 @@ export default {
           this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
         }
         this.onUpdateSelectedItemsOnParent()
+        this.checkValidButton()
         this.$refs.tableAddOrderOne.refreshTable()
       }
     },
@@ -359,6 +371,7 @@ export default {
         /* update all product with same characteristics */
         this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
         this.onUpdateSelectedItemsOnParent()
+        this.checkValidButton()
       }
     },
     onUpdateSelectedItemsOnParent() {
@@ -377,6 +390,25 @@ export default {
       this.selectedVariation = []
       this.selectedProdukIndexOnModal = 0
       this.selectedProdukIndexOnModal = -1
+    },
+    checkValidButton() {
+      let isDisable = true
+      const conditionArr = []
+      if (this.selectedItems && this.selectedItems.length && this.selectedItems.length > 0) {
+        for (let j = 0; j < this.selectedItems.length; j += 1) {
+          if (this.selectedItems[j].is_variant) {
+            if (this.selectedItems[j].selectedVariationData && this.selectedItems[j].selectedVariationData.length && this.selectedItems[j].selectedVariationData.length > 0) {
+              conditionArr.push(true)
+            } else {
+              conditionArr.push(false)
+            }
+          } else {
+            conditionArr.push(true)
+          }
+        }
+        isDisable = (conditionArr.indexOf(false) > -1)
+      }
+      this.disableSubmitBtn = isDisable
     },
   },
 }

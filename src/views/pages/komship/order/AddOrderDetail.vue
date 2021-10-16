@@ -9,7 +9,7 @@
       />
     </b-button>
     <b-card-title class="mt-4 mb-4">Tambah Order</b-card-title>
-    <div class="add-order-dsc-title top-right">Pengiriman Kompship</div>
+    <div class="add-order-dsc-title top-right">{{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}</div>
     <section class="add-order-form mb-4">
       <b-form-group
         class="add-order-label mb-2"
@@ -46,7 +46,7 @@
         <b-form-input
           v-model="customerPhone"
           class="add-order-product-input-v-select"
-          placeholder="Masukkan Nama"
+          placeholder="Masukkan Telepon"
         />
       </b-form-group>
       <b-form-group
@@ -379,6 +379,10 @@ export default {
     isOnboarding: {
       type: Boolean,
       default: false,
+    },
+    profile: {
+      type: Object,
+      default: () => {},
     },
   },
   data() {
