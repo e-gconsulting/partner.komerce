@@ -43,11 +43,29 @@
         label="No Telepon"
         label-cols-md="3"
       >
-        <b-form-input
-          v-model="customerPhone"
-          class="add-order-product-input-v-select"
-          placeholder="Masukkan Telepon"
-        />
+        <b-input-group
+          class="input-phone-add-order-details-wrapper"
+        >
+          <b-input-group-prepend>
+            <v-select
+              v-model="customerPhoneCode"
+              :clearable="false"
+              class="input-phone-code-add-order-details"
+              label=""
+              label-cols-md="2"
+              :options="customerPhoneCodeList"
+              @input="onChangePhoneCode"
+            />
+            <span class="straight-line" />
+          </b-input-group-prepend>
+
+          <b-form-input
+            v-model.number="customerPhone"
+            type="number"
+            class="add-order-product-input-v-select input-phone-add-order-details"
+            @input="onChangePhoneNumber"
+          />
+        </b-input-group>
       </b-form-group>
       <b-form-group
         class="add-order-label mb-2"
@@ -88,11 +106,18 @@
         label-cols-md="3"
       >
         <v-select
-          class="add-order-product-input-v-select"
+          class="add-order-product-input-v-select v-select-expedition-order-detail mr-1"
           label=""
           label-cols-md="2"
           :options="profile.shipping"
           @input="onAddShipping"
+        />
+
+        <v-select
+          class="add-order-product-input-v-select v-select-expedition-order-detail"
+          label=""
+          label-cols-md="2"
+          placeholder="Opsi Pengiriman"
         />
       </b-form-group>
       <b-form-group
@@ -298,6 +323,8 @@ import {
   BFormInput,
   BFormGroup,
   BFormTextarea,
+  BInputGroup,
+  BInputGroupPrepend,
   BCollapse,
   BButton,
   BIconCircle,
@@ -359,6 +386,8 @@ export default {
     BFormInput,
     BFormGroup,
     BFormTextarea,
+    BInputGroup,
+    BInputGroupPrepend,
     BCollapse,
     BButton,
     vSelect,
@@ -405,6 +434,8 @@ export default {
       customerDate: '',
       customerName: '',
       customerPhone: '',
+      customerPhoneCode: '+62',
+      customerPhoneCodeList: ['+62'],
       customerAddress: '',
       customerCity: '',
       destinationCity: [],
@@ -483,6 +514,12 @@ export default {
     },
     onAddPaymentMethod(itemSelected) {
       this.customerPaymentMethod = itemSelected
+    },
+    onChangePhoneCode(itemSelected) {
+      this.customerPhoneCode = itemSelected
+    },
+    onChangePhoneNumber(phoneNumber) {
+      if (phoneNumber) this.customerPhone = phoneNumber
     },
     showDetailPriceNetto() {
       this.visibleCollapse = !this.visibleCollapse

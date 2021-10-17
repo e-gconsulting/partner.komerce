@@ -53,6 +53,32 @@
   width: 100%;
   max-width: 340px;
 }
+.v-select-expedition-order-detail {
+  display: inline-block;
+}
+.input-phone-add-order-details-wrapper {
+  width: fit-content;
+  border-radius: 0.357rem;
+  border: 1px solid #d8d6de;
+  color: #828282;
+  font-size : 16px;
+  font-weight: 500;
+}
+.input-phone-add-order-details-wrapper:focus-within {
+  border-color: #ea5455;
+}
+.input-phone-code-add-order-details .vs__dropdown-toggle {
+  border: none;
+}
+.input-phone-add-order-details-wrapper .straight-line {
+  margin: auto 0;
+  border-right: 2px solid #C2C2C2;
+  height: 1.4rem;
+}
+.input-phone-add-order-details {
+  min-width: 17.4rem !important;
+  border: none;
+}
 .max-wd-411 {
   max-width: 411px;
 }
