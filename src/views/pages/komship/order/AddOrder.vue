@@ -9,9 +9,11 @@
       :list-product="listProduct"
       :list-selected="listSelected"
       :profile="profile"
+      :disable-submit-button-status="disableSubmitButtonStatus"
       @onUpdateDate="updateDateText"
       @onUpdateScreenView="updateScreenView"
       @onUpdateSelectedItems="updateSelectedItems"
+      @onUpdateSubmitButtonStatus="handleUpdateSubmitButtonStatus"
     />
 
     <add-order-detail
@@ -59,6 +61,7 @@ export default {
       listSelected: [],
       screens: 'input',
       loading: false,
+      disableSubmitButtonStatus: true,
       listProduct: [
         // {
         //   product_id: 1,
@@ -175,6 +178,9 @@ export default {
     },
     handlePublishButton() {
       if (this.isOnboarding) this.$refs.onboardingElement.showModal()
+    },
+    handleUpdateSubmitButtonStatus(value) {
+      this.disableSubmitButtonStatus = value
     },
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {

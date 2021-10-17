@@ -170,6 +170,10 @@ export default {
       type: String,
       default: '',
     },
+    disableSubmitButtonStatus: {
+      type: Boolean,
+      default: true,
+    },
     dateText: {
       type: String,
       default: '',
@@ -202,7 +206,7 @@ export default {
       selectedVariation: [],
       selectedProductVariant: [],
       selectedProdukIndexOnModal: -1,
-      disableSubmitBtn: true,
+      disableSubmitBtn: this.disableSubmitButtonStatus,
     }
   },
   mounted() {
@@ -409,6 +413,10 @@ export default {
         isDisable = (conditionArr.indexOf(false) > -1)
       }
       this.disableSubmitBtn = isDisable
+      this.onUpdateEnableSubmitButton(this.disableSubmitBtn)
+    },
+    onUpdateEnableSubmitButton(value) {
+      this.$emit('onUpdateSubmitButtonStatus', value)
     },
   },
 }

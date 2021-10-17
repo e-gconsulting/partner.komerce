@@ -17,7 +17,7 @@
         label-cols-md="3"
         label-for="input-date2"
       >
-        <div class="add-order-date-label">{{ dateLabel }}</div>
+        <div class="add-order-date-label">{{ customerDate }}</div>
         <b-form-datepicker
           id="input-date2"
           ref="dp2"
@@ -58,7 +58,17 @@
           v-model="customerCity"
           class="add-order-product-input-v-select max-wd-411"
           placeholder="Masukan Kota/Kabupaten"
+          list="city-list-id"
+          @input="handleSearchCity"
         />
+        <datalist id="city-list-id">
+          <option
+            v-for="(destination, destinationIndex) in destinationCity"
+            :key="'optionCity'+destinationIndex"
+          >
+            {{ destination.label }}
+          </option>
+        </datalist>
       </b-form-group>
       <b-form-group
         class="add-order-label mb-2"
@@ -79,8 +89,10 @@
       >
         <v-select
           class="add-order-product-input-v-select"
-          label="product_name"
+          label=""
           label-cols-md="2"
+          :options="profile.shipping"
+          @input="onAddShipping"
         />
       </b-form-group>
       <b-form-group
@@ -90,8 +102,10 @@
       >
         <v-select
           class="add-order-product-input-v-select"
-          label="product_name"
+          label=""
           label-cols-md="2"
+          :options="profile.payment_method"
+          @input="onAddPaymentMethod"
         />
       </b-form-group>
       <b-form-group
@@ -388,11 +402,14 @@ export default {
   data() {
     return {
       dateValue: this.dateText,
-      dateLabel: '',
+      customerDate: '',
       customerName: '',
       customerPhone: '',
-      customerCity: '',
       customerAddress: '',
+      customerCity: '',
+      destinationCity: [],
+      customerPaymentMethod: '',
+      customerShippingMethod: '',
       isUseDiscount: false,
       customerDiscountNumber: 0,
       codCutCost: 0,
@@ -420,7 +437,7 @@ export default {
   methods: {
     onChangeDate(ctx) {
       if (ctx && ctx.activeYMD) {
-        this.dateLabel = changeDate(ctx.activeYMD)
+        this.customerDate = changeDate(ctx.activeYMD)
         this.$emit('onUpdateDate', ctx.activeYMD)
       }
     },
@@ -455,10 +472,17 @@ export default {
     useDiscount() {
       this.isUseDiscount = !this.isUseDiscount
       this.codCutCost = this.isUseDiscount ? (this.totalCostNumberFirst * 0.028) : 0
+      this.customerDiscountNumber = this.isUseDiscount ? this.customerDiscountNumber : 0
       this.onUpdateOverAllPrice()
     },
     onInputDiscount() {
       this.onUpdateOverAllPrice()
+    },
+    onAddShipping(itemSelected) {
+      this.customerShippingMethod = itemSelected
+    },
+    onAddPaymentMethod(itemSelected) {
+      this.customerPaymentMethod = itemSelected
     },
     showDetailPriceNetto() {
       this.visibleCollapse = !this.visibleCollapse
@@ -468,6 +492,17 @@ export default {
     },
     handleRedirectToDataOrder() {
       this.$router.push('data-order')
+    },
+    async handleSearchCity(text) {
+      await this.searchCustomerCity(text)
+    },
+    searchCustomerCity(cityName) {
+      return this.$http_komship.get(`v1/destination?search=${cityName}`).then(response => {
+        const { data } = response.data.data
+        this.destinationCity = data
+      }).catch(() => {
+        console.log('fail to search destination')
+      })
     },
   },
 }
