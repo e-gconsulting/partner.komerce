@@ -187,7 +187,6 @@ export default {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
         console.log('this.profile', data)
-        // return data
         this.profile = data
       }).catch(() => {
         console.log('gagal2')
@@ -198,7 +197,6 @@ export default {
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
         console.log('this.product', data)
-        // return data
         this.listProduct = data
       }).catch(() => {
         console.log('gagal2')

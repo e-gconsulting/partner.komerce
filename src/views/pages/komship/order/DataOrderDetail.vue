@@ -62,7 +62,7 @@
             id="methods-order"
             class="data-order-detail-text"
           >
-            {{ detailOrder.payment_methode }}
+            {{ detailOrder.payment_method }}
           </div>
         </b-form-group>
 
@@ -77,19 +77,19 @@
             class="data-order-detail-text"
           >
             <b-badge
-              v-if="detailOrder.status.toLowerCase() === 'diterima' || detailOrder.status.toLowerCase() === 'dikembalikan'"
+              v-if="detailOrder.order_status.toLowerCase() === 'diterima' || detailOrder.order_status.toLowerCase() === 'dikembalikan'"
               variant="light-success"
             >
               Diterima
             </b-badge>
             <b-badge
-              v-if="detailOrder.status.toLowerCase() === 'perlu dikirim'"
+              v-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
               variant="light-warning"
             >
               Perlu Dikirim
             </b-badge>
             <b-badge
-              v-if="detailOrder.status.toLowerCase() === 'retur'"
+              v-if="detailOrder.order_status.toLowerCase() === 'retur'"
               variant="light-danger"
             >
               Retur
@@ -97,7 +97,7 @@
           </div>
         </b-form-group>
 
-        <div class="info-detail-data-order grey-text mt-4">{{ `Telah ditambahkan oleh ‘Nama User’ pada ${detailOrder.order_date} WIB` }}</div>
+        <div class="info-detail-data-order grey-text mt-4">{{ `Telah ditambahkan oleh ‘${profile.user_fullname}’ pada ${detailOrder.order_date} WIB` }}</div>
       </div>
 
       <div class="data-order-detail-title-wrapper">Informasi Pengiriman</div>
@@ -194,7 +194,7 @@
                   {{ prodData.value }}
                 </div>
                 <div class="product-name-variant-wrapper org-text">
-                  {{ prodData.item.product_variant.replace(' -', ',') }}
+                  {{ prodData.item.variant_name.replace(' -', ',') }}
                 </div>
               </div>
             </div>
@@ -232,7 +232,7 @@
               id="ongkos-prod-order"
               class="data-order-detail-text-small"
             >
-              {{ `Rp ${numberWithCommas(30000)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.shipping_cost)}` }}
             </div>
           </b-form-group>
 
@@ -252,7 +252,7 @@
 
           <b-form-group
             class="data-order-detail-label-small grey-text mb-2 summary-text"
-            label="Total Pembayaran (Transfer Bank) :"
+            :label="`Total Pembayaran (${detailOrder.payment_method}) :`"
             label-cols-md="9"
             label-for="summary-total-prod-order"
           >
@@ -260,13 +260,13 @@
               id="summary-total-prod-order"
               class="data-order-detail-text-small org-text"
             >
-              {{ `Rp ${numberWithCommas(detailOrder.grand_total - 30000)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.grand_total + detailOrder.shipping_cost - 0)}` }}
             </div>
           </b-form-group>
 
           <b-form-group
             class="data-order-detail-label-small grey-text mb-2"
-            label="Biaya COD (2,8 sudah termasuk PPN)"
+            :label="`Biaya ${detailOrder.payment_method} (2,8 sudah termasuk PPN)`"
             label-cols-md="9"
             label-for="cod-prod-order"
           >
@@ -302,7 +302,7 @@
               id="netto-prod-order"
               class="data-order-detail-text-small org-text"
             >
-              {{ `Rp ${numberWithCommas(detailOrder.grand_total - 100000)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.grand_total + detailOrder.shipping_cost - 0 - 70000)}` }}
             </div>
           </b-form-group>
         </section>
@@ -345,6 +345,10 @@ export default {
       type: String,
       default: 'tableOne',
     },
+    profile: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -378,9 +382,10 @@ export default {
     },
     getDate(dateVal) {
       if (dateVal) {
-        let today = dateVal.split(' ')
-        const month = today[1]
-        today = `${today[0]} ${month} ${today[2]}`
+        // let today = dateVal.split(' ')
+        // const month = today[1]
+        // today = `${today[0]} ${month} ${today[2]}`
+        const today = dateVal.split(' ')[0]
         return today
       }
       return dateVal

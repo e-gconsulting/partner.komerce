@@ -25,6 +25,7 @@
         v-if="isDetail"
         table-ref-name="tableDetailDataOrderOne"
         :detail-order="detailOrderData"
+        :profile="profile"
         @onExitDetailView="exitDetailView"
       />
 
@@ -63,122 +64,123 @@ export default {
       searchFilterText: '',
       isDetail: false,
       detailOrderData: {},
+      profile: {},
       tableData: {
         header: [
           { key: 'order_date', label: 'Tanggal Order' },
           { key: 'customer_name', label: 'Pelanggan' },
           { key: 'product', label: 'Produk' },
           { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'status', label: 'Status' },
+          { key: 'order_status', label: 'Status' },
           { key: 'details', label: 'Rincian' },
         ],
         items: [
-          {
-            order_id: 1,
-            customer_name: 'Putri Marani',
-            status: 'Diterima',
-            order_date: '22 Agustus 2021 16:30',
-            order_no: 'RT1219868',
-            district: 'Purbalingga',
-            detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
-            shipping_cost: 20000,
-            grand_total: 980000,
-            payment_methode: 'COD',
-            is_komship: 1,
-            bank: null,
-            airway_bill: 120109299303930,
-            product: [
-              {
-                product_id: 1,
-                product_name: 'Jilbab Pasmia 1-SKU 332',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: 'M - Merah',
-                weight: 1000,
-                price: 380000,
-                qty: 1,
-              },
-              {
-                product_id: 2,
-                product_name: 'Jilbab Pasmia 1-SKU 331',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: 'M - Merah',
-                weight: 1000,
-                price: 200000,
-                qty: 1,
-              },
-              {
-                product_id: 3,
-                product_name: 'Jilbab Pasmia 1-SKU 330',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: 'M - Merah',
-                price: 200000,
-                qty: 1,
-              },
-              {
-                product_id: 4,
-                product_name: 'Jilbab Pasmia 1-SKU 339',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: 'M - Merah',
-                weight: 1000,
-                price: 200000,
-                qty: 1,
-              },
-            ],
-          },
-          {
-            order_id: 2,
-            customer_name: 'Putri Marani',
-            status: 'Diterima',
-            order_date: '22 Agustus 2021. 16:30',
-            order_no: 'RT1219868',
-            district: 'Purbalingga',
-            detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
-            shipping_cost: 20000,
-            is_komship: 0,
-            grand_total: 980000,
-            payment_methode: 'Non COD',
-            airway_bill: null,
-            bank: {
-              bank_name: 'BCA',
-              account_no: 33129898,
-              account_name: 'Hj. Mabur',
-            },
-            product: [
-              {
-                product_id: 1,
-                product_name: 'Jilbab Pasmia 1-SKU 332',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: '-',
-                weight: 1000,
-                price: 100000,
-                qty: 5,
-              },
-              {
-                product_id: 2,
-                product_name: 'Jilbab Pasmia 1-SKU 331',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: '-',
-                weight: 1000,
-                price: 100000,
-                qty: 1,
-              },
-              {
-                product_id: 3,
-                product_name: 'Jilbab Pasmia 1-SKU 330',
-                product_image: 'images/product/product-980312037.jpg',
-                product_variant: '-',
-                weight: 1000,
-                price: 140000,
-                qty: 1,
-              },
-            ],
-          },
+          // {
+          //   order_id: 1,
+          //   customer_name: 'Putri Marani',
+          //   status: 'Diterima',
+          //   order_date: '22 Agustus 2021 16:30',
+          //   order_no: 'RT1219868',
+          //   district: 'Purbalingga',
+          //   detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
+          //   shipping_cost: 20000,
+          //   grand_total: 980000,
+          //   payment_methode: 'COD',
+          //   is_komship: 1,
+          //   bank: null,
+          //   airway_bill: 120109299303930,
+          //   product: [
+          //     {
+          //       product_id: 1,
+          //       product_name: 'Jilbab Pasmia 1-SKU 332',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: 'M - Merah',
+          //       weight: 1000,
+          //       price: 380000,
+          //       qty: 1,
+          //     },
+          //     {
+          //       product_id: 2,
+          //       product_name: 'Jilbab Pasmia 1-SKU 331',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: 'M - Merah',
+          //       weight: 1000,
+          //       price: 200000,
+          //       qty: 1,
+          //     },
+          //     {
+          //       product_id: 3,
+          //       product_name: 'Jilbab Pasmia 1-SKU 330',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: 'M - Merah',
+          //       price: 200000,
+          //       qty: 1,
+          //     },
+          //     {
+          //       product_id: 4,
+          //       product_name: 'Jilbab Pasmia 1-SKU 339',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: 'M - Merah',
+          //       weight: 1000,
+          //       price: 200000,
+          //       qty: 1,
+          //     },
+          //   ],
+          // },
+          // {
+          //   order_id: 2,
+          //   customer_name: 'Putri Marani',
+          //   status: 'Diterima',
+          //   order_date: '22 Agustus 2021. 16:30',
+          //   order_no: 'RT1219868',
+          //   district: 'Purbalingga',
+          //   detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
+          //   shipping_cost: 20000,
+          //   is_komship: 0,
+          //   grand_total: 980000,
+          //   payment_methode: 'Non COD',
+          //   airway_bill: null,
+          //   bank: {
+          //     bank_name: 'BCA',
+          //     account_no: 33129898,
+          //     account_name: 'Hj. Mabur',
+          //   },
+          //   product: [
+          //     {
+          //       product_id: 1,
+          //       product_name: 'Jilbab Pasmia 1-SKU 332',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: '-',
+          //       weight: 1000,
+          //       price: 100000,
+          //       qty: 5,
+          //     },
+          //     {
+          //       product_id: 2,
+          //       product_name: 'Jilbab Pasmia 1-SKU 331',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: '-',
+          //       weight: 1000,
+          //       price: 100000,
+          //       qty: 1,
+          //     },
+          //     {
+          //       product_id: 3,
+          //       product_name: 'Jilbab Pasmia 1-SKU 330',
+          //       product_image: 'images/product/product-980312037.jpg',
+          //       product_variant: '-',
+          //       weight: 1000,
+          //       price: 140000,
+          //       qty: 1,
+          //     },
+          //   ],
+          // },
         ],
       },
     }
   },
   async mounted() {
-    this.getProfile()
+    this.reload()
   },
   methods: {
     updateCurrentView(val) {
@@ -189,7 +191,7 @@ export default {
           { key: 'customer_name', label: 'Pelanggan' },
           { key: 'product', label: 'Produk' },
           { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'status', label: 'Status' },
+          { key: 'order_status', label: 'Status' },
           { key: 'details', label: 'Rincian' },
         ]
       } else if (this.currentView === 'send') {
@@ -246,19 +248,40 @@ export default {
     handleRedirectToAddOrder() {
       this.$router.push('add-order')
     },
+    async reload() {
+      this.loading = true
+      await this.getProfile()
+      await this.getOrder()
+      this.loading = false
+    },
     getProfile() {
-      return this.$http
-        .get('/v1/my-profile', {
-          // params: {
-          //   sort: 'name',
-          //   direction: 'asc',
-          // },
-        })
-        .then(async response => {
-          const { data } = response.data
-          console.log('berhasil data', data)
-          // this.provinceItems = data
-        })
+      return this.$http_komship.post('v1/my-profile').then(response => {
+        const { data } = response.data
+        console.log('this.profile', data)
+        this.profile = data
+      }).catch(() => {
+        console.log('gagal2')
+      })
+    },
+    getOrder() {
+      return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: {
+          order_id: '4,5',
+          // is_komship: 0,
+          // order_status: 0,
+          // customer_name: 'tunjungmuli',
+          // payment_method: 'COD',
+          // start_date: '2021-09-08',
+          // end_date: '2021-09-30',
+        },
+      }).then(response => {
+        const { data } = response.data.data
+        console.log('listAllOrder', data)
+        this.tableData.items = data
+        console.log('this.items', this.tableData.items)
+      }).catch(() => {
+        this.alertFail('Unable to get the list of the product Please try again later or contact support.')
+      })
     },
   },
 }

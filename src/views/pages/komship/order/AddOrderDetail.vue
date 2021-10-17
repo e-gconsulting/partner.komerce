@@ -303,14 +303,14 @@
           Please wait...
         </b-button>
         <b-button
-          v-if="isValidOrder"
+          v-if="isValidOrder && !isSubmitting"
           class="next-button"
           @click="handleSaveOrder"
         >
           Submit
         </b-button>
         <b-button
-          v-else-if="!isValidOrder"
+          v-else-if="!isValidOrder && !isSubmitting"
           class="next-button"
           disabled
         >
@@ -692,7 +692,7 @@ export default {
         discount: 0,
         shipping_cashback: 3750,
         net_profit: 113750,
-        cart: this.selectedItems,
+        cart: ['8'],
       }
       await this.onPostOrder(formData)
     },

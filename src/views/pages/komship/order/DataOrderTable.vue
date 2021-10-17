@@ -90,7 +90,7 @@
                       {{ prodItem.product_name }}
                     </div>
                     <div class="product-name-variant-wrapper org-text">
-                      {{ prodItem.product_variant.replace(' -', ',') }}
+                      {{ prodItem.variant_name.replace(' -', ',') }}
                     </div>
                   </div>
                   <div class="product-name-qty">
@@ -109,7 +109,7 @@
                     {{ prodItem.product_name }}
                   </div>
                   <div class="product-name-variant-wrapper org-text">
-                    {{ prodItem.product_variant.replace(' -', ',') }}
+                    {{ prodItem.variant_name.replace(' -', ',') }}
                   </div>
                 </div>
                 <div class="product-name-qty">
@@ -135,7 +135,7 @@
                   {{ prodItem.product_name }}
                 </div>
                 <div class="product-name-variant-wrapper org-text">
-                  {{ prodItem.product_variant.replace(' -', ',') }}
+                  {{ prodItem.variant_name.replace(' -', ',') }}
                 </div>
               </div>
               <div class="product-name-qty">
@@ -168,7 +168,7 @@
       <template #cell(grand_total)="totalData">
         <div class="price-wrapper">{{ `Rp ${numberWithCommas(totalData.value)}` }}</div>
         <div
-          v-if="totalData.item.payment_methode === 'COD'"
+          v-if="totalData.item.payment_method === 'COD'"
           class="label-wrapper"
         >
           {{ totalData.item.payment_methode }}
@@ -180,7 +180,7 @@
           Transfer
         </div>
         <div
-          v-if="totalData.item.payment_methode !== 'COD'"
+          v-if="totalData.item.payment_method !== 'COD'"
           :id="`popoverTable${totalData.item.order_id}`"
           class="tooltip-wrapper"
           @click="() => handleShowPopOver(`popoverTable${totalData.item.order_id}`)"
@@ -188,7 +188,7 @@
           <b-icon-info-circle />
         </div>
         <b-popover
-          v-if="totalData.item.payment_methode !== 'COD'"
+          v-if="totalData.item.payment_method !== 'COD'"
           :id="`popoverTable${totalData.item.order_id}`"
           :ref="`popoverTable${totalData.item.order_id}`"
           :target="`popoverTable${totalData.item.order_id}`"
@@ -199,19 +199,34 @@
               label="Nama Bank:"
               :label-for="`labelName-${totalData.item.order_id}`"
             >
-              <div :id="`labelName-${totalData.item.order_id}`">{{ totalData.item.bank.bank_name }}</div>
+              <div
+                v-if="totalData && totalData.item && totalData.item.bank"
+                :id="`labelName-${totalData.item.order_id}`"
+              >
+                {{ totalData.item.bank }}
+              </div>
             </b-form-group>
             <b-form-group
               label="No Rekening:"
               :label-for="`norek-${totalData.item.order_id}`"
             >
-              <div :id="`norek-${totalData.item.order_id}`">{{ totalData.item.bank.account_no }}</div>
+              <div
+                v-if="totalData && totalData.item && totalData.item.bank_account_no"
+                :id="`norek-${totalData.item.order_id}`"
+              >
+                {{ totalData.item.bank_account_no }}
+              </div>
             </b-form-group>
             <b-form-group
               label="Pemilik Rekening"
               :label-for="`ownerRek-${totalData.item.order_id}`"
             >
-              <div :id="`ownerRek-${totalData.item.order_id}`">{{ totalData.item.bank.account_name }}</div>
+              <div
+                v-if="totalData && totalData.item && totalData.item.bank_account_name"
+                :id="`ownerRek-${totalData.item.order_id}`"
+              >
+                {{ totalData.item.bank_account_name }}
+              </div>
             </b-form-group>
           </div>
         </b-popover>
@@ -328,11 +343,12 @@ export default {
   methods: {
     getDate(dateVal) {
       if (dateVal) {
-        let today = dateVal.split(' ')
-        let month = today[1]
-        const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-        month = (monthArr.indexOf(month) + 1) > 9 ? (monthArr.indexOf(month) + 1) : `0${(monthArr.indexOf(month) + 1)}`
-        today = `${today[0]}-${month}-${today[2]}`
+        // let today = dateVal.split(' ')
+        // let month = today[1]
+        // const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        // month = (monthArr.indexOf(month) + 1) > 9 ? (monthArr.indexOf(month) + 1) : `0${(monthArr.indexOf(month) + 1)}`
+        // today = `${today[0]}-${month}-${today[2]}`
+        const today = dateVal.split(' ')[0]
         return today
       }
       return dateVal
@@ -340,7 +356,7 @@ export default {
     getTime(dateVal) {
       if (dateVal) {
         const today = dateVal.split(' ')
-        let time = today[3].split(':')
+        let time = today[today.length - 1].split(':')
         time = `${time[0]}.${time[1]}`
         return time
       }
