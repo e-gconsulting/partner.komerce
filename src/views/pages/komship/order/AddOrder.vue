@@ -54,7 +54,8 @@ export default {
   },
   data() {
     return {
-      isOnboarding: true,
+      // isOnboarding: true,
+      isOnboarding: false,
       dateText: '',
       profile: {},
       test2: {},

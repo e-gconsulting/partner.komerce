@@ -178,7 +178,8 @@
         label-cols-md="3"
       >
         <b-form-input
-          v-model="customerDiscountNumber"
+          v-model.number="customerDiscountNumber"
+          type="number"
           class="add-order-product-input-v-select"
           placeholder="0"
         />
@@ -287,10 +288,19 @@
       </div>
       <div class="add-order-summary-button-wrapper">
         <b-button
+          v-if="!isCalculating"
           class="next-button no-mg-mobile"
           @click="onCountButtonClicked"
         >
           Hitung
+        </b-button>
+        <b-button
+          v-if="isCalculating"
+          class="next-button no-mg-mobile"
+          disabled
+          @click="onCountButtonClicked"
+        >
+          Please wait...
         </b-button>
         <b-button
           v-if="isValidOrder"
@@ -300,11 +310,18 @@
           Submit
         </b-button>
         <b-button
-          v-else
+          v-else-if="!isValidOrder"
           class="next-button"
           disabled
         >
           Submit
+        </b-button>
+        <b-button
+          v-else-if="isSubmitting"
+          class="next-button"
+          disabled
+        >
+          Please wait...
         </b-button>
       </div>
     </section>
@@ -350,17 +367,20 @@ import {
   BIconChevronUp,
   BIconChevronDown,
 } from 'bootstrap-vue'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import AddOrderTable from './AddOrderTable.vue'
 
-function changeDate(dateString) {
+function changeDate(dateString, format = 1) {
   if (dateString && dateString !== '') {
     let today = new Date(dateString)
     const dd = today.getDate()
     const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
     const mm = today.getMonth()
     const yyyy = today.getFullYear()
-    today = `${dd} ${monthArr[mm]} ${yyyy}`
+    if (format === 1) {
+      today = `${dd} ${monthArr[mm]} ${yyyy}`
+    } else if (format === 2) {
+      today = `${dd}-${monthArr[mm]}-${yyyy}`
+    }
     return today
   }
   return dateString
@@ -466,6 +486,8 @@ export default {
       totalCostNumber: [],
       visibleCollapse: true,
       isValidOrder: false,
+      isCalculating: false,
+      isSubmitting: false,
       fields: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
@@ -504,7 +526,7 @@ export default {
       if (this.isOnboarding) {
         this.$emit('onBoardingShow')
       } else {
-        this.handleShowPopUp()
+        this.submitOrder()
       }
     },
     handleShowPopUp() {
@@ -535,6 +557,43 @@ export default {
     },
     showDetailPriceNetto() {
       this.visibleCollapse = !this.visibleCollapse
+    },
+    handleRedirectToDataOrder() {
+      this.$router.push('data-order')
+    },
+    findCorrectData(dataArr) {
+      let selectedCost = {}
+      if (dataArr && dataArr.length && dataArr.length > 0) {
+        for (let j = 0; j < dataArr.length; j += 1) {
+          if (dataArr[j] && dataArr[j].shipping_type && dataArr[j].shipping_type === this.customerExpeditionOption) {
+            selectedCost = dataArr[j]
+          }
+        }
+      }
+      return selectedCost
+    },
+    calculateOnView() {
+      this.sendCostNumber = this.totalCostNumber && typeof this.totalCostNumber.shipping_cost !== 'undefined' ? this.totalCostNumber.shipping_cost : 0
+      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? this.totalCostNumber.service_fee : 0
+      this.sendCostNumberCut = this.totalCostNumber && typeof this.totalCostNumber.cashback !== 'undefined' ? this.totalCostNumber.cashback : 0
+      this.serviceFeeLabel = this.totalCostNumber && typeof this.totalCostNumber.service_fee_percentage !== 'undefined' ? this.totalCostNumber.service_fee_percentage.toString().replace('.', ',') : 0
+      this.cashbackLabel = this.totalCostNumber && typeof this.totalCostNumber.cashback_percentage !== 'undefined' ? this.totalCostNumber.cashback_percentage.toString().replace('.', ',') : 0
+      this.onUpdateOverAllPrice()
+      this.isCalculating = false
+      this.isValidOrder = true
+    },
+    alertFail(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+        },
+        buttonsStyling: false,
+      })
     },
     formCheck() {
       let countValidation = 0
@@ -574,11 +633,68 @@ export default {
       const validForm = this.formCheck()
       if (validForm) await this.calculate()
     },
-    handleRedirectToDataOrder() {
-      this.$router.push('data-order')
-    },
     async handleSearchCity(text) {
       await this.searchCustomerCity(text)
+    },
+    async submitOrder() {
+      console.log('customerDate', changeDate(this.customerDate, 2))
+      console.log('destinationCityALL', this.destinationCity)
+      console.log('tariff_code', this.destinationCity.value)
+      console.log('subdistrict_name', this.destinationCity.subdistrict_name)
+      console.log('district_name', this.destinationCity.district_name)
+      console.log('city_name', this.destinationCity.city_name)
+
+      console.log('profileAll', this.profile)
+      console.log('customer_id', 0)
+      console.log('profileAll', this.profile.is_komship)
+      console.log('bank', null)
+      console.log('bank_account_name', null)
+      console.log('bank_account_no', null)
+
+      console.log('customerName', this.customerName)
+      console.log('customerPhoneCode', this.customerPhoneCode)
+      console.log('customerPhone', this.customerPhone)
+      console.log('customerAddress', this.customerAddress)
+      console.log('customerShippingMethod', this.customerShippingMethod)
+      console.log('customerExpeditionOption', this.customerExpeditionOption)
+      console.log('customerPaymentMethod', this.customerPaymentMethod)
+      console.log('subtotal', this.sumAllProduct)
+      console.log('grandtotal', this.sumAllProductWithShipPrice)
+      console.log('shipping_cost', this.totalCostNumber.shipping_cost)
+      console.log('service_fee', this.totalCostNumber.service_fee)
+      console.log('discount', this.totalCostNumber.discount)
+      console.log('shipping_cashback', this.totalCostNumber.cashback)
+      console.log('net_profit', this.totalCostNumberNetto)
+
+      console.log('cart', this.selectedItems)
+
+      const formData = {
+        date: '2021-09-30',
+        tariff_code: 'BDO10000',
+        subdistrict_name: 'TUNJUNGMULI',
+        district_name: 'KARANGMONCOL',
+        city_name: 'PURBALINGGA',
+        is_komship: 1,
+        customer_id: 0,
+        customer_name: 'Pak Muh',
+        customer_phone: '09182938398',
+        detail_address: 'rt.10. Pulogadung, jakarta',
+        shipping: 'JNE',
+        shipping_type: 'YES',
+        payment_method: 'COD',
+        bank: null,
+        bank_account_name: null,
+        bank_account_no: null,
+        subtotal: 40000,
+        grandtotal: 82000,
+        shipping_cost: 42000,
+        service_fee: 3500,
+        discount: 0,
+        shipping_cashback: 3750,
+        net_profit: 113750,
+        cart: this.selectedItems,
+      }
+      await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
       return this.$http_komship.get(`v1/destination?search=${cityName}`).then(response => {
@@ -589,10 +705,12 @@ export default {
       })
     },
     calculate() {
+      this.isCalculating = true
       return this.$http_komship.get('v1/calculate', {
         params: {
           discount: this.customerDiscountNumber,
           shipping: this.customerShippingMethod,
+          // tariff_code: this.destinationCity.value,
           tariff_code: 'CGK10510',
           payment_method: this.customerPaymentMethod,
           cart: this.sumAllProduct,
@@ -603,48 +721,22 @@ export default {
         this.totalCostNumber = this.findCorrectData(data)
         this.calculateOnView()
       }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: 'Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.',
-            variant: 'danger',
-          },
-        })
+        this.isCalculating = false
+        this.alertFail('Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.')
       })
     },
-    findCorrectData(dataArr) {
-      let selectedCost = {}
-      if (dataArr && dataArr.length && dataArr.length > 0) {
-        for (let j = 0; j < dataArr.length; j += 1) {
-          if (dataArr[j] && dataArr[j].shipping_type && dataArr[j].shipping_type === this.customerExpeditionOption) {
-            selectedCost = dataArr[j]
-          }
-        }
-      }
-      return selectedCost
-    },
-    calculateOnView() {
-      this.sendCostNumber = this.totalCostNumber && typeof this.totalCostNumber.shipping_cost !== 'undefined' ? this.totalCostNumber.shipping_cost : 0
-      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? this.totalCostNumber.service_fee : 0
-      this.sendCostNumberCut = this.totalCostNumber && typeof this.totalCostNumber.cashback !== 'undefined' ? this.totalCostNumber.cashback : 0
-      this.serviceFeeLabel = this.totalCostNumber && typeof this.totalCostNumber.service_fee_percentage !== 'undefined' ? this.totalCostNumber.service_fee_percentage.toString().replace('.', ',') : 0
-      this.cashbackLabel = this.totalCostNumber && typeof this.totalCostNumber.cashback_percentage !== 'undefined' ? this.totalCostNumber.cashback_percentage.toString().replace('.', ',') : 0
-      this.onUpdateOverAllPrice()
-      this.isValidOrder = !this.isValidOrder
-    },
-    alertFail(textWarn) {
-      this.$swal({
-        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
-        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-        showCloseButton: false,
-        focusConfirm: true,
-        confirmButtonText: 'Oke',
-        customClass: {
-          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-        },
-        buttonsStyling: false,
+    onPostOrder(formData) {
+      this.isSubmitting = true
+      return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, {
+        data: { ...formData },
+      }).then(response => {
+        const { data } = response.data
+        console.log('detail post order', data)
+        this.isSubmitting = false
+        this.handleShowPopUp()
+      }).catch(() => {
+        this.isSubmitting = false
+        this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
       })
     },
   },
