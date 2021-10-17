@@ -67,6 +67,21 @@
 .input-phone-add-order-details-wrapper:focus-within {
   border-color: #ea5455;
 }
+.add-order-label-payment .col {
+  display: flex;
+}
+.add-order-product-input-v-select-payment {
+  display: inline-block;
+}
+.anchor-exp-select-wrapper {
+  width: 0;
+  overflow: hidden;
+  display: inline-block;
+}
+.anchor-exp-select {
+  opacity:0;
+  filter:alpha(opacity=0);
+}
 .input-phone-code-add-order-details .vs__dropdown-toggle {
   border: none;
 }

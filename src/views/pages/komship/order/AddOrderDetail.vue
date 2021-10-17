@@ -1,5 +1,8 @@
 <template>
-  <div class="add-order-main-wrapper">
+  <div
+    id="addOrderDetailsMainWrapper"
+    class="add-order-main-wrapper"
+  >
     <b-button
       class="next-button no-mg"
       @click="onUpdateScreenViewParent"
@@ -33,6 +36,7 @@
         label-cols-md="3"
       >
         <b-form-input
+          ref="addCustomerName"
           v-model="customerName"
           class="add-order-product-input-v-select"
           placeholder="Masukkan Nama"
@@ -60,6 +64,7 @@
           </b-input-group-prepend>
 
           <b-form-input
+            ref="addCustomerPhone"
             v-model.number="customerPhone"
             type="number"
             class="add-order-product-input-v-select input-phone-add-order-details"
@@ -73,6 +78,7 @@
         label-cols-md="3"
       >
         <b-form-input
+          ref="addCustomerCity"
           v-model="customerCity"
           class="add-order-product-input-v-select max-wd-411"
           placeholder="Masukan Kota/Kabupaten"
@@ -94,6 +100,7 @@
         label-cols-md="3"
       >
         <b-form-textarea
+          ref="addCustomerAddress"
           v-model="customerAddress"
           class="add-order-product-input-v-select"
           placeholder="Masukan alamat lengkap"
@@ -106,6 +113,7 @@
         label-cols-md="3"
       >
         <v-select
+          ref="addShippingRef"
           class="add-order-product-input-v-select v-select-expedition-order-detail mr-1"
           label=""
           label-cols-md="2"
@@ -114,24 +122,34 @@
         />
 
         <v-select
+          ref="expOptionRef"
           class="add-order-product-input-v-select v-select-expedition-order-detail"
           label=""
           label-cols-md="2"
           placeholder="Opsi Pengiriman"
+          :options="expeditionOption"
+          @input="onAddExpeditionOption"
         />
       </b-form-group>
       <b-form-group
-        class="add-order-label mb-2"
+        class="add-order-label mb-2 add-order-label-payment"
         label="Metode Pembayaran"
         label-cols-md="3"
       >
         <v-select
-          class="add-order-product-input-v-select"
+          ref="paymentMethodRef"
+          class="add-order-product-input-v-select add-order-product-input-v-select-payment"
           label=""
           label-cols-md="2"
           :options="profile.payment_method"
           @input="onAddPaymentMethod"
         />
+        <div class="anchor-exp-select-wrapper">
+          <b-form-input
+            ref="selectExpRef"
+            class="anchor-exp-select"
+          />
+        </div>
       </b-form-group>
       <b-form-group
         class="add-order-label mb-2"
@@ -163,7 +181,6 @@
           v-model="customerDiscountNumber"
           class="add-order-product-input-v-select"
           placeholder="0"
-          @input="onInputDiscount"
         />
       </b-form-group>
     </section>
@@ -182,7 +199,7 @@
         label="Total Harga Produk"
         label-cols-md="5"
       >
-        <div>{{ `Rp ${onNumberWithCommas(totalCostNumberFirst)}` }}</div>
+        <div>{{ `Rp ${onNumberWithCommas(sumAllProduct)}` }}</div>
       </b-form-group>
       <b-form-group
         class="mb-2"
@@ -209,10 +226,10 @@
       </b-form-group>
       <b-form-group
         class="summary-little-container mb-2"
-        label="Total Pembayaran (COD)"
-        label-cols-md="5"
+        :label="`Total Pembayaran${customerPaymentMethod !== '' ? ` (${customerPaymentMethod})` : ''}`"
+        label-cols-md="6"
       >
-        <div class="orange-bold">{{ `Rp ${onNumberWithCommas(totalCostNumberSecond)}` }}</div>
+        <div class="orange-bold">{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</div>
       </b-form-group>
       <div
         v-if="visibleCollapse"
@@ -242,14 +259,14 @@
         <b-form-group
           v-if="isUseDiscount"
           class="mb-2"
-          label="Biaya COD (2,8% sudah termasuk PPN)"
-          label-cols-md="5"
+          :label="`Biaya ${customerPaymentMethod !== '' ? `${customerPaymentMethod}` : ''} (${serviceFeeLabel}% sudah termasuk PPN)`"
+          label-cols-md="6"
         >
-          <div>{{ `- Rp ${onNumberWithCommas(codCutCost)}` }}</div>
+          <div>{{ `- Rp ${onNumberWithCommas(serviceFeeCutCost)}` }}</div>
         </b-form-group>
         <b-form-group
           class="mb-2"
-          label="Ongkos Kirim (dipotong cashback 25%)"
+          :label="`Ongkos Kirim (dipotong cashback ${cashbackLabel}%)`"
           label-cols-md="5"
         >
           <div>{{ `- Rp ${onNumberWithCommas(sendCostNumberCut)}` }}</div>
@@ -266,7 +283,7 @@
 
     <section class="view-order-summary view-order-summary-details-mobile">
       <div class="add-order-summary-text detail-add-order-summary-text">
-        <span>Total Pembayaran : <span class="orange-bold">{{ `Rp ${onNumberWithCommas(totalCostNumberSecond)}` }}</span></span>
+        <span>Total Pembayaran : <span class="orange-bold">{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</span></span>
       </div>
       <div class="add-order-summary-button-wrapper">
         <b-button
@@ -276,7 +293,7 @@
           Hitung
         </b-button>
         <b-button
-          v-if="isCountButtonClicked"
+          v-if="isValidOrder"
           class="next-button"
           @click="handleSaveOrder"
         >
@@ -333,6 +350,7 @@ import {
   BIconChevronUp,
   BIconChevronDown,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {
@@ -411,14 +429,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    totalCost: {
-      type: Number,
-      default: 180000,
-    },
-    sendCost: {
-      type: Number,
-      default: 30000,
-    },
     isOnboarding: {
       type: Boolean,
       default: false,
@@ -441,17 +451,21 @@ export default {
       destinationCity: [],
       customerPaymentMethod: '',
       customerShippingMethod: '',
+      customerExpeditionOption: '',
+      expeditionOption: ['OKE', 'REG', 'YES'],
       isUseDiscount: false,
       customerDiscountNumber: 0,
-      codCutCost: 0,
-      sendCostNumber: this.sendCost,
-      sendCostNumberCut: (this.sendCost * 0.25),
-      totalCostNumberFirst: countTotalPrice(this.listSelected),
-      totalCostNumberSecond: 0,
+      serviceFeeCutCost: 0,
+      serviceFeeLabel: 0,
+      sendCostNumber: 0,
+      sendCostNumberCut: 0,
+      cashbackLabel: 0,
+      sumAllProduct: countTotalPrice(this.listSelected),
+      sumAllProductWithShipPrice: 0,
       totalCostNumberNetto: 0,
-      totalCostNumber: this.totalCost,
+      totalCostNumber: [],
       visibleCollapse: true,
-      isCountButtonClicked: false,
+      isValidOrder: false,
       fields: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
@@ -476,13 +490,13 @@ export default {
       return numberWithCommas(x)
     },
     onUpdateAllPrice() {
-      this.totalCostNumberSecond = this.totalCostNumberFirst + this.sendCostNumber - this.customerDiscountNumber
+      this.sumAllProductWithShipPrice = this.sumAllProduct + this.sendCostNumber - this.customerDiscountNumber
     },
     onUpdateNettoPrice() {
-      this.totalCostNumberNetto = this.totalCostNumberSecond - this.codCutCost - this.sendCostNumberCut
+      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost - this.sendCostNumberCut
     },
     onUpdateOverAllPrice() {
-      this.totalCostNumberFirst = countTotalPrice(this.listSelected)
+      this.sumAllProduct = countTotalPrice(this.listSelected)
       this.onUpdateAllPrice()
       this.onUpdateNettoPrice()
     },
@@ -502,15 +516,13 @@ export default {
     },
     useDiscount() {
       this.isUseDiscount = !this.isUseDiscount
-      this.codCutCost = this.isUseDiscount ? (this.totalCostNumberFirst * 0.028) : 0
       this.customerDiscountNumber = this.isUseDiscount ? this.customerDiscountNumber : 0
-      this.onUpdateOverAllPrice()
-    },
-    onInputDiscount() {
-      this.onUpdateOverAllPrice()
     },
     onAddShipping(itemSelected) {
       this.customerShippingMethod = itemSelected
+    },
+    onAddExpeditionOption(itemSelected) {
+      this.customerExpeditionOption = itemSelected
     },
     onAddPaymentMethod(itemSelected) {
       this.customerPaymentMethod = itemSelected
@@ -524,8 +536,43 @@ export default {
     showDetailPriceNetto() {
       this.visibleCollapse = !this.visibleCollapse
     },
-    onCountButtonClicked() {
-      this.isCountButtonClicked = !this.isCountButtonClicked
+    formCheck() {
+      let countValidation = 0
+      if (this.customerName === '') {
+        this.$refs.addCustomerName.focus()
+        countValidation += 1
+      } else if (this.customerPhone === '') {
+        this.$refs.addCustomerPhone.focus()
+        countValidation += 1
+      } else if (this.customerCity === '') {
+        this.$refs.addCustomerCity.focus()
+        countValidation += 1
+      } else if (this.customerAddress === '') {
+        this.$refs.addCustomerAddress.focus()
+        countValidation += 1
+      } else if (typeof this.customerShippingMethod === 'undefined' || this.customerShippingMethod === '') {
+        if (!this.$refs.addShippingRef.open) this.$refs.addShippingRef.select()
+        this.$refs.selectExpRef.focus()
+        countValidation += 1
+      } else if (typeof this.customerExpeditionOption === 'undefined' || this.customerExpeditionOption === '') {
+        if (!this.$refs.expOptionRef.open) this.$refs.expOptionRef.select()
+        this.$refs.selectExpRef.focus()
+        countValidation += 1
+      } else if (typeof this.customerPaymentMethod === 'undefined' || this.customerPaymentMethod === '') {
+        if (!this.$refs.paymentMethodRef.open) this.$refs.paymentMethodRef.select()
+        this.$refs.selectExpRef.focus()
+        countValidation += 1
+      }
+      if (countValidation > 0) {
+        this.alertFail('Tidak Boleh Ada Field Yang Kosong!')
+        return false
+      }
+      return true
+    },
+    async onCountButtonClicked() {
+      this.onUpdateOverAllPrice()
+      const validForm = this.formCheck()
+      if (validForm) await this.calculate()
     },
     handleRedirectToDataOrder() {
       this.$router.push('data-order')
@@ -539,6 +586,65 @@ export default {
         this.destinationCity = data
       }).catch(() => {
         console.log('fail to search destination')
+      })
+    },
+    calculate() {
+      return this.$http_komship.get('v1/calculate', {
+        params: {
+          discount: this.customerDiscountNumber,
+          shipping: this.customerShippingMethod,
+          tariff_code: 'CGK10510',
+          payment_method: this.customerPaymentMethod,
+          cart: this.sumAllProduct,
+        },
+      }).then(response => {
+        const { data } = response.data
+        console.log('dataCost', data)
+        this.totalCostNumber = this.findCorrectData(data)
+        this.calculateOnView()
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.',
+            variant: 'danger',
+          },
+        })
+      })
+    },
+    findCorrectData(dataArr) {
+      let selectedCost = {}
+      if (dataArr && dataArr.length && dataArr.length > 0) {
+        for (let j = 0; j < dataArr.length; j += 1) {
+          if (dataArr[j] && dataArr[j].shipping_type && dataArr[j].shipping_type === this.customerExpeditionOption) {
+            selectedCost = dataArr[j]
+          }
+        }
+      }
+      return selectedCost
+    },
+    calculateOnView() {
+      this.sendCostNumber = this.totalCostNumber && typeof this.totalCostNumber.shipping_cost !== 'undefined' ? this.totalCostNumber.shipping_cost : 0
+      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? this.totalCostNumber.service_fee : 0
+      this.sendCostNumberCut = this.totalCostNumber && typeof this.totalCostNumber.cashback !== 'undefined' ? this.totalCostNumber.cashback : 0
+      this.serviceFeeLabel = this.totalCostNumber && typeof this.totalCostNumber.service_fee_percentage !== 'undefined' ? this.totalCostNumber.service_fee_percentage.toString().replace('.', ',') : 0
+      this.cashbackLabel = this.totalCostNumber && typeof this.totalCostNumber.cashback_percentage !== 'undefined' ? this.totalCostNumber.cashback_percentage.toString().replace('.', ',') : 0
+      this.onUpdateOverAllPrice()
+      this.isValidOrder = !this.isValidOrder
+    },
+    alertFail(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+        },
+        buttonsStyling: false,
       })
     },
   },
