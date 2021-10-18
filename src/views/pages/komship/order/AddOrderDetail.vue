@@ -40,7 +40,18 @@
           v-model="customerName"
           class="add-order-product-input-v-select"
           placeholder="Masukkan Nama"
+          list="customer-list-id"
+          @input="handleSearchCustomer"
+          @change="handleChangeCustomer"
         />
+        <datalist id="customer-list-id">
+          <option
+            v-for="(customerItem, customerItemIndex) in detailCustomerList"
+            :key="'optionCustomer'+customerItemIndex"
+          >
+            {{ customerItem.name }}
+          </option>
+        </datalist>
       </b-form-group>
       <b-form-group
         class="add-order-label mb-2"
@@ -458,6 +469,9 @@ export default {
       dateValue: this.dateText,
       customerDate: '',
       customerName: '',
+      customerId: '',
+      detailCustomerList: [],
+      customerTariffCode: '',
       customerPhone: '',
       customerPhoneCode: '+62',
       customerPhoneCodeList: ['+62'],
@@ -671,6 +685,28 @@ export default {
       }
       return {}
     },
+    findCustomer(names, listArr) {
+      for (let j = 0; j < listArr.length; j += 1) {
+        if (listArr[j] && listArr[j].name === names) {
+          return listArr[j]
+        }
+      }
+      return {}
+    },
+    handleChangeCustomer(text) {
+      if (text && this.detailCustomerList.length && this.detailCustomerList.length > 0) {
+        const chosenCustomerData = this.findCustomer(text, this.detailCustomerList)
+        if (chosenCustomerData && chosenCustomerData.customer_id) {
+          this.customerName = chosenCustomerData.name
+          this.customerTariffCode = chosenCustomerData.tariff_code
+          this.customerId = chosenCustomerData.customer_id
+          this.customerPhone = chosenCustomerData.phone[0] === '0' ? chosenCustomerData.phone.substring(1) : chosenCustomerData.phone
+          this.customerAddress = chosenCustomerData.address
+        } else {
+          this.customerId = 0
+        }
+      }
+    },
     async onCountButtonClicked() {
       this.onUpdateOverAllPrice()
       const validForm = this.formCheck()
@@ -679,16 +715,19 @@ export default {
     async handleSearchCity(text) {
       await this.searchCustomerCity(text)
     },
+    async handleSearchCustomer(text) {
+      await this.searchCustomerDetail(text)
+    },
     async submitOrder() {
       const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       const formData = {
         date: this.changeDate(this.dateValue, 2),
-        tariff_code: cityChosen.value,
+        tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : cityChosen.value,
         subdistrict_name: cityChosen.subdistrict_name,
         district_name: cityChosen.district_name,
         city_name: cityChosen.city_name,
         is_komship: this.profile.is_komship,
-        customer_id: 0,
+        customer_id: this.customerId,
         customer_name: this.customerName,
         customer_phone: this.customerPhoneCode !== '' ? `0${this.customerPhone}` : null,
         detail_address: this.customerAddress,
@@ -726,14 +765,21 @@ export default {
         console.log('fail to search destination')
       })
     },
+    searchCustomerDetail(customerName) {
+      return this.$http_komship.get(`v1/customer?search=${customerName}`).then(response => {
+        const { data } = response.data
+        this.detailCustomerList = data
+      }).catch(() => {
+        console.log('fail to search customer')
+      })
+    },
     calculate() {
       this.isCalculating = true
-      const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       return this.$http_komship.get('v1/calculate', {
         params: {
           discount: this.customerDiscountNumber,
           shipping: this.customerShippingMethod,
-          tariff_code: cityChosen.value,
+          tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
           payment_method: this.customerPaymentMethod,
           cart: this.sumAllProduct,
         },
