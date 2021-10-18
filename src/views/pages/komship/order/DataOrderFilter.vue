@@ -33,7 +33,7 @@
           <template v-slot:input="picker">
             <div class="d-flex justify-content-between align-items-center">
               <span class="mr-2">{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
-              <img src="@/assets/images/icons/date-picker-icon.svg" />
+              <img src="@/assets/images/icons/date-picker-icon.svg">
             </div>
           </template>
         </date-range-picker>
@@ -42,10 +42,13 @@
         label="Produk"
         label-for="productInput"
       >
-        <b-form-input
+        <v-select
           id="productInput"
-          v-model="chooseProduct"
-          placeholder="Pilih produk"
+          class="add-order-product-input"
+          label="product_name"
+          label-cols-md="2"
+          :options="listProduct"
+          @input="onAddProduct"
         />
       </b-form-group>
       <b-form-group
@@ -82,7 +85,6 @@
 import {
   BButton,
   BFormGroup,
-  BFormInput,
   BPopover,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
@@ -94,7 +96,6 @@ export default {
   components: {
     BButton,
     BFormGroup,
-    BFormInput,
     BPopover,
     DateRangePicker,
     vSelect,
@@ -130,7 +131,7 @@ export default {
       },
       listExpedition: [
         { key: 'code', value: 'COD' },
-        { key: 'transfer', value: 'Transfer' },
+        { key: 'transfer', value: 'BANK TRANSFER' },
       ],
       filterForm: {
         date: '',
@@ -139,31 +140,53 @@ export default {
       },
     }
   },
+  props: {
+    listProduct: {
+      type: Array,
+      default: () => [],
+    },
+  },
   methods: {
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
     },
+    formatDateByYear(d) {
+      return moment(d).format('YYYY-MM-D')
+    },
     handleShowFilter(popOverId) {
       this.$root.$emit('bv::show::popover', popOverId)
     },
+    handleHideFilter(popOverId = 'popoverDataOrderFilter1') {
+      this.$root.$emit('bv::hide::popover', popOverId)
+    },
     onAddExpedition(itemSelected) {
       if (itemSelected && itemSelected.value) {
-        if (this.selectedExp.indexOf(itemSelected.value) > -1) {
-          this.selectedExp.splice(this.selectedExp.indexOf(itemSelected.value), 1)
+        if (this.selectedExp.length === 0) {
+          this.selectedExp.push(itemSelected.value)
         } else {
+          this.selectedExp.splice(0, 1)
           this.selectedExp.push(itemSelected.value)
         }
       } else {
         this.selectedExp = []
       }
     },
+    onAddProduct(itemSelected) {
+      console.log('onAddProduct', itemSelected)
+      if (itemSelected && itemSelected.product_name) this.chooseProduct = itemSelected.product_name
+    },
     submitFilter() {
+      const formattedDateRange = {
+        start_date: this.formatDateByYear(this.dateRange.startDate),
+        end_date: this.formatDateByYear(this.dateRange.endDate),
+      }
       this.filterForm = {
-        date: this.dateRange,
-        product: this.selectedExp && this.selectedExp.length > 0 ? this.selectedExp[0].toLowerCase() : '',
-        method: this.chooseProduct,
+        date: formattedDateRange,
+        product: this.chooseProduct,
+        method: this.selectedExp && this.selectedExp.length > 0 ? this.selectedExp[0] : '',
       }
       this.$emit('onFormSubmit', this.filterForm)
+      this.handleHideFilter()
     },
     resetFilter() {
       const today = new Date()
@@ -176,11 +199,12 @@ export default {
         endDate: today,
       }
       this.filterForm = {
-        date: '',
+        date: {},
         product: '',
         method: null,
       }
-      this.$emit('onFormSubmit', this.filterForm)
+      this.$emit('onResetForm', this.filterForm)
+      this.handleHideFilter()
     },
   },
 }

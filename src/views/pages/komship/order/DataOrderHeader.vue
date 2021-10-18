@@ -93,7 +93,9 @@
         <div class="icon-magnify-glass"><b-icon-search /></div>
       </div>
       <data-order-filter
+        :list-product="listProduct"
         @onFormSubmit="handleFilterFormSubmit"
+        @onResetForm="handleFilterFormReset"
       />
     </div>
   </div>
@@ -124,6 +126,12 @@ export default {
     BDropdownItem,
     DataOrderFilter,
   },
+  props: {
+    listProduct: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       currentView: 'all',
@@ -152,9 +160,21 @@ export default {
     handleDropdown(val) {
       if (val) this.dropdownText = val === 'export' ? 'Export' : 'Import'
     },
+    handleFilterFormReset(valObj) {
+      if (valObj) {
+        this.filterForm = valObj
+        this.$emit('onResetFilter')
+      }
+    },
     handleFilterFormSubmit(valObj) {
       if (valObj) {
         this.filterForm = valObj
+        const paramsToSend = {
+          payment_method: this.filterForm && this.filterForm.method ? this.filterForm.method : '',
+          start_date: this.filterForm && this.filterForm.date && this.filterForm.date.start_date ? this.filterForm.date.start_date : '',
+          end_date: this.filterForm && this.filterForm.date && this.filterForm.date.end_date ? this.filterForm.date.end_date : '',
+        }
+        this.$emit('onApplyFilter', paramsToSend)
       }
     },
     handleAddPickupBtnClicked() {

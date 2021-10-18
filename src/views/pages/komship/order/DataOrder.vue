@@ -6,8 +6,11 @@
       <data-order-header
         v-if="!isDetail"
         :current-view="currentView"
+        :list-product="listProduct"
         @onUpdateView="updateCurrentView"
         @onSearchFilter="updateSearchFilterText"
+        @onApplyFilter="handleApplyFilter"
+        @onResetFilter="handleResetDataDisplayed"
       />
 
       <data-order-table
@@ -177,6 +180,7 @@ export default {
           // },
         ],
       },
+      listProduct: [],
     }
   },
   async mounted() {
@@ -248,9 +252,20 @@ export default {
     handleRedirectToAddOrder() {
       this.$router.push('add-order')
     },
+    async handleApplyFilter(params) {
+      this.loading = true
+      await this.getOrderByFilter(params)
+      this.loading = false
+    },
+    async handleResetDataDisplayed() {
+      this.loading = true
+      await this.getOrder()
+      this.loading = false
+    },
     async reload() {
       this.loading = true
       await this.getProfile()
+      await this.getListProductByPartner()
       await this.getOrder()
       this.loading = false
     },
@@ -263,24 +278,24 @@ export default {
         console.log('gagal2')
       })
     },
+    getListProductByPartner() {
+      const partnerId = this.profile.partner_id
+      return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
+        const { data } = response.data
+        console.log('this.product', data)
+        this.listProduct = data
+      }).catch(() => {
+        console.log('gagal2')
+      })
+    },
     getOrder() {
-      return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
-        params: {
-          order_id: '4,5',
-          // is_komship: 0,
-          // order_status: 0,
-          // customer_name: 'tunjungmuli',
-          // payment_method: 'COD',
-          // start_date: '2021-09-08',
-          // end_date: '2021-09-30',
-        },
-      }).then(response => {
+      return this.$http_komship.get(`v1/order/${this.profile.partner_id}`).then(response => {
         const { data } = response.data.data
         console.log('listAllOrder', data)
         this.tableData.items = data
         console.log('this.items', this.tableData.items)
       }).catch(() => {
-        this.alertFail('Unable to get the list of the product Please try again later or contact support.')
+        this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
       })
     },
     getOrderDetail(orderId) {
@@ -292,6 +307,17 @@ export default {
         console.log('this.detailOrderData', this.detailOrderData)
       }).catch(() => {
         this.alertFail('Unable to get the order detail. Please try again later or contact support.')
+      })
+    },
+    getOrderByFilter(values) {
+      return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: { ...values },
+      }).then(response => {
+        const { data } = response.data.data
+        console.log('listAllOrderFromFilter', data)
+        this.tableData.items = data
+      }).catch(() => {
+        this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
       })
     },
   },
