@@ -97,7 +97,7 @@
           </div>
         </b-form-group>
 
-        <div class="info-detail-data-order grey-text mt-4">{{ `Telah ditambahkan oleh ‘${profile.user_fullname}’ pada ${detailOrder.order_date} WIB` }}</div>
+        <div class="info-detail-data-order grey-text mt-4">{{ `Telah ditambahkan oleh ‘${detailOrder.user_fullname}’ pada ${detailOrder.order_date} WIB` }}</div>
       </div>
 
       <div class="data-order-detail-title-wrapper">Informasi Pengiriman</div>
@@ -133,7 +133,7 @@
               id="ekspedisi-order"
               class="data-order-detail-text"
             >
-              JNE
+              {{ detailOrder.shipping }}
             </div>
           </b-form-group>
 
@@ -169,7 +169,7 @@
               id="address-order"
               class="data-order-detail-text"
             >
-              {{ detailOrder.detail_address }}
+              {{ detailOrder.customer_address }}
             </div>
           </b-form-group>
         </section>
@@ -218,7 +218,7 @@
               id="total-prod-order"
               class="data-order-detail-text-small"
             >
-              {{ `Rp ${numberWithCommas(detailOrder.grand_total)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.subtotal)}` }}
             </div>
           </b-form-group>
 
@@ -246,7 +246,7 @@
               id="cut-prod-order"
               class="data-order-detail-text-small"
             >
-              {{ `Rp ${numberWithCommas(0)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.discount)}` }}
             </div>
           </b-form-group>
 
@@ -260,7 +260,7 @@
               id="summary-total-prod-order"
               class="data-order-detail-text-small org-text"
             >
-              {{ `Rp ${numberWithCommas(detailOrder.grand_total + detailOrder.shipping_cost - 0)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.subtotal + detailOrder.shipping_cost - detailOrder.discount)}` }}
             </div>
           </b-form-group>
 
@@ -274,7 +274,7 @@
               id="cod-prod-order"
               class="data-order-detail-text-small"
             >
-              {{ `Rp ${numberWithCommas(40000)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.service_fee)}` }}
             </div>
           </b-form-group>
 
@@ -288,7 +288,7 @@
               id="cashback-prod-order"
               class="data-order-detail-text-small"
             >
-              {{ `Rp ${numberWithCommas(30000)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.shipping_cashback)}` }}
             </div>
           </b-form-group>
 
@@ -302,7 +302,7 @@
               id="netto-prod-order"
               class="data-order-detail-text-small org-text"
             >
-              {{ `Rp ${numberWithCommas(detailOrder.grand_total + detailOrder.shipping_cost - 0 - 70000)}` }}
+              {{ `Rp ${numberWithCommas(detailOrder.subtotal + detailOrder.shipping_cost - detailOrder.discount - detailOrder.service_fee - detailOrder.shipping_cashback)}` }}
             </div>
           </b-form-group>
         </section>

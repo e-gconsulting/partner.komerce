@@ -258,7 +258,6 @@
         class="mt-2"
       >
         <b-form-group
-          v-if="isUseDiscount"
           class="mb-2"
           :label="`Biaya ${customerPaymentMethod !== '' ? `${customerPaymentMethod}` : ''} (${serviceFeeLabel}% sudah termasuk PPN)`"
           label-cols-md="6"
@@ -369,23 +368,6 @@ import {
 } from 'bootstrap-vue'
 import AddOrderTable from './AddOrderTable.vue'
 
-function changeDate(dateString, format = 1) {
-  if (dateString && dateString !== '') {
-    let today = new Date(dateString)
-    const dd = today.getDate()
-    const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-    const mm = today.getMonth()
-    const yyyy = today.getFullYear()
-    if (format === 1) {
-      today = `${dd} ${monthArr[mm]} ${yyyy}`
-    } else if (format === 2) {
-      today = `${dd}-${monthArr[mm]}-${yyyy}`
-    }
-    return today
-  }
-  return dateString
-}
-
 function numberWithCommas(x) {
   if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
   return x
@@ -415,6 +397,19 @@ function countTotalPrice(listData) {
     return totalPrice
   }
   return 0
+}
+
+function getVariantPerItem(listData) {
+  if (listData && listData.selectedVariationData && listData.selectedVariationData.length && listData.selectedVariationData.length > 0) {
+    const variantData = {}
+    for (let i = 0; i < listData.selectedVariationData.length; i += 1) {
+      variantData.id = i === 0 || i === (listData.selectedVariationData.length - 1) ? listData.selectedVariationData[i].options_id : (`${listData.selectedVariationData[i].options_id}, `)
+      variantData.name = i === 0 || i === (listData.selectedVariationData.length - 1) ? listData.selectedVariationData[i].name : (`${listData.selectedVariationData[i].name} - `)
+      variantData.price = genBasePrice(listData.selectedVariationData)
+    }
+    return variantData
+  }
+  return {}
 }
 
 export default {
@@ -496,6 +491,7 @@ export default {
         { key: 'subtotal', label: 'Subtotal' },
       ],
       selectedItems: this.listSelected,
+      cartOrder: [],
     }
   },
   mounted() {
@@ -504,9 +500,24 @@ export default {
   methods: {
     onChangeDate(ctx) {
       if (ctx && ctx.activeYMD) {
-        this.customerDate = changeDate(ctx.activeYMD)
+        this.customerDate = this.changeDate(ctx.activeYMD)
         this.$emit('onUpdateDate', ctx.activeYMD)
       }
+    },
+    changeDate(dateString, type) {
+      if (dateString && dateString !== '') {
+        let today = new Date(dateString)
+        const dd = today.getDate()
+        const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        const mm = today.getMonth()
+        const yyyy = today.getFullYear()
+        today = `${dd} ${monthArr[mm]} ${yyyy}`
+        if (type && type === 2) {
+          today = `${yyyy}-${mm + 1}-${dd}`
+        }
+        return today
+      }
+      return dateString
     },
     onNumberWithCommas(x) {
       return numberWithCommas(x)
@@ -582,6 +593,30 @@ export default {
       this.isCalculating = false
       this.isValidOrder = true
     },
+    genCart(dataArr) {
+      const newCart = []
+      let cartItem = {}
+      if (dataArr && dataArr.length && dataArr.length > 0) {
+        for (let j = 0; j < dataArr.length; j += 1) {
+          if (dataArr[j]) {
+            const isVariant = dataArr[j].is_variant === '1'
+            const variantData = isVariant ? getVariantPerItem(dataArr[j]) : {}
+            cartItem = {
+              product_id: dataArr[j].product_id,
+              product_name: dataArr[j].product_name,
+              variant_id: isVariant ? variantData.id : null,
+              variant_name: isVariant ? variantData.name : null,
+              product_price: isVariant ? variantData.price : dataArr[j].price,
+              product_weight: dataArr[j].weight,
+              qty: dataArr[j].input,
+              subtotal: dataArr[j].input * (isVariant ? variantData.price : dataArr[j].price),
+            }
+            newCart.push({ ...cartItem })
+          }
+        }
+      }
+      return newCart
+    },
     alertFail(textWarn) {
       this.$swal({
         title: `<span class="font-weight-bold h4">${textWarn}</span>`,
@@ -628,6 +663,14 @@ export default {
       }
       return true
     },
+    findCity(label, listArr) {
+      for (let j = 0; j < listArr.length; j += 1) {
+        if (listArr[j] && listArr[j].label === label) {
+          return listArr[j]
+        }
+      }
+      return {}
+    },
     async onCountButtonClicked() {
       this.onUpdateOverAllPrice()
       const validForm = this.formCheck()
@@ -637,63 +680,42 @@ export default {
       await this.searchCustomerCity(text)
     },
     async submitOrder() {
-      console.log('customerDate', changeDate(this.customerDate, 2))
-      console.log('destinationCityALL', this.destinationCity)
-      console.log('tariff_code', this.destinationCity.value)
-      console.log('subdistrict_name', this.destinationCity.subdistrict_name)
-      console.log('district_name', this.destinationCity.district_name)
-      console.log('city_name', this.destinationCity.city_name)
-
-      console.log('profileAll', this.profile)
-      console.log('customer_id', 0)
-      console.log('profileAll', this.profile.is_komship)
-      console.log('bank', null)
-      console.log('bank_account_name', null)
-      console.log('bank_account_no', null)
-
-      console.log('customerName', this.customerName)
-      console.log('customerPhoneCode', this.customerPhoneCode)
-      console.log('customerPhone', this.customerPhone)
-      console.log('customerAddress', this.customerAddress)
-      console.log('customerShippingMethod', this.customerShippingMethod)
-      console.log('customerExpeditionOption', this.customerExpeditionOption)
-      console.log('customerPaymentMethod', this.customerPaymentMethod)
-      console.log('subtotal', this.sumAllProduct)
-      console.log('grandtotal', this.sumAllProductWithShipPrice)
-      console.log('shipping_cost', this.totalCostNumber.shipping_cost)
-      console.log('service_fee', this.totalCostNumber.service_fee)
-      console.log('discount', this.totalCostNumber.discount)
-      console.log('shipping_cashback', this.totalCostNumber.cashback)
-      console.log('net_profit', this.totalCostNumberNetto)
-
-      console.log('cart', this.selectedItems)
-
+      const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       const formData = {
-        date: '2021-09-30',
-        tariff_code: 'BDO10000',
-        subdistrict_name: 'TUNJUNGMULI',
-        district_name: 'KARANGMONCOL',
-        city_name: 'PURBALINGGA',
-        is_komship: 1,
+        date: this.changeDate(this.dateValue, 2),
+        tariff_code: cityChosen.value,
+        subdistrict_name: cityChosen.subdistrict_name,
+        district_name: cityChosen.district_name,
+        city_name: cityChosen.city_name,
+        is_komship: this.profile.is_komship,
         customer_id: 0,
-        customer_name: 'Pak Muh',
-        customer_phone: '09182938398',
-        detail_address: 'rt.10. Pulogadung, jakarta',
-        shipping: 'JNE',
-        shipping_type: 'YES',
-        payment_method: 'COD',
+        customer_name: this.customerName,
+        customer_phone: this.customerPhoneCode !== '' ? `0${this.customerPhone}` : null,
+        detail_address: this.customerAddress,
+        shipping: this.customerShippingMethod,
+        shipping_type: this.customerExpeditionOption,
+        payment_method: this.customerPaymentMethod,
         bank: null,
         bank_account_name: null,
         bank_account_no: null,
-        subtotal: 40000,
-        grandtotal: 82000,
-        shipping_cost: 42000,
-        service_fee: 3500,
-        discount: 0,
-        shipping_cashback: 3750,
-        net_profit: 113750,
-        cart: ['8'],
+        subtotal: this.sumAllProduct,
+        grandtotal: this.sumAllProductWithShipPrice,
+        shipping_cost: this.totalCostNumber.shipping_cost,
+        service_fee: this.totalCostNumber.service_fee,
+        discount: this.totalCostNumber.discount,
+        shipping_cashback: this.totalCostNumber.cashback,
+        net_profit: this.totalCostNumberNetto,
       }
+      await this.storeSelectedItemsToCart(formData)
+    },
+    async storeSelectedItemsToCart(formData) {
+      const allItemsToPost = this.genCart(this.selectedItems)
+      await this.onPostCart(allItemsToPost)
+      Object.assign(formData, { cart: this.cartOrder })
+      this.storeOrder(formData)
+    },
+    async storeOrder(formData) {
+      console.log('formData', formData)
       await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
@@ -706,12 +728,12 @@ export default {
     },
     calculate() {
       this.isCalculating = true
+      const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       return this.$http_komship.get('v1/calculate', {
         params: {
           discount: this.customerDiscountNumber,
           shipping: this.customerShippingMethod,
-          // tariff_code: this.destinationCity.value,
-          tariff_code: 'CGK10510',
+          tariff_code: cityChosen.value,
           payment_method: this.customerPaymentMethod,
           cart: this.sumAllProduct,
         },
@@ -727,9 +749,7 @@ export default {
     },
     onPostOrder(formData) {
       this.isSubmitting = true
-      return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, {
-        data: { ...formData },
-      }).then(response => {
+      return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
         console.log('detail post order', data)
         this.isSubmitting = false
@@ -737,6 +757,15 @@ export default {
       }).catch(() => {
         this.isSubmitting = false
         this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
+      })
+    },
+    onPostCart(cartItem) {
+      return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
+        const { data } = response.data
+        console.log('detail post cart', data)
+        this.cartOrder = data.cart_id
+      }).catch(() => {
+        this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
   },

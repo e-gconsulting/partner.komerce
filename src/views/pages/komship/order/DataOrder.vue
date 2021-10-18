@@ -235,10 +235,10 @@ export default {
     updateSearchFilterText(val) {
       if (val) this.searchFilterText = val
     },
-    openDetailView(data) {
+    async openDetailView(data) {
       if (data) {
-        this.isDetail = true
-        this.detailOrderData = data
+        console.log('data from item', data.order_id)
+        await this.getOrderDetail(data.order_id)
       }
     },
     exitDetailView() {
@@ -281,6 +281,17 @@ export default {
         console.log('this.items', this.tableData.items)
       }).catch(() => {
         this.alertFail('Unable to get the list of the product Please try again later or contact support.')
+      })
+    },
+    getOrderDetail(orderId) {
+      return this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${orderId}`).then(response => {
+        const { data } = response.data
+        console.log('listOrderDetail', data)
+        this.detailOrderData = data
+        this.isDetail = true
+        console.log('this.detailOrderData', this.detailOrderData)
+      }).catch(() => {
+        this.alertFail('Unable to get the order detail. Please try again later or contact support.')
       })
     },
   },
