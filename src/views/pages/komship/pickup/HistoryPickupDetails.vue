@@ -55,25 +55,25 @@
           class="add-pickup-input-vehicle-btn-wrapper"
         >
           <b-button
-            v-if="items.vehicle === 'Motor'"
-            :class="items.vehicle === 'Motor' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
-            @click="() => onChooseVehicle('bike')"
+            v-if="items.vehicle === 'MOTOR'"
+            :class="items.vehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
+            @click="() => onChooseVehicle('MOTOR')"
           >
             <b-icon-bicycle aria-hidden="true" />
             <span>Motor</span>
           </b-button>
           <b-button
-            v-if="items.vehicle === 'Mobil'"
-            :class="items.vehicle === 'Mobil' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
-            @click="() => onChooseVehicle('car')"
+            v-if="items.vehicle === 'MOBIL'"
+            :class="items.vehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
+            @click="() => onChooseVehicle('MOBIL')"
           >
             <b-icon-truck-flatbed aria-hidden="true" />
             <span>Mobil</span>
           </b-button>
           <b-button
-            v-if="items.vehicle === 'Truk'"
-            :class="items.vehicle === 'Truk' ? 'vehicle-selected white-button' : 'white-button'"
-            @click="() => onChooseVehicle('truck')"
+            v-if="items.vehicle === 'TRUK'"
+            :class="items.vehicle === 'TRUK' ? 'vehicle-selected white-button' : 'white-button'"
+            @click="() => onChooseVehicle('TRUK')"
           >
             <b-icon-truck aria-hidden="true" />
             <span>Truk</span>

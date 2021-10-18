@@ -26,7 +26,7 @@
                 {{ prodItem.product_name }}
               </div>
               <div class="product-name-variant-wrapper org-text">
-                {{ prodItem.product_variant.replace(' -', ',') }}
+                {{ prodItem.variant_name.replace(' -', ',') }}
               </div>
             </div>
           </div>

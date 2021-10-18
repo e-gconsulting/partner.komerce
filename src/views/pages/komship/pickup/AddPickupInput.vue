@@ -105,22 +105,25 @@
           class="add-pickup-input-vehicle-btn-wrapper"
         >
           <b-button
-            :class="chosenVehicle === 'bike' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
-            @click="() => onChooseVehicle('bike')"
+            v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
+            :class="chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
+            @click="() => onChooseVehicle('MOTOR')"
           >
             <b-icon-bicycle aria-hidden="true" />
             <span>Motor</span>
           </b-button>
           <b-button
-            :class="chosenVehicle === 'car' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
-            @click="() => onChooseVehicle('car')"
+            v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
+            :class="chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
+            @click="() => onChooseVehicle('MOBIL')"
           >
             <b-icon-truck-flatbed aria-hidden="true" />
             <span>Mobil</span>
           </b-button>
           <b-button
-            :class="chosenVehicle === 'truck' ? 'vehicle-selected white-button' : 'vehicle-button'"
-            @click="() => onChooseVehicle('truck')"
+            v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUK') > -1"
+            :class="chosenVehicle === 'TRUK' ? 'vehicle-selected white-button' : 'vehicle-button'"
+            @click="() => onChooseVehicle('TRUK')"
           >
             <b-icon-truck aria-hidden="true" />
             <span>Truk</span>
@@ -230,6 +233,10 @@ export default {
     AddPickupPopup,
   },
   props: {
+    profile: {
+      type: Object,
+      default: () => {},
+    },
     dataOrder: {
       type: Array,
       default: () => [],

@@ -4,6 +4,7 @@
   >
     <add-pickup-input
       :class="currentView === 'input' ? '' : 'hide'"
+      :profile="profile"
       :data-order="dummyItems"
       @onSubmitInputForm="handleInputSubmitForm"
     />
@@ -43,6 +44,7 @@ export default {
     return {
       isOnboarding: true,
       currentView: 'input',
+      profile: {},
       listSelected: [],
       dummyItems: [
         {
@@ -55,7 +57,7 @@ export default {
           detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
           shipping_cost: 20000,
           grand_total: 980000,
-          payment_methode: 'COD',
+          payment_method: 'COD',
           is_komship: 1,
           bank: null,
           airway_bill: 120109299303930,
@@ -64,7 +66,7 @@ export default {
               product_id: 1,
               product_name: 'Jilbab Pasmia 1-SKU 332',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: 'M - Merah',
+              variant_name: 'M - Merah',
               weight: 1000,
               price: 380000,
               qty: 1,
@@ -73,7 +75,7 @@ export default {
               product_id: 2,
               product_name: 'Jilbab Pasmia 1-SKU 331',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: 'M - Merah',
+              variant_name: 'M - Merah',
               weight: 1000,
               price: 200000,
               qty: 1,
@@ -82,7 +84,7 @@ export default {
               product_id: 3,
               product_name: 'Jilbab Pasmia 1-SKU 330',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: 'M - Merah',
+              variant_name: 'M - Merah',
               price: 200000,
               qty: 1,
             },
@@ -90,7 +92,7 @@ export default {
               product_id: 4,
               product_name: 'Jilbab Pasmia 1-SKU 339',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: 'M - Merah',
+              variant_name: 'M - Merah',
               weight: 1000,
               price: 200000,
               qty: 1,
@@ -108,7 +110,7 @@ export default {
           shipping_cost: 20000,
           is_komship: 0,
           grand_total: 980000,
-          payment_methode: 'Non COD',
+          payment_method: 'BANK TRANSFER',
           airway_bill: null,
           bank: {
             bank_name: 'BCA',
@@ -120,7 +122,7 @@ export default {
               product_id: 1,
               product_name: 'Jilbab Pasmia 1-SKU 332',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: '-',
+              variant_name: '-',
               weight: 1000,
               price: 100000,
               qty: 5,
@@ -129,7 +131,7 @@ export default {
               product_id: 2,
               product_name: 'Jilbab Pasmia 1-SKU 331',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: '-',
+              variant_name: '-',
               weight: 1000,
               price: 100000,
               qty: 1,
@@ -138,7 +140,7 @@ export default {
               product_id: 3,
               product_name: 'Jilbab Pasmia 1-SKU 330',
               product_image: 'images/product/product-980312037.jpg',
-              product_variant: '-',
+              variant_name: '-',
               weight: 1000,
               price: 140000,
               qty: 1,
@@ -147,6 +149,9 @@ export default {
         },
       ],
     }
+  },
+  mounted() {
+    this.reload()
   },
   methods: {
     handleInputSubmitForm(arrValue) {
@@ -160,6 +165,20 @@ export default {
     },
     handlePublishButton() {
       if (this.isOnboarding) this.$refs.onboardingElement.showModal()
+    },
+    async reload() {
+      this.loading = true
+      await this.getProfile()
+      this.loading = false
+    },
+    getProfile() {
+      return this.$http_komship.post('v1/my-profile').then(response => {
+        const { data } = response.data
+        console.log('this.profile', data)
+        this.profile = data
+      }).catch(() => {
+        console.log('gagal2')
+      })
     },
   },
 }
