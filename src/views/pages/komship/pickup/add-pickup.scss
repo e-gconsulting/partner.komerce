@@ -210,6 +210,19 @@
 .add-pickup-time-picker .b-form-timepicker button:hover, .add-pickup-time-picker .b-form-timepicker button:focus, .add-pickup-time-picker .input-group:focus-within {
   box-shadow: unset !important;
 }
+.vehicle-button-content {
+  width: 70px;
+  height: 70px;
+  padding: 0;
+}
+.vehicle-button-content img {
+  max-width: 54px;
+  margin-bottom: 4px;
+  margin: 0 auto 4px;
+}
+.vehicle-button-content-truk img, .vehicle-button-content span {
+  margin: 0 auto;
+}
 
 .hide {
   display: none;

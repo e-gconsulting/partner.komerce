@@ -106,26 +106,26 @@
         >
           <b-button
             v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
-            :class="chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
+            :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
             @click="() => onChooseVehicle('MOTOR')"
           >
-            <b-icon-bicycle aria-hidden="true" />
+            <img src="@/assets/images/icons/motor.png">
             <span>Motor</span>
           </b-button>
           <b-button
             v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
-            :class="chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'"
+            :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
             @click="() => onChooseVehicle('MOBIL')"
           >
-            <b-icon-truck-flatbed aria-hidden="true" />
+            <img src="@/assets/images/icons/mobil.png">
             <span>Mobil</span>
           </b-button>
           <b-button
             v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUK') > -1"
-            :class="chosenVehicle === 'TRUK' ? 'vehicle-selected white-button' : 'vehicle-button'"
+            :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
             @click="() => onChooseVehicle('TRUK')"
           >
-            <b-icon-truck aria-hidden="true" />
+            <img src="@/assets/images/icons/truk.png">
             <span>Truk</span>
           </b-button>
         </div>
@@ -203,9 +203,6 @@ import {
   BButton,
   BBadge,
   BModal,
-  BIconBicycle,
-  BIconTruckFlatbed,
-  BIconTruck,
   BIconPencilSquare,
   BIconChevronExpand,
 } from 'bootstrap-vue'
@@ -224,9 +221,6 @@ export default {
     BButton,
     BBadge,
     BModal,
-    BIconBicycle,
-    BIconTruckFlatbed,
-    BIconTruck,
     BIconPencilSquare,
     BIconChevronExpand,
     AddPickupTable,

@@ -56,26 +56,26 @@
         >
           <b-button
             v-if="items.vehicle === 'MOTOR'"
-            :class="items.vehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
+            :class="`vehicle-button-content ${items.vehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'}`"
             @click="() => onChooseVehicle('MOTOR')"
           >
-            <b-icon-bicycle aria-hidden="true" />
+            <img src="@/assets/images/icons/motor.png">
             <span>Motor</span>
           </b-button>
           <b-button
             v-if="items.vehicle === 'MOBIL'"
-            :class="items.vehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'"
+            :class="`vehicle-button-content ${items.vehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'white-button mr-1'}`"
             @click="() => onChooseVehicle('MOBIL')"
           >
-            <b-icon-truck-flatbed aria-hidden="true" />
+            <img src="@/assets/images/icons/mobil.png">
             <span>Mobil</span>
           </b-button>
           <b-button
             v-if="items.vehicle === 'TRUK'"
-            :class="items.vehicle === 'TRUK' ? 'vehicle-selected white-button' : 'white-button'"
+            :class="`vehicle-button-content vehicle-button-content-truk ${items.vehicle === 'TRUK' ? 'vehicle-selected white-button' : 'white-button'}`"
             @click="() => onChooseVehicle('TRUK')"
           >
-            <b-icon-truck aria-hidden="true" />
+            <img src="@/assets/images/icons/truk.png">
             <span>Truk</span>
           </b-button>
         </div>
@@ -95,9 +95,6 @@ import {
   BButton,
   BFormGroup,
   BIconChevronLeft,
-  BIconBicycle,
-  BIconTruckFlatbed,
-  BIconTruck,
 } from 'bootstrap-vue'
 import AddPickupTable from './AddPickupTable.vue'
 
@@ -106,9 +103,6 @@ export default {
     BButton,
     BFormGroup,
     BIconChevronLeft,
-    BIconBicycle,
-    BIconTruckFlatbed,
-    BIconTruck,
     AddPickupTable,
   },
   props: {
