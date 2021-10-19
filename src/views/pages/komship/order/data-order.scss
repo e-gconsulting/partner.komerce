@@ -86,6 +86,9 @@
   align-items: center;
   justify-content: center;
 }
+.dropdown-export-wrapper .dropdown-menu {
+  z-index: 1;
+}
 
 .view-data-order-table {
   border-bottom: 1px solid #E2E2E2;

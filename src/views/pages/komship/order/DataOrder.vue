@@ -7,6 +7,7 @@
         v-if="!isDetail"
         :current-view="currentView"
         :list-product="listProduct"
+        :excel-data="excelData"
         @onUpdateView="updateCurrentView"
         @onSearchFilter="updateSearchFilterText"
         @onApplyFilter="handleApplyFilter"
@@ -181,6 +182,27 @@ export default {
         ],
       },
       listProduct: [],
+      excelData: {
+        header: {
+          'Tanggal Order': 'order_date',
+          Pelanggan: 'customer_name',
+          Produk: {
+            field: 'product',
+            callback: value => `${value[0].product_name}`,
+          },
+          'Produk Variant': {
+            field: 'product',
+            callback: value => `${value[0].variant_name}`,
+          },
+          'Produk Jumlah': {
+            field: 'product',
+            callback: value => `${value[0].qty}`,
+          },
+          'Total Harga Produk': 'grand_total',
+          'Status Order': 'order_status',
+        },
+        items: [],
+      },
     }
   },
   async mounted() {
@@ -189,51 +211,51 @@ export default {
   methods: {
     updateCurrentView(val) {
       if (val) this.currentView = val
+      this.tableData.header = [
+        { key: 'order_date', label: 'Tanggal Order' },
+        { key: 'customer_name', label: 'Pelanggan' },
+        { key: 'product', label: 'Produk' },
+        { key: 'grand_total', label: 'Total Pembayaran' },
+      ]
+
+      this.excelData.header = {
+        'Tanggal Order': 'order_date',
+        Pelanggan: 'customer_name',
+        Produk: {
+          field: 'product',
+          callback: value => `${value[0].product_name}`,
+        },
+        'Produk Variant': {
+          field: 'product',
+          callback: value => `${value[0].variant_name}`,
+        },
+        'Produk Jumlah': {
+          field: 'product',
+          callback: value => `${value[0].qty}`,
+        },
+        'Total Harga Produk': 'grand_total',
+      }
+
       if (this.currentView === 'all') {
-        this.tableData.header = [
-          { key: 'order_date', label: 'Tanggal Order' },
-          { key: 'customer_name', label: 'Pelanggan' },
-          { key: 'product', label: 'Produk' },
-          { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'order_status', label: 'Status' },
-          { key: 'details', label: 'Rincian' },
-        ]
+        this.tableData.header.push({ key: 'order_status', label: 'Status' })
+        this.tableData.header.push({ key: 'details', label: 'Rincian' })
+        Object.assign(this.excelData.header, { 'Status Order': 'order_status' })
       } else if (this.currentView === 'send') {
-        this.tableData.header = [
-          { key: 'order_date', label: 'Tanggal Order' },
-          { key: 'customer_name', label: 'Pelanggan' },
-          { key: 'product', label: 'Produk' },
-          { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'district', label: 'Alamat' },
-          { key: 'details', label: 'Rincian' },
-        ]
+        this.tableData.header.push({ key: 'district', label: 'Alamat' })
+        this.tableData.header.push({ key: 'details', label: 'Rincian' })
+        Object.assign(this.excelData.header, { Alamat: 'district' })
       } else if (this.currentView === 'sent') {
-        this.tableData.header = [
-          { key: 'order_date', label: 'Tanggal Order' },
-          { key: 'customer_name', label: 'Pelanggan' },
-          { key: 'product', label: 'Produk' },
-          { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'airway_bill', label: 'No Resi' },
-          { key: 'details', label: 'Rincian' },
-        ]
+        this.tableData.header.push({ key: 'airway_bill', label: 'No Resi' })
+        this.tableData.header.push({ key: 'details', label: 'Rincian' })
+        Object.assign(this.excelData.header, { 'No Resi': 'airway_bill' })
       } else if (this.currentView === 'received') {
-        this.tableData.header = [
-          { key: 'order_date', label: 'Tanggal Order' },
-          { key: 'customer_name', label: 'Pelanggan' },
-          { key: 'product', label: 'Produk' },
-          { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'acc_date', label: 'Tanggal Diterima' },
-          { key: 'details', label: 'Rincian' },
-        ]
+        this.tableData.header.push({ key: 'acc_date', label: 'Tanggal Diterima' })
+        this.tableData.header.push({ key: 'details', label: 'Rincian' })
+        Object.assign(this.excelData.header, { 'Tanggal Diterima': 'order_date' })
       } else if (this.currentView === 'retur') {
-        this.tableData.header = [
-          { key: 'order_date', label: 'Tanggal Order' },
-          { key: 'customer_name', label: 'Pelanggan' },
-          { key: 'product', label: 'Produk' },
-          { key: 'grand_total', label: 'Total Pembayaran' },
-          { key: 'acc_date', label: 'Tanggal Diterima' },
-          { key: 'details', label: 'Rincian' },
-        ]
+        this.tableData.header.push({ key: 'acc_date', label: 'Tanggal Diterima' })
+        this.tableData.header.push({ key: 'details', label: 'Rincian' })
+        Object.assign(this.excelData.header, { 'Tanggal Diterima': 'order_date' })
       }
     },
     updateSearchFilterText(val) {
@@ -293,6 +315,7 @@ export default {
         const { data } = response.data.data
         console.log('listAllOrder', data)
         this.tableData.items = data
+        this.excelData.items = data
         console.log('this.items', this.tableData.items)
       }).catch(() => {
         this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
@@ -316,6 +339,7 @@ export default {
         const { data } = response.data.data
         console.log('listAllOrderFromFilter', data)
         this.tableData.items = data
+        this.excelData.items = data
       }).catch(() => {
         this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
       })

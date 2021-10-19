@@ -12,15 +12,30 @@
       <b-dropdown
         id="dropdown-1"
         :text="dropdownText"
-        class="white-button"
+        class="dropdown-export-wrapper white-button"
         variant="outline-warning"
       >
-        <b-dropdown-item
-          @click="() => handleDropdown('import')"
-        >Import</b-dropdown-item>
-        <b-dropdown-item
-          @click="() => handleDropdown('export')"
-        >Export</b-dropdown-item>
+        <b-dropdown-item>
+          <json-excel
+            :fields="excelData.header"
+            :data="excelData.items"
+            :worksheet="`${currentView}-list-data`"
+            :name="`komship_${currentView}_order_data_${getTodayDate()}.xls`"
+          >
+            Export Excel
+          </json-excel>
+        </b-dropdown-item>
+        <b-dropdown-item>
+          <json-excel
+            :fields="excelData.header"
+            :data="excelData.items"
+            type="csv"
+            :worksheet="`${currentView}-list-data`"
+            :name="`komship_${currentView}_order_data_${getTodayDate()}.xls`"
+          >
+            Export CSV
+          </json-excel>
+        </b-dropdown-item>
       </b-dropdown>
     </div>
     <b-nav class="data-order-nav-wrapper mb-3">
@@ -112,6 +127,8 @@ import {
   BDropdown,
   BDropdownItem,
 } from 'bootstrap-vue'
+import jsonExcel from 'vue-json-excel'
+import moment from 'moment'
 import DataOrderFilter from './DataOrderFilter.vue'
 
 export default {
@@ -125,11 +142,16 @@ export default {
     BDropdown,
     BDropdownItem,
     DataOrderFilter,
+    jsonExcel,
   },
   props: {
     listProduct: {
       type: Array,
       default: () => [],
+    },
+    excelData: {
+      type: Object,
+      default: () => {},
     },
   },
   data() {
@@ -145,6 +167,10 @@ export default {
     }
   },
   methods: {
+    getTodayDate() {
+      const today = new Date()
+      return moment(today).format('D-MMM-YYYY')
+    },
     navButtonToggle(val) {
       if (val) {
         this.currentView = val
@@ -156,9 +182,6 @@ export default {
         this.searchFilterText = val
         this.$emit('onSearchFilter', val)
       }
-    },
-    handleDropdown(val) {
-      if (val) this.dropdownText = val === 'export' ? 'Export' : 'Import'
     },
     handleFilterFormReset(valObj) {
       if (valObj) {
