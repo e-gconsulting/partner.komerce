@@ -263,7 +263,6 @@ export default {
     },
     async openDetailView(data) {
       if (data) {
-        console.log('data from item', data.order_id)
         await this.getOrderDetail(data.order_id)
       }
     },

@@ -13,7 +13,7 @@
       <b-button
         variant="outline-danger"
         class="detail-button"
-        @click="exitDetailView"
+        @click="handleDeleteOrder"
       >
         Delete
       </b-button>
@@ -77,22 +77,22 @@
             class="data-order-detail-text"
           >
             <b-badge
-              v-if="detailOrder.order_status.toLowerCase() === 'diterima' || detailOrder.order_status.toLowerCase() === 'dikembalikan'"
+              v-if="detailOrder.order_status.toLowerCase() === 'diterima' || detailOrder.order_status.toLowerCase() === 'dikirim' || detailOrder.order_status.toLowerCase() === 'dikembalikan'"
               variant="light-success"
             >
-              Diterima
+              {{ detailOrder.order_status }}
             </b-badge>
             <b-badge
               v-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
               variant="light-warning"
             >
-              Perlu Dikirim
+              {{ detailOrder.order_status }}
             </b-badge>
             <b-badge
               v-if="detailOrder.order_status.toLowerCase() === 'retur'"
               variant="light-danger"
             >
-              Retur
+              {{ detailOrder.order_status }}
             </b-badge>
           </div>
         </b-form-group>
@@ -310,7 +310,9 @@
     </div>
     <data-order-detail-popup
       ref="popuprefresi"
+      :profile="profile"
       :detail-order="detailOrder"
+      @onUpdateAirwayBill="handleChangeAirwayBill"
     />
   </div>
 </template>
@@ -382,9 +384,6 @@ export default {
     },
     getDate(dateVal) {
       if (dateVal) {
-        // let today = dateVal.split(' ')
-        // const month = today[1]
-        // today = `${today[0]} ${month} ${today[2]}`
         const today = dateVal.split(' ')[0]
         return today
       }
@@ -392,6 +391,54 @@ export default {
     },
     showModalInputResi() {
       this.$refs.popuprefresi.showModalInputResi()
+    },
+    handleChangeAirwayBill(airwayBillText) {
+      if (this.detailOrder) {
+        this.detailOrder.airway_bill = airwayBillText
+      }
+    },
+    reloadPage() {
+      this.$router.go()
+    },
+    alertPopUp(textWarn, params = null, cb = null) {
+      const swalOption = {
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        showCloseButton: false,
+        showConfirmButton: false,
+      }
+      if (params === 'success') {
+        Object.assign(swalOption, {
+          imageUrl: require('@/assets/images/icons/success.svg') // eslint-disable-line
+        })
+      } else {
+        Object.assign(swalOption, {
+          imageUrl: require('@/assets/images/icons/fail.svg') // eslint-disable-line
+        })
+      }
+
+      this.$swal({
+        ...swalOption,
+      }).then(() => {
+        if (typeof cb === 'function') cb()
+      })
+    },
+    async handleDeleteOrder() {
+      await this.onDeleteOrder()
+    },
+    onDeleteOrder() {
+      // this.alertPopUp('Success To Delete Order', 'success', () => this.reloadPage())
+      return this.$http_komship.delete(`v1/order/${this.profile.partner_id}/delete/${this.detailOrder.order_id}`).then(response => {
+        const { data } = response
+        console.log('success to delete order', data)
+        if (data && data.code && data.code === 200) {
+          this.alertPopUp('Success To Delete Order', 'success', () => this.reloadPage())
+        } else {
+          this.alertPopUp((data.message && data.message !== '' ? data.message : 'Failed To Delete Order'), 'fail')
+        }
+      }).catch(() => {
+        console.log('failed to delete order')
+        this.alertPopUp('Failed To Delete Order', 'fail')
+      })
     },
   },
 }

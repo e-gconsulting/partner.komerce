@@ -4,12 +4,14 @@
       id="modal-3"
       title="Tambah Resi"
       :ok-title="okTitleButton"
+      :ok-disabled="isOnProccess"
       :cancel-title="cancelTitleButton"
       body-class="modal-on-detail-data-order"
       centered
       @show="resetModal"
       @hidden="resetModal"
       @ok="handleOkModal"
+      @cancel="handleCancelModalInputResi"
     >
       <template v-slot:modal-header-close>
         <b-icon-x-circle
@@ -88,7 +90,7 @@
             id="phone-order-popup"
             class="data-order-detail-text"
           >
-            01234567890
+            {{ detailOrder.customer_phone }}
           </div>
         </b-form-group>
 
@@ -102,7 +104,7 @@
             id="address-order-popup"
             class="data-order-detail-text"
           >
-            {{ detailOrder.detail_address }}
+            {{ detailOrder.customer_address }}
           </div>
         </b-form-group>
 
@@ -116,7 +118,7 @@
             id="expedisi-order-popup"
             class="data-order-detail-text"
           >
-            JNE
+            {{ detailOrder.shipping }}
           </div>
         </b-form-group>
 
@@ -130,7 +132,7 @@
             id="date-order-popup"
             class="data-order-detail-text"
           >
-            {{ getDate(detailOrder.order_date) }}
+            {{ detailOrder.order_date }}
           </div>
         </b-form-group>
       </div>
@@ -168,6 +170,10 @@ export default {
     BIconXCircle,
   },
   props: {
+    profile: {
+      type: Object,
+      default: () => {},
+    },
     detailOrder: {
       type: Object,
       default: () => {},
@@ -180,6 +186,7 @@ export default {
       okTitleButton: 'Cek Resi',
       cancelTitleButton: 'Batal',
       modalState: 'default',
+      isOnProccess: false,
     }
   },
   methods: {
@@ -195,8 +202,20 @@ export default {
     showModalInputResi() {
       this.$root.$emit('bv::show::modal', 'modal-3')
     },
-    checkFormValidity() {
-      return this.inputtedResi === ''
+    handleCancelModalInputResi(bvModalEvt) {
+      if (this.modalState === 'default') {
+        this.$root.$emit('bv::hide::modal', 'modal-3')
+        this.resetModal()
+      } else {
+        this.handleBackModalInputResi(bvModalEvt)
+      }
+    },
+    handleBackModalInputResi(bvModalEvt) {
+      this.okTitleButton = 'Cek Resi'
+      this.cancelTitleButton = 'Batal'
+      this.modalState = 'default'
+      this.warnTextModal = ''
+      bvModalEvt.preventDefault()
     },
     resetModal() {
       this.inputtedResi = ''
@@ -207,16 +226,14 @@ export default {
     },
     handleOkModal(bvModalEvt) {
       if (this.modalState === 'receipt') {
-        /* show succes popup */
-        this.handleShowSuccesModal()
+        this.triggerUpdateAirwayBill(this.inputtedResi)
       } else if (this.modalState !== 'receipt') {
-        if (this.checkFormValidity()) {
-          bvModalEvt.preventDefault()
-          this.warnTextModal = 'No resi tidak valid'
-        } else {
-          this.handleOkModalShowReceipt(bvModalEvt)
-        }
+        bvModalEvt.preventDefault()
+        this.checkFormValidity(bvModalEvt)
       }
+    },
+    handleShowSuccesModal() {
+      this.$root.$emit('bv::show::modal', 'modal-4')
     },
     handleOkModalShowReceipt(bvModalEvt) {
       this.okTitleButton = 'Simpan'
@@ -224,8 +241,55 @@ export default {
       this.modalState = 'receipt'
       bvModalEvt.preventDefault()
     },
-    handleShowSuccesModal() {
-      this.$root.$emit('bv::show::modal', 'modal-4')
+    handleSuccessUpdateAirwayBill(airwayBillText) {
+      this.$emit('onUpdateAirwayBill', airwayBillText)
+    },
+    async checkFormValidity(bvModalEvt) {
+      await this.checkAirwayBill(bvModalEvt)
+    },
+    async triggerUpdateAirwayBill() {
+      await this.updateAirwayBill()
+    },
+    checkAirwayBill(bvModalEvt) {
+      this.isOnProccess = true
+      this.okTitleButton = 'Please wait'
+      return this.$http_komship.get(`v1/check-awb/${this.inputtedResi}/${this.detailOrder.order_id}`).then(response => {
+        const { data } = response
+        console.log('checkAirwayBill', data)
+        if (data && data.status === 'success') {
+          this.warnTextModal = ''
+          this.handleOkModalShowReceipt(bvModalEvt)
+        } else {
+          this.warnTextModal = data && data.status === 'failed' && data.message && data.message !== '' ? data.message : 'No resi tidak valid'
+          this.okTitleButton = 'Cek Resi'
+        }
+        this.isOnProccess = false
+      }).catch(response => {
+        const { data } = response
+        console.log('failed to checkAirwayBill', data)
+        this.warnTextModal = data && data.status === 'failed' && data.message && data.message !== '' ? data.message : 'failed to check no resi'
+        this.isOnProccess = false
+        this.okTitleButton = 'Cek Resi'
+      })
+    },
+    updateAirwayBill(airwayBillText) {
+      this.isOnProccess = true
+      this.okTitleButton = 'Please wait'
+      const newAirwayBill = {
+        airway_bill: airwayBillText,
+      }
+      return this.$http_komship.put(`v1/order/${this.profile.partner_id}/update/${this.detailOrder.order_id}`, newAirwayBill).then(response => {
+        const { data } = response.data
+        console.log('updateAirwayBill', data)
+        this.handleSuccessUpdateAirwayBill(airwayBillText)
+        this.handleShowSuccesModal()
+        this.isOnProccess = false
+        this.okTitleButton = 'Simpan'
+      }).catch(() => {
+        console.log('failed to updateAirwayBill')
+        this.isOnProccess = false
+        this.okTitleButton = 'Simpan'
+      })
     },
   },
 }
