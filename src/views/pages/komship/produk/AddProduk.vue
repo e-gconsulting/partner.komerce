@@ -360,7 +360,8 @@ export default {
   },
   data() {
     return {
-      isOnboarding: true,
+      // isOnboarding: true,
+      isOnboarding: false,
       selected: ['A'],
       fields: [
         { key: 'name', label: 'Nama' },

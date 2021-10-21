@@ -504,7 +504,8 @@ export default {
   },
   data() {
     return {
-      isOnboarding: true,
+      // isOnboarding: true,
+      isOnboarding: false,
       saldo: 8000000,
       saldoPending: 3000000,
       cashback: 2000000,

@@ -42,7 +42,8 @@ export default {
   },
   data() {
     return {
-      isOnboarding: true,
+      // isOnboarding: true,
+      isOnboarding: false,
       currentView: 'input',
       profile: {},
       listSelected: [],
