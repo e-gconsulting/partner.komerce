@@ -307,7 +307,13 @@ export default {
     },
     onSubmitForm() {
       console.log('onSubmitForm')
-      this.storePickup()
+      if (this.chosenVehicle && this.chosenVehicle !== '') {
+        this.alertFail('Please enter a valid address')
+      } else if (this.addressDetailText && this.addressDetailText !== '') {
+        this.alertFail('Please choose your vehicle to pickup your order')
+      } else { /* call the api if the form is already correct */
+        this.storePickup()
+      }
     },
     handleSubmitPopUpSuccess() {
       console.log('handleSubmitPopUpSuccess')
