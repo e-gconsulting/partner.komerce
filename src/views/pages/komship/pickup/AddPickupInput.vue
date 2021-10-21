@@ -244,7 +244,7 @@ export default {
     return {
       selectedOrder: this.listSelected,
       selectedOrderId: this.genOrderId(this.listSelected),
-      dateValue: this.dateText,
+      dateValue: new Date(),
       dateLabel: '',
       isEditAddress: false,
       addressText: 'Gudang XYZ',
@@ -307,10 +307,10 @@ export default {
     },
     onSubmitForm() {
       console.log('onSubmitForm')
-      if (this.chosenVehicle && this.chosenVehicle !== '') {
-        this.alertFail('Please enter a valid address')
-      } else if (this.addressDetailText && this.addressDetailText !== '') {
+      if (this.chosenVehicle && this.chosenVehicle === '') {
         this.alertFail('Please choose your vehicle to pickup your order')
+      } else if (this.addressDetailText && this.addressDetailText === '') {
+        this.alertFail('Please enter a valid address')
       } else { /* call the api if the form is already correct */
         this.storePickup()
       }
