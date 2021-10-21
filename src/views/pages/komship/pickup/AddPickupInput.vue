@@ -152,10 +152,10 @@
       </b-button>
       <b-button
         :class="`org-button ${selectedOrder.length === 0 ? 'add-pickup-submit-button-disabled' : ''}`"
-        :disabled="selectedOrder.length === 0"
+        :disabled="selectedOrder.length === 0 || isSubmitting"
         @click="onSubmitForm"
       >
-        Ajukan Pickup
+        {{ isSubmitting ? 'Please wait..' : 'Ajukan Pickup' }}
       </b-button>
     </section>
 
@@ -243,6 +243,7 @@ export default {
   data() {
     return {
       selectedOrder: this.listSelected,
+      selectedOrderId: this.genOrderId(this.listSelected),
       dateValue: this.dateText,
       dateLabel: '',
       isEditAddress: false,
@@ -251,6 +252,7 @@ export default {
       timeValue: '09:00',
       timeValueText: '09 : 00',
       chosenVehicle: '',
+      isSubmitting: false,
       fields: [
         { key: 'product', label: 'Produk' },
         { key: 'qty', label: 'Jumlah' },
@@ -259,7 +261,7 @@ export default {
     }
   },
   methods: {
-    changeDate(dateString) {
+    changeDate(dateString, type) {
       if (dateString && dateString !== '') {
         let today = new Date(dateString)
         const dd = today.getDate()
@@ -267,6 +269,9 @@ export default {
         const mm = today.getMonth()
         const yyyy = today.getFullYear()
         today = `${dd} ${monthArr[mm]} ${yyyy}`
+        if (type && type === 2) {
+          today = `${yyyy}-${mm + 1}-${dd}`
+        }
         return today
       }
       return dateString
@@ -274,7 +279,6 @@ export default {
     onChangeDate(ctx) {
       if (ctx && ctx.activeYMD) {
         this.dateLabel = this.changeDate(ctx.activeYMD)
-        // this.$emit('onUpdateDate', ctx.activeYMD)
       }
     },
     onChangeTime(ctx) {
@@ -296,7 +300,6 @@ export default {
     onChooseOrder() {
       console.log('onChooseOrder', this.$refs.addPickupPopUP)
       this.$refs.addPickupPopUP.showModal()
-      // this.$emit('onShowPopUp', productId, selectedDataVariation)
     },
     onResetForm() {
       console.log('onResetForm')
@@ -304,18 +307,74 @@ export default {
     },
     onSubmitForm() {
       console.log('onSubmitForm')
-      this.$root.$emit('bv::show::modal', 'modal-7')
+      this.storePickup()
     },
     handleSubmitPopUpSuccess() {
       console.log('handleSubmitPopUpSuccess')
       this.$root.$emit('bv::hide::modal', 'modal-7')
+      this.$router.push('history-pickup')
     },
     onSelectOrder(arrValue) {
-      if (arrValue) this.selectedOrder = arrValue
+      if (arrValue) {
+        this.selectedOrder = arrValue
+        this.selectedOrderId = this.genOrderId(arrValue)
+      }
+    },
+    genOrderId(listData) {
+      const container = []
+      if (listData && listData.length && listData.length > 0) {
+        for (let i = 0; i < listData.length; i += 1) {
+          if (listData[i] && listData[i].order_id) {
+            container.push(listData[i].order_id)
+          }
+        }
+      }
+      return container
     },
     handleOpenDetailView() {
       console.log('handleOpenDetailView')
       this.$emit('onSubmitInputForm', this.selectedOrder)
+    },
+    alertFail(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+        },
+        buttonsStyling: false,
+      })
+    },
+    async storePickup() {
+      const formData = {
+        partner_name: 'Tata Usaha',
+        pickup_date: this.changeDate(this.dateValue, 2),
+        pickup_time: this.timeValue,
+        // pickup_time: '10:00',
+        pic: 'joko',
+        pic_phone: '099229',
+        vehicle: this.chosenVehicle,
+        address_id: 2,
+        address_detail: this.addressDetailText,
+        orders: this.selectedOrderId,
+      }
+      console.log('formData', formData)
+      await this.storePickupReq(formData)
+    },
+    storePickupReq(formData) {
+      this.isSubmitting = true
+      return this.$http_komship.post(`v1/pickup/${this.profile.partner_id}/store`, formData).then(response => {
+        const { data } = response.data
+        console.log('post pickup order', data)
+        this.isSubmitting = false
+        this.$root.$emit('bv::show::modal', 'modal-7')
+      }).catch(() => {
+        this.isSubmitting = false
+        this.alertFail('Unable to Request a Pickup. Please and try again later or contact support.')
+      })
     },
   },
 }
