@@ -158,6 +158,7 @@
               </b-table-simple> -->
 
               <b-table
+                id="my-table"
                 striped
                 hover
                 responsive
@@ -199,23 +200,24 @@
                     style="color: #222222;"
                   >
                     {{ data.item.bank_account_name }}
-                  </span>nominalRek
+                  </span>
                 </template>
                 <template #cell(nominalRek)="data">
-                  <span
-                    class="text-secondary"
-                    style="color: #222222;"
-                  >
-                    {{ data.item.nominal }}
-                  </span>
+                  <div style="text-align: right;">
+                    <span
+                      class="text-secondary"
+                      style="color: #222222;"
+                    >
+                      {{ data.item.nominal | formatRupiah }}
+                    </span>
+                  </div>
                 </template>
                 <template #cell(statusAccount)="data">
                   <span
                     class="text-secondary"
                     :class="colorStatus(data.item.status)"
-                    style="color: #222222;"
                   >
-                    {{ data.item.status | formatRupiah }}
+                    {{ data.item.status }}
                   </span>
                 </template>
                 <template #table-busy>
@@ -227,7 +229,12 @@
                   </div>
                 </template>
               </b-table>
-
+              <b-pagination
+                v-model="currentPage"
+                :total-rows="totalRows"
+                :per-page="perPage"
+                aria-controls="my-table"
+              ></b-pagination>
             </b-col>
 
           </b-row>
