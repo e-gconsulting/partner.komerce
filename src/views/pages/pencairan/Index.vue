@@ -52,7 +52,7 @@
                   style="width: 417px;"
                 >
                   <b-form-group
-                    v-model="filterDropdown.name"
+                    v-model="filterDropdown.partner_name"
                     label="Nama"
                     label-for="dropdown-form-nama"
                     @submit.stop.prevent
@@ -120,38 +120,116 @@
                       class="font-weight-bolder"
                     >
                       <span>
-                        {{ row.name }}
+                        {{ row.partner_name }}
                       </span>
                       <br>
                       <span>
-                        {{ row.email }}
+                        {{ row.partner_email }}
                       </span>
                     </b-td>
                     <b-td>
-                      {{ row.bankName }}
+                      {{ row.bank_name }}
                     </b-td>
-                    <b-td>{{ row.bankNo }}</b-td>
+                    <b-td>
+                      {{ row.bank_account_no }}
+                      <br>
+                      {{ row.bank_account_name }}
+                    </b-td>
                     <b-td
-                      class="font-weight-bolder"
+                      class="font-weight-bolder text-right"
                     >
                       {{ row.nominal }}
                     </b-td>
                     <b-td
                       style="cursor: pointer;"
                     >
-                      <b-link
+                      <!-- <b-link
                         :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: row.status.replace(' ','-') } }"
+                      > -->
+                      <span
+                        :class="colorStatus(row.status)"
                       >
-                        <span
-                          :class="colorStatus(row.status)"
-                        >
-                          {{ row.status }}
-                        </span>
-                      </b-link>
+                        {{ row.status }}
+                      </span>
+                      <!-- </b-link> -->
                     </b-td>
                   </b-tr>
                 </b-tbody>
               </b-table-simple>
+
+              <b-table
+                striped
+                hover
+                responsive
+                :per-page="perPage"
+                :current-page="currentPage"
+                :items="items"
+                :busy="isLoadTable"
+                :fields="fields"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                :sort-direction="sortDirection"
+                :filter="filter"
+                :filter-included-fields="filterOn"
+                @filtered="onFiltered"
+              >
+                <!-- A virtual composite column -->
+                <template #cell(detailName)="data">
+                  <b>
+                    {{ data.item.name }}
+                  </b>
+                  <br>
+                  <span
+                    class="text-secondary"
+                    style="color: #222222;"
+                  >
+                    {{ data.item.email }}
+                  </span>
+                </template>
+                <template #cell(servicesCustom)="data">
+                  <div class="d-flex">
+                    <div
+                      v-for="(itm,idx) in data.item.services"
+                      :key="idx"
+                    >
+                      <img
+                        :src="require('@/assets/images/logo/logo.png')"
+                        :title="itm"
+                        alt="logo"
+                        width="29px"
+                        height="29px"
+                        style="border-radius: 15px;"
+                      >
+                    </div>
+                  </div>
+                </template>
+                <template #cell(detailPartner)="data">
+                  <b-button
+                    variant="flat-info"
+                    @click="detailPartner(data.item.id)"
+                  >
+                    Lihat Detail...
+                  </b-button>
+                </template>
+                <template #cell(arsipkanPartner)="data">
+                  <b-button
+                    v-b-modal.modal-konfirmasi-arsip
+                    variant="flat-default"
+                    @click="arsipkanBtnPartner(data.item.id)"
+                  >
+                    <feather-icon icon="ArchiveIcon" />
+                  </b-button>
+                </template>
+                <template #table-busy>
+                  <div class="text-center text-danger my-2">
+                    <b-spinner
+                      class="align-middle"
+                    />
+                    <strong>Loading...</strong>
+                  </div>
+                </template>
+              </b-table>
+
             </b-col>
 
           </b-row>
@@ -176,10 +254,11 @@ import {
   BRow,
   BCol,
   BCard,
-  BLink,
+  // BLink,
   BFormInput,
   BFormGroup,
   BDropdownForm,
+  BTable,
   BTableSimple,
   BThead,
   BTbody,
@@ -205,8 +284,9 @@ export default {
     BRow,
     BCol,
     BCard,
-    BLink,
+    // BLink,
     BFormInput,
+    BTable,
     BTableSimple,
     BThead,
     BTbody,
@@ -229,47 +309,77 @@ export default {
   },
   data() {
     return {
-      dir: false,
       alertshow: false,
       loadDataAwal: true,
-      rows: [],
       searchTerm: '',
       filterDropdown: {
-        name: '',
+        partner_name: '',
         selectedStatus: null,
       },
       optionsStatus: [
         { value: null, text: 'Pilih Status' },
-        { value: 'Aktif', text: 'Aktif' },
-        { value: 'Tidak Aktif', text: 'Tidak Aktif' },
+        { value: 'completed', text: 'Completed' },
+        { value: 'requested', text: 'Canceled' },
+        { value: 'canceled', text: 'Canceled' },
+        { value: 'on_review', text: 'On Review' },
+        { value: 'rejected', text: 'Rejected' },
       ],
-      rowsTable: [
+      rowsTable: [],
+      isLoadTable: false,
+      perPage: 5,
+      // pageOptions: [3, 5, 10],
+      totalRows: 1,
+      currentPage: 1,
+      sortBy: '',
+      sortDesc: false,
+      sortDirection: 'asc',
+      filter: null,
+      filterOn: [],
+      items: [
         {
-          userId: 1,
-          name: 'Hanif Muflihul',
+          id: 1,
+          name: 'Skylar Korsgaard',
           email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 4500000,
-          status: 'Perlu disetujui',
+          username: 'Hanifsaja',
+          no_hp: 'Rp 27.000.000',
+          services: [1, 2, 3],
         },
         {
-          userId: 11,
-          name: 'Terry Siphron',
+          id: 2,
+          name: 'Skylar Korsgaard',
           email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Sedang direview',
+          username: 'Hanifsaja',
+          no_hp: 'Rp 27.000.000',
+          services: [1, 2, 3],
+        },
+      ],
+      fields: [
+        // A virtual column made up from two fields
+        {
+          key: 'detailName',
+          label: 'Nama',
         },
         {
-          userId: 21,
-          name: 'Kadin Franci',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Disetujui',
+          key: 'username',
+          label: 'Username',
+          sortable: true,
+        },
+        {
+          key: 'no_hp',
+          label: 'No Handphone',
+          sortable: true,
+        },
+        {
+          key: 'servicesCustom',
+          label: 'Layanan yang digunakan',
+        },
+        {
+          key: 'detailPartner',
+          label: '',
+        },
+        {
+          key: 'arsipkanPartner',
+          label: '',
         },
       ],
     }
@@ -280,74 +390,65 @@ export default {
   watch: {
     searchTerm: {
       handler() {
-        this.fetchData({ searchTerm: this.searchTerm })
+        this.fetchData({ partner_name: this.searchTerm })
       },
     },
   },
   mounted() {
+    this.fetchData()
     //
   },
   created() {
-    this.loadDataAwal = false
-    this.fetchData()
-    // get data tabel pencairan
-    // get data for select option status
+    //
   },
   methods: {
+    onFiltered(filteredItems) {
+      // Trigger pagination to update the number of buttons/pages due to filtering
+      this.totalRows = filteredItems.length
+      this.currentPage = 1
+    },
     kFormatter,
     onClickResetFilterDropdown() {
-      //
+      this.filterDropdown = {
+        partner_name: '',
+        selectedStatus: null,
+      }
     },
     onClickTerapkanFilterDropdown() {
+      this.fetchData({ ...this.filterDropdown })
       // Close the dropdown and (by passing true) return focus to the toggle button
       this.$refs.dropdownFilter.hide(true)
     },
     colorStatus(status) {
       let classStatusColor = ''
       switch (status) {
-        case 'Perlu disetujui':
-          // #FF6A3A
-          classStatusColor = 'colorStatusPrimary'
-          break
-        case 'Sedang direview':
+        case 'on_review':
           // #FBA63C
           classStatusColor = 'colorStatusWarning'
           break
-        case 'Disetujui':
+        case 'rejected':
+          // #FBA63C
+          classStatusColor = 'colorStatusWarning'
+          break
+        case 'completed':
           // #34A770
           classStatusColor = 'colorStatusSuccess'
           break
         default:
+          // #FF6A3A
+          classStatusColor = 'colorStatusPrimary'
           break
       }
       return classStatusColor
     },
-    async fetchData(params) {
+    fetchData(params) {
       // change this endpoint
       const endpoint = '/api/v1/admin/withdrawal/list'
       if (params) {
         axioskomsipdev.get(endpoint, { params: { ...params } })
           .then(({ data }) => {
-            // example = data.data[1]
-            // {
-            //   "withdrawal_id": 1,
-            //   "partner_name": "Tatausahaku",
-            //   "partner_email": "cankun@gmail.com",
-            //   "bank_name": "Mandiri",
-            //   "bank_account_no": "11111111",
-            //   "bank_account_name": "tatausaha",
-            //   "nominal": 400000,
-            //   "status": "completed",requested, canceled, on_review, rejected
-            // }
-            // const newParseData = data.data.map(x => {
-            //   const dt = {
-            //     title: x.title,
-            //     body: x.body.substring(0, 15),
-            //   }
-            //   return dt
-            // })
-            console.log(data)
-            this.rows = []
+            const parseData = JSON.parse(JSON.stringify(data.data))
+            this.rowsTable = parseData
           })
           .catch(e => {
             console.log('error', e)
@@ -358,15 +459,8 @@ export default {
       } else {
         axioskomsipdev.get(endpoint)
           .then(({ data }) => {
-            // const newParseData = data.data.map(x => {
-            //   const dt = {
-            //     title: x.title,
-            //     body: x.body.substring(0, 15),
-            //   }
-            //   return dt
-            // })
-            console.log(data)
-            this.rows = []
+            const parseData = JSON.parse(JSON.stringify(data.data))
+            this.rowsTable = parseData
           })
           .catch(e => {
             console.log('error', e)
@@ -375,6 +469,10 @@ export default {
             this.loadDataAwal = false
           })
       }
+
+      // this.$nextTick(function () {
+      //   console.log('338 :', this.row)
+      // })
     },
     toPage(params = '') {
       console.log(params)
