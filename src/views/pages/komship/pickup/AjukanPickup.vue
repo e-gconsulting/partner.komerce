@@ -11,6 +11,7 @@
 
     <add-pickup-details
       :class="currentView === 'details' ? '' : 'hide'"
+      :profile="profile"
       :list-selected="listSelected"
       :is-onboarding="isOnboarding"
       @onBoardingShow="handlePublishButton"

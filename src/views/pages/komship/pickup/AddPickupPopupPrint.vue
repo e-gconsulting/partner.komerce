@@ -108,6 +108,7 @@ export default {
     handleChosePrintOption(value) {
       console.log('handleChosePrintOption', value)
       if (value) this.selectedOptions = value
+      this.$emit('onChangeOption', this.selectedOptions)
     },
   },
 }

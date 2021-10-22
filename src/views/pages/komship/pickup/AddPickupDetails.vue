@@ -35,7 +35,17 @@
     <add-pickup-popup-print
       ref="addPickupPopUpPrint"
       :selected-option="printOption"
+      @onChangeOption="handleChangeOption"
       @onSubmitOption="onSubmitPrint"
+    />
+
+    <pickup-label-print
+      ref="printLabelContent"
+      :is-onboarding="isOnboarding"
+      :print-option="printOption"
+      :profile="profile"
+      :list-order="listSelected"
+      @onBoardingShow="handleShowOnBoarding"
     />
   </div>
 </template>
@@ -48,6 +58,7 @@ import {
 } from 'bootstrap-vue'
 import DataOrderTable from '../order/DataOrderTable.vue'
 import AddPickupPopupPrint from './AddPickupPopupPrint.vue'
+import PickupLabelPrint from './PickupLabelPrint.vue'
 
 export default {
   components: {
@@ -56,11 +67,16 @@ export default {
     BBadge,
     DataOrderTable,
     AddPickupPopupPrint,
+    PickupLabelPrint,
   },
   props: {
     listSelected: {
       type: Array,
       default: () => [],
+    },
+    profile: {
+      type: Object,
+      default: () => {},
     },
     isOnboarding: {
       type: Boolean,
@@ -69,7 +85,7 @@ export default {
   },
   data() {
     return {
-      printOption: 0,
+      printOption: 1,
       fields: [
         { key: 'order_date', label: 'Tanggal Order' },
         { key: 'customer_name', label: 'Pelanggan' },
@@ -79,24 +95,24 @@ export default {
       ],
     }
   },
-  mounted() {
-    console.log('listSelected', this.listSelected)
-  },
   methods: {
     onUpdateScreenViewParent() {
       this.$emit('onBackButtonClicked')
     },
     onShowModalPrint() {
-      console.log('onShowModalPrint')
       this.$refs.addPickupPopUpPrint.showModal()
     },
-    onSubmitPrint(values) {
-      console.log('onSubmitPrint')
-      if (values) this.printOption = values
-      console.log('onSubmitPrint2222', this.printOption)
-      if (this.isOnboarding) {
-        this.$emit('onBoardingShow')
+    handleChangeOption(values) {
+      if (values) {
+        this.printOption = values
+        this.$refs.printLabelContent.changePrintOption(this.printOption)
       }
+    },
+    onSubmitPrint(values) {
+      if (values) this.$refs.printLabelContent.printContent()
+    },
+    handleShowOnBoarding() {
+      if (this.isOnboarding) this.$emit('onBoardingShow')
     },
   },
 }
