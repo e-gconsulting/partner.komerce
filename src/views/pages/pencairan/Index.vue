@@ -101,7 +101,7 @@
               lg="12"
               class="mt-2"
             >
-              <b-table-simple responsive>
+              <!-- <b-table-simple responsive>
                 <b-thead>
                   <b-tr>
                     <b-th>Nama</b-th>
@@ -138,24 +138,24 @@
                     <b-td
                       class="font-weight-bolder text-right"
                     >
-                      {{ row.nominal }}
+                      {{ row.nominal | formatRupiah }}
                     </b-td>
                     <b-td
                       style="cursor: pointer;"
                     >
-                      <!-- <b-link
+                      <b-link
                         :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: row.status.replace(' ','-') } }"
-                      > -->
+                      >
                       <span
                         :class="colorStatus(row.status)"
                       >
                         {{ row.status }}
                       </span>
-                      <!-- </b-link> -->
+                      </b-link>
                     </b-td>
                   </b-tr>
                 </b-tbody>
-              </b-table-simple>
+              </b-table-simple> -->
 
               <b-table
                 striped
@@ -176,49 +176,47 @@
                 <!-- A virtual composite column -->
                 <template #cell(detailName)="data">
                   <b>
-                    {{ data.item.name }}
+                    {{ data.item.partner_name }}
                   </b>
                   <br>
                   <span
                     class="text-secondary"
                     style="color: #222222;"
                   >
-                    {{ data.item.email }}
+                    {{ data.item.partner_email }}
                   </span>
                 </template>
-                <template #cell(servicesCustom)="data">
-                  <div class="d-flex">
-                    <div
-                      v-for="(itm,idx) in data.item.services"
-                      :key="idx"
-                    >
-                      <img
-                        :src="require('@/assets/images/logo/logo.png')"
-                        :title="itm"
-                        alt="logo"
-                        width="29px"
-                        height="29px"
-                        style="border-radius: 15px;"
-                      >
-                    </div>
-                  </div>
-                </template>
-                <template #cell(detailPartner)="data">
-                  <b-button
-                    variant="flat-info"
-                    @click="detailPartner(data.item.id)"
+                <template #cell(bankAccount)="data">
+                  <span
+                    class="text-secondary"
+                    style="color: #222222;"
                   >
-                    Lihat Detail...
-                  </b-button>
-                </template>
-                <template #cell(arsipkanPartner)="data">
-                  <b-button
-                    v-b-modal.modal-konfirmasi-arsip
-                    variant="flat-default"
-                    @click="arsipkanBtnPartner(data.item.id)"
+                    {{ data.item.bank_account_no }}
+                  </span>
+                  <br>
+                  <span
+                    class="text-secondary"
+                    style="color: #222222;"
                   >
-                    <feather-icon icon="ArchiveIcon" />
-                  </b-button>
+                    {{ data.item.bank_account_name }}
+                  </span>nominalRek
+                </template>
+                <template #cell(nominalRek)="data">
+                  <span
+                    class="text-secondary"
+                    style="color: #222222;"
+                  >
+                    {{ data.item.nominal }}
+                  </span>
+                </template>
+                <template #cell(statusAccount)="data">
+                  <span
+                    class="text-secondary"
+                    :class="colorStatus(data.item.status)"
+                    style="color: #222222;"
+                  >
+                    {{ data.item.status | formatRupiah }}
+                  </span>
                 </template>
                 <template #table-busy>
                   <div class="text-center text-danger my-2">
@@ -259,12 +257,12 @@ import {
   BFormGroup,
   BDropdownForm,
   BTable,
-  BTableSimple,
-  BThead,
-  BTbody,
-  BTh,
-  BTr,
-  BTd,
+  // BTableSimple,
+  // BThead,
+  // BTbody,
+  // BTh,
+  // BTr,
+  // BTd,
   BInputGroup,
   BInputGroupPrepend,
   BDropdown,
@@ -287,12 +285,12 @@ export default {
     // BLink,
     BFormInput,
     BTable,
-    BTableSimple,
-    BThead,
-    BTbody,
-    BTh,
-    BTr,
-    BTd,
+    // BTableSimple,
+    // BThead,
+    // BTbody,
+    // BTh,
+    // BTr,
+    // BTd,
     BInputGroup,
     BFormGroup,
     BDropdownForm,
@@ -303,6 +301,13 @@ export default {
     BCardBody,
     BFormSelect,
     BCardHeader,
+  },
+  filters: {
+    formatRupiah: val => {
+      if (!val) return val
+      const dataRp = new Intl.NumberFormat('id-ID').format(val)
+      return dataRp
+    },
   },
   directives: {
     Ripple,
@@ -335,24 +340,7 @@ export default {
       sortDirection: 'asc',
       filter: null,
       filterOn: [],
-      items: [
-        {
-          id: 1,
-          name: 'Skylar Korsgaard',
-          email: 'hallobusiness@gmail.com',
-          username: 'Hanifsaja',
-          no_hp: 'Rp 27.000.000',
-          services: [1, 2, 3],
-        },
-        {
-          id: 2,
-          name: 'Skylar Korsgaard',
-          email: 'hallobusiness@gmail.com',
-          username: 'Hanifsaja',
-          no_hp: 'Rp 27.000.000',
-          services: [1, 2, 3],
-        },
-      ],
+      items: [],
       fields: [
         // A virtual column made up from two fields
         {
@@ -360,26 +348,21 @@ export default {
           label: 'Nama',
         },
         {
-          key: 'username',
-          label: 'Username',
+          key: 'bank_name',
+          label: 'Nama Bank',
           sortable: true,
         },
         {
-          key: 'no_hp',
-          label: 'No Handphone',
-          sortable: true,
+          key: 'bankAccount',
+          label: 'No Rekening',
         },
         {
-          key: 'servicesCustom',
-          label: 'Layanan yang digunakan',
+          key: 'nominalRek',
+          label: 'Nominal',
         },
         {
-          key: 'detailPartner',
-          label: '',
-        },
-        {
-          key: 'arsipkanPartner',
-          label: '',
+          key: 'statusAccount',
+          label: 'Status',
         },
       ],
     }
@@ -444,32 +427,24 @@ export default {
     fetchData(params) {
       // change this endpoint
       const endpoint = '/api/v1/admin/withdrawal/list'
+      let getData = null
+
       if (params) {
-        axioskomsipdev.get(endpoint, { params: { ...params } })
-          .then(({ data }) => {
-            const parseData = JSON.parse(JSON.stringify(data.data))
-            this.rowsTable = parseData
-          })
-          .catch(e => {
-            console.log('error', e)
-          })
-          .finally(() => {
-            this.loadDataAwal = false
-          })
+        getData = axioskomsipdev.get(endpoint, { params: { ...params } })
       } else {
-        axioskomsipdev.get(endpoint)
-          .then(({ data }) => {
-            const parseData = JSON.parse(JSON.stringify(data.data))
-            this.rowsTable = parseData
-          })
-          .catch(e => {
-            console.log('error', e)
-          })
-          .finally(() => {
-            this.loadDataAwal = false
-          })
+        getData = axioskomsipdev.get(endpoint)
       }
 
+      getData.then(({ data }) => {
+        const parseData = JSON.parse(JSON.stringify(data.data))
+        this.items = parseData
+      })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
       // this.$nextTick(function () {
       //   console.log('338 :', this.row)
       // })
