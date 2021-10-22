@@ -197,6 +197,7 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
+import axioskomsipdev from '@/libs/axioskomsipdev'
 import { kFormatter } from '@core/utils/filter'
 
 export default {
@@ -288,7 +289,7 @@ export default {
   },
   created() {
     this.loadDataAwal = false
-    // this.fetchData()
+    this.fetchData()
     // get data tabel pencairan
     // get data for select option status
   },
@@ -323,18 +324,30 @@ export default {
     },
     async fetchData(params) {
       // change this endpoint
-      const endpoint = 'https://jsonplaceholder.typicode.com/posts'
+      const endpoint = '/api/v1/admin/withdrawal/list'
       if (params) {
-        this.$http.get(endpoint, { params: { ...params } })
-          .then(data => {
-            const newParseData = data.data.map(x => {
-              const dt = {
-                title: x.title,
-                body: x.body.substring(0, 15),
-              }
-              return dt
-            })
-            this.rows = newParseData
+        axioskomsipdev.get(endpoint, { params: { ...params } })
+          .then(({ data }) => {
+            // example = data.data[1]
+            // {
+            //   "withdrawal_id": 1,
+            //   "partner_name": "Tatausahaku",
+            //   "partner_email": "cankun@gmail.com",
+            //   "bank_name": "Mandiri",
+            //   "bank_account_no": "11111111",
+            //   "bank_account_name": "tatausaha",
+            //   "nominal": 400000,
+            //   "status": "completed",requested, canceled, on_review, rejected
+            // }
+            // const newParseData = data.data.map(x => {
+            //   const dt = {
+            //     title: x.title,
+            //     body: x.body.substring(0, 15),
+            //   }
+            //   return dt
+            // })
+            console.log(data)
+            this.rows = []
           })
           .catch(e => {
             console.log('error', e)
@@ -343,16 +356,17 @@ export default {
             this.loadDataAwal = false
           })
       } else {
-        this.$http.get(endpoint)
-          .then(data => {
-            const newParseData = data.data.map(x => {
-              const dt = {
-                title: x.title,
-                body: x.body.substring(0, 15),
-              }
-              return dt
-            })
-            this.rows = newParseData
+        axioskomsipdev.get(endpoint)
+          .then(({ data }) => {
+            // const newParseData = data.data.map(x => {
+            //   const dt = {
+            //     title: x.title,
+            //     body: x.body.substring(0, 15),
+            //   }
+            //   return dt
+            // })
+            console.log(data)
+            this.rows = []
           })
           .catch(e => {
             console.log('error', e)
