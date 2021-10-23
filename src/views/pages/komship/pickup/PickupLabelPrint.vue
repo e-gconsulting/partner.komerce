@@ -1,7 +1,7 @@
 <template>
   <div
     id="pickupLabelContent"
-    :class="`pickup-label-container ${selectedOptions === 4 ? 'pickup-label-container-4' : (selectedOptions === 1 ? 'pickup-label-container-1' : 'pickup-label-container-full')}`"
+    :class="`pickup-label-container ${selectedOptions === 1 || selectedOptions === 2 ? 'pickup-label-container-1' : (selectedOptions === 4 ? 'pickup-label-container-4' : 'pickup-label-container-full')}`"
   >
     <div
       v-for="(item, itemIndex) in listOrder"
@@ -11,58 +11,58 @@
       <div class="pickup-label-receiver-wrapper">
         <div class="pickup-label-title">Penerima</div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Nama Penerima' }}</div>
-          <div class="pickup-label-value">{{ 'example 12345' }}</div>
+          <div class="pickup-label-key">Nama Penerima</div>
+          <div class="pickup-label-value">{{ item.customer_name }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Alamat' }}</div>
-          <div class="pickup-label-value">{{ 'Rumah depan masjid Al-Fatonah No.3 Jalan jendral sudirman RT 10 RW 03 Desa Tunjungmuli' }}</div>
+          <div class="pickup-label-key">Alamat</div>
+          <div class="pickup-label-value">{{ item.detail_address }}</div>
         </div>
       </div>
       <div class="pickup-label-sender-wrapper">
         <div class="pickup-label-title">Pengirim</div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Nama Pengirim' }}</div>
-          <div class="pickup-label-value">{{ 'Wahyu' }}</div>
+          <div class="pickup-label-key">Nama Pengirim</div>
+          <div class="pickup-label-value">{{ profile.user_name }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Kota / Kabupaten' }}</div>
-          <div class="pickup-label-value">{{ 'Jakarta Barat' }}</div>
+          <div class="pickup-label-key">Kota / Kabupaten</div>
+          <div class="pickup-label-value">{{ profile.user_address }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'No HP' }}</div>
-          <div class="pickup-label-value">{{ '081234567890' }}</div>
+          <div class="pickup-label-key">'No HP'</div>
+          <div class="pickup-label-value">{{ profile.user_phone }}</div>
         </div>
       </div>
       <div class="pickup-label-details-wrapper">
         <div class="pickup-label-title">Detail Pengiriman</div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'No Resi' }}</div>
-          <div class="pickup-label-value">{{ 'JE1234567890' }}</div>
+          <div class="pickup-label-key">No Resi</div>
+          <div class="pickup-label-value">{{ item.airway_bill }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Nama Ekspedisi' }}</div>
+          <div class="pickup-label-key">Nama Ekspedisi</div>
           <div class="pickup-label-value">{{ 'JNE' }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'No Orderan' }}</div>
-          <div class="pickup-label-value">{{ '123456' }}</div>
+          <div class="pickup-label-key">No Orderan</div>
+          <div class="pickup-label-value">{{ item.order_no }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'SKU' }}</div>
+          <div class="pickup-label-key">SKU</div>
           <div class="pickup-label-value">{{ '332' }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Variasi' }}</div>
-          <div class="pickup-label-value">{{ 'Merah' }}</div>
+          <div class="pickup-label-key">Variasi</div>
+          <div class="pickup-label-value">{{ item.product[0].variant_name }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Kuantiti' }}</div>
-          <div class="pickup-label-value">{{ '4' }}</div>
+          <div class="pickup-label-key">Kuantiti</div>
+          <div class="pickup-label-value">{{ item.product[0].qty }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">{{ 'Metode Pembayaran' }}</div>
-          <div class="pickup-label-value">{{ 'COD' }}</div>
+          <div class="pickup-label-key">Metode Pembayaran</div>
+          <div class="pickup-label-value">{{ item.payment_method }}</div>
         </div>
       </div>
     </div>
@@ -111,6 +111,7 @@ export default {
         type: 'html',
         style: this.getStyle(),
         scanStyles: false,
+        honorMarginPadding: false,
         onPrintDialogClose: () => this.handleShowOnBoarding(),
         onError: e => console.log(e),
       })
@@ -119,6 +120,7 @@ export default {
       return `
         .pickup-label-container {
           padding: 2rem;
+          height: fit-content;
         }
         .pickup-label-wrapper {
           font-family: "Poppins", sans-serif;
@@ -160,7 +162,8 @@ export default {
         .pickup-label-wrapper-1 {
           display: grid;
           grid-template-columns: auto auto;
-          margin-bottom: 5rem;
+          margin-bottom: 4rem;
+          height: 447.375px; // A4 height divide by 2
         }
         .pickup-label-wrapper-1 .pickup-label-key {
           width: 160px;
@@ -169,7 +172,7 @@ export default {
           width: calc(100% - 160px);
         }
         .pickup-label-wrapper-1 .pickup-label-receiver-wrapper, .pickup-label-wrapper-1 .pickup-label-sender-wrapper {
-          margin-bottom: 2rem;
+          margin-bottom: 0rem;
         }
         .pickup-label-wrapper-1 > div {
           padding-right: 1.5rem;
@@ -185,7 +188,7 @@ export default {
           padding: 0rem;
         }
         .pickup-label-container-4 .pickup-label-receiver-wrapper, .pickup-label-container-4 .pickup-label-sender-wrapper {
-          margin-bottom: 10px;
+          margin-bottom: 8px;
         }
         .pickup-label-container-4 .pickup-label-key {
           width: 140px;
@@ -197,11 +200,15 @@ export default {
           padding: 4px 0;
         }
 
+        .pickup-label-container-full {
+          padding: 0rem;
+        }
+
         .pickup-label-wrapper-100 {
           font-size: 8px;
           padding: 8px;
           margin-bottom: 11px;
-          width: 350.95275591px; // 10cm
+          margin-bottom: 4rem;
           height: 350.95275591px; // 10cm
         }
         .pickup-label-wrapper-100 .pickup-label-title {
@@ -221,15 +228,10 @@ export default {
           padding: 4px 0;
         }
 
-        .pickup-label-container-full {
-          padding: 0rem;
-        }
-
         .pickup-label-wrapper-150 {
           font-size: 14px;
           padding: 8px;
-          margin-bottom: 11px;
-          width: 350.95275591px; // 10cm
+          margin-bottom: 4rem;
           height: 526.429133865; // 15cm
         }
         .pickup-label-wrapper-150 .pickup-label-title {

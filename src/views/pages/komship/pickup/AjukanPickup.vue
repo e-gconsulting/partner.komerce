@@ -12,7 +12,7 @@
     <add-pickup-details
       :class="currentView === 'details' ? '' : 'hide'"
       :profile="profile"
-      :list-selected="listSelected"
+      :list-selected="listSelectedDetails"
       :is-onboarding="isOnboarding"
       @onBoardingShow="handlePublishButton"
       @onBackButtonClicked="() => handleChangeCurrenView('input')"
@@ -49,6 +49,8 @@ export default {
       profile: {},
       listOrder: [],
       listSelected: [],
+      listSelectedId: [],
+      listSelectedDetails: [],
       // dummyItems: [
       //   {
       //     order_id: 1,
@@ -157,9 +159,11 @@ export default {
     this.reload()
   },
   methods: {
-    handleInputSubmitForm(arrValue) {
-      if (arrValue) {
+    handleInputSubmitForm(arrValue, arrValueId) {
+      if (arrValue && arrValueId) {
         this.listSelected = arrValue
+        this.listSelectedId = arrValueId
+        this.triggerGetOrderDetails()
         this.handleChangeCurrenView('details')
       }
     },
@@ -173,6 +177,11 @@ export default {
       this.loading = true
       await this.getProfile()
       await this.getListOrderByPartner()
+      this.loading = false
+    },
+    async triggerGetOrderDetails() {
+      this.loading = true
+      await this.getListOrderDetailsByPartner()
       this.loading = false
     },
     getProfile() {
@@ -196,7 +205,23 @@ export default {
         console.log('this list order', data)
         this.listOrder = data
       }).catch(() => {
-        console.log('fail to get product')
+        console.log('fail to get list order')
+      })
+    },
+    getListOrderDetailsByPartner() {
+      const partnerId = this.profile.partner_id
+      return this.$http_komship.get(`v1/order/${partnerId}`, {
+        params: {
+          is_komship: this.profile.is_komship,
+          order_status: 0,
+          order_id: this.listSelectedId.toString(),
+        },
+      }).then(response => {
+        const { data } = response.data.data
+        console.log('this list order details', data)
+        this.listSelectedDetails = data
+      }).catch(() => {
+        console.log('fail to get list order details')
       })
     },
   },

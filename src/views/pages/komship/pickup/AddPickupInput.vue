@@ -339,7 +339,7 @@ export default {
     },
     handleOpenDetailView() {
       console.log('handleOpenDetailView')
-      this.$emit('onSubmitInputForm', this.selectedOrder)
+      this.$emit('onSubmitInputForm', this.selectedOrder, this.selectedOrderId)
     },
     alertFail(textWarn) {
       this.$swal({
