@@ -1,12 +1,12 @@
 <template>
   <div
     id="pickupLabelContent"
-    :class="`pickup-label-container ${selectedOptions === 1 || selectedOptions === 2 ? 'pickup-label-container-1' : (selectedOptions === 4 ? 'pickup-label-container-4' : 'pickup-label-container-full')}`"
+    :class="`pickup-label-container ${selectedOptions === 1 ? 'pickup-label-container-1' : (selectedOptions === 2 ? 'pickup-label-container-2' : (selectedOptions === 4 ? 'pickup-label-container-4' : 'pickup-label-container-full'))}`"
   >
     <div
       v-for="(item, itemIndex) in listOrder"
       :key="`pickupLabelWrapperKey${itemIndex}`"
-      :class="`pickup-label-wrapper ${selectedOptions === 1 || selectedOptions === 2 ? 'pickup-label-wrapper-1' : (selectedOptions === 150 ? 'pickup-label-wrapper-150' : (selectedOptions === 100 ? 'pickup-label-wrapper-100' : ''))}`"
+      :class="`pickup-label-wrapper ${selectedOptions === 1 || selectedOptions === 2 ? 'pickup-label-wrapper-2' : (selectedOptions === 150 ? 'pickup-label-wrapper-150' : (selectedOptions === 100 ? 'pickup-label-wrapper-100' : ''))} ${selectedOptions === 1 ? 'pickup-label-wrapper-1' : ''}`"
     >
       <div class="pickup-label-receiver-wrapper">
         <div class="pickup-label-title">Penerima</div>
@@ -30,7 +30,7 @@
           <div class="pickup-label-value">{{ profile.user_address }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
-          <div class="pickup-label-key">'No HP'</div>
+          <div class="pickup-label-key">No HP</div>
           <div class="pickup-label-value">{{ profile.user_phone }}</div>
         </div>
       </div>
@@ -156,29 +156,36 @@ export default {
           width: calc(100% - 227px);
         }
 
-        .pickup-label-container-1 {
+        .pickup-label-container-2 {
           padding: 2rem;
         }
-        .pickup-label-wrapper-1 {
+        .pickup-label-wrapper-2 {
           display: grid;
           grid-template-columns: auto auto;
           margin-bottom: 4rem;
           height: 447.375px; // A4 height divide by 2
         }
-        .pickup-label-wrapper-1 .pickup-label-key {
+        .pickup-label-wrapper-2 .pickup-label-key {
           width: 160px;
         }
-        .pickup-label-wrapper-1 .pickup-label-value {
+        .pickup-label-wrapper-2 .pickup-label-value {
           width: calc(100% - 160px);
         }
-        .pickup-label-wrapper-1 .pickup-label-receiver-wrapper, .pickup-label-wrapper-1 .pickup-label-sender-wrapper {
+        .pickup-label-wrapper-2 .pickup-label-receiver-wrapper, .pickup-label-wrapper-2 .pickup-label-sender-wrapper {
           margin-bottom: 0rem;
         }
-        .pickup-label-wrapper-1 > div {
+        .pickup-label-wrapper-2 > div {
           padding-right: 1.5rem;
         }
-        .pickup-label-wrapper-1 .pickup-label-sender-wrapper {
+        .pickup-label-wrapper-2 .pickup-label-sender-wrapper {
           width: 100%;
+        }
+
+        .pickup-label-container-1 {
+          padding: 2rem;
+        }
+        .pickup-label-wrapper-1 {
+          margin-bottom: 1342.125px;
         }
 
         .pickup-label-container-4 {
