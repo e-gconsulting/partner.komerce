@@ -28,9 +28,9 @@
               </div>
               <div
                 class="statusWrapper d-flex align-items-center justify-content-center"
-                :class="$route.params.slug.toLowerCase() | changeStatus"
+                :class="detailData.status.toLowerCase() | changeStatus"
               >
-                {{ $route.params.slug.replace('-', ' ') }}
+                {{ detailData.status }}
               </div>
             </b-col>
           </b-row>
@@ -45,7 +45,7 @@
                   Tanggal Penarikan
                 </td>
                 <td class="text-18-bold">
-                  31 Agustus 2021
+                  {{ detailData.withdrawal_date }}
                 </td>
               </tr>
               <tr>
@@ -53,7 +53,7 @@
                   Nama
                 </td>
                 <td class="text-18-bold">
-                  Hanif Muflihul
+                  {{ detailData.partner_name }}
                 </td>
               </tr>
               <tr>
@@ -61,7 +61,7 @@
                   Nama Bank
                 </td>
                 <td class="text-18-bold">
-                  Bank Mandiri
+                  {{ detailData.bank_name }}
                 </td>
               </tr>
               <tr>
@@ -69,11 +69,14 @@
                   No Rekening
                 </td>
                 <td class="text-18-bold">
-                  900012321423
+                  {{ detailData.bank_account_no }}
                 </td>
               </tr>
             </table>
-            <b-card no-body>
+            <b-card
+              v-if="detailData.transfer_proof"
+              no-body
+            >
               <b-card-body>
                 <div style="display: grid;">
                   <span class="text-bukti-transfer">
@@ -104,8 +107,8 @@
               <div class="d-flex align-items-center">
                 <span class="text-16-normal">
                   Total Saldo:
-                  <span class="text-16-normal font-weight-bolder">
-                    Rp5.000.000
+                  <span class="text-16-normal font-weight-bolder text-danger">
+                    {{ detailData.total_balance }}
                   </span>
                 </span>
                 <b-button
@@ -118,9 +121,9 @@
               </div>
               <div class="d-flex align-items-center">
                 <span class="text-16-normal">
-                  Total Saldo:
+                  Saldo Awal:
                   <span class="text-16-normal font-weight-bolder">
-                    Rp5.000.000
+                    {{ detailData.beginning_balance }}
                   </span>
                 </span>
                 <b-button
@@ -140,7 +143,7 @@
                   <span
                     ref="nominalPenarikanSaldo"
                     class="text-16-normal font-weight-bolder"
-                  >Rp5.000.000</span>
+                  >{{ detailData.withdrawal_nominal }}</span>
                 </span>
                 <b-button
                   variant="outline-success"
@@ -154,7 +157,7 @@
               <span class="text-16-normal">
                 Sisa Saldo:
                 <span class="text-16-normal font-weight-bolder">
-                  Rp500.000
+                  {{ detailData.current_balance }}
                 </span>
               </span>
             </div>
@@ -187,11 +190,11 @@
                 <!-- A virtual composite column -->
                 <template #cell(transreturn)="data">
                   <b>
-                    {{ data.item.trans }}
+                    {{ data.item.payment_method }}
                   </b>
                   <br>
                   <span class="text-secondary">
-                    {{ data.item.trans_return }}
+                    Return
                   </span>
                 </template>
                 <template #table-busy>
@@ -476,6 +479,8 @@ import {
   BCardHeader,
   BFormSelect,
 } from 'bootstrap-vue'
+
+import axioskomsipdev from '@/libs/axioskomsipdev'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -511,28 +516,32 @@ export default {
     ToastificationContent,
   },
   filters: {
-    // capitalize: value => {
-    //   let val = value
-    //   if (!val) return ''
-    //   val = val.toString()
-    //   return val.charAt(0).toUpperCase() + val.slice(1)
-    // },
-    changeStatus: val => {
-      let className = ''
-      switch (val) {
-        case 'disetujui':
-          className = 'statusSuccess'
+    formatRupiah: val => {
+      if (!val) return val
+      const dataRp = new Intl.NumberFormat('id-ID').format(val)
+      return dataRp
+    },
+    changeStatus: status => {
+      let classStatusColor = ''
+      switch (status) {
+        case 'on_review':
+          // #FBA63C
+          classStatusColor = 'statusWarning'
           break
-        case 'perlu-disetujui':
-          className = 'statusPrimary'
+        case 'rejected':
+          // #FBA63C
+          classStatusColor = 'statusWarning'
           break
-        case 'sedang-direview':
-          className = 'statusWarning'
+        case 'completed':
+          // #34A770
+          classStatusColor = 'statusSuccess'
           break
         default:
+          // #FF6A3A
+          classStatusColor = 'statusPrimary'
           break
       }
-      return className
+      return classStatusColor
     },
   },
   data() {
@@ -540,36 +549,10 @@ export default {
       loadDataAwal: true,
       catatanReview: '',
       catatanReviewState: null,
+      detailData: {
+        status: '',
+      },
       isLoadTable: false,
-      rowsTable: [
-        {
-          userId: 1,
-          name: 'Hanif Muflihul',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 4500000,
-          status: 'Perlu disetujui',
-        },
-        {
-          userId: 11,
-          name: 'Terry Siphron',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Sedang direview',
-        },
-        {
-          userId: 21,
-          name: 'Kadin Franci',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Disetujui',
-        },
-      ],
       perPage: 5,
       pageOptions: [3, 5, 10],
       totalRows: 1,
@@ -586,11 +569,11 @@ export default {
       },
       fields: [
         {
-          key: 'id',
+          key: 'order_id',
           label: 'Id',
         },
         {
-          key: 'tgl',
+          key: 'order_date',
           label: 'Tanggal',
           sortable: true,
         },
@@ -600,46 +583,23 @@ export default {
           label: 'Transaksi',
         },
         {
-          key: 'nom_trans',
+          key: 'order_grandtotal',
           label: 'Nilai Transaksi',
         },
         {
-          key: 'ongkir',
+          key: 'shipping_cost',
           label: 'Ongkos Kirim',
         },
         {
-          key: 'cod_cost',
+          key: 'service_fee',
           label: 'Biaya COD',
         },
         {
-          key: 'saldo',
+          key: 'net_profit',
           label: 'Saldo',
         },
       ],
-      items: [
-        {
-          id: 1,
-          tgl: '12-08-2021',
-          trans: 'Transfer Bank',
-          trans_return: 'Return',
-          nom_trans: 'Rp100.000',
-          ongkir: 'Rp7.500',
-          ongkir_return: 'Rp3.500',
-          cod_cost: 'Rp2.500',
-          saldo: '+Rp89.700',
-        },
-        {
-          id: 2,
-          tgl: '12-02-2022',
-          trans: 'Transfer Bank',
-          trans_return: 'Return',
-          nom_trans: 'Rp100.000',
-          ongkir: 'Rp7.500',
-          ongkir_return: 'Rp3.500',
-          cod_cost: 'Rp2.500',
-          saldo: '-Rp7.500',
-        },
-      ],
+      items: [],
     }
   },
   computed: {
@@ -666,8 +626,6 @@ export default {
   },
   created() {
     this.fetchData()
-    // get data tabel detail pencairan
-    // get data for select option status
   },
   methods: {
     selectText(element) {
@@ -751,26 +709,6 @@ export default {
         this.$bvModal.hide('modal-transfer-gagal')
       })
     },
-    colorStatus(status) {
-      let classStatusColor = ''
-      switch (status) {
-        case 'Perlu disetujui':
-          // #FF6A3A
-          classStatusColor = 'colorStatusPrimary'
-          break
-        case 'Sedang direview':
-          // #FBA63C
-          classStatusColor = 'colorStatusWarning'
-          break
-        case 'Disetujui':
-          // #34A770
-          classStatusColor = 'colorStatusSuccess'
-          break
-        default:
-          break
-      }
-      return classStatusColor
-    },
     info(item, index, button) {
       this.infoModal.title = `Row index: ${index}`
       this.infoModal.content = JSON.stringify(item, null, 2)
@@ -787,17 +725,13 @@ export default {
     },
     async fetchData() {
       this.isLoadTable = true
-      const endpoint = 'https://jsonplaceholder.typicode.com/posts'
-      this.$http.get(endpoint)
-        .then(data => {
-          const newParseData = data.data.map(x => {
-            const dt = {
-              title: x.title,
-              body: x.body.substring(0, 15),
-            }
-            return dt
-          })
-          return newParseData
+      const endpoint = `/api/v1/admin/withdrawal/detail/${this.$route.params.slug.split('-')[0]}`
+      axioskomsipdev.get(endpoint)
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          this.detailData = parseData
+          this.items = parseData.orders
+          this.totalRows = parseData.length
         })
         .catch(e => {
           console.log('error', e)

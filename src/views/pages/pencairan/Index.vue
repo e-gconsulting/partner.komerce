@@ -101,62 +101,6 @@
               lg="12"
               class="mt-2"
             >
-              <!-- <b-table-simple responsive>
-                <b-thead>
-                  <b-tr>
-                    <b-th>Nama</b-th>
-                    <b-th>Nama Bank</b-th>
-                    <b-th>No Rekening</b-th>
-                    <b-th>Nominal</b-th>
-                    <b-th>Status</b-th>
-                  </b-tr>
-                </b-thead>
-                <b-tbody>
-                  <b-tr
-                    v-for="row in rowsTable"
-                    :key="row.userId"
-                  >
-                    <b-td
-                      class="font-weight-bolder"
-                    >
-                      <span>
-                        {{ row.partner_name }}
-                      </span>
-                      <br>
-                      <span>
-                        {{ row.partner_email }}
-                      </span>
-                    </b-td>
-                    <b-td>
-                      {{ row.bank_name }}
-                    </b-td>
-                    <b-td>
-                      {{ row.bank_account_no }}
-                      <br>
-                      {{ row.bank_account_name }}
-                    </b-td>
-                    <b-td
-                      class="font-weight-bolder text-right"
-                    >
-                      {{ row.nominal | formatRupiah }}
-                    </b-td>
-                    <b-td
-                      style="cursor: pointer;"
-                    >
-                      <b-link
-                        :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: row.status.replace(' ','-') } }"
-                      >
-                      <span
-                        :class="colorStatus(row.status)"
-                      >
-                        {{ row.status }}
-                      </span>
-                      </b-link>
-                    </b-td>
-                  </b-tr>
-                </b-tbody>
-              </b-table-simple> -->
-
               <b-table
                 id="my-table"
                 striped
@@ -213,12 +157,17 @@
                   </div>
                 </template>
                 <template #cell(statusAccount)="data">
-                  <span
-                    class="text-secondary"
-                    :class="colorStatus(data.item.status)"
-                  >
-                    {{ data.item.status }}
-                  </span>
+                  <div>
+                    <b-link
+                      :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: `${data.item.withdrawal_id}-${data.item.status}` } }"
+                    >
+                      <span
+                        :class="colorStatus(data.item.status)"
+                      >
+                        {{ data.item.status }}
+                      </span>
+                    </b-link>
+                  </div>
                 </template>
                 <template #table-busy>
                   <div class="text-center text-danger my-2">
@@ -229,14 +178,36 @@
                   </div>
                 </template>
               </b-table>
+            </b-col>
+            <b-col
+              cols="3"
+            >
+              <b-form-group
+                class="mb-0"
+              >
+                <label class="d-inline-block text-sm-left mr-50">Per page</label>
+                <b-form-select
+                  id="perPageSelect"
+                  v-model="perPage"
+                  size="sm"
+                  :options="pageOptions"
+                  class="w-50"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col
+              cols="9"
+            >
               <b-pagination
                 v-model="currentPage"
                 :total-rows="totalRows"
                 :per-page="perPage"
+                align="right"
+                size="sm"
+                class="my-0"
                 aria-controls="my-table"
-              ></b-pagination>
+              />
             </b-col>
-
           </b-row>
         </b-card-body>
       </b-card>
@@ -259,18 +230,13 @@ import {
   BRow,
   BCol,
   BCard,
-  // BLink,
+  BLink,
+  BTable,
   BFormInput,
   BFormGroup,
-  BDropdownForm,
-  BTable,
-  // BTableSimple,
-  // BThead,
-  // BTbody,
-  // BTh,
-  // BTr,
-  // BTd,
+  BPagination,
   BInputGroup,
+  BDropdownForm,
   BInputGroupPrepend,
   BDropdown,
   BButton,
@@ -289,15 +255,10 @@ export default {
     BRow,
     BCol,
     BCard,
-    // BLink,
+    BLink,
     BFormInput,
     BTable,
-    // BTableSimple,
-    // BThead,
-    // BTbody,
-    // BTh,
-    // BTr,
-    // BTd,
+    BPagination,
     BInputGroup,
     BFormGroup,
     BDropdownForm,
@@ -331,7 +292,7 @@ export default {
       optionsStatus: [
         { value: null, text: 'Pilih Status' },
         { value: 'completed', text: 'Completed' },
-        { value: 'requested', text: 'Canceled' },
+        { value: 'requested', text: 'Requested' },
         { value: 'canceled', text: 'Canceled' },
         { value: 'on_review', text: 'On Review' },
         { value: 'rejected', text: 'Rejected' },
@@ -339,7 +300,7 @@ export default {
       rowsTable: [],
       isLoadTable: false,
       perPage: 5,
-      // pageOptions: [3, 5, 10],
+      pageOptions: [3, 5, 10],
       totalRows: 1,
       currentPage: 1,
       sortBy: '',
@@ -445,6 +406,7 @@ export default {
       getData.then(({ data }) => {
         const parseData = JSON.parse(JSON.stringify(data.data))
         this.items = parseData
+        this.totalRows = parseData.length
       })
         .catch(e => {
           console.log('error', e)
