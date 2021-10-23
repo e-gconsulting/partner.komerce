@@ -234,7 +234,7 @@
               </div>
             </b-col>
             <b-col
-              v-if="catatanReview !== ''"
+              v-if="detailData.notes !== ''"
               lg="12"
             >
               <div class="catatan-review p-1 mt-1">
@@ -244,7 +244,7 @@
                   Catatan :
                 </h4>
                 <p>
-                  {{ catatanReview }}
+                  {{ detailData.notes }}
                 </p>
               </div>
             </b-col>
@@ -551,6 +551,7 @@ export default {
       catatanReviewState: null,
       detailData: {
         status: '',
+        notes: '',
       },
       isLoadTable: false,
       perPage: 5,
@@ -611,12 +612,7 @@ export default {
     },
   },
   watch: {
-    catatanReview: {
-      immediate: true,
-      handler() {
-        this.fetchDataCatatanReview()
-      },
-    },
+    //
   },
   mounted() {
     this.loadDataAwal = false
@@ -652,9 +648,6 @@ export default {
           icon: 'BellIcon',
         },
       })
-    },
-    fetchDataCatatanReview() {
-      // calling api for catatan review
     },
     checkFormValidity() {
       const valid = this.$refs['form-review'].checkValidity()
