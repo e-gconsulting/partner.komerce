@@ -159,7 +159,7 @@
                 <template #cell(statusAccount)="data">
                   <div>
                     <b-link
-                      :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: `${data.item.withdrawal_id}-${data.item.status}` } }"
+                      :to="{ name: 'cod-rincian-penarikan-saldo', params: { slug: data.item.withdrawal_id } }"
                     >
                       <span
                         :class="colorStatus(data.item.status)"

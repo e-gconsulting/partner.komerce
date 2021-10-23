@@ -725,7 +725,7 @@ export default {
     },
     async fetchData() {
       this.isLoadTable = true
-      const endpoint = `/api/v1/admin/withdrawal/detail/${this.$route.params.slug.split('-')[0]}`
+      const endpoint = `/api/v1/admin/withdrawal/detail/${this.$route.params.slug}`
       axioskomsipdev.get(endpoint)
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
