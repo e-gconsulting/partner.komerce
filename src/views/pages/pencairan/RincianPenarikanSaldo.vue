@@ -108,7 +108,7 @@
                 <span class="text-16-normal">
                   Total Saldo:
                   <span class="text-16-normal font-weight-bolder text-danger">
-                    {{ detailData.total_balance }}
+                    Rp{{ detailData.total_balance | formatRupiah }}
                   </span>
                 </span>
                 <b-button
@@ -123,7 +123,7 @@
                 <span class="text-16-normal">
                   Saldo Awal:
                   <span class="text-16-normal font-weight-bolder">
-                    {{ detailData.beginning_balance }}
+                    Rp{{ detailData.beginning_balance | formatRupiah }}
                   </span>
                 </span>
                 <b-button
@@ -142,8 +142,8 @@
                   Nominal Penarikan Saldo:
                   <span
                     ref="nominalPenarikanSaldo"
-                    class="text-16-normal font-weight-bolder"
-                  >{{ detailData.withdrawal_nominal }}</span>
+                    class="text-16-normal font-weight-bolder text-success"
+                  >Rp{{ detailData.withdrawal_nominal | formatRupiah }}</span>
                 </span>
                 <b-button
                   variant="outline-success"
@@ -157,7 +157,7 @@
               <span class="text-16-normal">
                 Sisa Saldo:
                 <span class="text-16-normal font-weight-bolder">
-                  {{ detailData.current_balance }}
+                  Rp{{ detailData.current_balance | formatRupiah }}
                 </span>
               </span>
             </div>
