@@ -680,6 +680,23 @@ export default {
         return
       }
       // calling api for submit review
+      const endpoint = `/api/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.detailData.status}`
+      const formData = new FormData()
+      formData.append('notes', this.catatanReview)
+      // formData.append('yinyang.png', fs.createReadStream('./yinyang.png'));
+      // res.data.files; // 'yinyang.png': an extremely long binary string
+      // res.data.form; // form: { id: '1', string: 'Text we want to add to the submit' }
+      axioskomsipdev.put(endpoint, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(({ data }) => {
+          console.log(data)
+        })
+        .catch(e => {
+          console.log('error', e)
+        })
       // then hide modal
       this.$nextTick(() => {
         this.$bvModal.hide('modal-review')
