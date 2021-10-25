@@ -42,7 +42,7 @@
         </div>
         <div class="pickup-label-txt-wrapper">
           <div class="pickup-label-key">Nama Ekspedisi</div>
-          <div class="pickup-label-value">{{ 'JNE' }}</div>
+          <div class="pickup-label-value">{{ item.shipping }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
           <div class="pickup-label-key">No Orderan</div>
@@ -50,7 +50,7 @@
         </div>
         <div class="pickup-label-txt-wrapper">
           <div class="pickup-label-key">SKU</div>
-          <div class="pickup-label-value">{{ '332' }}</div>
+          <div class="pickup-label-value">{{ item.product[0].product_sku }}</div>
         </div>
         <div class="pickup-label-txt-wrapper">
           <div class="pickup-label-key">Variasi</div>

@@ -363,7 +363,7 @@ export default {
         pic: 'joko',
         pic_phone: '099229',
         vehicle: this.chosenVehicle,
-        address_id: 2,
+        address_id: this.profile && this.profile.user_address_default && this.profile.user_address_default.address_id ? this.profile.user_address_default.address_id : 2,
         address_detail: this.addressDetailText,
         orders: this.selectedOrderId,
       }
