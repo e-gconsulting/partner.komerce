@@ -356,7 +356,7 @@ export default {
     },
     async storePickup() {
       const formData = {
-        partner_name: 'Tata Usaha',
+        partner_name: this.profile && this.profile.partner_name ? this.profile.partner_name : 'Tata Usaha',
         pickup_date: this.changeDate(this.dateValue, 2),
         pickup_time: this.timeValue,
         // pickup_time: '10:00',
