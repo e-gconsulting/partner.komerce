@@ -1,190 +1,22 @@
 <template>
-  <b-card>
+  <b-overlay
+    variant="light"
+    :show="loading"
+    spinner-variant="primary"
+    blur="0"
+    opacity=".5"
+    rounded="sm"
+  >
+    <b-card>
 
-    <h4>
-      <strong>Pengaturan Alamat Penjemputan</strong>
-    </h4>
+      <h4>
+        <strong>Pengaturan Alamat Penjemputan</strong>
+      </h4>
 
-    <!-- List & Edit -->
-    <b-row
-      v-for="(data, index) in dataAddress"
-      :key="index + 1"
-      class="mt-3"
-    >
-      <b-col
-        cols="10"
-        class="border"
-      >
-
-        <b-row class="d-flex mt-50 mb-1">
-          <b-col md="6">
-            <h5>
-              <strong>Alamat {{ index+1 }}</strong>
-            </h5>
-          </b-col>
-          <b-col
-            md="6"
-            class="d-flex justify-content-end align-items-center"
-          >
-            <span
-              v-if="data.is_default === 1"
-              class="text-danger mr-50"
-            >
-              <strong>Alamat Utama</strong>
-            </span>
-            <b-button
-              variant="flat-dark"
-              class="btn-icon"
-              @click="editAddress(data)"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
-          </b-col>
-        </b-row>
-
-        <b-form @submit.prevent>
-          <b-row>
-
-            <b-col cols="10">
-              <b-form-group
-                label="Nama Alamat"
-                label-cols-md="3"
-              >
-                <div v-if="editMode === true && editIdAddress === data.address_id">
-                  <b-form-input
-                    v-model="addressName"
-                  />
-                </div>
-                <div v-else>
-                  <b-form-input
-                    v-model="data.address_name"
-                    disabled
-                  />
-                </div>
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="10">
-              <b-form-group
-                label="Kode Post/Kecamatan"
-                label-cols-md="3"
-              >
-                <div v-if="editMode === true && editIdAddress === data.address_id">
-                  <v-select
-                    v-model="tesLabel"
-                    :options="itemsOriginEdit"
-                    label="label"
-                    @search="onSearchOrigin"
-                  />
-                </div>
-                <div v-else>
-                  <v-select
-                    v-model="tesLabel"
-                    label="label"
-                    disabled
-                  />
-                </div>
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="10">
-              <b-form-group
-                label="Alamat Detail"
-                label-cols-md="3"
-              >
-                <div v-if="editMode === true && editIdAddress === data.address_id">
-                  <b-form-textarea
-                    v-model="addressDetail"
-                    placeholder="Alamat Detail"
-                    rows="3"
-                  />
-                </div>
-                <div v-else>
-                  <b-form-textarea
-                    v-model="data.address_detail"
-                    placeholder="Alamat Detail"
-                    disabled
-                    rows="3"
-                  />
-                </div>
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="10">
-              <b-form-group
-                label="Nama PIC"
-                label-cols-md="3"
-              >
-                <div v-if="editMode === true && editIdAddress === data.address_id">
-                  <b-form-input
-                    v-model="picName"
-                  />
-                </div>
-                <div v-else>
-                  <b-form-input
-                    v-model="data.pic"
-                    disabled
-                  />
-                </div>
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="10">
-              <b-form-group
-                label="No. HP"
-                label-cols-md="3"
-              >
-                <div v-if="editMode === true && editIdAddress === data.address_id">
-                  <b-form-input
-                    v-model="phoneUser"
-                  />
-                </div>
-                <div v-else>
-                  <b-form-input
-                    v-model="data.phone"
-                    disabled
-                  />
-                </div>
-              </b-form-group>
-            </b-col>
-
-            <transition name="fade">
-              <b-col
-                v-if="editMode === true && editIdAddress === data.address_id"
-                md="12"
-                class="d-flex justify-content-end mt-1 pb-1"
-              >
-                <b-button
-                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                  type="submit"
-                  variant="outline-primary"
-                  class="mr-1"
-                  @click.prevent="confirmDelete(data)"
-                >
-                  Hapus
-                </b-button>
-                <b-button
-                  v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                  type="reset"
-                  variant="primary"
-                  class="mr-1"
-                >
-                  Simpan
-                </b-button>
-              </b-col>
-            </transition>
-
-          </b-row>
-        </b-form>
-      </b-col>
-    </b-row>
-
-    <!-- Add Address -->
-    <transition name="fade">
+      <!-- List & Edit -->
       <b-row
-        v-if="formAddAddress === true"
+        v-for="(data, index) in dataAddress"
+        :key="index + 1"
         class="mt-3"
       >
         <b-col
@@ -195,8 +27,28 @@
           <b-row class="d-flex mt-50 mb-1">
             <b-col md="6">
               <h5>
-                <strong>Tambah Alamat</strong>
+                <strong>Alamat {{ index+1 }}</strong>
               </h5>
+            </b-col>
+            <b-col
+              md="6"
+              class="d-flex justify-content-end align-items-center"
+            >
+              <span
+                v-if="data.is_default === 1"
+                class="text-danger mr-50"
+              >
+                <strong>Alamat Utama</strong>
+              </span>
+              <b-button
+                variant="flat-dark"
+                class="btn-icon"
+                @click="editAddress(data)"
+              >
+                <feather-icon
+                  icon="EditIcon"
+                />
+              </b-button>
             </b-col>
           </b-row>
 
@@ -208,9 +60,17 @@
                   label="Nama Alamat"
                   label-cols-md="3"
                 >
-                  <b-form-input
-                    v-model="addressName"
-                  />
+                  <div v-if="editMode === true && editIdAddress === data.address_id">
+                    <b-form-input
+                      v-model="addressName"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-form-input
+                      v-model="data.address_name"
+                      disabled
+                    />
+                  </div>
                 </b-form-group>
               </b-col>
 
@@ -219,12 +79,21 @@
                   label="Kode Post/Kecamatan"
                   label-cols-md="3"
                 >
-                  <v-select
-                    v-model="tesLabelAdd"
-                    :options="itemsOriginEdit"
-                    label="label"
-                    @search="onSearchOrigin"
-                  />
+                  <div v-if="editMode === true && editIdAddress === data.address_id">
+                    <v-select
+                      v-model="tesLabel[index]"
+                      :options="itemsOriginEdit"
+                      label="label"
+                      @search="onSearchOrigin"
+                    />
+                  </div>
+                  <div v-else>
+                    <v-select
+                      v-model="tesLabel[index]"
+                      label="label"
+                      disabled
+                    />
+                  </div>
                 </b-form-group>
               </b-col>
 
@@ -233,11 +102,21 @@
                   label="Alamat Detail"
                   label-cols-md="3"
                 >
-                  <b-form-textarea
-                    v-model="addressDetail"
-                    placeholder="Alamat Detail"
-                    rows="3"
-                  />
+                  <div v-if="editMode === true && editIdAddress === data.address_id">
+                    <b-form-textarea
+                      v-model="addressDetail"
+                      placeholder="Alamat Detail"
+                      rows="3"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-form-textarea
+                      v-model="data.address_detail"
+                      placeholder="Alamat Detail"
+                      disabled
+                      rows="3"
+                    />
+                  </div>
                 </b-form-group>
               </b-col>
 
@@ -246,9 +125,17 @@
                   label="Nama PIC"
                   label-cols-md="3"
                 >
-                  <b-form-input
-                    v-model="picName"
-                  />
+                  <div v-if="editMode === true && editIdAddress === data.address_id">
+                    <b-form-input
+                      v-model="picName"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-form-input
+                      v-model="data.pic"
+                      disabled
+                    />
+                  </div>
                 </b-form-group>
               </b-col>
 
@@ -257,14 +144,23 @@
                   label="No. HP"
                   label-cols-md="3"
                 >
-                  <b-form-input
-                    v-model="phoneUser"
-                  />
+                  <div v-if="editMode === true && editIdAddress === data.address_id">
+                    <b-form-input
+                      v-model="phoneUser"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-form-input
+                      v-model="data.phone"
+                      disabled
+                    />
+                  </div>
                 </b-form-group>
               </b-col>
 
               <transition name="fade">
                 <b-col
+                  v-if="editMode === true && editIdAddress === data.address_id"
                   md="12"
                   class="d-flex justify-content-end mt-1 pb-1"
                 >
@@ -273,7 +169,7 @@
                     type="submit"
                     variant="outline-primary"
                     class="mr-1"
-                    @click="removeFormAddress"
+                    @click.prevent="confirmDelete(data)"
                   >
                     Hapus
                   </b-button>
@@ -282,7 +178,6 @@
                     type="reset"
                     variant="primary"
                     class="mr-1"
-                    @click="submitAddress"
                   >
                     Simpan
                   </b-button>
@@ -293,27 +188,141 @@
           </b-form>
         </b-col>
       </b-row>
-    </transition>
 
-    <b-row class="mt-1">
-      <b-col md="10">
-        <div class="demo-inline-spacing">
-          <b-button
-            block
-            variant="outline-primary"
-            @click="addAddress"
+      <!-- Add Address -->
+      <transition name="fade">
+        <b-row
+          v-if="formAddAddress === true"
+          class="mt-3"
+        >
+          <b-col
+            cols="10"
+            class="border"
           >
-            <feather-icon
-              icon="PlusIcon"
-              class="mr-50"
-            />
-            <span class="align-middle">Tambahkan Alamat</span>
-          </b-button>
-        </div>
-      </b-col>
-    </b-row>
 
-  </b-card>
+            <b-row class="d-flex mt-50 mb-1">
+              <b-col md="6">
+                <h5>
+                  <strong>Tambah Alamat</strong>
+                </h5>
+              </b-col>
+            </b-row>
+
+            <b-form @submit.prevent>
+              <b-row>
+
+                <b-col cols="10">
+                  <b-form-group
+                    label="Nama Alamat"
+                    label-cols-md="3"
+                  >
+                    <b-form-input
+                      v-model="addressName"
+                    />
+                  </b-form-group>
+                </b-col>
+
+                <b-col cols="10">
+                  <b-form-group
+                    label="Kode Post/Kecamatan"
+                    label-cols-md="3"
+                  >
+                    <v-select
+                      v-model="tesLabelAdd"
+                      :options="itemsOriginEdit"
+                      label="label"
+                      @search="onSearchOrigin"
+                    />
+                  </b-form-group>
+                </b-col>
+
+                <b-col cols="10">
+                  <b-form-group
+                    label="Alamat Detail"
+                    label-cols-md="3"
+                  >
+                    <b-form-textarea
+                      v-model="addressDetail"
+                      placeholder="Alamat Detail"
+                      rows="3"
+                    />
+                  </b-form-group>
+                </b-col>
+
+                <b-col cols="10">
+                  <b-form-group
+                    label="Nama PIC"
+                    label-cols-md="3"
+                  >
+                    <b-form-input
+                      v-model="picName"
+                    />
+                  </b-form-group>
+                </b-col>
+
+                <b-col cols="10">
+                  <b-form-group
+                    label="No. HP"
+                    label-cols-md="3"
+                  >
+                    <b-form-input
+                      v-model="phoneUser"
+                    />
+                  </b-form-group>
+                </b-col>
+
+                <transition name="fade">
+                  <b-col
+                    md="12"
+                    class="d-flex justify-content-end mt-1 pb-1"
+                  >
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      type="submit"
+                      variant="outline-primary"
+                      class="mr-1"
+                      @click="removeFormAddress"
+                    >
+                      Hapus
+                    </b-button>
+                    <b-button
+                      v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                      type="reset"
+                      variant="primary"
+                      class="mr-1"
+                      @click="submitAddress"
+                    >
+                      Simpan
+                    </b-button>
+                  </b-col>
+                </transition>
+
+              </b-row>
+            </b-form>
+          </b-col>
+        </b-row>
+      </transition>
+
+      <b-row class="mt-1">
+        <b-col md="10">
+          <div class="demo-inline-spacing">
+            <b-button
+              block
+              variant="outline-primary"
+              @click="addAddress"
+            >
+              <feather-icon
+                icon="PlusIcon"
+                class="mr-50"
+              />
+              <span class="align-middle">Tambahkan Alamat</span>
+            </b-button>
+          </div>
+        </b-col>
+      </b-row>
+
+    </b-card>
+  </b-overlay>
 </template>
 
 <script>
@@ -329,11 +338,11 @@ import {
   BFormInput,
   BFormTextarea,
   BButton,
+  BOverlay,
 } from 'bootstrap-vue'
 import axios2 from './baseUrl2'
 
 export default {
-
   components: {
     BCard,
     BRow,
@@ -344,6 +353,7 @@ export default {
     BFormTextarea,
     vSelect,
     BButton,
+    BOverlay,
   },
   directives: {
     Ripple,
@@ -381,26 +391,28 @@ export default {
   },
   methods: {
     getAddress() {
+      this.loading = true
       axios2.get('/v1/address', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         data.forEach(this.myLoop)
         this.dataAddress = data
+        this.loading = false
       })
     },
     myLoop(data) {
-      console.log(data.origin_code)
+      console.log(data)
       axios2.get(`/v1/origin?search=${data.origin_code}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.itemsOrigin = response.data.data
+        console.log(this.itemsOrigin)
         this.itemsOrigin.forEach(this.loopOrigin)
       })
     },
     loopOrigin(data) {
-      console.log(data.label)
-      this.tesLabel = data.label
+      this.tesLabel.push(data.label)
       return this.tesLabel
     },
     submitAddress() {

@@ -1,6 +1,6 @@
 <template>
   <b-col>
-    <b-form @submit.prevent>
+    <b-form>
       <b-row>
         <b-col cols="12">
           <b-form-group>
@@ -158,7 +158,7 @@
                   square
                   size="50px"
                   variant="light-primary"
-                  :src="data"
+                  :src="data.item.product_image[0]"
                 />
                 <div>
                   <p class="ml-1">
@@ -384,12 +384,14 @@ export default {
       console.log(index)
     },
     getProduct() {
+      this.loading = true
       return axios2.get('/v1/product', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         data.forEach(this.myArray)
         this.variantData = data
+        this.loading = false
         return this.variantData
       })
     },

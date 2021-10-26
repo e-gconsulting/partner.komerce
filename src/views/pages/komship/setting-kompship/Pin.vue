@@ -181,6 +181,11 @@
           variant="primary"
           @click="confirmChangePin"
         >
+          <b-spinner
+            v-if="loadingSubmit"
+            variant="light"
+            small
+          />
           Konfirmasi
         </b-button>
       </b-col>
@@ -224,6 +229,11 @@
           variant="primary"
           @click="isMatchChangePin"
         >
+          <b-spinner
+            v-if="loadingSubmit"
+            variant="light"
+            small
+          />
           Ganti PIN
         </b-button>
       </b-col>
@@ -271,6 +281,11 @@
           variant="primary"
           @click="submitChangePin"
         >
+          <b-spinner
+            v-if="loadingSubmit"
+            small
+            variant="light"
+          />
           Konfirmasi
         </b-button>
       </b-col>
@@ -624,6 +639,7 @@ import {
   BImg,
   BModal,
   VBModal,
+  BSpinner,
 } from 'bootstrap-vue'
 import VueOtpInput from '@bachdgvn/vue-otp-input'
 import httpKomship from '@/libs/http_komship'
@@ -638,12 +654,14 @@ export default {
     CodeInput,
     BModal,
     VueOtpInput,
+    BSpinner,
   },
   directives: {
     'b-modal': VBModal,
   },
   data() {
     return {
+      loadingSubmit: false,
       dataPin: null,
 
       errorConfirmPin: '',
@@ -736,7 +754,8 @@ export default {
       this.$refs['modal-change-pin'].show()
     },
     confirmChangePin() {
-      httpKomship.post('/v1/pin/auth', {
+      this.loadingSubmit = true
+      this.$httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
       },
       {
@@ -744,37 +763,49 @@ export default {
       }).then(response => {
         const { data } = response.data
         if (data.is_match === true) {
+          this.loadingSubmit = false
           this.$refs['modal-new-pin'].show()
           this.$refs['modal-change-pin'].hide()
         } else {
+          this.loadingSubmit = false
           this.errorConfirmPin = 'PIN tidak valid'
         }
         console.log(data)
       })
     },
     isMatchChangePin() {
+      this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'put')
       formData.append('pin', this.dataPin)
 
-      httpKomship.post('/v1/pin/update', formData, {
+      this.$httpKomship.post('/v1/pin/update', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
         console.log(data)
         if (data.status === 'success') {
+          this.loadingSubmit = false
           this.$refs['modal-confirm-new-pin'].show()
           this.$refs['modal-new-pin'].hide()
           this.matchesPin = this.dataPin
+        } else {
+          this.loadingSubmit = false
         }
       })
     },
     submitChangePin() {
-      if (this.matchesPin === this.dataPin) {
-        this.tes()
-      } else {
-        this.errorMatchesPin = 'PIN tidak valid'
-      }
+      this.loadingSubmit = true
+      setTimeout(() => {
+        if (this.matchesPin === this.dataPin) {
+          this.loadingSubmit = false
+          this.$refs['modal-confirm-new-pin'].hide()
+          this.tes()
+        } else {
+          this.loadingSubmit = false
+          this.errorMatchesPin = 'PIN tidak valid'
+        }
+      }, 2000)
     },
     countDownTimerOtp() {
       if (this.countOtp > 0) {

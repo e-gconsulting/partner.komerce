@@ -13,7 +13,7 @@
         ref="modal-pin"
         no-close-on-backdrop
         hide-header-close
-        ok-only
+        hide-footer
         hide-header
         modal-class="modal-primary"
         centered
@@ -50,6 +50,10 @@
             variant="primary"
             @click="confirmPin"
           >
+            <b-spinner
+              v-if="loadingSubmit"
+              small
+            />
             Konfirmasi
           </b-button>
         </b-col>
@@ -365,6 +369,7 @@ import {
   BModal,
   VBModal,
   BOverlay,
+  BSpinner,
 } from 'bootstrap-vue'
 // import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
@@ -386,6 +391,7 @@ export default {
     ValidationObserver,
     ValidationProvider,
     BOverlay,
+    BSpinner,
   },
   directives: {
     'b-modal': VBModal,
@@ -515,6 +521,7 @@ export default {
       this.$refs['modal-pin'].hide()
     },
     confirmPin() {
+      this.loadingSubmit = true
       axios2.post('/v1/pin/auth', {
         pin: this.dataPin,
       },
@@ -524,9 +531,11 @@ export default {
         const { data } = response.data
         console.log(data)
         if (data.is_match === true) {
+          this.loadingSubmit = false
           this.hideModal()
         } else {
           this.errorPin = 'PIN tidak valid'
+          this.loadingSubmit = false
         }
       })
     },

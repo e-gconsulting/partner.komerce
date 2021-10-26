@@ -61,40 +61,212 @@
                 name="Upload Gambar"
                 rules="required"
               >
-                <b-avatar
-                  variant="light-primary"
-                  size="50"
-                  :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
-                  class="mr-50"
-                />
-                <label for="uploadImage">
+
+                <!-- Preview Image -->
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 0"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileFirst ? fileUrl(imageFileFirst) : imageInitialFileFirst"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 1"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileSecond ? fileUrl(imageFileSecond) : imageInitialFileSecond"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 2"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileThird ? fileUrl(imageFileThird) : imageInitialFileThird"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 3"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileFourth ? fileUrl(imageFileFourth) : imageInitialFileFourth"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 4"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileFifth ? fileUrl(imageFileFifth) : imageInitialFileFifth"
+                    class="mr-50"
+                  />
+                </transition>
+
+                <!-- Button Upload Image -->
+                <label
+                  v-if="fieldPreviewImage.length === 0"
+                  for="uploadImageFirst"
+                >
                   <b-avatar
                     variant="light-dark"
                     size="50"
+                    class="btn btn-flat-primary btn-icon"
                   >
-                    <!-- <b-button
-                      class="btn-icon"
-                      variant="flat-primary"
-                    > -->
                     <feather-icon
                       icon="PlusIcon"
                       size="35"
                     />
-                    <!-- </b-button> -->
                   </b-avatar>
                 </label>
+                <label
+                  v-if="fieldPreviewImage.length === 1"
+                  for="uploadImageSecond"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+                <label
+                  v-if="fieldPreviewImage.length === 2"
+                  for="uploadImageThird"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+                <label
+                  v-if="fieldPreviewImage.length === 3"
+                  for="uploadImageFourth"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+                <label
+                  v-if="fieldPreviewImage.length === 4"
+                  for="uploadImageFifth"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+
+                <b-button
+                  class="btn-icon ml-50"
+                  variant="flat-primary"
+                  @click="removePreviewAvatar"
+                >
+                  <feather-icon
+                    icon="Trash2Icon"
+                    size="22"
+                  />
+                </b-button>
+
+                <!-- Field Gambar -->
                 <b-form-file
-                  id="uploadImage"
-                  v-model="imageFile"
+                  id="uploadImageFirst"
+                  v-model="imageFileFirst"
                   :state="errors.length > 0 ? false : null"
                   :placeholder="
-                    imageInitialFile
-                      ? imageInitialFile.split('/').pop()
+                    imageInitialFileFirst
+                      ? imageInitialFileFirst.split('/').pop()
                       : `Pilih atau drop file disini...`
                   "
                   drop-placeholder="Drop file disini..."
                   accept="image/*"
                   class="d-none"
+                  @change="addAvatarFirst"
+                />
+                <b-form-file
+                  id="uploadImageSecond"
+                  v-model="imageFileSecond"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileSecond
+                      ? imageInitialFileSecond.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarSecond"
+                />
+                <b-form-file
+                  id="uploadImageThird"
+                  v-model="imageFileThird"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileThird
+                      ? imageInitialFileThird.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarThird"
+                />
+                <b-form-file
+                  id="uploadImageFourth"
+                  v-model="imageFileFourth"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileFourth
+                      ? imageInitialFileFourth.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarFourth"
+                />
+                <b-form-file
+                  id="uploadImageFifth"
+                  v-model="imageFileFifth"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileFifth
+                      ? imageInitialFileFifth.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarFifth"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -833,6 +1005,34 @@
             </b-form-group>
           </b-col>
 
+          <b-col
+            v-if="isVariation === false"
+            cols="12"
+          >
+            <b-form-group
+              label="Stok"
+              label-cols-md="2"
+            >
+              <b-form-input
+                placeholder="Masukan jumlah stok barang"
+              />
+            </b-form-group>
+          </b-col>
+
+          <b-col
+            v-if="isVariation === false"
+            cols="12"
+          >
+            <b-form-group
+              label="Harga"
+              label-cols-md="2"
+            >
+              <b-form-input
+                placeholder="Rp  |  Masukan harga barang"
+              />
+            </b-form-group>
+          </b-col>
+
           <b-col cols="12">
             <b-form-group
               label="Pengiriman"
@@ -1049,8 +1249,16 @@ export default {
 
       fieldEditData: '',
 
-      imageFile: null,
-      imageInitialFile: null,
+      imageFileFirst: null,
+      imageInitialFileFirst: null,
+      imageFileSecond: null,
+      imageInitialFileSecond: null,
+      imageFileThird: null,
+      imageInitialFileThird: null,
+      imageFileFourth: null,
+      imageInitialFileFourth: null,
+      imageFileFifth: null,
+      imageInitialFileFifth: null,
 
       editMode: false,
 
@@ -1088,6 +1296,9 @@ export default {
 
       // Validation
       required,
+      fieldImage: [],
+
+      fieldPreviewImage: [],
     }
   },
   computed: {
@@ -1144,7 +1355,53 @@ export default {
     })
   },
   methods: {
+    addAvatarFirst() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarSecond() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarThird() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarFourth() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarFifth() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    removePreviewAvatar() {
+      this.fieldPreviewImage.splice(0, 1)
+      console.log(this.fieldPreviewImage)
+    },
     submitPublish() {
+      if (this.fieldPreviewImage.length === 1) {
+        this.fieldImage.push(this.imageFileFirst)
+      } else if (this.fieldPreviewImage.length === 2) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+      } else if (this.fieldPreviewImage.length === 3) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+      } else if (this.fieldPreviewImage.length === 4) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+        this.fieldImage.push(this.imageFileFourth)
+      } else if (this.fieldPreviewImage.length === 5) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+        this.fieldImage.push(this.imageFileFourth)
+        this.fieldImage.push(this.imageFileFifth)
+      }
+
       this.variantStore[0].val = this.variationName1
       this.variantStore[1].val = this.variationName2
       this.variantStore[2].val = this.variationName3
@@ -1206,108 +1463,32 @@ export default {
       console.log(this.productName)
       console.log(this.skuName)
       console.log(this.descriptionProduct)
+      console.log(this.fieldImage)
       console.log(this.weightProduct)
       console.log(this.lengthProduct)
       console.log(this.heightProduct)
       console.log(this.flavours)
       console.log(this.variantStore)
 
-      this.$httpKomship.post('/v1/product/create/618', {
-        product_name: this.productName,
-        sku: this.skuName,
-        description: this.descriptionProduct,
-        weight: this.weightProduct,
-        length: this.lengthProduct,
-        width: this.widthProduct,
-        height: this.heightProduct,
-        price: this.price,
-        stock: this.stock,
-        flavours: this.flavours,
-        variant_option: this.variantStore,
-      }, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        console.log(response)
-      })
+      // this.$httpKomship.post('/v1/product/create/618', {
+      //   product_name: this.productName,
+      //   sku: this.skuName,
+      //   description: this.descriptionProduct,
+      //   weight: this.weightProduct,
+      //   length: this.lengthProduct,
+      //   width: this.widthProduct,
+      //   height: this.heightProduct,
+      //   price: this.price,
+      //   stock: this.stock,
+      //   flavours: this.flavours,
+      //   variant_option: this.variantStore,
+      // }, {
+      //   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      // }).then(response => {
+      //   console.log(response)
+      // })
     },
     createListVariation() {
-      const tesArray = [
-        {
-          val: 'Warna',
-          option: [{
-            val: 'Merah',
-            parent: null,
-            stock: null,
-            price: null,
-          },
-          {
-            val: 'Biru',
-            parent: null,
-            stock: null,
-            price: null,
-          },
-          ],
-        },
-        {
-          val: 'Ukuran',
-          option: [
-            {
-              val: 'S',
-              parent: 0,
-              stock: 99,
-              price: 1000,
-            },
-            {
-              val: 'M',
-              parent: 0,
-              stock: 99,
-              price: 1000,
-            },
-            {
-              val: 'S',
-              parent: 1,
-              stock: 99,
-              price: 1000,
-            },
-            {
-              val: 'M',
-              parent: 1,
-              stock: 99,
-              price: 1000,
-            },
-          ],
-        },
-        {
-          val: 'Jenis',
-          option: [
-            {
-              val: 'Kalung',
-              parent: 0,
-              stock: 99,
-              price: 1000,
-            },
-            {
-              val: 'Cincin',
-              parent: 0,
-              stock: 99,
-              price: 1000,
-            },
-            {
-              val: 'Kalung',
-              parent: 1,
-              stock: 99,
-              price: 1000,
-            },
-            {
-              val: 'Cincin',
-              parent: 1,
-              stock: 99,
-              price: 1000,
-            },
-          ],
-        },
-      ]
-      console.log(tesArray)
       // Per Row
       // Variant 1
       if (this.formChoices1[0] !== undefined) {
