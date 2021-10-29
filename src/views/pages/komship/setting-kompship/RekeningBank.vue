@@ -148,7 +148,7 @@
           </b-col>
         </b-row>
 
-        <validation-observer ref="formEdit">
+        <validation-observer ref="formRules">
           <b-form>
             <b-row>
               <b-col cols="10">
@@ -156,26 +156,25 @@
                   label="Nama Bank"
                   label-cols-md="3"
                 >
-                  <validation-provider
-                    #default="{errors}"
-                    name="Nama Bank"
-                    rules="required"
-                  >
-                    <div v-if="editMode === true && editIdRek === data.bank_account_id">
+                  <div v-if="editMode === true && editIdRek === data.bank_account_id">
+                    <validation-provider
+                      #default="{errors}"
+                      name="Nama Bank"
+                      rules="required"
+                    >
                       <b-form-input
                         v-model="bankName"
                         :state="errors.length > 0 ? false:null"
                       />
-                    </div>
-                    <div v-else>
-                      <b-form-input
-                        v-model="data.bank_name"
-                        :state="errors.length > 0 ? false:null"
-                        disabled
-                      />
-                    </div>
-                    <small class="text-danger">{{ errors[0] }}</small>
-                  </validation-provider>
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </div>
+                  <div v-else>
+                    <b-form-input
+                      v-model="data.bank_name"
+                      disabled
+                    />
+                  </div>
                 </b-form-group>
               </b-col>
 
@@ -185,9 +184,17 @@
                   label-cols-md="3"
                 >
                   <div v-if="editMode === true && editIdRek === data.bank_account_id">
-                    <b-form-input
-                      v-model="accountNo"
-                    />
+                    <validation-provider
+                      #default="{errors}"
+                      name="No Rekening"
+                      rules="required"
+                    >
+                      <b-form-input
+                        v-model="accountNo"
+                        :state="errors.length > 0 ? false:null"
+                      />
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
                   </div>
                   <div v-else>
                     <b-form-input
@@ -204,9 +211,17 @@
                   label-cols-md="3"
                 >
                   <div v-if="editMode === true && editIdRek === data.bank_account_id">
-                    <b-form-input
-                      v-model="accountName"
-                    />
+                    <validation-provider
+                      #default="{errors}"
+                      name="Nama"
+                      rules="required"
+                    >
+                      <b-form-input
+                        v-model="accountName"
+                        :state="errors.length > 0 ? false:null"
+                      />
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
                   </div>
                   <div v-else>
                     <b-form-input
@@ -240,6 +255,11 @@
                     class="mr-1"
                     @click="submitEditRekening"
                   >
+                    <b-spinner
+                      v-if="loadingSubmit"
+                      variant="light"
+                      small
+                    />
                     Simpan
                   </b-button>
                 </b-col>
@@ -265,68 +285,99 @@
           </b-col>
         </b-row>
 
-        <b-form @submit.prevent>
-          <b-row>
+        <validation-observer ref="formRulesAdd">
+          <b-form>
+            <b-row>
 
-            <b-col cols="10">
-              <b-form-group
-                label="Nama Bank"
-                label-cols-md="3"
-              >
-                <b-form-input
-                  v-model="bankName"
-                />
-              </b-form-group>
-            </b-col>
+              <b-col cols="10">
+                <b-form-group
+                  label="Nama Bank"
+                  label-cols-md="3"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="Nama Bank"
+                    rules="required"
+                  >
+                    <b-form-input
+                      v-model="fieldAddBankName"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
 
-            <b-col cols="10">
-              <b-form-group
-                label="No Rekening"
-                label-cols-md="3"
-              >
-                <b-form-input
-                  v-model="accountNo"
-                />
-              </b-form-group>
-            </b-col>
+              <b-col cols="10">
+                <b-form-group
+                  label="No Rekening"
+                  label-cols-md="3"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="No rekening"
+                    rules="required"
+                  >
+                    <b-form-input
+                      v-model="fieldAddAccountNo"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
 
-            <b-col cols="10">
-              <b-form-group
-                label="Nama"
-                label-cols-md="3"
-              >
-                <b-form-input
-                  v-model="accountName"
-                />
-              </b-form-group>
-            </b-col>
+              <b-col cols="10">
+                <b-form-group
+                  label="Nama"
+                  label-cols-md="3"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="Nama"
+                    rules="required"
+                  >
+                    <b-form-input
+                      v-model="fieldAddAccountName"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <small class="text-danger">{{ errors[0] }}</small>
+                  </validation-provider>
+                </b-form-group>
+              </b-col>
 
-            <b-col
-              md="12"
-              class="d-flex justify-content-end mt-1 pb-1"
-            >
-              <b-button
-                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                type="submit"
-                variant="outline-primary"
-                class="mr-1"
-                @click="cancelAddRekening"
+              <b-col
+                md="12"
+                class="d-flex justify-content-end mt-1 pb-1"
               >
-                Hapus
-              </b-button>
-              <b-button
-                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                type="reset"
-                variant="primary"
-                class="mr-1"
-                @click.prevent="createRekening"
-              >
-                Simpan
-              </b-button>
-            </b-col>
+                <b-button
+                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                  type="submit"
+                  variant="outline-primary"
+                  class="mr-1"
+                  @click="cancelAddRekening"
+                >
+                  Hapus
+                </b-button>
+                <b-button
+                  v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                  type="reset"
+                  variant="primary"
+                  class="mr-1"
+                  @click="submitRekening"
+                >
+                  <b-spinner
+                    v-if="loadingSubmit"
+                    variant="light"
+                    small
+                  />
+                  Simpan
+                </b-button>
+              </b-col>
 
-          </b-row>
-        </b-form>
+            </b-row>
+          </b-form>
+        </validation-observer>
       </b-col>
 
       <b-col
@@ -400,6 +451,7 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
+      loadingSubmit: false,
       loading: false,
       dataPin: null,
       errorPin: '',
@@ -420,36 +472,52 @@ export default {
 
       fieldActionAddRekening: false,
 
-      loadingSubmit: false,
       submitAction: false,
+
+      // Create Rekening Bank
+      fieldAddBankName: '',
+      fieldAddAccountNo: '',
+      fieldAddAccountName: '',
     }
   },
   mounted() {
-    this.showModal()
+    // this.showModal()
     this.getBank()
   },
   methods: {
     getBank() {
-      axios2.get('v1/bank-account', {
+      this.loading = true
+      return axios2.get('v1/bank-account', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         console.log(data)
         this.formRekening = data
+        this.loading = false
       })
     },
-    createRekening() {
-      axios2.post('/v1/bank-account/store',
-        {
-          bank_name: this.bankName,
-          account_name: this.accountName,
-          account_no: this.accountNo,
-        },
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
-        const { data } = response
-        console.log(data)
+    submitRekening() {
+      this.loadingSubmit = true
+      this.$refs.formRulesAdd.validate().then(success => {
+        if (success) {
+          axios2.post('/v1/bank-account/store',
+            {
+              bank_name: this.fieldAddBankName,
+              account_name: this.fieldAddAccountName,
+              account_no: this.fieldAddAccountNo,
+            },
+            {
+              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+            }).then(response => {
+            const { data } = response
+            console.log(data)
+            this.loadingSubmit = false
+            this.getBank()
+            this.fieldActionAddRekening = false
+          })
+        } else {
+          this.loadingSubmit = false
+        }
       })
     },
     editRekening(data) {
@@ -464,21 +532,30 @@ export default {
       console.log(this.accountName)
     },
     submitEditRekening() {
-      const formData = new FormData()
-      formData.append('_method', 'put')
-      formData.append('bank_name', this.bankName)
-      formData.append('account_name', this.accountName)
-      formData.append('account_no', this.accountNo)
-      console.log(this.bankName)
-      console.log(this.accountNo)
-      console.log(this.accountName)
+      this.loadingSubmit = true
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          const formData = new FormData()
+          formData.append('_method', 'put')
+          formData.append('bank_name', this.bankName)
+          formData.append('account_name', this.accountName)
+          formData.append('account_no', this.accountNo)
+          console.log(this.bankName)
+          console.log(this.accountNo)
+          console.log(this.accountName)
 
-      axios2.post(`/v1/bank-account/update/${this.editIdRek}`, formData,
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
-        const { data } = response
-        console.log(data)
+          axios2.post(`/v1/bank-account/update/${this.editIdRek}`, formData,
+            {
+              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+            }).then(response => {
+            const { data } = response
+            this.loadingSubmit = false
+            this.getBank()
+            console.log(data)
+          })
+        } else {
+          this.loadingSubmit = false
+        }
       })
     },
     confirmDelete(data) {
@@ -504,6 +581,7 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
         .then(response => {
+          this.getBank()
           console.log(response)
         })
     },

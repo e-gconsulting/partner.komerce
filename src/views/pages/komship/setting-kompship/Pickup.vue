@@ -52,140 +52,172 @@
             </b-col>
           </b-row>
 
-          <b-form @submit.prevent>
-            <b-row>
+          <validation-observer ref="formRulesEdit">
+            <b-form>
+              <b-row>
 
-              <b-col cols="10">
-                <b-form-group
-                  label="Nama Alamat"
-                  label-cols-md="3"
-                >
-                  <div v-if="editMode === true && editIdAddress === data.address_id">
-                    <b-form-input
-                      v-model="addressName"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-form-input
-                      v-model="data.address_name"
-                      disabled
-                    />
-                  </div>
-                </b-form-group>
-              </b-col>
+                <b-col cols="10">
+                  <b-form-group
+                    label="Nama Alamat"
+                    label-cols-md="3"
+                  >
+                    <validation-provider
+                      #default="{errors}"
+                      name="Nama Alamat"
+                      rules="required"
+                    >
+                      <div v-if="editMode === true && editIdAddress === data.address_id">
+                        <b-form-input
+                          v-model="addressName"
+                          :state="errors.length > 0 ? false:null"
+                        />
+                      </div>
+                      <div v-else>
+                        <b-form-input
+                          v-model="data.address_name"
+                          disabled
+                        />
+                      </div>
+                      <small class="text-danger">{{ errors[0] }}</small>
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
 
-              <b-col cols="10">
-                <b-form-group
-                  label="Kode Post/Kecamatan"
-                  label-cols-md="3"
-                >
-                  <div v-if="editMode === true && editIdAddress === data.address_id">
-                    <v-select
-                      v-model="tesLabel[index]"
-                      :options="itemsOriginEdit"
-                      label="label"
-                      @search="onSearchOrigin"
-                    />
-                  </div>
-                  <div v-else>
-                    <v-select
-                      v-model="tesLabel[index]"
-                      label="label"
-                      disabled
-                    />
-                  </div>
-                </b-form-group>
-              </b-col>
+                <b-col cols="10">
+                  <b-form-group
+                    label="Kode Post/Kecamatan"
+                    label-cols-md="3"
+                  >
+                    <div v-if="editMode === true && editIdAddress === data.address_id">
+                      <v-select
+                        v-model="tesLabel[index]"
+                        :options="itemsOriginEdit"
+                        label="label"
+                        @search="onSearchOrigin"
+                      />
+                    </div>
+                    <div v-else>
+                      <v-select
+                        v-model="tesLabel[index]"
+                        label="label"
+                        disabled
+                      />
+                    </div>
+                  </b-form-group>
+                </b-col>
 
-              <b-col cols="10">
-                <b-form-group
-                  label="Alamat Detail"
-                  label-cols-md="3"
-                >
-                  <div v-if="editMode === true && editIdAddress === data.address_id">
-                    <b-form-textarea
-                      v-model="addressDetail"
-                      placeholder="Alamat Detail"
-                      rows="3"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-form-textarea
-                      v-model="data.address_detail"
-                      placeholder="Alamat Detail"
-                      disabled
-                      rows="3"
-                    />
-                  </div>
-                </b-form-group>
-              </b-col>
+                <b-col cols="10">
+                  <b-form-group
+                    label="Alamat Detail"
+                    label-cols-md="3"
+                  >
+                    <div v-if="editMode === true && editIdAddress === data.address_id">
+                      <b-form-textarea
+                        v-model="addressDetail"
+                        placeholder="Alamat Detail"
+                        rows="3"
+                      />
+                    </div>
+                    <div v-else>
+                      <b-form-textarea
+                        v-model="data.address_detail"
+                        placeholder="Alamat Detail"
+                        disabled
+                        rows="3"
+                      />
+                    </div>
+                  </b-form-group>
+                </b-col>
 
-              <b-col cols="10">
-                <b-form-group
-                  label="Nama PIC"
-                  label-cols-md="3"
-                >
-                  <div v-if="editMode === true && editIdAddress === data.address_id">
-                    <b-form-input
-                      v-model="picName"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-form-input
-                      v-model="data.pic"
-                      disabled
-                    />
-                  </div>
-                </b-form-group>
-              </b-col>
+                <b-col cols="10">
+                  <b-form-group
+                    label="Nama PIC"
+                    label-cols-md="3"
+                  >
+                    <div v-if="editMode === true && editIdAddress === data.address_id">
+                      <b-form-input
+                        v-model="picName"
+                      />
+                    </div>
+                    <div v-else>
+                      <b-form-input
+                        v-model="data.pic"
+                        disabled
+                      />
+                    </div>
+                  </b-form-group>
+                </b-col>
 
-              <b-col cols="10">
-                <b-form-group
-                  label="No. HP"
-                  label-cols-md="3"
-                >
-                  <div v-if="editMode === true && editIdAddress === data.address_id">
-                    <b-form-input
-                      v-model="phoneUser"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-form-input
-                      v-model="data.phone"
-                      disabled
-                    />
-                  </div>
-                </b-form-group>
-              </b-col>
+                <b-col cols="10">
+                  <b-form-group
+                    label="No. HP"
+                    label-cols-md="3"
+                  >
+                    <div v-if="editMode === true && editIdAddress === data.address_id">
+                      <b-form-input
+                        v-model="phoneUser"
+                      />
+                    </div>
+                    <div v-else>
+                      <b-form-input
+                        v-model="data.phone"
+                        disabled
+                      />
+                    </div>
+                  </b-form-group>
+                </b-col>
 
-              <transition name="fade">
                 <b-col
                   v-if="editMode === true && editIdAddress === data.address_id"
-                  md="12"
-                  class="d-flex justify-content-end mt-1 pb-1"
+                  md="10"
                 >
-                  <b-button
-                    v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                    type="submit"
-                    variant="outline-primary"
-                    class="mr-1"
-                    @click.prevent="confirmDelete(data)"
+                  <b-form-group
+                    label-cols-md="3"
                   >
-                    Hapus
-                  </b-button>
-                  <b-button
-                    v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                    type="reset"
-                    variant="primary"
-                    class="mr-1"
-                  >
-                    Simpan
-                  </b-button>
+                    <b-form-checkbox
+                      v-model="isDefault"
+                      @change="changeDefaultAddress"
+                    >
+                      Jadikan sebagai alamat utama
+                    </b-form-checkbox>
+                  </b-form-group>
                 </b-col>
-              </transition>
 
-            </b-row>
-          </b-form>
+                <transition name="fade">
+                  <b-col
+                    v-if="editMode === true && editIdAddress === data.address_id"
+                    md="12"
+                    class="d-flex justify-content-end mt-1 pb-1"
+                  >
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      type="submit"
+                      variant="outline-primary"
+                      class="mr-1"
+                      @click.prevent="confirmDelete(data)"
+                    >
+                      Hapus
+                    </b-button>
+                    <b-button
+                      v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                      type="reset"
+                      variant="primary"
+                      class="mr-1"
+                      @click="submitUpdateAddress"
+                    >
+                      <b-spinner
+                        v-if="loadingSubmit"
+                        variant="light"
+                        small
+                      />
+                      Simpan
+                    </b-button>
+                  </b-col>
+                </transition>
+
+              </b-row>
+            </b-form>
+          </validation-observer>
         </b-col>
       </b-row>
 
@@ -208,97 +240,143 @@
               </b-col>
             </b-row>
 
-            <b-form @submit.prevent>
-              <b-row>
+            <validation-observer ref="formRulesAdd">
+              <b-form>
+                <b-row>
 
-                <b-col cols="10">
-                  <b-form-group
-                    label="Nama Alamat"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      v-model="addressName"
-                    />
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="10">
-                  <b-form-group
-                    label="Kode Post/Kecamatan"
-                    label-cols-md="3"
-                  >
-                    <v-select
-                      v-model="tesLabelAdd"
-                      :options="itemsOriginEdit"
-                      label="label"
-                      @search="onSearchOrigin"
-                    />
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="10">
-                  <b-form-group
-                    label="Alamat Detail"
-                    label-cols-md="3"
-                  >
-                    <b-form-textarea
-                      v-model="addressDetail"
-                      placeholder="Alamat Detail"
-                      rows="3"
-                    />
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="10">
-                  <b-form-group
-                    label="Nama PIC"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      v-model="picName"
-                    />
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="10">
-                  <b-form-group
-                    label="No. HP"
-                    label-cols-md="3"
-                  >
-                    <b-form-input
-                      v-model="phoneUser"
-                    />
-                  </b-form-group>
-                </b-col>
-
-                <transition name="fade">
-                  <b-col
-                    md="12"
-                    class="d-flex justify-content-end mt-1 pb-1"
-                  >
-                    <b-button
-                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                      type="submit"
-                      variant="outline-primary"
-                      class="mr-1"
-                      @click="removeFormAddress"
+                  <b-col cols="10">
+                    <b-form-group
+                      label="Nama Alamat"
+                      label-cols-md="3"
                     >
-                      Hapus
-                    </b-button>
-                    <b-button
-                      v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                      type="reset"
-                      variant="primary"
-                      class="mr-1"
-                      @click="submitAddress"
-                    >
-                      Simpan
-                    </b-button>
+                      <validation-provider
+                        #default="{errors}"
+                        name="Nama Alamat"
+                        rules="required"
+                      >
+                        <b-form-input
+                          v-model="fieldAddAddressName"
+                          :state="errors.length > 0 ? false:null"
+                        />
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-form-group>
                   </b-col>
-                </transition>
 
-              </b-row>
-            </b-form>
+                  <b-col cols="10">
+                    <b-form-group
+                      label="Kode Post/Kecamatan"
+                      label-cols-md="3"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Kode Post/Kecamatan"
+                        rules="required"
+                      >
+                        <v-select
+                          v-model="fieldAddOrigin"
+                          :options="itemsOriginEdit"
+                          label="label"
+                          :state="errors.length > 0 ? false:null"
+                          @search="onSearchOrigin"
+                        />
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+
+                  <b-col cols="10">
+                    <b-form-group
+                      label="Alamat Detail"
+                      label-cols-md="3"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Alamat Detail"
+                        rules="required"
+                      >
+                        <b-form-textarea
+                          v-model="fieldAddAddressDetail"
+                          placeholder="Alamat Detail"
+                          rows="3"
+                          :state="errors.length > 0 ? false:null"
+                        />
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+
+                  <b-col cols="10">
+                    <b-form-group
+                      label="Nama PIC"
+                      label-cols-md="3"
+                    >
+                      <b-form-input
+                        v-model="fieldAddPicName"
+                      />
+                    </b-form-group>
+                  </b-col>
+
+                  <b-col cols="10">
+                    <b-form-group
+                      label="No. HP"
+                      label-cols-md="3"
+                    >
+                      <b-form-input
+                        v-model="fieldAddPhoneUser"
+                      />
+                    </b-form-group>
+                  </b-col>
+
+                  <b-col
+                    md="10"
+                  >
+                    <b-form-group
+                      label-cols-md="3"
+                    >
+                      <b-form-checkbox
+                        v-model="isDefault"
+                        @change="changeDefaultAddress"
+                      >
+                        Jadikan sebagai alamat utama
+                      </b-form-checkbox>
+                    </b-form-group>
+                  </b-col>
+
+                  <transition name="fade">
+                    <b-col
+                      md="12"
+                      class="d-flex justify-content-end mt-1 pb-1"
+                    >
+                      <b-button
+                        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                        type="submit"
+                        variant="outline-primary"
+                        class="mr-1"
+                        @click="removeFormAddress"
+                      >
+                        Hapus
+                      </b-button>
+                      <b-button
+                        v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                        type="reset"
+                        variant="primary"
+                        class="mr-1"
+                        @click="submitAddress"
+                      >
+                        <b-spinner
+                          v-if="loadingSubmit"
+                          variant="light"
+                          small
+                        />
+                        Simpan
+                      </b-button>
+                    </b-col>
+                  </transition>
+
+                </b-row>
+              </b-form>
+            </validation-observer>
           </b-col>
         </b-row>
       </transition>
@@ -329,6 +407,8 @@
 import vSelect from 'vue-select'
 import useJwt from '@/auth/jwt/useJwt'
 import Ripple from 'vue-ripple-directive'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import { required } from '@validations'
 import {
   BCard,
   BRow,
@@ -339,6 +419,8 @@ import {
   BFormTextarea,
   BButton,
   BOverlay,
+  BFormCheckbox,
+  BSpinner,
 } from 'bootstrap-vue'
 import axios2 from './baseUrl2'
 
@@ -354,6 +436,10 @@ export default {
     vSelect,
     BButton,
     BOverlay,
+    BFormCheckbox,
+    ValidationProvider,
+    ValidationObserver,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -361,6 +447,9 @@ export default {
   data() {
     return {
       loading: false,
+      loadingSubmit: false,
+
+      isDefault: false,
 
       dataAddress: [],
 
@@ -384,6 +473,16 @@ export default {
 
       tesOrigin: [],
       tesLabel: [],
+
+      // Add Address
+      fieldAddAddressName: '',
+      fieldAddAddressDetail: '',
+      fieldAddPicName: '',
+      fieldAddPhoneUser: '',
+      fieldAddOrigin: '',
+
+      // Validation
+      required,
     }
   },
   mounted() {
@@ -402,12 +501,10 @@ export default {
       })
     },
     myLoop(data) {
-      console.log(data)
       axios2.get(`/v1/origin?search=${data.origin_code}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.itemsOrigin = response.data.data
-        console.log(this.itemsOrigin)
         this.itemsOrigin.forEach(this.loopOrigin)
       })
     },
@@ -416,13 +513,38 @@ export default {
       return this.tesLabel
     },
     submitAddress() {
-      const formData = new FormData()
-      formData.append('_method', 'post')
-      formData.append('address_name', this.addressName)
-      formData.append('origin_code', this.tesLabel)
-      formData.append('address_detail', this.addressDetail)
-      formData.append('pic', this.picName)
-      formData.append('phone', this.phoneUser)
+      this.loadingSubmit = true
+      this.$refs.formRulesAdd.validate().then(success => {
+        if (success) {
+          const formData = new FormData()
+          formData.append('_method', 'post')
+          formData.append('address_name', this.fieldAddAddressName)
+          formData.append('origin_code', this.fieldAddOrigin.value)
+          formData.append('address_detail', this.fieldAddAddressDetail)
+          formData.append('pic', this.fieldAddPicName)
+          formData.append('phone', this.fieldAddPhoneUser)
+          formData.append('is_default', this.isDefault)
+
+          console.log(this.fieldAddAddressName)
+          console.log(this.fieldAddOrigin.value)
+          console.log(this.fieldAddAddressDetail)
+          console.log(this.fieldAddPicName)
+          console.log(this.fieldAddPhoneUser)
+          console.log(this.isDefault)
+
+          this.$httpKomship.post('/v1/address/store', formData, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(response => {
+            const { data } = response.data
+            console.log(data)
+            this.loadingSubmit = false
+            this.formAddAddress = false
+            this.getAddress()
+          })
+        } else {
+          this.loadingSubmit = false
+        }
+      })
     },
     addAddress() {
       this.formAddAddress = true
@@ -430,14 +552,28 @@ export default {
     removeFormAddress() {
       this.formAddAddress = false
     },
+    submitUpdateAddress() {
+      this.loadingSubmit = true
+      this.$refs.formRulesEdit.validate().then(success => {
+        if (success) {
+          const formData = new FormData()
+          formData.append()
+        }
+      })
+    },
     editAddress(data) {
-      console.log(data)
+      console.log(data.origin_code)
       this.editMode = true
       this.editIdAddress = data.address_id
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
       this.picName = data.pic
       this.phoneUser = data.phone
+      if (data.is_default === 0) {
+        this.isDefault = false
+      } else {
+        this.isDefault = true
+      }
     },
     confirmDelete(data) {
       this.$swal({
@@ -458,11 +594,13 @@ export default {
       })
     },
     delete(data) {
-      axios2.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
+      console.log(data)
+      axios2.delete(`/v1/address/delete/${data.address_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
         .then(response => {
           console.log(response)
+          this.getAddress()
         })
     },
     onSearchOrigin(search, loading) {
@@ -481,6 +619,15 @@ export default {
         console.log(response.data.data)
         this.itemsOriginEdit = response.data.data
       })
+    },
+    changeDefaultAddress() {
+      if (this.isDefault === false) {
+        this.dataIsDefault = 0
+      } else {
+        this.dataIsDefault = 1
+      }
+      console.log(this.isDefault)
+      console.log(this.dataIsDefault)
     },
   },
 

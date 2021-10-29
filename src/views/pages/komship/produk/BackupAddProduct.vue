@@ -61,40 +61,212 @@
                 name="Upload Gambar"
                 rules="required"
               >
-                <b-avatar
-                  variant="light-primary"
-                  size="50"
-                  :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
-                  class="mr-50"
-                />
-                <label for="uploadImage">
+
+                <!-- Preview Image -->
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 0"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileFirst ? fileUrl(imageFileFirst) : imageInitialFileFirst"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 1"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileSecond ? fileUrl(imageFileSecond) : imageInitialFileSecond"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 2"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileThird ? fileUrl(imageFileThird) : imageInitialFileThird"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 3"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileFourth ? fileUrl(imageFileFourth) : imageInitialFileFourth"
+                    class="mr-50"
+                  />
+                </transition>
+                <transition name="fade">
+                  <b-avatar
+                    v-if="fieldPreviewImage.length > 4"
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFileFifth ? fileUrl(imageFileFifth) : imageInitialFileFifth"
+                    class="mr-50"
+                  />
+                </transition>
+
+                <!-- Button Upload Image -->
+                <label
+                  v-if="fieldPreviewImage.length === 0"
+                  for="uploadImageFirst"
+                >
                   <b-avatar
                     variant="light-dark"
                     size="50"
+                    class="btn btn-flat-primary btn-icon"
                   >
-                    <!-- <b-button
-                      class="btn-icon"
-                      variant="flat-primary"
-                    > -->
                     <feather-icon
                       icon="PlusIcon"
                       size="35"
                     />
-                    <!-- </b-button> -->
                   </b-avatar>
                 </label>
+                <label
+                  v-if="fieldPreviewImage.length === 1"
+                  for="uploadImageSecond"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+                <label
+                  v-if="fieldPreviewImage.length === 2"
+                  for="uploadImageThird"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+                <label
+                  v-if="fieldPreviewImage.length === 3"
+                  for="uploadImageFourth"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+                <label
+                  v-if="fieldPreviewImage.length === 4"
+                  for="uploadImageFifth"
+                >
+                  <b-avatar
+                    variant="light-dark"
+                    size="50"
+                    class="btn btn-flat-primary btn-icon"
+                  >
+                    <feather-icon
+                      icon="PlusIcon"
+                      size="35"
+                    />
+                  </b-avatar>
+                </label>
+
+                <b-button
+                  class="btn-icon ml-50"
+                  variant="flat-primary"
+                  @click="removePreviewAvatar"
+                >
+                  <feather-icon
+                    icon="Trash2Icon"
+                    size="22"
+                  />
+                </b-button>
+
+                <!-- Field Gambar -->
                 <b-form-file
-                  id="uploadImage"
-                  v-model="imageFile"
+                  id="uploadImageFirst"
+                  v-model="imageFileFirst"
                   :state="errors.length > 0 ? false : null"
                   :placeholder="
-                    imageInitialFile
-                      ? imageInitialFile.split('/').pop()
+                    imageInitialFileFirst
+                      ? imageInitialFileFirst.split('/').pop()
                       : `Pilih atau drop file disini...`
                   "
                   drop-placeholder="Drop file disini..."
                   accept="image/*"
                   class="d-none"
+                  @change="addAvatarFirst"
+                />
+                <b-form-file
+                  id="uploadImageSecond"
+                  v-model="imageFileSecond"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileSecond
+                      ? imageInitialFileSecond.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarSecond"
+                />
+                <b-form-file
+                  id="uploadImageThird"
+                  v-model="imageFileThird"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileThird
+                      ? imageInitialFileThird.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarThird"
+                />
+                <b-form-file
+                  id="uploadImageFourth"
+                  v-model="imageFileFourth"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileFourth
+                      ? imageInitialFileFourth.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarFourth"
+                />
+                <b-form-file
+                  id="uploadImageFifth"
+                  v-model="imageFileFifth"
+                  :state="errors.length > 0 ? false : null"
+                  :placeholder="
+                    imageInitialFileFifth
+                      ? imageInitialFileFifth.split('/').pop()
+                      : `Pilih atau drop file disini...`
+                  "
+                  drop-placeholder="Drop file disini..."
+                  accept="image/*"
+                  class="d-none"
+                  @change="addAvatarFifth"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -833,6 +1005,34 @@
             </b-form-group>
           </b-col>
 
+          <b-col
+            v-if="isVariation === false"
+            cols="12"
+          >
+            <b-form-group
+              label="Stok"
+              label-cols-md="2"
+            >
+              <b-form-input
+                placeholder="Masukan jumlah stok barang"
+              />
+            </b-form-group>
+          </b-col>
+
+          <b-col
+            v-if="isVariation === false"
+            cols="12"
+          >
+            <b-form-group
+              label="Harga"
+              label-cols-md="2"
+            >
+              <b-form-input
+                placeholder="Rp  |  Masukan harga barang"
+              />
+            </b-form-group>
+          </b-col>
+
           <b-col cols="12">
             <b-form-group
               label="Pengiriman"
@@ -1049,8 +1249,16 @@ export default {
 
       fieldEditData: '',
 
-      imageFile: null,
-      imageInitialFile: null,
+      imageFileFirst: null,
+      imageInitialFileFirst: null,
+      imageFileSecond: null,
+      imageInitialFileSecond: null,
+      imageFileThird: null,
+      imageInitialFileThird: null,
+      imageFileFourth: null,
+      imageInitialFileFourth: null,
+      imageFileFifth: null,
+      imageInitialFileFifth: null,
 
       editMode: false,
 
@@ -1088,6 +1296,9 @@ export default {
 
       // Validation
       required,
+      fieldImage: [],
+
+      fieldPreviewImage: [],
     }
   },
   computed: {
@@ -1144,7 +1355,53 @@ export default {
     })
   },
   methods: {
+    addAvatarFirst() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarSecond() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarThird() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarFourth() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    addAvatarFifth() {
+      this.fieldPreviewImage.push({ avatar: '' })
+      console.log(this.fieldPreviewImage.length)
+    },
+    removePreviewAvatar() {
+      this.fieldPreviewImage.splice(0, 1)
+      console.log(this.fieldPreviewImage)
+    },
     submitPublish() {
+      if (this.fieldPreviewImage.length === 1) {
+        this.fieldImage.push(this.imageFileFirst)
+      } else if (this.fieldPreviewImage.length === 2) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+      } else if (this.fieldPreviewImage.length === 3) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+      } else if (this.fieldPreviewImage.length === 4) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+        this.fieldImage.push(this.imageFileFourth)
+      } else if (this.fieldPreviewImage.length === 5) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+        this.fieldImage.push(this.imageFileFourth)
+        this.fieldImage.push(this.imageFileFifth)
+      }
+
       this.variantStore[0].val = this.variationName1
       this.variantStore[1].val = this.variationName2
       this.variantStore[2].val = this.variationName3
@@ -1152,148 +1409,49 @@ export default {
       if (this.formChoices1[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[0].option.push(
-            {
-              val: this.formChoices1[i].choices,
-              parent: null,
-              stock: null,
-              price: null,
-            },
-          )
+          this.variantStore[0].option.push(this.variantItems[i][0].variant1.option[0])
         }
       }
 
-      if (this.formChoices2[0] !== undefined) {
+      if (this.formChoices2[0] !== undefined && this.formChoices1[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[1].option.push(
-            {
-              val: this.formChoices2[0].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
+        for (let i = 1; i < this.formChoices2.length + 1; i++) {
+          this.variantStore[1].option.push(this.variantItems[0][i].variant2.option[0])
         }
       }
-      if (this.formChoices2[1] !== undefined) {
+
+      if (this.formChoices2[0] !== undefined && this.formChoices1[1] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[1].option.push(
-            {
-              val: this.formChoices2[1].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
+        for (let i = 1; i < this.formChoices2.length + 1; i++) {
+          this.variantStore[1].option.push(this.variantItems[1][i].variant2.option[0])
         }
       }
-      if (this.formChoices2[2] !== undefined) {
+
+      if (this.formChoices2[0] !== undefined && this.formChoices1[2] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[1].option.push(
-            {
-              val: this.formChoices2[2].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
+        for (let i = 1; i < this.formChoices2.length + 1; i++) {
+          this.variantStore[1].option.push(this.variantItems[2][i].variant2.option[0])
         }
       }
-      if (this.formChoices2[3] !== undefined) {
+
+      if (this.formChoices2[0] !== undefined && this.formChoices1[3] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[1].option.push(
-            {
-              val: this.formChoices2[3].choices,
-              parent: 1,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
+        for (let i = 1; i < this.formChoices2.length + 1; i++) {
+          this.variantStore[1].option.push(this.variantItems[3][i].variant2.option[0])
         }
       }
-      if (this.formChoices2[4] !== undefined) {
+
+      if (this.formChoices2[0] !== undefined && this.formChoices1[4] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[1].option.push(
-            {
-              val: this.formChoices2[4].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
+        for (let i = 1; i < this.formChoices2.length + 1; i++) {
+          this.variantStore[1].option.push(this.variantItems[4][i].variant2.option[0])
         }
       }
 
       if (this.formChoices3[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[2].option.push(
-            {
-              val: this.formChoices3[0].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
-        }
-      }
-      if (this.formChoices3[1] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[2].option.push(
-            {
-              val: this.formChoices3[1].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
-        }
-      }
-      if (this.formChoices3[2] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[2].option.push(
-            {
-              val: this.formChoices3[2].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
-        }
-      }
-
-      if (this.formChoices3[3] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[2].option.push(
-            {
-              val: this.formChoices3[3].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
-        }
-      }
-
-      if (this.formChoices3[4] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[2].option.push(
-            {
-              val: this.formChoices3[4].choices,
-              parent: i,
-              stock: this.stock,
-              price: this.price,
-            },
-          )
+        for (let i = 0; i < this.formChoices3.length; i++) {
+          this.variantStore[2].option.push(this.variantItems[i][0].variant3.option[0])
         }
       }
 
@@ -1305,6 +1463,7 @@ export default {
       console.log(this.productName)
       console.log(this.skuName)
       console.log(this.descriptionProduct)
+      console.log(this.fieldImage)
       console.log(this.weightProduct)
       console.log(this.lengthProduct)
       console.log(this.heightProduct)
@@ -1342,8 +1501,8 @@ export default {
                   {
                     val: this.formChoices1[0].choices,
                     parent: null,
-                    stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    stock: null,
+                    price: null,
                   },
                 ],
               },
@@ -1351,9 +1510,9 @@ export default {
                 option: [
                   {
                     val: this.formChoices3[i].choices,
-                    parent: null,
+                    parent: 0,
                     stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    price: this.price,
                   },
                 ],
               },
@@ -1368,8 +1527,8 @@ export default {
               {
                 val: this.formChoices1[1].choices,
                 parent: null,
-                stock: this.stock,
-                price: `Rp. ${this.price}`,
+                stock: null,
+                price: null,
               },
             ],
           },
@@ -1383,8 +1542,8 @@ export default {
                   {
                     val: this.formChoices1[1].choices,
                     parent: null,
-                    stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    stock: null,
+                    price: null,
                   },
                 ],
               },
@@ -1392,9 +1551,9 @@ export default {
                 option: [
                   {
                     val: this.formChoices3[i].choices,
-                    parent: null,
+                    parent: 1,
                     stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    price: this.price,
                   },
                 ],
               },
@@ -1409,8 +1568,8 @@ export default {
               {
                 val: this.formChoices1[2].choices,
                 parent: null,
-                stock: this.stock,
-                price: `Rp. ${this.price}`,
+                stock: null,
+                price: null,
               },
             ],
           },
@@ -1424,8 +1583,8 @@ export default {
                   {
                     val: this.formChoices1[2].choices,
                     parent: null,
-                    stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    stock: null,
+                    price: null,
                   },
                 ],
               },
@@ -1433,9 +1592,9 @@ export default {
                 option: [
                   {
                     val: this.formChoices3[i].choices,
-                    parent: null,
+                    parent: 2,
                     stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    price: this.price,
                   },
                 ],
               },
@@ -1450,8 +1609,8 @@ export default {
               {
                 val: this.formChoices1[3].choices,
                 parent: null,
-                stock: this.stock,
-                price: `Rp. ${this.price}`,
+                stock: null,
+                price: null,
               },
             ],
           },
@@ -1465,8 +1624,8 @@ export default {
                   {
                     val: this.formChoices1[3].choices,
                     parent: null,
-                    stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    stock: null,
+                    price: null,
                   },
                 ],
               },
@@ -1474,9 +1633,9 @@ export default {
                 option: [
                   {
                     val: this.formChoices3[i].choices,
-                    parent: null,
+                    parent: 3,
                     stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    price: this.price,
                   },
                 ],
               },
@@ -1491,8 +1650,8 @@ export default {
               {
                 val: this.formChoices1[4].choices,
                 parent: null,
-                stock: this.stock,
-                price: `Rp. ${this.price}`,
+                stock: null,
+                price: null,
               },
             ],
           },
@@ -1506,8 +1665,8 @@ export default {
                   {
                     val: this.formChoices1[4].choices,
                     parent: null,
-                    stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    stock: null,
+                    price: null,
                   },
                 ],
               },
@@ -1515,9 +1674,9 @@ export default {
                 option: [
                   {
                     val: this.formChoices3[i].choices,
-                    parent: null,
+                    parent: 4,
                     stock: this.stock,
-                    price: `Rp. ${this.price}`,
+                    price: this.price,
                   },
                 ],
               },
@@ -1541,9 +1700,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 0,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1555,9 +1714,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 0,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1569,9 +1728,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 0,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1583,9 +1742,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 0,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1597,9 +1756,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 0,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1612,9 +1771,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 1,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1626,9 +1785,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 1,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1640,9 +1799,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 1,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1654,9 +1813,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 1,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1668,9 +1827,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 1,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1683,9 +1842,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 2,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1697,9 +1856,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 2,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1711,9 +1870,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 2,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1725,9 +1884,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 2,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1739,9 +1898,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 2,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1754,9 +1913,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 3,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1768,9 +1927,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 3,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1782,9 +1941,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 3,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1796,9 +1955,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 3,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1810,9 +1969,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 3,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1825,9 +1984,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 4,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1839,9 +1998,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 4,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1853,9 +2012,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 4,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1867,9 +2026,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 4,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1881,9 +2040,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 4,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1896,9 +2055,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 5,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1910,9 +2069,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 5,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1924,9 +2083,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 5,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1938,9 +2097,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 5,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1952,9 +2111,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 5,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1967,9 +2126,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 6,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1981,9 +2140,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 6,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -1995,9 +2154,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 6,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2009,9 +2168,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 6,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2023,9 +2182,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 6,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2038,9 +2197,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 7,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2052,9 +2211,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 7,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2066,9 +2225,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 7,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2080,9 +2239,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 7,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2094,9 +2253,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 7,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2109,9 +2268,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 8,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2123,9 +2282,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 8,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2137,9 +2296,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 8,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2151,9 +2310,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 8,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2165,9 +2324,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 8,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2180,9 +2339,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 9,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2194,9 +2353,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 9,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2208,9 +2367,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 9,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2222,9 +2381,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 9,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2236,9 +2395,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 9,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2251,9 +2410,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 10,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2265,9 +2424,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 10,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2279,9 +2438,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 10,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2293,9 +2452,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 10,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2307,9 +2466,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 10,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2322,9 +2481,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 11,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2336,9 +2495,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 11,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2350,9 +2509,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 11,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2364,9 +2523,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 11,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2378,9 +2537,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 11,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2393,9 +2552,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 12,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2407,9 +2566,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 12,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2421,9 +2580,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 12,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2435,9 +2594,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 12,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2449,9 +2608,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 12,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2464,9 +2623,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 13,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2478,9 +2637,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 13,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2492,9 +2651,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 13,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2506,9 +2665,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 13,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2520,9 +2679,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 13,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2535,9 +2694,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 14,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2549,9 +2708,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 14,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2563,9 +2722,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 14,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2577,9 +2736,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 14,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2591,9 +2750,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 14,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2606,9 +2765,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 15,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2620,9 +2779,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 15,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2634,9 +2793,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 15,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2648,9 +2807,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 15,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2662,9 +2821,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 15,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2677,9 +2836,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 16,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2691,9 +2850,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 16,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2705,9 +2864,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 16,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2719,9 +2878,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 16,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2733,9 +2892,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 16,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2748,9 +2907,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 17,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2762,9 +2921,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 17,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2776,9 +2935,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 17,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2790,9 +2949,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 17,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2804,9 +2963,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 17,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2819,9 +2978,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 18,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2833,9 +2992,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 18,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2847,9 +3006,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 18,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2861,9 +3020,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 18,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2875,9 +3034,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 18,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2890,9 +3049,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 19,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2904,9 +3063,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 19,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2918,9 +3077,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 19,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2932,9 +3091,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 19,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2946,9 +3105,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 19,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2961,9 +3120,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 20,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2975,9 +3134,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 20,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -2989,9 +3148,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 20,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3003,9 +3162,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 20,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3017,9 +3176,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 20,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3032,9 +3191,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 21,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3046,9 +3205,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 21,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3060,9 +3219,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 21,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3074,9 +3233,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 21,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3088,9 +3247,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 21,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3103,9 +3262,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 22,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3117,9 +3276,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 22,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3131,9 +3290,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 22,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3145,9 +3304,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 22,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3159,9 +3318,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 22,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3174,9 +3333,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 23,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3188,9 +3347,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 23,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3202,9 +3361,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 23,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3216,9 +3375,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 23,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3230,9 +3389,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 23,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3245,9 +3404,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[0].choices,
-                parent: null,
+                parent: 24,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3259,9 +3418,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[1].choices,
-                parent: null,
+                parent: 24,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3273,9 +3432,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[2].choices,
-                parent: null,
+                parent: 24,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3287,9 +3446,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[3].choices,
-                parent: null,
+                parent: 24,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3301,9 +3460,9 @@ export default {
             option: [
               {
                 val: this.formChoices2[4].choices,
-                parent: null,
+                parent: 24,
                 stock: this.stock,
-                price: `Rp. ${this.price}`,
+                price: this.price,
               },
             ],
           },
@@ -3352,656 +3511,6 @@ export default {
         )
       }, 1000)
       console.log(this.variantItems)
-      console.log(this.variantItems[0][2])
-      if (this.variantItems[0] !== undefined && this.variantItems[0][1] !== undefined) {
-        this.fieldEditData = this.variantItems[0][1].variant2.option[0].price
-        console.log('Edit Data Price 1')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[0] !== undefined && this.variantItems[0][2] !== undefined) {
-        this.fieldEditData = this.variantItems[0][2].variant2.option[0].price
-        console.log('Edit Data Price 1')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[0] !== undefined && this.variantItems[0][3] !== undefined) {
-        this.fieldEditData = this.variantItems[0][3].variant2.option[0].price
-        console.log('Edit Data Price 1')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[0] !== undefined && this.variantItems[0][4] !== undefined) {
-        this.fieldEditData = this.variantItems[0][4].variant2.option[0].price
-        console.log('Edit Data Price 1')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[0] !== undefined && this.variantItems[0][5] !== undefined) {
-        this.fieldEditData = this.variantItems[0][5].variant2.option[0].price
-        console.log('Edit Data Price 1')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[1] !== undefined && this.variantItems[1][1] !== undefined) {
-        this.fieldEditData = this.variantItems[1][1].variant2.option[0].price
-        console.log('Edit Data Price 2')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[1] !== undefined && this.variantItems[1][2] !== undefined) {
-        this.fieldEditData = this.variantItems[1][2].variant2.option[0].price
-        console.log('Edit Data Price 2')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[1] !== undefined && this.variantItems[1][3] !== undefined) {
-        this.fieldEditData = this.variantItems[1][3].variant2.option[0].price
-        console.log('Edit Data Price 2')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[1] !== undefined && this.variantItems[1][4] !== undefined) {
-        this.fieldEditData = this.variantItems[1][4].variant2.option[0].price
-        console.log('Edit Data Price 2')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[1] !== undefined && this.variantItems[1][5] !== undefined) {
-        this.fieldEditData = this.variantItems[1][5].variant2.option[0].price
-        console.log('Edit Data Price 2')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[2] !== undefined && this.variantItems[2][1] !== undefined) {
-        this.fieldEditData = this.variantItems[2][1].variant2.option[0].price
-        console.log('Edit Data Price 3')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[2] !== undefined && this.variantItems[2][2] !== undefined) {
-        this.fieldEditData = this.variantItems[2][2].variant2.option[0].price
-        console.log('Edit Data Price 3')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[2] !== undefined && this.variantItems[2][3] !== undefined) {
-        this.fieldEditData = this.variantItems[2][3].variant2.option[0].price
-        console.log('Edit Data Price 3')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[2] !== undefined && this.variantItems[2][4] !== undefined) {
-        this.fieldEditData = this.variantItems[2][4].variant2.option[0].price
-        console.log('Edit Data Price 3')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[2] !== undefined && this.variantItems[2][5] !== undefined) {
-        this.fieldEditData = this.variantItems[2][5].variant2.option[0].price
-        console.log('Edit Data Price 3')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[3] !== undefined && this.variantItems[3][1] !== undefined) {
-        this.fieldEditData = this.variantItems[3][1].variant2.option[0].price
-        console.log('Edit Data Price 4')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[3] !== undefined && this.variantItems[3][2] !== undefined) {
-        this.fieldEditData = this.variantItems[3][2].variant2.option[0].price
-        console.log('Edit Data Price 4')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[3] !== undefined && this.variantItems[3][3] !== undefined) {
-        this.fieldEditData = this.variantItems[3][3].variant2.option[0].price
-        console.log('Edit Data Price 4')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[3] !== undefined && this.variantItems[3][4] !== undefined) {
-        this.fieldEditData = this.variantItems[3][4].variant2.option[0].price
-        console.log('Edit Data Price 4')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[3] !== undefined && this.variantItems[3][5] !== undefined) {
-        this.fieldEditData = this.variantItems[3][5].variant2.option[0].price
-        console.log('Edit Data Price 4')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[4] !== undefined && this.variantItems[4][1] !== undefined) {
-        this.fieldEditData = this.variantItems[4][1].variant2.option[0].price
-        console.log('Edit Data Price 5')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[4] !== undefined && this.variantItems[4][2] !== undefined) {
-        this.fieldEditData = this.variantItems[4][2].variant2.option[0].price
-        console.log('Edit Data Price 5')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[4] !== undefined && this.variantItems[4][3] !== undefined) {
-        this.fieldEditData = this.variantItems[4][3].variant2.option[0].price
-        console.log('Edit Data Price 5')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[4] !== undefined && this.variantItems[4][4] !== undefined) {
-        this.fieldEditData = this.variantItems[4][4].variant2.option[0].price
-        console.log('Edit Data Price 5')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[4] !== undefined && this.variantItems[4][5] !== undefined) {
-        this.fieldEditData = this.variantItems[4][5].variant2.option[0].price
-        console.log('Edit Data Price 5')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[5] !== undefined && this.variantItems[5][1] !== undefined) {
-        this.fieldEditData = this.variantItems[5][1].variant2.option[0].price
-        console.log('Edit Data Price 6')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[5] !== undefined && this.variantItems[5][2] !== undefined) {
-        this.fieldEditData = this.variantItems[5][2].variant2.option[0].price
-        console.log('Edit Data Price 6')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[5] !== undefined && this.variantItems[5][3] !== undefined) {
-        this.fieldEditData = this.variantItems[5][3].variant2.option[0].price
-        console.log('Edit Data Price 6')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[5] !== undefined && this.variantItems[5][4] !== undefined) {
-        this.fieldEditData = this.variantItems[5][4].variant2.option[0].price
-        console.log('Edit Data Price 6')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[5] !== undefined && this.variantItems[5][5] !== undefined) {
-        this.fieldEditData = this.variantItems[5][5].variant2.option[0].price
-        console.log('Edit Data Price 6')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[6] !== undefined && this.variantItems[6][1] !== undefined) {
-        this.fieldEditData = this.variantItems[6][1].variant2.option[0].price
-        console.log('Edit Data Price 7')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[6] !== undefined && this.variantItems[6][2] !== undefined) {
-        this.fieldEditData = this.variantItems[6][2].variant2.option[0].price
-        console.log('Edit Data Price 7')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[6] !== undefined && this.variantItems[6][3] !== undefined) {
-        this.fieldEditData = this.variantItems[6][3].variant2.option[0].price
-        console.log('Edit Data Price 7')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[6] !== undefined && this.variantItems[6][4] !== undefined) {
-        this.fieldEditData = this.variantItems[6][4].variant2.option[0].price
-        console.log('Edit Data Price 7')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[6] !== undefined && this.variantItems[6][5] !== undefined) {
-        this.fieldEditData = this.variantItems[6][5].variant2.option[0].price
-        console.log('Edit Data Price 7')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[7] !== undefined && this.variantItems[7][1] !== undefined) {
-        this.fieldEditData = this.variantItems[7][1].variant2.option[0].price
-        console.log('Edit Data Price 8')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[7] !== undefined && this.variantItems[7][2] !== undefined) {
-        this.fieldEditData = this.variantItems[7][2].variant2.option[0].price
-        console.log('Edit Data Price 8')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[7] !== undefined && this.variantItems[7][3] !== undefined) {
-        this.fieldEditData = this.variantItems[7][3].variant2.option[0].price
-        console.log('Edit Data Price 8')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[7] !== undefined && this.variantItems[7][4] !== undefined) {
-        this.fieldEditData = this.variantItems[7][4].variant2.option[0].price
-        console.log('Edit Data Price 8')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[7] !== undefined && this.variantItems[7][5] !== undefined) {
-        this.fieldEditData = this.variantItems[7][5].variant2.option[0].price
-        console.log('Edit Data Price 8')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[8] !== undefined && this.variantItems[8][1] !== undefined) {
-        this.fieldEditData = this.variantItems[8][1].variant2.option[0].price
-        console.log('Edit Data Price 9')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[8] !== undefined && this.variantItems[8][2] !== undefined) {
-        this.fieldEditData = this.variantItems[8][2].variant2.option[0].price
-        console.log('Edit Data Price 9')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[8] !== undefined && this.variantItems[8][3] !== undefined) {
-        this.fieldEditData = this.variantItems[8][3].variant2.option[0].price
-        console.log('Edit Data Price 9')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[8] !== undefined && this.variantItems[8][4] !== undefined) {
-        this.fieldEditData = this.variantItems[8][4].variant2.option[0].price
-        console.log('Edit Data Price 9')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[8] !== undefined && this.variantItems[8][5] !== undefined) {
-        this.fieldEditData = this.variantItems[8][5].variant2.option[0].price
-        console.log('Edit Data Price 9')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[9] !== undefined && this.variantItems[9][1] !== undefined) {
-        this.fieldEditData = this.variantItems[9][1].variant2.option[0].price
-        console.log('Edit Data Price 10')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[9] !== undefined && this.variantItems[9][2] !== undefined) {
-        this.fieldEditData = this.variantItems[9][2].variant2.option[0].price
-        console.log('Edit Data Price 10')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[9] !== undefined && this.variantItems[9][3] !== undefined) {
-        this.fieldEditData = this.variantItems[9][3].variant2.option[0].price
-        console.log('Edit Data Price 10')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[9] !== undefined && this.variantItems[9][4] !== undefined) {
-        this.fieldEditData = this.variantItems[9][4].variant2.option[0].price
-        console.log('Edit Data Price 10')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[9] !== undefined && this.variantItems[9][5] !== undefined) {
-        this.fieldEditData = this.variantItems[9][5].variant2.option[0].price
-        console.log('Edit Data Price 10')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[10] !== undefined && this.variantItems[10][1] !== undefined) {
-        this.fieldEditData = this.variantItems[10][1].variant2.option[0].price
-        console.log('Edit Data Price 11')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[10] !== undefined && this.variantItems[10][2] !== undefined) {
-        this.fieldEditData = this.variantItems[10][2].variant2.option[0].price
-        console.log('Edit Data Price 11')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[10] !== undefined && this.variantItems[10][3] !== undefined) {
-        this.fieldEditData = this.variantItems[10][3].variant2.option[0].price
-        console.log('Edit Data Price 11')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[10] !== undefined && this.variantItems[10][4] !== undefined) {
-        this.fieldEditData = this.variantItems[10][4].variant2.option[0].price
-        console.log('Edit Data Price 11')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[10] !== undefined && this.variantItems[10][5] !== undefined) {
-        this.fieldEditData = this.variantItems[10][5].variant2.option[0].price
-        console.log('Edit Data Price 11')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[11] !== undefined && this.variantItems[11][1] !== undefined) {
-        this.fieldEditData = this.variantItems[11][1].variant2.option[0].price
-        console.log('Edit Data Price 12')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[11] !== undefined && this.variantItems[11][2] !== undefined) {
-        this.fieldEditData = this.variantItems[11][2].variant2.option[0].price
-        console.log('Edit Data Price 12')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[11] !== undefined && this.variantItems[11][3] !== undefined) {
-        this.fieldEditData = this.variantItems[11][3].variant2.option[0].price
-        console.log('Edit Data Price 12')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[11] !== undefined && this.variantItems[11][4] !== undefined) {
-        this.fieldEditData = this.variantItems[11][4].variant2.option[0].price
-        console.log('Edit Data Price 12')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[11] !== undefined && this.variantItems[11][5] !== undefined) {
-        this.fieldEditData = this.variantItems[11][5].variant2.option[0].price
-        console.log('Edit Data Price 12')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[12] !== undefined && this.variantItems[12][1] !== undefined) {
-        this.fieldEditData = this.variantItems[12][1].variant2.option[0].price
-        console.log('Edit Data Price 13')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[12] !== undefined && this.variantItems[12][2] !== undefined) {
-        this.fieldEditData = this.variantItems[12][2].variant2.option[0].price
-        console.log('Edit Data Price 13')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[12] !== undefined && this.variantItems[12][3] !== undefined) {
-        this.fieldEditData = this.variantItems[12][3].variant2.option[0].price
-        console.log('Edit Data Price 13')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[12] !== undefined && this.variantItems[12][4] !== undefined) {
-        this.fieldEditData = this.variantItems[12][4].variant2.option[0].price
-        console.log('Edit Data Price 13')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[12] !== undefined && this.variantItems[12][5] !== undefined) {
-        this.fieldEditData = this.variantItems[12][5].variant2.option[0].price
-        console.log('Edit Data Price 13')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[13] !== undefined && this.variantItems[13][1] !== undefined) {
-        this.fieldEditData = this.variantItems[13][1].variant2.option[0].price
-        console.log('Edit Data Price 14')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[13] !== undefined && this.variantItems[13][2] !== undefined) {
-        this.fieldEditData = this.variantItems[13][2].variant2.option[0].price
-        console.log('Edit Data Price 14')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[13] !== undefined && this.variantItems[13][3] !== undefined) {
-        this.fieldEditData = this.variantItems[13][3].variant2.option[0].price
-        console.log('Edit Data Price 14')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[13] !== undefined && this.variantItems[13][4] !== undefined) {
-        this.fieldEditData = this.variantItems[13][4].variant2.option[0].price
-        console.log('Edit Data Price 14')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[13] !== undefined && this.variantItems[13][5] !== undefined) {
-        this.fieldEditData = this.variantItems[13][5].variant2.option[0].price
-        console.log('Edit Data Price 14')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[14] !== undefined && this.variantItems[14][1] !== undefined) {
-        this.fieldEditData = this.variantItems[14][1].variant2.option[0].price
-        console.log('Edit Data Price 15')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[14] !== undefined && this.variantItems[14][2] !== undefined) {
-        this.fieldEditData = this.variantItems[14][2].variant2.option[0].price
-        console.log('Edit Data Price 15')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[14] !== undefined && this.variantItems[14][3] !== undefined) {
-        this.fieldEditData = this.variantItems[14][3].variant2.option[0].price
-        console.log('Edit Data Price 15')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[14] !== undefined && this.variantItems[14][4] !== undefined) {
-        this.fieldEditData = this.variantItems[14][4].variant2.option[0].price
-        console.log('Edit Data Price 15')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[14] !== undefined && this.variantItems[14][5] !== undefined) {
-        this.fieldEditData = this.variantItems[14][5].variant2.option[0].price
-        console.log('Edit Data Price 15')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[15] !== undefined && this.variantItems[15][1] !== undefined) {
-        this.fieldEditData = this.variantItems[15][1].variant2.option[0].price
-        console.log('Edit Data Price 16')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[15] !== undefined && this.variantItems[15][2] !== undefined) {
-        this.fieldEditData = this.variantItems[15][2].variant2.option[0].price
-        console.log('Edit Data Price 16')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[15] !== undefined && this.variantItems[15][3] !== undefined) {
-        this.fieldEditData = this.variantItems[15][3].variant2.option[0].price
-        console.log('Edit Data Price 16')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[15] !== undefined && this.variantItems[15][4] !== undefined) {
-        this.fieldEditData = this.variantItems[15][4].variant2.option[0].price
-        console.log('Edit Data Price 16')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[15] !== undefined && this.variantItems[15][5] !== undefined) {
-        this.fieldEditData = this.variantItems[15][5].variant2.option[0].price
-        console.log('Edit Data Price 16')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[16] !== undefined && this.variantItems[16][1] !== undefined) {
-        this.fieldEditData = this.variantItems[16][1].variant2.option[0].price
-        console.log('Edit Data Price 17')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[16] !== undefined && this.variantItems[16][2] !== undefined) {
-        this.fieldEditData = this.variantItems[16][2].variant2.option[0].price
-        console.log('Edit Data Price 17')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[16] !== undefined && this.variantItems[16][3] !== undefined) {
-        this.fieldEditData = this.variantItems[16][3].variant2.option[0].price
-        console.log('Edit Data Price 17')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[16] !== undefined && this.variantItems[16][4] !== undefined) {
-        this.fieldEditData = this.variantItems[16][4].variant2.option[0].price
-        console.log('Edit Data Price 17')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[16] !== undefined && this.variantItems[16][5] !== undefined) {
-        this.fieldEditData = this.variantItems[16][5].variant2.option[0].price
-        console.log('Edit Data Price 17')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[17] !== undefined && this.variantItems[17][1] !== undefined) {
-        this.fieldEditData = this.variantItems[17][1].variant2.option[0].price
-        console.log('Edit Data Price 18')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[17] !== undefined && this.variantItems[17][2] !== undefined) {
-        this.fieldEditData = this.variantItems[17][2].variant2.option[0].price
-        console.log('Edit Data Price 18')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[17] !== undefined && this.variantItems[17][3] !== undefined) {
-        this.fieldEditData = this.variantItems[17][3].variant2.option[0].price
-        console.log('Edit Data Price 18')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[17] !== undefined && this.variantItems[17][4] !== undefined) {
-        this.fieldEditData = this.variantItems[17][4].variant2.option[0].price
-        console.log('Edit Data Price 18')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[17] !== undefined && this.variantItems[17][5] !== undefined) {
-        this.fieldEditData = this.variantItems[17][5].variant2.option[0].price
-        console.log('Edit Data Price 18')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[18] !== undefined && this.variantItems[18][1] !== undefined) {
-        this.fieldEditData = this.variantItems[18][1].variant2.option[0].price
-        console.log('Edit Data Price 19')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[18] !== undefined && this.variantItems[18][2] !== undefined) {
-        this.fieldEditData = this.variantItems[18][2].variant2.option[0].price
-        console.log('Edit Data Price 19')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[18] !== undefined && this.variantItems[18][3] !== undefined) {
-        this.fieldEditData = this.variantItems[18][3].variant2.option[0].price
-        console.log('Edit Data Price 19')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[18] !== undefined && this.variantItems[18][4] !== undefined) {
-        this.fieldEditData = this.variantItems[18][4].variant2.option[0].price
-        console.log('Edit Data Price 19')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[18] !== undefined && this.variantItems[18][5] !== undefined) {
-        this.fieldEditData = this.variantItems[18][5].variant2.option[0].price
-        console.log('Edit Data Price 19')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[19] !== undefined && this.variantItems[19][1] !== undefined) {
-        this.fieldEditData = this.variantItems[19][1].variant2.option[0].price
-        console.log('Edit Data Price 20')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[19] !== undefined && this.variantItems[19][2] !== undefined) {
-        this.fieldEditData = this.variantItems[19][2].variant2.option[0].price
-        console.log('Edit Data Price 20')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[19] !== undefined && this.variantItems[19][3] !== undefined) {
-        this.fieldEditData = this.variantItems[19][3].variant2.option[0].price
-        console.log('Edit Data Price 20')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[19] !== undefined && this.variantItems[19][4] !== undefined) {
-        this.fieldEditData = this.variantItems[19][4].variant2.option[0].price
-        console.log('Edit Data Price 20')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[19] !== undefined && this.variantItems[19][5] !== undefined) {
-        this.fieldEditData = this.variantItems[19][5].variant2.option[0].price
-        console.log('Edit Data Price 20')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[20] !== undefined && this.variantItems[20][1] !== undefined) {
-        this.fieldEditData = this.variantItems[20][1].variant2.option[0].price
-        console.log('Edit Data Price 21')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[20] !== undefined && this.variantItems[20][2] !== undefined) {
-        this.fieldEditData = this.variantItems[20][2].variant2.option[0].price
-        console.log('Edit Data Price 21')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[20] !== undefined && this.variantItems[20][3] !== undefined) {
-        this.fieldEditData = this.variantItems[20][3].variant2.option[0].price
-        console.log('Edit Data Price 21')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[20] !== undefined && this.variantItems[20][4] !== undefined) {
-        this.fieldEditData = this.variantItems[20][4].variant2.option[0].price
-        console.log('Edit Data Price 21')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[20] !== undefined && this.variantItems[20][5] !== undefined) {
-        this.fieldEditData = this.variantItems[20][5].variant2.option[0].price
-        console.log('Edit Data Price 21')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[21] !== undefined && this.variantItems[21][1] !== undefined) {
-        this.fieldEditData = this.variantItems[21][1].variant2.option[0].price
-        console.log('Edit Data Price 22')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[21] !== undefined && this.variantItems[21][2] !== undefined) {
-        this.fieldEditData = this.variantItems[21][2].variant2.option[0].price
-        console.log('Edit Data Price 22')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[21] !== undefined && this.variantItems[21][3] !== undefined) {
-        this.fieldEditData = this.variantItems[21][3].variant2.option[0].price
-        console.log('Edit Data Price 22')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[21] !== undefined && this.variantItems[21][4] !== undefined) {
-        this.fieldEditData = this.variantItems[21][4].variant2.option[0].price
-        console.log('Edit Data Price 22')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[21] !== undefined && this.variantItems[21][5] !== undefined) {
-        this.fieldEditData = this.variantItems[21][5].variant2.option[0].price
-        console.log('Edit Data Price 22')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[22] !== undefined && this.variantItems[22][1] !== undefined) {
-        this.fieldEditData = this.variantItems[22][1].variant2.option[0].price
-        console.log('Edit Data Price 23')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[22] !== undefined && this.variantItems[22][2] !== undefined) {
-        this.fieldEditData = this.variantItems[22][2].variant2.option[0].price
-        console.log('Edit Data Price 23')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[22] !== undefined && this.variantItems[22][3] !== undefined) {
-        this.fieldEditData = this.variantItems[22][3].variant2.option[0].price
-        console.log('Edit Data Price 23')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[22] !== undefined && this.variantItems[22][4] !== undefined) {
-        this.fieldEditData = this.variantItems[22][4].variant2.option[0].price
-        console.log('Edit Data Price 23')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[22] !== undefined && this.variantItems[22][5] !== undefined) {
-        this.fieldEditData = this.variantItems[22][5].variant2.option[0].price
-        console.log('Edit Data Price 23')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[23] !== undefined && this.variantItems[23][1] !== undefined) {
-        this.fieldEditData = this.variantItems[23][1].variant2.option[0].price
-        console.log('Edit Data Price 24')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[23] !== undefined && this.variantItems[23][2] !== undefined) {
-        this.fieldEditData = this.variantItems[23][2].variant2.option[0].price
-        console.log('Edit Data Price 24')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[23] !== undefined && this.variantItems[23][3] !== undefined) {
-        this.fieldEditData = this.variantItems[23][3].variant2.option[0].price
-        console.log('Edit Data Price 24')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[23] !== undefined && this.variantItems[23][4] !== undefined) {
-        this.fieldEditData = this.variantItems[23][4].variant2.option[0].price
-        console.log('Edit Data Price 24')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[23] !== undefined && this.variantItems[23][5] !== undefined) {
-        this.fieldEditData = this.variantItems[23][5].variant2.option[0].price
-        console.log('Edit Data Price 24')
-        console.log(this.fieldEditData)
-      }
-
-      if (this.variantItems[24] !== undefined && this.variantItems[24][1] !== undefined) {
-        this.fieldEditData = this.variantItems[24][1].variant2.option[0].price
-        console.log('Edit Data Price 25')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[24] !== undefined && this.variantItems[24][2] !== undefined) {
-        this.fieldEditData = this.variantItems[24][2].variant2.option[0].price
-        console.log('Edit Data Price 25')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[24] !== undefined && this.variantItems[24][3] !== undefined) {
-        this.fieldEditData = this.variantItems[24][3].variant2.option[0].price
-        console.log('Edit Data Price 25')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[24] !== undefined && this.variantItems[24][4] !== undefined) {
-        this.fieldEditData = this.variantItems[24][4].variant2.option[0].price
-        console.log('Edit Data Price 25')
-        console.log(this.fieldEditData)
-      }
-      if (this.variantItems[24] !== undefined && this.variantItems[24][5] !== undefined) {
-        this.fieldEditData = this.variantItems[24][5].variant2.option[0].price
-        console.log('Edit Data Price 25')
-        console.log(this.fieldEditData)
-      }
 
       return this.variantItems
     },

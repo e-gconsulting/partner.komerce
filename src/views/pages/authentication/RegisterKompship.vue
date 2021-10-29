@@ -37,20 +37,20 @@
                     name="Nama Lengkap"
                     rules="required"
                   >
-                    <small class="text-danger mb-2"> {{ errors[0] }} </small>
                     <div class="inputs">
-                      <div class="input">
+                      <div :class="errors[0] ? 'input space-error0' : 'input'">
                         <b-form-input
                           id="fullname"
                           v-model="fullname"
                           :state="errors.length > 0 || submitErrors.fullname ? false:null"
                           name="fullname"
-                          class="border-0 bg-light"
+                          class="border-0 bg-light input-name-komship"
                           required
                         />
                         <label for="fullname">
                           Nama Lengkap
                         </label>
+                        <small class="text-danger"> {{ errors[0] }} </small>
                       </div>
                     </div>
                   </validation-provider>
@@ -63,9 +63,8 @@
                     name="Email"
                     rules="required|email"
                   >
-                    <small class="text-danger"> {{ errors[0] }} </small>
                     <div class="inputs">
-                      <div class="input">
+                      <div :class="errors[0] ? 'input space-error0' : 'input'">
                         <b-form-input
                           id="emailUser"
                           v-model="userEmail"
@@ -77,6 +76,7 @@
                         <label for="emailUser">
                           Email
                         </label>
+                        <small class="text-danger"> {{ errors[0] }} </small>
                       </div>
                     </div>
                   </validation-provider>
@@ -91,8 +91,7 @@
                       vid="password"
                       rules="required"
                     >
-                      <small class="text-danger">{{ errors[0] }}</small>
-                      <div class="input d-flex">
+                      <div class="input-password d-flex">
                         <b-form-input
                           id="password"
                           v-model="password"
@@ -113,6 +112,9 @@
                         </b-input-group-append>
                         <label for="password">Password</label>
                       </div>
+                      <div class="mb-1">
+                        <small class="text-danger">{{ errors[0] }}</small>
+                      </div>
                     </validation-provider>
                   </b-form-group>
                 </b-col>
@@ -126,8 +128,7 @@
                       vid="password"
                       rules="required"
                     >
-                      <small class="text-danger">{{ errors[0] }}</small>
-                      <div class="input d-flex">
+                      <div class="input-password d-flex">
                         <b-form-input
                           id="confirm-password"
                           v-model="confirmPassword"
@@ -148,6 +149,7 @@
                         </b-input-group-append>
                         <label for="confirm-password">Confirm Password</label>
                       </div>
+                      <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
                   </b-form-group>
 
@@ -341,7 +343,32 @@ export default {
     margin-bottom: 0.7rem;
 }
 
+[dir] .input-password {
+    position: relative;
+    width: 100%;
+    height: 50px;
+}
+
+[dir] .input.space-error0{
+    margin-bottom: 2.3rem;
+}
+
+[dir] .space-error-passowrd {
+  margin-bottom: 0.7rem;
+}
+
 [dir] .input input{
+    width: 100%;
+    height: 50px;
+    padding-top: 1.1rem;
+    padding-left: 9px;
+    outline: none;
+    border: 1px solid #8c8c8c;
+    border-radius: 3px;
+    transition: 0.2s;
+}
+
+[dir] .input-password input{
     width: 100%;
     height: 50px;
     padding-top: 1.1rem;
@@ -369,7 +396,22 @@ export default {
     transition: 0.2s;
 }
 
+[dir] .input-password label{
+    position: absolute;
+    top: 30%;
+    left: 10px;
+    font-size: 1.1rem;
+    color: #000;
+    transition: 0.2s;
+}
+
 [dir] .input input:focus ~ label, .input input:valid ~ label{
+    top: 10%;
+    font-size: 0.8rem;
+    color: #000;
+}
+
+[dir] .input-password input:focus ~ label, .input input:valid ~ label{
     top: 10%;
     font-size: 0.8rem;
     color: #000;
@@ -380,8 +422,17 @@ export default {
     border-color: #0A66C3;
 }
 
+[dir] .input-password input:focus{
+    border-width: 2px;
+    border-color: #0A66C3;
+}
+
 [dir] .input-group-text {
   border: 0;
   background: #f6f6f6;
+}
+
+[dir] .input-name-komship {
+  border-radius: 10px;
 }
 </style>
