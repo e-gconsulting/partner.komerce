@@ -23,7 +23,7 @@
                 <span
                   class="text__total"
                 >
-                  Rp 54.000.000
+                  Rp {{ new Intl.NumberFormat('id-ID').format(totalOngkir) }}
                 </span>
               </div>
               <div
@@ -38,7 +38,7 @@
                 <span
                   class="text__total"
                 >
-                  Rp 19.000.000
+                  Rp {{ new Intl.NumberFormat('id-ID').format(totalCod) }}
                 </span>
               </div>
             </div>
@@ -54,7 +54,10 @@
             <b-tab
               title="COD"
             >
-              <tab-cod />
+              <tab-cod
+                @totalCodFunc="totalCodFunc"
+                @totalOngkirFunc="totalOngkirFunc"
+              />
             </b-tab>
 
             <!-- and will be un-mounted when hidden -->
@@ -62,14 +65,20 @@
               title="Non - COD"
               lazy
             >
-              <tab-non-cod />
+              <tab-non-cod
+                @totalCodFunc="totalCodFunc"
+                @totalOngkirFunc="totalOngkirFunc"
+              />
             </b-tab>
             <!-- and will be un-mounted when hidden -->
             <b-tab
               title="Keduanya"
               lazy
             >
-              <tab-keduanya />
+              <tab-keduanya
+                @totalCodFunc="totalCodFunc"
+                @totalOngkirFunc="totalOngkirFunc"
+              />
             </b-tab>
           </b-tabs>
         </b-card-body>
@@ -97,6 +106,7 @@ import {
   BSpinner,
   BCardBody,
 } from 'bootstrap-vue'
+
 import TabCod from './TabCod.vue'
 import TabNonCod from './TabNonCod.vue'
 import TabKeduanya from './TabKeduanya.vue'
@@ -117,110 +127,9 @@ export default {
   },
   data() {
     return {
+      totalCod: 0,
+      totalOngkir: 0,
       loadDataAwal: true,
-      rangeDate: '2021-09-01 to 2021-09-03',
-      selected: { title: 'JNE' },
-      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'SiCepat' }],
-      isLoadTable: false,
-      rowsTable: [
-        {
-          userId: 1,
-          name: 'Hanif Muflihul',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 4500000,
-          status: 'Perlu disetujui',
-        },
-        {
-          userId: 11,
-          name: 'Terry Siphron',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Sedang direview',
-        },
-        {
-          userId: 21,
-          name: 'Kadin Franci',
-          email: 'hallobusiness@gmail.com',
-          bankName: 'Bank Mandiri',
-          bankNo: 9000021233213,
-          nominal: 5000000,
-          status: 'Disetujui',
-        },
-      ],
-      perPage: 5,
-      pageOptions: [3, 5, 10],
-      totalRows: 1,
-      currentPage: 1,
-      sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: null,
-      filterOn: [],
-      infoModal: {
-        id: 'info-modal',
-        title: '',
-        content: '',
-      },
-      fields: [
-        {
-          key: 'id',
-          label: 'Id',
-        },
-        {
-          key: 'tgl',
-          label: 'Tanggal',
-          sortable: true,
-        },
-        // A virtual column made up from two fields
-        {
-          key: 'transreturn',
-          label: 'Transaksi',
-        },
-        {
-          key: 'nom_trans',
-          label: 'Nilai Transaksi',
-        },
-        {
-          key: 'ongkir',
-          label: 'Ongkos Kirim',
-        },
-        {
-          key: 'cod_cost',
-          label: 'Biaya COD',
-        },
-        {
-          key: 'saldo',
-          label: 'Saldo',
-        },
-      ],
-      items: [
-        {
-          id: 1,
-          tgl: '12-08-2021',
-          trans: 'Transfer Bank',
-          trans_return: 'Return',
-          nom_trans: 'Rp100.000',
-          ongkir: 'Rp7.500',
-          ongkir_return: 'Rp3.500',
-          cod_cost: 'Rp2.500',
-          saldo: '+Rp89.700',
-        },
-        {
-          id: 2,
-          tgl: '12-02-2022',
-          trans: 'Transfer Bank',
-          trans_return: 'Return',
-          nom_trans: 'Rp100.000',
-          ongkir: 'Rp7.500',
-          ongkir_return: 'Rp3.500',
-          cod_cost: 'Rp2.500',
-          saldo: '-Rp7.500',
-        },
-      ],
     }
   },
   computed: {
@@ -238,7 +147,12 @@ export default {
     }, 1000)
   },
   methods: {
-    //
+    totalCodFunc(val) {
+      this.totalCod = val
+    },
+    totalOngkirFunc(val) {
+      this.totalOngkir = val
+    },
   },
 }
 </script>

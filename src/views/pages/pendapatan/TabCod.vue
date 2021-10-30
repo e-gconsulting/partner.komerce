@@ -66,6 +66,7 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
+import axioskomsipdev from '@/libs/axioskomsipdev'
 
 export default {
   components: {
@@ -78,6 +79,7 @@ export default {
   data() {
     return {
       rangeDate: '2021-09-01 to ',
+      payment_method: 'COD',
       selected: { title: 'JNE' },
       option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'SiCepat' }],
       isLoadTable: false,
@@ -169,15 +171,17 @@ export default {
         if (val.indexOf('to') !== -1) {
           const [startDate, endDate] = val.split(' to ')
           console.log({ startDate, endDate })
+          this.fetchData({ start_date: startDate, end_date: endDate })
         } else {
           console.log(val)
+          this.fetchData({ start_date: val, end_date: val })
         }
       },
     },
     selected: {
       handler(val) {
-        // calling api
         console.log(val.title)
+        this.fetchData({ shipping: val.title })
       },
     },
   },
@@ -194,8 +198,55 @@ export default {
     // get data for select option bulan or just hardcode
   },
   methods: {
-    async fetchData() {
-      // change this endpoint
+    fetchData(params) {
+      console.log('params fetch data: ', params)
+      const endpoint = '/api/v1/admin/finance/income'
+      let getData = null
+      if (params) {
+        getData = axioskomsipdev.get(endpoint, { params: { ...params, payment_method: this.payment_method } })
+      } else {
+        getData = axioskomsipdev.get(endpoint)
+      }
+
+      getData.then(({ data }) => {
+        /*
+          "data": {
+            "profit": {
+              "total_shipping_profit": 200000,
+              "total_cod_profit": 300000
+            },
+            "incomes": [
+              {
+                "partner_name": "Tatausahaku",
+                "district": "Purbalingga",
+                "shipping_cost": 1000000,
+                "grandtotal": 20000000,
+                "shipping_profit": 250000,
+                "net_profit": 1900000
+              },
+              {
+                "partner_name": "Tatausahamu",
+                "district": "Jakarta",
+                "shipping_cost": 1000000,
+                "grandtotal": 20000000,
+                "shipping_profit": 250000,
+                "net_profit": 1900000
+              }
+            ]
+          }
+        */
+        const parseData = JSON.parse(JSON.stringify(data.data))
+        this.items = parseData.incomes
+        this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
+        this.$emit('totalOngkirFunc', parseData.profit.total_cod)
+        this.totalRows = parseData.length
+      })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering

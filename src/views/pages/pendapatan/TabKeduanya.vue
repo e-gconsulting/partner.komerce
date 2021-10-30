@@ -78,6 +78,7 @@ export default {
   data() {
     return {
       rangeDate: '2021-09-01 to ',
+      payment_method: '',
       selected: { title: 'JNE' },
       option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'SiCepat' }],
       isLoadTable: false,
