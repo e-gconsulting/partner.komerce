@@ -113,12 +113,9 @@ import TabKeduanya from './TabKeduanya.vue'
 
 export default {
   components: {
-    // BRow,
-    // BBadge,
     BTab,
     BTabs,
     BCard,
-    // BTable,
     BSpinner,
     BCardBody,
     TabCod,

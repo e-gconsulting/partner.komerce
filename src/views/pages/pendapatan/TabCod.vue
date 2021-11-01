@@ -60,7 +60,6 @@
 
 <script>
 import {
-  // BBadge,
   BTable,
   BSpinner,
 } from 'bootstrap-vue'
@@ -70,7 +69,6 @@ import axioskomsipdev from '@/libs/axioskomsipdev'
 
 export default {
   components: {
-    // BBadge,
     BTable,
     BSpinner,
     vSelect,
@@ -81,7 +79,7 @@ export default {
       rangeDate: '2021-09-01 to ',
       payment_method: 'COD',
       selected: { title: 'JNE' },
-      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'SiCepat' }],
+      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'POS' }, { title: 'SiCepat' }],
       isLoadTable: false,
       perPage: 5,
       pageOptions: [3, 5, 10],
@@ -97,34 +95,15 @@ export default {
         title: '',
         content: '',
       },
-      items: [
-        {
-          id: 1,
-          name: 'Skylar Korsgaard',
-          city: 'Yogyakarta',
-          ongkir_cost: 'Rp 27.000.000',
-          cod_cost: '-',
-          ongkir_profit: 'Rp 9.000.000',
-          cod_profit: '-',
-        },
-        {
-          id: 2,
-          name: 'Kaylynn Dorwart',
-          city: 'Jakarta',
-          ongkir_cost: 'Rp 27.000.000',
-          cod_cost: '-',
-          ongkir_profit: 'Rp 9.000.000',
-          cod_profit: '-',
-        },
-      ],
+      items: [],
       fields: [
         {
-          key: 'name',
+          key: 'partner_name',
           label: 'Nama',
           sortable: true,
         },
         {
-          key: 'city',
+          key: 'district',
           label: 'Kota',
           sortable: true,
         },
@@ -134,24 +113,28 @@ export default {
         //   label: 'Transaksi',
         // },
         {
-          key: 'ongkir_cost',
+          key: 'shipping_cost',
           label: 'Nilai Ongkir',
           sortable: true,
+          formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
         {
-          key: 'cod_cost',
+          key: 'grand_total',
           label: 'Nilai COD',
           sortable: true,
+          formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
         {
-          key: 'ongkir_profit',
-          label: 'Profit Ongkir',
+          key: 'shipping_profit',
+          label: 'Profit Non COD',
           sortable: true,
+          formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
         {
-          key: 'cod_profit',
+          key: 'net_profit',
           label: 'Profit COD',
           sortable: true,
+          formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
       ],
     }
@@ -170,17 +153,14 @@ export default {
         // calling api
         if (val.indexOf('to') !== -1) {
           const [startDate, endDate] = val.split(' to ')
-          console.log({ startDate, endDate })
           this.fetchData({ start_date: startDate, end_date: endDate })
         } else {
-          console.log(val)
           this.fetchData({ start_date: val, end_date: val })
         }
       },
     },
     selected: {
       handler(val) {
-        console.log(val.title)
         this.fetchData({ shipping: val.title })
       },
     },
@@ -205,40 +185,32 @@ export default {
       if (params) {
         getData = axioskomsipdev.get(endpoint, { params: { ...params, payment_method: this.payment_method } })
       } else {
-        getData = axioskomsipdev.get(endpoint)
+        getData = axioskomsipdev.get(endpoint, { params: { payment_method: this.payment_method } })
       }
 
       getData.then(({ data }) => {
         /*
           "data": {
             "profit": {
-              "total_shipping_profit": 200000,
-              "total_cod_profit": 300000
+              "total_shipping_profit": 42000,
+              "profit_cod": 3500
             },
-            "incomes": [
+            "income": [
               {
                 "partner_name": "Tatausahaku",
-                "district": "Purbalingga",
-                "shipping_cost": 1000000,
-                "grandtotal": 20000000,
-                "shipping_profit": 250000,
-                "net_profit": 1900000
-              },
-              {
-                "partner_name": "Tatausahamu",
-                "district": "Jakarta",
-                "shipping_cost": 1000000,
-                "grandtotal": 20000000,
-                "shipping_profit": 250000,
-                "net_profit": 1900000
+                "district": "Idano Gawo",
+                "shipping_cost": 42000,
+                "grand_total": 82000,
+                "shipping_profit": 42000,
+                "net_profit": 113750
               }
             ]
           }
         */
         const parseData = JSON.parse(JSON.stringify(data.data))
-        this.items = parseData.incomes
+        this.items = parseData.income
         this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
-        this.$emit('totalOngkirFunc', parseData.profit.total_cod)
+        this.$emit('totalOngkirFunc', parseData.profit.profit_cod)
         this.totalRows = parseData.length
       })
         .catch(e => {

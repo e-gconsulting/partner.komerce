@@ -60,16 +60,15 @@
 
 <script>
 import {
-  // BBadge,
   BTable,
   BSpinner,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
+import axioskomsipdev from '@/libs/axioskomsipdev'
 
 export default {
   components: {
-    // BBadge,
     BTable,
     BSpinner,
     vSelect,
@@ -80,7 +79,7 @@ export default {
       rangeDate: '2021-09-01 to ',
       payment_method: '',
       selected: { title: 'JNE' },
-      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'SiCepat' }],
+      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'POS' }, { title: 'SiCepat' }],
       isLoadTable: false,
       perPage: 5,
       pageOptions: [3, 5, 10],
@@ -96,30 +95,15 @@ export default {
         title: '',
         content: '',
       },
-      items: [
-        {
-          id: 1,
-          name: 'Skylar Korsgaard',
-          city: 'Yogyakarta',
-          noncod_profit: 'Rp 9.000.000',
-          cod_profit: 'Rp 3.000.000',
-        },
-        {
-          id: 2,
-          name: 'Kaylynn Dorwart',
-          city: 'Jakarta',
-          noncod_profit: 'Rp 6.000.000',
-          cod_profit: 'Rp 2.000.000',
-        },
-      ],
+      items: [],
       fields: [
         {
-          key: 'name',
+          key: 'partner_name',
           label: 'Nama',
           sortable: true,
         },
         {
-          key: 'city',
+          key: 'district',
           label: 'Kota',
           sortable: true,
         },
@@ -129,14 +113,16 @@ export default {
         //   label: 'Transaksi',
         // },
         {
-          key: 'noncod_profit',
-          label: 'Profit Non COD',
+          key: 'shipping_profit',
+          label: 'Profit Ongkir',
           sortable: true,
+          formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
         {
-          key: 'cod_profit',
+          key: 'net_profit',
           label: 'Profit COD',
           sortable: true,
+          formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
       ],
     }
@@ -152,7 +138,18 @@ export default {
   watch: {
     rangeDate: {
       handler(val) {
-        console.log(val)
+        // calling api
+        if (val.indexOf('to') !== -1) {
+          const [startDate, endDate] = val.split(' to ')
+          this.fetchData({ start_date: startDate, end_date: endDate })
+        } else {
+          this.fetchData({ start_date: val, end_date: val })
+        }
+      },
+    },
+    selected: {
+      handler(val) {
+        this.fetchData({ shipping: val.title })
       },
     },
   },
@@ -168,8 +165,47 @@ export default {
     // get data for select option bulan or just hardcode
   },
   methods: {
-    async fetchData() {
-      // change this endpoint
+    fetchData(params) {
+      console.log('params fetch data: ', params)
+      const endpoint = '/api/v1/admin/finance/income'
+      let getData = null
+      if (params) {
+        getData = axioskomsipdev.get(endpoint, { params: { ...params, payment_method: this.payment_method } })
+      } else {
+        getData = axioskomsipdev.get(endpoint)
+      }
+
+      getData.then(({ data }) => {
+        /*
+          "data": {
+            "profit": {
+              "total_shipping_profit": 42000,
+              "profit_cod": 3500
+            },
+            "income": [
+              {
+                "partner_name": "Tatausahaku",
+                "district": "Idano Gawo",
+                "shipping_cost": 42000,
+                "grand_total": 82000,
+                "shipping_profit": 42000,
+                "net_profit": 113750
+              }
+            ]
+          }
+        */
+        const parseData = JSON.parse(JSON.stringify(data.data))
+        this.items = parseData.income
+        this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
+        this.$emit('totalOngkirFunc', parseData.profit.profit_cod)
+        this.totalRows = parseData.length
+      })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
