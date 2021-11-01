@@ -343,6 +343,7 @@ import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import axios2 from './baseUrl2'
 
 export default {
@@ -456,6 +457,18 @@ export default {
             const { data } = response
             console.log(data)
             this.loadingSubmit = false
+          }).catch(error => {
+            this.loadingSubmit = false
+            console.log(error)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal update profile, silahkan coba lagi',
+                variant: 'danger',
+              },
+            })
           })
         } else {
           this.loadingSubmit = false

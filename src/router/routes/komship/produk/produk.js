@@ -8,7 +8,7 @@ export default [
     meta: {
       name: pageName,
       routeCreate: 'add-produk',
-      routeEdit: 'add-produk',
+      routeEdit: 'edit-produk',
       resource: 'Produk',
       action: 'manage',
       breadcrumb: [
@@ -23,6 +23,22 @@ export default [
     path: '/add-produk',
     name: 'add-produk',
     component: () => import('@/views/pages/komship/produk/AddProduk.vue'),
+    meta: {
+      name: pageName,
+      resource: 'Produk',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: pageName.plural,
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/edit-produk/:product_id',
+    name: 'edit-produk',
+    component: () => import('@/views/pages/komship/produk/EditProduk.vue'),
     meta: {
       name: pageName,
       resource: 'Produk',

@@ -643,6 +643,7 @@ import {
 } from 'bootstrap-vue'
 import VueOtpInput from '@bachdgvn/vue-otp-input'
 import httpKomship from '@/libs/http_komship'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -694,6 +695,16 @@ export default {
       }).then(response => {
         const { data } = response
         console.log(data)
+      }).catch(() => {
+        this.$taost({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal buat pin, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
     },
     onChange(v) {
@@ -714,6 +725,16 @@ export default {
         } else {
           this.$refs['create-pin'].show()
         }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertIconIcon',
+            text: 'Gagal cek pin, silahkan refresh page',
+            variant: 'danger',
+          },
+        })
       })
     },
     tes() {
@@ -748,6 +769,16 @@ export default {
           },
           buttonsStyling: false,
         })
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal konfirmasi buat pin',
+            variant: 'danger',
+          },
+        })
       })
     },
     changePin() {
@@ -771,6 +802,17 @@ export default {
           this.errorConfirmPin = 'PIN tidak valid'
         }
         console.log(data)
+      }).catch(() => {
+        this.loadingSubmit = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal buat ganti pin, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
     },
     isMatchChangePin() {
@@ -792,6 +834,17 @@ export default {
         } else {
           this.loadingSubmit = false
         }
+      }).catch(() => {
+        this.loadingSubmit = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal ganti pin, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
     },
     submitChangePin() {
@@ -817,6 +870,7 @@ export default {
     },
     forgotPinByEmail() {
       this.$refs['modal-forgot-email-pin'].show()
+      this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
       this.$httpKomship.post('v1/send-otp', formData, {
@@ -824,10 +878,22 @@ export default {
           Authorization: `Bearer ${useJwt.getToken()}`,
         },
       }).then(response => {
+        this.loadingSubmit = false
         const { data } = response
         console.log(data)
+        this.countDownTimerOtp()
+      }).catch(() => {
+        this.loadingSubmit = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal kirim email, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
-      this.countDownTimerOtp()
     },
     sendOtpAgain() {
       this.countOtp = 10
@@ -838,6 +904,16 @@ export default {
       }).then(response => {
         const { data } = response
         console.log(data)
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal kirim OTP, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
       this.countDownTimerOtp()
     },

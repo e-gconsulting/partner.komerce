@@ -286,10 +286,12 @@ export default {
           let ability = []
 
           let { data } = response.data
+          console.log('first data')
+          console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
-          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM'].includes(role)) {
+          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
             return
@@ -360,6 +362,21 @@ export default {
                 { action: 'manage', subject: 'TalentProfile' },
               ]
               break
+            case 'KOMSHIP MEMBER':
+              ability = [
+                { action: 'manage', subject: 'Komship TalentPool' },
+                { action: 'manage', subject: 'Komship Wishlist' },
+                { action: 'manage', subject: 'PartnerProfile' },
+                { action: 'read', subject: 'Dashboard Komship' },
+                { action: 'manage', subject: 'Customer' },
+                { action: 'manage', subject: 'Produk' },
+                { action: 'manage', subject: 'Order' },
+                { action: 'manage', subject: 'Pickup' },
+                { action: 'manage', subject: 'Keuangan' },
+                { action: 'manage', subject: 'Setting Komship' },
+                { action: 'manage', subject: 'Hiring' },
+              ]
+              break
             default:
               break
           }
@@ -375,6 +392,8 @@ export default {
 
           data.ability = ability
           this.$ability.update(ability)
+          console.log('second data')
+          console.log(data)
 
           localStorage.setItem('userData', JSON.stringify(data))
           this.$store.commit('auth/UPDATE_USER_DATA', data)

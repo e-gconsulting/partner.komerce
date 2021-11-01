@@ -894,7 +894,7 @@
                             :key="index+1"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
                               :key="indexVariant+1"
                             >
                               <div
@@ -917,7 +917,7 @@
                             :key="index+1"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
                               :key="indexVariant+1"
                             >
                               <div
@@ -940,7 +940,7 @@
                             :key="index+1"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
                               :key="indexVariant+1"
                             >
                               <div
@@ -963,7 +963,7 @@
                             :key="index+1"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
+                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
                               :key="indexVariant+1"
                             >
                               <div
@@ -1488,7 +1488,7 @@ export default {
       if (this.formChoices1[0] !== undefined) {
         if (this.variantItems.length < 2) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices3.length; i++) {
+          for (let i = 0; i < this.formChoices2.length; i++) {
             this.variantItems.push([{
               variant1: {
                 option: [
@@ -1500,10 +1500,10 @@ export default {
                   },
                 ],
               },
-              variant3: {
+              variant2: {
                 option: [
                   {
-                    val: this.formChoices3[i].choices,
+                    val: this.formChoices2[i].choices,
                     parent: 0,
                     stock: this.stock,
                     price: this.price,
@@ -1529,7 +1529,7 @@ export default {
         }])
         if (this.variantItems.length > 1) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices3.length; i++) {
+          for (let i = 0; i < this.formChoices2.length; i++) {
             this.variantItems.push([{
               variant1: {
                 option: [
@@ -1541,10 +1541,10 @@ export default {
                   },
                 ],
               },
-              variant3: {
+              variant2: {
                 option: [
                   {
-                    val: this.formChoices3[i].choices,
+                    val: this.formChoices2[i].choices,
                     parent: 1,
                     stock: this.stock,
                     price: this.price,
@@ -1570,7 +1570,7 @@ export default {
         }])
         if (this.variantItems.length > 2) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices3.length; i++) {
+          for (let i = 0; i < this.formChoices2.length; i++) {
             this.variantItems.push([{
               variant1: {
                 option: [
@@ -1582,10 +1582,10 @@ export default {
                   },
                 ],
               },
-              variant3: {
+              variant2: {
                 option: [
                   {
-                    val: this.formChoices3[i].choices,
+                    val: this.formChoices2[i].choices,
                     parent: 2,
                     stock: this.stock,
                     price: this.price,
@@ -1611,7 +1611,7 @@ export default {
         }])
         if (this.variantItems.length > 2) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices3.length; i++) {
+          for (let i = 0; i < this.formChoices2.length; i++) {
             this.variantItems.push([{
               variant1: {
                 option: [
@@ -1623,10 +1623,10 @@ export default {
                   },
                 ],
               },
-              variant3: {
+              variant2: {
                 option: [
                   {
-                    val: this.formChoices3[i].choices,
+                    val: this.formChoices2[i].choices,
                     parent: 3,
                     stock: this.stock,
                     price: this.price,
@@ -1652,7 +1652,7 @@ export default {
         }])
         if (this.variantItems.length > 2) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices3.length; i++) {
+          for (let i = 0; i < this.formChoices2.length; i++) {
             this.variantItems.push([{
               variant1: {
                 option: [
@@ -1664,10 +1664,10 @@ export default {
                   },
                 ],
               },
-              variant3: {
+              variant2: {
                 option: [
                   {
-                    val: this.formChoices3[i].choices,
+                    val: this.formChoices2[i].choices,
                     parent: 4,
                     stock: this.stock,
                     price: this.price,
@@ -1682,1785 +1682,84 @@ export default {
       // Delete row undefined
       // eslint-disable-next-line no-plusplus
       for (let i = 0; i < this.variantItems.length; i++) {
-        if (this.variantItems[i][0].variant3 === undefined) {
+        if (this.variantItems[i][0].variant2 === undefined) {
           this.variantItems.splice(i, 1)
         }
       }
 
-      // Variant 2
-      if (this.formChoices2[0] !== undefined && this.variantItems[0] !== undefined) {
-        this.variantItems[0].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 0,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[0] !== undefined) {
-        this.variantItems[0].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 0,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[0] !== undefined) {
-        this.variantItems[0].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 0,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[0] !== undefined) {
-        this.variantItems[0].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 0,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[0] !== undefined) {
-        this.variantItems[0].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 0,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[1] !== undefined) {
-        this.variantItems[1].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 1,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[1] !== undefined) {
-        this.variantItems[1].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 1,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[1] !== undefined) {
-        this.variantItems[1].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 1,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[1] !== undefined) {
-        this.variantItems[1].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 1,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[1] !== undefined) {
-        this.variantItems[1].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 1,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[2] !== undefined) {
-        this.variantItems[2].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 2,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[2] !== undefined) {
-        this.variantItems[2].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 2,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[2] !== undefined) {
-        this.variantItems[2].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 2,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[2] !== undefined) {
-        this.variantItems[2].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 2,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[2] !== undefined) {
-        this.variantItems[2].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 2,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[3] !== undefined) {
-        this.variantItems[3].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 3,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[3] !== undefined) {
-        this.variantItems[3].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 3,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[3] !== undefined) {
-        this.variantItems[3].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 3,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[3] !== undefined) {
-        this.variantItems[3].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 3,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[3] !== undefined) {
-        this.variantItems[3].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 3,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[4] !== undefined) {
-        this.variantItems[4].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 4,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[4] !== undefined) {
-        this.variantItems[4].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 4,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[4] !== undefined) {
-        this.variantItems[4].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 4,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[4] !== undefined) {
-        this.variantItems[4].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 4,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[4] !== undefined) {
-        this.variantItems[4].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 4,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[5] !== undefined) {
-        this.variantItems[5].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 5,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[5] !== undefined) {
-        this.variantItems[5].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 5,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[5] !== undefined) {
-        this.variantItems[5].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 5,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[5] !== undefined) {
-        this.variantItems[5].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 5,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[5] !== undefined) {
-        this.variantItems[5].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 5,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[6] !== undefined) {
-        this.variantItems[6].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 6,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[6] !== undefined) {
-        this.variantItems[6].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 6,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[6] !== undefined) {
-        this.variantItems[6].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 6,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[6] !== undefined) {
-        this.variantItems[6].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 6,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[6] !== undefined) {
-        this.variantItems[6].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 6,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[7] !== undefined) {
-        this.variantItems[7].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 7,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[7] !== undefined) {
-        this.variantItems[7].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 7,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[7] !== undefined) {
-        this.variantItems[7].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 7,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[7] !== undefined) {
-        this.variantItems[7].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 7,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[7] !== undefined) {
-        this.variantItems[7].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 7,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[8] !== undefined) {
-        this.variantItems[8].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 8,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[8] !== undefined) {
-        this.variantItems[8].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 8,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[8] !== undefined) {
-        this.variantItems[8].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 8,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[8] !== undefined) {
-        this.variantItems[8].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 8,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[8] !== undefined) {
-        this.variantItems[8].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 8,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[9] !== undefined) {
-        this.variantItems[9].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 9,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[9] !== undefined) {
-        this.variantItems[9].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 9,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[9] !== undefined) {
-        this.variantItems[9].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 9,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[9] !== undefined) {
-        this.variantItems[9].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 9,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[9] !== undefined) {
-        this.variantItems[9].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 9,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[10] !== undefined) {
-        this.variantItems[10].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 10,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[10] !== undefined) {
-        this.variantItems[10].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 10,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[10] !== undefined) {
-        this.variantItems[10].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 10,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[10] !== undefined) {
-        this.variantItems[10].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 10,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[10] !== undefined) {
-        this.variantItems[10].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 10,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[11] !== undefined) {
-        this.variantItems[11].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 11,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[11] !== undefined) {
-        this.variantItems[11].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 11,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[11] !== undefined) {
-        this.variantItems[11].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 11,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[11] !== undefined) {
-        this.variantItems[11].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 11,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[11] !== undefined) {
-        this.variantItems[11].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 11,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[12] !== undefined) {
-        this.variantItems[12].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 12,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[12] !== undefined) {
-        this.variantItems[12].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 12,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[12] !== undefined) {
-        this.variantItems[12].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 12,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[12] !== undefined) {
-        this.variantItems[12].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 12,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[12] !== undefined) {
-        this.variantItems[12].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 12,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[13] !== undefined) {
-        this.variantItems[13].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 13,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[13] !== undefined) {
-        this.variantItems[13].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 13,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[13] !== undefined) {
-        this.variantItems[13].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 13,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[13] !== undefined) {
-        this.variantItems[13].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 13,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[13] !== undefined) {
-        this.variantItems[13].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 13,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[14] !== undefined) {
-        this.variantItems[14].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 14,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[14] !== undefined) {
-        this.variantItems[14].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 14,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[14] !== undefined) {
-        this.variantItems[14].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 14,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[14] !== undefined) {
-        this.variantItems[14].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 14,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[14] !== undefined) {
-        this.variantItems[14].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 14,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[15] !== undefined) {
-        this.variantItems[15].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 15,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[15] !== undefined) {
-        this.variantItems[15].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 15,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[15] !== undefined) {
-        this.variantItems[15].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 15,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[15] !== undefined) {
-        this.variantItems[15].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 15,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[15] !== undefined) {
-        this.variantItems[15].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 15,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[16] !== undefined) {
-        this.variantItems[16].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 16,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[16] !== undefined) {
-        this.variantItems[16].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 16,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[16] !== undefined) {
-        this.variantItems[16].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 16,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[16] !== undefined) {
-        this.variantItems[16].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 16,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[16] !== undefined) {
-        this.variantItems[16].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 16,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[17] !== undefined) {
-        this.variantItems[17].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 17,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[17] !== undefined) {
-        this.variantItems[17].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 17,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[17] !== undefined) {
-        this.variantItems[17].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 17,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[17] !== undefined) {
-        this.variantItems[17].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 17,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[17] !== undefined) {
-        this.variantItems[17].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 17,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[18] !== undefined) {
-        this.variantItems[18].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 18,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[18] !== undefined) {
-        this.variantItems[18].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 18,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[18] !== undefined) {
-        this.variantItems[18].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 18,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[18] !== undefined) {
-        this.variantItems[18].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 18,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[18] !== undefined) {
-        this.variantItems[18].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 18,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[19] !== undefined) {
-        this.variantItems[19].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 19,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[19] !== undefined) {
-        this.variantItems[19].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 19,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[19] !== undefined) {
-        this.variantItems[19].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 19,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[19] !== undefined) {
-        this.variantItems[19].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 19,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[19] !== undefined) {
-        this.variantItems[19].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 19,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[20] !== undefined) {
-        this.variantItems[20].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 20,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[20] !== undefined) {
-        this.variantItems[20].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 20,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[20] !== undefined) {
-        this.variantItems[20].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 20,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[20] !== undefined) {
-        this.variantItems[20].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 20,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[20] !== undefined) {
-        this.variantItems[20].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 20,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[21] !== undefined) {
-        this.variantItems[21].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 21,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[21] !== undefined) {
-        this.variantItems[21].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 21,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[21] !== undefined) {
-        this.variantItems[21].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 21,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[21] !== undefined) {
-        this.variantItems[21].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 21,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[21] !== undefined) {
-        this.variantItems[21].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 21,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[22] !== undefined) {
-        this.variantItems[22].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 22,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[22] !== undefined) {
-        this.variantItems[22].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 22,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[22] !== undefined) {
-        this.variantItems[22].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 22,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[22] !== undefined) {
-        this.variantItems[22].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 22,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[22] !== undefined) {
-        this.variantItems[22].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 22,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[23] !== undefined) {
-        this.variantItems[23].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 23,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[23] !== undefined) {
-        this.variantItems[23].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 23,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[23] !== undefined) {
-        this.variantItems[23].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 23,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[23] !== undefined) {
-        this.variantItems[23].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 23,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[23] !== undefined) {
-        this.variantItems[23].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 23,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-
-      if (this.formChoices2[0] !== undefined && this.variantItems[24] !== undefined) {
-        this.variantItems[24].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[0].choices,
-                parent: 24,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[1] !== undefined && this.variantItems[24] !== undefined) {
-        this.variantItems[24].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[1].choices,
-                parent: 24,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[2] !== undefined && this.variantItems[24] !== undefined) {
-        this.variantItems[24].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[2].choices,
-                parent: 24,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[3] !== undefined && this.variantItems[24] !== undefined) {
-        this.variantItems[24].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[3].choices,
-                parent: 24,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
-      }
-      if (this.formChoices2[4] !== undefined && this.variantItems[24] !== undefined) {
-        this.variantItems[24].push({
-          variant2: {
-            option: [
-              {
-                val: this.formChoices2[4].choices,
-                parent: 24,
-                stock: this.stock,
-                price: this.price,
-              },
-            ],
-          },
-        })
+      // Variant 3
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < this.variantItems.length; i++) {
+        if (this.formChoices3[0] !== undefined && this.variantItems[i] !== undefined) {
+          this.variantItems[i].push({
+            variant3: {
+              option: [
+                {
+                  val: this.formChoices3[0].choices,
+                  parent: 0,
+                  stock: this.stock,
+                  price: this.price,
+                },
+              ],
+            },
+          })
+        }
+        if (this.formChoices3[1] !== undefined && this.variantItems[i] !== undefined) {
+          this.variantItems[i].push({
+            variant3: {
+              option: [
+                {
+                  val: this.formChoices3[1].choices,
+                  parent: 0,
+                  stock: this.stock,
+                  price: this.price,
+                },
+              ],
+            },
+          })
+        }
+        if (this.formChoices3[2] !== undefined && this.variantItems[i] !== undefined) {
+          this.variantItems[i].push({
+            variant3: {
+              option: [
+                {
+                  val: this.formChoices3[2].choices,
+                  parent: 0,
+                  stock: this.stock,
+                  price: this.price,
+                },
+              ],
+            },
+          })
+        }
+        if (this.formChoices3[3] !== undefined && this.variantItems[i] !== undefined) {
+          this.variantItems[i].push({
+            variant3: {
+              option: [
+                {
+                  val: this.formChoices3[3].choices,
+                  parent: 0,
+                  stock: this.stock,
+                  price: this.price,
+                },
+              ],
+            },
+          })
+        }
+        if (this.formChoices3[4] !== undefined && this.variantItems[i] !== undefined) {
+          this.variantItems[i].push({
+            variant3: {
+              option: [
+                {
+                  val: this.formChoices3[4].choices,
+                  parent: 0,
+                  stock: this.stock,
+                  price: this.price,
+                },
+              ],
+            },
+          })
+        }
       }
 
       if (this.variationName1 !== null) {

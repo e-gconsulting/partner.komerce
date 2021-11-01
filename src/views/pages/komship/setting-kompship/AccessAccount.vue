@@ -428,6 +428,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required, email } from '@validations'
 
 export default {
@@ -523,13 +524,7 @@ export default {
     }
   },
   mounted() {
-    this.$httpKomship.post('/v1/my-profile', {},
-      {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-      console.log(response.data.data)
-    })
-    this.$http.get('/user/partner/get-komship-member/618', {
+    this.$http.get('/user/partner/get-menu-member', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       const { data } = response.data
@@ -546,6 +541,17 @@ export default {
       }).then(response => {
         const { data } = response.data
         return data
+      }).catch(() => {
+        this.loadingSubmit = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal me-load data, silahkan coba lagi',
+            variant: 'Danger',
+          },
+        })
       })
     },
     addAccount() {
@@ -566,6 +572,18 @@ export default {
             console.log(data)
             this.$refs['modal-add-account'].hide()
             this.refreshTable()
+          }).catch(error => {
+            this.loadingSubmit = false
+            console.log(error)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal menambahkan akses orang, silahkan coba lagi',
+                variant: 'Danger',
+              },
+            })
           })
         } else {
           this.loadingSubmit = false

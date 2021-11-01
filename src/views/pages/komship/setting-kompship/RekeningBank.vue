@@ -407,6 +407,7 @@
 <script>
 import CodeInput from 'vue-verification-code-input'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required } from '@validations'
 import useJwt from '@/auth/jwt/useJwt'
 import {
@@ -552,6 +553,17 @@ export default {
             this.loadingSubmit = false
             this.getBank()
             console.log(data)
+          }).catch(() => {
+            this.loadingSubmit = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal edit rekening bank, silahkan coba lagi',
+                variant: 'danger',
+              },
+            })
           })
         } else {
           this.loadingSubmit = false

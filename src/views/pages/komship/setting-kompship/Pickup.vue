@@ -53,7 +53,7 @@
           </b-row>
 
           <validation-observer ref="formRulesEdit">
-            <b-form>
+            <b-form @submit.prevent>
               <b-row>
 
                 <b-col cols="10">
@@ -203,7 +203,7 @@
                       type="reset"
                       variant="primary"
                       class="mr-1"
-                      @click="submitUpdateAddress"
+                      @click.prevent="submitUpdateAddress"
                     >
                       <b-spinner
                         v-if="loadingSubmit"
@@ -409,6 +409,7 @@ import useJwt from '@/auth/jwt/useJwt'
 import Ripple from 'vue-ripple-directive'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   BCard,
   BRow,
@@ -540,6 +541,17 @@ export default {
             this.loadingSubmit = false
             this.formAddAddress = false
             this.getAddress()
+          }).catch(() => {
+            this.loadingSubmit = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal menambahkan alamat, silahkan coba lagi',
+                variant: 'danger',
+              },
+            })
           })
         } else {
           this.loadingSubmit = false
@@ -552,17 +564,20 @@ export default {
     removeFormAddress() {
       this.formAddAddress = false
     },
-    submitUpdateAddress() {
+    submitUpdateAddress(data) {
+      console.log(data)
       this.loadingSubmit = true
-      this.$refs.formRulesEdit.validate().then(success => {
-        if (success) {
-          const formData = new FormData()
-          formData.append()
-        }
-      })
+      console.log(this.editAddress())
+      // eslint-disable-next-line dot-notation
+      // this.$refs['formRulesEdit'][0].validate().then(success => {
+      //   if (success) {
+      //     const formData = new FormData()
+      //     formData.append()
+      //   }
+      // })
     },
     editAddress(data) {
-      console.log(data.origin_code)
+      console.log(data)
       this.editMode = true
       this.editIdAddress = data.address_id
       this.addressName = data.address_name

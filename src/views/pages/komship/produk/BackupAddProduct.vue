@@ -1409,49 +1409,42 @@ export default {
       if (this.formChoices1[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[0].option.push(this.variantItems[i][0].variant1.option[0])
+          this.variantStore[0].option.push(
+            {
+              val: this.formChoices1[i].choices,
+              parent: null,
+              stock: null,
+              price: null,
+            },
+          )
         }
       }
 
-      if (this.formChoices2[0] !== undefined && this.formChoices1[0] !== undefined) {
+      if (this.formChoices2[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 1; i < this.formChoices2.length + 1; i++) {
-          this.variantStore[1].option.push(this.variantItems[0][i].variant2.option[0])
-        }
-      }
-
-      if (this.formChoices2[0] !== undefined && this.formChoices1[1] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 1; i < this.formChoices2.length + 1; i++) {
-          this.variantStore[1].option.push(this.variantItems[1][i].variant2.option[0])
-        }
-      }
-
-      if (this.formChoices2[0] !== undefined && this.formChoices1[2] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 1; i < this.formChoices2.length + 1; i++) {
-          this.variantStore[1].option.push(this.variantItems[2][i].variant2.option[0])
-        }
-      }
-
-      if (this.formChoices2[0] !== undefined && this.formChoices1[3] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 1; i < this.formChoices2.length + 1; i++) {
-          this.variantStore[1].option.push(this.variantItems[3][i].variant2.option[0])
-        }
-      }
-
-      if (this.formChoices2[0] !== undefined && this.formChoices1[4] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 1; i < this.formChoices2.length + 1; i++) {
-          this.variantStore[1].option.push(this.variantItems[4][i].variant2.option[0])
+        for (let i = 0; i < this.formChoices2.length; i++) {
+          this.variantStore[1].option.push(
+            {
+              val: this.formChoices2[i].choices,
+              parent: 0,
+              stock: this.stock,
+              price: this.price,
+            },
+          )
         }
       }
 
       if (this.formChoices3[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices3.length; i++) {
-          this.variantStore[2].option.push(this.variantItems[i][0].variant3.option[0])
+          this.variantStore[2].option.push(
+            {
+              val: this.formChoices3[i].choices,
+              parent: 0,
+              stock: this.stock,
+              price: this.price,
+            },
+          )
         }
       }
 
@@ -1485,7 +1478,8 @@ export default {
       // }, {
       //   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       // }).then(response => {
-      //   console.log(response)
+      //   const { data } = response
+      //   console.log(data)
       // })
     },
     createListVariation() {

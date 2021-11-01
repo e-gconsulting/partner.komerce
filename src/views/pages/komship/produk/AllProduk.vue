@@ -265,7 +265,8 @@
               <b-button
                 variant="flat-secondary"
                 class="btn-icon"
-                @click="edit(data.index)"
+                tag="router-link"
+                :to="{ name: $route.meta.routeEdit, params: { product_id: data.item.product_id } }"
               >
                 <feather-icon
                   icon="EditIcon"
