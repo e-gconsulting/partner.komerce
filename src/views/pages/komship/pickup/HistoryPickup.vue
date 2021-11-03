@@ -18,7 +18,7 @@
     <history-pickup-table
       v-if="this.currentView === 'all'"
       ref="allPickupTable1"
-      :items="dummyItems"
+      :items="items"
       :fields="fields"
       table-ref-name="allPickupTable1"
       @onDetailsClicked="handleDetailsButtonClicked"
@@ -27,6 +27,7 @@
     <history-pickup-details
       v-else
       :items="detailsItem"
+      :items-arr="itemsArr"
       @onBackButtonClicked="() => handleDetailsButtonClicked('all', {})"
     />
 
@@ -51,132 +52,72 @@ export default {
       currentView: 'all',
       detailsItem: {},
       fields: [
-        { key: 'order_date', label: 'Waktu Pengajuan' },
+        { key: 'date_submission', label: 'Waktu Pengajuan' },
         { key: 'pickup_date', label: 'Waktu Penjemputan' },
-        { key: 'ekspedisi', label: 'Ekspedisi' },
+        { key: 'shipping', label: 'Ekspedisi' },
         { key: 'vehicle', label: 'Kendaraan' },
-        { key: 'product_amount', label: 'Produk' },
-        { key: 'order_amount', label: 'Orderan' },
+        { key: 'total_product', label: 'Produk' },
+        { key: 'total_order', label: 'Orderan' },
         { key: 'button', label: 'Rincian' },
       ],
-      dummyItems: [
-        {
-          order_id: 1,
-          customer_name: 'Putri Marani',
-          status: 'Diterima',
-          order_date: '22 Agustus 2021 16:30',
-          pickup_date: '24 Agustus 2021 14:59',
-          ekspedisi: 'JNE',
-          vehicle: 'MOTOR',
-          product_amount: 4,
-          order_amount: 1,
-          order_no: 'RT1219868',
-          district: 'Purbalingga',
-          detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
-          shipping_cost: 20000,
-          grand_total: 980000,
-          payment_method: 'COD',
-          is_komship: 1,
-          bank: null,
-          airway_bill: 120109299303930,
-          product: [
-            {
-              product_id: 1,
-              product_name: 'Jilbab Pasmia 1-SKU 332',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: 'M - Merah',
-              weight: 1000,
-              price: 380000,
-              qty: 1,
-            },
-            {
-              product_id: 2,
-              product_name: 'Jilbab Pasmia 1-SKU 331',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: 'M - Merah',
-              weight: 1000,
-              price: 200000,
-              qty: 1,
-            },
-            {
-              product_id: 3,
-              product_name: 'Jilbab Pasmia 1-SKU 330',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: 'M - Merah',
-              price: 200000,
-              qty: 1,
-            },
-            {
-              product_id: 4,
-              product_name: 'Jilbab Pasmia 1-SKU 339',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: 'M - Merah',
-              weight: 1000,
-              price: 200000,
-              qty: 1,
-            },
-          ],
-        },
-        {
-          order_id: 2,
-          customer_name: 'Putri Marani',
-          status: 'Diterima',
-          order_date: '22 Agustus 2021 16:30',
-          pickup_date: '24 Agustus 2021 14:59',
-          ekspedisi: 'JnT',
-          vehicle: 'TRUK',
-          product_amount: 7,
-          order_amount: 1,
-          order_no: 'RT1219868',
-          district: 'Purbalingga',
-          detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
-          shipping_cost: 20000,
-          is_komship: 0,
-          grand_total: 980000,
-          payment_method: 'BANK TRANSFER',
-          airway_bill: null,
-          bank: {
-            bank_name: 'BCA',
-            account_no: 33129898,
-            account_name: 'Hj. Mabur',
-          },
-          product: [
-            {
-              product_id: 1,
-              product_name: 'Jilbab Pasmia 1-SKU 332',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: '-',
-              weight: 1000,
-              price: 100000,
-              qty: 5,
-            },
-            {
-              product_id: 2,
-              product_name: 'Jilbab Pasmia 1-SKU 331',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: '-',
-              weight: 1000,
-              price: 100000,
-              qty: 1,
-            },
-            {
-              product_id: 3,
-              product_name: 'Jilbab Pasmia 1-SKU 330',
-              product_image: 'images/product/product-980312037.jpg',
-              variant_name: '-',
-              weight: 1000,
-              price: 140000,
-              qty: 1,
-            },
-          ],
-        },
-      ],
+      items: [],
+      itemsArr: [],
     }
+  },
+  async mounted() {
+    this.reload()
   },
   methods: {
     handleDetailsButtonClicked(view, itemDetails) {
       if (view) this.currentView = view
-      if (itemDetails) this.detailsItem = itemDetails
+      if (itemDetails && typeof itemDetails.id !== 'undefined') {
+        this.openDetailView(itemDetails)
+      }
+    },
+    genItemsProdArr(itemsOld) {
+      const newItems = itemsOld
+      newItems.product = itemsOld.data_order
+      delete newItems.data_order
+      this.itemsArr.push({ ...newItems })
+    },
+    async reload() {
+      this.loading = true
+      await this.getProfile()
+      await this.getPickup()
+      this.loading = false
+    },
+    async openDetailView(data) {
+      if (data) {
+        await this.getPickupDetail(data.id)
+      }
+    },
+    getProfile() {
+      return this.$http_komship.post('v1/my-profile').then(response => {
+        const { data } = response.data
+        // console.log('this.profile', data)
+        this.profile = data
+      }).catch(() => {
+        console.log('gagal fetch profile')
+      })
+    },
+    getPickup() {
+      return this.$http_komship.get('v1/pickup/history').then(response => {
+        const { data } = response.data
+        // console.log('listAllPickup', data)
+        this.items = data
+      }).catch(() => {
+        this.alertFail('Unable to get the list of the pickup. Please try again later or contact support.')
+      })
+    },
+    getPickupDetail(pickupId) {
+      return this.$http_komship.get(`v1/pickup/history/detail/${pickupId}`).then(response => {
+        const { data } = response.data
+        // console.log('pickupDetail', data)
+        this.detailsItem = data
+        if (data && data.data_order && data.data_order.length && data.data_order.length > 0) this.genItemsProdArr(data)
+      }).catch(() => {
+        this.alertFail('Unable to get the pickup detail. Please try again later or contact support.')
+      })
     },
   },
 }

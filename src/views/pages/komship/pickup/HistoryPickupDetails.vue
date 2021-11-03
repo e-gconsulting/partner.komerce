@@ -23,8 +23,8 @@
           class="add-pickup-input-address-wrapper"
         >
           <div class="add-pickup-input-address-name-wrapper">
-            <div class="add-pickup-input-address-name">Gudang XYZ</div>
-            <div class="add-pickup-input-address-desc">Jalan Raya Melebar penuh dengan sabar Aamiin</div>
+            <div class="add-pickup-input-address-name">{{ items.address_name }}</div>
+            <div class="add-pickup-input-address-desc">{{ items.address_detail }}</div>
           </div>
         </div>
       </b-form-group>
@@ -34,7 +34,7 @@
         label-cols-md="3"
         label-for="input-pickup-date"
       >
-        <div id="input-pickup-date">{{ getDate(items.pickup_date) }}</div>
+        <div id="input-pickup-date">{{ items.pickup_date }}</div>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"
@@ -42,7 +42,7 @@
         label-cols-md="3"
         label-for="input-pickup-time2"
       >
-        <div id="input-pickup-time2">{{ getTime(items.pickup_date) }}</div>
+        <div id="input-pickup-time2">{{ items.pickup_time }}</div>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"
@@ -110,40 +110,20 @@ export default {
       type: Object,
       default: () => {},
     },
+    itemsArr: {
+      type: Array,
+      default: () => [],
+    },
   },
   data() {
     return {
-      itemsArr: [this.items],
       fields: [
         { key: 'product', label: 'Produk' },
         { key: 'qty', label: 'Jumlah' },
       ],
     }
   },
-  mounted() {
-    console.log('Selected items', this.items)
-  },
   methods: {
-    getDate(dateVal) {
-      if (dateVal) {
-        let today = dateVal.split(' ')
-        let month = today[1]
-        const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-        month = (monthArr.indexOf(month) + 1) > 9 ? (monthArr.indexOf(month) + 1) : `0${(monthArr.indexOf(month) + 1)}`
-        today = `${today[0]} ${month} ${today[2]}`
-        return today
-      }
-      return dateVal
-    },
-    getTime(dateVal) {
-      if (dateVal) {
-        const today = dateVal.split(' ')
-        let time = today[3].split(':')
-        time = `${time[0]}:${time[1]}`
-        return time
-      }
-      return dateVal
-    },
     onUpdateScreenViewParent() {
       this.$emit('onBackButtonClicked')
     },

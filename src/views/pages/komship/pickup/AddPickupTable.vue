@@ -18,7 +18,7 @@
           class="product-item-wrapper"
         >
           <div class="product-name-img-wrapper">
-            <img src="prodItem.product_image">
+            <img :src="prodItem.product_image">
           </div>
           <div class="product-name-wrapper">
             <div class="product-name-content">
@@ -26,7 +26,7 @@
                 {{ prodItem.product_name }}
               </div>
               <div class="product-name-variant-wrapper org-text">
-                {{ prodItem.variant_name.replace(' -', ',') }}
+                {{ (prodItem && prodItem.variant_name) ? (prodItem.variant_name.replace(' -', ',')) : ((prodItem && prodItem.product_variant_name) ? (prodItem.product_variant_name.replace(' -', ',')) : '') }}
               </div>
             </div>
           </div>
