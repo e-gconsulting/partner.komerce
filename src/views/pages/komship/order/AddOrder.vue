@@ -186,20 +186,20 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        console.log('this.profile', data)
+        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
-        console.log('gagal2')
+        console.log('failed to get the profile data')
       })
     },
     getListProductByPartner() {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        console.log('this.product', data)
+        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
-        console.log('gagal2')
+        console.log('failed to get the product data by partner')
       })
     },
   },

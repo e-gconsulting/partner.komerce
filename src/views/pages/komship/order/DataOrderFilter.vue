@@ -172,7 +172,6 @@ export default {
       }
     },
     onAddProduct(itemSelected) {
-      console.log('onAddProduct', itemSelected)
       if (itemSelected && itemSelected.product_name) this.chooseProduct = itemSelected.product_name
     },
     submitFilter() {

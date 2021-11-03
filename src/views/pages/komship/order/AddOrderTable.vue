@@ -123,9 +123,6 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    // console.log('hello world', this.items)
-  },
   methods: {
     addTotalItem(param, itemSelectedIndex, itemSelected) {
       this.$emit('onAddTotalItem', param, itemSelectedIndex, itemSelected)

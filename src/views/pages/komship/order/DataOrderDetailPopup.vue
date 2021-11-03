@@ -255,7 +255,7 @@ export default {
       this.okTitleButton = 'Please wait'
       return this.$http_komship.get(`v1/check-awb/${this.inputtedResi}/${this.detailOrder.order_id}`).then(response => {
         const { data } = response
-        console.log('checkAirwayBill', data)
+        // console.log('checkAirwayBill', data)
         if (data && data.status === 'success') {
           this.warnTextModal = ''
           this.handleOkModalShowReceipt(bvModalEvt)
@@ -280,7 +280,7 @@ export default {
       }
       return this.$http_komship.put(`v1/order/${this.profile.partner_id}/update/${this.detailOrder.order_id}`, newAirwayBill).then(response => {
         const { data } = response.data
-        console.log('updateAirwayBill', data)
+        // console.log('updateAirwayBill', data)
         this.handleSuccessUpdateAirwayBill(airwayBillText)
         this.handleShowSuccesModal()
         this.isOnProccess = false

@@ -754,7 +754,7 @@ export default {
       this.storeOrder(formData)
     },
     async storeOrder(formData) {
-      console.log('formData', formData)
+      // console.log('formData', formData)
       await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
@@ -785,7 +785,7 @@ export default {
         },
       }).then(response => {
         const { data } = response.data
-        console.log('dataCost', data)
+        // console.log('dataCost', data)
         this.totalCostNumber = this.findCorrectData(data)
         this.calculateOnView()
       }).catch(() => {
@@ -797,7 +797,7 @@ export default {
       this.isSubmitting = true
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
-        console.log('detail post order', data)
+        // console.log('detail post order', data)
         this.isSubmitting = false
         this.handleShowPopUp()
       }).catch(() => {
@@ -808,7 +808,7 @@ export default {
     onPostCart(cartItem) {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
-        console.log('detail post cart', data)
+        // console.log('detail post cart', data)
         this.cartOrder = data.cart_id
       }).catch(() => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')

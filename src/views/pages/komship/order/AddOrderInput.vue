@@ -209,9 +209,6 @@ export default {
       disableSubmitBtn: this.disableSubmitButtonStatus,
     }
   },
-  mounted() {
-    console.log('profile', this.profile)
-  },
   methods: {
     onChangeDate(ctx) {
       if (ctx && ctx.activeYMD) {

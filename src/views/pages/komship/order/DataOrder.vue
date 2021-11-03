@@ -293,29 +293,28 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        console.log('this.profile', data)
+        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
-        console.log('gagal2')
+        console.log('failed to get the profile data')
       })
     },
     getListProductByPartner() {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        console.log('this.product', data)
+        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
-        console.log('gagal2')
+        console.log('failed to get the product data by partner')
       })
     },
     getOrder() {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`).then(response => {
         const { data } = response.data.data
-        console.log('listAllOrder', data)
+        // console.log('listAllOrder', data)
         this.tableData.items = data
         this.excelData.items = data
-        console.log('this.items', this.tableData.items)
       }).catch(() => {
         this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
       })
@@ -323,10 +322,9 @@ export default {
     getOrderDetail(orderId) {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${orderId}`).then(response => {
         const { data } = response.data
-        console.log('listOrderDetail', data)
+        // console.log('listOrderDetail', data)
         this.detailOrderData = data
         this.isDetail = true
-        console.log('this.detailOrderData', this.detailOrderData)
       }).catch(() => {
         this.alertFail('Unable to get the order detail. Please try again later or contact support.')
       })
@@ -336,7 +334,7 @@ export default {
         params: { ...values },
       }).then(response => {
         const { data } = response.data.data
-        console.log('listAllOrderFromFilter', data)
+        // console.log('listAllOrderFromFilter', data)
         this.tableData.items = data
         this.excelData.items = data
       }).catch(() => {
