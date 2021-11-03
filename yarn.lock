@@ -9618,10 +9618,10 @@ vue-feather-icons@5.1.0:
   dependencies:
     babel-helper-vue-jsx-merge-props "^2.0.2"
 
-vue-flatpickr-component@8.1.6:
-  version "8.1.6"
-  resolved "https://registry.npmjs.org/vue-flatpickr-component/-/vue-flatpickr-component-8.1.6.tgz"
-  integrity sha512-RUu/M/1lbuzQT+U3yP7O5/M2EIizr9vXLXqSc1eFOvCT3AHurQg8+iO02rjW+2l78Kit8pCNAUvHw7eexws6hw==
+vue-flatpickr-component@8:
+  version "8.1.7"
+  resolved "https://registry.yarnpkg.com/vue-flatpickr-component/-/vue-flatpickr-component-8.1.7.tgz#202a8977ee5838b09e6920154c99a69ce17a00e0"
+  integrity sha512-T9aapLERf5XrisKUHw8QVByFpN9UB583Bhu6+HtzvhCcfXqIYBtRc3rQC0ZhFSRk3CNMo7533U+B5Qs4WAbhyA==
   dependencies:
     flatpickr "^4.6.6"
 
@@ -9836,6 +9836,11 @@ vuedraggable@2.24.3:
   integrity sha512-6/HDXi92GzB+Hcs9fC6PAAozK1RLt1ewPTLjK0anTYguXLAeySDmcnqE8IC0xa7shvSzRjQXq3/+dsZ7ETGF3g==
   dependencies:
     sortablejs "1.10.2"
+
+vuex-map-fields@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/vuex-map-fields/-/vuex-map-fields-1.4.1.tgz#3f22f0c3d39e25968d3a74fc2b43738c23c4ae4d"
+  integrity sha512-jvIcpvoIPqwvJCOfRkPU9Rj0EbjWuk7GlNC5LXU9mCXVGZph6bWGHZssnoUzpLMxJtXQEHoVyZkKf7YQV+/bnQ==
 
 vuex@3.6.0:
   version "3.6.0"

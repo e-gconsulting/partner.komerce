@@ -1,91 +1,98 @@
 <template>
-  <canvas
+  <VueApexcharts
+    width="700"
+    type="area"
     ref="myChart"
-    width="500"
-    height="400"
-  />
+    :options="options"
+    :series="series"
+  ></VueApexcharts>
 </template>
 
 <script>
-import Chart from 'chart.js'
+import VueApexcharts from 'vue-apexcharts'
 
 export default {
   name: 'ChartPerforma',
-  mounted() {
-    const ctx = this.$refs.myChart.getContext('2d')
-
-    const redGrad = ctx.createLinearGradient(0, 300, 0, 500)
-    redGrad.addColorStop(0, 'rgba(255, 99, 132, 0.1)')
-    redGrad.addColorStop(1, 'rgba(100, 100, 0, 0)')
-
-    const blueGrad = ctx.createLinearGradient(100, 0, 0, 300)
-    blueGrad.addColorStop(0, 'rgba(54, 162, 235, 0.1)')
-    blueGrad.addColorStop(1, 'rgba(100, 100, 0, 0)')
-
-    const greenGrad = ctx.createLinearGradient(0, 0, 0, 100)
-    greenGrad.addColorStop(0, 'rgba(75, 192, 192, 0.1)')
-    greenGrad.addColorStop(1, 'rgba(100, 100, 0, 0)')
-
-    new Chart(this.$refs.myChart, { // eslint-disable-line
-      type: 'line',
-      data: {
-        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
-        datasets: [
-          {
-            label: 'Leads',
-            borderColor: '#08A0F7',
-            backgroundColor: '#08A0F7',
-            fill: false,
-            data: [60, 55, 75, 25, 70, 12, 76],
-            pointRadius: 0,
-          },
-          {
-            label: 'Order',
-            borderColor: '#34A770',
-            backgroundColor: '#34A770',
-            fill: false,
-            data: [30, 70, 45, 75, 45, 67, 87],
-            pointRadius: 0,
-          },
-          {
-            label: 'Pcs',
-            borderColor: '#F95031',
-            backgroundColor: '#F95031',
-            fill: false,
-            data: [12, 45, 76, 41, 89, 54, 76],
-            pointRadius: 0,
-          },
-        ],
-      },
+  components: {
+    VueApexcharts,
+  },
+  props: {
+    categoriesProp: {
+      type: Array,
+    },
+    seriesProp: {
+      type: Array,
+    },
+  },
+  data() {
+    return {
       options: {
-        scales: {
-          yAxes: [
-            {
-              ticks: {
-                beginAtZero: true,
-              },
-            },
-          ],
+        chart: {
+          id: `vuechart-${Date.now()}`,
+          toolbar: {
+            show: false,
+          },
+          stacked: true,
         },
-        tooltips: {
-          intersect: false,
-          backgroundColor: '#fff',
-          titleFontColor: '#000',
-          bodyFontColor: '#000',
-          displayColors: false,
-          titleFontStyle: 'normal',
-          bodyFontStyle: 'bold',
-          bodyFontSize: 14,
+        fill: {
+          colors: ['#08A0F7', '#34A770', '#F95031'],
         },
-        legend: {
-          position: 'bottom',
-          labels: {
-            usePointStyle: true,
-            boxWidth: 10,
+        colors: ['#08A0F7', '#34A770', '#F95031'],
+        xaxis: {
+          categories: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+          tooltip: {
+            enabled: false,
           },
         },
+        yaxis: {
+          labels: {
+            formatter: value => {
+              let formatedVal = 0
+
+              if (Math.abs(Number(value)) >= 1.0e9) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e9} Mn`
+              } else if (Math.abs(Number(value)) >= 1.0e6) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e6} Jt`
+              } else if (Math.abs(Number(value)) >= 1.0e3) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e3} Rb`
+              } else {
+                formatedVal = Math.abs(Number(value))
+              }
+              return `${formatedVal}`
+            },
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: 'smooth',
+        },
       },
-    })
+      series: [
+        {
+          name: 'Leads',
+          data: ['24', '23', '27', '20', '25', '28', '21'],
+        },
+        {
+          name: 'Orders',
+          data: ['14', '13', '17', '20', '15', '18', '11'],
+        },
+        {
+          name: 'Pcs',
+          data: ['4', '3', '7', '10', '5', '8', '1'],
+        },
+      ],
+    }
+  },
+  watch: {
+    seriesProp() {
+      this.$refs.myChart.updateSeries(this.seriesProp)
+    },
+    categoriesProp() {
+      this.options.xaxis.categories = this.categoriesProp
+      this.$refs.myChart.updateOptions(this.options)
+    },
   },
 }
 </script>
