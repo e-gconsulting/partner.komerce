@@ -298,15 +298,12 @@ export default {
       if (vehicle) this.chosenVehicle = vehicle
     },
     onChooseOrder() {
-      console.log('onChooseOrder', this.$refs.addPickupPopUP)
       this.$refs.addPickupPopUP.showModal()
     },
     onResetForm() {
-      console.log('onResetForm')
       this.selectedOrder = []
     },
     onSubmitForm() {
-      console.log('onSubmitForm')
       if (this.chosenVehicle && this.chosenVehicle === '') {
         this.alertFail('Please choose your vehicle to pickup your order')
       } else if (this.addressDetailText && this.addressDetailText === '') {
@@ -316,7 +313,6 @@ export default {
       }
     },
     handleSubmitPopUpSuccess() {
-      console.log('handleSubmitPopUpSuccess')
       this.$root.$emit('bv::hide::modal', 'modal-7')
       this.$router.push('history-pickup')
     },
@@ -338,7 +334,6 @@ export default {
       return container
     },
     handleOpenDetailView() {
-      console.log('handleOpenDetailView')
       this.$emit('onSubmitInputForm', this.selectedOrder, this.selectedOrderId)
     },
     alertFail(textWarn) {
@@ -367,14 +362,14 @@ export default {
         address_detail: this.addressDetailText,
         orders: this.selectedOrderId,
       }
-      console.log('formData', formData)
+      // console.log('formData', formData)
       await this.storePickupReq(formData)
     },
     storePickupReq(formData) {
       this.isSubmitting = true
       return this.$http_komship.post(`v1/pickup/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
-        console.log('post pickup order', data)
+        // console.log('post pickup order', data)
         this.isSubmitting = false
         this.$root.$emit('bv::show::modal', 'modal-7')
       }).catch(() => {

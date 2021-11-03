@@ -106,7 +106,7 @@ export default {
       this.$root.$emit('bv::hide::modal', 'modal-8')
     },
     handleChosePrintOption(value) {
-      console.log('handleChosePrintOption', value)
+      // console.log('handleChosePrintOption', value)
       if (value) this.selectedOptions = value
       this.$emit('onChangeOption', this.selectedOptions)
     },
