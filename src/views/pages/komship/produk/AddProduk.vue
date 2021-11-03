@@ -360,8 +360,7 @@ export default {
   },
   data() {
     return {
-      // isOnboarding: true,
-      isOnboarding: false,
+      profile: {},
       selected: ['A'],
       fields: [
         { key: 'name', label: 'Nama' },
@@ -393,9 +392,17 @@ export default {
       ],
     }
   },
+  mounted() {
+    this.$http_komship.post('v1/my-profile').then(response => {
+      const { data } = response.data
+      if (data) {
+        this.profile = data
+      }
+    })
+  },
   methods: {
     handlePublishButton() {
-      if (this.isOnboarding) this.$refs.onboardingElement.showModal()
+      if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
     },
   },
 }

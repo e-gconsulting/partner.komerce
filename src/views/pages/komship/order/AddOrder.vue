@@ -21,7 +21,6 @@
       :date-text="dateText"
       :screens="screens"
       :list-selected="listSelected"
-      :is-onboarding="isOnboarding"
       :profile="profile"
       @onBoardingShow="handlePublishButton"
       @onUpdateDate="updateDateText"
@@ -54,8 +53,6 @@ export default {
   },
   data() {
     return {
-      // isOnboarding: true,
-      isOnboarding: false,
       dateText: '',
       profile: {},
       test2: {},
@@ -63,99 +60,7 @@ export default {
       screens: 'input',
       loading: false,
       disableSubmitButtonStatus: true,
-      listProduct: [
-        // {
-        //   product_id: 1,
-        //   product_name: 'Jilbab',
-        //   product_image: 'www.example.com/img/products/product-980312037.jpg',
-        //   is_variant: 1,
-        //   variant: [
-        //     {
-        //       variant_id: 1,
-        //       variant_name: 'Warna',
-        //       variant_option: [
-        //         {
-        //           option_id: 1,
-        //           option_name: 'Biru',
-        //           option_parent: null,
-        //         },
-        //         {
-        //           option_id: 2,
-        //           option_name: 'Merah',
-        //           option_parent: null,
-        //         },
-        //       ],
-        //     },
-        //     {
-        //       variant_id: 1,
-        //       variant_name: 'Ukuran',
-        //       variant_option: [
-        //         {
-        //           option_id: 3,
-        //           option_name: 'S',
-        //           option_parent: 1,
-        //         },
-        //         {
-        //           option_id: 4,
-        //           option_name: 'M',
-        //           option_parent: 1,
-        //         },
-        //         {
-        //           option_id: 5,
-        //           option_name: 'S',
-        //           option_parent: 2,
-        //         },
-        //         {
-        //           option_id: 6,
-        //           option_name: 'M',
-        //           option_parent: 2,
-        //         },
-        //       ],
-        //     },
-        //   ],
-        //   product_variant: [
-        //     {
-        //       option_id: 3,
-        //       name: 'Merah',
-        //       price: 20,
-        //       stock: 100,
-        //       option_parent: 1,
-        //     },
-        //     {
-        //       option_id: 4,
-        //       name: 'Biru',
-        //       price: 20,
-        //       stock: 100,
-        //       option_parent: 2,
-        //     },
-        //     {
-        //       option_id: 5,
-        //       name: 'Merah',
-        //       price: 20,
-        //       stock: 100,
-        //       option_parent: 1,
-        //     },
-        //     {
-        //       option_id: 6,
-        //       name: 'Biru',
-        //       price: 20,
-        //       stock: 100,
-        //       option_parent: 2,
-        //     },
-        //   ],
-        //   price: 0,
-        //   stock: 0,
-        // },
-        // {
-        //   product_id: 2,
-        //   product_name: 'Jilbab Keche',
-        //   product_image: 'www.example.com/img/products/product-980312031.jpg',
-        //   is_variant: 0,
-        //   variant: [],
-        //   price: 20000,
-        //   stock: 100,
-        // },
-      ],
+      listProduct: [],
     }
   },
   mounted() {
@@ -178,7 +83,7 @@ export default {
       if (value) this.screens = value
     },
     handlePublishButton() {
-      if (this.isOnboarding) this.$refs.onboardingElement.showModal()
+      if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
     },
     handleUpdateSubmitButtonStatus(value) {
       this.disableSubmitButtonStatus = value

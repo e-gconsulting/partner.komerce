@@ -455,10 +455,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    isOnboarding: {
-      type: Boolean,
-      default: false,
-    },
     profile: {
       type: Object,
       default: () => {},
@@ -548,7 +544,7 @@ export default {
       this.onUpdateNettoPrice()
     },
     handleSaveOrder() {
-      if (this.isOnboarding) {
+      if (this.profile.is_onboarding) {
         this.$emit('onBoardingShow')
       } else {
         this.submitOrder()

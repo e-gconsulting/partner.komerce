@@ -13,7 +13,6 @@
       :class="currentView === 'details' ? '' : 'hide'"
       :profile="profile"
       :list-selected="listSelectedDetails"
-      :is-onboarding="isOnboarding"
       @onBoardingShow="handlePublishButton"
       @onBackButtonClicked="() => handleChangeCurrenView('input')"
     />
@@ -43,8 +42,6 @@ export default {
   },
   data() {
     return {
-      // isOnboarding: true,
-      isOnboarding: false,
       currentView: 'input',
       profile: {},
       listOrder: [],
@@ -69,7 +66,7 @@ export default {
       if (values) this.currentView = values
     },
     handlePublishButton() {
-      if (this.isOnboarding) this.$refs.onboardingElement.showModal()
+      if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
     },
     async reload() {
       this.loading = true

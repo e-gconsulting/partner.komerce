@@ -41,7 +41,6 @@
 
     <pickup-label-print
       ref="printLabelContent"
-      :is-onboarding="isOnboarding"
       :print-option="printOption"
       :profile="profile"
       :list-order="listSelected"
@@ -78,10 +77,6 @@ export default {
       type: Object,
       default: () => {},
     },
-    isOnboarding: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -112,7 +107,7 @@ export default {
       if (values) this.$refs.printLabelContent.printContent()
     },
     handleShowOnBoarding() {
-      if (this.isOnboarding) this.$emit('onBoardingShow')
+      if (this.profile.is_onboarding) this.$emit('onBoardingShow')
     },
   },
 }

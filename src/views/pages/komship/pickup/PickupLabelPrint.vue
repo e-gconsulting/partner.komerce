@@ -70,16 +70,10 @@
 </template>
 
 <script>
-// import {} from 'bootstrap-vue'
 import printJS from 'print-js'
 
 export default {
-  // components: {},
   props: {
-    isOnboarding: {
-      type: Boolean,
-      default: false,
-    },
     printOption: {
       type: Number,
       default: 1,
@@ -103,7 +97,7 @@ export default {
       if (printOption) this.selectedOptions = printOption
     },
     handleShowOnBoarding() {
-      if (this.isOnboarding) this.$emit('onBoardingShow')
+      if (this.profile.is_onboarding) this.$emit('onBoardingShow')
     },
     printContent() {
       printJS({
@@ -112,9 +106,10 @@ export default {
         style: this.getStyle(),
         scanStyles: false,
         honorMarginPadding: false,
-        onPrintDialogClose: () => this.handleShowOnBoarding(),
+        // onPrintDialogClose: () => this.handleShowOnBoarding(),
         onError: e => console.log(e),
       })
+      this.handleShowOnBoarding()
     },
     getStyle() {
       return `

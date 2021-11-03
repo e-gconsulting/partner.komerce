@@ -11,7 +11,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -37,7 +40,10 @@
               "
               @click="alertFail()"
             >
-              <img src="@/assets/images/icons/send-square.svg" alt="Top Up" />
+              <img
+                src="@/assets/images/icons/send-square.svg"
+                alt="Top Up"
+              >
               <p class="saldo-texts mb-0">
                 Top Up
               </p>
@@ -53,7 +59,7 @@
               <img
                 src="@/assets/images/icons/receive-square.svg"
                 alt="Tarik Saldo"
-              />
+              >
               <p class="saldo-texts mb-0">
                 Tarik Saldo
               </p>
@@ -66,7 +72,10 @@
                 align-items-center
               "
             >
-              <img src="@/assets/images/icons/document-text.svg" alt="Detail" />
+              <img
+                src="@/assets/images/icons/document-text.svg"
+                alt="Detail"
+              >
               <p class="saldo-texts mb-0">
                 Detail
               </p>
@@ -81,12 +90,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo Pending
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            />
+            >
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
             {{ formatRupiah(saldoPending) }}
@@ -100,7 +112,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Cashback
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
           </div>
           <div class="card-body pb-0 mb-0">
@@ -122,7 +137,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Penghasilan
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
             <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
               <v-select
@@ -136,7 +154,7 @@
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            />
+            >
           </div>
           <div class="position-relative card-body">
             <v-select
@@ -176,7 +194,7 @@
                   <img
                     src="@/assets/images/icons/arrow-right-2.svg"
                     alt="Arrow Right"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -202,7 +220,7 @@
                   <img
                     src="@/assets/images/icons/arrow-right-2.svg"
                     alt="Arrow Right"
-                  />
+                  >
                 </div>
               </div>
             </div>
@@ -214,7 +232,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Top Admin Order
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
           </div>
           <div class="card-body">
@@ -229,7 +250,7 @@
                     <img
                       src="@/assets/images/icons/profile-placehold.svg"
                       alt="Photo"
-                    />
+                    >
                     <p class="list-text-1 h-text-dark ml-2 mb-0">
                       {{ topAdminOrder.name }}
                     </p>
@@ -257,12 +278,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Produk Terlaris
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            />
+            >
           </div>
           <div class="card-body">
             <div class="w-25">
@@ -289,7 +313,7 @@
                     <img
                       src="@/assets/images/icons/product-placehold.svg"
                       alt="Photo"
-                    />
+                    >
                     <div>
                       <p class="list-text-1 h-text-dark ml-2 mb-0">
                         {{ produkTerlaris.name }}
@@ -317,12 +341,12 @@
                       v-if="produkTerlaris.persentase >= 0"
                       src="@/assets/images/icons/arrow-going-up-alt.svg"
                       alt="arrow-going-up-alt"
-                    />
+                    >
                     <img
                       v-else
                       src="@/assets/images/icons/arrow-going-down-alt.svg"
                       alt="arrow-going-down-alt"
-                    />
+                    >
                   </div>
                 </div>
               </li>
@@ -337,12 +361,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Customer Loyal
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            />
+            >
           </div>
           <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -383,18 +410,24 @@
               <div class="first-card-header-text me-8 mb-0">
                 Performa Customer Service
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
             <date-range-picker
               ref="picker"
-              :locale-data="locale"
               v-model="dateRange"
+              :locale-data="locale"
               :ranges="ranges"
               class="w-25"
             >
-              <template v-slot:input="picker" style="min-width: 350px;">
+              <template
+                v-slot:input="pickers"
+                style="min-width: 350px;"
+              >
                 <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ getRange(picker.startDate, picker.endDate) }}</span>
+                  <span>{{ getRange(pickers.startDate, pickers.endDate) }}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -413,7 +446,10 @@
             </date-range-picker>
           </div>
           <div class="card-body">
-            <ChartPerforma :seriesProp="series" :categoriesProp="categories" />
+            <ChartPerforma
+              :series-prop="series"
+              :categories-prop="categories"
+            />
           </div>
         </div>
       </div>
@@ -424,7 +460,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Top Customer Service
               </div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
             </div>
           </div>
           <div class="card-body">
@@ -439,7 +478,7 @@
                     <img
                       src="@/assets/images/icons/profile-placehold.svg"
                       alt="Photo"
-                    />
+                    >
                     <p class="list-text-1 h-text-dark ml-2 mb-0">
                       {{ topCustomerService.name }}
                     </p>
@@ -458,9 +497,12 @@
           </div>
         </div>
       </div>
-      <div v-if="blurred" class="position-absolute pos-center text-center">
+      <div
+        v-if="blurred"
+        class="position-absolute pos-center text-center"
+      >
         <p class="h3 font-weight-bolder mb-2">
-          Yuk, Hiring Talent Komerce agar kamu<br />dapat menggunakan fitur ini!
+          Yuk, Hiring Talent Komerce agar kamu<br>dapat menggunakan fitur ini!
         </p>
         <button class="btn btn-outline-primary">Tutup</button>
       </div>
@@ -588,13 +630,6 @@ export default {
       categories: ['abc', 'def', 'ghi', 'jkl'],
     }
   },
-  mounted() {
-    this.$http_komship.post('v1/my-profile').then(response => {
-      const { data } = response
-      console.log(data)
-    })
-    if (this.isOnboarding) this.$refs.onboardingElement.showModal()
-  },
   computed: {
     ...mapFields('dashboard', { selectedProdukTerlaris: 'selectedProdukTerlaris' }),
     ...mapState('dashboard', [
@@ -609,9 +644,21 @@ export default {
       'optionsProdukTerlaris',
     ]),
   },
+  mounted() {
+    this.$http_komship.post('v1/my-profile').then(response => {
+      const { data } = response.data
+      console.log('onboarding', data)
+      if (data) {
+        if (data.is_onboarding) this.$refs.onboardingElement.showModal()
+      }
+    })
+  },
   methods: {
     formatRibuan(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      if (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
+      return x
     },
     formatRupiah(x) {
       return `Rp ${this.formatRibuan(x)}`
