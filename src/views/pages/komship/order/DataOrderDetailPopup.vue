@@ -281,10 +281,12 @@ export default {
       return this.$http_komship.put(`v1/order/${this.profile.partner_id}/update/${this.detailOrder.order_id}`, newAirwayBill).then(response => {
         const { data } = response.data
         // console.log('updateAirwayBill', data)
-        this.handleSuccessUpdateAirwayBill(airwayBillText)
-        this.handleShowSuccesModal()
-        this.isOnProccess = false
-        this.okTitleButton = 'Simpan'
+        if (data) {
+          this.handleSuccessUpdateAirwayBill(airwayBillText)
+          this.handleShowSuccesModal()
+          this.isOnProccess = false
+          this.okTitleButton = 'Simpan'
+        }
       }).catch(() => {
         console.log('failed to updateAirwayBill')
         this.isOnProccess = false

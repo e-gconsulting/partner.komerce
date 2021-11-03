@@ -798,8 +798,10 @@ export default {
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
         // console.log('detail post order', data)
-        this.isSubmitting = false
-        this.handleShowPopUp()
+        if (data) {
+          this.isSubmitting = false
+          this.handleShowPopUp()
+        }
       }).catch(() => {
         this.isSubmitting = false
         this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
