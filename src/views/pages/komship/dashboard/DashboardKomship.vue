@@ -11,10 +11,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -40,10 +37,7 @@
               "
               @click="alertFail()"
             >
-              <img
-                src="@/assets/images/icons/send-square.svg"
-                alt="Top Up"
-              >
+              <img src="@/assets/images/icons/send-square.svg" alt="Top Up" />
               <p class="saldo-texts mb-0">
                 Top Up
               </p>
@@ -59,7 +53,7 @@
               <img
                 src="@/assets/images/icons/receive-square.svg"
                 alt="Tarik Saldo"
-              >
+              />
               <p class="saldo-texts mb-0">
                 Tarik Saldo
               </p>
@@ -72,10 +66,7 @@
                 align-items-center
               "
             >
-              <img
-                src="@/assets/images/icons/document-text.svg"
-                alt="Detail"
-              >
+              <img src="@/assets/images/icons/document-text.svg" alt="Detail" />
               <p class="saldo-texts mb-0">
                 Detail
               </p>
@@ -90,15 +81,12 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo Pending
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            >
+            />
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
             {{ formatRupiah(saldoPending) }}
@@ -112,10 +100,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Cashback
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body pb-0 mb-0">
@@ -137,10 +122,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Penghasilan
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
             <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
               <v-select
@@ -154,7 +136,7 @@
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            >
+            />
           </div>
           <div class="position-relative card-body">
             <v-select
@@ -165,7 +147,7 @@
               :options="optionsChart"
               :clearable="false"
             />
-            <ChartPenghasilan class="mt-1"/>
+            <ChartPenghasilan class="mt-1" />
           </div>
         </div>
       </div>
@@ -194,7 +176,7 @@
                   <img
                     src="@/assets/images/icons/arrow-right-2.svg"
                     alt="Arrow Right"
-                  >
+                  />
                 </div>
               </div>
             </div>
@@ -220,7 +202,7 @@
                   <img
                     src="@/assets/images/icons/arrow-right-2.svg"
                     alt="Arrow Right"
-                  >
+                  />
                 </div>
               </div>
             </div>
@@ -232,10 +214,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Top Admin Order
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body">
@@ -250,7 +229,7 @@
                     <img
                       src="@/assets/images/icons/profile-placehold.svg"
                       alt="Photo"
-                    >
+                    />
                     <p class="list-text-1 h-text-dark ml-2 mb-0">
                       {{ topAdminOrder.name }}
                     </p>
@@ -278,15 +257,12 @@
               <div class="first-card-header-text me-8 mb-0">
                 Produk Terlaris
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            >
+            />
           </div>
           <div class="card-body">
             <div class="w-25">
@@ -298,6 +274,7 @@
                   id="select_produk_terlaris"
                   :options="optionsProdukTerlaris"
                   :clearable="false"
+                  @input="handleChangeProdukTerlaris"
                 />
               </b-form-group>
             </div>
@@ -312,7 +289,7 @@
                     <img
                       src="@/assets/images/icons/product-placehold.svg"
                       alt="Photo"
-                    >
+                    />
                     <div>
                       <p class="list-text-1 h-text-dark ml-2 mb-0">
                         {{ produkTerlaris.name }}
@@ -327,9 +304,11 @@
                       {{ produkTerlaris.penjualan }}
                     </p>
                     <div
-                      :class="`badge h-badge-${
-                        produkTerlaris.persentase >= 0 ? 'success' : 'danger'
-                      } rounded-pill font-weight-normal`"
+                      :class="
+                        `badge h-badge-${
+                          produkTerlaris.persentase >= 0 ? 'success' : 'danger'
+                        } rounded-pill font-weight-normal`
+                      "
                     >
                       {{ produkTerlaris.persentase >= 0 ? '+' : ''
                       }}{{ produkTerlaris.persentase }}%
@@ -338,12 +317,12 @@
                       v-if="produkTerlaris.persentase >= 0"
                       src="@/assets/images/icons/arrow-going-up-alt.svg"
                       alt="arrow-going-up-alt"
-                    >
+                    />
                     <img
                       v-else
                       src="@/assets/images/icons/arrow-going-down-alt.svg"
                       alt="arrow-going-down-alt"
-                    >
+                    />
                   </div>
                 </div>
               </li>
@@ -358,15 +337,12 @@
               <div class="first-card-header-text me-8 mb-0">
                 Customer Loyal
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            >
+            />
           </div>
           <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -407,10 +383,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Performa Customer Service
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
             <date-range-picker
               ref="picker"
@@ -419,18 +392,28 @@
               :ranges="ranges"
               class="w-25"
             >
-                <template v-slot:input="picker" style="min-width: 350px;">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span>{{ getRange(picker.startDate, picker.endDate) }}</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                    </svg>
-                  </div>
-                </template>
+              <template v-slot:input="picker" style="min-width: 350px;">
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>{{ getRange(picker.startDate, picker.endDate) }}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-chevron-down"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
+                    />
+                  </svg>
+                </div>
+              </template>
             </date-range-picker>
           </div>
           <div class="card-body">
-            <ChartPerforma :seriesProp="series" :categoriesProp="categories"/>
+            <ChartPerforma :seriesProp="series" :categoriesProp="categories" />
           </div>
         </div>
       </div>
@@ -441,10 +424,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Top Customer Service
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body">
@@ -459,7 +439,7 @@
                     <img
                       src="@/assets/images/icons/profile-placehold.svg"
                       alt="Photo"
-                    >
+                    />
                     <p class="list-text-1 h-text-dark ml-2 mb-0">
                       {{ topCustomerService.name }}
                     </p>
@@ -479,7 +459,9 @@
         </div>
       </div>
       <div v-if="blurred" class="position-absolute pos-center text-center">
-        <p class="h3 font-weight-bolder mb-2">Yuk, Hiring Talent Komerce agar kamu<br>dapat menggunakan fitur ini!</p>
+        <p class="h3 font-weight-bolder mb-2">
+          Yuk, Hiring Talent Komerce agar kamu<br />dapat menggunakan fitur ini!
+        </p>
         <button class="btn btn-outline-primary">Tutup</button>
       </div>
     </div>
@@ -487,6 +469,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+import { mapFields } from 'vuex-map-fields'
 import { BFormGroup } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import moment from 'moment'
@@ -519,74 +503,6 @@ export default {
     const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
 
     return {
-      saldo: 8000000,
-      saldoPending: 3000000,
-      cashback: 2000000,
-      orderanPerluDikirim: 10000,
-      orderanRetur: 10000,
-      topAdminOrders: [
-        {
-          photo: null,
-          name: 'Afifah Mimo',
-          totalDana: 25000000,
-          totalProduk: 500,
-        },
-        {
-          photo: null,
-          name: 'Afifah Mimo',
-          totalDana: 25000000,
-          totalProduk: 500,
-        },
-        {
-          photo: null,
-          name: 'Afifah Mimo',
-          totalDana: 25000000,
-          totalProduk: 500,
-        },
-      ],
-      produkTerlarises: [
-        {
-          photo: null,
-          name: 'Jilbab Pasima',
-          kodeBrg: 'SKU: JBB-1',
-          penjualan: 1023,
-          persentase: 20,
-        },
-        {
-          photo: null,
-          name: 'Jilbab Pasima',
-          kodeBrg: 'SKU: JBB-1',
-          penjualan: 999,
-          persentase: -8,
-        },
-        {
-          photo: null,
-          name: 'Jilbab Pasima',
-          kodeBrg: 'SKU: JBB-1',
-          penjualan: 1023,
-          persentase: 20,
-        },
-      ],
-      customerLoyals: [
-        {
-          name: 'Gilang Asep Surya',
-          location: 'Bandung, Jawa Barat',
-          totalProduk: 5,
-          totalDana: 440000,
-        },
-        {
-          name: 'Gilang Asep Surya',
-          location: 'Bandung, Jawa Barat',
-          totalProduk: 5,
-          totalDana: 440000,
-        },
-        {
-          name: 'Gilang Asep Surya',
-          location: 'Bandung, Jawa Barat',
-          totalProduk: 5,
-          totalDana: 440000,
-        },
-      ],
       topCustomerServices: [
         {
           photo: null,
@@ -623,8 +539,8 @@ export default {
       optionsPenghasilan: ['Kompship'],
       selectedChart: 'COD (Bayar di tempat)',
       optionsChart: ['COD (Bayar di tempat)', 'Transfer Bank'],
-      selectedProdukTerlaris: 'Bulan Ini',
-      optionsProdukTerlaris: ['Bulan Ini', '7 Hari Terakhir'],
+      // selectedProdukTerlaris: 'Bulan Ini',
+      // optionsProdukTerlaris: ['Bulan Ini', '7 Hari Terakhir'],
       dropDownValues: ['Real Time', '7 Hari Terakhir', '30 Hari Terakhir', 'Custom Tanggal'],
       selectedCstDateBefore: null,
       selectedCstDate: 'Real Time',
@@ -664,6 +580,20 @@ export default {
       series: [],
       categories: ['abc', 'def', 'ghi', 'jkl'],
     }
+  },
+  computed: {
+    ...mapFields('dashboard', { selectedProdukTerlaris: 'selectedProdukTerlaris' }),
+    ...mapState('dashboard', [
+      'saldo',
+      'saldoPending',
+      'cashback',
+      'orderanPerluDikirim',
+      'orderanRetur',
+      'topAdminOrders',
+      'customerLoyals',
+      'produkTerlarises',
+      'optionsProdukTerlaris',
+    ]),
   },
   methods: {
     formatRibuan(x) {
@@ -789,6 +719,12 @@ export default {
           break
       }
     },
+    handleChangeProdukTerlaris() {
+      this.$store.dispatch('dashboard/getProdukTerlarises')
+    },
+  },
+  beforeMount() {
+    this.$store.dispatch('dashboard/init')
   },
 }
 </script>
@@ -800,7 +736,7 @@ export default {
   background-color: #ff6a3a !important;
 }
 .bg-orange2 {
-  background-color: #F95031 !important;
+  background-color: #f95031 !important;
 }
 .card,
 .rounded-16 {
@@ -918,13 +854,13 @@ export default {
   color: #e31a1a;
 }
 #select_produk_terlaris > div {
-   border: none;
-   padding-left: 0px;
+  border: none;
+  padding-left: 0px;
 }
 #select_produk_terlaris > div > .vs__selected-options,
 #select_produk_terlaris > div > .vs__selected-options > .vs__selected {
-   padding-left: 0px;
-   margin-left: 0;
+  padding-left: 0px;
+  margin-left: 0;
 }
 .select-chart {
   right: 42px;

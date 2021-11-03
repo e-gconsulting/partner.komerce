@@ -9815,6 +9815,11 @@ vuedraggable@2.24.3:
   dependencies:
     sortablejs "1.10.2"
 
+vuex-map-fields@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/vuex-map-fields/-/vuex-map-fields-1.4.1.tgz#3f22f0c3d39e25968d3a74fc2b43738c23c4ae4d"
+  integrity sha512-jvIcpvoIPqwvJCOfRkPU9Rj0EbjWuk7GlNC5LXU9mCXVGZph6bWGHZssnoUzpLMxJtXQEHoVyZkKf7YQV+/bnQ==
+
 vuex@3.6.0:
   version "3.6.0"
   resolved "https://registry.npmjs.org/vuex/-/vuex-3.6.0.tgz"
