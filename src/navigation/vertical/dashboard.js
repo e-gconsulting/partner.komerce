@@ -1,12 +1,12 @@
 export default [
-  // {
-  //   title: 'Dashboard Admin',
-  //   icon: 'HomeIcon',
-  //   tagVariant: 'light-warning',
-  //   route: 'dashboard-analytics',
-  //   resource: 'Dashboard',
-  //   action: 'read',
-  // },
+  {
+    title: 'Dashboard Admin',
+    icon: 'HomeIcon',
+    tagVariant: 'light-warning',
+    route: 'dashboard-analytics',
+    resource: 'Dashboard',
+    action: 'read',
+  },
   {
     title: 'Dashboard COD',
     icon: 'HomeIcon',
