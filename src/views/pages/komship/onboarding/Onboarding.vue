@@ -201,10 +201,22 @@ export default {
       }
     },
     handleRedirectToAddProduct() {
-      this.$router.push('add-produk')
+      this.triggerUpdateOnBoardingStatus('add-produk')
     },
     handleRedirectToProfile() {
-      this.$router.push('partner/profile')
+      this.triggerUpdateOnBoardingStatus('partner/profile')
+    },
+    async triggerUpdateOnBoardingStatus(nextUrl) {
+      await this.updateOnboardingStatus(nextUrl)
+    },
+    updateOnboardingStatus(nextUrl) {
+      return this.$http_komship.put('v1/partner/onboarding/update').then(response => {
+        if (response && response.data && response.data.code && response.data.code === 200) {
+          this.$router.push(nextUrl)
+        }
+      }).catch(() => {
+        console.log('failed to update onboarding status on profile')
+      })
     },
   },
 }
