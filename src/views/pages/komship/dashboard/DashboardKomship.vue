@@ -653,6 +653,9 @@ export default {
       }
     })
   },
+  beforeMount() {
+    this.$store.dispatch('dashboard/init')
+  },
   methods: {
     formatRibuan(x) {
       if (x) {
@@ -783,9 +786,6 @@ export default {
     handleChangeProdukTerlaris() {
       this.$store.dispatch('dashboard/getProdukTerlarises')
     },
-  },
-  beforeMount() {
-    this.$store.dispatch('dashboard/init')
   },
 }
 </script>

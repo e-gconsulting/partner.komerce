@@ -3,7 +3,7 @@
     class="history-pickup-main-wrapper"
   >
     <div
-      v-if="this.currentView === 'all'"
+      v-if="currentView === 'all'"
       class="history-pickup-title mb-4"
     >
       Riwayat Pickup
@@ -16,7 +16,7 @@
     </div>
 
     <history-pickup-table
-      v-if="this.currentView === 'all'"
+      v-if="currentView === 'all'"
       ref="allPickupTable1"
       :items="items"
       :fields="fields"

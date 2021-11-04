@@ -100,6 +100,12 @@ export default {
     DateRangePicker,
     vSelect,
   },
+  props: {
+    listProduct: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -139,12 +145,6 @@ export default {
         method: null,
       },
     }
-  },
-  props: {
-    listProduct: {
-      type: Array,
-      default: () => [],
-    },
   },
   methods: {
     formatDate(d) {
