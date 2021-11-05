@@ -26,6 +26,8 @@ export default [
     meta: {
       name: pageName,
       resource: 'Produk',
+      routeAllProduk: 'data-produk',
+      routeDraftProduk: 'data-produk',
       action: 'manage',
       breadcrumb: [
         {
@@ -42,6 +44,8 @@ export default [
     meta: {
       name: pageName,
       resource: 'Produk',
+      routeAllProduk: 'data-produk',
+      routeDraftProduk: 'data-produk',
       action: 'manage',
       breadcrumb: [
         {

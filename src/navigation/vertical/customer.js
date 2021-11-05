@@ -7,14 +7,14 @@ export default [
     children: [
       {
         title: 'Info Customer',
-        icon: 'UserCheckIcon',
+        icon: 'None',
         resource: 'Customer',
         route: 'info-customer',
         action: 'manage',
       },
       {
         title: 'Data Customer',
-        icon: 'UsersIcon',
+        icon: 'None',
         resource: 'Customer',
         route: 'data-customer',
         action: 'manage',

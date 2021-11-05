@@ -7,14 +7,14 @@ export default [
     children: [
       {
         title: 'Ajukan Pickup',
-        icon: 'PlusIcon',
+        icon: 'None',
         resource: 'Pickup',
         route: 'ajukan-pickup',
         action: 'manage',
       },
       {
         title: 'Riwayat Pickup',
-        icon: 'BookOpenIcon',
+        icon: 'None',
         resource: 'Pickup',
         route: 'history-pickup',
         action: 'manage',

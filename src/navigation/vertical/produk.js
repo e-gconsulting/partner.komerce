@@ -7,14 +7,14 @@ export default [
     children: [
       {
         title: 'Tambah Produk',
-        icon: 'PlusIcon',
+        icon: 'None',
         resource: 'Produk',
         route: 'add-produk',
         action: 'manage',
       },
       {
         title: 'Data Produk',
-        icon: 'ArchiveIcon',
+        icon: 'None',
         resource: 'Produk',
         route: 'data-produk',
         action: 'manage',

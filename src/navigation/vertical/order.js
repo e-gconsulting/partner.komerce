@@ -7,14 +7,14 @@ export default [
     children: [
       {
         title: 'Tambah Order',
-        icon: 'PlusIcon',
+        icon: 'None',
         resource: 'Order',
         route: 'add-order',
         action: 'manage',
       },
       {
         title: 'Data Order',
-        icon: 'BookOpenIcon',
+        icon: 'None',
         resource: 'Order',
         route: 'data-order',
         action: 'manage',

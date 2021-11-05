@@ -301,6 +301,7 @@ import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import axios2 from '../setting-kompship/baseUrl2'
 
 export default {
@@ -393,6 +394,17 @@ export default {
         this.variantData = data
         this.loading = false
         return this.variantData
+      }).catch(() => {
+        this.loading = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal, me-load produk, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
       })
     },
     myLoop(data) {

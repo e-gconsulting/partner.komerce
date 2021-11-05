@@ -737,23 +737,13 @@
                           class="mb-50"
                         >
                           <div
-                            v-for="(dataItem, index) in data.item"
+                            v-for="(dataItem, index) in data.item.variant1.option"
                             :key="index+1"
                           >
-                            <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant1"
-                              :key="indexVariant+1"
-                            >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                <b-form-input
-                                  v-model="itemVariant.val"
-                                  class="mb-50"
-                                />
-                              </div>
-                            </div>
+                            <b-form-input
+                              v-model="dataItem.val"
+                              class="mb-50"
+                            />
                           </div>
                         </b-col>
                       </div>
@@ -763,20 +753,10 @@
                           class="mb-50"
                         >
                           <div
-                            v-for="(dataItem, index) in data.item"
+                            v-for="(dataItem, index) in data.item.variant1.option"
                             :key="index+1"
                           >
-                            <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant1"
-                              :key="indexVariant+1"
-                            >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                {{ itemVariant.val }}
-                              </div>
-                            </div>
+                            {{ dataItem.val }}
                           </div>
                         </b-col>
                       </div>
@@ -789,23 +769,13 @@
                           class="mb-50"
                         >
                           <div
-                            v-for="(dataItem, index) in data.item"
+                            v-for="(dataItem, index) in data.item.variant2.option"
                             :key="index+1"
                           >
-                            <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
-                              :key="indexVariant+1"
-                            >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                <b-form-input
-                                  v-model="itemVariant.val"
-                                  class="mb-50"
-                                />
-                              </div>
-                            </div>
+                            <b-form-input
+                              v-model="dataItem.val"
+                              class="mb-50"
+                            />
                           </div>
                         </b-col>
                       </div>
@@ -815,20 +785,10 @@
                           class="mb-50"
                         >
                           <div
-                            v-for="(dataItem, index) in data.item"
+                            v-for="(dataItem, index) in data.item.variant2.option"
                             :key="index+1"
                           >
-                            <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2"
-                              :key="indexVariant+1"
-                            >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                {{ itemVariant.val }}
-                              </div>
-                            </div>
+                            {{ dataItem.val }}
                           </div>
                         </b-col>
                       </div>
@@ -841,23 +801,13 @@
                           class="mb-50"
                         >
                           <div
-                            v-for="(dataItem, index) in data.item"
+                            v-for="(dataItem, index) in data.item.variant3.option"
                             :key="index+1"
                           >
-                            <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
-                              :key="indexVariant+1"
-                            >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                <b-form-input
-                                  v-model="itemVariant.val"
-                                  class="mb-50"
-                                />
-                              </div>
-                            </div>
+                            <b-form-input
+                              v-model="dataItem.val"
+                              class="mb-50"
+                            />
                           </div>
                         </b-col>
                       </div>
@@ -867,20 +817,10 @@
                           class="mb-50"
                         >
                           <div
-                            v-for="(dataItem, index) in data.item"
+                            v-for="(dataItem, index) in data.item.variant3.option"
                             :key="index+1"
                           >
-                            <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
-                              :key="indexVariant+1"
-                            >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                {{ itemVariant.val }}
-                              </div>
-                            </div>
+                            {{ dataItem.val }}
                           </div>
                         </b-col>
                       </div>
@@ -888,44 +828,72 @@
 
                     <template #cell(price)="data">
                       <div v-if="editMode === true && indexRow === data.index">
-                        <b-col cols="12">
-                          <div
-                            v-for="(dataItem, index) in data.item"
-                            :key="index+1"
-                          >
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
+                          <div v-if="data.item.variant3 !== undefined">
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant3.option"
+                              :key="index+1"
                             >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                <b-form-input
-                                  v-model="itemVariant.price"
-                                  class="mb-50"
-                                />
-                              </div>
+                              <b-form-input
+                                v-model="dataItem.price"
+                                class="mb-50"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && data.item.variant2 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant2.option"
+                              :key="index+1"
+                            >
+                              <b-form-input
+                                v-model="dataItem.price"
+                                class="mb-50"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && !data.item.variant2 && data.item.variant1 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              <b-form-input
+                                v-model="dataItem.price"
+                                class="mb-50"
+                              />
                             </div>
                           </div>
                         </b-col>
                       </div>
                       <div v-else>
-                        <b-col cols="12">
-                          <div
-                            v-for="(dataItem, index) in data.item"
-                            :key="index+1"
-                          >
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
+                          <div v-if="data.item.variant3 !== undefined">
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant3.option"
+                              :key="index+1"
                             >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                {{ itemVariant.price }}
-                              </div>
+                              {{ dataItem.price }}
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && data.item.variant2 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant2.option"
+                              :key="index+1"
+                            >
+                              {{ dataItem.price }}
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && !data.item.variant2 && data.item.variant1 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              {{ dataItem.price }}
                             </div>
                           </div>
                         </b-col>
@@ -934,44 +902,72 @@
 
                     <template #cell(stock)="data">
                       <div v-if="editMode === true && indexRow === data.index">
-                        <b-col cols="12">
-                          <div
-                            v-for="(dataItem, index) in data.item"
-                            :key="index+1"
-                          >
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
+                          <div v-if="data.item.variant3 !== undefined">
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant3.option"
+                              :key="index+1"
                             >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                <b-form-input
-                                  v-model="itemVariant.stock"
-                                  class="mb-50"
-                                />
-                              </div>
+                              <b-form-input
+                                v-model="dataItem.stock"
+                                class="mb-50"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && data.item.variant2 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant2.option"
+                              :key="index+1"
+                            >
+                              <b-form-input
+                                v-model="dataItem.stock"
+                                class="mb-50"
+                              />
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && !data.item.variant2 && data.item.variant1 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              <b-form-input
+                                v-model="dataItem.stock"
+                                class="mb-50"
+                              />
                             </div>
                           </div>
                         </b-col>
                       </div>
                       <div v-else>
-                        <b-col cols="12">
-                          <div
-                            v-for="(dataItem, index) in data.item"
-                            :key="index+1"
-                          >
+                        <b-col
+                          cols="12"
+                          class="mb-50"
+                        >
+                          <div v-if="data.item.variant3 !== undefined">
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant3"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant3.option"
+                              :key="index+1"
                             >
-                              <div
-                                v-for="(itemVariant, indexItem) in dataVariant"
-                                :key="indexItem+1"
-                              >
-                                {{ itemVariant.stock }}
-                              </div>
+                              {{ dataItem.stock }}
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && data.item.variant2 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant2.option"
+                              :key="index+1"
+                            >
+                              {{ dataItem.stock }}
+                            </div>
+                          </div>
+                          <div v-if="!data.item.variant3 && !data.item.variant2 && data.item.variant1 !== undefined">
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              {{ dataItem.stock }}
                             </div>
                           </div>
                         </b-col>
@@ -1148,7 +1144,13 @@
               type="submit"
               variant="outline-primary"
               class="mr-1"
+              @click="submitDraft"
             >
+              <b-spinner
+                v-if="loadingSubmit"
+                small
+                variant="light"
+              />
               Simpan Draft
             </b-button>
             <b-button
@@ -1157,6 +1159,11 @@
               variant="primary"
               @click="submitPublish"
             >
+              <b-spinner
+                v-if="loadingSubmit"
+                small
+                variant="light"
+              />
               Publish
             </b-button>
           </b-col>
@@ -1191,6 +1198,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -1221,11 +1229,12 @@ export default {
     return {
 
       loading: false,
+      loadingSubmit: false,
 
       isVariation: false,
-      formChoices1: [{ choices: null }],
-      formChoices2: [{ choices: null }],
-      formChoices3: [{ choices: null }],
+      formChoices1: [],
+      formChoices2: [],
+      formChoices3: [],
 
       variationFields1: false,
       variationFields2: false,
@@ -1274,20 +1283,7 @@ export default {
       heightProduct: null,
       cod: true,
       transfer: true,
-      variantStore: [
-        {
-          val: null,
-          option: [],
-        },
-        {
-          val: null,
-          option: [],
-        },
-        {
-          val: null,
-          option: [],
-        },
-      ],
+      variantStore: [],
       parentVariant1: 0,
       parentVariant2: 1,
       parentVariant3: 2,
@@ -1380,6 +1376,7 @@ export default {
       console.log(this.fieldPreviewImage)
     },
     submitPublish() {
+      this.loadingSubmit = true
       if (this.fieldPreviewImage.length === 1) {
         this.fieldImage.push(this.imageFileFirst)
       } else if (this.fieldPreviewImage.length === 2) {
@@ -1402,99 +1399,400 @@ export default {
         this.fieldImage.push(this.imageFileFifth)
       }
 
-      this.variantStore[0].val = this.variationName1
-      this.variantStore[1].val = this.variationName2
-      this.variantStore[2].val = this.variationName3
-
-      if (this.formChoices1[0] !== undefined) {
+      // eslint-disable-next-line no-plusplus
+      if (this.formChoices3[0] !== undefined) {
+        this.variantStore.push(
+          {
+            val: null,
+            option: [],
+          },
+          {
+            val: null,
+            option: [],
+          },
+          {
+            val: null,
+            option: [],
+          },
+        )
+        this.variantStore[0].val = this.variationName1
+        this.variantStore[1].val = this.variationName2
+        this.variantStore[2].val = this.variationName3
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantStore[0].option.push(
+        for (let x = 0; x < this.variantItems.length; x++) {
+          this.variantStore[2].option.push(
             {
-              val: this.formChoices1[i].choices,
+              val: this.variantItems[x].variant3.option[0].val,
+              parent: null,
+              stock: this.variantItems[x].variant3.option[0].stock,
+              price: this.variantItems[x].variant3.option[0].price,
+            },
+          )
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let y = 0; y < this.formChoices2.length; y++) {
+          this.variantStore[1].option.push(
+            {
+              val: this.formChoices2[y].choices,
               parent: null,
               stock: null,
               price: null,
             },
           )
         }
-      }
-
-      if (this.formChoices2[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices2.length; i++) {
+        for (let z = 0; z < this.formChoices1.length; z++) {
+          this.variantStore[0].option.push(
+            {
+              val: this.variantItems[z].variant1.option[0].val,
+              parent: null,
+              stock: null,
+              price: null,
+            },
+          )
+        }
+      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+        this.variantStore.push(
+          {
+            val: null,
+            option: [],
+          },
+          {
+            val: null,
+            option: [],
+          },
+        )
+        this.variantStore[0].val = this.variationName1
+        this.variantStore[1].val = this.variationName2
+        // eslint-disable-next-line no-plusplus
+        for (let y = 0; y < this.variantItems.length; y++) {
           this.variantStore[1].option.push(
             {
-              val: this.formChoices2[i].choices,
-              parent: 0,
-              stock: this.stock,
-              price: this.price,
+              val: this.variantItems[y].variant2.option[0].val,
+              parent: null,
+              stock: this.variantItems[y].variant2.option[0].stock,
+              price: this.variantItems[y].variant2.option[0].price,
+            },
+          )
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let z = 0; z < this.formChoices1.length; z++) {
+          this.variantStore[0].option.push(
+            {
+              val: this.variantItems[z].variant1.option[0].val,
+              parent: null,
+              stock: null,
+              price: null,
+            },
+          )
+        }
+      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
+        this.variantStore.push(
+          {
+            val: null,
+            option: [],
+          },
+        )
+        this.variantStore[0].val = this.variationName1
+        // eslint-disable-next-line no-plusplus
+        for (let z = 0; z < this.variantItems.length; z++) {
+          this.variantStore[0].option.push(
+            {
+              val: this.variantItems[z].variant1.option[0].val,
+              parent: null,
+              stock: this.variantItems[z].variant1.option[0].stock,
+              price: this.variantItems[z].variant1.option[0].price,
             },
           )
         }
       }
 
+      console.log(this.variantStore)
+      if (this.cod === true) {
+        this.flavours = 'COD'
+      } else if (this.transfer === true) {
+        this.flavours = 'BANK TRANSFER'
+      }
+
+      this.$httpKomship.post('/v1/product/create/1', {
+        product_name: this.productName,
+        sku: this.skuName,
+        description: this.descriptionProduct,
+        weight: this.weightProduct,
+        length: this.lengthProduct,
+        width: this.widthProduct,
+        height: this.heightProduct,
+        price: this.price,
+        stock: this.stock,
+        flavours: this.flavours,
+        variant_option: this.variantStore,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response
+        console.log(data)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Berhasil',
+            icon: 'CheckIcon',
+            text: 'Berhasil menambahkan produk',
+            variant: 'success',
+          },
+        })
+        this.loadingSubmit = false
+        this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal menambahkan produk, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
+        this.loadingSubmit = false
+      })
+    },
+    submitDraft() {
+      this.loadingSubmit = true
+      if (this.fieldPreviewImage.length === 1) {
+        this.fieldImage.push(this.imageFileFirst)
+      } else if (this.fieldPreviewImage.length === 2) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+      } else if (this.fieldPreviewImage.length === 3) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+      } else if (this.fieldPreviewImage.length === 4) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+        this.fieldImage.push(this.imageFileFourth)
+      } else if (this.fieldPreviewImage.length === 5) {
+        this.fieldImage.push(this.imageFileFirst)
+        this.fieldImage.push(this.imageFileSecond)
+        this.fieldImage.push(this.imageFileThird)
+        this.fieldImage.push(this.imageFileFourth)
+        this.fieldImage.push(this.imageFileFifth)
+      }
+
+      // eslint-disable-next-line no-plusplus
       if (this.formChoices3[0] !== undefined) {
+        this.variantStore.push(
+          {
+            val: null,
+            option: [],
+          },
+          {
+            val: null,
+            option: [],
+          },
+          {
+            val: null,
+            option: [],
+          },
+        )
+        this.variantStore[0].val = this.variationName1
+        this.variantStore[1].val = this.variationName2
+        this.variantStore[2].val = this.variationName3
         // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices3.length; i++) {
+        for (let x = 0; x < this.variantItems.length; x++) {
           this.variantStore[2].option.push(
             {
-              val: this.formChoices3[i].choices,
-              parent: 0,
-              stock: this.stock,
-              price: this.price,
+              val: this.variantItems[x].variant3.option[0].val,
+              parent: null,
+              stock: this.variantItems[x].variant3.option[0].stock,
+              price: this.variantItems[x].variant3.option[0].price,
+            },
+          )
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let y = 0; y < this.formChoices2.length; y++) {
+          this.variantStore[1].option.push(
+            {
+              val: this.formChoices2[y].choices,
+              parent: null,
+              stock: null,
+              price: null,
+            },
+          )
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let z = 0; z < this.formChoices1.length; z++) {
+          this.variantStore[0].option.push(
+            {
+              val: this.variantItems[z].variant1.option[0].val,
+              parent: null,
+              stock: null,
+              price: null,
+            },
+          )
+        }
+      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+        this.variantStore.push(
+          {
+            val: null,
+            option: [],
+          },
+          {
+            val: null,
+            option: [],
+          },
+        )
+        this.variantStore[0].val = this.variationName1
+        this.variantStore[1].val = this.variationName2
+        // eslint-disable-next-line no-plusplus
+        for (let y = 0; y < this.variantItems.length; y++) {
+          this.variantStore[1].option.push(
+            {
+              val: this.variantItems[y].variant2.option[0].val,
+              parent: null,
+              stock: this.variantItems[y].variant2.option[0].stock,
+              price: this.variantItems[y].variant2.option[0].price,
+            },
+          )
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let z = 0; z < this.formChoices1.length; z++) {
+          this.variantStore[0].option.push(
+            {
+              val: this.variantItems[z].variant1.option[0].val,
+              parent: null,
+              stock: null,
+              price: null,
+            },
+          )
+        }
+      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
+        this.variantStore.push(
+          {
+            val: null,
+            option: [],
+          },
+        )
+        this.variantStore[0].val = this.variationName1
+        // eslint-disable-next-line no-plusplus
+        for (let z = 0; z < this.variantItems.length; z++) {
+          this.variantStore[0].option.push(
+            {
+              val: this.variantItems[z].variant1.option[0].val,
+              parent: null,
+              stock: this.variantItems[z].variant1.option[0].stock,
+              price: this.variantItems[z].variant1.option[0].price,
             },
           )
         }
       }
+
+      console.log(this.variantStore)
 
       if (this.cod === true) {
         this.flavours = 'COD'
       } else if (this.transfer === true) {
         this.flavours = 'BANK TRANSFER'
       }
-      console.log(this.productName)
-      console.log(this.skuName)
-      console.log(this.descriptionProduct)
-      console.log(this.fieldImage)
-      console.log(this.weightProduct)
-      console.log(this.lengthProduct)
-      console.log(this.heightProduct)
-      console.log(this.flavours)
-      console.log(this.variantStore)
 
-      // this.$httpKomship.post('/v1/product/create/618', {
-      //   product_name: this.productName,
-      //   sku: this.skuName,
-      //   description: this.descriptionProduct,
-      //   weight: this.weightProduct,
-      //   length: this.lengthProduct,
-      //   width: this.widthProduct,
-      //   height: this.heightProduct,
-      //   price: this.price,
-      //   stock: this.stock,
-      //   flavours: this.flavours,
-      //   variant_option: this.variantStore,
-      // }, {
-      //   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      // }).then(response => {
-      //   const { data } = response
-      //   console.log(data)
-      // })
+      this.$httpKomship.post('/v1/product/create/1', {
+        product_name: this.productName,
+        sku: this.skuName,
+        description: this.descriptionProduct,
+        weight: this.weightProduct,
+        length: this.lengthProduct,
+        width: this.widthProduct,
+        height: this.heightProduct,
+        price: this.price,
+        stock: this.stock,
+        flavours: this.flavours,
+        variant_option: this.variantStore,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response
+        console.log(data)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Berhasil',
+            icon: 'CheckIcon',
+            text: 'Berhasil menambahkan produk',
+            variant: 'success',
+          },
+        })
+        this.loadingSubmit = false
+        this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'draft' } })
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal menambahkan produk, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
+        this.loadingSubmit = false
+      })
     },
     createListVariation() {
-      // Per Row
-      // Variant 1
-      if (this.formChoices1[0] !== undefined) {
-        if (this.variantItems.length < 2) {
+      console.log(this.formChoices3.length < 2)
+      // Create Table
+      if (this.formChoices3[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices2.length; i++) {
-            this.variantItems.push([{
+        for (let x = 0; x < this.formChoices3.length; x++) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.formChoices2.length; y++) {
+            // eslint-disable-next-line no-plusplus
+            for (let z = 0; z < this.formChoices1.length; z++) {
+              this.variantItems.push({
+                variant1: {
+                  option: [
+                    {
+                      val: this.formChoices1[z].choices,
+                      parent: z,
+                      stock: null,
+                      price: null,
+                    },
+                  ],
+                },
+                variant2: {
+                  option: [
+                    {
+                      val: this.formChoices2[y].choices,
+                      parent: z,
+                      stock: null,
+                      price: null,
+                    },
+                  ],
+                },
+                variant3: {
+                  option: [
+                    {
+                      val: this.formChoices3[x].choices,
+                      parent: y,
+                      stock: this.stock,
+                      price: this.price,
+                    },
+                  ],
+                },
+              })
+            }
+          }
+        }
+      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.formChoices2.length; x++) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.formChoices1.length; y++) {
+            // eslint-disable-next-line no-plusplus
+            this.variantItems.push({
               variant1: {
                 option: [
                   {
-                    val: this.formChoices1[0].choices,
-                    parent: null,
+                    val: this.formChoices1[y].choices,
+                    parent: y,
                     stock: null,
                     price: null,
                   },
@@ -1503,256 +1801,25 @@ export default {
               variant2: {
                 option: [
                   {
-                    val: this.formChoices2[i].choices,
-                    parent: 0,
+                    val: this.formChoices2[x].choices,
+                    parent: y,
                     stock: this.stock,
                     price: this.price,
                   },
                 ],
               },
-            }])
+            })
           }
         }
-      }
-      if (this.formChoices1[1] !== undefined) {
-        this.variantItems.push([{
-          variant1: {
-            option: [
-              {
-                val: this.formChoices1[1].choices,
-                parent: null,
-                stock: null,
-                price: null,
-              },
-            ],
-          },
-        }])
-        if (this.variantItems.length > 1) {
+      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1 !== undefined) {
         // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices2.length; i++) {
-            this.variantItems.push([{
-              variant1: {
-                option: [
-                  {
-                    val: this.formChoices1[1].choices,
-                    parent: null,
-                    stock: null,
-                    price: null,
-                  },
-                ],
-              },
-              variant2: {
-                option: [
-                  {
-                    val: this.formChoices2[i].choices,
-                    parent: 1,
-                    stock: this.stock,
-                    price: this.price,
-                  },
-                ],
-              },
-            }])
-          }
-        }
-      }
-      if (this.formChoices1[2] !== undefined) {
-        this.variantItems.push([{
-          variant1: {
-            option: [
-              {
-                val: this.formChoices1[2].choices,
-                parent: null,
-                stock: null,
-                price: null,
-              },
-            ],
-          },
-        }])
-        if (this.variantItems.length > 2) {
-        // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices2.length; i++) {
-            this.variantItems.push([{
-              variant1: {
-                option: [
-                  {
-                    val: this.formChoices1[2].choices,
-                    parent: null,
-                    stock: null,
-                    price: null,
-                  },
-                ],
-              },
-              variant2: {
-                option: [
-                  {
-                    val: this.formChoices2[i].choices,
-                    parent: 2,
-                    stock: this.stock,
-                    price: this.price,
-                  },
-                ],
-              },
-            }])
-          }
-        }
-      }
-      if (this.formChoices1[3] !== undefined) {
-        this.variantItems.push([{
-          variant1: {
-            option: [
-              {
-                val: this.formChoices1[3].choices,
-                parent: null,
-                stock: null,
-                price: null,
-              },
-            ],
-          },
-        }])
-        if (this.variantItems.length > 2) {
-        // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices2.length; i++) {
-            this.variantItems.push([{
-              variant1: {
-                option: [
-                  {
-                    val: this.formChoices1[3].choices,
-                    parent: null,
-                    stock: null,
-                    price: null,
-                  },
-                ],
-              },
-              variant2: {
-                option: [
-                  {
-                    val: this.formChoices2[i].choices,
-                    parent: 3,
-                    stock: this.stock,
-                    price: this.price,
-                  },
-                ],
-              },
-            }])
-          }
-        }
-      }
-      if (this.formChoices1[4] !== undefined) {
-        this.variantItems.push([{
-          variant1: {
-            option: [
-              {
-                val: this.formChoices1[4].choices,
-                parent: null,
-                stock: null,
-                price: null,
-              },
-            ],
-          },
-        }])
-        if (this.variantItems.length > 2) {
-        // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.formChoices2.length; i++) {
-            this.variantItems.push([{
-              variant1: {
-                option: [
-                  {
-                    val: this.formChoices1[4].choices,
-                    parent: null,
-                    stock: null,
-                    price: null,
-                  },
-                ],
-              },
-              variant2: {
-                option: [
-                  {
-                    val: this.formChoices2[i].choices,
-                    parent: 4,
-                    stock: this.stock,
-                    price: this.price,
-                  },
-                ],
-              },
-            }])
-          }
-        }
-      }
-
-      // Delete row undefined
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.variantItems.length; i++) {
-        if (this.variantItems[i][0].variant2 === undefined) {
-          this.variantItems.splice(i, 1)
-        }
-      }
-
-      // Variant 3
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.variantItems.length; i++) {
-        if (this.formChoices3[0] !== undefined && this.variantItems[i] !== undefined) {
-          this.variantItems[i].push({
-            variant3: {
+        for (let y = 0; y < this.formChoices1.length; y++) {
+          this.variantItems.push({
+            variant1: {
               option: [
                 {
-                  val: this.formChoices3[0].choices,
-                  parent: 0,
-                  stock: this.stock,
-                  price: this.price,
-                },
-              ],
-            },
-          })
-        }
-        if (this.formChoices3[1] !== undefined && this.variantItems[i] !== undefined) {
-          this.variantItems[i].push({
-            variant3: {
-              option: [
-                {
-                  val: this.formChoices3[1].choices,
-                  parent: 0,
-                  stock: this.stock,
-                  price: this.price,
-                },
-              ],
-            },
-          })
-        }
-        if (this.formChoices3[2] !== undefined && this.variantItems[i] !== undefined) {
-          this.variantItems[i].push({
-            variant3: {
-              option: [
-                {
-                  val: this.formChoices3[2].choices,
-                  parent: 0,
-                  stock: this.stock,
-                  price: this.price,
-                },
-              ],
-            },
-          })
-        }
-        if (this.formChoices3[3] !== undefined && this.variantItems[i] !== undefined) {
-          this.variantItems[i].push({
-            variant3: {
-              option: [
-                {
-                  val: this.formChoices3[3].choices,
-                  parent: 0,
-                  stock: this.stock,
-                  price: this.price,
-                },
-              ],
-            },
-          })
-        }
-        if (this.formChoices3[4] !== undefined && this.variantItems[i] !== undefined) {
-          this.variantItems[i].push({
-            variant3: {
-              option: [
-                {
-                  val: this.formChoices3[4].choices,
-                  parent: 0,
+                  val: this.formChoices1[y].choices,
+                  parent: y,
                   stock: this.stock,
                   price: this.price,
                 },
@@ -1761,6 +1828,7 @@ export default {
           })
         }
       }
+      console.log(this.variantItems)
 
       if (this.variationName1 !== null) {
         this.fields.push({
@@ -1811,26 +1879,19 @@ export default {
       this.isVariation = true
       this.variationFields1 = true
       this.activeAddChoices1 = true
+      this.formChoices1.push({ choices: null })
     },
     addVariationItems2() {
       this.variationFields2 = true
       this.activeAddChoices2 = true
       this.activeAddChoices1 = false
+      this.formChoices2.push({ choices: null })
     },
     addVariationItems3() {
       this.variationFields3 = true
       this.activeAddChoices3 = true
       this.activeAddChoices2 = false
-    },
-    addVariationItems4() {
-      this.variationFields4 = true
-      this.activeAddChoices4 = true
-      this.activeAddChoices3 = false
-    },
-    addVariationItems5() {
-      this.variationFields5 = true
-      this.activeAddChoices5 = true
-      this.activeAddChoices4 = false
+      this.formChoices3.push({ choices: null })
     },
     addChoices1() {
       this.formChoices1.push({ choices: null })
@@ -1841,12 +1902,6 @@ export default {
     addChoices3() {
       this.formChoices3.push({ choices: null })
     },
-    addChoices4() {
-      this.formChoices4.push({ choices: null })
-    },
-    addChoices5() {
-      this.formChoices5.push({ choices: null })
-    },
     removeChoices1(index) {
       this.formChoices1.splice(index, 1)
     },
@@ -1855,12 +1910,6 @@ export default {
     },
     removeChoices3(index) {
       this.formChoices3.splice(index, 1)
-    },
-    removeChoices4(index) {
-      this.formChoices4.splice(index, 1)
-    },
-    removeChoices5(index) {
-      this.formChoices5.splice(index, 1)
     },
     editTable(data) {
       console.log(data)

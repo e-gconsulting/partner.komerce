@@ -7,14 +7,14 @@ export default [
     children: [
       {
         title: 'Penghasilan',
-        icon: 'UserCheckIcon',
+        icon: 'None',
         resource: 'Keuangan',
         route: 'penghasilan',
         action: 'manage',
       },
       {
         title: 'Saldo',
-        icon: 'UsersIcon',
+        icon: 'None',
         resource: 'Keuangan',
         route: 'saldo',
         action: 'manage',

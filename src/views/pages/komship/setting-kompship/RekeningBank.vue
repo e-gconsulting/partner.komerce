@@ -162,9 +162,14 @@
                       name="Nama Bank"
                       rules="required"
                     >
-                      <b-form-input
+                      <v-select
                         v-model="bankName"
-                        :state="errors.length > 0 ? false:null"
+                        label="name"
+                        :reduce="option => option.name"
+                        :options="banks"
+                        :filterable="true"
+                        :state="errors.length > 0 ? false : null"
+                        placeholder="Ketik untuk mencari..."
                       />
                       <small class="text-danger">{{ errors[0] }}</small>
                     </validation-provider>
@@ -235,7 +240,7 @@
               <!-- Edit Rekening -->
               <transition name="fade">
                 <b-col
-                  v-if="editIdRek === data.bank_account_id"
+                  v-if="editMode === true && editIdRek === data.bank_account_id"
                   md="12"
                   class="d-flex justify-content-end mt-1 pb-1"
                 >
@@ -253,7 +258,7 @@
                     type="reset"
                     variant="primary"
                     class="mr-1"
-                    @click="submitEditRekening"
+                    @click.prevent="submitEditRekening"
                   >
                     <b-spinner
                       v-if="loadingSubmit"
@@ -410,6 +415,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required } from '@validations'
 import useJwt from '@/auth/jwt/useJwt'
+import vSelect from 'vue-select'
 import {
   BRow,
   BCol,
@@ -444,6 +450,7 @@ export default {
     ValidationProvider,
     BOverlay,
     BSpinner,
+    vSelect,
   },
   directives: {
     'b-modal': VBModal,
@@ -457,6 +464,8 @@ export default {
       dataPin: null,
       errorPin: '',
       addForm: true,
+
+      banks: [],
 
       editIdRek: null,
 
@@ -484,6 +493,7 @@ export default {
   mounted() {
     // this.showModal()
     this.getBank()
+    this.loadBanks()
   },
   methods: {
     getBank() {
@@ -534,7 +544,8 @@ export default {
     },
     submitEditRekening() {
       this.loadingSubmit = true
-      this.$refs.formRules.validate().then(success => {
+      // eslint-disable-next-line dot-notation
+      this.$refs['formRules'][0].validate().then(success => {
         if (success) {
           const formData = new FormData()
           formData.append('_method', 'put')
@@ -550,7 +561,17 @@ export default {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(response => {
             const { data } = response
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Berhasil',
+                icon: 'CheckIcon',
+                text: 'Berhasil update rekening',
+                variant: 'success',
+              },
+            })
             this.loadingSubmit = false
+            this.editMode = false
             this.getBank()
             console.log(data)
           }).catch(() => {
@@ -629,8 +650,37 @@ export default {
         }
       })
     },
+    loadBanks() {
+      this.loading = true
+      this.$http
+        .get('xendit/disbursementbankAvailable')
+        .then(({ data }) => {
+          this.banks = data.data
+          console.log(data)
+        })
+        .catch(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Terjadi Kesalahan',
+                text: 'Terjadi kesalahan saat pengambilan data bank',
+                variant: 'danger',
+                attachment: 'AlertTriangleIcon',
+              },
+            },
+            { timeout: 2500 },
+          )
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
     addRekening() {
       this.fieldActionAddRekening = true
+      if (this.editMode === true) {
+        this.editMode = false
+      }
     },
     cancelAddRekening() {
       this.fieldActionAddRekening = false

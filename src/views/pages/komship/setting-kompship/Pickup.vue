@@ -53,7 +53,7 @@
           </b-row>
 
           <validation-observer ref="formRulesEdit">
-            <b-form @submit.prevent>
+            <b-form>
               <b-row>
 
                 <b-col cols="10">
@@ -89,19 +89,31 @@
                     label-cols-md="3"
                   >
                     <div v-if="editMode === true && editIdAddress === data.address_id">
-                      <v-select
-                        v-model="tesLabel[index]"
-                        :options="itemsOriginEdit"
-                        label="label"
-                        @search="onSearchOrigin"
-                      />
+                      <div
+                        v-for="(dataOrigin, indexOrigin) in itemsOrigin"
+                        :key="indexOrigin+1"
+                      >
+                        <v-select
+                          v-if="dataOrigin.value === data.origin_code"
+                          v-model="dataOrigin.label"
+                          :options="itemsOriginEdit"
+                          label="label"
+                          @search="onSearchOrigin"
+                        />
+                      </div>
                     </div>
                     <div v-else>
-                      <v-select
-                        v-model="tesLabel[index]"
-                        label="label"
-                        disabled
-                      />
+                      <div
+                        v-for="(dataOrigin, indexOrigin) in itemsOrigin"
+                        :key="indexOrigin+1"
+                      >
+                        <v-select
+                          v-if="dataOrigin.value === data.origin_code"
+                          v-model="dataOrigin.label"
+                          label="label"
+                          disabled
+                        />
+                      </div>
                     </div>
                   </b-form-group>
                 </b-col>
@@ -464,6 +476,7 @@ export default {
       // Edit Mode
       editMode: false,
       editIdAddress: null,
+      originValue: '',
 
       addressName: '',
       codeOriginEdit: [],
@@ -471,9 +484,6 @@ export default {
       addressDetail: '',
       picName: '',
       phoneUser: '',
-
-      tesOrigin: [],
-      tesLabel: [],
 
       // Add Address
       fieldAddAddressName: '',
@@ -499,19 +509,16 @@ export default {
         data.forEach(this.myLoop)
         this.dataAddress = data
         this.loading = false
+        console.log(this.itemsOrigin)
+        return this.dataAddress
       })
     },
     myLoop(data) {
       axios2.get(`/v1/origin?search=${data.origin_code}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
-        this.itemsOrigin = response.data.data
-        this.itemsOrigin.forEach(this.loopOrigin)
+        this.itemsOrigin.push(response.data.data[0])
       })
-    },
-    loopOrigin(data) {
-      this.tesLabel.push(data.label)
-      return this.tesLabel
     },
     submitAddress() {
       this.loadingSubmit = true
@@ -525,13 +532,6 @@ export default {
           formData.append('pic', this.fieldAddPicName)
           formData.append('phone', this.fieldAddPhoneUser)
           formData.append('is_default', this.isDefault)
-
-          console.log(this.fieldAddAddressName)
-          console.log(this.fieldAddOrigin.value)
-          console.log(this.fieldAddAddressDetail)
-          console.log(this.fieldAddPicName)
-          console.log(this.fieldAddPhoneUser)
-          console.log(this.isDefault)
 
           this.$httpKomship.post('/v1/address/store', formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -564,24 +564,59 @@ export default {
     removeFormAddress() {
       this.formAddAddress = false
     },
-    submitUpdateAddress(data) {
-      console.log(data)
+    submitUpdateAddress() {
       this.loadingSubmit = true
-      console.log(this.editAddress())
       // eslint-disable-next-line dot-notation
-      // this.$refs['formRulesEdit'][0].validate().then(success => {
-      //   if (success) {
-      //     const formData = new FormData()
-      //     formData.append()
-      //   }
-      // })
+      this.$refs['formRulesEdit'][0].validate().then(success => {
+        if (success) {
+          const formData = new FormData()
+          formData.append('_method', 'put')
+          formData.append('address_name', this.addressName)
+          formData.append('origin_code', this.originValue)
+          formData.append('address_detail', this.addressDetail)
+          formData.append('pic', this.picName)
+          formData.append('phone', this.phoneUser)
+          formData.append('is_default', this.dataIsDefault)
+
+          this.$httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(response => {
+            this.loadingSubmit = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success update satu alamat pickup',
+                variant: 'success',
+              },
+            })
+            this.editMode = false
+            this.getAddress()
+            console.log(response)
+          }).catch(() => {
+            this.loadingSubmit = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal update alamat pickup',
+                variant: 'danger',
+              },
+            })
+          })
+        }
+      })
     },
     editAddress(data) {
       console.log(data)
       this.editMode = true
       this.editIdAddress = data.address_id
+      console.log(this.editIdAddress)
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
+      this.originValue = data.origin_code
       this.picName = data.pic
       this.phoneUser = data.phone
       if (data.is_default === 0) {
@@ -613,8 +648,7 @@ export default {
       axios2.delete(`/v1/address/delete/${data.address_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
-        .then(response => {
-          console.log(response)
+        .then(() => {
           this.getAddress()
         })
     },
@@ -631,7 +665,6 @@ export default {
       return axios2.get(`/v1/origin?search=${search}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
-        console.log(response.data.data)
         this.itemsOriginEdit = response.data.data
       })
     },
@@ -641,8 +674,6 @@ export default {
       } else {
         this.dataIsDefault = 1
       }
-      console.log(this.isDefault)
-      console.log(this.dataIsDefault)
     },
   },
 

@@ -177,6 +177,13 @@
                     :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
                     class="mr-50"
                   />
+                  <b-avatar
+                    v-else
+                    variant="light-primary"
+                    size="50"
+                    :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
+                    class="mr-50"
+                  />
                 </transition>
                 <label
                   v-if="fieldLogoBusiness.length === 0"
@@ -393,10 +400,10 @@ export default {
 
       options: [
         {
-          text: 'Laki-laki', value: '1',
+          text: 'Laki-laki', value: 'Laki-laki',
         },
         {
-          text: 'Perempuan', value: '0',
+          text: 'Perempuan', value: 'Perempuan',
         },
       ],
 
@@ -476,11 +483,9 @@ export default {
       })
     },
     loadProfile() {
+      this.fieldLogoBusiness.push({ logo: '' })
       this.loading = true
-      axios2.post('/v1/my-profile',
-        {
-
-        },
+      axios2.post('/v1/my-profile', {},
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {
@@ -492,8 +497,22 @@ export default {
         this.noHP = data.user_phone
         this.emailUser = data.user_email
         this.address = data.user_address
-        this.imageFile = data.user_img
+        if (data.partner_business_logo) this.imageInitialFile = data.partner_business_logo
+        this.nameBusiness = data.partner_business_name
+        this.sektorBusiness = data.partner_category_name
+        this.typeBusiness = data.partner_business_type_id
         this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal update profile, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
     },
     loadPartnerCategory() {
