@@ -37,10 +37,11 @@ export default {
   watch: {
     datasets: {
       handler() {
-        this.chart.destroy()
+        if (this.chart) {
+          this.chart.destroy()
+        }
         this.initChart()
       },
-      immediate: true,
     },
   },
   mounted() {
@@ -53,35 +54,6 @@ export default {
         data: {
           labels: this.labels,
           datasets: this.datasets,
-          // labels: [
-          //   'Senin',
-          //   'Selasa',
-          //   'Rabu',
-          //   'Kamis',
-          //   "Jum'at",
-          //   'Sabtu',
-          //   'Minggu',
-          // ],
-          // datasets: [
-          //   {
-          //     label: 'Penghasilan Bersih',
-          //     backgroundColor: '#08A0F7',
-          //     data: [
-          //       3000000, 7000000, 4500000, 7500000, 4500000, 6780000, 8790000,
-          //     ],
-          //     lineTension: 0,
-          //     pointRadius: 0,
-          //   },
-          //   {
-          //     label: 'Penghasilan Kotor',
-          //     backgroundColor: '#FBA63C',
-          //     data: [
-          //       6000000, 5500000, 7500000, 2500000, 7000000, 1220000, 7690000,
-          //     ],
-          //     lineTension: 0,
-          //     pointRadius: 0,
-          //   },
-          // ],
         },
         options: {
           scales: {

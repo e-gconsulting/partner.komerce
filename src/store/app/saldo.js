@@ -30,6 +30,7 @@ export default {
     getField,
     rekening(state) {
       const rekening = state.rekenings[0]
+      if (!rekening) return {}
       return {
         ...rekening,
         noRek: hideAccount(rekening.noRek),
