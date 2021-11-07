@@ -1,16 +1,12 @@
 <template>
   <div class="container p-0">
-    <h1 class="mb-2 h-text-xl">
-      Informasi Penghasilan
-    </h1>
+    <h1 class="mb-2 h-text-xl">Informasi Penghasilan</h1>
     <div class="d-flex justify-content-between">
       <div class="d-block" style="width: 29.5%">
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Cashback
-              </div>
+              <div class="first-card-header-text me-8 mb-0">Cashback</div>
             </div>
           </div>
           <div class="card-body pb-0 mb-0">
@@ -30,10 +26,7 @@
               Penghasilan
               <div class="d-flex align-items-center">
                 <p class="mb-0 mr-1">7 Hari Terakhir</p>
-                <img
-                  src="@/assets/images/icons/info-circle.svg"
-                  alt="Info"
-                >
+                <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
               </div>
             </div>
           </div>
@@ -49,10 +42,7 @@
               Penghasilan
               <div class="d-flex align-items-center">
                 <p class="mb-0 mr-1">30 Hari Terakhir</p>
-                <img
-                  src="@/assets/images/icons/info-circle.svg"
-                  alt="Info"
-                >
+                <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
               </div>
             </div>
           </div>
@@ -68,10 +58,7 @@
               Penghasilan
               <div class="d-flex align-items-center">
                 <p class="mb-0 mr-1">Total</p>
-                <img
-                  src="@/assets/images/icons/info-circle.svg"
-                  alt="Info"
-                >
+                <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
               </div>
             </div>
           </div>
@@ -85,9 +72,7 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <div class="h-text-lg">
-              Rincian Penghasilan
-            </div>
+            <div class="h-text-lg">Rincian Penghasilan</div>
             <div class="d-flex justify-content-end w-50">
               <b-form-group class="w-25 mb-0 mr-1">
                 <v-select
@@ -96,21 +81,28 @@
                   dir="ltr"
                   :options="optionsPenghasilan"
                   :clearable="false"
+                  @input="handleChangePenghasilan"
                 />
               </b-form-group>
               <date-range-picker
-                  ref="picker"
-                  :locale-data="locale"
-                  v-model="dateRange"
-                  :ranges="ranges"
-                  :opens="'left'"
-                  class="w-50"
+                ref="picker"
+                :locale-data="locale"
+                v-model="dateRange"
+                :ranges="ranges"
+                :opens="'left'"
+                class="w-50"
+                @input="handleChangePenghasilan"
               >
-                  <template v-slot:input="picker" style="min-width: 350px;">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
-                    </div>
-                  </template>
+                <template v-slot:input="picker" style="min-width: 350px">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span
+                      >{{ formatDate(picker.startDate) }} -
+                      {{ formatDate(picker.endDate) }}</span
+                    >
+                  </div>
+                </template>
               </date-range-picker>
             </div>
           </div>
@@ -118,21 +110,19 @@
             <div class="row">
               <div class="col-12 col-md-6 pr-0">
                 <p class="h-text-xl">COD</p>
-                <ChartPenghasilan :height="300"/>
+                <ChartPenghasilan  :datasets="incomeCODGraph.datasets" :labels="incomeCODGraph.labels" :height="300" />
               </div>
               <div class="col-12 col-md-6 row px-0">
                 <div class="col-12 h-5-5"></div>
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Orderan COD
-                      </div>
+                      <div class="info-card-header-text">Orderan COD</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ dataCod.orderan }}%
@@ -142,47 +132,37 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Orderan Sukses
-                      </div>
+                      <div class="info-card-header-text">Orderan Sukses</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
-                      >
+                      />
                     </div>
-                    <div class="info-card-body-text">
-                      {{ dataCod.sukses }}%
-                    </div>
+                    <div class="info-card-body-text">{{ dataCod.sukses }}%</div>
                   </div>
                 </div>
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Orderan Retur
-                      </div>
+                      <div class="info-card-header-text">Orderan Retur</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
-                    <div class="info-card-body-text">
-                      {{ dataCod.retur }}%
-                    </div>
+                    <div class="info-card-body-text">{{ dataCod.retur }}%</div>
                   </div>
                 </div>
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Penghasilan Kotor
-                      </div>
+                      <div class="info-card-header-text">Penghasilan Kotor</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text text-orange">
                       {{ formatRupiah(dataCod.pKotor) }}
@@ -199,7 +179,7 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text text-blue">
                       {{ formatRupiah(dataCod.pBersih) }}
@@ -216,7 +196,7 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.cashbackOngkir) }}
@@ -226,14 +206,12 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Ongkos Kirim
-                      </div>
+                      <div class="info-card-header-text">Ongkos Kirim</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.ongkir) }}
@@ -250,7 +228,7 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.ongkirBersih) }}
@@ -260,14 +238,12 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Biaya COD
-                      </div>
+                      <div class="info-card-header-text">Biaya COD</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.biayaCod) }}
@@ -279,7 +255,7 @@
             <div class="row mt-3">
               <div class="col-12 col-md-6 pr-0">
                 <p class="h-text-xl">Transfer</p>
-                <ChartPenghasilan :height="300"/>
+                <ChartPenghasilan  :datasets="incomeTransferGraph.datasets" :labels="incomeTransferGraph.labels" :height="300" />
               </div>
               <div class="col-12 col-md-6 row px-0">
                 <div class="col-12 h-5-5"></div>
@@ -293,7 +269,7 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ dataTransfer.orderan }}%
@@ -303,13 +279,11 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Orderan Sukses
-                      </div>
+                      <div class="info-card-header-text">Orderan Sukses</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ dataTransfer.sukses }}%
@@ -319,14 +293,12 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Orderan Retur
-                      </div>
+                      <div class="info-card-header-text">Orderan Retur</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ dataTransfer.retur }}%
@@ -336,14 +308,12 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Penghasilan Kotor
-                      </div>
+                      <div class="info-card-header-text">Penghasilan Kotor</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text text-orange">
                       {{ formatRupiah(dataTransfer.pKotor) }}
@@ -360,7 +330,7 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text text-blue">
                       {{ formatRupiah(dataTransfer.pBersih) }}
@@ -377,7 +347,7 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.cashbackOngkir) }}
@@ -387,14 +357,12 @@
                 <div class="col-4 pr-0 h-color-dark mb-1">
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
-                      <div class="info-card-header-text">
-                        Ongkos Kirim
-                      </div>
+                      <div class="info-card-header-text">Ongkos Kirim</div>
                       <img
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.ongkir) }}
@@ -411,10 +379,25 @@
                         src="@/assets/images/icons/info-circle.svg"
                         alt="Info"
                         class="ml-1"
-                      >
+                      />
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.ongkirBersih) }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-4 pr-0 h-color-dark mb-1">
+                  <div class="border rounded-16 h-100 p-1">
+                    <div class="d-flex flex-nowrap">
+                      <div class="info-card-header-text">Biaya COD</div>
+                      <img
+                        src="@/assets/images/icons/info-circle.svg"
+                        alt="Info"
+                        class="ml-1"
+                      />
+                    </div>
+                    <div class="info-card-body-text">
+                      {{ formatRupiah(dataTransfer.biayaCod) }}
                     </div>
                   </div>
                 </div>
@@ -429,6 +412,8 @@
 
 <script>
 import moment from 'moment'
+import { mapGetters, mapState } from 'vuex'
+import { mapFields } from 'vuex-map-fields'
 import { BFormGroup } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import DateRangePicker from 'vue2-daterange-picker'
@@ -447,49 +432,21 @@ export default {
     today.setHours(0, 0, 0, 0)
 
     const last7 = new Date()
-    last7.setDate(today.getDate() - 7)
+    last7.setDate(today.getDate() - 6)
     last7.setHours(0, 0, 0, 0)
 
     const last30 = new Date()
-    last30.setDate(today.getDate() - 30)
+    last30.setDate(today.getDate() - 29)
     last30.setHours(0, 0, 0, 0)
 
     const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+    const lastDateOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+    )
 
     return {
-      cashback: 4460000,
-      penghasilan7Hari: 400200100,
-      penghasilan30Hari: 4200000,
-      penghasilanTotal: 4200000,
-      selectedPenghasilan: 'Kompship',
-      optionsPenghasilan: ['Kompship'],
-      dataCod: {
-        orderan: 70,
-        sukses: 75,
-        retur: 25,
-        pKotor: 199666000,
-        pBersih: 199666000,
-        cashbackOngkir: 199666000,
-        ongkir: 199666000,
-        ongkirBersih: 199666000,
-        biayaCod: 199666000,
-      },
-      dataTransfer: {
-        orderan: 70,
-        sukses: 75,
-        retur: 25,
-        pKotor: 199666000,
-        pBersih: 199666000,
-        cashbackOngkir: 199666000,
-        ongkir: 199666000,
-        ongkirBersih: 199666000,
-        biayaCod: 199666000,
-      },
-      dateRange: {
-        startDate: today,
-        endDate: today,
-      },
       picker: {
         startDate: today,
         endDate: today,
@@ -500,7 +457,7 @@ export default {
       ranges: {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
-        'Bulan Ini': [firstDateOfMonth, lastDateOfMonth],
+        'Bulan Ini': [firstDateOfMonth, today],
       },
       today,
       last7,
@@ -508,6 +465,25 @@ export default {
       firstDateOfMonth,
       lastDateOfMonth,
     }
+  },
+  computed: {
+    ...mapFields('penghasilan', [
+      'selectedPenghasilan',
+      'optionsPenghasilan',
+      'dateRange',
+    ]),
+    ...mapGetters('penghasilan', [
+      'incomeTransferGraph',
+      'incomeCODGraph',
+    ]),
+    ...mapState('penghasilan', [
+      'cashback',
+      'penghasilan7Hari',
+      'penghasilan30Hari',
+      'penghasilanTotal',
+      'dataCod',
+      'dataTransfer',
+    ]),
   },
   methods: {
     formatRibuan(x) {
@@ -518,6 +494,23 @@ export default {
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
+    },
+    handleChangePenghasilan() {
+      this.$store.dispatch('penghasilan/getDataCod')
+      this.$store.dispatch('penghasilan/getDataTransfer')
+      this.$store.dispatch('penghasilan/getIncomeTransferGraph')
+      this.$store.dispatch('penghasilan/getIncomeCODGraph')
+    },
+  },
+  beforeMount() {
+    this.$store.dispatch('penghasilan/init')
+  },
+  watch: {
+    dateRange() {
+      this.handleChangePenghasilan()
+    },
+    selectedPenghasilan() {
+      this.handleChangePenghasilan()
     },
   },
 }
@@ -588,10 +581,10 @@ export default {
   color: #222222;
 }
 .text-orange {
-  color: #FBA63C;
+  color: #fba63c;
 }
 .text-blue {
-  color: #08A0F7;
+  color: #08a0f7;
 }
 .h-5-5 {
   height: 5.5em;

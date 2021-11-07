@@ -1,6 +1,6 @@
 export default [
   {
-    title: 'Dashboard Komship',
+    title: 'Dashboard',
     icon: 'TrelloIcon',
     resource: 'Dashboard Komship',
     tagVariant: 'light-warning',

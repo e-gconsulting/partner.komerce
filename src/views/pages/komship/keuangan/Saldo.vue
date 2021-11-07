@@ -1,52 +1,68 @@
 <template>
   <div class="container p-0">
-    <h1 class="mb-2 h-text-xl">
-      Informasi Saldo
-    </h1>
+    <h1 class="mb-2 h-text-xl">Informasi Saldo</h1>
     <div class="row">
       <div class="col-12 col-md-4">
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Saldo
-              </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <div class="first-card-header-text me-8 mb-0">Saldo</div>
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
             {{ formatRupiah(saldo) }}
           </div>
-          <div class="card-footer d-flex justify-content-around bg-orange text-white rounded-16 py-9">
-            <a class="d-flex flex-column justify-content-center align-items-center" @click="showTopUpModal()">
-              <img
-                src="@/assets/images/icons/send-square.svg"
-                alt="Top Up"
-              >
-              <p class="h-text-xs mb-0">
-                Top Up
-              </p>
+          <div
+            class="
+              card-footer
+              d-flex
+              justify-content-around
+              bg-orange
+              text-white
+              rounded-16
+              py-9
+            "
+          >
+            <a
+              class="
+                d-flex
+                flex-column
+                justify-content-center
+                align-items-center
+              "
+              @click="showTopUpModal()"
+            >
+              <img src="@/assets/images/icons/send-square.svg" alt="Top Up" />
+              <p class="h-text-xs mb-0">Top Up</p>
             </a>
-            <a class="d-flex flex-column justify-content-center align-items-center" @click="showModal()">
+            <a
+              class="
+                d-flex
+                flex-column
+                justify-content-center
+                align-items-center
+              "
+              @click="showModal()"
+            >
               <img
                 src="@/assets/images/icons/receive-square.svg"
                 alt="Tarik Saldo"
-              >
-              <p class="h-text-xs mb-0">
-                Tarik Saldo
-              </p>
+              />
+              <p class="h-text-xs mb-0">Tarik Saldo</p>
             </a>
-            <a href="/keuangan/saldo/detail" class="d-flex text-reset flex-column justify-content-center align-items-center">
-              <img
-                src="@/assets/images/icons/document-text.svg"
-                alt="Detail"
-              >
-              <p class="h-text-xs mb-0">
-                Detail
-              </p>
+            <a
+              href="/keuangan/saldo/detail"
+              class="
+                d-flex
+                text-reset
+                flex-column
+                justify-content-center
+                align-items-center
+              "
+            >
+              <img src="@/assets/images/icons/document-text.svg" alt="Detail" />
+              <p class="h-text-xs mb-0">Detail</p>
             </a>
           </div>
         </div>
@@ -55,18 +71,13 @@
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Saldo Pending
-              </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <div class="first-card-header-text me-8 mb-0">Saldo Pending</div>
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
               alt="Arrow Right"
-            >
+            />
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
             {{ formatRupiah(saldoPending) }}
@@ -77,13 +88,8 @@
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Rekening Bank
-              </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <div class="first-card-header-text me-8 mb-0">Rekening Bank</div>
+              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body pb-0 mb-0">
@@ -93,7 +99,7 @@
                 src="@/assets/images/icons/arrow-down-light.svg"
                 alt="Arrow Down"
                 class="ml-1"
-              >
+              />
             </p>
             <p class="h-text-xs mb-0">
               {{ `${rekening.bank} - ${rekening.noRek}` }}
@@ -104,39 +110,110 @@
       <div class="col-12 mt-2">
         <div class="card">
           <div class="card-header mb-8 pb-0">
-            <div class="h-text-lg">
-              Riwayat Penarikan Saldo
-            </div>
+            <div class="h-text-lg">Riwayat Penarikan Saldo</div>
             <div class="d-flex justify-content-end">
               <date-range-picker
-                  ref="picker"
-                  :locale-data="locale"
-                  v-model="dateRange"
-                  :ranges="ranges"
-                  :opens="'left'"
-                  class="w-100 mr-1"
+                ref="picker"
+                :locale-data="locale"
+                v-model="dateRange"
+                :ranges="ranges"
+                :opens="'left'"
+                class="w-100 mr-1"
               >
-                  <template v-slot:input="picker" style="min-width: 350px;">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="mr-2">{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 2V5" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M16 2V5" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M3.5 9.08984H20.5" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z" stroke="#222222" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.6947 13.7002H15.7037" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M15.6947 16.7002H15.7037" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M11.9955 13.7002H12.0045" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M11.9955 16.7002H12.0045" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8.29431 13.7002H8.30329" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8.29431 16.7002H8.30329" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </div>
-                  </template>
+                <template v-slot:input="picker" style="min-width: 350px">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span class="mr-2"
+                      >{{ formatDate(picker.startDate) }} -
+                      {{ formatDate(picker.endDate) }}</span
+                    >
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M8 2V5"
+                        stroke="#222222"
+                        stroke-width="1.5"
+                        stroke-miterlimit="10"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M16 2V5"
+                        stroke="#222222"
+                        stroke-width="1.5"
+                        stroke-miterlimit="10"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M3.5 9.08984H20.5"
+                        stroke="#222222"
+                        stroke-width="1.5"
+                        stroke-miterlimit="10"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z"
+                        stroke="#222222"
+                        stroke-width="1.5"
+                        stroke-miterlimit="10"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M15.6947 13.7002H15.7037"
+                        stroke="#222222"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M15.6947 16.7002H15.7037"
+                        stroke="#222222"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M11.9955 13.7002H12.0045"
+                        stroke="#222222"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M11.9955 16.7002H12.0045"
+                        stroke="#222222"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M8.29431 13.7002H8.30329"
+                        stroke="#222222"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M8.29431 16.7002H8.30329"
+                        stroke="#222222"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </template>
               </date-range-picker>
-              <a href="#" class="btn btn-outline-primary">
-                Export
-              </a>
+              <button @click="$store.dispatch('saldo/exportSaldo')" class="btn btn-outline-primary"> Export </button>
             </div>
           </div>
           <div class="card-body">
@@ -146,7 +223,14 @@
                   <th
                     v-for="title in tableTitles"
                     :key="title"
-                    class="h-text-sm transform-none h-text-dark bg-white h-border-bottom pb-2"
+                    class="
+                      h-text-sm
+                      transform-none
+                      h-text-dark
+                      bg-white
+                      h-border-bottom
+                      pb-2
+                    "
                     scope="col"
                   >
                     {{ title }}
@@ -157,35 +241,53 @@
                 <tr
                   v-for="riwayat in riwayatPenarikans"
                   :key="riwayatPenarikans.indexOf(riwayat)"
-                  :class="'py-1' + (riwayatPenarikans.indexOf(riwayat) != riwayatPenarikans.length-1 ? ' border-bottom' : '')">
+                  :class="
+                    'py-1' +
+                    (riwayatPenarikans.indexOf(riwayat) !=
+                    riwayatPenarikans.length - 1
+                      ? ' border-bottom'
+                      : '')
+                  "
+                >
                   <th>
                     <p class="mb-0 h-text-dark">{{ riwayat.tanggal }}</p>
                     <p class="mb-0">{{ riwayat.jam }}</p>
                   </th>
                   <td>
-                    <p class="mb-0 h-text-dark">{{ riwayat.tujuan.nama }} - {{ riwayat.tujuan.bank }}</p>
+                    <p class="mb-0 h-text-dark">
+                      {{ riwayat.tujuan.nama }} - {{ riwayat.tujuan.bank }}
+                    </p>
                     <p class="mb-0">{{ riwayat.tujuan.noRek }}</p>
                   </td>
                   <td class="h-text-dark">
                     {{ riwayat.status }}
                   </td>
-                  <td class="h-text-dark">
+                  <!-- <td class="h-text-dark">
                     {{ formatRupiah(riwayat.saldo) }}
-                  </td>
+                  </td> -->
                   <td class="h-text-dark">
                     {{ formatRupiah(riwayat.jumlahPenarikan) }}
                   </td>
-                  <td class="h-text-dark">
+                  <!-- <td class="h-text-dark">
                     {{ riwayat.sisaSaldo == null ? '-' : formatRupiah(riwayat.sisaSaldo) }}
-                  </td>
+                  </td> -->
                   <td>
-                    <a :href="'/keuangan/saldo/rincian/' + riwayatPenarikans.indexOf(riwayat)" class="text-info">
+                    <a
+                      :href="'/keuangan/saldo/rincian/' + riwayat.id"
+                      class="text-info"
+                    >
                       Lihat Detail
                     </a>
                   </td>
                 </tr>
               </tbody>
             </table>
+            <b-pagination
+              class="mt-2 float-right"
+              v-model="table.currentPage"
+              :total-rows="table.totalRows"
+              :per-page="table.perPage"
+            ></b-pagination>
           </div>
         </div>
       </div>
@@ -198,7 +300,7 @@
           width="18"
           alt="close"
           class="float-right"
-        >
+        />
       </a>
       <div class="p-1">
         <p class="text-center h-text-lg mb-2">Top Up Saldo</p>
@@ -206,11 +308,12 @@
       <form id="formTopUp">
         <div class="row align-items-center my-2">
           <div class="col-4">
-            <p class="font-weight-bold h-text-sm h-text-dark mb-0">
-              Nominal
-            </p>
+            <p class="font-weight-bold h-text-sm h-text-dark mb-0">Nominal</p>
           </div>
-          <b-form-group class="col-8 mb-0" invalid-feedback="Nominal is required">
+          <b-form-group
+            class="col-8 mb-0"
+            invalid-feedback="Nominal is required"
+          >
             <b-form-input
               id="nominal-topup"
               v-model="nominalTopUp"
@@ -225,11 +328,26 @@
         </div>
       </form>
       <template #modal-footer>
-        <button class="btn btn-outline-primary rounded-lg" @click="$bvModal.hide('modalTopUp')">Batal</button>
-        <button class="btn btn-primary rounded-lg" @click="topUpSaldo()">Top Up Sekarang</button>
+        <button
+          class="btn btn-outline-primary rounded-lg"
+          @click="$bvModal.hide('modalTopUp')"
+        >
+          Batal
+        </button>
+        <button class="btn btn-primary rounded-lg" @click="topUpSaldo()">
+          Top Up Sekarang
+        </button>
       </template>
     </b-modal>
-    <b-modal id="modal-keuangan" body-class="p-1" hide-header hide-footer centered no-close-on-backdrop no-close-on-esc>
+    <b-modal
+      id="modal-keuangan"
+      body-class="p-1"
+      hide-header
+      hide-footer
+      centered
+      no-close-on-backdrop
+      no-close-on-esc
+    >
       <a href="#" @click="closeModal()">
         <img
           src="@/assets/images/icons/close-circle.svg"
@@ -237,16 +355,26 @@
           width="18"
           alt="close"
           class="float-right"
-        >
+        />
       </a>
       <div class="p-1">
-        <p class="text-center h-text-lg mb-2" id="modal-title">{{ modalTitle }}</p>
+        <p class="text-center h-text-lg mb-2" id="modal-title">
+          {{ modalTitle }}
+        </p>
         <div v-if="stepNow === 0">
-          <form ref="form1" class="row align-items-center" @submit.stop.prevent="handleSubmit(1)">
+          <form
+            ref="form1"
+            class="row align-items-center"
+            @submit.stop.prevent="handleSubmit(1)"
+          >
             <div class="col-5 mb-1">
               <p class="h-text-sm h-text-dark mb-0">Nominal</p>
             </div>
-            <b-form-group class="col-7 mb-1" invalid-feedback="Nominal is required" :state="nominalState">
+            <b-form-group
+              class="col-7 mb-1"
+              invalid-feedback="Nominal is required"
+              :state="nominalState"
+            >
               <b-form-input
                 id="nominal-input"
                 v-model="nominal"
@@ -262,36 +390,65 @@
             <div class="col-5 mb-1">
               <p class="h-text-sm h-text-dark mb-0">Rekening Tujuan</p>
             </div>
-            <b-form-group class="col-7 mb-1" invalid-feedback="Rekening tujuan is required" :state="rekTujuanState">
-              <b-form-select v-model="selectedRekTujuan" class="h-text-sm h-text-dark" :options="rekTujuanOptions" required></b-form-select>
+            <b-form-group
+              class="col-7 mb-1"
+              invalid-feedback="Rekening tujuan is required"
+              :state="rekTujuanState"
+            >
+              <b-form-select
+                v-model="selectedRekTujuan"
+                class="h-text-sm h-text-dark"
+                :options="rekTujuanOptions"
+                required
+              ></b-form-select>
             </b-form-group>
             <div class="col-12 text-right mt-3">
-              <button type="button" class="btn btn-outline-primary" @click="closeModal()">Batal</button>
-              <button type="submit" class="btn btn-primary ml-2">Ajukan Penarikan</button>
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                @click="closeModal()"
+              >
+                Batal
+              </button>
+              <button type="submit" class="btn btn-primary ml-2">
+                Ajukan Penarikan
+              </button>
             </div>
           </form>
         </div>
         <div v-if="stepNow === 1">
           <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
-            <p class="text-center h-text-dark font-weight-bold mb-3">Mohon verifikasi identitas kamu dengan memasukan PIN</p>
+            <p class="text-center h-text-dark font-weight-bold mb-3">
+              Mohon verifikasi identitas kamu dengan memasukan PIN
+            </p>
             <PincodeInput
               v-model="pin"
-              :length="6"
+              :length="4"
               class="font-weight-bold h-text-dark"
             />
             <div class="col-12 mt-2">
               <div class="text-center">
-                <button type="submit" class="btn btn-primary d-block m-auto">Konfirmasi</button>
-                <button type="button" class="btn btn-link mt-1" @click="modalBack()">Kembali</button>
+                <button type="submit" class="btn btn-primary d-block m-auto">
+                  Konfirmasi
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-link mt-1"
+                  @click="modalBack()"
+                >
+                  Kembali
+                </button>
               </div>
             </div>
           </form>
         </div>
         <div v-if="stepNow === 2" class="text-center">
-          <img src="@/assets/images/icons/success.svg" alt="success">
+          <img src="@/assets/images/icons/success.svg" alt="success" />
           <p class="mt-2 h-text-md text-center">Penarikan Saldo Berhasil</p>
           <p class="h-text-dark font-weight-bold">
-            Saldo sebesar {{ formatRupiah(nominal) }} akan segera dikirim ke rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam 1x24 jam
+            Saldo sebesar {{ formatRupiah(nominal) }} akan segera dikirim ke
+            rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
+            1x24 jam
           </p>
         </div>
       </div>
@@ -301,17 +458,19 @@
 
 <script>
 import moment from 'moment'
+import { mapFields } from 'vuex-map-fields'
 import {
   BFormGroup,
   BModal,
   BFormInput,
   BFormSelect,
+  BPagination,
 } from 'bootstrap-vue'
+import { mapState, mapGetters } from 'vuex'
 import DateRangePicker from 'vue2-daterange-picker'
 import PincodeInput from 'vue-pincode-input'
 
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-// import { formatDate } from '@/@core/utils/filter'
 
 export default {
   components: {
@@ -319,6 +478,7 @@ export default {
     BModal,
     BFormInput,
     BFormSelect,
+    BPagination,
     DateRangePicker,
     PincodeInput,
   },
@@ -327,28 +487,21 @@ export default {
     today.setHours(0, 0, 0, 0)
 
     const last7 = new Date()
-    last7.setDate(today.getDate() - 7)
+    last7.setDate(today.getDate() - 6)
     last7.setHours(0, 0, 0, 0)
 
     const last30 = new Date()
-    last30.setDate(today.getDate() - 30)
+    last30.setDate(today.getDate() - 29)
     last30.setHours(0, 0, 0, 0)
 
     const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+    const lastDateOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0,
+    )
 
     return {
-      saldo: 8500000,
-      saldoPending: 4200000,
-      rekening: {
-        nama: 'Hanif Muflihul Anwar',
-        bank: 'Mandiri',
-        noRek: '********2334',
-      },
-      dateRange: {
-        startDate: today,
-        endDate: today,
-      },
       picker: {
         startDate: today,
         endDate: today,
@@ -359,83 +512,26 @@ export default {
       ranges: {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
-        'Bulan Ini': [firstDateOfMonth, lastDateOfMonth],
+        'Bulan Ini': [firstDateOfMonth, today],
       },
       today,
       last7,
       last30,
       firstDateOfMonth,
       lastDateOfMonth,
-      tableTitles: ['Tanggal', 'Tujuan Penarikan', 'Status', 'Saldo', 'Jumlah Penarikan', 'Sisa Saldo', 'Rincian'],
-      riwayatPenarikans: [
-        {
-          tanggal: '12-08-2021',
-          jam: '14.59',
-          tujuan: {
-            nama: 'Komerce',
-            bank: 'Bank Mandiri',
-            noRek: '92350923520395',
-          },
-          status: 'Diajukan',
-          saldo: 1500000,
-          jumlahPenarikan: 4540000,
-          sisaSaldo: null,
-        },
-        {
-          tanggal: '12-08-2021',
-          jam: '14.59',
-          tujuan: {
-            nama: 'Komerce',
-            bank: 'Bank Mandiri',
-            noRek: '92350923520395',
-          },
-          status: 'Direview',
-          saldo: 1500000,
-          jumlahPenarikan: 4540000,
-          sisaSaldo: null,
-        },
-        {
-          tanggal: '12-08-2021',
-          jam: '14.59',
-          tujuan: {
-            nama: 'Komerce',
-            bank: 'Bank Mandiri',
-            noRek: '92350923520395',
-          },
-          status: 'Disetujui',
-          saldo: 1500000,
-          jumlahPenarikan: 4540000,
-          sisaSaldo: 0,
-        },
-        {
-          tanggal: '12-08-2021',
-          jam: '14.59',
-          tujuan: {
-            nama: 'Komerce',
-            bank: 'Bank Mandiri',
-            noRek: '92350923520395',
-          },
-          status: 'Ditolak',
-          saldo: 1500000,
-          jumlahPenarikan: 4540000,
-          sisaSaldo: null,
-        },
+      tableTitles: [
+        'Tanggal',
+        'Tujuan Penarikan',
+        'Status',
+        'Jumlah Penarikan',
+        'Rincian',
       ],
       clientKey: 'VT-client-yrHf-c8Sxr-ck8tx',
       snapToken: '31f5ef26-5121-44e9-97b5-f469039bf6cf',
       modalTitle: null,
       stepNow: 0,
-      nominalTopUp: '',
-      nominal: '',
       nominalState: null,
-      selectedRekTujuan: null,
-      rekTujuanOptions: [
-        { value: '1', text: 'Bank Mandiri - 124567890' },
-        { value: '2', text: 'Bank BCA - 124567890' },
-        { value: '3', text: 'Bank BNI - 124567890' },
-      ],
       rekTujuanState: null,
-      pin: '',
       obj: null,
     }
   },
@@ -446,14 +542,26 @@ export default {
         'src',
         'https://app.sandbox.midtrans.com/snap/snap.js',
       )
-      snapScriptEl.setAttribute(
-        'data-client-key',
-        this.clientKey,
-      )
+      snapScriptEl.setAttribute('data-client-key', this.clientKey)
       document.head.appendChild(snapScriptEl)
       window.snapScriptLoaded = 1
     }
-    this.alertFail()
+  },
+  computed: {
+    ...mapFields('saldo', [
+      'dateRange',
+      'nominalTopUp',
+      'selectedRekTujuan',
+      'nominal',
+      'pin',
+    ]),
+    ...mapState('saldo', [
+      'saldo',
+      'saldoPending',
+      'table',
+      'riwayatPenarikans',
+    ]),
+    ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
   },
   methods: {
     formatRibuan(x) {
@@ -465,12 +573,45 @@ export default {
     showTopUpModal() {
       this.$bvModal.show('modalTopUp')
     },
-    topUpSaldo() {
-      window.snap.pay(this.snapToken, {
-        onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-        onPending: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-        onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      })
+    async topUpSaldo() {
+      try {
+        const response = await this.$store.dispatch('saldo/topUpSaldo')
+        this.closeModal()
+        if (!response.data.status) throw response.data
+        this.$swal({
+          title:
+            '<span class="font-weight-bold h4">Top Up Saldo Berhasil</span>',
+          text: `Top Up sebesar ${this.formatRupiah(
+            response.data.data.amount,
+          )} berhasil. Silahkan Melakukan Pembayaran.`,
+          imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
+          confirmButtonText: 'Oke',
+          customClass: {
+            confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+          },
+          buttonsStyling: false,
+        })
+      } catch (e) {
+        this.$swal({
+          title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
+          text: e.message,
+          imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+          showCloseButton: false,
+          focusConfirm: true,
+          confirmButtonText: 'Oke',
+          customClass: {
+            confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+          },
+          buttonsStyling: false,
+        })
+      } finally {
+        this.$store.commit('saldo/UPDATE_NOMINAL', '')
+      }
+      // window.snap.pay(this.snapToken, {
+      //   onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
+      //   onPending: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
+      //   onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
+      // })
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
@@ -519,7 +660,7 @@ export default {
       this.nominal = nominalBefore
       this.selectedRekTujuan = rekTujuanBefore
     },
-    handleSubmit(step) {
+    async handleSubmit(step) {
       if (!this.checkFormValidity(step)) {
         return
       }
@@ -532,10 +673,31 @@ export default {
           })
           break
         case 2:
-          this.$nextTick(() => {
-            this.stepNow = 2
-            this.modalTitle = null
-          })
+          try {
+            const response = await this.$store.dispatch('saldo/checkPin')
+            if (!response.data.data.is_match) {
+              throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
+            }
+            await this.$store.dispatch('saldo/withdrawalRequest')
+            this.$nextTick(() => {
+              this.stepNow = 2
+              this.modalTitle = null
+            })
+          } catch (e) {
+            this.$swal({
+              title:
+                '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+              text: e.message,
+              imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+              showCloseButton: false,
+              focusConfirm: true,
+              confirmButtonText: 'Oke',
+              customClass: {
+                confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+              },
+              buttonsStyling: false,
+            })
+          }
           break
         default:
           break
@@ -545,7 +707,9 @@ export default {
       const input = document.getElementById(el)
       let inputVal = input.value
 
-      if (inputVal === '' || inputVal === 'Rp' || inputVal === 'Rp ') { return }
+      if (inputVal === '' || inputVal === 'Rp' || inputVal === 'Rp ') {
+        return
+      }
 
       const originalLen = inputVal.length
       let caretPos = input.selectionStart
@@ -600,7 +764,8 @@ export default {
     },
     alertFail() {
       this.$swal({
-        title: '<span class="font-weight-bold h4">Maaf sedang ada gangguan,<br>coba lagi nanti</span>',
+        title:
+          '<span class="font-weight-bold h4">Maaf sedang ada gangguan,<br>coba lagi nanti</span>',
         imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
         showCloseButton: false,
         focusConfirm: true,
@@ -610,6 +775,23 @@ export default {
         },
         buttonsStyling: false,
       })
+    },
+  },
+  beforeMount() {
+    this.$store.dispatch('saldo/init')
+  },
+  watch: {
+    'table.currentPage': {
+      handler() {
+        this.$store.dispatch('saldo/getWithdrawalRequest')
+      },
+    },
+    dateRange: {
+      handler() {
+        this.$store.commit('saldo/UPDATE_CURRENT_PAGE', 1)
+        this.$store.dispatch('saldo/getWithdrawalRequest')
+      },
+      deep: true,
     },
   },
 }
@@ -625,7 +807,7 @@ export default {
   background-color: #ff6a3a !important;
 }
 .bg-orange2 {
-  background-color: #F95031 !important;
+  background-color: #f95031 !important;
 }
 .card,
 .rounded-16 {
@@ -699,7 +881,7 @@ export default {
   text-transform: none !important;
 }
 .h-border-bottom {
-  border-bottom: 2px solid #C2C2C2 !important;
+  border-bottom: 2px solid #c2c2c2 !important;
 }
 .w-20e {
   width: 20em;
@@ -709,7 +891,11 @@ export default {
   letter-spacing: 42px;
   border: none !important;
   outline: none !important;
-  background-image: linear-gradient(to left, black 70%, rgba(255, 255, 255, 0) 0%);
+  background-image: linear-gradient(
+    to left,
+    black 70%,
+    rgba(255, 255, 255, 0) 0%
+  );
   background-position: bottom;
   background-size: 50px 2px;
   background-repeat: repeat-x;
@@ -717,19 +903,19 @@ export default {
   width: 300px;
   min-width: 300px;
 }
-#divInner{
+#divInner {
   left: 0;
   position: sticky;
 }
-#divOuter{
+#divOuter {
   width: 288px;
   overflow: hidden;
 }
 .btn-primary {
-  background-color: #F95031 !important;
+  background-color: #f95031 !important;
 }
 .btn-outline-primary {
-  border-color: #F95031 !important;
+  border-color: #f95031 !important;
 }
 .vue-pincode-input-wrapper {
   width: 100%;
@@ -744,7 +930,7 @@ input.vue-pincode-input {
   max-width: 67px;
 }
 .reportrange-text {
-  background-color: #F1F2F6 !important;
+  background-color: #f1f2f6 !important;
   display: flex;
 }
 </style>
