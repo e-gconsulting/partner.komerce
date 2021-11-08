@@ -1,25 +1,14 @@
-import Vue from 'vue'
+import moment from 'moment'
 import { getField, updateField } from 'vuex-map-fields'
-
-const axiosKomship = partnerId => {
-  const axios = Vue.prototype.$http_komship
-  axios.defaults.params = { partner_id: partnerId }
-  return axios
-}
-
-const today = new Date()
-today.setHours(0, 0, 0, 0)
-
-const last7 = new Date()
-last7.setDate(today.getDate() - 7)
-last7.setHours(0, 0, 0, 0)
-
-const last30 = new Date()
-last30.setDate(today.getDate() - 30)
-last30.setHours(0, 0, 0, 0)
-
-const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-const lastDateOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+import {
+  axiosKomship,
+  formatYmd,
+  last7,
+  today,
+  ranges,
+  paymentMethods,
+  getDates,
+} from '@/store/helpers'
 
 export default {
   namespaced: true,
@@ -34,18 +23,42 @@ export default {
     produkTerlarises: [],
     selectedProdukTerlaris: 'Bulan Ini',
     optionsProdukTerlaris: ['Bulan Ini', '7 Hari Terakhir'],
-    ranges: {
-      'Real Time': [today, today],
-      '7 Hari Terakhir': [last7, today],
-      '30 Hari Terakhir': [last30, today],
-      'Bulan Ini': [firstDateOfMonth, lastDateOfMonth],
-      'Custom Tanggal': [null, null],
-    },
+    partnerIncomeGraph: [],
+    selectedChart: 'COD (Bayar di tempat)',
+    optionsChart: ['COD (Bayar di tempat)', 'Transfer Bank'],
+    startDateChart: formatYmd(last7),
+    endDateChart: formatYmd(today),
+    // startDateChart: '2021-10-02',
+    // endDateChart: '2021-11-31',
   },
   getters: {
     getField,
     selectedProdukTerlaris(state) {
-      return state.ranges[state.selectedProdukTerlaris]
+      return ranges[state.selectedProdukTerlaris]
+    },
+    partnerIncomeGraph(state) {
+      return {
+        labels: state.partnerIncomeGraph.map(item => moment(new Date(item.date)).format('DD MMM')),
+        datasets: [
+          {
+            label: 'Penghasilan Bersih',
+            backgroundColor: '#08A0F7',
+            data: state.partnerIncomeGraph.map(item => item.net_income),
+            lineTension: 0,
+            pointRadius: 0,
+          },
+          {
+            label: 'Penghasilan Kotor',
+            backgroundColor: '#FBA63C',
+            data: state.partnerIncomeGraph.map(item => item.gross_income),
+            lineTension: 0,
+            pointRadius: 0,
+          },
+        ],
+      }
+    },
+    selectedChart(state) {
+      return paymentMethods[state.selectedChart]
     },
   },
   mutations: {
@@ -74,6 +87,7 @@ export default {
           name: customer.customer_name,
           totalProduk: customer.total_order,
           totalDana: customer.total_spent,
+          location: customer.address,
         })),
       ]
     },
@@ -81,12 +95,26 @@ export default {
       state.produkTerlarises = [
         ...produkTerlarises.map(produk => ({
           photo: produk.images_path,
-          name: produk.product_id,
+          name: produk.product_name,
           kodeBrg: produk.product_sku,
           penjualan: produk.total_sold,
           persentase: produk.total_sold_change_percentage,
         })),
       ]
+    },
+    UPDATE_PARTNER_INCOME_GRAPH(state, partnerIncomeGraph) {
+      state.partnerIncomeGraph = getDates(new Date(state.startDateChart), new Date(state.endDateChart)).map(date => {
+        const income = partnerIncomeGraph.find(item => item.date === date)
+        if (income) {
+          return income
+        }
+        return {
+          total_transaction: 0,
+          gross_income: 0,
+          net_income: 0,
+          date,
+        }
+      })
     },
   },
   actions: {
@@ -96,12 +124,14 @@ export default {
       dispatch('getTopAdminOrders')
       dispatch('getCustomerLoyal')
       dispatch('getProdukTerlarises')
+      dispatch('getPartnerIncomeGraph')
     },
     async getBalanceSummary({ commit, rootState }) {
       try {
-        const response = await axiosKomship(
-          rootState.auth.userData.partner_detail.id,
-        ).get('v1/dashboard/partner/balanceSummary')
+        const partnerId = rootState.auth.userData.partner_detail.id
+        const response = await axiosKomship(partnerId).get(
+          'v1/dashboard/partner/balanceSummary',
+        )
         commit('UPDATE_ِِBALANCE_SUMMARY', response.data.data)
       } catch (e) {
         console.error(e)
@@ -109,9 +139,10 @@ export default {
     },
     async getOrderSummary({ commit, rootState }) {
       try {
-        const response = await axiosKomship(
-          rootState.auth.userData.partner_detail.id,
-        ).get('v1/dashboard/partner/orderSummary')
+        const partnerId = rootState.auth.userData.partner_detail.id
+        const response = await axiosKomship(partnerId).get(
+          'v1/dashboard/partner/orderSummary',
+        )
         commit('UPDATE_ORDER_SUMMARY', response.data.data)
       } catch (e) {
         console.error(e)
@@ -119,13 +150,15 @@ export default {
     },
     async getTopAdminOrders({ commit, rootState }) {
       try {
-        const response = await axiosKomship(
-          rootState.auth.userData.partner_detail.id,
-        ).get('v1/dashboard/partner/topAdminOrder', {
-          params: {
-            limit: 0,
+        const partnerId = rootState.auth.userData.partner_detail.id
+        const response = await axiosKomship(partnerId).get(
+          'v1/dashboard/partner/topAdminOrder',
+          {
+            params: {
+              limit: 0,
+            },
           },
-        })
+        )
         commit('UPDATE_TOP_ADMIN_ORDERS', response.data.data)
       } catch (e) {
         console.error(e)
@@ -133,32 +166,54 @@ export default {
     },
     async getCustomerLoyal({ commit, rootState }) {
       try {
-        const response = await axiosKomship(
-          rootState.auth.userData.partner_detail.id,
-        ).get('v1/dashboard/partner/customerLoyal', {
-          params: {
-            limit: 3,
+        const partnerId = rootState.auth.userData.partner_detail.id
+        const response = await axiosKomship(partnerId).get(
+          'v1/dashboard/partner/customerLoyal',
+          {
+            params: {
+              limit: 3,
+            },
           },
-        })
-        console.log(response)
+        )
         commit('UPDATE_CUSTOMER_LOYALS', response.data.data)
       } catch (e) {
         console.error(e)
       }
     },
-    async getProdukTerlarises({
-      commit, rootState, getters,
+    async getProdukTerlarises({ commit, rootState, getters }) {
+      try {
+        const partnerId = rootState.auth.userData.partner_detail.id
+        const response = await axiosKomship(partnerId).get(
+          'v1/dashboard/partner/bestSellerProducts',
+          {
+            params: {
+              start_date: formatYmd(getters.selectedProdukTerlaris[0]),
+              end_date: formatYmd(getters.selectedProdukTerlaris[1]),
+            },
+          },
+        )
+        commit('UPDATE_PRODUK_TERLARISES', response.data.data)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    async getPartnerIncomeGraph({
+      commit, getters, state, rootState,
     }) {
       try {
-        const response = await axiosKomship(
-          rootState.auth.userData.partner_detail.id,
-        ).get('v1/dashboard/partner/bestSellerProducts', {
-          params: {
-            start_date: getters.selectedProdukTerlaris[0],
-            end_date: getters.selectedProdukTerlaris[1],
+        const partnerId = rootState.auth.userData.partner_detail.id
+        const response = await axiosKomship(partnerId).get(
+          'v1/finance/partner/partnerIncomeGraph',
+          {
+            params: {
+              start_date: state.startDateChart,
+              end_date: state.endDateChart,
+              is_komship: 1,
+              payment_method: getters.selectedChart,
+            },
           },
-        })
-        commit('UPDATE_CUSTOMER_LOYALS', response.data.data)
+        )
+        commit('UPDATE_PARTNER_INCOME_GRAPH', response.data.data)
       } catch (e) {
         console.error(e)
       }

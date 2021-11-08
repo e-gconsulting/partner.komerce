@@ -1,6 +1,6 @@
 export default [
   {
-    title: 'Dashboard',
+    title: 'Dashboard ',
     icon: 'PieChartIcon',
     tagVariant: 'light-warning',
     route: 'dashboard-analytics',
