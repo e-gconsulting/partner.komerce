@@ -578,19 +578,20 @@ export default {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
-        this.$swal({
+        await this.$swal({
           title:
             '<span class="font-weight-bold h4">Top Up Saldo Berhasil</span>',
           text: `Top Up sebesar ${this.formatRupiah(
             response.data.data.amount,
           )} berhasil. Silahkan Melakukan Pembayaran.`,
           imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-          confirmButtonText: 'Oke',
+          confirmButtonText: 'Buka Invoice',
           customClass: {
             confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
           },
           buttonsStyling: false,
         })
+        window.open(response.data.data.invoice_xendit_url, '_blank').focus()
       } catch (e) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
