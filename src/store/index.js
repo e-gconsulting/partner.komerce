@@ -8,6 +8,7 @@ import appConfig from './app-config'
 import verticalMenu from './vertical-menu'
 import auth from './auth'
 import menuaccess from './menuaccess'
+import pencairan from './pencairan'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -19,6 +20,7 @@ export default new Vuex.Store({
     verticalMenu,
     auth,
     menuaccess,
+    pencairan,
   },
   plugins: [createPersistedState({
     key: 'vuex-store',

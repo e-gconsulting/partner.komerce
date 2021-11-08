@@ -9,7 +9,7 @@ export default [
     },
   },
   {
-    path: '/pencairan/upload-bukti-transfer',
+    path: '/pencairan/:slug/upload-bukti-transfer',
     name: 'cod-penarikan-upload-bukti-transfer',
     component: () => import('@/views/pages/pencairan/UploadBuktiTransfer'),
     meta: {

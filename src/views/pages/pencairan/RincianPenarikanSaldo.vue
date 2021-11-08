@@ -259,10 +259,9 @@
               Review
             </b-button>
             <b-button
+              :to="{ name: 'cod-penarikan-upload-bukti-transfer', params: { slug: $route.params.slug } }"
               variant="outline-primary"
               class="mr-1 btn-custom-bottom"
-              to="/pencairan/upload-bukti-transfer"
-              exact
             >
               Transfer Manual
             </b-button>
@@ -621,6 +620,7 @@ export default {
     //
   },
   created() {
+    this.$store.commit('pencairan/UPDATE_PENCAIRAN_ID', this.$route.params.slug)
     this.fetchData()
   },
   methods: {
@@ -739,6 +739,7 @@ export default {
       axioskomsipdev.get(endpoint)
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
+          this.$store.commit('pencairan/UPDATE_PENCAIRAN_STATUS', parseData.status)
           this.detailData = parseData
           this.items = parseData.orders
           this.totalRows = parseData.length

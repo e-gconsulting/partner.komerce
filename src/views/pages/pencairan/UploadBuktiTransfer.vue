@@ -156,6 +156,8 @@
 </template>
 
 <script>
+import axioskomsipdev from '@/libs/axioskomsipdev'
+
 import {
   // BRow,
   // BCol,
@@ -298,30 +300,51 @@ export default {
       this.handleFiles(files)
     },
     handleFiles(files) {
-      ([...files]).forEach(file => {
+      const endpoint = `/api/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.$store.state.pencairan.status}`
+      const dataCopy = [...files]
+      dataCopy.forEach(file => {
         console.log(file)
         const formData = new FormData()
         formData.append('file', file)
-        this.$http.post(
-          'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            onUploadProgress: progressEvent => {
-              const progressPercent = parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100), 10)
-              this.valueProgressUpload = progressPercent
-              if (progressPercent === 100) {
-                this.fileUploadCount += 1
-              }
-            },
+        axioskomsipdev.put(endpoint, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
-        )
+          onUploadProgress: progressEvent => {
+            const progressPercent = parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100), 10)
+            this.valueProgressUpload = progressPercent
+            if (progressPercent === 100) {
+              this.fileUploadCount += 1
+            }
+          },
+        })
           .then(({ data }) => {
+            console.log(data)
             this.filesUploaded.push(data)
           })
-          .catch(err => console.log(err))
+          .catch(e => {
+            console.log('error', e)
+          })
+        // this.$http.post(
+        //   'https://www.mocky.io/v2/5cc8019d300000980a055e76',
+        //   formData,
+        //   {
+        //     headers: {
+        //       'Content-Type': 'multipart/form-data',
+        //     },
+        //     onUploadProgress: progressEvent => {
+        //       const progressPercent = parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100), 10)
+        //       this.valueProgressUpload = progressPercent
+        //       if (progressPercent === 100) {
+        //         this.fileUploadCount += 1
+        //       }
+        //     },
+        //   },
+        // )
+        //   .then(({ data }) => {
+        //     this.filesUploaded.push(data)
+        //   })
+        //   .catch(err => console.log(err))
       })
     },
     handleKonfirmasi() {
