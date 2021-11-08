@@ -829,7 +829,7 @@ export default {
   mounted() {
     this.$http_komship.post('v1/my-profile').then(response => {
       const { data } = response.data
-      // console.log('onboarding', data)
+      console.log('onboarding', data)
       if (data) {
         if (data.is_onboarding) this.$refs.onboardingElement.showModal()
       }
@@ -837,6 +837,7 @@ export default {
   },
   beforeMount() {
     this.$store.dispatch('dashboard/init')
+    this.$store.dispatch('saldo/getBankAccount')
   },
   methods: {
     formatRibuan(x) {
@@ -1140,10 +1141,6 @@ export default {
     handleChangeChart() {
       this.$store.dispatch('dashboard/getPartnerIncomeGraph')
     },
-  },
-  beforeMount() {
-    this.$store.dispatch('dashboard/init')
-    this.$store.dispatch('saldo/getBankAccount')
   },
 }
 </script>
