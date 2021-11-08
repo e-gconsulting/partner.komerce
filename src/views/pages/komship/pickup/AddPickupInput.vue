@@ -368,7 +368,7 @@ export default {
     storePickupReq(formData) {
       this.isSubmitting = true
       return this.$http_komship.post(`v1/pickup/${this.profile.partner_id}/store`, formData).then(response => {
-        const { data } = response.data
+        const { data } = response
         if (data) {
           // console.log('post pickup order', data)
           this.isSubmitting = false
