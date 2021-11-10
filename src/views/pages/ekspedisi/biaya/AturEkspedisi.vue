@@ -35,6 +35,7 @@
                 >Batal
                 </b-button>
                 <b-button
+                  type="submit"
                   variant="primary"
                   size="sm"
                   class="btn-custom btn-custom--edit"
@@ -61,8 +62,8 @@
                   cols="3"
                 >
                   <b-form-input
-                    id="name"
-                    v-model="name"
+                    id="shipping_name"
+                    v-model="shipping_name"
                     placeholder="Masukkan Nama Ekspedisi"
                   />
                 </b-col>
@@ -106,8 +107,8 @@
                   cols="3"
                 >
                   <b-form-input
-                    id="name"
-                    v-model="name"
+                    id="cashback_from"
+                    v-model="cashback_from"
                     placeholder="Masukkan Data"
                   />
                 </b-col>
@@ -115,8 +116,8 @@
                   cols="3"
                 >
                   <b-form-input
-                    id="name"
-                    v-model="name"
+                    id="cashback_to"
+                    v-model="cashback_to"
                     placeholder="Masukkan Data"
                   />
                 </b-col>
@@ -131,8 +132,8 @@
                   cols="3"
                 >
                   <b-form-input
-                    id="name"
-                    v-model="name"
+                    id="service_fee_from"
+                    v-model="service_fee_from"
                     placeholder="Masukkan Data"
                   />
                 </b-col>
@@ -140,8 +141,8 @@
                   cols="3"
                 >
                   <b-form-input
-                    id="name"
-                    v-model="name"
+                    id="service_fee_to"
+                    v-model="service_fee_to"
                     placeholder="Masukkan Data"
                   />
                 </b-col>
@@ -173,8 +174,8 @@
                 md="3"
               >
                 <b-form-input
-                  id="name"
-                  v-model="name"
+                  id="max_pickup_time"
+                  v-model="max_pickup_time"
                   placeholder="Masukkan Data"
                 />
               </b-col>
@@ -311,8 +312,8 @@
                 cols="3"
               >
                 <b-form-input
-                  id="name"
-                  v-model="name"
+                  id="origin"
+                  v-model="origin"
                   placeholder="Masukkan Data"
                 />
               </b-col>
@@ -320,8 +321,8 @@
                 cols="3"
               >
                 <b-form-input
-                  id="name"
-                  v-model="name"
+                  id="destination"
+                  v-model="destination"
                   placeholder="Masukkan Data"
                 />
               </b-col>
@@ -360,8 +361,8 @@
                 cols="3"
               >
                 <b-form-input
-                  id="name"
-                  v-model="name"
+                  id="delivery"
+                  v-model="delivery"
                   placeholder="Masukkan Data"
                 />
               </b-col>
@@ -369,8 +370,8 @@
                 cols="3"
               >
                 <b-form-input
-                  id="name"
-                  v-model="name"
+                  id="retur"
+                  v-model="retur"
                   placeholder="Masukkan Data"
                 />
               </b-col>
@@ -499,6 +500,8 @@
 </template>
 
 <script>
+import axioskomsipdev from '@/libs/axioskomsipdev'
+
 import {
   BRow,
   BCol,
@@ -533,20 +536,31 @@ export default {
     return {
       loadDataAwal: true,
       name: '',
+      shipping_name: '',
+      cashback_from: null,
+      service_fee_from: null,
+      service_fee_to: null,
+      cashback_to: null,
+      max_pickup_time: '',
+      vehicles: '',
+      origin: '',
+      destination: '',
+      delivery: null,
+      retur: null,
+      type: '',
       listCheckBox: [
         { text: 'Hiring', value: 'hiring' },
         { text: 'COD', value: 'cod' },
         { text: 'Hiring dan COD', value: 'hiringncod' },
         { text: 'Lainnya', value: 'lainny' },
       ],
-      selectedExpedisi: '',
     }
   },
   computed: {
     //
   },
   watch: {
-    selectedExpedisi: {
+    vehicles: {
       handler(val, val2) {
         const el = document.getElementById(`choice${val}`)
         const el2 = document.getElementById(`choice${val2}`)
@@ -570,6 +584,51 @@ export default {
   methods: {
     submitData() {
       console.log(this.name)
+      const endpoint = 'api/v1/admin/shippment/create'
+      let getData = null
+      getData = axioskomsipdev.post(endpoint, {
+        shipping_name: this.shipping_name,
+        cashback_from: this.cashback_from,
+        service_fee_from: this.service_fee_from,
+        service_fee_to: this.service_fee_to,
+        cashback_to: this.cashback_to,
+        max_pickup_time: this.max_pickup_time,
+        vehicles: this.vehicles,
+        origin: this.origin,
+        destination: this.destination,
+        delivery: this.delivery,
+        retur: this.retur,
+        type: this.type,
+      })
+      getData.then(({ data }) => {
+        /*
+          "data": {
+            "profit": {
+              "total_shipping_profit": 42000,
+              "profit_cod": 3500
+            },
+            "income": [
+              {
+                "partner_name": "Tatausahaku",
+                "district": "Idano Gawo",
+                "shipping_cost": 42000,
+                "grand_total": 82000,
+                "shipping_profit": 42000,
+                "net_profit": 113750
+              }
+            ]
+          }
+        */
+        const parseData = JSON.parse(JSON.stringify(data.data))
+        this.items = parseData
+        this.totalRows = parseData.length
+      })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
     checkAksesLayanan() {
       //
@@ -590,7 +649,7 @@ export default {
       // calling api for simpan data
     },
     handleChoiceTypeVehicle(val) {
-      this.selectedExpedisi = val
+      this.vehicles = val
     },
     saveKriteria() {
       //

@@ -170,6 +170,7 @@ import {
   BInputGroup,
   BInputGroupPrepend,
 } from 'bootstrap-vue'
+import axioskomsipdev from '@/libs/axioskomsipdev'
 
 export default {
   components: {
@@ -291,7 +292,38 @@ export default {
   },
   methods: {
     async fetchData() {
-      // change this endpoint
+      const endpoint = '/api/v1/admin/shippment'
+      let getData = null
+      getData = axioskomsipdev.get(endpoint)
+      getData.then(({ data }) => {
+        /*
+          "data": {
+            "profit": {
+              "total_shipping_profit": 42000,
+              "profit_cod": 3500
+            },
+            "income": [
+              {
+                "partner_name": "Tatausahaku",
+                "district": "Idano Gawo",
+                "shipping_cost": 42000,
+                "grand_total": 82000,
+                "shipping_profit": 42000,
+                "net_profit": 113750
+              }
+            ]
+          }
+        */
+        const parseData = JSON.parse(JSON.stringify(data.data))
+        this.items = parseData
+        this.totalRows = parseData.length
+      })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
     onFiltered(filteredItems) {
       // Trigger pagination to update the number of buttons/pages due to filtering
