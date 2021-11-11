@@ -90,7 +90,7 @@
                   >
                     <div v-if="editMode === true && editIdAddress === data.address_id">
                       <div
-                        v-for="(dataOrigin, indexOrigin) in itemsOrigin"
+                        v-for="(dataOrigin, indexOrigin) in tes"
                         :key="indexOrigin+1"
                       >
                         <v-select
@@ -104,7 +104,7 @@
                     </div>
                     <div v-else>
                       <div
-                        v-for="(dataOrigin, indexOrigin) in itemsOrigin"
+                        v-for="(dataOrigin, indexOrigin) in tes"
                         :key="indexOrigin+1"
                       >
                         <v-select
@@ -492,6 +492,8 @@ export default {
       fieldAddPhoneUser: '',
       fieldAddOrigin: '',
 
+      tes: null,
+
       // Validation
       required,
     }
@@ -509,7 +511,6 @@ export default {
         data.forEach(this.myLoop)
         this.dataAddress = data
         this.loading = false
-        console.log(this.itemsOrigin)
         return this.dataAddress
       })
     },
@@ -518,6 +519,13 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.itemsOrigin.push(response.data.data[0])
+        const result = this.itemsOrigin.reduce((unique, o) => {
+          if (!unique.some(obj => obj.label === o.label && obj.value === o.value)) {
+            unique.push(o)
+          }
+          return unique
+        }, [])
+        this.tes = result
       })
     },
     submitAddress() {

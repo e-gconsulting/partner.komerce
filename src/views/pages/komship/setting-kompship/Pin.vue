@@ -670,7 +670,7 @@ export default {
 
       matchesPin: null,
 
-      countOtp: 10,
+      countOtp: 60,
       sendOtpEmail: false,
     }
   },
@@ -720,7 +720,8 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        if (data.is_set === true) {
+        console.log(data)
+        if (data.is_match === true) {
           this.$refs['create-pin'].hide()
         } else {
           this.$refs['create-pin'].show()
@@ -896,7 +897,7 @@ export default {
       })
     },
     sendOtpAgain() {
-      this.countOtp = 10
+      this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
       httpKomship.post('v1/send-otp', formData, {

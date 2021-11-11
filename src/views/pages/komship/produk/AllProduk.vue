@@ -169,8 +169,17 @@
               </div>
             </template>
 
-            <template #cell(variant)="data">
+            <template
+              #cell(variant)="data"
+            >
+              <h5
+                v-if="data.item.is_variant !== '1'"
+                class="text-center"
+              >
+                Tidak ada variasi
+              </h5>
               <b-table
+                v-if="data.item.is_variant === '1'"
                 :fields="variantFieldsTable"
                 :items="variantItems"
                 :head-variant="headVariant"
@@ -213,7 +222,7 @@
                 </template>
 
               </b-table>
-              <app-collapse>
+              <app-collapse v-if="data.item.is_variant === '1'">
                 <app-collapse-item title="Tampilkan Variasi Lainnya">
                   <b-table
                     :fields="variantFieldsTable"
@@ -387,10 +396,11 @@ export default {
     },
     getProduct() {
       this.loading = true
-      return axios2.get('/v1/product', {
+      return axios2.get('/v1/product?status=1', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
+        console.log(data)
         data.forEach(this.myArray)
         this.variantData = data
         this.loading = false

@@ -1,10 +1,5 @@
 <template>
-  <b-card-actions
-    ref="formCard"
-    :title="$route.meta.name.singular"
-    no-actions
-    no-body
-  >
+  <b-card>
     <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
@@ -40,7 +35,7 @@
           placement="bottom"
         >
           <b-row class="p-50">
-            <b-form @submit.prevent>
+            <b-form>
               <b-row>
                 <b-col
                   cols="12"
@@ -64,7 +59,7 @@
                         class="pl-0"
                       >
                         <b-form-input
-                          v-model="defaultFilter"
+                          v-model="area"
                           class="mr-1"
                         />
                       </b-col>
@@ -81,7 +76,6 @@
                   >
                     <div class="d-flex justify-content-center align-items-center">
                       <b-form-input
-                        v-model="defaultFilter"
                         class=""
                       />
                       <b-button
@@ -94,7 +88,6 @@
                         />
                       </b-button>
                       <b-form-input
-                        v-model="defaultFilter"
                         class="mr-1"
                       />
                     </div>
@@ -110,7 +103,6 @@
                   >
                     <div class="d-flex justify-content-center align-items-center">
                       <b-form-input
-                        v-model="defaultFilter"
                         class=""
                       />
                       <b-button
@@ -123,7 +115,6 @@
                         />
                       </b-button>
                       <b-form-input
-                        v-model="defaultFilter"
                         class="mr-1"
                       />
                     </div>
@@ -139,7 +130,6 @@
                   >
                     <div class="d-flex justify-content-center align-items-center">
                       <b-form-input
-                        v-model="defaultFilter"
                         class=""
                       />
                       <b-button
@@ -152,7 +142,6 @@
                         />
                       </b-button>
                       <b-form-input
-                        v-model="defaultFilter"
                         class="mr-1"
                       />
                     </div>
@@ -168,7 +157,6 @@
                   >
                     <div class="d-flex justify-content-center align-items-center mr-1">
                       <b-form-input
-                        v-model="defaultFilter"
                         class=""
                       />
                     </div>
@@ -185,6 +173,7 @@
                     type="reset"
                     variant="outline-primary"
                     class="mr-1"
+                    @click="resetFilter"
                   >
                     Reset
                   </b-button>
@@ -193,6 +182,7 @@
                     v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                     type="submit"
                     variant="primary"
+                    @click.prevent="filterCustomer"
                   >
                     Terapkan
                   </b-button>
@@ -205,26 +195,43 @@
     </b-row>
 
     <b-row>
-      <b-table
-        :items="items"
-        :fields="fields"
-        class="mt-2"
+      <b-overlay
+        :show="loading"
+        spinner-variant="primary"
+        variant="light"
+        rounded="sm"
+        opacity=".5"
+        blur="0"
       >
+        <b-table
+          ref="tables"
+          hover
+          responsive
+          class="position-relative mt-2"
+          empty-text="Tidak ada data untuk ditampilkan."
+          :items="itemsCustomer"
+          :fields="fields"
+        >
 
-        <template #cell(action)>
-          <b-button
-            size="sm"
-            variant="flat-info"
-            tag="router-link"
-            :to="{ name: $route.meta.routeDetail }"
-          >
-            Lihat Detail
-          </b-button>
-        </template>
+          <template #cell(total_spent)="data">
+            Rp. {{ data.value }}
+          </template>
 
-      </b-table>
+          <template #cell(action)="data">
+            <b-button
+              size="sm"
+              variant="flat-info"
+              tag="router-link"
+              :to="{ name: $route.meta.routeDetail, params: { customer_id: data.item.customer_id } }"
+            >
+              Lihat Detail
+            </b-button>
+          </template>
+
+        </b-table>
+      </b-overlay>
     </b-row>
-  </b-card-actions>
+  </b-card>
 </template>
 
 <script>
@@ -242,14 +249,17 @@ import {
   BForm,
   BFormGroup,
   BFormSelect,
+  BCard,
+  BOverlay,
 } from 'bootstrap-vue'
-import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 import Ripple from 'vue-ripple-directive'
+import useJwt from '@/auth/jwt/useJwt'
+import { dateFormat } from '@core/mixins/ui/date'
 
 export default {
   components: {
-    BCardActions,
+    BCard,
     BCol,
     BFormInput,
     BInputGroup,
@@ -263,13 +273,17 @@ export default {
     BForm,
     BFormGroup,
     BFormSelect,
+    BOverlay,
   },
   directives: {
     'b-popover': VBPopover,
     Ripple,
   },
+  mixins: [dateFormat],
   data() {
     return {
+      loading: false,
+
       selected: 1,
       options: [
         { value: 1, text: 'Kabupaten' },
@@ -277,79 +291,76 @@ export default {
 
       fields: [
         {
-          key: 'name_customer', label: 'Nama Customer',
+          key: 'customer_name',
+          label: 'Nama Customer',
         },
         {
-          key: 'address', label: 'Alamat',
+          key: 'customer_address',
+          label: 'Alamat',
         },
         {
-          key: 'total_order', label: 'Total Order',
+          key: 'total_order',
+          label: 'Total Order',
+          tdClass: 'text-center',
         },
         {
-          key: 'total_pcs', label: 'Total Pcs',
+          key: 'total_pcs',
+          label: 'Total Pcs',
+          tdClass: 'text-center',
         },
         {
-          key: 'uang_dihabiskan', label: 'Uang Dihabiskan',
+          key: 'total_spent',
+          label: 'Uang Dihabiskan',
         },
         {
-          key: 'last_order', label: 'Terakhir Order',
+          key: 'last_order',
+          label: 'Terakhir Order',
+          formatter: value => {
+            if (!value || value === '00-00-0000') return '-'
+            return this.dateFormat(value, 'dd mmmm yyyy')
+          },
         },
         {
-          key: 'action', label: 'Aksi',
+          key: 'action',
+          label: 'Aksi',
         },
       ],
 
-      items: [
-        {
-          name_customer: 'Cankun',
-          address: 'Bocari',
-          total_order: 10,
-          total_pcs: '100',
-          uang_dihabiskan: 'Rp. 1.000',
-          last_order: '01 Januari 2000',
-        },
-        {
-          name_customer: 'Cankun Bagus',
-          address: 'Bocari',
-          total_order: 20,
-          total_pcs: '200',
-          uang_dihabiskan: 'Rp. 2.000',
-          last_order: '01 Januari 2001',
-        },
-        {
-          name_customer: 'Candra',
-          address: 'Bocari',
-          total_order: 30,
-          total_pcs: '300',
-          uang_dihabiskan: 'Rp. 3.000',
-          last_order: '01 Januari 2002',
-        },
-        {
-          name_customer: 'Candra Dajal',
-          address: 'Bocari',
-          total_order: 40,
-          total_pcs: '400',
-          uang_dihabiskan: 'Rp. 4.000',
-          last_order: '01 Januari 2003',
-        },
-        {
-          name_customer: 'Leksana Budi Candra',
-          address: 'Bocari',
-          total_order: 50,
-          total_pcs: '500',
-          uang_dihabiskan: 'Rp. 5.000',
-          last_order: '01 Januari 2004',
-        },
-        {
-          name_customer: 'Candra Budi leksana',
-          address: 'Bocari',
-          total_order: 0,
-          total_pcs: '600',
-          uang_dihabiskan: 'Rp. 6.000',
-          last_order: '01 Januari 2005',
-        },
-      ],
+      itemsCustomer: [],
     }
+  },
+  mounted() {
+    this.tableProvider()
+  },
+  methods: {
+    tableProvider() {
+      this.loading = true
+      this.$httpKomship.get('/v1/customers', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        this.itemsCustomer = data
+        console.log(this.itemsCustomer)
+        this.loading = false
+        return this.itemsCustomer
+      })
+    },
+    filterCustomer() {
+      this.loading = true
+      this.$httpKomship.get(`/v1/customers?area=${this.area}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        console.log(data)
+        this.itemsCustomer = data
+        console.log(this.itemsCustomer)
+        this.loading = false
+        return this.itemsCustomer
+      })
+    },
+    resetFilter() {
+      this.tableProvider()
+    },
   },
 }
 </script>

@@ -37,7 +37,7 @@ export default [
     },
   },
   {
-    path: '/info-customer/detail-customer',
+    path: '/info-customer/detail-customer/:customer_id',
     name: 'detail-customer',
     component: () => import('@/views/pages/komship/customer/DetailCustomer.vue'),
     meta: {
@@ -58,7 +58,7 @@ export default [
     },
   },
   {
-    path: '/detail-order',
+    path: '/info-customer/detail-customer/detail-order/:order_id',
     name: 'detail-order',
     component: () => import('@/views/pages/komship/customer/DetailOrder.vue'),
     meta: {

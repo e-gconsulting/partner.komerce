@@ -47,7 +47,7 @@
           <div id="chart">
             <vue-apex-charts
               type="bar"
-              height="290"
+              height="150"
               :options="chartOptions"
               :series="series"
             />
@@ -103,7 +103,7 @@ export default {
         colors: '#34A770',
         chart: {
           type: 'bar',
-          height: 290,
+          height: 150,
         },
         plotOptions: {
           bar: {

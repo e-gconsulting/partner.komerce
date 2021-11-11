@@ -302,7 +302,6 @@ import useJwt from '@/auth/jwt/useJwt'
 import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import axios2 from '../setting-kompship/baseUrl2'
 
 export default {
   components: {
@@ -386,10 +385,11 @@ export default {
     },
     getProduct() {
       this.loading = true
-      return axios2.get('/v1/product', {
+      return this.$httpKomship.get('/v1/product?status=0', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
+        console.log(data)
         data.forEach(this.myArray)
         this.variantData = data
         this.loading = false

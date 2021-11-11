@@ -286,8 +286,6 @@ export default {
           let ability = []
 
           let { data } = response.data
-          console.log('first data')
-          console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
@@ -367,7 +365,7 @@ export default {
                 { action: 'manage', subject: 'Komship TalentPool' },
                 { action: 'manage', subject: 'Komship Wishlist' },
                 { action: 'manage', subject: 'PartnerProfile' },
-                { action: 'read', subject: 'Dashboard Komship' },
+                { action: 'manage', subject: 'Dashboard Komship' },
                 { action: 'manage', subject: 'Customer' },
                 { action: 'manage', subject: 'Produk' },
                 { action: 'manage', subject: 'Order' },
@@ -392,8 +390,6 @@ export default {
 
           data.ability = ability
           this.$ability.update(ability)
-          console.log('second data')
-          console.log(data)
 
           localStorage.setItem('userData', JSON.stringify(data))
           this.$store.commit('auth/UPDATE_USER_DATA', data)

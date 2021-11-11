@@ -1538,6 +1538,7 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
+        console.log(data.message)
         this.productName = data.message.product_name
         this.skuName = data.message.product_sku
         this.descriptionProduct = data.message.product_description
@@ -1826,20 +1827,18 @@ export default {
       } else if (this.transfer === true) {
         this.flavours = 'BANK TRANSFER'
       }
+      const formData = new FormData()
+      formData.append('_method', 'put')
+      formData.append('product_name', this.productName)
+      formData.append('sku', this.skuName)
+      formData.append('description', this.descriptionProduct)
+      formData.append('weight', this.weightProduct)
+      formData.append('length', this.lengthProduct)
+      formData.append('width', this.widthProduct)
+      formData.append('height', this.heightProduct)
+      formData.append('flavours', this.flavours)
 
-      this.$httpKomship.post(`/v1/product/update/${this.partnerId}`, {
-        product_name: this.productName,
-        sku: this.skuName,
-        description: this.descriptionProduct,
-        weight: this.weightProduct,
-        length: this.lengthProduct,
-        width: this.widthProduct,
-        height: this.heightProduct,
-        price: this.price,
-        stock: this.stock,
-        flavours: this.flavours,
-        variant_option: this.variantStore,
-      }, {
+      this.$httpKomship.post(`/v1/product/update/${this.partnerId}`, formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
