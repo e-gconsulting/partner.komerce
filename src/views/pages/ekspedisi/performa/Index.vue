@@ -7,7 +7,7 @@
             class="text-24-bold"
             style="color: #222222;"
           >
-            Performa Partner
+            Performa Ekspedisi
           </h3>
           <div class="mb-1 d-flex justify-content-end">
             <v-select
