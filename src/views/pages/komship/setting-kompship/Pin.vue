@@ -6,14 +6,14 @@
       ref="create-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
       title="Primary Modal"
     >
 
-      <b-col class="d-flex justify-content-center mt-50">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Buat PIN</strong>
         </h4>
@@ -34,7 +34,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           v-b-modal.modal-confirm-create-new-pin
           variant="primary"
@@ -49,13 +49,13 @@
       id="modal-confirm-create-new-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Konfirmasi PIN</strong>
         </h4>
@@ -76,7 +76,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
           @click="confirmCreatePin"
@@ -143,15 +143,14 @@
     <!-- Modal Change PIN -->
     <b-modal
       ref="modal-change-pin"
-      no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Ganti PIN</strong>
         </h4>
@@ -176,7 +175,7 @@
         <small class="text-danger">{{ errorConfirmPin }}</small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
           @click="confirmChangePin"
@@ -197,13 +196,13 @@
       ref="modal-new-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Ganti PIN</strong>
         </h4>
@@ -224,7 +223,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
           @click="isMatchChangePin"
@@ -245,13 +244,13 @@
       ref="modal-confirm-new-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Ganti PIN</strong>
         </h4>
@@ -276,7 +275,7 @@
         <small class="text-danger">{{ errorMatchesPin }}</small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
           @click="submitChangePin"
@@ -298,27 +297,26 @@
     <!-- Forgot PIN -->
     <b-modal
       id="modal-forgot-pin"
-      no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Lupa PIN</strong>
         </h4>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 mb-1">
         <small class="text-center">
           <strong>Pilih metode untuk mengirim kode</strong>
         </small>
       </b-col>
 
-      <b-row class="d-flex justify-content-center ml-1">
+      <!-- <b-row class="d-flex justify-content-center ml-1">
         <b-col md="6">
           <div class="demo-inline-spacing">
             <b-button
@@ -330,14 +328,14 @@
             </b-button>
           </div>
         </b-col>
-      </b-row>
+      </b-row> -->
 
-      <b-row class="d-flex justify-content-center ml-1">
+      <b-row class="d-flex justify-content-center ml-1 pb-2">
         <b-col md="6">
           <div class="demo-inline-spacing">
             <b-button
               block
-              variant="outline-primary"
+              variant="primary"
               @click="forgotPinByEmail"
             >
               Email
@@ -353,13 +351,13 @@
       id="modal-forgot-no-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Lupa PIN</strong>
         </h4>
@@ -401,7 +399,7 @@
         </div>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           v-b-modal.forgot-create-new-pin
           variant="primary"
@@ -416,13 +414,13 @@
       id="forgot-create-new-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Masukan PIN Baru</strong>
         </h4>
@@ -437,7 +435,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           v-b-modal.forgot-confirm-new-pin
           variant="primary"
@@ -452,13 +450,13 @@
       id="forgot-confirm-new-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Masukan Ulang PIN</strong>
         </h4>
@@ -473,7 +471,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
           @click="tes()"
@@ -489,13 +487,13 @@
       ref="modal-forgot-email-pin"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Lupa PIN</strong>
         </h4>
@@ -538,7 +536,7 @@
         </div>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           v-b-modal.forgot-create-new-pin-email
           variant="primary"
@@ -553,13 +551,13 @@
       id="forgot-create-new-pin-email"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Masukan PIN Baru</strong>
         </h4>
@@ -574,7 +572,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           v-b-modal.forgot-confirm-new-pin-email
           variant="primary"
@@ -589,13 +587,13 @@
       id="forgot-confirm-new-pin-email"
       no-close-on-backdrop
       hide-header-close
-      ok-only
+      hide-footer
       hide-header
       modal-class="modal-primary"
       centered
     >
 
-      <b-col class="d-flex justify-content-center mt-4">
+      <b-col class="d-flex justify-content-center mt-2">
         <h4>
           <strong>Masukan Ulang PIN</strong>
         </h4>
@@ -610,7 +608,7 @@
         />
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
           @click="tes()"
@@ -900,7 +898,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      httpKomship.post('v1/send-otp', formData, {
+      this.$httpKomship.post('v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response

@@ -133,6 +133,7 @@
           responsive
           class="position-relative mt-2"
           empty-text="Tidak ada data untuk ditampilkan."
+          :show-empty="!loading"
           :fields="fields"
           :items="itemsDetailCustomer"
         >

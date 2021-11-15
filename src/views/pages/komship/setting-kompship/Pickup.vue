@@ -365,7 +365,7 @@
                         type="submit"
                         variant="outline-primary"
                         class="mr-1"
-                        @click="removeFormAddress"
+                        @click.prevent="removeFormAddress"
                       >
                         Hapus
                       </b-button>
@@ -374,7 +374,7 @@
                         type="reset"
                         variant="primary"
                         class="mr-1"
-                        @click="submitAddress"
+                        @click.prevent="submitAddress"
                       >
                         <b-spinner
                           v-if="loadingSubmit"
@@ -568,6 +568,7 @@ export default {
     },
     addAddress() {
       this.formAddAddress = true
+      this.editMode = false
     },
     removeFormAddress() {
       this.formAddAddress = false

@@ -2,6 +2,10 @@ import Vue from 'vue'
 
 // axios
 import axios from 'axios'
+import useJwt from '@core/auth/jwt/useJwt'
+
+const { jwt } = useJwt(axios, {})
+const token = jwt.getToken()
 
 const axiosIns = axios.create({
   // You can add your headers here
@@ -14,10 +18,9 @@ const axiosIns = axios.create({
 
 const axiosInsKomship = axios.create({
   // You can add your headers here
-  headers: new Headers({
-    'Application-Name': 'Web Komerce',
-    'Access-Control-Allow-Headers': 'localhost:8080',
-  }),
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
   baseURL: process.env.VUE_APP_BASE_URL_KOMSHIP,
   timeout: 14000,
 })

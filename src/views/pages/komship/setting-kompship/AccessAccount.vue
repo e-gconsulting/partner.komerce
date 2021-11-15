@@ -109,7 +109,10 @@
         <b-form>
           <b-row>
 
-            <b-col cols="10">
+            <b-col
+              v-if="!editMode"
+              cols="10"
+            >
               <b-form-group
                 label="Nama"
               >
@@ -127,7 +130,10 @@
               </b-form-group>
             </b-col>
 
-            <b-col cols="10">
+            <b-col
+              v-if="!editMode"
+              cols="10"
+            >
               <b-form-group
                 label="Email"
               >
@@ -580,6 +586,8 @@ export default {
       menu: [],
 
       partnerId: null,
+
+      editMode: false,
 
       // Validation
       required,
@@ -1823,65 +1831,12 @@ export default {
       })
     },
     editAccess(data) {
+      this.editMode = true
       console.log(data)
       this.$refs['modal-add-account'].show()
-      this.fullname = data.item.full_name
-      this.emailUser = data.item.email
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < data.item.access_menu.length; i++) {
-        if (data.item.access_menu[i].menu_name === 'Access Application' && data.item.access_menu[i].menu_name === 'PRODUCT'
-        && data.item.access_menu[i].menu_name === 'ORDER' && data.item.access_menu[i].menu_name === 'PICKUP'
-        && data.item.access_menu[i].menu_name === 'FINANCE' && data.item.access_menu[i].menu_name === 'SETTING') {
-          this.allAccessApps = true
-          this.allAccessWeb = true
-          this.addOrderApps = true
-          this.dataOrderApps = true
-          this.addProdukWeb = true
-          this.dataProdukWeb = true
-          this.addOrderWeb = true
-          this.dataOrderWeb = true
-          this.ajukanPickup = true
-          this.historyPickup = true
-          this.penghasilan = true
-          this.saldo = true
-          this.settingProfile = true
-          this.accessAccount = true
-          this.addressPickup = true
-          this.settingRekening = true
-          this.settingPin = true
-          this.settingEkspedisi = true
-        }
-        if (data.item.access_menu[i].menu_name === 'Access Application') {
-          this.allAccessApps = true
-          this.addOrderApps = true
-          this.dataOrderApps = true
-        }
-        if (data.item.access_menu[i].menu_name === 'PRODUCT') {
-          this.addProdukWeb = true
-          this.dataProdukWeb = true
-        }
-        if (data.item.access_menu[i].menu_name === 'ORDER') {
-          this.addOrderWeb = true
-          this.dataOrderWeb = true
-        }
-        if (data.item.access_menu[i].menu_name === 'PICKUP') {
-          this.ajukanPickup = true
-          this.historyPickup = true
-        }
-        if (data.item.access_menu[i].menu_name === 'FINANCE') {
-          this.penghasilan = true
-          this.saldo = true
-        }
-        if (data.item.access_menu[i].menu_name === 'SETTING') {
-          this.settingProfile = true
-          this.accessAccount = true
-          this.addressPickup = true
-          this.settingRekening = true
-          this.settingPin = true
-          this.settingEkspedisi = true
-        }
-      }
-      console.log(this.allAccessWeb)
+    },
+    submitEditAccess() {
+
     },
     confirmDelete(data) {
       console.log(data)
@@ -1907,6 +1862,15 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { result } = response.data
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Success',
+            icon: 'CheckIcon',
+            text: 'Success delete access',
+            variant: 'success',
+          },
+        })
         console.log(result)
         this.refreshTable()
       })

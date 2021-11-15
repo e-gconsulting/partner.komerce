@@ -49,7 +49,7 @@
                           >
                             <div class="d-flex justify-content-center align-items-center">
                               <b-form-input
-                                v-model="defaultFilter"
+                                v-model="stockFrom"
                                 class=""
                               />
                               <b-button
@@ -62,7 +62,7 @@
                                 />
                               </b-button>
                               <b-form-input
-                                v-model="defaultFilter"
+                                v-model="stockTo"
                                 class="mr-1"
                               />
                             </div>
@@ -77,7 +77,7 @@
                           >
                             <div class="d-flex justify-content-center align-items-center">
                               <b-form-input
-                                v-model="defaultFilter"
+                                v-model="soldFrom"
                                 class=""
                               />
                               <b-button
@@ -90,7 +90,7 @@
                                 />
                               </b-button>
                               <b-form-input
-                                v-model="defaultFilter"
+                                v-model="soldTo"
                                 class="mr-1"
                               />
                             </div>
@@ -113,6 +113,7 @@
                             v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                             type="submit"
                             variant="primary"
+                            @click="filterProduct"
                           >
                             Terapkan
                           </b-button>
@@ -158,7 +159,6 @@
                   square
                   size="50px"
                   variant="light-primary"
-                  :src="data.item.product_image[0]"
                 />
                 <div>
                   <p class="ml-1">
@@ -308,11 +308,11 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import useJwt from '@/auth/jwt/useJwt'
 import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import axios2 from '../setting-kompship/baseUrl2'
+// import httpKomship from '@/views/pages/komship/setting-kompship/baseUrl2'
+// import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -385,6 +385,13 @@ export default {
         },
       ],
       items: [],
+
+      // Filter
+      name: '',
+      stockFrom: null,
+      stockTo: null,
+      soldFrom: null,
+      soldTo: null,
     }
   },
   created() {
@@ -396,9 +403,7 @@ export default {
     },
     getProduct() {
       this.loading = true
-      return axios2.get('/v1/product?status=1', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      return this.$httpKomship.get('/v1/product?status=1').then(response => {
         const { data } = response.data
         console.log(data)
         data.forEach(this.myArray)
@@ -444,6 +449,18 @@ export default {
         sold: data.sold,
         stock: data.stock,
         variant: data.variant.slice(3),
+      })
+    },
+    filterProduct() {
+      const params = {}
+      if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
+      if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
+      if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
+      if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
+      this.$httpKomship.get('/v1/product?status=1', {
+        params,
+      }).then(response => {
+        console.log(response)
       })
     },
   },

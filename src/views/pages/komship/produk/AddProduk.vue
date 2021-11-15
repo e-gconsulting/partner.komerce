@@ -1533,36 +1533,39 @@ export default {
           }).then(response => {
             const { data } = response
             // Store image
-            const formData = new FormData()
-            formData.append('_method', 'post')
-            formData.append('image_path', this.fieldImage)
-            this.$httpKomship.post('/v1/product/temp-img', formData, {
-              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-            }).then(res => {
-              console.log(res)
-              this.$toast({
-                component: ToastificationContentVue,
-                props: {
-                  title: 'Success',
-                  icon: 'CheckIcon',
-                  text: 'Success menambahkan produk',
-                  variant: 'success',
-                },
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.fieldImage.length; i++) {
+              const formData = new FormData()
+              formData.append('_method', 'post')
+              formData.append('image_path', this.fieldImage[i])
+              this.$httpKomship.post('/v1/product/temp-img', formData, {
+                headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+              }).then(res => {
+                console.log(res)
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success menambahkan produk',
+                    variant: 'success',
+                  },
+                })
+                this.loadingSubmitPublish = false
+                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+              }).catch(() => {
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Gagal',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal menambahkan produk, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
+                })
+                this.loadinsSubmitPublish = false
               })
-              this.loadingSubmitPublish = false
-              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
-            }).catch(() => {
-              this.$toast({
-                component: ToastificationContentVue,
-                props: {
-                  title: 'Gagal',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal menambahkan produk, silahkan coba lagi!',
-                  variant: 'danger',
-                },
-              })
-              this.loadinsSubmitPublish = false
-            })
+            }
             console.log(data)
           }).catch(() => {
             this.$toast({

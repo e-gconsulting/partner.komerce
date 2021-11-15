@@ -76,6 +76,7 @@
                   >
                     <div class="d-flex justify-content-center align-items-center">
                       <b-form-input
+                        v-model="spentFrom"
                         class=""
                       />
                       <b-button
@@ -88,6 +89,7 @@
                         />
                       </b-button>
                       <b-form-input
+                        v-model="spentTo"
                         class="mr-1"
                       />
                     </div>
@@ -103,6 +105,7 @@
                   >
                     <div class="d-flex justify-content-center align-items-center">
                       <b-form-input
+                        v-model="pcsFrom"
                         class=""
                       />
                       <b-button
@@ -115,6 +118,7 @@
                         />
                       </b-button>
                       <b-form-input
+                        v-model="pcsTo"
                         class="mr-1"
                       />
                     </div>
@@ -130,6 +134,7 @@
                   >
                     <div class="d-flex justify-content-center align-items-center">
                       <b-form-input
+                        v-model="orderFrom"
                         class=""
                       />
                       <b-button
@@ -142,6 +147,7 @@
                         />
                       </b-button>
                       <b-form-input
+                        v-model="orderTo"
                         class="mr-1"
                       />
                     </div>
@@ -157,6 +163,7 @@
                   >
                     <div class="d-flex justify-content-center align-items-center mr-1">
                       <b-form-input
+                        v-model="productName"
                         class=""
                       />
                     </div>
@@ -327,6 +334,19 @@ export default {
       ],
 
       itemsCustomer: [],
+
+      // Params Filter
+      productName: '',
+      spentFrom: null,
+      spentTo: null,
+      orderFrom: null,
+      orderTo: null,
+      pcsFrom: null,
+      pcsTo: null,
+      area: '',
+
+      endpoint: null,
+      url: '/v1/customers',
     }
   },
   mounted() {
@@ -347,8 +367,13 @@ export default {
     },
     filterCustomer() {
       this.loading = true
-      this.$httpKomship.get(`/v1/customers?area=${this.area}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      const params = {}
+
+      if (this.orderFrom) Object.assign(params, { orderFrom: this.orderFrom })
+      if (this.orderTo) Object.assign(params, { orderTo: this.orderTo })
+
+      this.$httpKomship.get('/v1/customers', {
+        params,
       }).then(response => {
         const { data } = response.data
         console.log(data)

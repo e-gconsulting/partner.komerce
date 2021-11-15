@@ -369,7 +369,7 @@
                   type="reset"
                   variant="primary"
                   class="mr-1"
-                  @click="submitRekening"
+                  @click="submitVerification"
                 >
                   <b-spinner
                     v-if="loadingSubmit"
@@ -406,10 +406,74 @@
       </b-col>
 
     </b-card>
+    <b-modal
+      ref="modal-verification-submit"
+      no-close-on-backdrop
+      hide-header-close
+      hide-footer
+      hide-header
+      modal-class="modal-primary"
+      centered
+    >
+
+      <b-col class="d-flex justify-content-center mt-2">
+        <h4>
+          <strong>Verifikasi Email</strong>
+        </h4>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-1">
+        <small class="text-center">
+          <strong>Masukan kode verifikasi (OTP) yang dikirimkan ke email maung@******.com</strong>
+        </small>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-2">
+        <div style="display: flex; flex-direction: row;">
+          <vue-otp-input
+            ref="otpInput"
+            input-classes="otp-input"
+            separator="-"
+            :num-inputs="4"
+            :should-auto-focus="true"
+            :is-input-num="true"
+            @on-change="handleOnChange"
+            @on-complete="handleOnComplete"
+          />
+        </div>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-1">
+        <div v-if="countOtp > 0">
+          <small>Kirim Ulang({{ countOtp }})</small>
+        </div>
+        <div v-else>
+          <b-button
+            variant="flat-primary"
+            size="sm"
+            class="btn-icon"
+            @click="sendOtpAgain"
+          >
+            Kirim Ulang
+          </b-button>
+        </div>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-1 pb-2">
+        <b-button
+          variant="primary"
+          @click.prevent="submitRekening"
+        >
+          Konfirmasi
+        </b-button>
+      </b-col>
+
+    </b-modal>
   </b-overlay>
 </template>
 
 <script>
+import VueOtpInput from '@bachdgvn/vue-otp-input'
 import CodeInput from 'vue-verification-code-input'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -451,6 +515,7 @@ export default {
     BOverlay,
     BSpinner,
     vSelect,
+    VueOtpInput,
   },
   directives: {
     'b-modal': VBModal,
@@ -488,10 +553,12 @@ export default {
       fieldAddBankName: '',
       fieldAddAccountNo: '',
       fieldAddAccountName: '',
+
+      countOtp: 60,
     }
   },
   mounted() {
-    // this.showModal()
+    this.showModal()
     this.getBank()
     this.loadBanks()
   },
@@ -502,13 +569,61 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
         this.formRekening = data
         this.loading = false
       })
     },
-    submitRekening() {
+    submitVerification() {
+      // Verification
       this.loadingSubmit = true
+      const formData = new FormData()
+      formData.append('_method', 'post')
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: {
+          Authorization: `Bearer ${useJwt.getToken()}`,
+        },
+      }).then(response => {
+        this.loadingSubmit = false
+        const { data } = response
+        console.log(data)
+        this.$refs['modal-verification-submit'].show()
+        this.countDownTimerOtp()
+      }).catch(() => {
+        this.loadingSubmit = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal kirim email, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
+      })
+    },
+    sendOtpAgain() {
+      this.countOtp = 60
+      const formData = new FormData()
+      formData.append('_method', 'post')
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response
+        console.log(data)
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal kirim OTP, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
+      })
+      this.countDownTimerOtp()
+    },
+    submitRekening() {
       this.$refs.formRulesAdd.validate().then(success => {
         if (success) {
           axios2.post('/v1/bank-account/store',
@@ -519,9 +634,7 @@ export default {
             },
             {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-            }).then(response => {
-            const { data } = response
-            console.log(data)
+            }).then(() => {
             this.loadingSubmit = false
             this.getBank()
             this.fieldActionAddRekening = false
@@ -538,9 +651,6 @@ export default {
       this.accountName = data.account_name
       this.editMode = true
       this.addForm = false
-      console.log(this.bankName)
-      console.log(this.accountNo)
-      console.log(this.accountName)
     },
     submitEditRekening() {
       this.loadingSubmit = true
@@ -552,15 +662,11 @@ export default {
           formData.append('bank_name', this.bankName)
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
-          console.log(this.bankName)
-          console.log(this.accountNo)
-          console.log(this.accountName)
 
           axios2.post(`/v1/bank-account/update/${this.editIdRek}`, formData,
             {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-            }).then(response => {
-            const { data } = response
+            }).then(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -573,7 +679,6 @@ export default {
             this.loadingSubmit = false
             this.editMode = false
             this.getBank()
-            console.log(data)
           }).catch(() => {
             this.loadingSubmit = false
             this.$toast({
@@ -613,17 +718,15 @@ export default {
       axios2.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
-        .then(response => {
+        .then(() => {
           this.getBank()
-          console.log(response)
         })
     },
     onChange(v) {
-      console.log('onChange ', v)
+      this.dataPin = v
     },
     onComplete(v) {
       this.dataPin = v
-      console.log('onComplete ', v)
     },
     showModal() {
       this.$refs['modal-pin'].show()
@@ -640,7 +743,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
         if (data.is_match === true) {
           this.loadingSubmit = false
           this.hideModal()
@@ -656,7 +758,6 @@ export default {
         .get('xendit/disbursementbankAvailable')
         .then(({ data }) => {
           this.banks = data.data
-          console.log(data)
         })
         .catch(() => {
           this.$toast(
@@ -688,6 +789,21 @@ export default {
     removeFormRekening(index) {
       this.formRekening.splice(index, 1)
     },
+    countDownTimerOtp() {
+      if (this.countOtp > 0) {
+        setTimeout(() => {
+          this.countOtp -= 1
+          this.countDownTimerOtp()
+        }, 1000)
+      }
+    },
+    // Handle OTP
+    handleOnComplete(value) {
+      console.log('OTP completed: ', value)
+    },
+    handleOnChange(value) {
+      console.log('OTP changed: ', value)
+    },
   },
 
 }
@@ -695,4 +811,19 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+[dir] .otp-input {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    margin: 0 10px;
+    font-size: 20px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+  [dir] .otp-input::-webkit-inner-spin-button,
+  [dir] .otp-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 </style>
