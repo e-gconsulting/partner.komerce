@@ -719,7 +719,7 @@ export default {
       }).then(response => {
         const { data } = response.data
         console.log(data)
-        if (data.is_match === true) {
+        if (data.is_set === true) {
           this.$refs['create-pin'].hide()
         } else {
           this.$refs['create-pin'].show()

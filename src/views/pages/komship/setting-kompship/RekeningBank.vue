@@ -478,7 +478,6 @@ import CodeInput from 'vue-verification-code-input'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required } from '@validations'
-import useJwt from '@/auth/jwt/useJwt'
 import vSelect from 'vue-select'
 import {
   BRow,
@@ -496,7 +495,6 @@ import {
 // import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
-import axios2 from './baseUrl2'
 
 export default {
   components: {
@@ -565,9 +563,7 @@ export default {
   methods: {
     getBank() {
       this.loading = true
-      return axios2.get('v1/bank-account', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      return this.$httpKomship.get('v1/bank-account').then(response => {
         const { data } = response.data
         this.formRekening = data
         this.loading = false
@@ -578,11 +574,7 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData, {
-        headers: {
-          Authorization: `Bearer ${useJwt.getToken()}`,
-        },
-      }).then(response => {
+      this.$httpKomship.post('v1/send-otp', formData).then(response => {
         this.loadingSubmit = false
         const { data } = response
         console.log(data)
@@ -605,9 +597,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$httpKomship.post('v1/send-otp', formData).then(response => {
         const { data } = response
         console.log(data)
       }).catch(() => {
@@ -626,14 +616,11 @@ export default {
     submitRekening() {
       this.$refs.formRulesAdd.validate().then(success => {
         if (success) {
-          axios2.post('/v1/bank-account/store',
+          this.$httpKomship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
               account_no: this.fieldAddAccountNo,
-            },
-            {
-              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(() => {
             this.loadingSubmit = false
             this.getBank()
@@ -663,10 +650,7 @@ export default {
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
 
-          axios2.post(`/v1/bank-account/update/${this.editIdRek}`, formData,
-            {
-              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-            }).then(() => {
+          this.$httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData).then(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -715,9 +699,7 @@ export default {
       })
     },
     delete(data) {
-      axios2.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      })
+      this.$httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`)
         .then(() => {
           this.getBank()
         })
@@ -736,11 +718,8 @@ export default {
     },
     confirmPin() {
       this.loadingSubmit = true
-      axios2.post('/v1/pin/auth', {
+      this.$httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
-      },
-      {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         if (data.is_match === true) {

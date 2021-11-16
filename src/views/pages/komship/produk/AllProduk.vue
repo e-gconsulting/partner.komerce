@@ -1,5 +1,5 @@
 <template>
-  <b-col>
+  <b-col class="pl-0 pr-0">
     <b-form>
       <b-row>
         <b-col cols="12">
@@ -141,7 +141,7 @@
           opacity=".5"
           rounded="sm"
         >
-          <b-table
+          <!-- <b-table
             ref="table"
             striped
             hover
@@ -283,7 +283,139 @@
               </b-button>
             </template>
 
-          </b-table>
+          </b-table> -->
+          <b-container fluid>
+            <b-row>
+              <b-col
+                cols="3"
+              >
+                <strong class="ml-2">
+                  Nama Produk
+                </strong>
+              </b-col>
+              <b-col cols="3">
+                <strong class="ml-2">
+                  Variasi
+                </strong>
+              </b-col>
+              <b-col cols="2">
+                <strong class="ml-2">
+                  Harga
+                </strong>
+              </b-col>
+              <b-col cols="2">
+                <strong class="ml-2">
+                  Stock
+                </strong>
+              </b-col>
+              <b-col cols="1">
+                <strong>
+                  Terjual
+                </strong>
+              </b-col>
+              <b-col cols="1">
+                <strong class="ml-2">
+                  Aksi
+                </strong>
+              </b-col>
+            </b-row>
+            <hr style="height:1px; background-color:#828282; color: #828282; opacity: 0.5;">
+            <div
+              v-for="(itemsData, index) in variantData"
+              :key="index+1"
+            >
+              <b-row class="d-flex">
+                <b-col
+                  cols="3"
+                  class="pb-3"
+                >
+                  <b-row class="ml-2">
+                    <div>
+                      <b-avatar
+                        v-if="itemsData.product_image[0] !== undefined"
+                        variant="light-primary"
+                        square
+                        size="50px"
+                        :src="itemsData.product_image[0].image"
+                      />
+                      <b-avatar
+                        v-else
+                        variant="light-primary"
+                        square
+                        size="50px"
+                        :src="imageFileProduct"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      <p><strong>{{ itemsData.product_name }}</strong></p>
+                      <small>SKU: {{ itemsData.sku }}</small>
+                    </div>
+                  </b-row>
+                </b-col>
+                <b-col
+                  cols="3"
+                >
+                  <div
+                    v-for="(itemsVariant, indexVariant) in itemsData.variant"
+                    :key="indexVariant+1"
+                  >
+                    <p class="ml-2">{{ itemsVariant.variant }}</p>
+                  </div>
+                </b-col>
+                <b-col
+                  cols="2"
+                >
+                  <div
+                    v-for="(itemsVariant, indexVariant) in itemsData.variant"
+                    :key="indexVariant+1"
+                  >
+                    <p class="ml-2">
+                      Rp. {{ itemsVariant.price }}
+                    </p>
+                  </div>
+                </b-col>
+                <b-col
+                  cols="2"
+                >
+                  <div
+                    v-for="(itemsVariant, indexVariant) in itemsData.variant"
+                    :key="indexVariant+1"
+                  >
+                    <p class="ml-2">
+                      {{ itemsVariant.stock }}
+                    </p>
+                  </div>
+                </b-col>
+                <b-col
+                  cols="1"
+                >
+                  <p>{{ itemsData.sold }}</p>
+                </b-col>
+                <b-col
+                  cols="1"
+                >
+                  <b-button
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-dark"
+                  >
+                    <feather-icon
+                      icon="EditIcon"
+                    />
+                  </b-button>
+                  <b-button
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-dark"
+                  >
+                    <feather-icon
+                      icon="Trash2Icon"
+                    />
+                  </b-button>
+                </b-col>
+              </b-row>
+            </div>
+          </b-container>
         </b-overlay>
       </b-col>
     </b-row>
@@ -301,15 +433,16 @@ import {
   BInputGroupPrepend,
   BButton,
   BImg,
-  BTable,
+  // BTable,
   BAvatar,
   VBPopover,
   BPopover,
   BOverlay,
+  BContainer,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
+// import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
+// import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 // import httpKomship from '@/views/pages/komship/setting-kompship/baseUrl2'
 // import useJwt from '@/auth/jwt/useJwt'
@@ -324,13 +457,14 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    BTable,
+    // BTable,
     BAvatar,
     BPopover,
     BForm,
     BOverlay,
-    AppCollapse,
-    AppCollapseItem,
+    // AppCollapse,
+    // AppCollapseItem,
+    BContainer,
   },
   directives: {
     'b-popover': VBPopover,
@@ -385,6 +519,8 @@ export default {
         },
       ],
       items: [],
+
+      imageFileProduct: null,
 
       // Filter
       name: '',

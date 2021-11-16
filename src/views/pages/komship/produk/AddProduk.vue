@@ -1542,17 +1542,7 @@ export default {
                 headers: { Authorization: `Bearer ${useJwt.getToken()}` },
               }).then(res => {
                 console.log(res)
-                this.$toast({
-                  component: ToastificationContentVue,
-                  props: {
-                    title: 'Success',
-                    icon: 'CheckIcon',
-                    text: 'Success menambahkan produk',
-                    variant: 'success',
-                  },
-                })
                 this.loadingSubmitPublish = false
-                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
               }).catch(() => {
                 this.$toast({
                   component: ToastificationContentVue,
@@ -1566,6 +1556,17 @@ export default {
                 this.loadinsSubmitPublish = false
               })
             }
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success menambahkan produk',
+                variant: 'success',
+              },
+            })
+            this.loadingSubmitPublish = false
+            this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
             console.log(data)
           }).catch(() => {
             this.$toast({
