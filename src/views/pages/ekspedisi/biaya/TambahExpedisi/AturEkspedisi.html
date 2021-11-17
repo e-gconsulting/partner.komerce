@@ -1,8 +1,8 @@
 <section id="cod-data-partner-detail">
   <div v-if="!loadDataAwal">
-    <b-card no-body>
+    <b-card style="padding: 16px;" no-body>
       <b-card-body>
-        <div class="d-flex align-items-center">
+        <div class="d-flex text-center ">
           <b-button
             variant="primary"
             size="sm"
@@ -22,6 +22,7 @@
               <b-button
                 variant="outline-primary"
                 size="sm"
+                style="font-weight: 400;font-size:16px;"
                 class="mr-1 btn-custom btn-custom--edit"
                 @click="$router.go(-1)"
                 >Batal
@@ -30,6 +31,7 @@
                 type="submit"
                 variant="primary"
                 size="sm"
+                style="font-weight: 400;font-size:16px;"
                 class="btn-custom btn-custom--edit"
                 @click="simpanFormEdit"
                 >Simpan
@@ -355,7 +357,7 @@
               variant="outline-primary"
               size="sm"
               class="mt-1 btn-custom btn-custom--edit"
-              style="width: 261px;"
+              style="font-weight: 400;font-size:16px;"
               @click="saveKriteria"
               >Save
             </b-button>
