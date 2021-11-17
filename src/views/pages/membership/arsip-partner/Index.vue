@@ -89,7 +89,7 @@
                     Lihat Detail...
                   </b-button>
                 </template>
-                <template #cell(arsipkanPartner)="data">
+                <!-- <template #cell(arsipkanPartner)="data">
                   <b-button
                     v-b-modal.modal-konfirmasi-arsip
                     variant="flat-default"
@@ -97,7 +97,7 @@
                   >
                     <feather-icon icon="ArchiveIcon" />
                   </b-button>
-                </template>
+                </template> -->
                 <template #table-busy>
                   <div class="text-center text-danger my-2">
                     <b-spinner
