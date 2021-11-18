@@ -627,8 +627,6 @@
 
 <script>
 import CodeInput from 'vue-verification-code-input'
-import useJwt from '@/auth/jwt/useJwt'
-// import axios from 'axios'
 import {
   BCard,
   BRow,
@@ -640,7 +638,6 @@ import {
   BSpinner,
 } from 'bootstrap-vue'
 import VueOtpInput from '@bachdgvn/vue-otp-input'
-import httpKomship from '@/libs/http_komship'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -685,11 +682,8 @@ export default {
     },
     // ==================================================================
     createPin() {
-      httpKomship.post('https://komshipdev.komerce.id/api/v1/pin/store', {
+      this.$httpKomship.post('https://komshipdev.komerce.id/api/v1/pin/store', {
         pin: this.dataPin,
-      },
-      {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
         console.log(data)
@@ -714,9 +708,7 @@ export default {
       this.dataPin = v
     },
     showModal() {
-      httpKomship.get('/v1/pin/check', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$httpKomship.get('/v1/pin/check').then(response => {
         const { data } = response.data
         console.log(data)
         if (data.is_set === true) {
@@ -750,10 +742,7 @@ export default {
       })
     },
     confirmCreatePin() {
-      httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check',
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
+      this.$httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check').then(response => {
         const { data } = response
         console.log(data)
         this.$swal({
@@ -787,9 +776,6 @@ export default {
       this.loadingSubmit = true
       this.$httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
-      },
-      {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         if (data.is_match === true) {
@@ -820,9 +806,7 @@ export default {
       formData.append('_method', 'put')
       formData.append('pin', this.dataPin)
 
-      this.$httpKomship.post('/v1/pin/update', formData, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$httpKomship.post('/v1/pin/update', formData).then(response => {
         const { data } = response
         console.log(data)
         if (data.status === 'success') {
@@ -872,11 +856,7 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData, {
-        headers: {
-          Authorization: `Bearer ${useJwt.getToken()}`,
-        },
-      }).then(response => {
+      this.$httpKomship.post('v1/send-otp', formData).then(response => {
         this.loadingSubmit = false
         const { data } = response
         console.log(data)
@@ -898,9 +878,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$httpKomship.post('v1/send-otp', formData).then(response => {
         const { data } = response
         console.log(data)
       }).catch(() => {

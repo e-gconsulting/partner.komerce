@@ -29,15 +29,20 @@
         <b-col
           md="4"
         >
-          <b-list-group
-            v-for="(items, index) in province"
-            :key="index+1"
-            class="ml-2"
-          >
-            <b-list-group-item class="border-0 p-1">
-              {{ items.province_name }}
-            </b-list-group-item>
-          </b-list-group>
+          <div v-if="province[0] !== undefined">
+            <b-list-group
+              v-for="(items, index) in province"
+              :key="index+1"
+              class="ml-2"
+            >
+              <b-list-group-item class="border-0 p-1">
+                {{ items.province_name }}
+              </b-list-group-item>
+            </b-list-group>
+          </div>
+          <div v-else>
+            Tidak ada data
+          </div>
         </b-col>
 
         <b-col
@@ -69,7 +74,6 @@ import {
   BCard,
   BOverlay,
 } from 'bootstrap-vue'
-import useJwt from '@/auth/jwt/useJwt'
 import VueApexCharts from 'vue-apexcharts'
 
 export default {
@@ -145,9 +149,7 @@ export default {
       const params = {
         is_liftime: this.rangkingProvince,
       }
-      this.$httpKomship.get('/v1/customers/ranking-customers', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }, params).then(response => {
+      this.$httpKomship.get('/v1/customers/ranking-customers', params).then(response => {
         this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories.length)
         const { data } = response.data
         this.province = data.province
@@ -159,6 +161,13 @@ export default {
           },
         ]
         return this.province
+      }).catch(() => {
+        this.loading = false
+        this.series = [
+          {
+            data: [],
+          },
+        ]
       })
     },
     getData() {
@@ -166,9 +175,7 @@ export default {
       const params = {
         is_liftime: this.rangkingProvince,
       }
-      this.$httpKomship.get('/v1/customers/ranking-customers', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }, params).then(response => {
+      this.$httpKomship.get('/v1/customers/ranking-customers', params).then(response => {
         const { data } = response.data
         this.province = data.province
         this.loading = false
@@ -179,6 +186,13 @@ export default {
           },
         ]
         return this.province
+      }).catch(() => {
+        this.loading = false
+        this.series = [
+          {
+            data: [],
+          },
+        ]
       })
     },
     getPercentage(value) {

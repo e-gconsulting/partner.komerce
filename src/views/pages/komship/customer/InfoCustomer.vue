@@ -201,43 +201,60 @@
       </b-col>
     </b-row>
 
-    <b-row>
-      <b-overlay
-        :show="loading"
-        spinner-variant="primary"
-        variant="light"
-        rounded="sm"
-        opacity=".5"
-        blur="0"
+    <b-overlay
+      :show="loading"
+      spinner-variant="primary"
+      variant="light"
+      rounded="sm"
+      opacity=".5"
+      blur="0"
+    >
+      <b-table
+        ref="tables"
+        striped
+        hover
+        responsive
+        class="position-relative mt-2"
+        empty-text="Tidak ada data untuk ditampilkan."
+
+        :items="itemsCustomer"
+        :fields="fields"
+        :show-empty="!loading"
       >
-        <b-table
-          ref="tables"
-          hover
-          responsive
-          class="position-relative mt-2"
-          empty-text="Tidak ada data untuk ditampilkan."
-          :items="itemsCustomer"
-          :fields="fields"
-        >
 
-          <template #cell(total_spent)="data">
-            Rp. {{ data.value }}
-          </template>
+        <template #cell(customer_name)="data">
+          {{ data.item.customer_name }}
+        </template>
 
-          <template #cell(action)="data">
-            <b-button
-              size="sm"
-              variant="flat-info"
-              tag="router-link"
-              :to="{ name: $route.meta.routeDetail, params: { customer_id: data.item.customer_id } }"
-            >
-              Lihat Detail
-            </b-button>
-          </template>
+        <template #cell(customer_address)="data">
+          {{ data.item.customer_address }}
+        </template>
 
-        </b-table>
-      </b-overlay>
-    </b-row>
+        <template #cell(total_order)="data">
+          {{ data.item.total_order }}
+        </template>
+
+        <template #cell(total_pcs)="data">
+          {{ data.item.total_pcs }}
+        </template>
+
+        <template #cell(total_spent)="data">
+          Rp. {{ formatPrice(data.value) }}
+        </template>
+
+        <template #cell(action)="data">
+          <b-button
+            size="sm"
+            variant="flat-info"
+            tag="router-link"
+            :to="{ name: $route.meta.routeDetail, params: { customer_id: data.item.customer_id } }"
+          >
+            Lihat Detail
+          </b-button>
+        </template>
+
+      </b-table>
+    </b-overlay>
   </b-card>
 </template>
 
@@ -385,6 +402,10 @@ export default {
     },
     resetFilter() {
       this.tableProvider()
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
   },
 }

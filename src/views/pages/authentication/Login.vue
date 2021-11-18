@@ -394,6 +394,11 @@ export default {
           localStorage.setItem('userData', JSON.stringify(data))
           this.$store.commit('auth/UPDATE_USER_DATA', data)
 
+          console.log(data)
+
+          // Get Access Komship Member
+          this.getAccessKomshipMember(data.id)
+
           this.$router
             .replace(getHomeRouteForLoggedInUser(role))
             .then(() => {})
@@ -433,6 +438,19 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    getAccessKomshipMember(userId) {
+      const params = {
+        user_id: userId,
+      }
+      this.$http.get('user/partner/get-menu-komship-member', {
+        params,
+      }).then(response => {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < response.data.data.length; i++) {
+          console.log(response.data.data[i])
+        }
+      })
     },
     logout() {
       useJwt

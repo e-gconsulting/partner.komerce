@@ -100,7 +100,7 @@
     <b-modal
       ref="modal-add-account"
       scrollable
-      title="Tambah Orang"
+      :title="editMode ? 'Edit Akses' : 'Tambah Orang'"
       ok-only
       ok-title="Simpan"
       cancel-variant="outline-primary"
@@ -151,7 +151,10 @@
               </b-form-group>
             </b-col>
 
-            <b-col cols="10">
+            <b-col
+              v-if="!editMode"
+              cols="10"
+            >
               <b-form-group
                 label="Password"
               >
@@ -169,7 +172,10 @@
               </b-form-group>
             </b-col>
 
-            <b-col cols="12">
+            <b-col
+              v-if="!editMode"
+              cols="12"
+            >
               <hr>
             </b-col>
 
@@ -191,6 +197,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="addOrderApps"
+                      @change="cekAkses"
                     >
                       Tambah Order
                     </b-form-checkbox>
@@ -201,6 +208,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="dataOrderApps"
+                      @change="cekAkses"
                     >
                       Data Order
                     </b-form-checkbox>
@@ -233,6 +241,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="addProdukWeb"
+                      @change="cekAkses"
                     >
                       Tambah Produk
                     </b-form-checkbox>
@@ -243,6 +252,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="dataProdukWeb"
+                      @change="cekAkses"
                     >
                       Data Produk
                     </b-form-checkbox>
@@ -257,6 +267,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="addOrderWeb"
+                      @change="cekAkses"
                     >
                       Tambah Order
                     </b-form-checkbox>
@@ -267,6 +278,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="dataOrderWeb"
+                      @change="cekAkses"
                     >
                       Data Order
                     </b-form-checkbox>
@@ -281,6 +293,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="ajukanPickup"
+                      @change="cekAkses"
                     >
                       Ajukan Pickup
                     </b-form-checkbox>
@@ -291,6 +304,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="historyPickup"
+                      @change="cekAkses"
                     >
                       Riwayat Pickup
                     </b-form-checkbox>
@@ -305,6 +319,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="penghasilan"
+                      @change="cekAkses"
                     >
                       Penghasilan
                     </b-form-checkbox>
@@ -315,6 +330,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="saldo"
+                      @change="cekAkses"
                     >
                       Saldo
                     </b-form-checkbox>
@@ -329,6 +345,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="settingProfile"
+                      @change="cekAkses"
                     >
                       Edit Profile
                     </b-form-checkbox>
@@ -339,6 +356,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="accessAccount"
+                      @change="cekAkses"
                     >
                       Akses Akun
                     </b-form-checkbox>
@@ -349,6 +367,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="addressPickup"
+                      @change="cekAkses"
                     >
                       Alamat Pickup
                     </b-form-checkbox>
@@ -359,6 +378,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="settingRekening"
+                      @change="cekAkses"
                     >
                       Rekening Bank
                     </b-form-checkbox>
@@ -369,6 +389,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="settingPin"
+                      @change="cekAkses"
                     >
                       PIN
                     </b-form-checkbox>
@@ -379,6 +400,7 @@
                   <b-form-group>
                     <b-form-checkbox
                       v-model="settingEkspedisi"
+                      @change="cekAkses"
                     >
                       Ekspedisi
                     </b-form-checkbox>
@@ -398,6 +420,7 @@
             class="d-flex justify-content-end"
           >
             <b-button
+              v-if="!editMode"
               variant="primary"
               @click="addAccount"
             >
@@ -407,6 +430,18 @@
                 small
               />
               Simpan
+            </b-button>
+            <b-button
+              v-else
+              variant="primary"
+              @click="submitEditAccess"
+            >
+              <b-spinner
+                v-if="loadingSubmit"
+                variant="light"
+                small
+              />
+              Update
             </b-button>
           </b-col>
         </b-row>
@@ -433,7 +468,6 @@ import {
   BSpinner,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import useJwt from '@/auth/jwt/useJwt'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required, email } from '@validations'
@@ -486,77 +520,21 @@ export default {
       settingEkspedisi: false,
 
       // Store
-      valueAddOrderApps: {
-        menuPositionId: 0,
-        create: 0,
-        edit: 0,
-        delete: 0,
-      },
-      valueDataOrderApps: {
-        menuPositionId: 0,
-        access: 0,
-      },
-
-      valueAddProdukWeb: {
-        menuPositionId: 0,
-        create: 0,
-        edit: 0,
-        delete: 0,
-      },
-      valueDataProdukWeb: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueAddOrderWeb: {
-        menuPositionId: 0,
-        create: 0,
-        edit: 0,
-        delete: 0,
-      },
-      valueDataOrderWeb: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueAjukanPickup: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueHistoryPickup: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valuePenghasilan: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueSaldo: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueSettingProfile: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueAccessAccount: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueAddressPickup: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueSettingRekening: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueSettingPin: {
-        menuPositionId: 0,
-        access: 0,
-      },
-      valueSettingEkspedisi: {
-        menuPositionId: 0,
-        access: 0,
-      },
+      accessView: 1,
+      accessCreate: 2,
+      accessEdit: 3,
+      accessDelete: 4,
+      accessSubmitPickup: 5,
+      accessPickupHistory: 6,
+      accessIncomeData: 7,
+      accessBalanceData: 8,
+      accessEditProfile: 9,
+      accessHakAccount: 10,
+      accessPickupAddress: 11,
+      accessBankAccount: 12,
+      accessPin: 13,
+      accessEkspedisi: 14,
+      menuPosition: [],
 
       fields: [
         {
@@ -570,12 +548,7 @@ export default {
         },
       ],
 
-      items: [
-        {
-          name: 'maung',
-          access: 'Akses aplikasi, Orderku, Penghasi...',
-        },
-      ],
+      items: [],
 
       name: '',
       username: 'maungkomshipusername',
@@ -588,24 +561,26 @@ export default {
       partnerId: null,
 
       editMode: false,
+      menuAksesEdit: [],
+      idEdit: '',
 
       // Validation
       required,
       email,
     }
   },
-  mounted() {
+  created() {
     this.loadPartner()
-    this.loadMenuAccess()
+  },
+  mounted() {
+    this.getMenuKomship()
   },
   methods: {
     refreshTable() {
       this.$refs.table.refresh()
     },
     tableProvider() {
-      return this.$http.get('/user/partner/get-komship-member/618', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      return this.$http.get('/user/partner/get-komship-member/618').then(response => {
         const { data } = response.data
         return data
       }).catch(() => {
@@ -625,1160 +600,320 @@ export default {
       this.$refs.formRules.validate().then(success => {
         if (success) {
           // Apps
-          if (this.allAccessApps === true && this.addOrderApps === true && this.dataOrderApps === true) {
-            this.valueAddOrderApps.create = 2
-            this.valueAddOrderApps.edit = 3
-            this.valueAddOrderApps.delete = 4
-            this.valueDataOrderApps.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueDataOrderApps.access,
-              },
-            )
+          if (this.allAccessApps === true || this.addOrderApps === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'Access Application') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+            }
           }
-          if (this.allAccessApps === true && this.addOrderApps === true) {
-            this.valueAddOrderApps.create = 2
-            this.valueAddOrderApps.edit = 3
-            this.valueAddOrderApps.delete = 4
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.delete,
-              },
-            )
-          }
-          if (this.allAccessApps === true && this.dataOrderApps === true) {
-            this.valueDataOrderApps.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueDataOrderApps.access,
-              },
-            )
-          }
-          if (this.addOrderApps === true) {
-            this.valueAddOrderApps.create = 2
-            this.valueAddOrderApps.edit = 3
-            this.valueAddOrderApps.delete = 4
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.delete,
-              },
-            )
-          }
-          if (this.dataOrderApps === true) {
-            this.valueDataOrderApps.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueDataOrderApps.access,
-              },
-            )
-          }
-          if (this.addOrderApps === true && this.dataOrderApps === true) {
-            this.valueAddOrderApps.create = 2
-            this.valueAddOrderApps.edit = 3
-            this.valueAddOrderApps.delete = 4
-            this.valueDataOrderApps.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueAddOrderApps.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderApps.menuPositionId,
-                menu_access_id: this.valueDataOrderApps.access,
-              },
-            )
+          if (this.dataOrderApps === true && this.allAccessApps === false && this.addOrderApps === false) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'Access Application') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+              }
+            }
           }
 
           // Web
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true && this.settingProfile === true
-              && this.accessAccount === true && this.addressPickup === true
-              && this.settingRekening === true && this.settingPin === true && this.settinEkspedisi === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.valueSettingProfile.access = 9
-            this.valueAccessAccount.access = 10
-            this.valueAddressPickup.access = 11
-            this.valueSettingRekening.access = 12
-            this.valueSettingPin.access = 13
-            this.valueSettingEkspedisi.access = 14
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-              {
-                menu_position_id: this.valueAccessAccount.menuPositionId,
-                menu_access_id: this.valueAccessAccount.access,
-              },
-              {
-                menu_position_id: this.valueAddressPickup.menuPositionId,
-                menu_access_id: this.valueAddressPickup.access,
-              },
-              {
-                menu_position_id: this.valueSettingRekening.menuPositionId,
-                menu_access_id: this.valueSettingRekening.access,
-              },
-              {
-                menu_position_id: this.valueSettingPin.menuPositionId,
-                menu_access_id: this.valueSettingPin.access,
-              },
-              {
-                menu_position_id: this.valueSettingEkspedisi.menuPositionId,
-                menu_access_id: this.valueSettingEkspedisi.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true && this.settingProfile === true
-              && this.accessAccount === true && this.addressPickup === true
-              && this.settingRekening === true && this.settingPin === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.valueSettingProfile.access = 9
-            this.valueAccessAccount.access = 10
-            this.valueAddressPickup.access = 11
-            this.valueSettingRekening.access = 12
-            this.valueSettingPin.access = 13
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-              {
-                menu_position_id: this.valueAccessAccount.menuPositionId,
-                menu_access_id: this.valueAccessAccount.access,
-              },
-              {
-                menu_position_id: this.valueAddressPickup.menuPositionId,
-                menu_access_id: this.valueAddressPickup.access,
-              },
-              {
-                menu_position_id: this.valueSettingRekening.menuPositionId,
-                menu_access_id: this.valueSettingRekening.access,
-              },
-              {
-                menu_position_id: this.valueSettingPin.menuPositionId,
-                menu_access_id: this.valueSettingPin.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true && this.settingProfile === true
-              && this.accessAccount === true && this.addressPickup === true
-              && this.settingRekening === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.valueSettingProfile.access = 9
-            this.valueAccessAccount.access = 10
-            this.valueAddressPickup.access = 11
-            this.valueSettingRekening.access = 12
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-              {
-                menu_position_id: this.valueAccessAccount.menuPositionId,
-                menu_access_id: this.valueAccessAccount.access,
-              },
-              {
-                menu_position_id: this.valueAddressPickup.menuPositionId,
-                menu_access_id: this.valueAddressPickup.access,
-              },
-              {
-                menu_position_id: this.valueSettingRekening.menuPositionId,
-                menu_access_id: this.valueSettingRekening.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true && this.settingProfile === true
-              && this.accessAccount === true && this.addressPickup === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.valueSettingProfile.access = 9
-            this.valueAccessAccount.access = 10
-            this.valueAddressPickup.access = 11
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-              {
-                menu_position_id: this.valueAccessAccount.menuPositionId,
-                menu_access_id: this.valueAccessAccount.access,
-              },
-              {
-                menu_position_id: this.valueAddressPickup.menuPositionId,
-                menu_access_id: this.valueAddressPickup.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true && this.settingProfile === true
-              && this.accessAccount === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.valueSettingProfile.access = 9
-            this.valueAccessAccount.access = 10
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-              {
-                menu_position_id: this.valueAccessAccount.menuPositionId,
-                menu_access_id: this.valueAccessAccount.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true && this.settingProfile === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.valueSettingProfile.access = 9
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true
-              && this.saldo === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.valueSaldo.access = 8
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true && this.penghasilan === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.valuePenghasilan.access = 7
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true
-              && this.historyPickup === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.valueHistoryPickup.access = 6
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true && this.ajukanPickup === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.valueAjukanPickup.access = 5
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true
-              && this.dataOrderWeb === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.valueDataOrderWeb.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true && this.addOrderWeb === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true
-              && this.dataProdukWeb === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.valueDataProdukWeb.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-            )
-          }
-          if (this.allAccessWeb === true && this.addProdukWeb === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-            )
+          if (this.allAccessWeb === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PRODUCT') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+              if (this.menuPosition[i].name === 'ORDER') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+              if (this.menuPosition[i].name === 'PICKUP') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessSubmitPickup,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupHistory,
+                })
+              }
+              if (this.menuPosition[i].name === 'FINANCE') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessIncomeData,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBalanceData,
+                })
+              }
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEditProfile,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessHakAccount,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupAddress,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBankAccount,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPin,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEkspedisi,
+                })
+              }
+            }
           }
 
           if (this.addProdukWeb === true) {
-            this.valueAddProdukWeb.create = 2
-            this.valueAddProdukWeb.edit = 3
-            this.valueAddProdukWeb.delete = 4
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddProdukWeb.menuPositionId,
-                menu_access_id: this.valueAddProdukWeb.delete,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PRODUCT') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+            }
           }
 
-          if (this.dataProdukWeb === true) {
-            this.valueDataProdukWeb.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueDataProdukWeb.menuPositionId,
-                menu_access_id: this.valueDataProdukWeb.access,
-              },
-            )
+          if (this.dataProdukWeb === true && this.addProdukWeb === false) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PRODUCT') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+              }
+            }
           }
 
           if (this.addOrderWeb === true) {
-            this.valueAddOrderWeb.create = 2
-            this.valueAddOrderWeb.edit = 3
-            this.valueAddOrderWeb.delete = 4
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.create,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.edit,
-              },
-              {
-                menu_position_id: this.valueAddOrderWeb.menuPositionId,
-                menu_access_id: this.valueAddOrderWeb.delete,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'ORDER') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+            }
           }
 
-          if (this.dataOrderWeb === true) {
-            this.valueDataOrderWeb.access = 1
-            this.menu.push(
-              {
-                menu_position_id: this.valueDataOrderWeb.menuPositionId,
-                menu_access_id: this.valueDataOrderWeb.access,
-              },
-            )
+          if (this.dataOrderWeb === true && this.addOrderWeb === false) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'ORDER') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+              }
+            }
           }
 
           if (this.ajukanPickup === true) {
-            this.valueAjukanPickup.access = 5
-            this.menu.push(
-              {
-                menu_position_id: this.valueAjukanPickup.menuPositionId,
-                menu_access_id: this.valueAjukanPickup.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PICKUP') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessSubmitPickup,
+                })
+              }
+            }
           }
 
           if (this.historyPickup === true) {
-            this.valueHistoryPickup.access = 6
-            this.menu.push(
-              {
-                menu_position_id: this.valueHistoryPickup.menuPositionId,
-                menu_access_id: this.valueHistoryPickup.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PICKUP') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupHistory,
+                })
+              }
+            }
           }
 
           if (this.penghasilan === true) {
-            this.valuePenghasilan.access = 7
-            this.menu.push(
-              {
-                menu_position_id: this.valuePenghasilan.menuPositionId,
-                menu_access_id: this.valuePenghasilan.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'FINANCE') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessIncomeData,
+                })
+              }
+            }
           }
 
           if (this.saldo === true) {
-            this.valueSaldo.access = 8
-            this.menu.push(
-              {
-                menu_position_id: this.valueSaldo.menuPositionId,
-                menu_access_id: this.valueSaldo.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'FINANCE') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBalanceData,
+                })
+              }
+            }
           }
 
           if (this.settingProfile === true) {
-            this.valueSettingProfile.access = 9
-            this.menu.push(
-              {
-                menu_position_id: this.valueSettingProfile.menuPositionId,
-                menu_access_id: this.valueSettingProfile.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEditProfile,
+                })
+              }
+            }
           }
 
           if (this.accessAccount === true) {
-            this.valueAccessAccount.access = 10
-            this.menu.push(
-              {
-                menu_position_id: this.valueAccessAccount.menuPositionId,
-                menu_access_id: this.valueAccessAccount.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessHakAccount,
+                })
+              }
+            }
           }
 
           if (this.addressPickup === true) {
-            this.valueAddressPickup.access = 11
-            this.menu.push(
-              {
-                menu_position_id: this.valueAddressPickup.menuPositionId,
-                menu_access_id: this.valueAddressPickup.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupAddress,
+                })
+              }
+            }
           }
 
           if (this.settingRekening === true) {
-            this.valueSettingRekening.access = 12
-            this.menu.push(
-              {
-                menu_position_id: this.valueSettingRekening.menuPositionId,
-                menu_access_id: this.valueSettingRekening.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBankAccount,
+                })
+              }
+            }
           }
 
           if (this.settingPin === true) {
-            this.valueSettingPin.access = 13
-            this.menu.push(
-              {
-                menu_position_id: this.valueSettingPin.menuPositionId,
-                menu_access_id: this.valueSettingPin.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPin,
+                })
+              }
+            }
           }
 
           if (this.settingEkspedisi === true) {
-            this.valueSettingEkspedisi.access = 14
-            this.menu.push(
-              {
-                menu_position_id: this.valueSettingEkspedisi.menuPositionId,
-                menu_access_id: this.valueSettingEkspedisi.access,
-              },
-            )
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEkspedisi,
+                })
+              }
+            }
           }
 
           console.log(this.menu)
@@ -1791,8 +926,6 @@ export default {
             email: this.emailUser,
             menu: this.menu,
             partner_id: this.partnerId,
-          }, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
             const { data } = response
             if (data.code === 400) {
@@ -1807,6 +940,15 @@ export default {
                 },
               })
             } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success menambahkan akun',
+                  variant: 'success',
+                },
+              })
               this.loadingSubmit = false
               this.$refs['modal-add-account'].hide()
               this.refreshTable()
@@ -1831,12 +973,527 @@ export default {
       })
     },
     editAccess(data) {
-      this.editMode = true
-      console.log(data)
+      this.allAccessApps = false
+      this.allAccessWeb = false
+      this.addOrderApps = false
+      this.dataOrderApps = false
+      this.addProdukWeb = false
+      this.dataProdukWeb = false
+      this.addOrderWeb = false
+      this.dataOrderWeb = false
+      this.ajukanPickup = false
+      this.historyPickup = false
+      this.penghasilan = false
+      this.saldo = false
+      this.settingProfile = false
+      this.accessAccount = false
+      this.addressPickup = false
+      this.settingRekening = false
+      this.settingPin = false
+      this.settingEkspedisi = false
+      this.fullname = ''
+      this.emailUser = ''
+      this.password = ''
+      this.menuAksesEdit = []
       this.$refs['modal-add-account'].show()
+      this.editMode = true
+      this.idEdit = data.item.user_id
+      console.log(data)
+      const params = {
+        user_id: data.item.user_id,
+      }
+      this.$http.get('user/partner/get-menu-komship-member', {
+        params,
+      }).then(response => {
+        response.data.data.forEach(this.arrayMenuKomship)
+        console.log('Item menu edit')
+        console.log(this.menuAksesEdit)
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.menuAksesEdit.length; x++) {
+          if (this.menuAksesEdit[x].menu_name === 'Access Application') {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessView) {
+                this.dataOrderApps = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessCreate || this.menuAksesEdit[x].access[y].access_id === this.accessEdit || this.menuAksesEdit[x].access[y].access_id === this.accessDelete) {
+                this.addOrderApps = true
+              }
+            }
+          }
+          if (this.menuAksesEdit[x].menu_name === 'PRODUCT') {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessView) {
+                this.dataProdukWeb = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessCreate || this.menuAksesEdit[x].access[y].access_id === this.accessEdit || this.menuAksesEdit[x].access[y].access_id === this.accessDelete) {
+                this.addProdukWeb = true
+              }
+            }
+          }
+          if (this.menuAksesEdit[x].menu_name === 'ORDER') {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessView) {
+                this.dataOrderWeb = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessCreate || this.menuAksesEdit[x].access[y].access_id === this.accessEdit || this.menuAksesEdit[x].access[y].access_id === this.accessDelete) {
+                this.addOrderWeb = true
+              }
+            }
+          }
+          if (this.menuAksesEdit[x].menu_name === 'PICKUP') {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessSubmitPickup) {
+                this.ajukanPickup = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessPickupHistory) {
+                this.historyPickup = true
+              }
+            }
+          }
+          if (this.menuAksesEdit[x].menu_name === 'FINANCE') {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessIncomeData) {
+                this.penghasilan = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessBalanceData) {
+                this.saldo = true
+              }
+            }
+          }
+          if (this.menuAksesEdit[x].menu_name === 'SETTING') {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessEditProfile) {
+                this.settingProfile = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessHakAccount) {
+                this.accessAccount = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessPickupAddress) {
+                this.addressPickup = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessBankAccount) {
+                this.settingRekening = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessPin) {
+                this.settingPin = true
+              }
+              if (this.menuAksesEdit[x].access[y].access_id === this.accessEkspedisi) {
+                this.settingEkspedisi = true
+              }
+            }
+          }
+          if (this.addProdukWeb === true
+              && this.dataProdukWeb === true
+              && this.addOrderWeb === true
+              && this.dataOrderWeb === true
+              && this.ajukanPickup === true
+              && this.historyPickup === true
+              && this.penghasilan === true
+              && this.saldo === true
+              && this.settingProfile === true
+              && this.accessAccount === true
+              && this.addressPickup === true
+              && this.settingRekening === true
+              && this.settingPin === true
+              && this.settingEkspedisi === true) {
+            this.allAccessWeb = true
+          }
+          if (this.addOrderApps === true && this.dataOrderApps === true) {
+            this.allAccessApps = true
+          }
+        }
+      })
+    },
+    arrayMenuKomship(data) {
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < this.menuPosition.length; i++) {
+        if (data.menu_name === this.menuPosition[i].name && data.access !== 'No Data Access.') {
+          this.menuAksesEdit.push(data)
+        }
+      }
     },
     submitEditAccess() {
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          // Apps
+          if (this.allAccessApps === true || this.addOrderApps === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'Access Application') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+            }
+          } else if (this.dataOrderApps === true && this.allAccessApps === false && this.addOrderApps === false) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'Access Application') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+              }
+            }
+          }
 
+          // Web
+          if (this.allAccessWeb === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PRODUCT') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+              if (this.menuPosition[i].name === 'ORDER') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+              if (this.menuPosition[i].name === 'PICKUP') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessSubmitPickup,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupHistory,
+                })
+              }
+              if (this.menuPosition[i].name === 'FINANCE') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessIncomeData,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBalanceData,
+                })
+              }
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEditProfile,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessHakAccount,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupAddress,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBankAccount,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPin,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEkspedisi,
+                })
+              }
+            }
+          }
+
+          if (this.addProdukWeb === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PRODUCT') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+            }
+          }
+
+          if (this.dataProdukWeb === true && this.addProdukWeb === false) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PRODUCT') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+              }
+            }
+          }
+
+          if (this.addOrderWeb === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'ORDER') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessCreate,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEdit,
+                })
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessDelete,
+                })
+              }
+            }
+          }
+
+          if (this.dataOrderWeb === true && this.addOrderWeb === false) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'ORDER') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessView,
+                })
+              }
+            }
+          }
+
+          if (this.ajukanPickup === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PICKUP') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessSubmitPickup,
+                })
+              }
+            }
+          }
+
+          if (this.historyPickup === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'PICKUP') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupHistory,
+                })
+              }
+            }
+          }
+
+          if (this.penghasilan === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'FINANCE') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessIncomeData,
+                })
+              }
+            }
+          }
+
+          if (this.saldo === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'FINANCE') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBalanceData,
+                })
+              }
+            }
+          }
+
+          if (this.settingProfile === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEditProfile,
+                })
+              }
+            }
+          }
+
+          if (this.accessAccount === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessHakAccount,
+                })
+              }
+            }
+          }
+
+          if (this.addressPickup === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPickupAddress,
+                })
+              }
+            }
+          }
+
+          if (this.settingRekening === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessBankAccount,
+                })
+              }
+            }
+          }
+
+          if (this.settingPin === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessPin,
+                })
+              }
+            }
+          }
+
+          if (this.settingEkspedisi === true) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.menuPosition.length; i++) {
+              if (this.menuPosition[i].name === 'SETTING') {
+                this.menu.push({
+                  menu_position_id: this.menuPosition[i].menu_position[0].id,
+                  menu_access_id: this.accessEkspedisi,
+                })
+              }
+            }
+          }
+
+          console.log(this.menu)
+          console.log(this.idEdit)
+
+          this.loadingSubmit = true
+          // const params = {
+          //   user_id: this.idEdit,
+          //   menu: this.menu,
+          // }
+          this.$http.put('/user/partner/update-account', {
+            user_id: this.idEdit,
+            menu: this.menu,
+          }).then(response => {
+            console.log(response)
+            const { data } = response
+            if (data.code === 400) {
+              this.loadingSubmit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  icon: 'AlertCircleIcon',
+                  text: 'Username or Email has already taken!',
+                  variant: 'danger',
+                },
+              })
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Akun berhasil di update',
+                  variant: 'success',
+                },
+              })
+              this.loadingSubmit = false
+              this.$refs['modal-add-account'].hide()
+              this.refreshTable()
+            }
+            console.log(data)
+          }).catch(error => {
+            this.loadingSubmit = false
+            console.log(error)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal menambahkan akses orang, silahkan coba lagi',
+                variant: 'Danger',
+              },
+            })
+          })
+        } else {
+          this.loadingSubmit = false
+        }
+      })
     },
     confirmDelete(data) {
       console.log(data)
@@ -1858,9 +1515,7 @@ export default {
       })
     },
     delete(data) {
-      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`).then(response => {
         const { result } = response.data
         this.$toast({
           component: ToastificationContent,
@@ -1917,8 +1572,56 @@ export default {
         this.settingEkspedisi = false
       }
     },
+    cekAkses() {
+      // Apps
+      if (this.allAccessApps === true) {
+        if (this.addOrderApps === false || this.dataOrderApps === false) {
+          this.allAccessApps = false
+        }
+      }
+      if (this.addOrderApps === true && this.dataOrderApps === true) {
+        this.allAccessApps = true
+      }
+
+      // Web
+      if (this.allAccessWeb === true) {
+        if (this.addProdukWeb === false || this.dataProdukWeb === false
+        || this.addOrderWeb === false
+        || this.dataOrderWeb === false
+        || this.ajukanPickup === false
+        || this.historyPickup === false
+        || this.penghasilan === false
+        || this.saldo === false
+        || this.settingProfile === false
+        || this.accessAccount === false
+        || this.addressPickup === false
+        || this.settingRekening === false
+        || this.settingPin === false
+        || this.settingEkspedisi === false) {
+          this.allAccessWeb = false
+        }
+      }
+      if (this.addProdukWeb === true
+        && this.dataProdukWeb === true
+        && this.addOrderWeb === true
+        && this.dataOrderWeb === true
+        && this.ajukanPickup === true
+        && this.historyPickup === true
+        && this.penghasilan === true
+        && this.saldo === true
+        && this.settingProfile === true
+        && this.accessAccount === true
+        && this.addressPickup === true
+        && this.settingRekening === true
+        && this.settingPin === true
+        && this.settingEkspedisi === true) {
+        this.allAccessWeb = true
+      }
+    },
     showModalAddAccount() {
-      this.cekAllApps = false
+      this.editMode = false
+      this.allAccessApps = false
+      this.allAccessWeb = false
       this.addOrderApps = false
       this.dataOrderApps = false
       this.addProdukWeb = false
@@ -1941,37 +1644,20 @@ export default {
       this.$refs['modal-add-account'].show()
     },
     loadPartner() {
-      return this.$httpKomship.post('v1/my-profile', {},
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
+      this.$httpKomship.post('v1/my-profile').then(response => {
         this.partnerId = response.data.data.partner_id
+        return this.partnerId
       })
     },
-    loadMenuAccess() {
-      this.$http.get('/user/partner/get-menu-member', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        // Apps
-        this.valueAddOrderApps.menuPositionId = data[2].menu_position[0].id
-        this.valueDataOrderApps.menuPositionId = data[2].menu_position[0].id
-
-        // Web
-        this.valueAddProdukWeb.menuPositionId = data[0].menu_position[0].id
-        this.valueDataProdukWeb.menuPositionId = data[0].menu_position[0].id
-        this.valueAddOrderWeb.menuPositionId = data[1].menu_position[0].id
-        this.valueDataOrderWeb.menuPositionId = data[1].menu_position[0].id
-        this.valueAjukanPickup.menuPositionId = data[3].menu_position[0].id
-        this.valueHistoryPickup.menuPositionId = data[3].menu_position[0].id
-        this.valuePenghasilan.menuPositionId = data[4].menu_position[0].id
-        this.valueSaldo.menuPositionId = data[4].menu_position[0].id
-        this.valueSettingProfile.menuPositionId = data[5].menu_position[0].id
-        this.valueAccessAccount.menuPositionId = data[5].menu_position[0].id
-        this.valueAddressPickup.menuPositionId = data[5].menu_position[0].id
-        this.valueSettingRekening.menuPositionId = data[5].menu_position[0].id
-        this.valueSettingPin.menuPositionId = data[5].menu_position[0].id
-        this.valueSettingEkspedisi.menuPositionId = data[5].menu_position[0].id
+    getMenuKomship() {
+      this.$http.get('user/partner/get-menu-member').then(response => {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < response.data.data.length; i++) {
+          this.menuPosition.push({
+            name: response.data.data[i].name,
+            menu_position: response.data.data[i].menu_position,
+          })
+        }
       })
     },
   },

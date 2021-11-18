@@ -10,12 +10,6 @@
     <b-card>
       <province-bar />
       <city-bar />
-      <ProgressBar
-        bar-color="#dc720f"
-        val="60"
-        text="60%"
-        size="medium"
-      />
     </b-card>
   </b-overlay>
 </template>
@@ -25,7 +19,6 @@ import {
   BCard,
   BOverlay,
 } from 'bootstrap-vue'
-import ProgressBar from 'vue-simple-progress'
 import ProvinceBar from './ProvinceData.vue'
 import CityBar from './CityData.vue'
 
@@ -35,7 +28,6 @@ export default {
     BOverlay,
     ProvinceBar,
     CityBar,
-    ProgressBar,
   },
   data() {
     return {

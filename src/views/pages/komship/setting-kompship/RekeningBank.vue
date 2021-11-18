@@ -60,8 +60,20 @@
         <b-col class="d-flex justify-content-center mt-1">
           <b-button
             variant="outline-primary"
+            @click="backPage"
           >
             Kembali
+          </b-button>
+        </b-col>
+        <b-col class="d-flex justify-content-center align-items-center mt-1">
+          <small>Belum punya PIN ?</small><b-button
+            class="btn-icon"
+            size="sm"
+            variant="flat-primary"
+            tag="router-link"
+            :to="{ name: $route.meta.routePin }"
+          >
+            Buat PIN!
           </b-button>
         </b-col>
 
@@ -737,6 +749,7 @@ export default {
         .get('xendit/disbursementbankAvailable')
         .then(({ data }) => {
           this.banks = data.data
+          console.log(this.banks)
         })
         .catch(() => {
           this.$toast(
@@ -782,6 +795,9 @@ export default {
     },
     handleOnChange(value) {
       console.log('OTP changed: ', value)
+    },
+    backPage() {
+      window.history.go(-1)
     },
   },
 

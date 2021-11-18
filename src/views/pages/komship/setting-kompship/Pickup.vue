@@ -417,7 +417,6 @@
 
 <script>
 import vSelect from 'vue-select'
-import useJwt from '@/auth/jwt/useJwt'
 import Ripple from 'vue-ripple-directive'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { required } from '@validations'
@@ -435,7 +434,6 @@ import {
   BFormCheckbox,
   BSpinner,
 } from 'bootstrap-vue'
-import axios2 from './baseUrl2'
 
 export default {
   components: {
@@ -504,9 +502,7 @@ export default {
   methods: {
     getAddress() {
       this.loading = true
-      axios2.get('/v1/address', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$httpKomship.get('/v1/address').then(response => {
         const { data } = response.data
         data.forEach(this.myLoop)
         this.dataAddress = data
@@ -515,9 +511,7 @@ export default {
       })
     },
     myLoop(data) {
-      axios2.get(`/v1/origin?search=${data.origin_code}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$httpKomship.get(`/v1/origin?search=${data.origin_code}`).then(response => {
         this.itemsOrigin.push(response.data.data[0])
         const result = this.itemsOrigin.reduce((unique, o) => {
           if (!unique.some(obj => obj.label === o.label && obj.value === o.value)) {
@@ -541,9 +535,7 @@ export default {
           formData.append('phone', this.fieldAddPhoneUser)
           formData.append('is_default', this.isDefault)
 
-          this.$httpKomship.post('/v1/address/store', formData, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(response => {
+          this.$httpKomship.post('/v1/address/store', formData).then(response => {
             const { data } = response.data
             console.log(data)
             this.loadingSubmit = false
@@ -587,9 +579,7 @@ export default {
           formData.append('phone', this.phoneUser)
           formData.append('is_default', this.dataIsDefault)
 
-          this.$httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(response => {
+          this.$httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData).then(response => {
             this.loadingSubmit = false
             this.$toast({
               component: ToastificationContent,
@@ -654,9 +644,7 @@ export default {
     },
     delete(data) {
       console.log(data)
-      axios2.delete(`/v1/address/delete/${data.address_id}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      })
+      this.$httpKomship.delete(`/v1/address/delete/${data.address_id}`)
         .then(() => {
           this.getAddress()
         })
@@ -671,9 +659,7 @@ export default {
       that.loadOrigin(search).finally(() => loading(false))
     }, 500),
     loadOrigin(search) {
-      return axios2.get(`/v1/origin?search=${search}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      return this.$httpKomship.get(`/v1/origin?search=${search}`).then(response => {
         this.itemsOriginEdit = response.data.data
       })
     },

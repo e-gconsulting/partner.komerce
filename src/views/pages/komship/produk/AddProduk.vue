@@ -63,116 +63,19 @@
                 <!-- Preview Image -->
                 <transition name="fade">
                   <b-avatar
-                    v-if="fieldPreviewImage.length > 0"
+                    v-if="imageFile !== null"
                     variant="light-primary"
                     size="50"
-                    :src="imageFileFirst ? fileUrl(imageFileFirst) : imageInitialFileFirst"
+                    :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
                     class="mr-50"
                   />
                 </transition>
-                <transition name="fade">
-                  <b-avatar
-                    v-if="fieldPreviewImage.length > 1"
-                    variant="light-primary"
-                    size="50"
-                    :src="imageFileSecond ? fileUrl(imageFileSecond) : imageInitialFileSecond"
-                    class="mr-50"
-                  />
-                </transition>
-                <transition name="fade">
-                  <b-avatar
-                    v-if="fieldPreviewImage.length > 2"
-                    variant="light-primary"
-                    size="50"
-                    :src="imageFileThird ? fileUrl(imageFileThird) : imageInitialFileThird"
-                    class="mr-50"
-                  />
-                </transition>
-                <transition name="fade">
-                  <b-avatar
-                    v-if="fieldPreviewImage.length > 3"
-                    variant="light-primary"
-                    size="50"
-                    :src="imageFileFourth ? fileUrl(imageFileFourth) : imageInitialFileFourth"
-                    class="mr-50"
-                  />
-                </transition>
-                <transition name="fade">
-                  <b-avatar
-                    v-if="fieldPreviewImage.length > 4"
-                    variant="light-primary"
-                    size="50"
-                    :src="imageFileFifth ? fileUrl(imageFileFifth) : imageInitialFileFifth"
-                    class="mr-50"
-                  />
-                </transition>
-
                 <!-- Button Upload Image -->
                 <label
-                  v-if="fieldPreviewImage.length === 0"
-                  for="uploadImageFirst"
+                  for="uploadImage"
                 >
                   <b-avatar
-                    variant="light-dark"
-                    size="50"
-                    class="btn btn-flat-primary btn-icon"
-                  >
-                    <feather-icon
-                      icon="PlusIcon"
-                      size="35"
-                    />
-                  </b-avatar>
-                </label>
-                <label
-                  v-if="fieldPreviewImage.length === 1"
-                  for="uploadImageSecond"
-                >
-                  <b-avatar
-                    variant="light-dark"
-                    size="50"
-                    class="btn btn-flat-primary btn-icon"
-                  >
-                    <feather-icon
-                      icon="PlusIcon"
-                      size="35"
-                    />
-                  </b-avatar>
-                </label>
-                <label
-                  v-if="fieldPreviewImage.length === 2"
-                  for="uploadImageThird"
-                >
-                  <b-avatar
-                    variant="light-dark"
-                    size="50"
-                    class="btn btn-flat-primary btn-icon"
-                  >
-                    <feather-icon
-                      icon="PlusIcon"
-                      size="35"
-                    />
-                  </b-avatar>
-                </label>
-                <label
-                  v-if="fieldPreviewImage.length === 3"
-                  for="uploadImageFourth"
-                >
-                  <b-avatar
-                    variant="light-dark"
-                    size="50"
-                    class="btn btn-flat-primary btn-icon"
-                  >
-                    <feather-icon
-                      icon="PlusIcon"
-                      size="35"
-                    />
-                  </b-avatar>
-                </label>
-                <label
-                  v-if="fieldPreviewImage.length === 4"
-                  for="uploadImageFifth"
-                >
-                  <b-avatar
+                    v-if="imageFile === null"
                     variant="light-dark"
                     size="50"
                     class="btn btn-flat-primary btn-icon"
@@ -184,87 +87,30 @@
                   </b-avatar>
                 </label>
 
-                <b-button
-                  class="btn-icon ml-50"
-                  variant="flat-primary"
-                  @click="removePreviewAvatar"
+                <label
+                  v-if="imageFile !== null"
+                  for="uploadImage"
+                  class="btn btn-flat-dark btn-icon"
                 >
                   <feather-icon
-                    icon="Trash2Icon"
-                    size="22"
+                    icon="EditIcon"
+                    size="20"
                   />
-                </b-button>
+                </label>
 
                 <!-- Field Gambar -->
                 <b-form-file
-                  id="uploadImageFirst"
-                  v-model="imageFileFirst"
+                  id="uploadImage"
+                  v-model="imageFile"
                   :state="errors.length > 0 ? false : null"
                   :placeholder="
-                    imageInitialFileFirst
-                      ? imageInitialFileFirst.split('/').pop()
+                    imageInitialFile
+                      ? imageInitialFile.split('/').pop()
                       : `Pilih atau drop file disini...`
                   "
                   drop-placeholder="Drop file disini..."
                   accept="image/*"
                   class="d-none"
-                  @change="addAvatarFirst"
-                />
-                <b-form-file
-                  id="uploadImageSecond"
-                  v-model="imageFileSecond"
-                  :state="errors.length > 0 ? false : null"
-                  :placeholder="
-                    imageInitialFileSecond
-                      ? imageInitialFileSecond.split('/').pop()
-                      : `Pilih atau drop file disini...`
-                  "
-                  drop-placeholder="Drop file disini..."
-                  accept="image/*"
-                  class="d-none"
-                  @change="addAvatarSecond"
-                />
-                <b-form-file
-                  id="uploadImageThird"
-                  v-model="imageFileThird"
-                  :state="errors.length > 0 ? false : null"
-                  :placeholder="
-                    imageInitialFileThird
-                      ? imageInitialFileThird.split('/').pop()
-                      : `Pilih atau drop file disini...`
-                  "
-                  drop-placeholder="Drop file disini..."
-                  accept="image/*"
-                  class="d-none"
-                  @change="addAvatarThird"
-                />
-                <b-form-file
-                  id="uploadImageFourth"
-                  v-model="imageFileFourth"
-                  :state="errors.length > 0 ? false : null"
-                  :placeholder="
-                    imageInitialFileFourth
-                      ? imageInitialFileFourth.split('/').pop()
-                      : `Pilih atau drop file disini...`
-                  "
-                  drop-placeholder="Drop file disini..."
-                  accept="image/*"
-                  class="d-none"
-                  @change="addAvatarFourth"
-                />
-                <b-form-file
-                  id="uploadImageFifth"
-                  v-model="imageFileFifth"
-                  :state="errors.length > 0 ? false : null"
-                  :placeholder="
-                    imageInitialFileFifth
-                      ? imageInitialFileFifth.split('/').pop()
-                      : `Pilih atau drop file disini...`
-                  "
-                  drop-placeholder="Drop file disini..."
-                  accept="image/*"
-                  class="d-none"
-                  @change="addAvatarFifth"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -1211,7 +1057,6 @@ import draggable from 'vuedraggable'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
-import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -1265,16 +1110,8 @@ export default {
       stock: '',
       price: '',
       fieldEditData: '',
-      imageFileFirst: null,
-      imageInitialFileFirst: null,
-      imageFileSecond: null,
-      imageInitialFileSecond: null,
-      imageFileThird: null,
-      imageInitialFileThird: null,
-      imageFileFourth: null,
-      imageInitialFileFourth: null,
-      imageFileFifth: null,
-      imageInitialFileFifth: null,
+      imageFile: null,
+      imageInitialFile: null,
       editMode: false,
       indexRow: null,
       // Data Store
@@ -1343,63 +1180,15 @@ export default {
     },
   },
   mounted() {
-    this.$httpKomship.get('/v1/product', {
-      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-    }).then(response => {
+    this.$httpKomship.get('/v1/product').then(response => {
       console.log(response.data)
     })
   },
   methods: {
-    addAvatarFirst() {
-      this.fieldPreviewImage.push({ avatar: '' })
-      console.log(this.fieldPreviewImage.length)
-    },
-    addAvatarSecond() {
-      this.fieldPreviewImage.push({ avatar: '' })
-      console.log(this.fieldPreviewImage.length)
-    },
-    addAvatarThird() {
-      this.fieldPreviewImage.push({ avatar: '' })
-      console.log(this.fieldPreviewImage.length)
-    },
-    addAvatarFourth() {
-      this.fieldPreviewImage.push({ avatar: '' })
-      console.log(this.fieldPreviewImage.length)
-    },
-    addAvatarFifth() {
-      this.fieldPreviewImage.push({ avatar: '' })
-      console.log(this.fieldPreviewImage.length)
-    },
-    removePreviewAvatar() {
-      this.fieldPreviewImage.splice(0, 1)
-      console.log(this.fieldPreviewImage)
-    },
     submitPublish() {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
-          if (this.fieldPreviewImage.length === 1) {
-            this.fieldImage.push(this.imageFileFirst)
-          } else if (this.fieldPreviewImage.length === 2) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-          } else if (this.fieldPreviewImage.length === 3) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-            this.fieldImage.push(this.imageFileThird)
-          } else if (this.fieldPreviewImage.length === 4) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-            this.fieldImage.push(this.imageFileThird)
-            this.fieldImage.push(this.imageFileFourth)
-          } else if (this.fieldPreviewImage.length === 5) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-            this.fieldImage.push(this.imageFileThird)
-            this.fieldImage.push(this.imageFileFourth)
-            this.fieldImage.push(this.imageFileFifth)
-          }
-
           if (this.formChoices3[0] !== undefined) {
             this.variantStore.push(
               {
@@ -1499,22 +1288,12 @@ export default {
             }
           }
 
-          console.log(this.optionStore)
-
           if (this.cod === true) {
             this.flavours = 'COD'
           } else if (this.transfer === true) {
             this.flavours = 'BANK TRANSFER'
           }
-          console.log(this.productName)
-          console.log(this.skuName)
-          console.log(this.descriptionProduct)
-          console.log(this.fieldImage)
-          console.log(this.weightProduct)
-          console.log(this.lengthProduct)
-          console.log(this.heightProduct)
-          console.log(this.flavours)
-          console.log(this.variantStore)
+
           this.$httpKomship.post('/v1/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
@@ -1528,34 +1307,27 @@ export default {
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
-          }, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
             const { data } = response
             // Store image
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.fieldImage.length; i++) {
-              const formData = new FormData()
-              formData.append('_method', 'post')
-              formData.append('image_path', this.fieldImage[i])
-              this.$httpKomship.post('/v1/product/temp-img', formData, {
-                headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-              }).then(res => {
-                console.log(res)
-                this.loadingSubmitPublish = false
-              }).catch(() => {
-                this.$toast({
-                  component: ToastificationContentVue,
-                  props: {
-                    title: 'Gagal',
-                    icon: 'AlertCircleIcon',
-                    text: 'Gagal menambahkan produk, silahkan coba lagi!',
-                    variant: 'danger',
-                  },
-                })
-                this.loadinsSubmitPublish = false
+            const formData = new FormData()
+            formData.append('_method', 'post')
+            formData.append('image_path', this.imageFile)
+            this.$httpKomship.post('/v1/product/temp-img', formData).then(res => {
+              console.log(res)
+              this.loadingSubmitPublish = false
+            }).catch(() => {
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
+                  variant: 'danger',
+                },
               })
-            }
+              this.loadinsSubmitPublish = false
+            })
             this.$toast({
               component: ToastificationContentVue,
               props: {
@@ -1586,31 +1358,9 @@ export default {
       })
     },
     submitDraft() {
-      this.loadingSubmitPublish = true
+      this.loadingSubmitDraft = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
-          if (this.fieldPreviewImage.length === 1) {
-            this.fieldImage.push(this.imageFileFirst)
-          } else if (this.fieldPreviewImage.length === 2) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-          } else if (this.fieldPreviewImage.length === 3) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-            this.fieldImage.push(this.imageFileThird)
-          } else if (this.fieldPreviewImage.length === 4) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-            this.fieldImage.push(this.imageFileThird)
-            this.fieldImage.push(this.imageFileFourth)
-          } else if (this.fieldPreviewImage.length === 5) {
-            this.fieldImage.push(this.imageFileFirst)
-            this.fieldImage.push(this.imageFileSecond)
-            this.fieldImage.push(this.imageFileThird)
-            this.fieldImage.push(this.imageFileFourth)
-            this.fieldImage.push(this.imageFileFifth)
-          }
-
           if (this.formChoices3[0] !== undefined) {
             this.variantStore.push(
               {
@@ -1710,24 +1460,12 @@ export default {
             }
           }
 
-          console.log(this.optionStore)
-
           if (this.cod === true) {
             this.flavours = 'COD'
           } else if (this.transfer === true) {
             this.flavours = 'BANK TRANSFER'
           }
-          console.log(this.productName)
-          console.log(this.skuName)
-          console.log(this.descriptionProduct)
-          console.log(this.fieldImage)
-          console.log(this.weightProduct)
-          console.log(this.lengthProduct)
-          console.log(this.heightProduct)
-          console.log(this.flavours)
-          console.log(this.variantStore)
 
-          // Store Data Prodcut
           this.$httpKomship.post('/v1/product/create/0', {
             product_name: this.productName,
             sku: this.skuName,
@@ -1741,11 +1479,27 @@ export default {
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
-          }, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
             const { data } = response
-            console.log(data)
+            // Store image
+            const formData = new FormData()
+            formData.append('_method', 'post')
+            formData.append('image_path', this.imageFile)
+            this.$httpKomship.post('/v1/product/temp-img', formData).then(res => {
+              console.log(res)
+              this.loadingSubmitDraft = false
+            }).catch(() => {
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
+                  variant: 'danger',
+                },
+              })
+              this.loadinsSubmitDraft = false
+            })
             this.$toast({
               component: ToastificationContentVue,
               props: {
@@ -1755,8 +1509,9 @@ export default {
                 variant: 'success',
               },
             })
-            this.loadingSubmitPublish = false
+            this.loadingSubmitDraft = false
             this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'draft' } })
+            console.log(data)
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,
@@ -1767,10 +1522,10 @@ export default {
                 variant: 'danger',
               },
             })
-            this.loadinsSubmitPublish = false
+            this.loadinsSubmitDraft = false
           })
         } else {
-          this.loadingSubmitPublish = false
+          this.loadingSubmitDraft = false
         }
       })
     },
@@ -1944,5 +1699,6 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 </style>

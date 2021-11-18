@@ -315,6 +315,7 @@
                 type="reset"
                 variant="outline-secondary"
                 class="mr-5"
+                @click.prevent="reset"
               >
                 Reset
               </b-button>
@@ -346,12 +347,10 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
-import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import axios2 from './baseUrl2'
 
 export default {
   components: {
@@ -418,16 +417,6 @@ export default {
     }
   },
   mounted() {
-    axios2.post('/v1/my-profile',
-      {
-
-      },
-      {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
     this.loadProfile()
     this.loadPartnerCategory()
     this.loadBusinessType()
@@ -485,10 +474,7 @@ export default {
     loadProfile() {
       this.fieldLogoBusiness.push({ logo: '' })
       this.loading = true
-      axios2.post('/v1/my-profile', {},
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
+      this.$httpKomship.post('/v1/my-profile').then(response => {
         const { data } = response.data
         this.id = data.user_id
         this.fullname = data.user_fullname
@@ -528,6 +514,20 @@ export default {
         this.businessTypeItems = data
         return this.businessTypeItems
       })
+    },
+    reset() {
+      this.fullname = ''
+      this.username = ''
+      this.jenisKelamin = null
+      this.noHP = ''
+      this.emailUser = ''
+      this.address = ''
+      this.imageFile = null
+      this.imageInitialFile = null
+      this.nameBusiness = ''
+      this.location = ''
+      this.sektorBusiness = ''
+      this.typeBusiness = ''
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },

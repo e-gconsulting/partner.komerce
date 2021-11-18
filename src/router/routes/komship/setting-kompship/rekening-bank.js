@@ -7,6 +7,7 @@ export default [
     component: () => import('@/views/pages/komship/setting-kompship/RekeningBank.vue'),
     meta: {
       name: pageName.singular,
+      routePin: 'kompship-pin',
       resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
