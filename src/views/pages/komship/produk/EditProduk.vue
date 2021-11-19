@@ -72,7 +72,7 @@
                   <!-- Preview Image -->
                   <transition name="fade">
                     <b-avatar
-                      v-if="imageInitialFile !== null"
+                      v-if="imageFile !== null"
                       variant="light-primary"
                       size="50"
                       :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
@@ -84,7 +84,7 @@
                     for="uploadImage"
                   >
                     <b-avatar
-                      v-if="imageInitialFile === null"
+                      v-if="imageFile === null"
                       variant="light-dark"
                       size="50"
                       class="btn btn-flat-primary btn-icon"
@@ -97,7 +97,7 @@
                   </label>
 
                   <label
-                    v-if="imageInitialFile !== null"
+                    v-if="imageFile !== null"
                     for="uploadImage"
                     class="btn btn-flat-dark btn-icon"
                   >
@@ -682,7 +682,7 @@
                               v-for="(itemsVariant, indexVariant) in items.option"
                               :key="indexVariant + 1"
                             >
-                              {{ itemsVariant.price }}
+                              Rp. {{ formatPrice(itemsVariant.price) }}
                             </div>
                           </div>
                         </div>
@@ -988,7 +988,7 @@ export default {
       loading: false,
       loadingSubmit: false,
       loadingSubmitVariant: false,
-      partnerId: null,
+      partnerId: JSON.parse(localStorage.getItem('userData')),
 
       isVariation: false,
       formChoices1: [{ choices: null }],
@@ -1095,14 +1095,12 @@ export default {
   },
   mounted() {
     this.loadProduct()
-    this.getPartnerId()
   },
   methods: {
     loadProduct() {
       this.loading = true
       this.$httpKomship.get(`/v1/product/detail/${this.productId}`).then(response => {
         const { data } = response.data
-        console.log(data)
         this.productName = data.product_name
         this.skuName = data.product_sku
         this.descriptionProduct = data.product_description
@@ -1112,7 +1110,9 @@ export default {
         this.lengthProduct = data.product_length
         this.widthProduct = data.product_width
         this.heightProduct = data.product_height
-        if (data.product_image[0].images_path) this.imageInitialFile = data.product_image[0].images_path
+        if (data.product_image[0] !== undefined) {
+          if (data.product_image[0].images_path) this.imageInitialFile = data.product_image[0].images_path
+        }
         if (data.flavors === 'COD') {
           this.cod = true
           this.transfer = false
@@ -1121,7 +1121,6 @@ export default {
           this.transfer = true
         }
 
-        console.log(data.options)
         if (data.product_is_variant === '1') {
           this.isVariation = true
         }
@@ -1381,17 +1380,12 @@ export default {
         option: this.optionStore,
       }
 
-      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params).then(response => {
-        const { data } = response
-        console.log(data)
-
+      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params).then(() => {
         // Update Image
-        const formData = new FormData()
-        formData.append('_method', 'post')
-        formData.append('product_id', this.productId)
-        formData.append('image_path', this.imageFile)
-        this.$httpKomship.post('/v1/product/update-upload-img-product', formData).then(res => {
-          console.log(res)
+        this.$httpKomship.post('/v1/product/update-upload-img-product', {
+          product_id: this.productId,
+          image_path: this.imageFile,
+        }).then(() => {
           this.loadingSubmit = false
           this.$toast({
             component: ToastificationContent,
@@ -1402,6 +1396,7 @@ export default {
               variant: 'success',
             },
           })
+          this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
         }).catch(() => {
           this.loadingSubmit = false
           this.$toast({
@@ -1409,12 +1404,11 @@ export default {
             props: {
               title: 'Failed',
               icon: 'AlertCircleIcon',
-              text: 'Gagal update gambar produk',
+              text: 'Gagal update gambar produk, silahkan coba lagi!',
               variant: 'danger',
             },
           })
         })
-        this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
       }).catch(() => {
         this.loadingSubmit = false
         this.$toast({
@@ -1557,17 +1551,13 @@ export default {
         option: this.optionStore,
       }
 
-      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params).then(response => {
-        const { data } = response
-        console.log(data)
-
+      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params).then(() => {
         // Update Image
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('product_id', this.productId)
         formData.append('image_path', this.imageFile)
-        this.$httpKomship.post('/v1/product/update-upload-img-product', formData).then(res => {
-          console.log(res)
+        this.$httpKomship.post('/v1/product/update-upload-img-product', formData).then(() => {
           this.loadingSubmit = false
           this.$toast({
             component: ToastificationContent,
@@ -1638,8 +1628,6 @@ export default {
       this.formChoices3.splice(index, 1)
     },
     editTable(data) {
-      console.log(data.item)
-      console.log(data.index)
       this.indexRow = data.index
       this.rowSelected = data.rowSelected
       this.rowSelected = true
@@ -1648,12 +1636,9 @@ export default {
     updateTable() {
       this.editMode = false
     },
-    getPartnerId() {
-      this.$httpKomship.post('/v1/my-profile').then(response => {
-        const { data } = response.data
-        console.log(data)
-        this.partnerId = data.partner_id
-      })
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },
@@ -1661,5 +1646,8 @@ export default {
 </script>
 
 <style scoped>
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  font-family: Poppins;
+}
 </style>

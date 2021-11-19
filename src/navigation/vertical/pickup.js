@@ -8,14 +8,14 @@ export default [
       {
         title: 'Ajukan Pickup',
         icon: 'None',
-        resource: 'Pickup',
+        resource: 'Ajukan Pickup',
         route: 'ajukan-pickup',
         action: 'manage',
       },
       {
         title: 'Riwayat Pickup',
         icon: 'None',
-        resource: 'Pickup',
+        resource: 'History Pickup',
         route: 'history-pickup',
         action: 'manage',
       },

@@ -8,14 +8,14 @@ export default [
       {
         title: 'Tambah Order',
         icon: 'None',
-        resource: 'Order',
+        resource: 'Tambah Order',
         route: 'add-order',
         action: 'manage',
       },
       {
         title: 'Data Order',
         icon: 'None',
-        resource: 'Order',
+        resource: 'Data Order',
         route: 'data-order',
         action: 'manage',
       },

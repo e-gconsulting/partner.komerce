@@ -172,7 +172,7 @@
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
-        <small class="text-danger">{{ errorConfirmPin }}</small>
+        <small class="text-primary">{{ errorConfirmPin }}</small>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -675,19 +675,16 @@ export default {
   methods: {
     // Handle OTP
     handleOnComplete(value) {
-      console.log('OTP completed: ', value)
+      this.dataPin = value
     },
     handleOnChange(value) {
-      console.log('OTP changed: ', value)
+      this.dataPin = value
     },
     // ==================================================================
     createPin() {
       this.$httpKomship.post('https://komshipdev.komerce.id/api/v1/pin/store', {
         pin: this.dataPin,
-      }).then(response => {
-        const { data } = response
-        console.log(data)
-      }).catch(() => {
+      }).then(() => {}).catch(() => {
         this.$taost({
           component: ToastificationContent,
           props: {
@@ -700,17 +697,14 @@ export default {
       })
     },
     onChange(v) {
-      console.log('onChange ', v)
       this.dataPin = v
     },
     onComplete(v) {
-      console.log('onComplete ', v)
       this.dataPin = v
     },
     showModal() {
       this.$httpKomship.get('/v1/pin/check').then(response => {
         const { data } = response.data
-        console.log(data)
         if (data.is_set === true) {
           this.$refs['create-pin'].hide()
         } else {
@@ -742,9 +736,7 @@ export default {
       })
     },
     confirmCreatePin() {
-      this.$httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check').then(response => {
-        const { data } = response
-        console.log(data)
+      this.$httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check').then(() => {
         this.$swal({
           title: 'PIN Berhasil Dibuat',
           text: 'Selamat kamu telah berhasil mengamankan saldo yang kamu miliki',
@@ -786,7 +778,6 @@ export default {
           this.loadingSubmit = false
           this.errorConfirmPin = 'PIN tidak valid'
         }
-        console.log(data)
       }).catch(() => {
         this.loadingSubmit = false
         this.$toast({
@@ -808,7 +799,6 @@ export default {
 
       this.$httpKomship.post('/v1/pin/update', formData).then(response => {
         const { data } = response
-        console.log(data)
         if (data.status === 'success') {
           this.loadingSubmit = false
           this.$refs['modal-confirm-new-pin'].show()
@@ -856,10 +846,8 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(response => {
+      this.$httpKomship.post('v1/send-otp', formData).then(() => {
         this.loadingSubmit = false
-        const { data } = response
-        console.log(data)
         this.countDownTimerOtp()
       }).catch(() => {
         this.loadingSubmit = false
@@ -878,10 +866,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(response => {
-        const { data } = response
-        console.log(data)
-      }).catch(() => {
+      this.$httpKomship.post('v1/send-otp', formData).then(() => {}).catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {

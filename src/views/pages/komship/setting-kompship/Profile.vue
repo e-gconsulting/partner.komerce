@@ -449,13 +449,10 @@ export default {
           formData.append('business_location', this.location)
           formData.append('email', this.emailUser)
 
-          this.$http.post('/user/partner/update-profile-komship', formData).then(response => {
-            const { data } = response
-            console.log(data)
+          this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.loadingSubmit = false
-          }).catch(error => {
+          }).catch(() => {
             this.loadingSubmit = false
-            console.log(error)
             this.$toast({
               component: ToastificationContent,
               props: {

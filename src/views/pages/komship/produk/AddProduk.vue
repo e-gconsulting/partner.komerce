@@ -545,12 +545,6 @@
                           class="d-flex align-items-center"
                           @click="createListVariation"
                         >
-                          <b-spinner
-                            v-if="loading"
-                            variant="light"
-                            size="sm"
-                            class="mr-50"
-                          />
                           Terapkan Kesemua
                         </b-button>
                       </div>
@@ -567,294 +561,303 @@
                   label-cols-md="2"
                   class="mt-2"
                 >
-                  <b-table
-                    responsive
-                    class="border position-relative"
-                    :fields="fields"
-                    :items="variantItems"
+                  <b-overlay
+                    :show="loading"
+                    variant="light"
+                    spinner-variant="primary"
+                    rounded="sm"
+                    opacity=".5"
+                    blur="0"
                   >
+                    <b-table
+                      responsive
+                      class="border position-relative"
+                      :fields="fields"
+                      :items="variantItems"
+                    >
 
-                    <template #cell(variant1)="data">
-                      <div v-if="editMode === true && indexRow === data.index">
-                        <b-col
-                          cols="12"
-                          class="mb-50"
-                        >
-                          <b-form-input
-                            v-model="data.item.variant1.val"
+                      <template #cell(variant1)="data">
+                        <div v-if="editMode === true && indexRow === data.index">
+                          <b-col
+                            cols="12"
                             class="mb-50"
-                          />
-                        </b-col>
-                      </div>
-                      <div v-else>
-                        <b-col
-                          cols="12"
-                          class="mb-50"
-                        >
-                          {{ data.item.variant1.val }}
-                        </b-col>
-                      </div>
-                    </template>
-
-                    <template #cell(variant2)="data">
-                      <div v-if="editMode === true && indexRow === data.index">
-                        <b-col
-                          cols="12"
-                          class="mb-50"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
                           >
                             <b-form-input
-                              v-model="dataItem.variant2.val"
+                              v-model="data.item.variant1.val"
                               class="mb-50"
                             />
-                          </div>
-                        </b-col>
-                      </div>
-                      <div v-else>
-                        <b-col
-                          cols="12"
-                          class="mb-50"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                        </div>
+                        <div v-else>
+                          <b-col
+                            cols="12"
+                            class="mb-50"
                           >
-                            {{ dataItem.variant2.val }}
-                          </div>
-                        </b-col>
-                      </div>
-                    </template>
+                            {{ data.item.variant1.val }}
+                          </b-col>
+                        </div>
+                      </template>
 
-                    <template #cell(variant3)="data">
-                      <div v-if="editMode === true && indexRow === data.index">
-                        <b-col
-                          cols="12"
-                          class="mb-50"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                      <template #cell(variant2)="data">
+                        <div v-if="editMode === true && indexRow === data.index">
+                          <b-col
+                            cols="12"
+                            class="mb-50"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
                             >
                               <b-form-input
-                                v-model="dataVariant.variant3.val"
+                                v-model="dataItem.variant2.val"
                                 class="mb-50"
                               />
                             </div>
-                          </div>
-                        </b-col>
-                      </div>
-                      <div v-else>
-                        <b-col
-                          cols="12"
-                          class="mb-50"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                        </div>
+                        <div v-else>
+                          <b-col
+                            cols="12"
+                            class="mb-50"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
                             >
-                              {{ dataVariant.variant3.val }}
+                              {{ dataItem.variant2.val }}
                             </div>
-                          </div>
-                        </b-col>
-                      </div>
-                    </template>
+                          </b-col>
+                        </div>
+                      </template>
 
-                    <template #cell(price)="data">
-                      <div v-if="editMode === true && indexRow === data.index">
-                        <b-col
-                          v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                      <template #cell(variant3)="data">
+                        <div v-if="editMode === true && indexRow === data.index">
+                          <b-col
+                            cols="12"
+                            class="mb-50"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              <div
+                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                :key="indexVariant+1"
+                              >
+                                <b-form-input
+                                  v-model="dataVariant.variant3.val"
+                                  class="mb-50"
+                                />
+                              </div>
+                            </div>
+                          </b-col>
+                        </div>
+                        <div v-else>
+                          <b-col
+                            cols="12"
+                            class="mb-50"
+                          >
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              <div
+                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                :key="indexVariant+1"
+                              >
+                                {{ dataVariant.variant3.val }}
+                              </div>
+                            </div>
+                          </b-col>
+                        </div>
+                      </template>
+
+                      <template #cell(price)="data">
+                        <div v-if="editMode === true && indexRow === data.index">
+                          <b-col
+                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
+                            cols="12"
+                          >
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              <div
+                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                :key="indexVariant+1"
+                              >
+                                <b-form-input
+                                  v-model="dataVariant.variant3.price"
+                                  class="mb-50"
+                                />
+                              </div>
+                            </div>
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
+                          >
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
                             >
                               <b-form-input
-                                v-model="dataVariant.variant3.price"
+                                v-model="dataItem.variant2.price"
                                 class="mb-50"
                               />
                             </div>
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
                           >
                             <b-form-input
-                              v-model="dataItem.variant2.price"
+                              v-model="data.item.variant1.price"
                               class="mb-50"
                             />
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          <b-form-input
-                            v-model="data.item.variant1.price"
-                            class="mb-50"
-                          />
-                        </b-col>
-                      </div>
-                      <div v-else>
-                        <b-col
-                          v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                        </div>
+                        <div v-else>
+                          <b-col
+                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
+                            cols="12"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
                             >
-                              {{ dataVariant.variant3.price }}
+                              <div
+                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                :key="indexVariant+1"
+                              >
+                                Rp. {{ formatPrice(dataVariant.variant3.price) }}
+                              </div>
                             </div>
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
-                          >
-                            {{ dataItem.variant2.price }}
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          {{ data.item.variant1.price }}
-                        </b-col>
-                      </div>
-                    </template>
-
-                    <template #cell(stock)="data">
-                      <div v-if="editMode === true && indexRow === data.index">
-                        <b-col
-                          v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              {{ dataItem.variant2.price }}
+                            </div>
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
+                          >
+                            {{ data.item.variant1.price }}
+                          </b-col>
+                        </div>
+                      </template>
+
+                      <template #cell(stock)="data">
+                        <div v-if="editMode === true && indexRow === data.index">
+                          <b-col
+                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
+                            cols="12"
+                          >
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              <div
+                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                :key="indexVariant+1"
+                              >
+                                <b-form-input
+                                  v-model="dataVariant.variant3.stock"
+                                  class="mb-50"
+                                />
+                              </div>
+                            </div>
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
+                          >
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
                             >
                               <b-form-input
-                                v-model="dataVariant.variant3.stock"
+                                v-model="dataItem.variant2.stock"
                                 class="mb-50"
                               />
                             </div>
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
                           >
                             <b-form-input
-                              v-model="dataItem.variant2.stock"
+                              v-model="data.item.variant1.stock"
                               class="mb-50"
                             />
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          <b-form-input
-                            v-model="data.item.variant1.stock"
-                            class="mb-50"
-                          />
-                        </b-col>
-                      </div>
-                      <div v-else>
-                        <b-col
-                          v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                        </div>
+                        <div v-else>
+                          <b-col
+                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
+                            cols="12"
                           >
                             <div
-                              v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                              :key="indexVariant+1"
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
                             >
-                              {{ dataVariant.variant3.stock }}
+                              <div
+                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                :key="indexVariant+1"
+                              >
+                                {{ dataVariant.variant3.stock }}
+                              </div>
                             </div>
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
-                        >
-                          <div
-                            v-for="(dataItem, index) in data.item.variant1.option"
-                            :key="index+1"
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
                           >
-                            {{ dataItem.variant2.stock }}
-                          </div>
-                        </b-col>
-                        <b-col
-                          v-if="data.item.variant1.stock !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                          cols="12"
+                            <div
+                              v-for="(dataItem, index) in data.item.variant1.option"
+                              :key="index+1"
+                            >
+                              {{ dataItem.variant2.stock }}
+                            </div>
+                          </b-col>
+                          <b-col
+                            v-if="data.item.variant1.stock !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
+                            cols="12"
+                          >
+                            {{ data.item.variant1.stock }}
+                          </b-col>
+                        </div>
+                      </template>
+
+                      <template #cell(action)="data">
+                        <b-button
+                          variant="flat-secondary"
+                          class="btn-icon"
+                          @click="editTable(data)"
                         >
-                          {{ data.item.variant1.stock }}
-                        </b-col>
-                      </div>
-                    </template>
+                          <feather-icon
+                            icon="EditIcon"
+                          />
+                        </b-button>
+                        <b-button
+                          v-if="editMode === true && indexRow === data.index"
+                          variant="flat-primary"
+                          class="btn-icon"
+                          @click="updateTable(data)"
+                        >
+                          Simpan
+                        </b-button>
+                      </template>
 
-                    <template #cell(action)="data">
-                      <b-button
-                        variant="flat-secondary"
-                        class="btn-icon"
-                        @click="editTable(data)"
-                      >
-                        <feather-icon
-                          icon="EditIcon"
-                        />
-                      </b-button>
-                      <b-button
-                        v-if="editMode === true && indexRow === data.index"
-                        variant="flat-primary"
-                        class="btn-icon"
-                        @click="updateTable(data)"
-                      >
-                        Simpan
-                      </b-button>
-                    </template>
-
-                  </b-table>
+                    </b-table>
+                  </b-overlay>
                 </b-form-group>
               </transition>
 
@@ -1050,6 +1053,7 @@ import {
   BInputGroup,
   BAvatar,
   BSpinner,
+  BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
@@ -1079,6 +1083,7 @@ export default {
     ValidationProvider,
     BAvatar,
     BSpinner,
+    BOverlay,
   },
   directives: {
     Ripple,
@@ -1178,11 +1183,6 @@ export default {
       const fields = [...this.fields]
       return fields
     },
-  },
-  mounted() {
-    this.$httpKomship.get('/v1/product').then(response => {
-      console.log(response.data)
-    })
   },
   methods: {
     submitPublish() {
@@ -1307,14 +1307,14 @@ export default {
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
+            status: '1',
           }).then(response => {
-            const { data } = response
+            console.log(response)
             // Store image
             const formData = new FormData()
             formData.append('_method', 'post')
             formData.append('image_path', this.imageFile)
-            this.$httpKomship.post('/v1/product/temp-img', formData).then(res => {
-              console.log(res)
+            this.$httpKomship.post('/product/upload-img-product', formData).then(() => {
               this.loadingSubmitPublish = false
             }).catch(() => {
               this.$toast({
@@ -1339,7 +1339,6 @@ export default {
             })
             this.loadingSubmitPublish = false
             this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
-            console.log(data)
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,
@@ -1479,14 +1478,12 @@ export default {
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
-          }).then(response => {
-            const { data } = response
+          }).then(() => {
             // Store image
             const formData = new FormData()
             formData.append('_method', 'post')
             formData.append('image_path', this.imageFile)
-            this.$httpKomship.post('/v1/product/temp-img', formData).then(res => {
-              console.log(res)
+            this.$httpKomship.post('/v1/product/upload-img-product', formData).then(() => {
               this.loadingSubmitDraft = false
             }).catch(() => {
               this.$toast({
@@ -1511,7 +1508,6 @@ export default {
             })
             this.loadingSubmitDraft = false
             this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'draft' } })
-            console.log(data)
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,
@@ -1634,18 +1630,13 @@ export default {
           label: 'Stok',
         })
       }
-      this.loading = true
-      setTimeout(() => {
-        this.loading = false
-        this.fields.push(
-          {
-            key: 'action',
-            label: 'Aksi',
-            class: 'col-action',
-          },
-        )
-      }, 1000)
-      console.log(this.variantItems)
+      this.fields.push(
+        {
+          key: 'action',
+          label: 'Aksi',
+          class: 'col-action',
+        },
+      )
       return this.variantItems
     },
     addVariation() {
@@ -1682,17 +1673,17 @@ export default {
       this.formChoices3.splice(index, 1)
     },
     editTable(data) {
-      console.log(data)
-      console.log(data.index)
       this.indexRow = data.index
       this.rowSelected = data.rowSelected
       this.rowSelected = true
       this.editMode = true
     },
-    updateTable(data) {
+    updateTable() {
       this.editMode = false
-      console.log(data)
-      console.log(this.variantItems)
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },
@@ -1701,4 +1692,7 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  font-family: Poppins;
+}
 </style>

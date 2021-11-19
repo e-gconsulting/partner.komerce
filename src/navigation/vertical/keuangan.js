@@ -8,14 +8,14 @@ export default [
       {
         title: 'Penghasilan',
         icon: 'None',
-        resource: 'Keuangan',
+        resource: 'Penghasilan',
         route: 'penghasilan',
         action: 'manage',
       },
       {
         title: 'Saldo',
         icon: 'None',
-        resource: 'Keuangan',
+        resource: 'Saldo',
         route: 'saldo',
         action: 'manage',
       },

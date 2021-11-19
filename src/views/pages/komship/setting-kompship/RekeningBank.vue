@@ -149,6 +149,17 @@
           </b-col>
           <b-col class="d-flex justify-content-end">
             <b-button
+              v-if="editMode === true"
+              class="btn-icon"
+              variant="flat-dark"
+              @click="changeEditMode"
+            >
+              <feather-icon
+                icon="EditIcon"
+              />
+            </b-button>
+            <b-button
+              v-else
               class="btn-icon"
               variant="flat-dark"
               @click="editRekening(data)"
@@ -586,10 +597,8 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(response => {
+      this.$httpKomship.post('v1/send-otp', formData).then(() => {
         this.loadingSubmit = false
-        const { data } = response
-        console.log(data)
         this.$refs['modal-verification-submit'].show()
         this.countDownTimerOtp()
       }).catch(() => {
@@ -609,10 +618,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(response => {
-        const { data } = response
-        console.log(data)
-      }).catch(() => {
+      this.$httpKomship.post('v1/send-otp', formData).then(() => {}).catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -749,7 +755,6 @@ export default {
         .get('xendit/disbursementbankAvailable')
         .then(({ data }) => {
           this.banks = data.data
-          console.log(this.banks)
         })
         .catch(() => {
           this.$toast(
@@ -791,13 +796,16 @@ export default {
     },
     // Handle OTP
     handleOnComplete(value) {
-      console.log('OTP completed: ', value)
+      this.dataPin = value
     },
     handleOnChange(value) {
-      console.log('OTP changed: ', value)
+      this.dataPin = value
     },
     backPage() {
       window.history.go(-1)
+    },
+    changeEditMode() {
+      this.editMode = false
     },
   },
 

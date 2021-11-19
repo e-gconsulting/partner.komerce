@@ -558,7 +558,7 @@ export default {
       noPartner: '',
       menu: [],
 
-      partnerId: null,
+      partnerId: JSON.parse(localStorage.getItem('userData')),
 
       editMode: false,
       menuAksesEdit: [],
@@ -569,9 +569,6 @@ export default {
       email,
     }
   },
-  created() {
-    this.loadPartner()
-  },
   mounted() {
     this.getMenuKomship()
   },
@@ -580,7 +577,7 @@ export default {
       this.$refs.table.refresh()
     },
     tableProvider() {
-      return this.$http.get('/user/partner/get-komship-member/618').then(response => {
+      return this.$http.get(`/user/partner/get-komship-member/${this.partnerId.partner_detail.id}`).then(response => {
         const { data } = response.data
         return data
       }).catch(() => {
@@ -916,8 +913,6 @@ export default {
             }
           }
 
-          console.log(this.menu)
-
           this.loadingSubmit = true
           this.$http.post('/user/partner/create-account', {
             username: this.fullname,
@@ -925,7 +920,7 @@ export default {
             full_name: this.fullname,
             email: this.emailUser,
             menu: this.menu,
-            partner_id: this.partnerId,
+            partner_id: this.partnerId.partner_detail.id,
           }).then(response => {
             const { data } = response
             if (data.code === 400) {
@@ -953,10 +948,8 @@ export default {
               this.$refs['modal-add-account'].hide()
               this.refreshTable()
             }
-            console.log(data)
-          }).catch(error => {
+          }).catch(() => {
             this.loadingSubmit = false
-            console.log(error)
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -998,7 +991,6 @@ export default {
       this.$refs['modal-add-account'].show()
       this.editMode = true
       this.idEdit = data.item.user_id
-      console.log(data)
       const params = {
         user_id: data.item.user_id,
       }
@@ -1006,8 +998,6 @@ export default {
         params,
       }).then(response => {
         response.data.data.forEach(this.arrayMenuKomship)
-        console.log('Item menu edit')
-        console.log(this.menuAksesEdit)
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.menuAksesEdit.length; x++) {
           if (this.menuAksesEdit[x].menu_name === 'Access Application') {
@@ -1119,6 +1109,7 @@ export default {
       }
     },
     submitEditAccess() {
+      this.menu = []
       this.$refs.formRules.validate().then(success => {
         if (success) {
           // Apps
@@ -1437,19 +1428,12 @@ export default {
             }
           }
 
-          console.log(this.menu)
-          console.log(this.idEdit)
-
           this.loadingSubmit = true
-          // const params = {
-          //   user_id: this.idEdit,
-          //   menu: this.menu,
-          // }
+
           this.$http.put('/user/partner/update-account', {
             user_id: this.idEdit,
             menu: this.menu,
           }).then(response => {
-            console.log(response)
             const { data } = response
             if (data.code === 400) {
               this.loadingSubmit = false
@@ -1476,16 +1460,14 @@ export default {
               this.$refs['modal-add-account'].hide()
               this.refreshTable()
             }
-            console.log(data)
-          }).catch(error => {
+          }).catch(() => {
             this.loadingSubmit = false
-            console.log(error)
             this.$toast({
               component: ToastificationContent,
               props: {
                 title: 'Gagal',
                 icon: 'AlertCircleIcon',
-                text: 'Gagal menambahkan akses orang, silahkan coba lagi',
+                text: 'Gagal update akses orang, silahkan coba lagi',
                 variant: 'Danger',
               },
             })
@@ -1496,7 +1478,6 @@ export default {
       })
     },
     confirmDelete(data) {
-      console.log(data)
       this.$swal({
         text: 'Kamu yakin ingin hapus akun ?',
         icon: 'warning',
@@ -1515,8 +1496,7 @@ export default {
       })
     },
     delete(data) {
-      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`).then(response => {
-        const { result } = response.data
+      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -1526,7 +1506,6 @@ export default {
             variant: 'success',
           },
         })
-        console.log(result)
         this.refreshTable()
       })
     },
@@ -1643,12 +1622,6 @@ export default {
       this.password = ''
       this.$refs['modal-add-account'].show()
     },
-    loadPartner() {
-      this.$httpKomship.post('v1/my-profile').then(response => {
-        this.partnerId = response.data.data.partner_id
-        return this.partnerId
-      })
-    },
     getMenuKomship() {
       this.$http.get('user/partner/get-menu-member').then(response => {
         // eslint-disable-next-line no-plusplus
@@ -1666,5 +1639,8 @@ export default {
 </script>
 
 <style>
-
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  font-family: Poppins;
+}
 </style>

@@ -523,9 +523,6 @@ export default {
     this.getProduct()
   },
   methods: {
-    edit(index) {
-      console.log(index)
-    },
     getProduct() {
       this.loading = true
       const params = {
@@ -558,7 +555,6 @@ export default {
       })
     },
     confirmDelete(id) {
-      console.log(id)
       this.$swal({
         title: 'Anda yakin?',
         text: 'Hapus satu produk dari tabel. Aksi ini tidak dapat dibatalkan.',
@@ -577,8 +573,7 @@ export default {
       })
     },
     delete(id) {
-      this.$httpKomship.delete(`/v1/product/delete/${id}`).then(response => {
-        console.log(response)
+      this.$httpKomship.delete(`/v1/product/delete/${id}`).then(() => {
         this.getProduct()
       }).catch(() => {
         this.$toast({
@@ -609,6 +604,11 @@ export default {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+* {
+  font-family: Poppins;
+}
+
 [dir] .background-table-variant {
   background: #FFF;
 }

@@ -347,10 +347,24 @@ export default {
                 { action: 'read', subject: 'Dashboard Komship' },
                 { action: 'manage', subject: 'Customer' },
                 { action: 'manage', subject: 'Produk' },
+                { action: 'manage', subject: 'Tambah Produk' },
+                { action: 'manage', subject: 'Data Produk' },
                 { action: 'manage', subject: 'Order' },
+                { action: 'manage', subject: 'Tambah Order' },
+                { action: 'read', subject: 'Data Order' },
                 { action: 'manage', subject: 'Pickup' },
+                { action: 'manage', subject: 'Ajukan Pickup' },
+                { action: 'manage', subject: 'History Pickup' },
                 { action: 'manage', subject: 'Keuangan' },
+                { action: 'manage', subject: 'Penghasilan' },
+                { action: 'manage', subject: 'Saldo' },
                 { action: 'manage', subject: 'Setting Komship' },
+                { action: 'manage', subject: 'Setting Profile' },
+                { action: 'manage', subject: 'Setting Access Account' },
+                { action: 'manage', subject: 'Setting Pickup Address' },
+                { action: 'manage', subject: 'Setting Rekening Bank' },
+                { action: 'manage', subject: 'Setting PIN' },
+                { action: 'manage', subject: 'Setting Ekspedisi' },
                 { action: 'manage', subject: 'Hiring' },
               ]
               break
@@ -362,17 +376,7 @@ export default {
               break
             case 'KOMSHIP MEMBER':
               ability = [
-                { action: 'manage', subject: 'Komship TalentPool' },
-                { action: 'manage', subject: 'Komship Wishlist' },
-                { action: 'manage', subject: 'PartnerProfile' },
                 { action: 'manage', subject: 'Dashboard Komship' },
-                { action: 'manage', subject: 'Customer' },
-                { action: 'manage', subject: 'Produk' },
-                { action: 'manage', subject: 'Order' },
-                { action: 'manage', subject: 'Pickup' },
-                { action: 'manage', subject: 'Keuangan' },
-                { action: 'manage', subject: 'Setting Komship' },
-                { action: 'manage', subject: 'Hiring' },
               ]
               break
             default:
@@ -388,16 +392,94 @@ export default {
             }
           }
 
+          if (role === 'KOMSHIP MEMBER') {
+            const itemMember = await this.getAccessKomship(data.id)
+            console.log(itemMember)
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < itemMember.length; x++) {
+              if (itemMember[x].access !== 'No Data Access.') {
+                if (itemMember[x].menu_name === 'ORDER') {
+                  ability.push({ action: 'manage', subject: 'Order' })
+                  // eslint-disable-next-line no-plusplus
+                  for (let y = 0; y < itemMember[x].access.length; y++) {
+                    if (itemMember[x].access[y].access_name === 'View') {
+                      ability.push({ action: 'manage', subject: 'Data Order' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Create') {
+                      ability.push({ action: 'manage', subject: 'Tambah Order' })
+                    }
+                  }
+                }
+                if (itemMember[x].menu_name === 'PRODUCT') {
+                  ability.push({ action: 'manage', subject: 'Produk' })
+                  // eslint-disable-next-line no-plusplus
+                  for (let y = 0; y < itemMember[x].access.length; y++) {
+                    if (itemMember[x].access[y].access_name === 'View') {
+                      ability.push({ action: 'manage', subject: 'Data Produk' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Create') {
+                      ability.push({ action: 'manage', subject: 'Tambah Produk' })
+                    }
+                  }
+                }
+                if (itemMember[x].menu_name === 'PICKUP') {
+                  ability.push({ action: 'manage', subject: 'Pickup' })
+                  // eslint-disable-next-line no-plusplus
+                  for (let y = 0; y < itemMember[x].access.length; y++) {
+                    if (itemMember[x].access[y].access_name === 'Submit Pickup') {
+                      ability.push({ action: 'manage', subject: 'Ajukan Pickup' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Pickup History') {
+                      ability.push({ action: 'manage', subject: 'History Pickup' })
+                    }
+                  }
+                }
+                if (itemMember[x].menu_name === 'FINANCE') {
+                  ability.push({ action: 'manage', subject: 'Keuangan' })
+                  // eslint-disable-next-line no-plusplus
+                  for (let y = 0; y < itemMember[x].access.length; y++) {
+                    if (itemMember[x].access[y].access_name === 'Income Data') {
+                      ability.push({ action: 'manage', subject: 'Penghasilan' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Balance Data') {
+                      ability.push({ action: 'manage', subject: 'Saldo' })
+                    }
+                  }
+                }
+                if (itemMember[x].menu_name === 'SETTING') {
+                  ability.push({ action: 'manage', subject: 'Setting Komship' })
+                  // eslint-disable-next-line no-plusplus
+                  for (let y = 0; y < itemMember[x].access.length; y++) {
+                    if (itemMember[x].access[y].access_name === 'Edit Profile') {
+                      ability.push({ action: 'manage', subject: 'Setting Profile' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Account Access') {
+                      ability.push({ action: 'manage', subject: 'Setting Access Account' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Pickup Address') {
+                      ability.push({ action: 'manage', subject: 'Setting Pickup Address' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Bank Account') {
+                      ability.push({ action: 'manage', subject: 'Setting Rekening Bank' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'PIN') {
+                      ability.push({ action: 'manage', subject: 'Setting PIN' })
+                    }
+                    if (itemMember[x].access[y].access_name === 'Expedition') {
+                      ability.push({ action: 'manage', subject: 'Setting Ekspedisi' })
+                    }
+                  }
+                }
+              }
+            }
+            console.log(ability)
+          }
+
           data.ability = ability
           this.$ability.update(ability)
 
           localStorage.setItem('userData', JSON.stringify(data))
           this.$store.commit('auth/UPDATE_USER_DATA', data)
-
-          console.log(data)
-
-          // Get Access Komship Member
-          this.getAccessKomshipMember(data.id)
 
           this.$router
             .replace(getHomeRouteForLoggedInUser(role))
@@ -439,18 +521,13 @@ export default {
           this.loading = false
         })
     },
-    getAccessKomshipMember(userId) {
+    getAccessKomship(id) {
       const params = {
-        user_id: userId,
+        user_id: id,
       }
-      this.$http.get('user/partner/get-menu-komship-member', {
+      return this.$http.get('/user/partner/get-menu-komship-member', {
         params,
-      }).then(response => {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < response.data.data.length; i++) {
-          console.log(response.data.data[i])
-        }
-      })
+      }).then(response => response.data.data)
     },
     logout() {
       useJwt

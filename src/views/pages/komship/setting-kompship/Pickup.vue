@@ -36,11 +36,22 @@
             >
               <span
                 v-if="data.is_default === 1"
-                class="text-danger mr-50"
+                class="text-primary mr-50"
               >
                 <strong>Alamat Utama</strong>
               </span>
               <b-button
+                v-if="editMode === true"
+                variant="flat-dark"
+                class="btn-icon"
+                @click="changeEditMode"
+              >
+                <feather-icon
+                  icon="EditIcon"
+                />
+              </b-button>
+              <b-button
+                v-else
                 variant="flat-dark"
                 class="btn-icon"
                 @click="editAddress(data)"
@@ -535,9 +546,7 @@ export default {
           formData.append('phone', this.fieldAddPhoneUser)
           formData.append('is_default', this.isDefault)
 
-          this.$httpKomship.post('/v1/address/store', formData).then(response => {
-            const { data } = response.data
-            console.log(data)
+          this.$httpKomship.post('/v1/address/store', formData).then(() => {
             this.loadingSubmit = false
             this.formAddAddress = false
             this.getAddress()
@@ -579,7 +588,7 @@ export default {
           formData.append('phone', this.phoneUser)
           formData.append('is_default', this.dataIsDefault)
 
-          this.$httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData).then(response => {
+          this.$httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData).then(() => {
             this.loadingSubmit = false
             this.$toast({
               component: ToastificationContent,
@@ -592,7 +601,6 @@ export default {
             })
             this.editMode = false
             this.getAddress()
-            console.log(response)
           }).catch(() => {
             this.loadingSubmit = false
             this.$toast({
@@ -609,10 +617,8 @@ export default {
       })
     },
     editAddress(data) {
-      console.log(data)
       this.editMode = true
       this.editIdAddress = data.address_id
-      console.log(this.editIdAddress)
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
       this.originValue = data.origin_code
@@ -643,7 +649,6 @@ export default {
       })
     },
     delete(data) {
-      console.log(data)
       this.$httpKomship.delete(`/v1/address/delete/${data.address_id}`)
         .then(() => {
           this.getAddress()
@@ -669,6 +674,9 @@ export default {
       } else {
         this.dataIsDefault = 1
       }
+    },
+    changeEditMode() {
+      this.editMode = false
     },
   },
 
