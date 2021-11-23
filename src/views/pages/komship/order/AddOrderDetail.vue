@@ -11,8 +11,12 @@
         aria-hidden="true"
       />
     </b-button>
-    <b-card-title class="mt-4 mb-4">Tambah Order</b-card-title>
-    <div class="add-order-dsc-title top-right">{{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}</div>
+    <b-card-title class="mt-4 mb-4">
+      Tambah Order
+    </b-card-title>
+    <div class="add-order-dsc-title top-right">
+      {{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}
+    </div>
     <section class="add-order-form mb-4">
       <b-form-group
         class="add-order-label mb-2"
@@ -20,7 +24,9 @@
         label-cols-md="3"
         label-for="input-date2"
       >
-        <div class="add-order-date-label">{{ customerDate }}</div>
+        <div class="add-order-date-label">
+          {{ customerDate }}
+        </div>
         <b-form-datepicker
           id="input-date2"
           ref="dp2"
@@ -241,7 +247,9 @@
         :label="`Total Pembayaran${customerPaymentMethod !== '' ? ` (${customerPaymentMethod})` : ''}`"
         label-cols-md="6"
       >
-        <div class="orange-bold">{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</div>
+        <div class="orange-bold">
+          {{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}
+        </div>
       </b-form-group>
       <div
         v-if="visibleCollapse"
@@ -347,7 +355,9 @@
         <div class="image-wrapper">
           <img src="@/assets/images/icons/success.svg">
         </div>
-        <div class="text-wrapper">Berhasil Tambah Order</div>
+        <div class="text-wrapper">
+          Berhasil Tambah Order
+        </div>
         <b-button
           class="next-button no-mg"
           @click="handleRedirectToDataOrder"
@@ -544,11 +554,7 @@ export default {
       this.onUpdateNettoPrice()
     },
     handleSaveOrder() {
-      if (this.profile.is_onboarding) {
-        this.$emit('onBoardingShow')
-      } else {
-        this.submitOrder()
-      }
+      this.submitOrder()
     },
     handleShowPopUp() {
       this.$root.$emit('bv::show::modal', 'modal-2')
@@ -796,7 +802,11 @@ export default {
         // console.log('detail post order', data)
         if (data) {
           this.isSubmitting = false
-          this.handleShowPopUp()
+          if (this.profile.is_onboarding) {
+            this.$emit('onBoardingShow')
+          } else {
+            this.handleShowPopUp()
+          }
         }
       }).catch(() => {
         this.isSubmitting = false

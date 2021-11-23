@@ -96,8 +96,8 @@ export default {
     changePrintOption(printOption) {
       if (printOption) this.selectedOptions = printOption
     },
-    handleShowOnBoarding() {
-      if (this.profile.is_onboarding) this.$emit('onBoardingShow')
+    handleAfterPrint() {
+      this.$emit('onAfterPrintLabel')
     },
     printContent() {
       printJS({
@@ -106,10 +106,10 @@ export default {
         style: this.getStyle(),
         scanStyles: false,
         honorMarginPadding: false,
-        // onPrintDialogClose: () => this.handleShowOnBoarding(),
+        // onPrintDialogClose: () => this.handleAfterPrint(),
         onError: e => console.log(e),
       })
-      this.handleShowOnBoarding()
+      this.handleAfterPrint()
     },
     getStyle() {
       return `

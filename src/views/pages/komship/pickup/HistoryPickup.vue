@@ -80,6 +80,21 @@ export default {
       delete newItems.data_order
       this.itemsArr.push({ ...newItems })
     },
+    alertFail(textWarn, isReload) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+        },
+        buttonsStyling: false,
+      }).then(() => {
+          if (isReload) this.$forceUpdate()
+      });
+    },
     async reload() {
       this.loading = true
       await this.getProfile()

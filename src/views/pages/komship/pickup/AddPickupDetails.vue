@@ -44,7 +44,7 @@
       :print-option="printOption"
       :profile="profile"
       :list-order="listSelected"
-      @onBoardingShow="handleShowOnBoarding"
+      @onAfterPrintLabel="handleAfterPrintLabel"
     />
   </div>
 </template>
@@ -106,8 +106,12 @@ export default {
     onSubmitPrint(values) {
       if (values) this.$refs.printLabelContent.printContent()
     },
-    handleShowOnBoarding() {
-      if (this.profile.is_onboarding) this.$emit('onBoardingShow')
+    handleAfterPrintLabel() {
+      if (this.profile.is_onboarding) {
+        this.$emit('onBoardingShow')
+      } else {
+      this.$router.push('history-pickup')
+      }
     },
   },
 }

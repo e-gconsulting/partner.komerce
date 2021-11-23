@@ -314,7 +314,8 @@ export default {
     },
     handleSubmitPopUpSuccess() {
       this.$root.$emit('bv::hide::modal', 'modal-7')
-      this.$router.push('history-pickup')
+      this.handleOpenDetailView()
+      // this.$router.push('history-pickup')
     },
     onSelectOrder(arrValue) {
       if (arrValue) {
@@ -336,7 +337,7 @@ export default {
     handleOpenDetailView() {
       this.$emit('onSubmitInputForm', this.selectedOrder, this.selectedOrderId)
     },
-    alertFail(textWarn) {
+    alertFail(textWarn, isReload) {
       this.$swal({
         title: `<span class="font-weight-bold h4">${textWarn}</span>`,
         imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
@@ -347,7 +348,9 @@ export default {
           confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
         },
         buttonsStyling: false,
-      })
+      }).then(() => {
+          if (isReload) this.$forceUpdate()
+      });
     },
     async storePickup() {
       const formData = {
@@ -376,7 +379,7 @@ export default {
         }
       }).catch(() => {
         this.isSubmitting = false
-        this.alertFail('Unable to Request a Pickup. Please and try again later or contact support.')
+        this.alertFail('Unable to Request a Pickup. Please and try again later or contact support.', true)
       })
     },
   },
