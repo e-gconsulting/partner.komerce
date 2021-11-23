@@ -6,6 +6,7 @@
       <data-order-header
         v-if="!isDetail"
         :current-view="currentView"
+        :need-to-send-counter="needToSendCounter"
         :list-product="listProduct"
         :excel-data="excelData"
         @onUpdateView="updateCurrentView"
@@ -69,6 +70,16 @@ export default {
       isDetail: false,
       detailOrderData: {},
       profile: {},
+      listProduct: [],
+      tableItemsAllData: [],
+      needToSendCounter: 0,
+      filterHeaderOption: {
+        all: 'all',
+        send: 'perlu dikirim',
+        sent: 'dikirim',
+        received: 'diterima',
+        retur: 'retur'
+      },
       tableData: {
         header: [
           { key: 'order_date', label: 'Tanggal Order' },
@@ -78,110 +89,8 @@ export default {
           { key: 'order_status', label: 'Status' },
           { key: 'details', label: 'Rincian' },
         ],
-        items: [
-          // {
-          //   order_id: 1,
-          //   customer_name: 'Putri Marani',
-          //   status: 'Diterima',
-          //   order_date: '22 Agustus 2021 16:30',
-          //   order_no: 'RT1219868',
-          //   district: 'Purbalingga',
-          //   detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
-          //   shipping_cost: 20000,
-          //   grand_total: 980000,
-          //   payment_methode: 'COD',
-          //   is_komship: 1,
-          //   bank: null,
-          //   airway_bill: 120109299303930,
-          //   product: [
-          //     {
-          //       product_id: 1,
-          //       product_name: 'Jilbab Pasmia 1-SKU 332',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: 'M - Merah',
-          //       weight: 1000,
-          //       price: 380000,
-          //       qty: 1,
-          //     },
-          //     {
-          //       product_id: 2,
-          //       product_name: 'Jilbab Pasmia 1-SKU 331',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: 'M - Merah',
-          //       weight: 1000,
-          //       price: 200000,
-          //       qty: 1,
-          //     },
-          //     {
-          //       product_id: 3,
-          //       product_name: 'Jilbab Pasmia 1-SKU 330',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: 'M - Merah',
-          //       price: 200000,
-          //       qty: 1,
-          //     },
-          //     {
-          //       product_id: 4,
-          //       product_name: 'Jilbab Pasmia 1-SKU 339',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: 'M - Merah',
-          //       weight: 1000,
-          //       price: 200000,
-          //       qty: 1,
-          //     },
-          //   ],
-          // },
-          // {
-          //   order_id: 2,
-          //   customer_name: 'Putri Marani',
-          //   status: 'Diterima',
-          //   order_date: '22 Agustus 2021. 16:30',
-          //   order_no: 'RT1219868',
-          //   district: 'Purbalingga',
-          //   detail_address: 'Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355',
-          //   shipping_cost: 20000,
-          //   is_komship: 0,
-          //   grand_total: 980000,
-          //   payment_methode: 'Non COD',
-          //   airway_bill: null,
-          //   bank: {
-          //     bank_name: 'BCA',
-          //     account_no: 33129898,
-          //     account_name: 'Hj. Mabur',
-          //   },
-          //   product: [
-          //     {
-          //       product_id: 1,
-          //       product_name: 'Jilbab Pasmia 1-SKU 332',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: '-',
-          //       weight: 1000,
-          //       price: 100000,
-          //       qty: 5,
-          //     },
-          //     {
-          //       product_id: 2,
-          //       product_name: 'Jilbab Pasmia 1-SKU 331',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: '-',
-          //       weight: 1000,
-          //       price: 100000,
-          //       qty: 1,
-          //     },
-          //     {
-          //       product_id: 3,
-          //       product_name: 'Jilbab Pasmia 1-SKU 330',
-          //       product_image: 'images/product/product-980312037.jpg',
-          //       product_variant: '-',
-          //       weight: 1000,
-          //       price: 140000,
-          //       qty: 1,
-          //     },
-          //   ],
-          // },
-        ],
+        items: [],
       },
-      listProduct: [],
       excelData: {
         header: {
           'Tanggal Order': 'order_date',
@@ -257,6 +166,33 @@ export default {
         this.tableData.header.push({ key: 'details', label: 'Rincian' })
         Object.assign(this.excelData.header, { 'Tanggal Diterima': 'order_date' })
       }
+      this.filterDataTableByHeaderType(val)
+    },
+    filterDataTableByHeaderType(type) {
+      let oldItem = this.tableItemsAllData
+      let newItem = []
+      if (type) {
+        if (type === 'all') {
+          newItem = oldItem
+        } else {
+          oldItem.map((item, indexItem) => {
+            if (item && item.order_status.toLowerCase() === this.filterHeaderOption[type]) {
+              newItem.push(item)
+            }
+          })
+        }
+      }
+      this.tableData.items = newItem
+      this.excelData.items = newItem
+    },
+    handleCountNeedToSendOrder() {
+      let needToSendCounterTmp = 0
+      this.tableItemsAllData.map((item, indexItem) => {
+        if (item && item.order_status.toLowerCase() === 'perlu dikirim') {
+          needToSendCounterTmp += 1
+        }
+      })
+      this.needToSendCounter = needToSendCounterTmp
     },
     updateSearchFilterText(val) {
       if (val) this.searchFilterText = val
@@ -313,8 +249,10 @@ export default {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`).then(response => {
         const { data } = response.data.data
         // console.log('listAllOrder', data)
+        this.tableItemsAllData = data
         this.tableData.items = data
         this.excelData.items = data
+        this.handleCountNeedToSendOrder()
       }).catch(() => {
         this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
       })
@@ -335,8 +273,10 @@ export default {
       }).then(response => {
         const { data } = response.data.data
         // console.log('listAllOrderFromFilter', data)
-        this.tableData.items = data
-        this.excelData.items = data
+        // this.tableData.items = data
+        // this.excelData.items = data
+        this.tableItemsAllData = data
+        this.filterDataTableByHeaderType(this.currentView)
       }).catch(() => {
         this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
       })

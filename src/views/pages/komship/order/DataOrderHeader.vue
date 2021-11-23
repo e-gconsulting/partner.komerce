@@ -1,6 +1,8 @@
 <template>
   <div class="data-order-header-wrapper">
-    <b-card-title class="mb-4">Data Order</b-card-title>
+    <b-card-title class="mb-4">
+      Data Order
+    </b-card-title>
     <div class="data-order-floating-button-wrapper top-right">
       <b-button
         v-if="currentView === 'send'"
@@ -49,7 +51,12 @@
         >
           Semua
         </div>
-        <div class="tag-item">05</div>
+        <div
+          v-if="needToSendCounter && needToSendCounter > 0"
+          class="tag-item"
+        >
+          {{ needToSendCounter > 9 ? needToSendCounter : `0${needToSendCounter}` }}
+        </div>
       </b-nav-item>
       <b-nav-item
         class="data-order-nav-item"
@@ -105,7 +112,9 @@
           placeholder="Example"
           @input="updateSearchFilterText"
         />
-        <div class="icon-magnify-glass"><b-icon-search /></div>
+        <div class="icon-magnify-glass">
+          <b-icon-search />
+        </div>
       </div>
       <data-order-filter
         :list-product="listProduct"
@@ -152,6 +161,10 @@ export default {
     excelData: {
       type: Object,
       default: () => {},
+    },
+    needToSendCounter: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
