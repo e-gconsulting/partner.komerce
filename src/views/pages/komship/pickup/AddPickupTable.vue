@@ -1,51 +1,58 @@
 <template>
   <div class="add-pickup-table-wrapper">
-    <div class="add-pickup-table-title">Orderan</div>
-    <b-table
-      :fields="fields"
-      :items="items"
-      borderless
+    <div class="add-pickup-table-title">
+      Orderan
+    </div>
+    <div
+      class="add-pickup-table-content-animated"
+      :style="{ maxHeight: (isExpand ? (items && items.length ? `${ (items.length * 100.15) + 43.85 }px` : '100%') : '244.15px') }"
     >
+      <b-table
+        :fields="fields"
+        :items="items"
+        borderless
+      >
 
-      <template #head(qty)="data">
-        <div class="add-pickup-header-table-qty">{{ data.label }}</div>
-      </template>
+        <template #head(qty)="data">
+          <div class="add-pickup-header-table-qty">{{ data.label }}</div>
+        </template>
 
-      <template #cell(product)="productData">
-        <div
-          v-for="(prodItem, prodIndex) in productData.value"
-          :key="prodIndex+'prodItem'"
-          class="product-item-wrapper"
-        >
-          <div class="product-name-img-wrapper">
-            <img :src="prodItem.product_image">
-          </div>
-          <div class="product-name-wrapper">
-            <div class="product-name-content">
-              <div class="product-name-text">
-                {{ prodItem.product_name }}
-              </div>
-              <div class="product-name-variant-wrapper org-text">
-                {{ (prodItem && prodItem.variant_name) ? (prodItem.variant_name.replace(' -', ',')) : ((prodItem && prodItem.product_variant_name) ? (prodItem.product_variant_name.replace(' -', ',')) : '') }}
+        <template #cell(product)="productData">
+          <div
+            v-for="(prodItem, prodIndex) in productData.value"
+            :key="prodIndex+'prodItem'"
+            class="product-item-wrapper"
+          >
+            <div class="product-name-img-wrapper">
+              <img :src="prodItem.product_image">
+            </div>
+            <div class="product-name-wrapper">
+              <div class="product-name-content">
+                <div class="product-name-text">
+                  {{ prodItem.product_name }}
+                </div>
+                <div class="product-name-variant-wrapper org-text">
+                  {{ (prodItem && prodItem.variant_name) ? (prodItem.variant_name.replace(' -', ',')) : ((prodItem && prodItem.product_variant_name) ? (prodItem.product_variant_name.replace(' -', ',')) : '') }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template #cell(qty)="jumlahData">
-        <div
-          v-for="(prodItem, prodIndex) in jumlahData.item.product"
-          :key="prodIndex+'jumlahProdukItem'"
-          class="product-item-wrapper total-product-item-wrapper-on-pickup"
-        >
-          <div class="product-name-qty">
-            {{ `x${prodItem.qty}` }}
+        <template #cell(qty)="jumlahData">
+          <div
+            v-for="(prodItem, prodIndex) in jumlahData.item.product"
+            :key="prodIndex+'jumlahProdukItem'"
+            class="product-item-wrapper total-product-item-wrapper-on-pickup"
+          >
+            <div class="product-name-qty">
+              {{ `x${prodItem.qty}` }}
+            </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-    </b-table>
+      </b-table>
+    </div>
 
     <div
       v-if="items.length === 0"
@@ -67,7 +74,7 @@
       class="add-pickup-input-notice-filled mb-2"
     >
       <div
-        class="add-pickup-input-notice-filled-button"
+        :class="`add-pickup-input-notice-filled-button ${ items && items.length && items.length < 3 ? 'hide-details-button' : '' }`"
         @click="handleOpenDetailView"
       >
         Lihat detail...
@@ -99,11 +106,13 @@ export default {
     },
   },
   data() {
-    return {}
+    return {
+      isExpand: false,
+    }
   },
   methods: {
     handleOpenDetailView() {
-      this.$emit('onDetailView')
+      this.isExpand = !this.isExpand
     },
     onChooseOrder() {
       this.$emit('onChooseOrder')

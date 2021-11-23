@@ -84,7 +84,6 @@
       <add-pickup-table
         :fields="fields"
         :items="itemsArr"
-        @onDetailView="handleOpenDetailView"
       />
     </section>
   </div>
@@ -126,9 +125,6 @@ export default {
   methods: {
     onUpdateScreenViewParent() {
       this.$emit('onBackButtonClicked')
-    },
-    handleOpenDetailView() {
-      console.log('handleOpenDetailView')
     },
   },
 }

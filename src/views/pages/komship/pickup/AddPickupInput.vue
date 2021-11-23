@@ -135,7 +135,6 @@
         :fields="fields"
         :items="selectedOrder"
         @onChooseOrder="onChooseOrder"
-        @onDetailView="handleOpenDetailView"
       />
 
       <div class="add-pickup-input-notice-notif">
