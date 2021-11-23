@@ -259,7 +259,17 @@
               />
             </b-col>
             <b-col cols="3">
-              <b-form-select v-model="selectedKota" :options="optionsKota" />
+              <Dropdown
+                :options="optionsKota"
+                v-on:selected="selectedKota"
+                v-on:filter="optionsKota"
+                :disabled="false"
+                class="custom-dropdown"
+                name="zipcode"
+                :maxItem="10"
+                placeholder="Please select an option"
+              >
+              </Dropdown>
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -319,7 +329,17 @@
               />
             </b-col>
             <b-col cols="3">
-              <b-form-select v-model="selectedKota" :options="optionsKota" />
+              <Dropdown
+                :options="optionsKota"
+                v-on:selected="selectedKota"
+                v-on:filter="optionsKota"
+                :disabled="false"
+                class="custom-dropdown"
+                name="zipcode"
+                :maxItem="10"
+                placeholder="Please select an option"
+              >
+              </Dropdown>
             </b-col>
           </b-row>
           <b-row class="mt-1">

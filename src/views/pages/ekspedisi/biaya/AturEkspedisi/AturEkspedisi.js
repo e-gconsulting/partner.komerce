@@ -16,6 +16,7 @@ import {
   BSpinner,
   BCardBody,
 } from 'bootstrap-vue'
+import Dropdown from 'vue-simple-search-dropdown'
 
 export default {
   components: {
@@ -24,6 +25,7 @@ export default {
     BForm,
     BFormInput,
     // BFormGroup,
+    Dropdown,
     BInputGroup,
     BFormSelect,
     // BFormCheckbox,
@@ -97,13 +99,28 @@ export default {
   },
   mounted() {
     //
+
   },
   created() {
+    this.getKota()
     setTimeout(() => {
       this.loadDataAwal = false
     }, 1000)
   },
   methods: {
+    getKota() {
+      const endpoint = 'api/v1/destination'
+      const fetchData = axioskomsipdev.get(endpoint)
+      fetchData.then(async data => {
+        const array = data.data.data.data
+        const newdata = await array.map(val => ({
+          id: val.value,
+          name: val.label,
+        }))
+        console.log('Kota', newdata)
+        this.optionsKota = newdata
+      })
+    },
     submitData() {
       console.log(this.name)
       const endpoint = 'api/v1/admin/shippment/create'

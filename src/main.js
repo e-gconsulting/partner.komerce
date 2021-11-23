@@ -4,6 +4,7 @@ import VueCompositionAPI from '@vue/composition-api'
 import VueLodash from 'vue-lodash'
 
 import lodash from 'lodash'
+import Dropdown from 'vue-simple-search-dropdown'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -23,7 +24,6 @@ import '@/libs/tour'
 import '@/libs/maps'
 import '@/libs/geocoder'
 import '@/libs/filters'
-
 // Axios Mock Adapter
 // import '@/@fake-db/db'
 
@@ -33,7 +33,7 @@ Vue.use(ModalPlugin)
 
 // Composition API
 Vue.use(VueCompositionAPI)
-
+Vue.use(Dropdown)
 // Lodash
 Vue.use(VueLodash, { lodash })
 
