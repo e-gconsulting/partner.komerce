@@ -26,7 +26,7 @@
               Penghasilan
               <div class="d-flex align-items-center">
                 <p class="mb-0 mr-1">7 Hari Terakhir</p>
-                <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+                <popover-info text="Akumulasi penghasilan 7 hari terakhir."/>
               </div>
             </div>
           </div>
@@ -42,7 +42,7 @@
               Penghasilan
               <div class="d-flex align-items-center">
                 <p class="mb-0 mr-1">30 Hari Terakhir</p>
-                <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+                <popover-info text="Akumulasi penghasilan dalam 30 hari terakhir."/>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@
               Penghasilan
               <div class="d-flex align-items-center">
                 <p class="mb-0 mr-1">Total</p>
-                <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+                <popover-info text="Akumulasi total penghasilan yang didapatkan."/>
               </div>
             </div>
           </div>
@@ -118,11 +118,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Orderan COD</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Orderan COD merupakan presentase perbandingan jumlah order antara metode pembayaran COD dengan Transfer Bank."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ dataCod.orderan }}%
@@ -133,10 +129,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Orderan Sukses</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                      />
+                     <popover-info text="Presentase orderan dengan status diterima, dari seluruh orderan."/>
                     </div>
                     <div class="info-card-body-text">{{ dataCod.sukses }}%</div>
                   </div>
@@ -145,11 +138,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Orderan Retur</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Presentase orderan dengan status retur dari seluruh orderan."/>
                     </div>
                     <div class="info-card-body-text">{{ dataCod.retur }}%</div>
                   </div>
@@ -158,11 +147,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Penghasilan Kotor</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi penghasilan kotor."/>
                     </div>
                     <div class="info-card-body-text text-orange">
                       {{ formatRupiah(dataCod.pKotor) }}
@@ -175,11 +160,7 @@
                       <div class="info-card-header-text">
                         Penghasilan Bersih
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi penghasilan bersih."/>
                     </div>
                     <div class="info-card-body-text text-blue">
                       {{ formatRupiah(dataCod.pBersih) }}
@@ -192,11 +173,7 @@
                       <div class="info-card-header-text">
                         Cashback Ongkos Kirim
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi perolehan cashback ongkos kirim yang diperoleh."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.cashbackOngkir) }}
@@ -207,11 +184,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Ongkos Kirim</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi nilai ongkos kirim kotor (tanpa cashback)."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.ongkir) }}
@@ -224,11 +197,7 @@
                       <div class="info-card-header-text">
                         Ongkos Kirim Bersih
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi nilai ongkos kirim bersih (setelah cashback)."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.ongkirBersih) }}
@@ -239,11 +208,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Biaya COD</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi seluruh Biaya COD dari setiap transaksi COD."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataCod.biayaCod) }}
@@ -265,11 +230,7 @@
                       <div class="info-card-header-text">
                         Orderan Transfer Bank
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Orderan Transfer Bank merupakan presentase perbandingan jumlah order antara metode pembayaran Transfer Bank dengan COD."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ dataTransfer.orderan }}%
@@ -280,10 +241,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Orderan Sukses</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                      />
+                      <popover-info text="Presentase orderan dengan status diterima, dari seluruh orderan."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ dataTransfer.sukses }}%
@@ -294,11 +252,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Orderan Retur</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Presentase orderan dengan status retur dari seluruh orderan.Akumulasi penghasilan kotor."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ dataTransfer.retur }}%
@@ -309,11 +263,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Penghasilan Kotor</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi penghasilan kotor."/>
                     </div>
                     <div class="info-card-body-text text-orange">
                       {{ formatRupiah(dataTransfer.pKotor) }}
@@ -326,11 +276,7 @@
                       <div class="info-card-header-text">
                         Penghasilan Bersih
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi penghasilan bersih."/>
                     </div>
                     <div class="info-card-body-text text-blue">
                       {{ formatRupiah(dataTransfer.pBersih) }}
@@ -343,11 +289,7 @@
                       <div class="info-card-header-text">
                         Cashback Ongkos Kirim
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi perolehan cashback ongkos kirim yang diperoleh."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.cashbackOngkir) }}
@@ -358,11 +300,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Ongkos Kirim</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi nilai ongkos kirim kotor (tanpa cashback)."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.ongkir) }}
@@ -375,11 +313,7 @@
                       <div class="info-card-header-text">
                         Ongkos Kirim Bersih
                       </div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi nilai ongkos kirim bersih (setelah cashback)."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.ongkirBersih) }}
@@ -390,11 +324,7 @@
                   <div class="border rounded-16 h-100 p-1">
                     <div class="d-flex flex-nowrap">
                       <div class="info-card-header-text">Biaya COD</div>
-                      <img
-                        src="@/assets/images/icons/info-circle.svg"
-                        alt="Info"
-                        class="ml-1"
-                      />
+                      <popover-info text="Akumulasi seluruh Biaya COD dari setiap transaksi COD."/>
                     </div>
                     <div class="info-card-body-text">
                       {{ formatRupiah(dataTransfer.biayaCod) }}
@@ -419,6 +349,7 @@ import vSelect from 'vue-select'
 import DateRangePicker from 'vue2-daterange-picker'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
   components: {
@@ -426,6 +357,7 @@ export default {
     DateRangePicker,
     vSelect,
     ChartPenghasilan,
+    PopoverInfo,
   },
   data() {
     const today = new Date()

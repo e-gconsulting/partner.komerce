@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { ToastPlugin, ModalPlugin } from 'bootstrap-vue'
+import { ToastPlugin, ModalPlugin, PopoverPlugin } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import VueLodash from 'vue-lodash'
 
@@ -31,6 +31,7 @@ import '@/@fake-db/db'
 // BSV Plugin Registration
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
+Vue.use(PopoverPlugin)
 
 // Composition API
 Vue.use(VueCompositionAPI)

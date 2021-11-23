@@ -75,13 +75,17 @@
                     scope="col"
                   >
                     {{ title }}
-                    <img
-                      v-if="
-                        tableTitles.indexOf(title) == 3 ||
+                    <popover-info
+                    v-if="
+                        tableTitles.indexOf(title) == 3
+                      "
+                      text="Ongkos kirim dari orderan."
+                    />
+                                       <popover-info
+                    v-if="
                         tableTitles.indexOf(title) == 4
                       "
-                      src="@/assets/images/icons/info-circle-dark.svg"
-                      alt="Info"
+                      text="Biaya COD dari orderan yang menggunakan layanan COD."
                     />
                   </th>
                 </tr>
@@ -156,8 +160,12 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
+  components: {
+    PopoverInfo,
+  },
   data() {
     return {
       tableTitles: [

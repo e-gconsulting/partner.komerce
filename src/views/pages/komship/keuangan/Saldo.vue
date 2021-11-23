@@ -7,7 +7,7 @@
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
               <div class="first-card-header-text me-8 mb-0">Saldo</div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <popover-info text="Saldo kamu saat ini."/>
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -72,7 +72,7 @@
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
               <div class="first-card-header-text me-8 mb-0">Saldo Pending</div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
+              <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima."/>
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
@@ -89,7 +89,6 @@
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
               <div class="first-card-header-text me-8 mb-0">Rekening Bank</div>
-              <img src="@/assets/images/icons/info-circle.svg" alt="Info" />
             </div>
           </div>
           <div class="card-body pb-0 mb-0">
@@ -423,7 +422,7 @@
             </p>
             <PincodeInput
               v-model="pin"
-              :length="4"
+              :length="6"
               class="font-weight-bold h-text-dark"
             />
             <div class="col-12 mt-2">
@@ -471,6 +470,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 import PincodeInput from 'vue-pincode-input'
 
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
   components: {
@@ -481,6 +481,7 @@ export default {
     BPagination,
     DateRangePicker,
     PincodeInput,
+    PopoverInfo,
   },
   data() {
     const today = new Date()

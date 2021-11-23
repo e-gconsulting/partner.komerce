@@ -11,10 +11,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <popover-info text="Saldo kamu saat ini."/>
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -86,10 +83,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo Pending
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima."/>
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
@@ -108,10 +102,6 @@
               <div class="first-card-header-text me-8 mb-0">
                 Cashback
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
             </div>
           </div>
           <div class="card-body pb-0 mb-0">
@@ -133,10 +123,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Penghasilan
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <popover-info text="Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir."/>
             </div>
             <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
               <v-select
@@ -147,10 +134,6 @@
                 :clearable="false"
               />
             </b-form-group>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
-            >
           </div>
           <div class="position-relative card-body">
             <v-select
@@ -229,10 +212,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Top Admin Order
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <popover-info text="Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan"/>
             </div>
           </div>
           <div class="card-body">
@@ -275,10 +255,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Produk Terlaris
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <popover-info text="Produk Terlaris merupakan produk kamu yang paling banyak di order."/>
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
@@ -365,10 +342,7 @@
               <div class="first-card-header-text me-8 mb-0">
                 Customer Loyal
               </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
+              <popover-info text="Customer Loyal merupakan customer yang sering melakukan order."/>
             </div>
             <img
               src="@/assets/images/icons/arrow-square-right.svg"
@@ -642,7 +616,7 @@
             </p>
             <PincodeInput
               v-model="pin"
-              :length="4"
+              :length="6"
               class="font-weight-bold h-text-dark"
             />
             <div class="col-12 mt-2">
@@ -694,6 +668,7 @@ import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 // import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import Onboarding from '../onboarding/Onboarding.vue'
+import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
   components: {
@@ -707,6 +682,7 @@ export default {
     PincodeInput,
     vSelect,
     Onboarding,
+    PopoverInfo,
   },
   data() {
     const today = new Date()
