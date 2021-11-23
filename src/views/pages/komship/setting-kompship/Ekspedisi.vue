@@ -1,7 +1,7 @@
 <template>
   <b-card>
     <!-- Dialog Konfirmasi Non Kompship -->
-    <b-modal
+    <!-- <b-modal
       ref="modal-konfirmasi-nonkompship"
       no-close-on-backdrop
       hide-header-close
@@ -41,7 +41,7 @@
         </b-col>
       </template>
 
-    </b-modal>
+    </b-modal> -->
 
     <b-row class="d-flex align-items-center mt-1">
       <b-col>
@@ -132,114 +132,13 @@
         />
       </b-col>
     </b-row>
-
-    <b-row
-      v-if="settingEkspedisi === false"
-      class="mt-3"
-    >
-      <b-col>
-        <b-table
-          :fields="fieldsSendNonKompship"
-          :items="itemsSendNonKompship"
-          class="border"
-        >
-
-          <template #cell(send_non_kompship)>
-
-            <b-table
-              :fields="fields"
-              :items="items"
-            >
-
-              <template #cell(name_ekspedisi)="data">
-                <b-col>
-                  <h5>
-                    {{ data.value }}
-                  </h5>
-                </b-col>
-              </template>
-
-              <template #cell(status)="data">
-                <b-row class="d-flex align-items-center">
-                  <b-form-checkbox
-                    v-model="statusEkspedisiNonKomship"
-                    class="custom-control-primary"
-                    name="check-button"
-                    switch
-                  />
-
-                  <b-button
-                    class="btn-icon"
-                    size="sm"
-                    variant="flat-dark"
-                    @click="confirmDelete(data)"
-                  >
-                    <feather-icon
-                      icon="Trash2Icon"
-                    />
-                  </b-button>
-                </b-row>
-              </template>
-            </b-table>
-
-            <transition name="fade">
-              <b-col
-                v-if="formAddEkspedisi === true"
-                class="mt-50"
-              >
-                <b-form
-                  @submit.prevent
-                >
-                  <b-row>
-                    <b-col md="5">
-                      <v-select />
-                    </b-col>
-                    <b-col
-                      md="12"
-                      class="mt-1"
-                    >
-                      <b-button
-                        variant="primary"
-                        @click="submitEkspedisi"
-                      >
-                        <feather-icon
-                          icon="PlusIcon"
-                          class="mr-50"
-                        />
-                        <span class="align-middle">Simpan</span>
-                      </b-button>
-                    </b-col>
-                  </b-row>
-                </b-form>
-              </b-col>
-            </transition>
-
-            <b-col class="mt-2">
-              <b-button
-                variant="outline-primary"
-                @click="addEkspedisi"
-              >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Tambahkan Ekspedisi</span>
-              </b-button>
-            </b-col>
-
-          </template>
-
-        </b-table>
-      </b-col>
-    </b-row>
-
   </b-card>
 </template>
 
 <script>
 import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
 import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
-import vSelect from 'vue-select'
+// import vSelect from 'vue-select'
 import { heightTransition } from '@core/mixins/ui/transition'
 import {
   BCard,
@@ -247,11 +146,7 @@ import {
   BCol,
   BFormCheckbox,
   BTable,
-  BButton,
-  BForm,
-  BModal,
   VBModal,
-  BImg,
   BOverlay,
 } from 'bootstrap-vue'
 
@@ -264,11 +159,6 @@ export default {
     BTable,
     AppCollapse,
     AppCollapseItem,
-    BButton,
-    vSelect,
-    BForm,
-    BModal,
-    BImg,
     BOverlay,
   },
   directives: {
@@ -298,18 +188,9 @@ export default {
         },
       ],
 
-      fieldsSendNonKompship: [
-        {
-          key: 'send_non_kompship', label: 'Pengiriman Non Kompship',
-        },
-      ],
-
       items: [
         {
           name_ekspedisi: 'JNE',
-        },
-        {
-          name_ekspedisi: 'J&T',
         },
       ],
 
@@ -319,21 +200,18 @@ export default {
         },
       ],
 
-      itemsSendNonKompship: [
-        {
-          send_non_kompship: null,
-        },
-      ],
       loading: false,
     }
   },
   mounted() {
-    this.$refs['modal-konfirmasi-nonkompship'].show()
+    // this.$refs['modal-konfirmasi-nonkompship'].show()
+    this.$httpKomship.get('/v1/partner/shipment', {
+      is_komship: 1,
+    }).then(response => {
+      console.log(response.data.data)
+    })
   },
   methods: {
-    closeConfirmNonkomship() {
-      this.$refs['modal-konfirmasi-nonkompship'].hide()
-    },
     switchSettingEkspedisi() {
       if (this.settingEkspedisi === true) {
         this.settingEkspedisi = true

@@ -70,7 +70,7 @@ export default [
     },
   },
   {
-    path: '/kompship/daftar',
+    path: '/komship-register',
     name: 'kompship-daftar',
     component: () => import('@/views/pages/authentication/RegisterKompship'),
     meta: {

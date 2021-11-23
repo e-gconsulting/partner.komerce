@@ -8,14 +8,14 @@ export default [
       {
         title: 'Tambah Produk',
         icon: 'None',
-        resource: 'Produk',
+        resource: 'Tambah Produk',
         route: 'add-produk',
         action: 'manage',
       },
       {
         title: 'Data Produk',
         icon: 'None',
-        resource: 'Produk',
+        resource: 'Data Produk',
         route: 'data-produk',
         action: 'manage',
       },

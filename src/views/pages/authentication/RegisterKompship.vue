@@ -49,7 +49,7 @@
                     <label for="fullname">
                       Nama Lengkap
                     </label>
-                    <small class="text-danger"> {{ errors[0] }} </small>
+                    <small class="text-primary"> {{ errors[0] }} </small>
                   </validation-provider>
                 </b-col>
 
@@ -73,7 +73,7 @@
                     <label for="emailUser">
                       Email
                     </label>
-                    <small class="text-danger"> {{ errors[0] }} </small>
+                    <small class="text-primary"> {{ errors[0] }} </small>
                   </validation-provider>
                 </b-col>
 
@@ -90,19 +90,19 @@
                   >
                     <b-form-input
                       id="password"
-                      v-model="password"
+                      v-model="userPassword"
                       class="bg-light"
-                      :type="passwordFieldType"
+                      :type="passwordFieldTypePassword"
                       :state="errors.length > 0 ? false:null"
                       required
                     />
                     <label for="password">Password</label>
                     <feather-icon
-                      :icon="passwordToggleIcon"
+                      :icon="passwordToggleIconPassword"
                       class="icon-password"
-                      @click="togglePasswordVisibility"
+                      @click="togglePasswordVisibilityPassword"
                     />
-                    <small class="text-danger">{{ errors[0] }}</small>
+                    <small class="text-primary">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-col>
                 <b-col
@@ -119,32 +119,39 @@
                       id="confirm-password"
                       v-model="confirmPassword"
                       :class="confirmPassword !== confirmPassword ? 'is-invalid' : 'bg-light'"
-                      :type="passwordFieldType"
+                      :type="passwordFieldTypeConfirmPassword"
                       :state="errors.length > 0 || submitErrors.password ? false:null"
                       required
                     />
                     <label for="confirm-password">Confirm Password</label>
                     <feather-icon
-                      :icon="passwordToggleIcon"
+                      :icon="passwordToggleIconConfirmPassword"
                       class="icon-password"
-                      @click="togglePasswordVisibility"
+                      @click="togglePasswordVisibilityConfirmPassword(togglePasswordVisibility)"
                     />
-                    <small class="text-danger">{{ errors[0] }}</small>
+                    <small class="text-primary">{{ errors[0] }}</small>
                   </validation-provider>
 
-                  <b-form-group v-if="confirmPassword !== password">
-                    <small class="text-danger">*Pastikan konfirmasi password sama dengan password sebelumnya</small>
+                  <b-form-group v-if="confirmPassword !== userPassword">
+                    <small class="text-primary">*Pastikan konfirmasi password sama dengan password sebelumnya</small>
                   </b-form-group>
                 </b-col>
 
                 <!-- checkbox -->
                 <b-col cols="12">
                   <b-form-group>
-                    <b-form-checkbox
-                      v-model="agree"
+                    <validation-provider
+                      #default="{errors}"
+                      rules="required"
                     >
-                      Saya setuju dengan syarat dan ketentuan Kompship
-                    </b-form-checkbox>
+                      <b-form-checkbox
+                        v-model="agree"
+                        :state="errors.length > 0 || submitErrors.agree ? false:null"
+                        required
+                      >
+                        Saya setuju dengan syarat dan ketentuan Kompship
+                      </b-form-checkbox>
+                    </validation-provider>
                   </b-form-group>
                 </b-col>
 
@@ -159,7 +166,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || loading"
+                        :disabled="invalid || agree === false || confirmPassword !== userPassword"
                       >
                         <b-spinner
                           v-if="loading"
@@ -199,8 +206,6 @@ import {
   BRow,
   BFormGroup,
   BFormInput,
-  // BInputGroup,
-  // BInputGroupAppend,
   BFormCheckbox,
   BForm,
   BButton,
@@ -216,8 +221,6 @@ export default {
     BRow,
     BFormGroup,
     BFormInput,
-    // BInputGroup,
-    // BInputGroupAppend,
     BFormCheckbox,
     BForm,
     BButton,
@@ -231,10 +234,11 @@ export default {
   mixins: [togglePasswordVisibility],
   data() {
     return {
-      agree: '',
+      agree: false,
       fullname: '',
       userEmail: '',
       userPassword: '',
+      confirmPassword: '',
       loading: false,
 
       submitErrors: '',
@@ -242,23 +246,22 @@ export default {
       required,
       email,
 
+      passwordFieldTypePassword: 'password',
+      passwordFieldTypeConfirmPassword: 'password',
+
       data: [],
     }
   },
   computed: {
-    passwordToggleIcon() {
-      return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+    passwordToggleIconPassword() {
+      return this.passwordFieldTypePassword === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+    },
+    passwordToggleIconConfirmPassword() {
+      return this.passwordFieldTypeConfirmPassword === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
   },
   methods: {
     login() {
-      console.log(this.fullname)
-      console.log(this.userEmail)
-      console.log(this.userPassword)
-      if (this.agree === '') {
-        this.agree = false
-      }
-      console.log(this.agree)
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
@@ -268,38 +271,42 @@ export default {
             full_name: this.fullname,
             email: this.userEmail,
             password: this.userPassword,
-            password_confirmation: this.userPassword,
+            password_confirmation: this.confirmPassword,
           })
             .then(response => {
-              if (response.data.status === false) {
-                this.error = response.data.message
-                this.loading = false
-              } else {
-                this.$router.push({ name: 'auth-login' })
+              console.log(response)
+              this.$router.push({ name: 'auth-login' })
 
-                this.$swal({
-                  title: 'Pendaftaran berhasil',
-                  text: 'Harap periksa email anda untuk verifikasi akun Anda.',
-                  icon: 'success',
-                  confirmButtonText: 'Mengerti',
-                  customClass: {
-                    confirmButton: 'btn btn-primary',
-                  },
-                })
-              }
+              this.$swal({
+                title: 'Pendaftaran berhasil',
+                text: 'Harap periksa email anda untuk verifikasi akun Anda.',
+                icon: 'success',
+                confirmButtonText: 'Mengerti',
+                customClass: {
+                  confirmButton: 'btn btn-primary',
+                },
+              })
             }).catch(error => {
               this.loading = false
 
-              if (error.response.status === 422) {
-                this.submitErrors = Object.fromEntries(
-                  Object.entries(error.response.data.data).map(
-                    ([key, value]) => [key, value[0]],
-                  ),
-                )
-              }
+              console.log(error)
             })
         }
       })
+    },
+    togglePasswordVisibilityPassword() {
+      if (this.passwordFieldTypePassword === 'password') {
+        this.passwordFieldTypePassword = 'text'
+      } else if (this.passwordFieldTypePassword === 'text') {
+        this.passwordFieldTypePassword = 'password'
+      }
+    },
+    togglePasswordVisibilityConfirmPassword() {
+      if (this.passwordFieldTypeConfirmPassword === 'password') {
+        this.passwordFieldTypeConfirmPassword = 'text'
+      } else if (this.passwordFieldTypeConfirmPassword === 'text') {
+        this.passwordFieldTypeConfirmPassword = 'password'
+      }
     },
   },
 }

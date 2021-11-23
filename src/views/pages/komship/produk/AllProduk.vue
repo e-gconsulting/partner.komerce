@@ -319,7 +319,7 @@
                     class="btn-icon"
                     size="sm"
                     variant="flat-dark"
-                    @click="confirmDelete(itemsData.product_id)"
+                    @click="showConfirmDelete(itemsData.product_id)"
                   >
                     <feather-icon
                       icon="Trash2Icon"
@@ -408,6 +408,57 @@
         </b-overlay>
       </b-col>
     </b-row>
+
+    <!-- confirm Delete Product -->
+    <b-modal
+      ref="modal-confirm-delete-product"
+      no-close-on-backdrop
+      hide-header-close
+      hide-header
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-1">
+        <h4>
+          Anda yakin ingin hapus satu produk ?
+        </h4>
+      </b-col>
+
+      <template #modal-footer>
+        <b-col
+          md="12"
+          class="d-flex justify-content-center pb-2"
+        >
+          <b-button
+            variant="primary"
+            class="mr-50"
+            @click="deleteProduct"
+          >
+            Iya
+          </b-button>
+          <b-button
+            variant="flat-primary"
+            @click="closeConfirmDelete"
+          >
+            Batal
+          </b-button>
+        </b-col>
+      </template>
+
+    </b-modal>
+
   </b-col>
 </template>
 
@@ -422,7 +473,6 @@ import {
   BInputGroupPrepend,
   BButton,
   BImg,
-  // BTable,
   BAvatar,
   VBPopover,
   BPopover,
@@ -430,6 +480,7 @@ import {
   BContainer,
   BCollapse,
   VBToggle,
+  BModal,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -444,13 +495,13 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    // BTable,
     BAvatar,
     BPopover,
     BForm,
     BOverlay,
     BContainer,
     BCollapse,
+    BModal,
   },
   directives: {
     'b-popover': VBPopover,
@@ -461,6 +512,8 @@ export default {
     return {
       defaultFilter: 0,
       headVariant: null,
+
+      idDelete: '',
 
       loading: false,
       variantFieldsTable: [
@@ -554,26 +607,25 @@ export default {
         })
       })
     },
-    confirmDelete(id) {
-      this.$swal({
-        title: 'Anda yakin?',
-        text: 'Hapus satu produk dari tabel. Aksi ini tidak dapat dibatalkan.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus!',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-danger ml-1',
-        },
-        buttonsStyling: false,
-      }).then(result => {
-        if (result.value) {
-          this.delete(id)
-        }
-      })
+    showConfirmDelete(id) {
+      this.idDelete = id
+      this.$refs['modal-confirm-delete-product'].show()
     },
-    delete(id) {
-      this.$httpKomship.delete(`/v1/product/delete/${id}`).then(() => {
+    closeConfirmDelete() {
+      this.$refs['modal-confirm-delete-product'].hide()
+    },
+    deleteProduct() {
+      this.$httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Success',
+            icon: 'CheckIcon',
+            text: 'Success hapus produk',
+            variant: 'success',
+          },
+        })
+        this.closeConfirmDelete()
         this.getProduct()
       }).catch(() => {
         this.$toast({

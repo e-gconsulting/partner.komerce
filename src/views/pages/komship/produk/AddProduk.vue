@@ -41,6 +41,7 @@
               >
                 <b-form-input
                   v-model="skuName"
+                  type="number"
                   placeholder="Masukan SKU produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
@@ -57,7 +58,6 @@
               <validation-provider
                 #default="{errors}"
                 name="Upload Gambar"
-                rules="required"
               >
 
                 <!-- Preview Image -->
@@ -524,6 +524,7 @@
                     <b-col md="4">
                       <b-form-input
                         v-model="price"
+                        type="number"
                         placeholder="Rp | Harga"
                       />
                     </b-col>
@@ -531,6 +532,7 @@
                     <b-col md="2">
                       <b-form-input
                         v-model="stock"
+                        type="number"
                         placeholder="Stok"
                       />
                     </b-col>
@@ -873,6 +875,7 @@
               label-cols-md="2"
             >
               <b-form-input
+                type="number"
                 placeholder="Masukan jumlah stok barang"
               />
             </b-form-group>
@@ -887,6 +890,7 @@
               label-cols-md="2"
             >
               <b-form-input
+                type="number"
                 placeholder="Rp  |  Masukan harga barang"
               />
             </b-form-group>
@@ -910,6 +914,7 @@
                   <b-form-input
                     id="hi-first-name"
                     v-model="weightProduct"
+                    type="number"
                     placeholder="1000"
                   />
                   <b-input-group-append is-text>
@@ -935,6 +940,7 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="lengthProduct"
+                      type="number"
                       placeholder="P"
                     />
                     <b-input-group-append is-text>
@@ -947,6 +953,7 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="widthProduct"
+                      type="number"
                       placeholder="L"
                     />
                     <b-input-group-append is-text>
@@ -959,6 +966,7 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="heightProduct"
+                      type="number"
                       placeholder="T"
                     />
                     <b-input-group-append is-text>
@@ -1136,6 +1144,7 @@ export default {
       fieldImage: [],
       fieldPreviewImage: [],
       tesStore: [],
+      productId: '',
     }
   },
   computed: {
@@ -1304,30 +1313,32 @@ export default {
             height: this.heightProduct,
             price: this.price,
             stock: this.stock,
-            flavours: this.flavours,
+            flavours: [this.flavours],
             variant_option: this.variantStore,
             option: this.optionStore,
-            status: '1',
           }).then(response => {
+            this.productId = response.data.product_id
             console.log(response)
-            // Store image
-            const formData = new FormData()
-            formData.append('_method', 'post')
-            formData.append('image_path', this.imageFile)
-            this.$httpKomship.post('/product/upload-img-product', formData).then(() => {
-              this.loadingSubmitPublish = false
-            }).catch(() => {
-              this.$toast({
-                component: ToastificationContentVue,
-                props: {
-                  title: 'Gagal',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
-                  variant: 'danger',
-                },
+            if (this.imageFile) {
+              // Store image
+              this.$httpKomship.post('/v1/product/upload-img-product', {
+                product_id: this.productId,
+                image_path: this.imageFile,
+              }).then(() => {
+                this.loadingSubmitPublish = false
+              }).catch(() => {
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Gagal',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
+                })
+                this.loadinsSubmitPublish = false
               })
-              this.loadinsSubmitPublish = false
-            })
+            }
             this.$toast({
               component: ToastificationContentVue,
               props: {
@@ -1349,7 +1360,7 @@ export default {
                 variant: 'danger',
               },
             })
-            this.loadinsSubmitPublish = false
+            this.loadingSubmitPublish = false
           })
         } else {
           this.loadingSubmitPublish = false
@@ -1357,7 +1368,7 @@ export default {
       })
     },
     submitDraft() {
-      this.loadingSubmitDraft = true
+      this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
           if (this.formChoices3[0] !== undefined) {
@@ -1478,13 +1489,15 @@ export default {
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
-          }).then(() => {
+          }).then(response => {
+            this.productId = response.data.product_id
+            console.log(response)
             // Store image
-            const formData = new FormData()
-            formData.append('_method', 'post')
-            formData.append('image_path', this.imageFile)
-            this.$httpKomship.post('/v1/product/upload-img-product', formData).then(() => {
-              this.loadingSubmitDraft = false
+            this.$httpKomship.post('/v1/product/upload-img-product', {
+              product_id: this.productId,
+              image_path: this.imageFile,
+            }).then(() => {
+              this.loadingSubmitPublish = false
             }).catch(() => {
               this.$toast({
                 component: ToastificationContentVue,
@@ -1495,7 +1508,7 @@ export default {
                   variant: 'danger',
                 },
               })
-              this.loadinsSubmitDraft = false
+              this.loadinsSubmitPublish = false
             })
             this.$toast({
               component: ToastificationContentVue,
@@ -1506,8 +1519,8 @@ export default {
                 variant: 'success',
               },
             })
-            this.loadingSubmitDraft = false
-            this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'draft' } })
+            this.loadingSubmitPublish = false
+            this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,
@@ -1518,10 +1531,10 @@ export default {
                 variant: 'danger',
               },
             })
-            this.loadinsSubmitDraft = false
+            this.loadingSubmitPublish = false
           })
         } else {
-          this.loadingSubmitDraft = false
+          this.loadingSubmitPublish = false
         }
       })
     },
