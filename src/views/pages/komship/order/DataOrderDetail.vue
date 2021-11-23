@@ -1,6 +1,8 @@
 <template>
   <div class="data-order-detail-wrapper">
-    <div class="top-right mr-5">
+    <div
+      :class="`top-right ${detailOrder.order_status.toLowerCase() === 'perlu dikirim' ? 'mr-5' : ''}`"
+    >
       <b-button
         v-if="!detailOrder.airway_bill"
         class="header-button mid-part org-button"
@@ -9,7 +11,10 @@
         Masukan No Resi
       </b-button>
     </div>
-    <div class="details-wrapper top-right delete-button">
+    <div
+      v-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
+      class="details-wrapper top-right delete-button"
+    >
       <b-button
         variant="outline-danger"
         class="detail-button"
@@ -18,7 +23,9 @@
         Delete
       </b-button>
     </div>
-    <b-card-title class="mb-4">Detail Order</b-card-title>
+    <b-card-title class="mb-4">
+      Detail Order
+    </b-card-title>
 
     <div class="data-order-detail-content">
       <div class="data-order-detail-title-wrapper">Informasi Order</div>
@@ -83,14 +90,20 @@
               {{ detailOrder.order_status }}
             </b-badge>
             <b-badge
-              v-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
+              v-else-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
               variant="light-warning"
             >
               {{ detailOrder.order_status }}
             </b-badge>
             <b-badge
-              v-if="detailOrder.order_status.toLowerCase() === 'retur'"
+              v-else-if="detailOrder.order_status.toLowerCase() === 'retur'"
               variant="light-danger"
+            >
+              {{ detailOrder.order_status }}
+            </b-badge>
+            <b-badge
+              v-else
+              variant="light-dark"
             >
               {{ detailOrder.order_status }}
             </b-badge>
