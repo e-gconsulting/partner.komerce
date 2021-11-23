@@ -9,7 +9,9 @@
       />
     </b-button>
 
-    <div class="all-pickup-details-title">Penjemputan</div>
+    <div class="all-pickup-details-title">
+      Penjemputan
+    </div>
 
     <section class="add-pickup-input-form-wrapper">
       <b-form-group
@@ -23,8 +25,12 @@
           class="add-pickup-input-address-wrapper"
         >
           <div class="add-pickup-input-address-name-wrapper">
-            <div class="add-pickup-input-address-name">{{ items.address_name }}</div>
-            <div class="add-pickup-input-address-desc">{{ items.address_detail }}</div>
+            <div class="add-pickup-input-address-name">
+              {{ items.address_name }}
+            </div>
+            <div class="add-pickup-input-address-desc">
+              {{ items.address_detail }}
+            </div>
           </div>
         </div>
       </b-form-group>
@@ -34,7 +40,9 @@
         label-cols-md="3"
         label-for="input-pickup-date"
       >
-        <div id="input-pickup-date">{{ items.pickup_date }}</div>
+        <div id="input-pickup-date">
+          {{ items.pickup_date }}
+        </div>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"
@@ -42,7 +50,9 @@
         label-cols-md="3"
         label-for="input-pickup-time2"
       >
-        <div id="input-pickup-time2">{{ items.pickup_time }}</div>
+        <div id="input-pickup-time2">
+          {{ items.pickup_time }}
+        </div>
       </b-form-group>
       <b-form-group
         class="add-pickup-input-label mb-2"

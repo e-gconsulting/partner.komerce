@@ -1,7 +1,11 @@
 <template>
   <div class="add-pickup-input-main-wrapper">
-    <b-card-title class="mb-4">Pengajuan Pickup</b-card-title>
-    <div class="add-pickup-input-title mb-4">Penjemputan</div>
+    <b-card-title class="mb-4">
+      Pengajuan Pickup
+    </b-card-title>
+    <div class="add-pickup-input-title mb-4">
+      Penjemputan
+    </div>
     <section class="add-pickup-input-form-wrapper">
       <b-form-group
         class="add-pickup-input-label mb-2"
@@ -17,8 +21,12 @@
             v-if="!isEditAddress"
             class="add-pickup-input-address-name-wrapper"
           >
-            <div class="add-pickup-input-address-name">{{ addressText }}</div>
-            <div class="add-pickup-input-address-desc">{{ addressDetailText }}</div>
+            <div class="add-pickup-input-address-name">
+              {{ addressText }}
+            </div>
+            <div class="add-pickup-input-address-desc">
+              {{ addressDetailText }}
+            </div>
           </div>
           <div
             v-else
@@ -49,7 +57,9 @@
         label-cols-md="3"
         label-for="input-pickup-date"
       >
-        <div class="add-pickup-input-date-label">{{ dateLabel }}</div>
+        <div class="add-pickup-input-date-label">
+          {{ dateLabel }}
+        </div>
         <b-form-datepicker
           id="input-pickup-date"
           ref="dp1"
@@ -138,7 +148,9 @@
       />
 
       <div class="add-pickup-input-notice-notif">
-        <b-badge variant="light-danger">*Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan</b-badge>
+        <b-badge variant="light-danger">
+          *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
+        </b-badge>
       </div>
     </section>
 
@@ -177,7 +189,9 @@
         <div class="image-wrapper">
           <img src="@/assets/images/icons/success.svg">
         </div>
-        <div class="text-wrapper mb-3">Pengajuan Pickup Berhasil</div>
+        <div class="text-wrapper mb-3">
+          Pengajuan Pickup Berhasil
+        </div>
         <b-button
           class="org-button"
           @click="handleSubmitPopUpSuccess"
@@ -348,8 +362,8 @@ export default {
         },
         buttonsStyling: false,
       }).then(() => {
-          if (isReload) this.$forceUpdate()
-      });
+        if (isReload) this.$forceUpdate()
+      })
     },
     async storePickup() {
       const formData = {

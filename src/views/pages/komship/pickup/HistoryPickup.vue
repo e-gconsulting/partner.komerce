@@ -92,8 +92,8 @@ export default {
         },
         buttonsStyling: false,
       }).then(() => {
-          if (isReload) this.$forceUpdate()
-      });
+        if (isReload) this.$forceUpdate()
+      })
     },
     async reload() {
       this.loading = true

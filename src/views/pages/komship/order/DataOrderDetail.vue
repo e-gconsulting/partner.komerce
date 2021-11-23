@@ -28,7 +28,9 @@
     </b-card-title>
 
     <div class="data-order-detail-content">
-      <div class="data-order-detail-title-wrapper">Informasi Order</div>
+      <div class="data-order-detail-title-wrapper">
+        Informasi Order
+      </div>
 
       <div class="data-order-detail-section">
         <b-form-group
@@ -110,17 +112,27 @@
           </div>
         </b-form-group>
 
-        <div class="info-detail-data-order grey-text mt-4">{{ `Telah ditambahkan oleh ‘${detailOrder.user_fullname}’ pada ${detailOrder.order_date} WIB` }}</div>
+        <div class="info-detail-data-order grey-text mt-4">
+          {{ `Telah ditambahkan oleh ‘${detailOrder.user_fullname}’ pada ${detailOrder.order_date} WIB` }}
+        </div>
       </div>
 
-      <div class="data-order-detail-title-wrapper">Informasi Pengiriman</div>
+      <div class="data-order-detail-title-wrapper">
+        Informasi Pengiriman
+      </div>
 
       <div class="data-order-detail-section">
         <div class="data-order-detail-profile mb-2">
-          <div class="data-order-detail-profile-img"><b-icon-person-fill /></div>
+          <div class="data-order-detail-profile-img">
+            <b-icon-person-fill />
+          </div>
           <div class="data-order-detail-profile-text">
-            <div class="data-order-detail-profile-name">{{ detailOrder.customer_name }}</div>
-            <div class="data-order-detail-profile-number grey-text">(+62)8223432234</div>
+            <div class="data-order-detail-profile-name">
+              {{ detailOrder.customer_name }}
+            </div>
+            <div class="data-order-detail-profile-number grey-text">
+              {{ detailOrder.customer_phone }}
+            </div>
           </div>
         </div>
         <div
@@ -188,7 +200,9 @@
         </section>
       </div>
 
-      <div class="data-order-detail-title-wrapper">Informasi Penjualan</div>
+      <div class="data-order-detail-title-wrapper">
+        Informasi Penjualan
+      </div>
 
       <div class="data-order-detail-section">
         <b-table
