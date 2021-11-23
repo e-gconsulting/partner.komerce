@@ -175,10 +175,10 @@ export default {
 
       fields: [
         {
-          key: 'name_ekspedisi', label: 'Nama Ekspedisi', class: 'col-md-3 bg-white border-bottom-0',
+          key: 'shipping_name', label: 'Nama Ekspedisi', class: 'col-md-3 bg-white border-bottom-0',
         },
         {
-          key: 'status', label: 'Status', class: 'bg-white border-bottom-0 ', thClass: 'text-right pr-5', tdClass: 'd-flex justify-content-end align-items-start',
+          key: 'is_active', label: 'Status', class: 'bg-white border-bottom-0 ', thClass: 'text-right pr-5', tdClass: 'd-flex justify-content-end align-items-start',
         },
       ],
 
@@ -200,15 +200,26 @@ export default {
         },
       ],
 
+      listEkspedisi: [],
+
       loading: false,
     }
   },
   mounted() {
     // this.$refs['modal-konfirmasi-nonkompship'].show()
-    this.$httpKomship.get('/v1/partner/shipment', {
+    const params = {
       is_komship: 1,
+    }
+    this.$httpKomship.get('/v1/partner/shipment', {
+      params,
     }).then(response => {
-      console.log(response.data.data)
+      const { data } = response.data
+      console.log(data)
+      console.log(data.is_komship)
+      if (data.is_komship === 1) {
+        this.settingEkspedisi = true
+      }
+      this.listEkspedisi = data
     })
   },
   methods: {

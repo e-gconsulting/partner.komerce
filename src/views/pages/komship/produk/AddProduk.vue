@@ -676,165 +676,155 @@
 
                       <template #cell(price)="data">
                         <div v-if="editMode === true && indexRow === data.index">
-                          <b-col
-                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                            cols="12"
+                          <div
+                            v-if="variationName3 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
                               <div
-                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                :key="indexVariant+1"
+                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                :key="indexVariantPrice+1"
                               >
                                 <b-form-input
-                                  v-model="dataVariant.variant3.price"
-                                  class="mb-50"
+                                  v-model="itemsVariant.variant3.price"
                                 />
                               </div>
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
                               <b-form-input
-                                v-model="dataItem.variant2.price"
-                                class="mb-50"
+                                v-model="item.variant2.price"
                               />
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                           >
                             <b-form-input
                               v-model="data.item.variant1.price"
-                              class="mb-50"
                             />
-                          </b-col>
+                          </div>
                         </div>
                         <div v-else>
-                          <b-col
-                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                            cols="12"
+                          <div
+                            v-if="variationName3 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
                               <div
-                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                :key="indexVariant+1"
+                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                :key="indexVariantPrice+1"
                               >
-                                Rp. {{ formatPrice(dataVariant.variant3.price) }}
+                                Rp. {{ formatPrice(itemsVariant.variant3.price) }}
                               </div>
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
-                              {{ dataItem.variant2.price }}
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                              Rp. {{ formatPrice(item.variant2.price) }}
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                           >
-                            {{ data.item.variant1.price }}
-                          </b-col>
+                            Rp. {{ formatPrice(data.item.variant1.price) }}
+                          </div>
                         </div>
                       </template>
 
                       <template #cell(stock)="data">
                         <div v-if="editMode === true && indexRow === data.index">
-                          <b-col
-                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                            cols="12"
+                          <div
+                            v-if="variationName3 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
                               <div
-                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                :key="indexVariant+1"
+                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                :key="indexVariantPrice+1"
                               >
                                 <b-form-input
-                                  v-model="dataVariant.variant3.stock"
-                                  class="mb-50"
+                                  v-model="itemsVariant.variant3.stock"
                                 />
                               </div>
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
                               <b-form-input
-                                v-model="dataItem.variant2.stock"
-                                class="mb-50"
+                                v-model="item.variant2.stock"
                               />
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.price !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                           >
                             <b-form-input
                               v-model="data.item.variant1.stock"
-                              class="mb-50"
                             />
-                          </b-col>
+                          </div>
                         </div>
                         <div v-else>
-                          <b-col
-                            v-if="data.item.variant1.option[0].variant2.option[0] !== undefined"
-                            cols="12"
+                          <div
+                            v-if="variationName3 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
                               <div
-                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                :key="indexVariant+1"
+                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                :key="indexVariantPrice+1"
                               >
-                                {{ dataVariant.variant3.stock }}
+                                {{ itemsVariant.variant3.stock }}
                               </div>
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.option[0] !== undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
                           >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            <b-col
+                              v-for="(item, indexVariant) in data.item.variant1.option"
+                              :key="indexVariant+1"
+                              cols="12"
                             >
-                              {{ dataItem.variant2.stock }}
-                            </div>
-                          </b-col>
-                          <b-col
-                            v-if="data.item.variant1.stock !== undefined && data.item.variant1.option[0] === undefined && data.item.variant1.option[0].variant2.option[0] === undefined"
-                            cols="12"
+                              {{ item.variant2.stock }}
+                            </b-col>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                           >
                             {{ data.item.variant1.stock }}
-                          </b-col>
+                          </div>
                         </div>
                       </template>
 
@@ -1070,6 +1060,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -1135,6 +1126,7 @@ export default {
       lengthProduct: null,
       widthProduct: null,
       heightProduct: null,
+      flavours: [],
       cod: true,
       transfer: true,
       variantStore: [],
@@ -1195,10 +1187,29 @@ export default {
   },
   methods: {
     submitPublish() {
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices1.length; x++) {
+        if (this.formChoices1[x].choices === null) {
+          this.formChoices1.splice(x, 1)
+        }
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices2.length; x++) {
+        if (this.formChoices2[x].choices === null) {
+          this.formChoices2.splice(x, 1)
+        }
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices3.length; x++) {
+        if (this.formChoices3[x].choices === null) {
+          this.formChoices3.splice(x, 1)
+        }
+      }
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
           if (this.formChoices3[0] !== undefined) {
+            console.log('Variant 3')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1247,6 +1258,7 @@ export default {
               }
             }
           } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
+            console.log('variant 2')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1279,6 +1291,7 @@ export default {
               }
             }
           } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
+            console.log('varian 1')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1296,12 +1309,41 @@ export default {
               )
             }
           }
+          console.log('variantItems')
+          console.log(this.variantItems)
 
           if (this.cod === true) {
-            this.flavours = 'COD'
-          } else if (this.transfer === true) {
-            this.flavours = 'BANK TRANSFER'
+            this.flavours.push('COD')
           }
+          if (this.transfer === true) {
+            this.flavours.push('BANK TRANSFER')
+          }
+
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.variantStore.length; i++) {
+            if (this.variantStore[i].val === null) {
+              this.variantStore.splice(i, 1)
+            }
+          }
+
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.variantStore.length; i++) {
+            if (this.variantStore[i].val === null) {
+              this.variantStore.splice(i, 1)
+            }
+          }
+
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.variantStore.length; i++) {
+            if (this.variantStore[i].val === null) {
+              this.variantStore.splice(i, 1)
+            }
+          }
+
+          console.log('variantStore')
+          console.log(this.variantStore)
+          console.log('optionStore')
+          console.log(this.optionStore)
 
           this.$httpKomship.post('/v1/product/create/1', {
             product_name: this.productName,
@@ -1313,19 +1355,34 @@ export default {
             height: this.heightProduct,
             price: this.price,
             stock: this.stock,
-            flavours: [this.flavours],
+            flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
+          }, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
-            this.productId = response.data.product_id
-            console.log(response)
-            if (this.imageFile) {
+            this.productId = response.data.data.product_id
+            console.log(response.data.data)
+            if (this.imageFile !== null) {
               // Store image
-              this.$httpKomship.post('/v1/product/upload-img-product', {
-                product_id: this.productId,
-                image_path: this.imageFile,
-              }).then(() => {
+              const formData = new FormData()
+              formData.append('product_id', response.data.data.product_id)
+              formData.append('image_path', this.imageFile)
+              this.$httpKomship.post('/v1/product/upload-img-product', formData,
+                {
+                  headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+                }).then(() => {
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success menambahkan produk',
+                    variant: 'success',
+                  },
+                })
                 this.loadingSubmitPublish = false
+                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
               }).catch(() => {
                 this.$toast({
                   component: ToastificationContentVue,
@@ -1339,17 +1396,6 @@ export default {
                 this.loadinsSubmitPublish = false
               })
             }
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Success',
-                icon: 'CheckIcon',
-                text: 'Success menambahkan produk',
-                variant: 'success',
-              },
-            })
-            this.loadingSubmitPublish = false
-            this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,
@@ -1539,7 +1585,27 @@ export default {
       })
     },
     createListVariation() {
+      // Delete Null Data
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices1.length; x++) {
+        if (this.formChoices1[x].choices === null) {
+          this.formChoices1.splice(x, 1)
+        }
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices2.length; x++) {
+        if (this.formChoices2[x].choices === null) {
+          this.formChoices2.splice(x, 1)
+        }
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices3.length; x++) {
+        if (this.formChoices3[x].choices === null) {
+          this.formChoices3.splice(x, 1)
+        }
+      }
       if (this.formChoices3[0] !== undefined) {
+        console.log('variant 3')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1575,7 +1641,9 @@ export default {
             }
           }
         }
-      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+      }
+      if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+        console.log('variant 2')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1599,7 +1667,9 @@ export default {
             })
           }
         }
-      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
+      }
+      if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
+        console.log('variant 1')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1650,6 +1720,7 @@ export default {
           class: 'col-action',
         },
       )
+      console.log(this.variantItems)
       return this.variantItems
     },
     addVariation() {

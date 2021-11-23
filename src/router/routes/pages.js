@@ -78,14 +78,4 @@ export default [
       resource: 'Auth',
     },
   },
-  {
-    path: '/login-komship',
-    name: 'auth-login-komship',
-    component: () => import('@/views/pages/authentication/LoginKomship.vue'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      redirectIfLoggedIn: true,
-    },
-  },
 ]
