@@ -280,6 +280,7 @@ import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -372,7 +373,7 @@ export default {
   methods: {
     tableProvider() {
       this.loading = true
-      this.$httpKomship.get('/v1/customers', {
+      httpKomship.get('/v1/customers', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -389,8 +390,10 @@ export default {
       if (this.orderFrom) Object.assign(params, { orderFrom: this.orderFrom })
       if (this.orderTo) Object.assign(params, { orderTo: this.orderTo })
 
-      this.$httpKomship.get('/v1/customers', {
+      httpKomship.get('/v1/customers', {
         params,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         console.log(data)

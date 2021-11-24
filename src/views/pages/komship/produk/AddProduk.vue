@@ -1061,6 +1061,7 @@ import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -1345,7 +1346,7 @@ export default {
           console.log('optionStore')
           console.log(this.optionStore)
 
-          this.$httpKomship.post('/v1/product/create/1', {
+          httpKomship.post('/v1/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
             description: this.descriptionProduct,
@@ -1368,7 +1369,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', response.data.data.product_id)
               formData.append('image_path', this.imageFile)
-              this.$httpKomship.post('/v1/product/upload-img-product', formData,
+              httpKomship.post('/v1/product/upload-img-product', formData,
                 {
                   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
                 }).then(() => {
@@ -1572,7 +1573,7 @@ export default {
           console.log('optionStore')
           console.log(this.optionStore)
 
-          this.$httpKomship.post('/v1/product/create/0', {
+          httpKomship.post('/v1/product/create/0', {
             product_name: this.productName,
             sku: this.skuName,
             description: this.descriptionProduct,
@@ -1595,7 +1596,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', response.data.data.product_id)
               formData.append('image_path', this.imageFile)
-              this.$httpKomship.post('/v1/product/upload-img-product', formData,
+              httpKomship.post('/v1/product/upload-img-product', formData,
                 {
                   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
                 }).then(() => {

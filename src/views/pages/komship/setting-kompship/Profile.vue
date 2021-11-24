@@ -352,6 +352,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -481,7 +482,7 @@ export default {
     loadProfile() {
       this.fieldLogoBusiness.push({ logo: '' })
       this.loading = true
-      this.$httpKomship.post('/v1/my-profile', {
+      httpKomship.post('/v1/my-profile', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -504,7 +505,7 @@ export default {
           props: {
             title: 'Gagal',
             icon: 'AlertCircleIcon',
-            text: 'Gagal update profile, silahkan coba lagi',
+            text: 'Gagal load profile, silahkan coba lagi',
             variant: 'danger',
           },
         })

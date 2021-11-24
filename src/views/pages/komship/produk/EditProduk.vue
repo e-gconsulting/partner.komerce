@@ -954,6 +954,7 @@ import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -1100,7 +1101,7 @@ export default {
   methods: {
     loadProduct() {
       this.loading = true
-      this.$httpKomship.get(`/v1/product/detail/${this.productId}`, {
+      httpKomship.get(`/v1/product/detail/${this.productId}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -1385,14 +1386,14 @@ export default {
       }
       console.log(this.imageFile)
 
-      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+      httpKomship.put(`/v1/product/update/${this.productId}`, params, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {
         // Update Image
         const formData = new FormData()
         formData.append('product_id', this.productId)
         formData.append('image_path', this.imageFile)
-        this.$httpKomship.post('/v1/product/update-upload-img-product', formData, {
+        httpKomship.post('/v1/product/update-upload-img-product', formData, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {
           this.loadingSubmit = false
@@ -1560,7 +1561,7 @@ export default {
         option: this.optionStore,
       }
 
-      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+      httpKomship.put(`/v1/product/update/${this.productId}`, params, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {
         // Update Image
@@ -1568,7 +1569,7 @@ export default {
         formData.append('_method', 'post')
         formData.append('product_id', this.productId)
         formData.append('image_path', this.imageFile)
-        this.$httpKomship.post('/v1/product/update-upload-img-product', formData, {
+        httpKomship.post('/v1/product/update-upload-img-product', formData, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {
           this.loadingSubmit = false

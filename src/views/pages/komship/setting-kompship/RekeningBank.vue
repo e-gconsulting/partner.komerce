@@ -519,6 +519,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -587,7 +588,7 @@ export default {
   methods: {
     getBank() {
       this.loading = true
-      return this.$httpKomship.get('v1/bank-account', {
+      return httpKomship.get('v1/bank-account', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -600,7 +601,7 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData, {
+      httpKomship.post('v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {
         this.loadingSubmit = false
@@ -623,7 +624,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData, {
+      httpKomship.post('v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {}).catch(() => {
         this.$toast({
@@ -641,7 +642,7 @@ export default {
     submitRekening() {
       this.$refs.formRulesAdd.validate().then(success => {
         if (success) {
-          this.$httpKomship.post('/v1/bank-account/store',
+          httpKomship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
@@ -677,7 +678,7 @@ export default {
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
 
-          this.$httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
+          httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
             this.$toast({
@@ -728,7 +729,7 @@ export default {
       })
     },
     delete(data) {
-      this.$httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
+      httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
         .then(() => {
@@ -749,7 +750,7 @@ export default {
     },
     confirmPin() {
       this.loadingSubmit = true
-      this.$httpKomship.post('/v1/pin/auth', {
+      httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },

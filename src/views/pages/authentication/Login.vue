@@ -472,7 +472,6 @@ export default {
                 }
               }
             }
-            console.log(ability)
           }
 
           data.ability = ability

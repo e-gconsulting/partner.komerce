@@ -149,6 +149,8 @@ import {
   VBModal,
   BOverlay,
 } from 'bootstrap-vue'
+import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -210,8 +212,10 @@ export default {
     const params = {
       is_komship: 1,
     }
-    this.$httpKomship.get('/v1/partner/shipment', {
+    httpKomship.get('/v1/partner/shipment', {
       params,
+    }, {
+      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       const { data } = response.data
       console.log(data)

@@ -75,6 +75,8 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
+import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -149,7 +151,9 @@ export default {
       const params = {
         is_liftime: this.rangkingCity,
       }
-      this.$httpKomship.get('/v1/customers/ranking-customers', params).then(response => {
+      httpKomship.get('/v1/customers/ranking-customers', params, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories.length)
         const { data } = response.data
         this.city = data.city
@@ -172,7 +176,9 @@ export default {
     },
     getData() {
       this.loading = true
-      this.$httpKomship.get('/v1/customers/ranking-customers').then(response => {
+      httpKomship.get('/v1/customers/ranking-customers', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response.data
         this.city = data.city
         this.loading = false

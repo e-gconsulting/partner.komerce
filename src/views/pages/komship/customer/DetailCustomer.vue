@@ -191,7 +191,6 @@
 </template>
 
 <script>
-import useJwt from '@/auth/jwt/useJwt'
 import {
   BRow,
   BButton,
@@ -202,6 +201,8 @@ import {
   BOverlay,
   BCard,
 } from 'bootstrap-vue'
+import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -269,7 +270,7 @@ export default {
   methods: {
     getCustomerDetail() {
       this.loading = true
-      this.$httpKomship.get(`/v1/customers/${this.customerId}`, {
+      httpKomship.get(`/v1/customers/${this.customerId}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data

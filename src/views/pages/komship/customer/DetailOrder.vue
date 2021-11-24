@@ -317,6 +317,7 @@ import {
   BCard,
   BOverlay,
 } from 'bootstrap-vue'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -394,7 +395,7 @@ export default {
   methods: {
     getDetailOrder() {
       this.loading = true
-      this.$httpKomship.get(`/v1/customers/detail-order/${this.id}`, {
+      httpKomship.get(`/v1/customers/detail-order/${this.id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -427,7 +428,7 @@ export default {
       })
     },
     getPartner() {
-      this.$httpKomship.post('/v1/my-profile', {}, {
+      httpKomship.post('/v1/my-profile', {}, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
