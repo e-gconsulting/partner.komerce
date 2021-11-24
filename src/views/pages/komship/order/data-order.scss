@@ -188,10 +188,11 @@
   width: 207px;
 }
 .product-name-content {
-  width: 187px;
+  width: 80%;
 }
 .product-name-qty {
-  width: 20px;
+  width: 20%;
+  text-align: right;
 }
 .price-wrapper {
   width: 159px;
@@ -490,6 +491,10 @@
   font-size: 24px;
   color: #F95031;
   margin-right: 5px;
+}
+.detail-data-order-back-btn {
+  padding: 20px;
+  font-size: 15px;
 }
 
 .top-right {

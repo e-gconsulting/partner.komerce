@@ -11,6 +11,7 @@
         Masukan No Resi
       </b-button>
     </div>
+
     <div
       v-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
       class="details-wrapper top-right delete-button"
@@ -23,6 +24,16 @@
         Delete
       </b-button>
     </div>
+
+    <b-button
+      class="detail-data-order-back-btn org-button mb-4"
+      @click="exitDetailView"
+    >
+      <b-icon-chevron-left
+        aria-hidden="true"
+      />
+    </b-button>
+
     <b-card-title class="mb-4">
       Detail Order
     </b-card-title>
@@ -351,6 +362,7 @@ import {
   BFormGroup,
   BBadge,
   BIconPersonFill,
+  BIconChevronLeft,
   BTable,
 } from 'bootstrap-vue'
 import DataOrderDetailPopup from './DataOrderDetailPopup.vue'
@@ -362,6 +374,7 @@ export default {
     BFormGroup,
     BBadge,
     BIconPersonFill,
+    BIconChevronLeft,
     BTable,
     DataOrderDetailPopup,
   },

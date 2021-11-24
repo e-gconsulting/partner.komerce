@@ -78,7 +78,7 @@ export default {
         send: 'perlu dikirim',
         sent: 'dikirim',
         received: 'diterima',
-        retur: 'retur'
+        retur: 'retur',
       },
       tableData: {
         header: [
@@ -169,17 +169,17 @@ export default {
       this.filterDataTableByHeaderType(val)
     },
     filterDataTableByHeaderType(type) {
-      let oldItem = this.tableItemsAllData
+      const oldItem = this.tableItemsAllData
       let newItem = []
       if (type) {
         if (type === 'all') {
           newItem = oldItem
         } else {
-          oldItem.map((item, indexItem) => {
-            if (item && item.order_status.toLowerCase() === this.filterHeaderOption[type]) {
-              newItem.push(item)
+          for (let i = 0; i < oldItem.length; i += 1) {
+            if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
+              newItem.push(oldItem[i])
             }
-          })
+          }
         }
       }
       this.tableData.items = newItem
@@ -187,11 +187,11 @@ export default {
     },
     handleCountNeedToSendOrder() {
       let needToSendCounterTmp = 0
-      this.tableItemsAllData.map((item, indexItem) => {
-        if (item && item.order_status.toLowerCase() === 'perlu dikirim') {
+      for (let i = 0; i < this.tableItemsAllData.length; i += 1) {
+        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'perlu dikirim') {
           needToSendCounterTmp += 1
         }
-      })
+      }
       this.needToSendCounter = needToSendCounterTmp
     },
     updateSearchFilterText(val) {
