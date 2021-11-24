@@ -484,6 +484,7 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -588,6 +589,8 @@ export default {
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
       return this.$httpKomship.get('/v1/product', {
         params,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         console.log(data)
@@ -615,7 +618,9 @@ export default {
       this.$refs['modal-confirm-delete-product'].hide()
     },
     deleteProduct() {
-      this.$httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+      this.$httpKomship.delete(`/v1/product/delete/${this.idDelete}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {

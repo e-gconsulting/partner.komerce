@@ -351,6 +351,7 @@ import { required, email } from '@validations'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -450,6 +451,15 @@ export default {
           formData.append('email', this.emailUser)
 
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success update profile',
+                variant: 'success',
+              },
+            })
             this.loadingSubmit = false
           }).catch(() => {
             this.loadingSubmit = false
@@ -471,7 +481,9 @@ export default {
     loadProfile() {
       this.fieldLogoBusiness.push({ logo: '' })
       this.loading = true
-      this.$httpKomship.post('/v1/my-profile').then(response => {
+      this.$httpKomship.post('/v1/my-profile', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response.data
         this.id = data.user_id
         this.fullname = data.user_fullname

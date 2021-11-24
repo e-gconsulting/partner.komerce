@@ -218,11 +218,11 @@
                   </b-row>
                 </b-col>
                 <b-col
-                  v-if="itemsData.variant[0] !== undefined"
+                  v-if="itemsData.variants[0] !== undefined"
                   cols="3"
                 >
                   <div
-                    v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(0,3)"
+                    v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
                     :key="indexVariant+1"
                   >
                     <p class="ml-2">
@@ -239,11 +239,11 @@
                   </p>
                 </b-col>
                 <b-col
-                  v-if="itemsData.variant[0] !== undefined"
+                  v-if="itemsData.variants[0] !== undefined"
                   cols="2"
                 >
                   <div
-                    v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(0,3)"
+                    v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
                     :key="indexVariant+1"
                   >
                     <p class="ml-2">
@@ -260,11 +260,11 @@
                   </p>
                 </b-col>
                 <b-col
-                  v-if="itemsData.variant[0] !== undefined"
+                  v-if="itemsData.variants[0] !== undefined"
                   cols="2"
                 >
                   <div
-                    v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(0,3)"
+                    v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
                     :key="indexVariant+1"
                   >
                     <p class="ml-2">
@@ -281,11 +281,11 @@
                   </p>
                 </b-col>
                 <b-col
-                  v-if="itemsData.variant[0] !== undefined"
+                  v-if="itemsData.variants[0] !== undefined"
                   cols="1"
                 >
                   <div
-                    v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(0,3)"
+                    v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
                     :key="indexVariant+1"
                   >
                     <p class="ml-2">
@@ -328,7 +328,7 @@
                 </b-col>
               </b-row>
               <b-row
-                v-if="itemsData.variant.length > 3"
+                v-if="itemsData.variants.length > 3"
                 class="d-flex justify-content-end mb-2"
               >
                 <b-col cols="auto">
@@ -354,7 +354,7 @@
                         cols="3"
                       >
                         <div
-                          v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(3,itemsData.variant.length)"
+                          v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
                           :key="indexVariant+1"
                         >
                           <p class="ml-2">
@@ -366,7 +366,7 @@
                         cols="2"
                       >
                         <div
-                          v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(3,itemsData.variant.length)"
+                          v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
                           :key="indexVariant+1"
                         >
                           <p class="ml-2">
@@ -378,7 +378,7 @@
                         cols="2"
                       >
                         <div
-                          v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(3,itemsData.variant.length)"
+                          v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
                           :key="indexVariant+1"
                         >
                           <p class="ml-2">
@@ -390,7 +390,7 @@
                         cols="1"
                       >
                         <div
-                          v-for="(itemsVariant, indexVariant) in itemsData.variant.slice(3,itemsData.variant.length)"
+                          v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
                           :key="indexVariant+1"
                         >
                           <p class="ml-2">
@@ -484,6 +484,7 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -550,7 +551,7 @@ export default {
           key: 'product_name', label: 'Nama Produk',
         },
         {
-          key: 'variant',
+          key: 'variants',
           label: 'Variasi',
           thClass: 'text-center',
         },
@@ -588,6 +589,8 @@ export default {
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
       return this.$httpKomship.get('/v1/product', {
         params,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         console.log(data)
@@ -615,7 +618,9 @@ export default {
       this.$refs['modal-confirm-delete-product'].hide()
     },
     deleteProduct() {
-      this.$httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+      this.$httpKomship.delete(`/v1/product/delete/${this.idDelete}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {

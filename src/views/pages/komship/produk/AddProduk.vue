@@ -24,7 +24,7 @@
                   placeholder="Masukan nama produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -45,7 +45,7 @@
                   placeholder="Masukan SKU produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -112,7 +112,7 @@
                   accept="image/*"
                   class="d-none"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -134,7 +134,7 @@
                   rows="3"
                   :state="errors.length > 0 ? false:null"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -181,7 +181,7 @@
                             placeholder="Masukan nama variasi"
                             :state="errors.length > 0 ? false:null"
                           />
-                          <small class="text-danger">{{ errors[0] }}</small>
+                          <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                       </b-form-group>
                     </b-col>
@@ -219,7 +219,7 @@
                                       />
                                     </b-input-group-append>
                                   </b-input-group>
-                                  <small class="text-danger">{{ errors[0] }}</small>
+                                  <small class="text-primary">{{ errors[0] }}</small>
                                 </validation-provider>
                               </b-col>
                               <b-col
@@ -1414,10 +1414,29 @@ export default {
       })
     },
     submitDraft() {
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices1.length; x++) {
+        if (this.formChoices1[x].choices === null) {
+          this.formChoices1.splice(x, 1)
+        }
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices2.length; x++) {
+        if (this.formChoices2[x].choices === null) {
+          this.formChoices2.splice(x, 1)
+        }
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices3.length; x++) {
+        if (this.formChoices3[x].choices === null) {
+          this.formChoices3.splice(x, 1)
+        }
+      }
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
           if (this.formChoices3[0] !== undefined) {
+            console.log('Variant 3')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1466,6 +1485,7 @@ export default {
               }
             }
           } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
+            console.log('variant 2')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1498,6 +1518,7 @@ export default {
               }
             }
           } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
+            console.log('varian 1')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1515,12 +1536,41 @@ export default {
               )
             }
           }
+          console.log('variantItems')
+          console.log(this.variantItems)
 
           if (this.cod === true) {
-            this.flavours = 'COD'
-          } else if (this.transfer === true) {
-            this.flavours = 'BANK TRANSFER'
+            this.flavours.push('COD')
           }
+          if (this.transfer === true) {
+            this.flavours.push('BANK TRANSFER')
+          }
+
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.variantStore.length; i++) {
+            if (this.variantStore[i].val === null) {
+              this.variantStore.splice(i, 1)
+            }
+          }
+
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.variantStore.length; i++) {
+            if (this.variantStore[i].val === null) {
+              this.variantStore.splice(i, 1)
+            }
+          }
+
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.variantStore.length; i++) {
+            if (this.variantStore[i].val === null) {
+              this.variantStore.splice(i, 1)
+            }
+          }
+
+          console.log('variantStore')
+          console.log(this.variantStore)
+          console.log('optionStore')
+          console.log(this.optionStore)
 
           this.$httpKomship.post('/v1/product/create/0', {
             product_name: this.productName,
@@ -1535,38 +1585,44 @@ export default {
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
+          }, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
-            this.productId = response.data.product_id
-            console.log(response)
-            // Store image
-            this.$httpKomship.post('/v1/product/upload-img-product', {
-              product_id: this.productId,
-              image_path: this.imageFile,
-            }).then(() => {
-              this.loadingSubmitPublish = false
-            }).catch(() => {
-              this.$toast({
-                component: ToastificationContentVue,
-                props: {
-                  title: 'Gagal',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
-                  variant: 'danger',
-                },
+            this.productId = response.data.data.product_id
+            console.log(response.data.data)
+            if (this.imageFile !== null) {
+              // Store image
+              const formData = new FormData()
+              formData.append('product_id', response.data.data.product_id)
+              formData.append('image_path', this.imageFile)
+              this.$httpKomship.post('/v1/product/upload-img-product', formData,
+                {
+                  headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+                }).then(() => {
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success menambahkan produk',
+                    variant: 'success',
+                  },
+                })
+                this.loadingSubmitPublish = false
+                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+              }).catch(() => {
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Gagal',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
+                })
+                this.loadinsSubmitPublish = false
               })
-              this.loadinsSubmitPublish = false
-            })
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Success',
-                icon: 'CheckIcon',
-                text: 'Success menambahkan produk',
-                variant: 'success',
-              },
-            })
-            this.loadingSubmitPublish = false
-            this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+            }
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,

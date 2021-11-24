@@ -518,6 +518,7 @@ import {
 // import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -586,7 +587,9 @@ export default {
   methods: {
     getBank() {
       this.loading = true
-      return this.$httpKomship.get('v1/bank-account').then(response => {
+      return this.$httpKomship.get('v1/bank-account', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response.data
         this.formRekening = data
         this.loading = false
@@ -597,7 +600,9 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(() => {
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         this.loadingSubmit = false
         this.$refs['modal-verification-submit'].show()
         this.countDownTimerOtp()
@@ -618,7 +623,9 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(() => {}).catch(() => {
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {}).catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -639,6 +646,8 @@ export default {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
               account_no: this.fieldAddAccountNo,
+            }, {
+              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(() => {
             this.loadingSubmit = false
             this.getBank()
@@ -668,7 +677,9 @@ export default {
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
 
-          this.$httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData).then(() => {
+          this.$httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -717,7 +728,9 @@ export default {
       })
     },
     delete(data) {
-      this.$httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`)
+      this.$httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      })
         .then(() => {
           this.getBank()
         })
@@ -738,6 +751,8 @@ export default {
       this.loadingSubmit = true
       this.$httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         if (data.is_match === true) {

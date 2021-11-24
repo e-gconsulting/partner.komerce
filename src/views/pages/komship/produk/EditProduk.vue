@@ -33,7 +33,7 @@
                     placeholder="Masukan nama produk kamu"
                     :state="errors.length > 0 ? false:null"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -53,7 +53,7 @@
                     placeholder="Masukan SKU produk kamu"
                     :state="errors.length > 0 ? false:null"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -72,7 +72,7 @@
                   <!-- Preview Image -->
                   <transition name="fade">
                     <b-avatar
-                      v-if="imageFile !== null"
+                      v-if="imageInitialFile !== null || imageFile !== null"
                       variant="light-primary"
                       size="50"
                       :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
@@ -97,7 +97,7 @@
                   </label>
 
                   <label
-                    v-if="imageFile !== null"
+                    v-if="imageInitialFile !== null || imageFile !== null"
                     for="uploadImage"
                     class="btn btn-flat-dark btn-icon"
                   >
@@ -121,7 +121,7 @@
                     accept="image/*"
                     class="d-none"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -953,6 +953,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -1099,7 +1100,9 @@ export default {
   methods: {
     loadProduct() {
       this.loading = true
-      this.$httpKomship.get(`/v1/product/detail/${this.productId}`).then(response => {
+      this.$httpKomship.get(`/v1/product/detail/${this.productId}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response.data
         this.productName = data.product_name
         this.skuName = data.product_sku
@@ -1110,9 +1113,10 @@ export default {
         this.lengthProduct = data.product_length
         this.widthProduct = data.product_width
         this.heightProduct = data.product_height
-        if (data.product_image[0] !== undefined) {
-          if (data.product_image[0].images_path) this.imageInitialFile = data.product_image[0].images_path
-        }
+        // if (data.product_image[0].images_path) {
+        //   this.imageInitialFile = data.product_image[0].images_path
+        //   this.imageFile = data.product_image[0].images_path
+        // }
         if (data.flavors === 'COD') {
           this.cod = true
           this.transfer = false
@@ -1379,12 +1383,17 @@ export default {
         variant_option: this.variantStore,
         option: this.optionStore,
       }
+      console.log(this.imageFile)
 
-      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params).then(() => {
+      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         // Update Image
-        this.$httpKomship.post('/v1/product/update-upload-img-product', {
-          product_id: this.productId,
-          image_path: this.imageFile,
+        const formData = new FormData()
+        formData.append('product_id', this.productId)
+        formData.append('image_path', this.imageFile)
+        this.$httpKomship.post('/v1/product/update-upload-img-product', formData, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {
           this.loadingSubmit = false
           this.$toast({
@@ -1551,13 +1560,17 @@ export default {
         option: this.optionStore,
       }
 
-      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params).then(() => {
+      this.$httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         // Update Image
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('product_id', this.productId)
         formData.append('image_path', this.imageFile)
-        this.$httpKomship.post('/v1/product/update-upload-img-product', formData).then(() => {
+        this.$httpKomship.post('/v1/product/update-upload-img-product', formData, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(() => {
           this.loadingSubmit = false
           this.$toast({
             component: ToastificationContent,

@@ -639,6 +639,7 @@ import {
 } from 'bootstrap-vue'
 import VueOtpInput from '@bachdgvn/vue-otp-input'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import useJwt from '@/auth/jwt/useJwt'
 
 export default {
   components: {
@@ -684,6 +685,8 @@ export default {
     createPin() {
       this.$httpKomship.post('https://komshipdev.komerce.id/api/v1/pin/store', {
         pin: this.dataPin,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {}).catch(() => {
         this.$taost({
           component: ToastificationContent,
@@ -703,7 +706,9 @@ export default {
       this.dataPin = v
     },
     showModal() {
-      this.$httpKomship.get('/v1/pin/check').then(response => {
+      this.$httpKomship.get('/v1/pin/check', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response.data
         if (data.is_set === true) {
           this.$refs['create-pin'].hide()
@@ -736,7 +741,9 @@ export default {
       })
     },
     confirmCreatePin() {
-      this.$httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check').then(() => {
+      this.$httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         this.$swal({
           title: 'PIN Berhasil Dibuat',
           text: 'Selamat kamu telah berhasil mengamankan saldo yang kamu miliki',
@@ -768,6 +775,8 @@ export default {
       this.loadingSubmit = true
       this.$httpKomship.post('/v1/pin/auth', {
         pin: this.dataPin,
+      }, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         if (data.is_match === true) {
@@ -797,7 +806,9 @@ export default {
       formData.append('_method', 'put')
       formData.append('pin', this.dataPin)
 
-      this.$httpKomship.post('/v1/pin/update', formData).then(response => {
+      this.$httpKomship.post('/v1/pin/update', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
         const { data } = response
         if (data.status === 'success') {
           this.loadingSubmit = false
@@ -846,7 +857,9 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(() => {
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
         this.loadingSubmit = false
         this.countDownTimerOtp()
       }).catch(() => {
@@ -866,7 +879,9 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      this.$httpKomship.post('v1/send-otp', formData).then(() => {}).catch(() => {
+      this.$httpKomship.post('v1/send-otp', formData, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {}).catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
