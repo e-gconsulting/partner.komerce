@@ -1,7 +1,7 @@
 <template>
   <div class="data-order-detail-wrapper">
     <div
-      :class="`top-right ${detailOrder.order_status.toLowerCase() === 'perlu dikirim' ? 'mr-5' : ''}`"
+      :class="`top-right space-top ${detailOrder.order_status.toLowerCase() === 'perlu dikirim' ? 'mr-5' : ''}`"
     >
       <b-button
         v-if="!detailOrder.airway_bill"
@@ -14,7 +14,7 @@
 
     <div
       v-if="detailOrder.order_status.toLowerCase() === 'perlu dikirim'"
-      class="details-wrapper top-right delete-button"
+      class="details-wrapper top-right delete-button space-top"
     >
       <b-button
         variant="outline-danger"
