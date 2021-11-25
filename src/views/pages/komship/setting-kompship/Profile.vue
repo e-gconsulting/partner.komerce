@@ -451,7 +451,8 @@ export default {
           formData.append('business_location', this.location)
           formData.append('email', this.emailUser)
 
-          this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
+          this.$http.post('/user/partner/update-profile-komship', formData,
+            {}).then(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -462,6 +463,7 @@ export default {
               },
             })
             this.loadingSubmit = false
+            this.loadProfile()
           }).catch(() => {
             this.loadingSubmit = false
             this.$toast({
@@ -486,6 +488,7 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
+        console.log(data)
         this.id = data.user_id
         this.fullname = data.user_fullname
         this.username = data.user_name

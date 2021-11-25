@@ -24,7 +24,7 @@
           >
             <b-form
               class="ml-5"
-              @submit.prevent="login"
+              @submit.prevent="register"
             >
               <b-row>
 
@@ -196,9 +196,9 @@
 </template>
 <script>
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
-import useJwt from '@/auth/jwt/useJwt'
 import {
   BCol,
   BNavbarBrand,
@@ -261,20 +261,30 @@ export default {
     },
   },
   methods: {
-    login() {
+    register() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
           this.error = ''
 
-          useJwt.registerKomship({
+          this.$httpKomship.post('/v1/register', {
             full_name: this.fullname,
             email: this.userEmail,
             password: this.userPassword,
             password_confirmation: this.confirmPassword,
-          })
-            .then(response => {
-              console.log(response)
+          }).then(response => {
+            if (response.data.error.email[0]) {
+              this.$swal({
+                title: 'Email anda sudah terdaftar',
+                text: 'Silahkan login menggunakan email yang sudah terdaftar',
+                icon: 'success',
+                confirmButtonText: 'Oke',
+                customClass: {
+                  confirmButton: 'btn btn-primary',
+                },
+              })
+              this.$router.push({ name: 'auth-login' })
+            } else {
               this.$router.push({ name: 'auth-login' })
 
               this.$swal({
@@ -286,11 +296,19 @@ export default {
                   confirmButton: 'btn btn-primary',
                 },
               })
-            }).catch(error => {
-              this.loading = false
-
-              console.log(error)
+            }
+          }).catch(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk register, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
             })
+            this.loading = false
+          })
         }
       })
     },

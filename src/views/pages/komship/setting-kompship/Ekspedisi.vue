@@ -1,75 +1,32 @@
 <template>
-  <b-card>
-    <!-- Dialog Konfirmasi Non Kompship -->
-    <!-- <b-modal
-      ref="modal-konfirmasi-nonkompship"
-      no-close-on-backdrop
-      hide-header-close
-      hide-header
-      modal-class="modal-primary"
-      centered
-      title="Primary Modal"
-    >
-
-      <b-col
-        md="12"
-        class="d-flex justify-content-center pt-3"
-      >
-        <b-img
-          width="100"
-          src="@core/assets/image/icon-popup-warning.png"
-        />
-      </b-col>
-
-      <b-col class="text-center mt-1">
-        <h4>
-          Ketika menggunakan pengiriman Non Kompship kamu harus menambahkan ekspedisi dan mengaktifkannya agar dapat menambahkan order
-        </h4>
-      </b-col>
-
-      <template #modal-footer>
-        <b-col
-          md="12"
-          class="d-flex justify-content-center pb-2"
-        >
-          <b-button
-            variant="primary"
-            @click="closeConfirmNonkomship"
-          >
-            Oke
-          </b-button>
+  <b-overlay
+    variant="light"
+    :show="loading"
+    spinner-variant="primary"
+    blur="0"
+    opacity=".5"
+    rounded="sm"
+  >
+    <b-card>
+      <b-row class="d-flex align-items-center mt-1">
+        <b-col>
+          <h5>
+            <strong>Pengaturan Ekspedisi</strong>
+          </h5>
         </b-col>
-      </template>
+        <b-col class="d-flex justify-content-end">
+          <b-form-checkbox
+            v-model="settingEkspedisi"
+            class="custom-control-primary"
+            name="check-button"
+            switch
+            @change="switchSettingEkspedisi"
+          />
+        </b-col>
+      </b-row>
 
-    </b-modal> -->
-
-    <b-row class="d-flex align-items-center mt-1">
-      <b-col>
-        <h5>
-          <strong>Pengaturan Ekspedisi</strong>
-        </h5>
-      </b-col>
-      <b-col class="d-flex justify-content-end">
-        <b-form-checkbox
-          v-model="settingEkspedisi"
-          class="custom-control-primary"
-          name="check-button"
-          switch
-          @change="switchSettingEkspedisi"
-        />
-      </b-col>
-    </b-row>
-
-    <b-row class="mt-2">
-      <b-col>
-        <b-overlay
-          variant="light"
-          :show="loading"
-          spinner-variant="primary"
-          blur="0"
-          opacity=".5"
-          rounded="sm"
-        >
+      <b-row class="mt-2">
+        <b-col>
           <b-table
             :fields="fieldsSendKompship"
             :items="itemsSendKompship"
@@ -80,10 +37,10 @@
 
               <b-table
                 :fields="fields"
-                :items="items"
+                :items="listEkspedisi"
               >
 
-                <template #cell(name_ekspedisi)="data">
+                <template #cell(shipping_name)="data">
                   <b-col>
                     <h5>
                       {{ data.value }}
@@ -91,23 +48,9 @@
                   </b-col>
                 </template>
 
-                <template #cell(status)="data">
-                  <app-collapse
-                    accordion
-                    class="bg-dark"
-                  >
-                    <app-collapse-item title="">
-                      J&T Exspress adalah perusahaan pengiriman ekspres yang menerapkan aperkembangan teknologi sebagai dasar dari sistemnya. Jaringan luas yang dimiliki oleh J&T Exspress memfasilitasi layanan- layanan ekspres untuk pelanggan di seluruh indonesia.
-
-                      J&T Express tidak menerima cairan dan baterai untuk pengiriman yang melalui transportasi udara.
-
-                      Customer Care : 021-8066-1888
-                      Website : http//jet.co.id
-                      Batasan
-                      Berat Maks : 50000gr
-                    </app-collapse-item>
-                  </app-collapse>
+                <template #cell(is_active)="data">
                   <b-form-checkbox
+                    v-model="data.item.is_active"
                     class="custom-control-primary"
                     name="check-button"
                     switch
@@ -119,26 +62,24 @@
             </template>
 
           </b-table>
-        </b-overlay>
-      </b-col>
-    </b-row>
+        </b-col>
+      </b-row>
 
-    <b-row class="mt-3">
-      <b-col>
-        <b-table
-          :fields="fieldsSendKompship"
-          :items="itemsSendKompship"
-          class="border"
-        />
-      </b-col>
-    </b-row>
-  </b-card>
+      <b-row class="mt-3">
+        <b-col>
+          <b-table
+            :fields="fieldsSendKompship"
+            :items="itemsSendKompship"
+            class="border"
+          />
+        </b-col>
+      </b-row>
+    </b-card>
+  </b-overlay>
+
 </template>
 
 <script>
-import AppCollapse from '@core/components/app-collapse/AppCollapse.vue'
-import AppCollapseItem from '@core/components/app-collapse/AppCollapseItem.vue'
-// import vSelect from 'vue-select'
 import { heightTransition } from '@core/mixins/ui/transition'
 import {
   BCard,
@@ -150,6 +91,7 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship from './http_komship'
 
 export default {
@@ -159,8 +101,6 @@ export default {
     BCol,
     BFormCheckbox,
     BTable,
-    AppCollapse,
-    AppCollapseItem,
     BOverlay,
   },
   directives: {
@@ -169,11 +109,13 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
+      loading: false,
 
       settingEkspedisi: false,
       statusEkspedisiNonKomship: false,
 
       formAddEkspedisi: false,
+      partnerId: JSON.parse(localStorage.getItem('userData')),
 
       fields: [
         {
@@ -203,66 +145,131 @@ export default {
       ],
 
       listEkspedisi: [],
-
-      loading: false,
+      isActive: null,
     }
   },
   mounted() {
-    // this.$refs['modal-konfirmasi-nonkompship'].show()
-    const params = {
-      is_komship: 1,
-    }
-    httpKomship.get('/v1/partner/shipment', {
-      params,
-    }, {
-      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-    }).then(response => {
-      const { data } = response.data
-      console.log(data)
-      console.log(data.is_komship)
-      if (data.is_komship === 1) {
-        this.settingEkspedisi = true
-      }
-      this.listEkspedisi = data
-    })
+    this.loadEkspedisi()
   },
   methods: {
+    loadEkspedisi() {
+      this.loading = true
+      httpKomship.get('/v1/partner/shipment/not-active?is_komship=1',
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response.data
+        console.log(data)
+        this.listEkspedisi = data
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.listEkspedisi.length; x++) {
+          if (this.listEkspedisi[x].is_active === 0) {
+            this.listEkspedisi[x].is_active = false
+          }
+          if (this.listEkspedisi[x].is_active === 1) {
+            this.listEkspedisi[x].is_active = true
+          }
+
+          if (!this.listEkspedisi[x].is_active === false) {
+            this.settingEkspedisi = true
+          }
+        }
+        this.loading = false
+        return this.listEkspedisi
+      })
+    },
     switchSettingEkspedisi() {
       if (this.settingEkspedisi === true) {
-        this.settingEkspedisi = true
-        this.statusEkspedisi = true
-      } else {
-        this.settingEkspedisi = false
-        this.statusEkspedisi = false
+        this.isActive = 1
+      }
+      if (this.settingEkspedisi === false) {
+        this.isActive = 0
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.listEkspedisi.length; x++) {
+        console.log(this.listEkspedisi[x])
+        httpKomship.put(`/v1/partner/shipment/update/${this.listEkspedisi[x].id}`, {
+          shipping_name: this.listEkspedisi[x].shipping_name,
+          is_komship: 1,
+          partner_id: this.partnerId.partner_detail.id,
+          is_active: this.isActive,
+        },
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(() => {
+          this.loadEkspedisi()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+              variant: 'danger',
+            },
+          })
+        })
       }
     },
     switchStatusEkspedisi(data) {
-      console.log(data)
-    },
-    confirmDelete(data) {
-      console.log(data)
-      this.$swal({
-        text: 'Kamu yakin hapus ekspedisi ?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Hapus',
-        cancelButtonText: 'Batal',
-        customClass: {
-          confirmButton: 'btn btn-outline-primary',
-          cancelButton: 'btn btn-primary ml-1',
-        },
-        buttonsStyling: false,
-      }).then(result => {
-        if (result.value) {
-          this.delete(data)
-        }
-      })
-    },
-    submitEkspedisi() {
-      this.formAddEkspedisi = false
-    },
-    addEkspedisi() {
-      this.formAddEkspedisi = true
+      if (data.item.is_active === false) {
+        httpKomship.put(`/v1/partner/shipment/update/${data.item.id}`, {
+          shipping_name: data.item.shipping_name,
+          is_komship: 1,
+          partner_id: this.partnerId.partner_detail.id,
+          is_active: 0,
+        }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success update setting ekspedisi',
+              variant: 'success',
+            },
+          })
+          this.loadEkspedisi()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+              variant: 'danger',
+            },
+          })
+        })
+      }
+      if (data.item.is_active === true) {
+        httpKomship.put(`/v1/partner/shipment/update/${data.item.id}`, {
+          shipping_name: data.item.shipping_name,
+          is_komship: 1,
+          partner_id: this.partnerId.partner_detail.id,
+          is_active: 1,
+        }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success update setting ekspedisi',
+              variant: 'success',
+            },
+          })
+          this.loadEkspedisi()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+              variant: 'danger',
+            },
+          })
+        })
+      }
     },
   },
 }

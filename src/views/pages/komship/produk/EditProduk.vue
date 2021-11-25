@@ -234,7 +234,7 @@
                                 <b-col
                                   v-if="formChoices1.length > 1"
                                   md="auto"
-                                  class="mb-1 d-none"
+                                  class="mb-1"
                                 >
                                   <b-button
                                     class="btn-icon"
@@ -256,7 +256,6 @@
                       <b-col
                         v-if="formChoices1.length < 5"
                         cols="8"
-                        class="d-none"
                       >
                         <b-form-group
                           label=""
@@ -339,7 +338,7 @@
                                 <b-col
                                   v-if="formChoices2.length > 1"
                                   md="auto"
-                                  class="mb-1 d-none"
+                                  class="mb-1"
                                 >
                                   <b-button
                                     class="btn-icon"
@@ -361,7 +360,6 @@
                       <b-col
                         v-if="formChoices2.length < 5"
                         cols="8"
-                        class="d-none"
                       >
                         <b-form-group
                           label=""
@@ -438,7 +436,7 @@
                                 <b-col
                                   v-if="formChoices3.length > 1"
                                   md="auto"
-                                  class="mb-1 d-none"
+                                  class="mb-1"
                                 >
                                   <b-button
                                     class="btn-icon"
@@ -460,7 +458,6 @@
                       <b-col
                         v-if="formChoices3.length < 5"
                         cols="8"
-                        class="d-none"
                       >
                         <b-form-group
                           label=""
@@ -488,7 +485,7 @@
                     v-if="variationFields1 === true && activeAddChoices1 === true"
                     label="Tambah Variasi"
                     label-cols-md="2"
-                    class="mt-1 d-none"
+                    class="mt-1"
                   >
                     <b-button
                       v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -509,7 +506,7 @@
                     v-if="variationFields2 === true && activeAddChoices2 === true "
                     label="Tambah Variasi"
                     label-cols-md="2"
-                    class="mt-1 d-none"
+                    class="mt-1"
                   >
                     <b-button
                       v-ripple.400="'rgba(113, 102, 240, 0.15)'"
@@ -659,31 +656,75 @@
                       <template #cell(price)="data">
                         <div v-if="editMode === true && indexRow === data.index">
                           <div
-                            v-for="(items, index) in data.item.option"
-                            :key="index + 1"
+                            v-if="variationName3 !== null"
                           >
                             <div
-                              v-for="(itemsVariant, indexVariant) in items.option"
-                              :key="indexVariant + 1"
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
+                            >
+                              <div
+                                v-for="(itemsVariant, indexVariant) in items.option"
+                                :key="indexVariant + 1"
+                              >
+                                <b-form-input
+                                  v-model="itemsVariant.price"
+                                  class="mb-50"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
+                          >
+                            <div
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
                             >
                               <b-form-input
-                                v-model="itemsVariant.price"
+                                v-model="items.price"
                                 class="mb-50"
                               />
                             </div>
                           </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                          >
+                            <b-form-input
+                              v-model="data.item.price"
+                              class="mb-50"
+                            />
+                          </div>
                         </div>
                         <div v-else>
                           <div
-                            v-for="(items, index) in data.item.option"
-                            :key="index + 1"
+                            v-if="variationName3 !== null"
                           >
                             <div
-                              v-for="(itemsVariant, indexVariant) in items.option"
-                              :key="indexVariant + 1"
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
                             >
-                              Rp. {{ formatPrice(itemsVariant.price) }}
+                              <div
+                                v-for="(itemsVariant, indexVariant) in items.option"
+                                :key="indexVariant + 1"
+                              >
+                                Rp. {{ formatPrice(itemsVariant.price) }}
+                              </div>
                             </div>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
+                          >
+                            <div
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
+                            >
+                              Rp. {{ formatPrice(items.price) }}
+                            </div>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                          >
+                            Rp. {{ formatPrice(data.item.price) }}
                           </div>
                         </div>
                       </template>
@@ -691,31 +732,75 @@
                       <template #cell(stock)="data">
                         <div v-if="editMode === true && indexRow === data.index">
                           <div
-                            v-for="(items, index) in data.item.option"
-                            :key="index + 1"
+                            v-if="variationName3 !== null"
                           >
                             <div
-                              v-for="(itemsVariant, indexVariant) in items.option"
-                              :key="indexVariant + 1"
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
+                            >
+                              <div
+                                v-for="(itemsVariant, indexVariant) in items.option"
+                                :key="indexVariant + 1"
+                              >
+                                <b-form-input
+                                  v-model="itemsVariant.stock"
+                                  class="mb-50"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
+                          >
+                            <div
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
                             >
                               <b-form-input
-                                v-model="itemsVariant.stock"
+                                v-model="items.stock"
                                 class="mb-50"
                               />
                             </div>
                           </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                          >
+                            <b-form-input
+                              v-model="data.item.stock"
+                              class="mb-50"
+                            />
+                          </div>
                         </div>
                         <div v-else>
                           <div
-                            v-for="(items, index) in data.item.option"
-                            :key="index + 1"
+                            v-if="variationName3 !== null"
                           >
                             <div
-                              v-for="(itemsVariant, indexVariant) in items.option"
-                              :key="indexVariant + 1"
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
                             >
-                              {{ itemsVariant.stock }}
+                              <div
+                                v-for="(itemsVariant, indexVariant) in items.option"
+                                :key="indexVariant + 1"
+                              >
+                                {{ itemsVariant.stock }}
+                              </div>
                             </div>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 !== null"
+                          >
+                            <div
+                              v-for="(items, index) in data.item.option"
+                              :key="index + 1"
+                            >
+                              {{ items.stock }}
+                            </div>
+                          </div>
+                          <div
+                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                          >
+                            {{ data.item.stock }}
                           </div>
                         </div>
                       </template>
@@ -1114,10 +1199,7 @@ export default {
         this.lengthProduct = data.product_length
         this.widthProduct = data.product_width
         this.heightProduct = data.product_height
-        // if (data.product_image[0].images_path) {
-        //   this.imageInitialFile = data.product_image[0].images_path
-        //   this.imageFile = data.product_image[0].images_path
-        // }
+        console.log(data)
         if (data.flavors === 'COD') {
           this.cod = true
           this.transfer = false
@@ -1143,6 +1225,18 @@ export default {
         if (data.variants[2] !== undefined) {
           this.variationFields3 = true
           this.variationName3 = data.variants[2].variant_name
+        }
+
+        if (this.variationName1 !== null) {
+          this.addVariation()
+        }
+
+        if (this.variationName2 !== null) {
+          this.addVariationItems2()
+        }
+
+        if (this.variationName3 !== null) {
+          this.addVariationItems3()
         }
 
         // Create Table

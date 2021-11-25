@@ -1642,6 +1642,9 @@ export default {
       })
     },
     createListVariation() {
+      if (this.variantItems !== []) {
+        this.variantItems = []
+      }
       // Delete Null Data
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {
