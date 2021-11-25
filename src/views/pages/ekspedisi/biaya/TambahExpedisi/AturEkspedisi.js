@@ -47,7 +47,6 @@ export default {
   data() {
     return {
       loadDataAwal: true,
-      name: '',
       shipping_name: '',
       service_name: null,
       cashback_from: null,
@@ -88,7 +87,6 @@ export default {
       const dt = [...this.criteriasData].map(x => {
         const returnData = { ...x }
         returnData.origin = [x.type]
-        returnData.vehicles = [x.vehicles]
         return returnData
       })
       return dt
@@ -107,12 +105,12 @@ export default {
         }
       },
     },
-    criteriasData: {
-      handler(val) {
-        console.log(val)
-      },
-      deep: true,
-    },
+    // criteriasData: {
+    //   handler(val) {
+    //     console.log(val)
+    //   },
+    //   deep: true,
+    // },
   },
   mounted() {
     //
@@ -131,20 +129,20 @@ export default {
       this.criteriasData.splice(index, 1)
     },
     submitData() {
-      console.log(this.name)
+      this.loadDataAwal = true
       const endpoint = 'api/v1/admin/shipment/store'
       let getData = null
-      console.log('datasubmit :', {
-        shipping_name: this.shipping_name,
-        service_name: this.service_name,
-        cashback_from: this.cashback_from,
-        service_fee_from: this.service_fee_from,
-        service_fee_to: this.service_fee_to,
-        cashback_to: this.cashback_to,
-        max_pickup_time: this.max_pickup_time,
-        vehicles: this.vehicles,
-        criterias: this.changeCriteriasData,
-      })
+      // console.log('datasubmit :', {
+      //   shipping_name: this.shipping_name,
+      //   service_name: this.service_name,
+      //   cashback_from: this.cashback_from,
+      //   service_fee_from: this.service_fee_from,
+      //   service_fee_to: this.service_fee_to,
+      //   cashback_to: this.cashback_to,
+      //   max_pickup_time: this.max_pickup_time,
+      //   vehicles: [this.vehicles],
+      //   criterias: this.changeCriteriasData,
+      // })
       getData = axioskomsipdev.post(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
@@ -153,31 +151,18 @@ export default {
         service_fee_to: this.service_fee_to,
         cashback_to: this.cashback_to,
         max_pickup_time: this.max_pickup_time,
-        vehicles: this.vehicles,
+        vehicles: [this.vehicles],
         criterias: this.changeCriteriasData,
       })
-      getData.then(({ data }) => {
-        /*
-          "data": {
-            "profit": {
-              "total_shipping_profit": 42000,
-              "profit_cod": 3500
-            },
-            "income": [
-              {
-                "partner_name": "Tatausahaku",
-                "district": "Idano Gawo",
-                "shipping_cost": 42000,
-                "grand_total": 82000,
-                "shipping_profit": 42000,
-                "net_profit": 113750
-              }
-            ]
-          }
-        */
-        const parseData = JSON.parse(JSON.stringify(data.data))
-        this.items = parseData
-        this.totalRows = parseData.length
+      getData.then(data => {
+        console.log(data)
+        // {
+        // status: "success",
+        // code: 200,
+        // message: "Success Create data Shipment"}
+        // const parseData = JSON.parse(JSON.stringify(data.data))
+        // this.items = parseData
+        // this.totalRows = parseData.length
       })
         .catch(e => {
           console.log('error', e)
