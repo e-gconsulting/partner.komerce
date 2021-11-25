@@ -1,3 +1,4 @@
+import vSelect from 'vue-select'
 import axioskomsipdev from '@/libs/axioskomsipdev'
 
 import {
@@ -5,8 +6,8 @@ import {
   BCol,
   BForm,
   BFormInput,
-  // BFormGroup,
-  // BFormCheckbox,
+  BFormValidFeedback,
+  BFormInvalidFeedback,
   // BListGroup,
   // BListGroupItem,
   BInputGroup,
@@ -17,6 +18,14 @@ import {
   BCardBody,
 } from 'bootstrap-vue'
 
+const initCriteria = {
+  origin: [],
+  destination: [],
+  delivery: 0,
+  retur: 0,
+  type: null,
+}
+
 export default {
   components: {
     BRow,
@@ -26,49 +35,45 @@ export default {
     // BFormGroup,
     BInputGroup,
     BFormSelect,
-    // BFormCheckbox,
-    // BListGroup,
+    BFormValidFeedback,
+    BFormInvalidFeedback,
     // BListGroupItem,
     BButton,
     BCard,
     BSpinner,
     BCardBody,
+    vSelect,
   },
   data() {
     return {
       loadDataAwal: true,
       name: '',
       shipping_name: '',
+      service_name: null,
       cashback_from: null,
       service_fee_from: null,
       service_fee_to: null,
       cashback_to: null,
       max_pickup_time: '',
       vehicles: '',
-      origin: '',
-      destination: '',
-      delivery: null,
-      retur: null,
-      type: '',
-      selectedKota: null,
+      criteriasData: [{ ...initCriteria }],
       optionsKota: [
         { value: null, text: 'Pilih layanan kota' },
         { value: 'jawa_bali', text: 'Jawa & Bali' },
         { value: 'kalimantan_sumatera', text: 'Kalimantan & Sumatera' },
         { value: 'jakarta_batam', text: 'Jakarta & Batam' },
       ],
+      optionsCriteria: [
+        { value: null, text: 'Pilih jenis pengiriman' },
+        { text: 'Exclude', value: 'exclude' },
+        { text: 'Include', value: 'include' },
+      ],
       selected: null,
-      options: [
+      optionsServiceName: [
         { value: null, text: 'Pilih jenis service' },
         { text: 'Oke', value: 'oke' },
         { text: 'Reg', value: 'reg' },
         { text: 'Yes', value: 'yes' },
-      ],
-      selectedCriteria: null,
-      optionsCriteria: [
-        { value: null, text: 'Pilih jenis pengiriman' },
-        { text: 'exclude', value: 'Exclude' },
-        { text: 'include', value: 'Include' },
       ],
       listCheckBox: [
         { text: 'Hiring', value: 'hiring' },
@@ -79,7 +84,14 @@ export default {
     }
   },
   computed: {
-    //
+    changeCriteriasData() {
+      const dt = [...this.criteriasData].map(x => {
+        const returnData = { ...x }
+        returnData.origin = [x.type]
+        return returnData
+      })
+      return dt
+    },
   },
   watch: {
     vehicles: {
@@ -94,6 +106,12 @@ export default {
         }
       },
     },
+    criteriasData: {
+      handler(val) {
+        console.log(val)
+      },
+      deep: true,
+    },
   },
   mounted() {
     //
@@ -104,23 +122,38 @@ export default {
     }, 1000)
   },
   methods: {
+    tambahKriteria(criteriasDataParams) {
+      criteriasDataParams.push({ ...initCriteria })
+    },
+    hapusKriteria(index) {
+      if (index === 0) return
+      this.criteriasData.splice(index, 1)
+    },
     submitData() {
       console.log(this.name)
-      const endpoint = 'api/v1/admin/shippment/create'
+      const endpoint = 'api/v1/admin/shipment/store'
       let getData = null
-      getData = axioskomsipdev.post(endpoint, {
+      console.log('datasubmit :', {
         shipping_name: this.shipping_name,
+        service_name: this.service_name,
         cashback_from: this.cashback_from,
         service_fee_from: this.service_fee_from,
         service_fee_to: this.service_fee_to,
         cashback_to: this.cashback_to,
         max_pickup_time: this.max_pickup_time,
         vehicles: this.vehicles,
-        origin: this.origin,
-        destination: this.destination,
-        delivery: this.delivery,
-        retur: this.retur,
-        type: this.type,
+        criterias: this.changeCriteriasData,
+      })
+      getData = axioskomsipdev.post(endpoint, {
+        shipping_name: this.shipping_name,
+        service_name: this.service_name,
+        cashback_from: this.cashback_from,
+        service_fee_from: this.service_fee_from,
+        service_fee_to: this.service_fee_to,
+        cashback_to: this.cashback_to,
+        max_pickup_time: this.max_pickup_time,
+        vehicles: this.vehicles,
+        criterias: this.changeCriteriasData,
       })
       getData.then(({ data }) => {
         /*
@@ -172,9 +205,6 @@ export default {
     },
     handleChoiceTypeVehicle(val) {
       this.vehicles = val
-    },
-    saveKriteria() {
-      //
     },
   },
 }
