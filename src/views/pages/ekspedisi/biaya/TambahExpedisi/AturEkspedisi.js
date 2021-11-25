@@ -88,6 +88,7 @@ export default {
       const dt = [...this.criteriasData].map(x => {
         const returnData = { ...x }
         returnData.origin = [x.type]
+        returnData.vehicles = [x.vehicles]
         return returnData
       })
       return dt
