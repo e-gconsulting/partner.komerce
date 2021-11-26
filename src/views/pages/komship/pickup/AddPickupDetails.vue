@@ -21,7 +21,9 @@
     </b-button>
 
     <div class="add-pickup-input-notice-notif mt-2">
-      <b-badge variant="light-warning">*Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan</b-badge>
+      <b-badge variant="light-warning">
+        *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
+      </b-badge>
     </div>
 
     <data-order-table
@@ -110,7 +112,7 @@ export default {
       if (this.profile.is_onboarding) {
         this.$emit('onBoardingShow')
       } else {
-      this.$router.push('history-pickup')
+        this.$router.push('history-pickup')
       }
     },
   },
