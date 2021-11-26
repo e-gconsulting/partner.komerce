@@ -72,7 +72,7 @@
                 <template #cell(editExpedition)="data">
                   <b-button
                     variant="flat-default"
-                    @click="editExpedition(data.item.id)"
+                    @click="editExpedition(data.item.shipping_id)"
                   >
                     <feather-icon icon="EditIcon" />
                   </b-button>
@@ -86,6 +86,39 @@
                   </div>
                 </template>
               </b-table>
+              <b-row align-h="between">
+                <b-col
+                  sm="4"
+                  md="4"
+                >
+                  <b-form-group
+                    class="mb-0"
+                  >
+                    <div
+                      style="display: flex;align-items: center;"
+                    >
+                      <label class="d-inline-block text-sm-left mr-50">Per page</label>
+                      <b-form-select
+                        id="perPageSelect"
+                        v-model="perPage"
+                        :options="pageOptions"
+                        size="sm"
+                        style="width: 65px;"
+                      />
+                    </div>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="8">
+                  <b-pagination
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="perPage"
+                    align="right"
+                    size="sm"
+                    class="my-0"
+                  />
+                </b-col>
+              </b-row>
             </div>
 
             <b-modal
@@ -158,6 +191,8 @@
 <script>
 import {
   BButton,
+  BRow,
+  BCol,
   BTh,
   BTr,
   BCard,
@@ -167,7 +202,9 @@ import {
   BSpinner,
   BFormGroup,
   BFormInput,
+  BFormSelect,
   BInputGroup,
+  BPagination,
   BInputGroupPrepend,
 } from 'bootstrap-vue'
 import axioskomsipdev from '@/libs/axioskomsipdev'
@@ -176,6 +213,8 @@ export default {
   components: {
     BButton,
     BTable,
+    BRow,
+    BCol,
     BTh,
     BTr,
     BModal,
@@ -184,7 +223,9 @@ export default {
     BCardBody,
     BFormGroup,
     BFormInput,
+    BFormSelect,
     BInputGroup,
+    BPagination,
     BInputGroupPrepend,
   },
   data() {
@@ -202,54 +243,29 @@ export default {
       sortDirection: 'asc',
       filter: null,
       filterOn: [],
-      items: [
-        {
-          id: 1,
-          expedition_name: 'JNE',
-          cb_from_expd: '28%',
-          cod_from_expd: '2.5%',
-          cb_to_user: '25%',
-          cod_to_user: '2.8%',
-        },
-        {
-          id: 2,
-          expedition_name: 'J&T',
-          cb_from_expd: '28%',
-          cod_from_expd: '2.5%',
-          cb_to_user: '25%',
-          cod_to_user: '2.8%',
-        },
-        {
-          id: 3,
-          expedition_name: 'SiCepat',
-          cb_from_expd: '28%',
-          cod_from_expd: '2.5%',
-          cb_to_user: '25%',
-          cod_to_user: '2.8%',
-        },
-      ],
+      items: [],
       fields: [
         // A virtual column made up from two fields
         {
-          key: 'expedition_name',
+          key: 'shipping_name',
           label: 'Nama Ekspedisi',
         },
         {
-          key: 'cb_from_expd',
+          key: 'cashback_from',
           label: 'Cashback',
           sortable: true,
         },
         {
-          key: 'cod_from_expd',
+          key: 'service_fee_from',
           label: 'Biaya COD',
           sortable: true,
         },
         {
-          key: 'cb_to_user',
+          key: 'cashback_to',
           label: 'Cashback',
         },
         {
-          key: 'cod_to_user',
+          key: 'service_fee_to',
           label: 'Biaya COD',
         },
         {
@@ -281,9 +297,6 @@ export default {
     this.totalRows = this.items.length
   },
   created() {
-    setTimeout(() => {
-      this.loadDataAwal = false
-    }, 1000)
     this.fetchData()
     // check data from API when there is withdrawal pending/process in api
     // get data for series performa expedisi and performa partner
@@ -292,31 +305,24 @@ export default {
   },
   methods: {
     async fetchData() {
-      const endpoint = '/api/v1/admin/shippment'
+      const endpoint = '/api/v1/admin/shipment'
       let getData = null
       getData = axioskomsipdev.get(endpoint)
       getData.then(({ data }) => {
         /*
-          "data": {
-            "profit": {
-              "total_shipping_profit": 42000,
-              "profit_cod": 3500
-            },
-            "income": [
-              {
-                "partner_name": "Tatausahaku",
-                "district": "Idano Gawo",
-                "shipping_cost": 42000,
-                "grand_total": 82000,
-                "shipping_profit": 42000,
-                "net_profit": 113750
-              }
-            ]
-          }
+          data: [{
+            // "shipping_id": 1,
+            // "shipping_name": "JNE",
+            // "cashback_from": 2.8,
+            // "service_fee_from": 2.5,
+            // "cashback_to": 25,
+            // "service_fee_to": 25
+          }]
         */
         const parseData = JSON.parse(JSON.stringify(data.data))
         this.items = parseData
         this.totalRows = parseData.length
+        this.loadDataAwal = false
       })
         .catch(e => {
           console.log('error', e)
@@ -379,6 +385,6 @@ export default {
 .btn-float-custom{
   position: fixed;
   right: 30px;
-  bottom: 30px;
+  bottom: 20px;
 }
 </style>
