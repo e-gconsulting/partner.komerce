@@ -864,10 +864,19 @@
               label="Stok"
               label-cols-md="2"
             >
-              <b-form-input
-                type="number"
-                placeholder="Masukan jumlah stok barang"
-              />
+              <validation-provider
+                #default="{errors}"
+                name="Stock"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="stockNotVariation"
+                  type="number"
+                  placeholder="Masukan jumlah stok barang"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-primary">{{ errors[0] }}</small>
+              </validation-provider>
             </b-form-group>
           </b-col>
 
@@ -879,10 +888,19 @@
               label="Harga"
               label-cols-md="2"
             >
-              <b-form-input
-                type="number"
-                placeholder="Rp  |  Masukan harga barang"
-              />
+              <validation-provider
+                #default="{errors}"
+                name="Harga"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="priceNotVariation"
+                  type="number"
+                  placeholder="Rp  |  Masukan harga barang"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-primary">{{ errors[0] }}</small>
+              </validation-provider>
             </b-form-group>
           </b-col>
 
@@ -900,17 +918,25 @@
               class="ml-5"
             >
               <b-col class="d-flex align-items-center">
-                <b-input-group class="input-group-merge">
-                  <b-form-input
-                    id="hi-first-name"
-                    v-model="weightProduct"
-                    type="number"
-                    placeholder="1000"
-                  />
-                  <b-input-group-append is-text>
-                    gram
-                  </b-input-group-append>
-                </b-input-group>
+                <validation-provider
+                  #default="errors"
+                  name="Berat"
+                  rules="required"
+                >
+                  <b-input-group class="input-group-merge">
+                    <b-form-input
+                      id="hi-first-name"
+                      v-model="weightProduct"
+                      type="number"
+                      placeholder="1000"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <b-input-group-append is-text>
+                      gram
+                    </b-input-group-append>
+                  </b-input-group>
+                  <small class="text-primary">{{ errors[0] }}</small>
+                </validation-provider>
               </b-col>
             </b-form-group>
           </b-col>
@@ -1114,6 +1140,8 @@ export default {
       variantItems: [],
       stock: '',
       price: '',
+      stockNotVariation: '',
+      priceNotVariation: '',
       fieldEditData: '',
       imageFile: null,
       imageInitialFile: null,
@@ -1123,10 +1151,10 @@ export default {
       productName: '',
       skuName: '',
       descriptionProduct: '',
-      weightProduct: null,
-      lengthProduct: null,
-      widthProduct: null,
-      heightProduct: null,
+      weightProduct: 0,
+      lengthProduct: 0,
+      widthProduct: 0,
+      heightProduct: 0,
       flavours: [],
       cod: true,
       transfer: true,
@@ -1354,8 +1382,8 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.price,
-            stock: this.stock,
+            price: this.priceNotVariation,
+            stock: this.stockNotVariation,
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
@@ -1383,7 +1411,9 @@ export default {
                   },
                 })
                 this.loadingSubmitPublish = false
-                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+                setTimeout(() => {
+                  this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+                }, 500)
               }).catch(() => {
                 this.$toast({
                   component: ToastificationContentVue,

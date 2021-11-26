@@ -50,6 +50,12 @@
                       Nama Lengkap
                     </label>
                     <small class="text-primary"> {{ errors[0] }} </small>
+                    <small
+                      v-if="usernameTaken"
+                      class="text-primary"
+                    >
+                      {{ usernameTaken }}
+                    </small>
                   </validation-provider>
                 </b-col>
 
@@ -74,6 +80,12 @@
                       Email
                     </label>
                     <small class="text-primary"> {{ errors[0] }} </small>
+                    <small
+                      v-if="emailTaken"
+                      class="text-primary"
+                    >
+                      {{ emailTaken }}
+                    </small>
                   </validation-provider>
                 </b-col>
 
@@ -95,6 +107,7 @@
                       :type="passwordFieldTypePassword"
                       :state="errors.length > 0 ? false:null"
                       required
+                      @input="validPassword"
                     />
                     <label for="password">Password</label>
                     <feather-icon
@@ -102,7 +115,14 @@
                       class="icon-password"
                       @click="togglePasswordVisibilityPassword"
                     />
-                    <small class="text-primary">{{ errors[0] }}</small>
+                    <small
+                      class="text-primary"
+                    >{{ errors[0] }}
+                    </small>
+                    <small
+                      class="text-primary"
+                    >{{ errorCharPassword }}
+                    </small>
                   </validation-provider>
                 </b-col>
                 <b-col
@@ -166,7 +186,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || agree === false || confirmPassword !== userPassword"
+                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8"
                       >
                         <b-spinner
                           v-if="loading"
@@ -249,6 +269,11 @@ export default {
       passwordFieldTypePassword: 'password',
       passwordFieldTypeConfirmPassword: 'password',
 
+      errorCharPassword: '',
+
+      usernameTaken: '',
+      emailTaken: '',
+
       data: [],
     }
   },
@@ -262,6 +287,8 @@ export default {
   },
   methods: {
     register() {
+      this.usernameTaken = ''
+      this.emailTaken = ''
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
@@ -273,18 +300,18 @@ export default {
             password: this.userPassword,
             password_confirmation: this.confirmPassword,
           }).then(response => {
-            if (response.data.error.email[0]) {
-              this.$swal({
-                title: 'Email anda sudah terdaftar',
-                text: 'Silahkan login menggunakan email yang sudah terdaftar',
-                icon: 'success',
-                confirmButtonText: 'Oke',
-                customClass: {
-                  confirmButton: 'btn btn-primary',
-                },
-              })
-              this.$router.push({ name: 'auth-login' })
-            } else {
+            const { data } = response
+            if (data[0].content.data.username !== undefined) {
+              this.usernameTaken = 'The username has already been taken.'
+              this.loading = false
+            }
+
+            if (data[0].content.data.email !== undefined) {
+              this.emailTaken = 'The email has already been taken.'
+              this.loading = false
+            }
+
+            if (data[0].content.message !== 'Failed to register new partner') {
               this.$router.push({ name: 'auth-login' })
 
               this.$swal({
@@ -297,6 +324,7 @@ export default {
                 },
               })
             }
+            this.loading = false
           }).catch(() => {
             this.$toast({
               component: ToastificationContentVue,
@@ -324,6 +352,13 @@ export default {
         this.passwordFieldTypeConfirmPassword = 'text'
       } else if (this.passwordFieldTypeConfirmPassword === 'text') {
         this.passwordFieldTypeConfirmPassword = 'password'
+      }
+    },
+    validPassword() {
+      if (this.userPassword.length < 8) {
+        this.errorCharPassword = '*Minimal 8 karakter'
+      } else {
+        this.errorCharPassword = ''
       }
     },
   },

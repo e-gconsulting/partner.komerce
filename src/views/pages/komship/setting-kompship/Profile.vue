@@ -401,10 +401,10 @@ export default {
 
       options: [
         {
-          text: 'Laki-laki', value: 'Laki-laki',
+          text: 'Laki-laki', value: 1,
         },
         {
-          text: 'Perempuan', value: 'Perempuan',
+          text: 'Perempuan', value: 2,
         },
       ],
 
@@ -437,22 +437,26 @@ export default {
       this.$refs.formRules.validate().then(success => {
         if (success) {
           const formData = new FormData()
-          formData.append('_method', 'post')
           formData.append('id', this.id)
           formData.append('username', this.username)
           formData.append('full_name', this.fullname)
           formData.append('no_hp', this.noHP)
           formData.append('address', this.address)
           formData.append('gender', this.jenisKelamin)
-          formData.append('business_logo', this.imageFile)
+          if (this.imageInitialFile !== null && this.imageFile === null) {
+            formData.append('business_logo', this.imageInitialFile)
+          } else if (this.imageFile !== null) {
+            formData.append('business_logo', this.imageFile)
+          }
           formData.append('brand_name', this.nameBusiness)
           formData.append('partner_category_name', this.sektorBusiness)
           formData.append('business_type_id', this.typeBusiness)
-          formData.append('business_location', this.location)
+          formData.append('business_location', String(this.location))
           formData.append('email', this.emailUser)
 
-          this.$http.post('/user/partner/update-profile-komship', formData,
-            {}).then(() => {
+          console.log(this.imageFile)
+
+          this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -492,12 +496,18 @@ export default {
         this.id = data.user_id
         this.fullname = data.user_fullname
         this.username = data.user_name
-        this.jenisKelamin = data.user_gender
+        if (data.user_gender === 'Laki-laki') {
+          this.jenisKelamin = 1
+        }
+        if (data.user_gender === 'Perempuan') {
+          this.jenisKelamin = 2
+        }
         this.noHP = data.user_phone
         this.emailUser = data.user_email
         this.address = data.user_address
         if (data.partner_business_logo) this.imageInitialFile = data.partner_business_logo
         this.nameBusiness = data.partner_business_name
+        this.location = data.user_address_default.detail_address
         this.sektorBusiness = data.partner_category_name
         this.typeBusiness = data.partner_business_type_id
         this.loading = false

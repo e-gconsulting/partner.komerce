@@ -84,7 +84,7 @@
                     for="uploadImage"
                   >
                     <b-avatar
-                      v-if="imageFile === null"
+                      v-if="imageFile === null && imageInitialFile === null"
                       variant="light-dark"
                       size="50"
                       class="btn btn-flat-primary btn-icon"
@@ -527,23 +527,9 @@
                     v-if="isVariation === true"
                     label="Info Variasi"
                     label-cols-md="2"
-                    class="mt-2 d-none"
+                    class="mt-2"
                   >
                     <b-row class="d-flex align-items-center">
-                      <b-col md="4">
-                        <b-form-input
-                          v-model="price"
-                          placeholder="Rp | Harga"
-                        />
-                      </b-col>
-
-                      <b-col md="2">
-                        <b-form-input
-                          v-model="stock"
-                          placeholder="Stok"
-                        />
-                      </b-col>
-
                       <b-col
                         md="6"
                         class="d-flex align-items-center"
@@ -552,14 +538,9 @@
                           <b-button
                             variant="primary"
                             class="d-flex align-items-center"
+                            @click.prevent="updateVariation"
                           >
-                            <b-spinner
-                              v-if="loading"
-                              variant="light"
-                              size="sm"
-                              class="mr-50"
-                            />
-                            Terapkan Kesemua
+                            Terapkan Perubahan Variasi
                           </b-button>
                         </div>
                       </b-col>
@@ -995,7 +976,7 @@
                 v-ripple.400="'rgba(186, 191, 199, 0.15)'"
                 type="reset"
                 variant="primary"
-                @click="submitPublish"
+                @click.prevent="submitPublish"
               >
                 <b-spinner
                   v-if="loadingSubmit"
@@ -1131,6 +1112,7 @@ export default {
       fieldImage: [],
 
       fieldPreviewImage: [],
+      fieldEditVariation: [],
 
     }
   },
@@ -1186,20 +1168,27 @@ export default {
   methods: {
     loadProduct() {
       this.loading = true
+      if (this.variantItems !== []) {
+        this.variantItems = []
+      }
       httpKomship.get(`/v1/product/detail/${this.productId}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
+        console.log(data)
+        this.fieldEditVariation = data
         this.productName = data.product_name
         this.skuName = data.product_sku
         this.descriptionProduct = data.product_description
+        if (data.product_image[0].images_path) {
+          this.imageInitialFile = data.product_image[0].images_path
+        }
         this.stockProduct = data.product_stock
         this.priceProduct = data.product_price
         this.weightProduct = data.product_weight
         this.lengthProduct = data.product_length
         this.widthProduct = data.product_width
         this.heightProduct = data.product_height
-        console.log(data)
         if (data.flavors === 'COD') {
           this.cod = true
           this.transfer = false
@@ -1335,25 +1324,148 @@ export default {
             label: 'Stok',
           })
         }
-        this.loading = true
-        setTimeout(() => {
-          this.loading = false
-          this.fields.push(
-            {
-              key: 'action',
-              label: 'Aksi',
-              class: 'col-action',
-            },
-          )
-        }, 1000)
+        this.fields.push(
+          {
+            key: 'action',
+            label: 'Aksi',
+            class: 'col-action',
+          },
+        )
 
         this.loading = false
       })
     },
+    updateVariation() {
+      this.variantItems = []
+      this.fields = []
+
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices1.length; x++) {
+        this.variantItems.push({
+          val: this.formChoices1[x].choices,
+          parent: 0,
+          sold: 0,
+          stock: 0,
+          price: 0,
+          option: [],
+        })
+        // eslint-disable-next-line no-plusplus
+        for (let y = 0; y < this.formChoices2.length; y++) {
+          this.variantItems[x].option.push({
+            val: this.formChoices2[y].choices,
+            parent: 0,
+            sold: 0,
+            stock: 0,
+            price: 0,
+            option: [],
+          })
+          // eslint-disable-next-line no-plusplus
+          for (let z = 0; z < this.formChoices3.length; z++) {
+            if (this.fieldEditVariation.options[x] !== undefined) {
+              if (this.fieldEditVariation.options[x].options[y] !== undefined) {
+                if (this.fieldEditVariation.options[x].options[y].options[z] !== undefined) {
+                  this.variantItems[x].option[y].option.push({
+                    val: this.formChoices3[z].choices,
+                    parent: 0,
+                    sold: this.fieldEditVariation.options[x].options[y].options[z].sold,
+                    stock: this.fieldEditVariation.options[x].options[y].options[z].variant_stock,
+                    price: this.fieldEditVariation.options[x].options[y].options[z].option_price,
+                  })
+                } else {
+                  this.variantItems[x].option[y].option.push({
+                    val: this.formChoices3[z].choices,
+                    parent: 0,
+                    sold: 0,
+                    stock: 0,
+                    price: 0,
+                  })
+                }
+              } else {
+                this.variantItems[x].option[y].option.push({
+                  val: this.formChoices3[z].choices,
+                  parent: 0,
+                  sold: 0,
+                  stock: 0,
+                  price: 0,
+                })
+              }
+            } else {
+              this.variantItems[x].option[y].option.push({
+                val: this.formChoices3[z].choices,
+                parent: 0,
+                sold: 0,
+                stock: 0,
+                price: 0,
+              })
+            }
+          }
+        }
+      }
+
+      console.log(this.variantItems)
+
+      // Delete empty choices
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.formChoices1.length; x++) {
+        if (this.formChoices1[x].choices === '') {
+          this.formChoices1.splice(x, 1)
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let y = 0; y < this.formChoices2.length; y++) {
+          if (this.formChoices2[y].choices === '') {
+            this.formChoices2.splice(y, 1)
+          }
+          // eslint-disable-next-line no-plusplus
+          for (let z = 0; z < this.formChoices3.length; z++) {
+            if (this.formChoices3[z].choices === '') {
+              this.formChoices3.splice(z, 1)
+            }
+          }
+        }
+      }
+
+      if (this.variationName1 !== null) {
+        this.fields.push({
+          key: 'variant1',
+          label: String(this.variationName1),
+        })
+      }
+      if (this.variationName2 !== null) {
+        this.fields.push({
+          key: 'variant2',
+          label: String(this.variationName2),
+        })
+      }
+      if (this.variationName3 !== null) {
+        this.fields.push({
+          key: 'variant3',
+          label: String(this.variationName3),
+        })
+      }
+      if (this.price !== null) {
+        this.fields.push({
+          key: 'price',
+          label: 'Harga',
+        })
+      }
+      if (this.stock !== null) {
+        this.fields.push({
+          key: 'stock',
+          label: 'Stok',
+        })
+      }
+      this.fields.push(
+        {
+          key: 'action',
+          label: 'Aksi',
+          class: 'col-action',
+        },
+      )
+    },
     submitPublish() {
       this.loadingSubmit = true
 
-      if (this.formChoices3[0] !== undefined) {
+      if (this.variationName3 !== null) {
         this.variantStore.push(
           {
             val: this.variationName1,
@@ -1404,7 +1516,7 @@ export default {
             }
           }
         }
-      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+      } else if (this.variationName3 === null && this.variationName2 !== null) {
         this.variantStore.push(
           {
             val: this.variationName1,
@@ -1438,7 +1550,7 @@ export default {
             )
           }
         }
-      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChocies1[0] !== undefined) {
+      } else if (this.variationName3 === null && this.variationName2 === null && this.variationName1 !== null) {
         this.variantStore.push(
           {
             val: this.variationName1,
@@ -1474,11 +1586,13 @@ export default {
         height: this.heightProduct,
         price: this.price,
         stock: this.stock,
+        params: 1,
         flavours: this.flavours,
         variant_option: this.variantStore,
         option: this.optionStore,
       }
-      console.log(this.imageFile)
+
+      console.log(params)
 
       httpKomship.put(`/v1/product/update/${this.productId}`, params, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
