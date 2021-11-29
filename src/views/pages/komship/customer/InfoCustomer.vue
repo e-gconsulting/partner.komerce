@@ -327,22 +327,38 @@ export default {
           key: 'total_order',
           label: 'Total Order',
           tdClass: 'text-center',
+          sortable: true,
         },
         {
           key: 'total_pcs',
           label: 'Total Pcs',
           tdClass: 'text-center',
+          sortable: true,
         },
         {
           key: 'total_spent',
           label: 'Uang Dihabiskan',
+          sortable: true,
         },
         {
           key: 'last_order',
           label: 'Terakhir Order',
           formatter: value => {
             if (!value || value === '00-00-0000') return '-'
-            return this.dateFormat(value, 'dd mmmm yyyy')
+            value.split('')
+            const newFormat = []
+            newFormat.push(value[6])
+            newFormat.push(value[7])
+            newFormat.push(value[8])
+            newFormat.push(value[9])
+            newFormat.push(value[2])
+            newFormat.push(value[3])
+            newFormat.push(value[4])
+            newFormat.push(value[5])
+            newFormat.push(value[0])
+            newFormat.push(value[1])
+            newFormat.join('')
+            return this.dateFormat(String(newFormat.join('')), 'dd mmmm yyyy')
           },
         },
         {

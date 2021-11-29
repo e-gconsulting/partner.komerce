@@ -53,6 +53,12 @@ import settingKompship from './setting-kompship'
 import keuangan from './keuangan'
 import hiring from './hiring'
 
+// Komplace
+import dashboardKomplace from './dashboard-komplace'
+import monitoring from './monitoring-komplace'
+import pengaturanKomplace from './pengaturanKomplace'
+import manajemenAdmin from './manajemenAdmin'
+
 // Array of sections
 export default [
   ...dashboard,
@@ -72,6 +78,11 @@ export default [
   ...settingKompship,
   ...keuangan,
   ...hiring,
+
+  ...dashboardKomplace,
+  ...monitoring,
+  ...pengaturanKomplace,
+  ...manajemenAdmin,
 
   ...talentPool,
   ...wishlist,

@@ -366,6 +366,12 @@ export default {
                 { action: 'manage', subject: 'Setting PIN' },
                 { action: 'manage', subject: 'Setting Ekspedisi' },
                 { action: 'manage', subject: 'Hiring' },
+
+                // Komplace
+                { action: 'manage', subject: 'Dashboard Komplace' },
+                { action: 'manage', subject: 'Monitoring' },
+                { action: 'manage', subject: 'Manajemen Admin' },
+                { action: 'manage', subject: 'Pengaturan Akun Komplace' },
               ]
               break
             case 'SDM':

@@ -109,10 +109,10 @@
                 {{ productFavorit }}
               </div>
               <div class="mt-1">
-                Rp. {{ totalSpent }}
+                Rp. {{ formatPrice(totalSpent) }}
               </div>
               <div class="mt-1">
-                Rp. {{ averageSpent }}
+                Rp. {{ formatPrice(averageSpent) }}
               </div>
             </b-col>
           </b-row>
@@ -128,64 +128,114 @@
         </h5>
       </b-col>
 
-      <b-row>
-        <b-table
-          responsive
-          class="position-relative mt-2"
-          empty-text="Tidak ada data untuk ditampilkan."
-          :show-empty="!loading"
-          :fields="fields"
-          :items="itemsDetailCustomer"
+      <b-container fluid>
+        <b-row class="mt-3">
+          <b-col
+            cols="2"
+            class="pl-0 pr-0"
+          >
+            <h5 class="ml-2">
+              <strong>
+                Tanggal Order
+              </strong>
+            </h5>
+          </b-col>
+          <b-col
+            cols="2"
+            class="pl-0 pr-0"
+          >
+            <h5>
+              <strong>
+                Pelanggan
+              </strong>
+            </h5>
+          </b-col>
+          <b-col
+            cols="3"
+            class="pl-0 pr-0"
+          >
+            <h5>
+              <strong>
+                Produk
+              </strong>
+            </h5>
+          </b-col>
+          <b-col
+            cols="2"
+            class="pl-0 pr-0"
+          >
+            <h5>
+              <strong>
+                Total Pembayaran
+              </strong>
+            </h5>
+          </b-col>
+          <b-col
+            cols="2"
+            class="pl-0 pr-0"
+          >
+            <h5 class="text-center">
+              <strong>
+                Status
+              </strong>
+            </h5>
+          </b-col>
+          <b-col
+            cols="1"
+            class="pl-0 pr-0"
+          >
+            <h5>
+              <strong>
+                Rincian
+              </strong>
+            </h5>
+          </b-col>
+        </b-row>
+        <b-col
+          class="p-0 m-0"
+          cols="12"
         >
+          <hr style="height:1px; background-color:#828282; color: #828282; opacity: 0.5;">
+        </b-col>
 
-          <template #cell(order_date)="data">
-            {{ data.item.order_date }}
-          </template>
-
-          <template #cell(all_order_detail)="data">
-            <div
-              v-for="(items, index) in data.item.all_order_detail"
-              :key="index+1"
+        <div
+          v-for="(items, index) in itemsDetailCustomer"
+          :key="index+1"
+        >
+          <b-row>
+            <b-col
+              cols="2"
             >
-              <div class="d-flex align-items-center mb-1">
-                <b-avatar
-                  square
-                  size="50px"
-                  variant="light-primary"
-                  :src="items.product.product_image[0].images_path"
-                />
-                <div>
-                  <p class="ml-1">
-                    <strong> {{ items.product_name }} </strong>
-                  </p>
-                  <small class="text-danger ml-1">{{ items.product_variant_name }}</small>
-                </div>
-              </div>
-            </div>
-          </template>
-
-          <template #cell(grand_total)="data">
-            Rp. {{ data.item.grand_total }}
-          </template>
-
-          <template #cell(order_status)="data">
-            {{ data.item.order_status }}
-          </template>
-
-          <template #cell(rincian)="data">
-            <b-button
-              size="sm"
-              variant="flat-info"
-              tag="router-link"
-              :to="{ name: $route.meta.routeDetailOrder, params: { order_id: data.item.id } }"
+              {{ items.last_order }}
+            </b-col>
+            <b-col
+              cols="2"
             >
-              Lihat Detail
-            </b-button>
-          </template>
-
-        </b-table>
-      </b-row>
-
+              {{ items }}
+            </b-col>
+            <b-col
+              cols="3"
+            >
+              {{ items }}
+            </b-col>
+            <b-col
+              cols="2"
+            >
+              {{ items }}
+            </b-col>
+            <b-col
+              cols="2"
+            >
+              {{ items }}
+            </b-col>
+            <b-col
+              cols="1"
+            >
+              {{ items }}
+            </b-col>
+          </b-row>
+        </div>
+      </b-container>
     </b-card>
   </b-overlay>
 </template>
@@ -197,9 +247,9 @@ import {
   BCol,
   BImg,
   BAvatar,
-  BTable,
   BOverlay,
   BCard,
+  BContainer,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import httpKomship from '../setting-kompship/http_komship'
@@ -212,8 +262,8 @@ export default {
     BCol,
     BImg,
     BAvatar,
-    BTable,
     BOverlay,
+    BContainer,
   },
   data() {
     return {
@@ -265,7 +315,206 @@ export default {
   },
   mounted() {
     console.log(this.customerId)
-    this.getCustomerDetail()
+    this.itemsDetailCustomer = [{
+      customer_id: 4,
+      customer_name: 'Pak Muh',
+      customer_phone: '09182938398',
+      customer_address: 'rt.10. Pulogadung, jakarta',
+      customer_report: {
+        last_order: '2021-10-18 09:14:33',
+        total_order: 8,
+        total_pcs: '62',
+        total_spent: 3041952,
+        average_spent: 380244,
+        customer_product_favorit: 'Jilbab',
+      },
+      customer_orders: [
+        {
+          id: 4,
+          customer_id: 4,
+          grand_total: 128500,
+          order_status: 2,
+          payment_method: 'COD',
+          order_date: '2021-10-18 09:14:33',
+          all_order_detail: [
+            {
+              product_id: 22,
+              detail_order_id: 4,
+              product_name: 'Jilbab',
+              product_variant_name: 'Merah - l',
+              product: {
+                id: 22,
+                product_name: 'Jilbab',
+                product_image: [],
+              },
+            },
+          ],
+        },
+        {
+          id: 32,
+          customer_id: 4,
+          grand_total: 61120,
+          order_status: 1,
+          payment_method: 'COD',
+          order_date: '2021-10-18 09:14:33',
+          all_order_detail: [
+            {
+              product_id: 26,
+              detail_order_id: 32,
+              product_name: 'Jilbab',
+              product_variant_name: 'M',
+              product: {
+                id: 26,
+                product_name: 'Jilbab',
+                product_image: [
+                  {
+                    id: 24,
+                    product_id: 26,
+                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          id: 37,
+          customer_id: 4,
+          grand_total: 80092,
+          order_status: 1,
+          payment_method: 'COD',
+          order_date: '2021-10-29 20:23:43',
+          all_order_detail: [
+            {
+              product_id: 26,
+              detail_order_id: 37,
+              product_name: 'Jilbab',
+              product_variant_name: 'M',
+              product: {
+                id: 26,
+                product_name: 'Jilbab',
+                product_image: [
+                  {
+                    id: 24,
+                    product_id: 26,
+                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          id: 46,
+          customer_id: 4,
+          grand_total: 81120,
+          order_status: 1,
+          payment_method: 'COD',
+          order_date: '2021-11-08 14:30:05',
+          all_order_detail: [
+            {
+              product_id: 26,
+              detail_order_id: 46,
+              product_name: 'Jilbab',
+              product_variant_name: 'M',
+              product: {
+                id: 26,
+                product_name: 'Jilbab',
+                product_image: [
+                  {
+                    id: 24,
+                    product_id: 26,
+                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          id: 47,
+          customer_id: 4,
+          grand_total: 61120,
+          order_status: 1,
+          payment_method: 'COD',
+          order_date: '2021-11-08 14:38:34',
+          all_order_detail: [
+            {
+              product_id: 26,
+              detail_order_id: 47,
+              product_name: 'Jilbab',
+              product_variant_name: 'M',
+              product: {
+                id: 26,
+                product_name: 'Jilbab',
+                product_image: [
+                  {
+                    id: 24,
+                    product_id: 26,
+                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
+                  },
+                ],
+              },
+            },
+          ],
+        },
+        {
+          id: 73,
+          customer_id: 4,
+          grand_total: 90000,
+          order_status: 1,
+          payment_method: 'COD',
+          order_date: '2021-11-23 23:06:58',
+          all_order_detail: [
+            {
+              product_id: 26,
+              detail_order_id: 73,
+              product_name: 'Jilbab',
+              product_variant_name: 'Merah - l',
+              product: {
+                id: 26,
+                product_name: 'Jilbab',
+                product_image: [
+                  {
+                    id: 24,
+                    product_id: 26,
+                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
+                  },
+                ],
+              },
+            },
+            {
+              product_id: 27,
+              detail_order_id: 73,
+              product_name: 'Jilbab',
+              product_variant_name: 'M',
+              product: null,
+            },
+          ],
+        },
+        {
+          id: 76,
+          customer_id: 4,
+          grand_total: 2450000,
+          order_status: 1,
+          payment_method: 'COD',
+          order_date: '2021-11-23 23:38:59',
+          all_order_detail: [
+            {
+              product_id: 74,
+              detail_order_id: 76,
+              product_name: 'Iphone 13',
+              product_variant_name: 'PRO',
+              product: {
+                id: 74,
+                product_name: 'Iphone 13',
+                product_image: [],
+              },
+            },
+          ],
+        },
+      ],
+    }]
   },
   methods: {
     getCustomerDetail() {
@@ -293,6 +542,10 @@ export default {
 
         return this.itemsDetailCustomer
       })
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
   },
 }

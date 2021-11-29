@@ -34,6 +34,12 @@ import settingKompship from './routes/komship/setting-kompship/index'
 import keuangan from './routes/komship/keuangan/index'
 import hiring from './routes/komship/hiring/index'
 
+// Komplace
+import dashboardKomplace from './routes/komplace/dashboard/index'
+import monitoring from './routes/komplace/monitoring/index'
+import manajemenAdmin from './routes/komplace/manajemenAdmin/index'
+import pengaturanKomplace from './routes/komplace/pengaturan/index'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -63,6 +69,11 @@ const router = new VueRouter({
     ...settingKompship,
     ...keuangan,
     ...hiring,
+
+    ...dashboardKomplace,
+    ...monitoring,
+    ...manajemenAdmin,
+    ...pengaturanKomplace,
 
     ...talentPool,
     ...parentProfile,
