@@ -1,6 +1,15 @@
 export default [
   {
     path: '/',
+    name: 'cod-dashboard',
+    component: () => import('@/views/pages/dashboard-cod/Index'),
+    meta: {
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
+    path: '/dashboard-lama',
     name: 'dashboard-analytics',
     component: () => import('@/views/pages/dashboard/Index'),
     meta: {

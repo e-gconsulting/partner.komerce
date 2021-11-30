@@ -9,7 +9,7 @@
           @click="toggleVerticalMenuActive"
         >
           <feather-icon
-            icon="MenuIcon"
+            icon="GridIcon"
             size="21"
           />
         </b-link>

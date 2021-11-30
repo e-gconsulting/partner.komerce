@@ -31,6 +31,8 @@ tagVariant
 
 */
 import dashboard from './dashboard'
+import membership from './membership'
+import ekspedisi from './ekspedisi'
 import training from './training'
 import talent from './talent'
 import partner from './partner'
@@ -62,6 +64,8 @@ import manajemenAdmin from './manajemenAdmin'
 // Array of sections
 export default [
   ...dashboard,
+  ...membership,
+  ...ekspedisi,
   ...training,
   ...talent,
   ...partner,

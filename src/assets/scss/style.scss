@@ -7,7 +7,11 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 
 @import '~@core/scss/base/bootstrap-extended/include';
 @import '~@core/scss/base/components/include';
-
+@import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+body{
+  font-family: 'Poppins',
+  sans-serif;
+}
 .header-navbar {
   &.fixed-top {
     left: 0;
@@ -27,6 +31,10 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
       }
     }
   }
+}
+
+.vertical-layout.vertical-menu-modern.menu-expanded .main-menu{
+  margin-top: 16px;
 }
 
 .main-menu {
@@ -308,4 +316,59 @@ body {
       color: $theme-dark-body-color;
     }
   }
+}
+
+.text-24-bold{
+  font-style: normal;
+  font-weight: 600 !important;
+  font-size: 24px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #444444;
+}
+.text-20-bold{
+  font-style: normal;
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+}
+.text-20-normal{
+  font-style: normal;
+  font-weight: 500 !important;
+  font-size: 20px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+}
+.text-18-bold{
+  font-style: normal;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #444444;
+}
+.text-18-normal{
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #444444;
+}
+.text-16-normal{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #444444;
+}
+.text-16-bld{
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px !important;
+  line-height: 150%;
+  letter-spacing: 0.5px;
+  color: #444444;
 }
