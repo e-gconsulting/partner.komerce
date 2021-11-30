@@ -1180,9 +1180,9 @@ export default {
         this.productName = data.product_name
         this.skuName = data.product_sku
         this.descriptionProduct = data.product_description
-        if (data.product_image[0].images_path) {
-          this.imageInitialFile = data.product_image[0].images_path
-        }
+        // if (data.product_image[0].images_path) {
+        //   this.imageInitialFile = data.product_image[0].images_path
+        // }
         this.stockProduct = data.product_stock
         this.priceProduct = data.product_price
         this.weightProduct = data.product_weight

@@ -56,11 +56,41 @@
                 <strong>{{ metodePembayaran }}</strong>
               </b-list-group-item>
               <b-list-group-item class="border-0">
-                <b-badge
-                  variant="light-primary"
-                >
-                  {{ orderStatus }}
-                </b-badge>
+                <div v-if="orderStatus === 'Diajukan'">
+                  <b-badge
+                    variant="light-warning"
+                  >
+                    {{ orderStatus }}
+                  </b-badge>
+                </div>
+                <div v-if="orderStatus === 'Dikirim'">
+                  <b-badge
+                    variant="light-info"
+                  >
+                    {{ orderStatus }}
+                  </b-badge>
+                </div>
+                <div v-if="orderStatus === 'Diterima'">
+                  <b-badge
+                    variant="light-success"
+                  >
+                    {{ orderStatus }}
+                  </b-badge>
+                </div>
+                <div v-if="orderStatus === 'Batal'">
+                  <b-badge
+                    variant="light-primary"
+                  >
+                    {{ orderStatus }}
+                  </b-badge>
+                </div>
+                <div v-if="orderStatus === 'Retur'">
+                  <b-badge
+                    variant="light-primary"
+                  >
+                    {{ orderStatus }}
+                  </b-badge>
+                </div>
               </b-list-group-item>
             </b-list-group>
           </b-col>
@@ -150,12 +180,21 @@
             <template #cell(product_name)="data">
               <b-row class="d-flex align-items-center">
                 <div class="d-flex align-items-center mb-1">
-                  <b-avatar
-                    square
-                    size="50px"
-                    variant="light-primary"
-                    :src="data.item.product.product_image[0].images_path"
-                  />
+                  <div v-if="data.item.product.product_image[0] !== undefined">
+                    <b-avatar
+                      square
+                      size="50px"
+                      variant="light-primary"
+                      :src="data.item.product.product_image[0].images_path"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-avatar
+                      square
+                      size="50px"
+                      variant="light-primary"
+                    />
+                  </div>
                   <div>
                     <p class="ml-1">
                       <strong> {{ data.item.product_name }} </strong>
@@ -402,8 +441,16 @@ export default {
         this.orderNomor = data.order_no
         this.orderDate = data.order_date
         this.metodePembayaran = data.payment_method
-        if (data.order_status === 2) {
+        if (data.order_status === 0) {
+          this.orderStatus = 'Diajukan'
+        } else if (data.order_status === 1) {
+          this.orderStatus = 'Dikirim'
+        } else if (data.order_status === 2) {
+          this.orderStatus = 'Diterima'
+        } else if (data.order_status === 3) {
           this.orderStatus = 'Retur'
+        } else if (data.order_status === 4) {
+          this.orderStatus = 'Batal'
         }
         this.customerOrderName = data.customers.name
         this.customerOrderAddress = data.customers.address

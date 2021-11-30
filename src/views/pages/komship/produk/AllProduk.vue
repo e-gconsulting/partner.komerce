@@ -195,20 +195,19 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
+                        <div v-if="itemsData.product_image[0] !== undefined">
                           <b-avatar
-                            v-if="itemsData.product_image.images_path !== undefined"
                             variant="light-primary"
                             square
                             size="50px"
-                            :src="itemsData.product_image.images_path"
+                            :src="itemsData.product_image[0].images_path"
                           />
+                        </div>
+                        <div v-else>
                           <b-avatar
-                            v-else
                             variant="light-primary"
                             square
                             size="50px"
-                            :src="imageFileProduct"
                           />
                         </div>
                         <div class="ml-1">

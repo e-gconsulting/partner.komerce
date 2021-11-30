@@ -9,7 +9,9 @@
             <feather-icon icon="SearchIcon" />
           </b-input-group-prepend>
           <b-form-input
+            v-model="customerName"
             placeholder="Example"
+            @input="filterCustomer"
           />
         </b-input-group>
       </b-col>
@@ -39,31 +41,20 @@
               <b-row>
                 <b-col
                   cols="12"
-                  class="ml-50 mt-50"
+                  class="mt-50 pr-2 pl-2"
                 >
                   <b-form-group
                     label="Daerah"
                   >
-                    <div class="d-flex justify-content-center align-items-center">
-                      <b-col
-                        md="5"
-                        class="pl-0"
-                      >
-                        <b-form-select
-                          v-model="selected"
-                          :options="options"
-                        />
-                      </b-col>
-                      <b-col
-                        md="7"
-                        class="pl-0"
-                      >
-                        <b-form-input
-                          v-model="area"
-                          class="mr-1"
-                        />
-                      </b-col>
-                    </div>
+                    <v-select
+                      v-model="destination"
+                      label="label"
+                      :options="itemsDestinations"
+                      :reduce="items => items.city_name"
+                      placeholder="Ketik untuk mencari..."
+                      @search="onSearchDestination"
+                      @input="tes"
+                    />
                   </b-form-group>
                 </b-col>
 
@@ -149,22 +140,6 @@
                       <b-form-input
                         v-model="orderTo"
                         class="mr-1"
-                      />
-                    </div>
-                  </b-form-group>
-                </b-col>
-
-                <b-col
-                  cols="12"
-                  class="ml-50 mt-50"
-                >
-                  <b-form-group
-                    label="Produk"
-                  >
-                    <div class="d-flex justify-content-center align-items-center mr-1">
-                      <b-form-input
-                        v-model="productName"
-                        class=""
                       />
                     </div>
                   </b-form-group>
@@ -272,7 +247,6 @@ import {
   BPopover,
   BForm,
   BFormGroup,
-  BFormSelect,
   BCard,
   BOverlay,
 } from 'bootstrap-vue'
@@ -280,6 +254,7 @@ import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
+import vSelect from 'vue-select'
 import httpKomship from '../setting-kompship/http_komship'
 
 export default {
@@ -297,8 +272,8 @@ export default {
     BPopover,
     BForm,
     BFormGroup,
-    BFormSelect,
     BOverlay,
+    vSelect,
   },
   directives: {
     'b-popover': VBPopover,
@@ -378,6 +353,10 @@ export default {
       pcsFrom: null,
       pcsTo: null,
       area: '',
+      destination: '',
+      itemsDestinations: [],
+
+      customerName: '',
 
       endpoint: null,
       url: '/v1/customers',
@@ -403,8 +382,14 @@ export default {
       this.loading = true
       const params = {}
 
+      if (this.customerName) Object.assign(params, { customer_name: this.customerName })
       if (this.orderFrom) Object.assign(params, { orderFrom: this.orderFrom })
       if (this.orderTo) Object.assign(params, { orderTo: this.orderTo })
+      if (this.destination) Object.assign(params, { area: this.destination })
+      if (this.spentFrom) Object.assign(params, { spentFrom: this.spentFrom })
+      if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
+      if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
+      if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
 
       httpKomship.get('/v1/customers', {
         params,
@@ -419,6 +404,27 @@ export default {
         return this.itemsCustomer
       })
     },
+    tes() {
+      console.log(this.destination)
+    },
+    onSearchDestination(search, loading) {
+      if (search.length) {
+        this.searchDestination(loading, search, this)
+      }
+    },
+    searchDestination: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadDestination(search).finally(() => loading(false))
+    }, 500),
+    loadDestination(search) {
+      return httpKomship.get(`/v1/destination?search=${search}`, {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data.data
+        this.itemsDestinations = data
+        return this.itemsDestinations
+      })
+    },
     resetFilter() {
       this.tableProvider()
     },
@@ -429,3 +435,7 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+@import '~@core/scss/vue/libs/vue-select.scss';
+</style>

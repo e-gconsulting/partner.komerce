@@ -134,61 +134,61 @@
             cols="2"
             class="pl-0 pr-0"
           >
-            <h5 class="ml-2">
+            <span class="ml-2">
               <strong>
                 Tanggal Order
               </strong>
-            </h5>
+            </span>
           </b-col>
           <b-col
             cols="2"
-            class="pl-0 pr-0"
+            class=""
           >
-            <h5>
+            <span>
               <strong>
                 Pelanggan
               </strong>
-            </h5>
+            </span>
           </b-col>
           <b-col
             cols="3"
-            class="pl-0 pr-0"
+            class=""
           >
-            <h5>
+            <span>
               <strong>
                 Produk
               </strong>
-            </h5>
+            </span>
           </b-col>
           <b-col
             cols="2"
-            class="pl-0 pr-0"
+            class=""
           >
-            <h5>
+            <span>
               <strong>
                 Total Pembayaran
               </strong>
-            </h5>
-          </b-col>
-          <b-col
-            cols="2"
-            class="pl-0 pr-0"
-          >
-            <h5 class="text-center">
-              <strong>
-                Status
-              </strong>
-            </h5>
+            </span>
           </b-col>
           <b-col
             cols="1"
-            class="pl-0 pr-0"
+            class="text-center"
           >
-            <h5>
+            <span class="text-center">
+              <strong>
+                Status
+              </strong>
+            </span>
+          </b-col>
+          <b-col
+            cols="2"
+            class="text-center"
+          >
+            <span>
               <strong>
                 Rincian
               </strong>
-            </h5>
+            </span>
           </b-col>
         </b-row>
         <b-col
@@ -202,38 +202,169 @@
           v-for="(items, index) in itemsDetailCustomer"
           :key="index+1"
         >
-          <b-row>
+          <b-row class="mb-2">
             <b-col
               cols="2"
+              class="p-0"
             >
-              {{ items.last_order }}
+              <span class="ml-2">
+                {{ items.order_date }}
+              </span>
             </b-col>
             <b-col
               cols="2"
+              class="p-0"
             >
-              {{ items }}
+              <span class="ml-1">
+                {{ infoCustomer.customer_name }}
+              </span>
             </b-col>
             <b-col
               cols="3"
+              class="p-0"
             >
-              {{ items }}
+              <div
+                v-for="(detailOrder, indexDetail) in items.all_order_detail.slice(0, 1)"
+                :key="indexDetail+1"
+              >
+                <b-container
+                  fluid
+                  class="d-flex mb-50"
+                >
+                  <div v-if="detailOrder.product.product_image[0] !== undefined">
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="detailOrder.product.product_image[0].images_path"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <b-row>
+                      <b-col>
+                        <small><strong>{{ detailOrder.product_name }}</strong></small>
+                      </b-col>
+                      <b-col>
+                        <small>
+                          <strong>
+                            x{{ detailOrder.qty }}
+                          </strong>
+                        </small>
+                      </b-col>
+                    </b-row>
+                    <p>
+                      <strong class="text-primary">
+                        {{ detailOrder.product_variant_name }}
+                      </strong>
+                    </p>
+                  </div>
+                </b-container>
+              </div>
             </b-col>
             <b-col
               cols="2"
+              class="p-0"
             >
-              {{ items }}
-            </b-col>
-            <b-col
-              cols="2"
-            >
-              {{ items }}
+              <span class="ml-1">
+                Rp. {{ formatPrice(items.grand_total) }}
+              </span>
+              <p class="text-primary ml-1 mt-50">
+                <strong>
+                  {{ items.payment_method }}
+                </strong>
+              </p>
             </b-col>
             <b-col
               cols="1"
+              class="p-0 text-center"
             >
-              {{ items }}
+              {{ formatStatus(items.order_status) }}
+            </b-col>
+            <b-col
+              cols="2"
+              class="p-0 text-center"
+            >
+              <b-button
+                size="sm"
+                variant="flat-info"
+                tag="router-link"
+                :to="{ name: $route.meta.routeDetailOrder, params: { order_id: items.id } }"
+              >
+                Lihat Detail
+              </b-button>
             </b-col>
           </b-row>
+
+          <b-row
+            v-if="items.all_order_detail.length > 1"
+            class="d-flex justify-content-end mb-2"
+          >
+            <b-col
+              cols="auto"
+            >
+              <b-button
+                v-b-toggle="`collapse-${String(index)}`"
+                variant="flat-dark"
+                size="sm"
+              >
+                Tampilkan Versi Lainnya
+                <feather-icon
+                  icon="ChevronDownIcon"
+                />
+              </b-button>
+            </b-col>
+            <b-col cols="12">
+              <b-collapse
+                :id="`collapse-${String(index)}`"
+              >
+                <b-row>
+                  <b-col cols="2" />
+                  <b-col cols="2" />
+                  <b-col
+                    cols="3"
+                    class="p-0"
+                  >
+                    <div
+                      v-for="(detailOrder, indexDetail) in items.all_order_detail.slice(1, items.all_order_detail.length)"
+                      :key="indexDetail+1"
+                    >
+                      <b-container
+                        fluid
+                        class="d-flex mb-50"
+                      >
+                        <div>
+                          <b-avatar
+                            variant="light-primary"
+                            square
+                            size="50px"
+                          />
+                        </div>
+                        <div class="ml-1">
+                          <small><strong>{{ detailOrder.product_name }}</strong></small>
+                          <p>
+                            <strong class="text-primary">
+                              {{ detailOrder.product_variant_name }}
+                            </strong>
+                          </p>
+                        </div>
+                      </b-container>
+                    </div>
+                  </b-col>
+                  <b-col cols="2" />
+                  <b-col cols="1" />
+                  <b-col cols="2" />
+                </b-row>
+              </b-collapse>
+            </b-col>
+          </b-row>
+
         </div>
       </b-container>
     </b-card>
@@ -250,8 +381,11 @@ import {
   BOverlay,
   BCard,
   BContainer,
+  BCollapse,
+  VBToggle,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
+import moment from 'moment'
 import httpKomship from '../setting-kompship/http_komship'
 
 export default {
@@ -264,6 +398,10 @@ export default {
     BAvatar,
     BOverlay,
     BContainer,
+    BCollapse,
+  },
+  directives: {
+    'b-toggle': VBToggle,
   },
   data() {
     return {
@@ -311,210 +449,12 @@ export default {
       ],
 
       itemsDetailCustomer: [],
+      infoCustomer: [],
     }
   },
   mounted() {
-    console.log(this.customerId)
-    this.itemsDetailCustomer = [{
-      customer_id: 4,
-      customer_name: 'Pak Muh',
-      customer_phone: '09182938398',
-      customer_address: 'rt.10. Pulogadung, jakarta',
-      customer_report: {
-        last_order: '2021-10-18 09:14:33',
-        total_order: 8,
-        total_pcs: '62',
-        total_spent: 3041952,
-        average_spent: 380244,
-        customer_product_favorit: 'Jilbab',
-      },
-      customer_orders: [
-        {
-          id: 4,
-          customer_id: 4,
-          grand_total: 128500,
-          order_status: 2,
-          payment_method: 'COD',
-          order_date: '2021-10-18 09:14:33',
-          all_order_detail: [
-            {
-              product_id: 22,
-              detail_order_id: 4,
-              product_name: 'Jilbab',
-              product_variant_name: 'Merah - l',
-              product: {
-                id: 22,
-                product_name: 'Jilbab',
-                product_image: [],
-              },
-            },
-          ],
-        },
-        {
-          id: 32,
-          customer_id: 4,
-          grand_total: 61120,
-          order_status: 1,
-          payment_method: 'COD',
-          order_date: '2021-10-18 09:14:33',
-          all_order_detail: [
-            {
-              product_id: 26,
-              detail_order_id: 32,
-              product_name: 'Jilbab',
-              product_variant_name: 'M',
-              product: {
-                id: 26,
-                product_name: 'Jilbab',
-                product_image: [
-                  {
-                    id: 24,
-                    product_id: 26,
-                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        {
-          id: 37,
-          customer_id: 4,
-          grand_total: 80092,
-          order_status: 1,
-          payment_method: 'COD',
-          order_date: '2021-10-29 20:23:43',
-          all_order_detail: [
-            {
-              product_id: 26,
-              detail_order_id: 37,
-              product_name: 'Jilbab',
-              product_variant_name: 'M',
-              product: {
-                id: 26,
-                product_name: 'Jilbab',
-                product_image: [
-                  {
-                    id: 24,
-                    product_id: 26,
-                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        {
-          id: 46,
-          customer_id: 4,
-          grand_total: 81120,
-          order_status: 1,
-          payment_method: 'COD',
-          order_date: '2021-11-08 14:30:05',
-          all_order_detail: [
-            {
-              product_id: 26,
-              detail_order_id: 46,
-              product_name: 'Jilbab',
-              product_variant_name: 'M',
-              product: {
-                id: 26,
-                product_name: 'Jilbab',
-                product_image: [
-                  {
-                    id: 24,
-                    product_id: 26,
-                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        {
-          id: 47,
-          customer_id: 4,
-          grand_total: 61120,
-          order_status: 1,
-          payment_method: 'COD',
-          order_date: '2021-11-08 14:38:34',
-          all_order_detail: [
-            {
-              product_id: 26,
-              detail_order_id: 47,
-              product_name: 'Jilbab',
-              product_variant_name: 'M',
-              product: {
-                id: 26,
-                product_name: 'Jilbab',
-                product_image: [
-                  {
-                    id: 24,
-                    product_id: 26,
-                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
-                  },
-                ],
-              },
-            },
-          ],
-        },
-        {
-          id: 73,
-          customer_id: 4,
-          grand_total: 90000,
-          order_status: 1,
-          payment_method: 'COD',
-          order_date: '2021-11-23 23:06:58',
-          all_order_detail: [
-            {
-              product_id: 26,
-              detail_order_id: 73,
-              product_name: 'Jilbab',
-              product_variant_name: 'Merah - l',
-              product: {
-                id: 26,
-                product_name: 'Jilbab',
-                product_image: [
-                  {
-                    id: 24,
-                    product_id: 26,
-                    images_path: 'https://komshipdev.komerce.id/product_images/1637306043.jpg',
-                  },
-                ],
-              },
-            },
-            {
-              product_id: 27,
-              detail_order_id: 73,
-              product_name: 'Jilbab',
-              product_variant_name: 'M',
-              product: null,
-            },
-          ],
-        },
-        {
-          id: 76,
-          customer_id: 4,
-          grand_total: 2450000,
-          order_status: 1,
-          payment_method: 'COD',
-          order_date: '2021-11-23 23:38:59',
-          all_order_detail: [
-            {
-              product_id: 74,
-              detail_order_id: 76,
-              product_name: 'Iphone 13',
-              product_variant_name: 'PRO',
-              product: {
-                id: 74,
-                product_name: 'Iphone 13',
-                product_image: [],
-              },
-            },
-          ],
-        },
-      ],
-    }]
+    this.getCustomerDetail()
+    console.log(this.currentDateTime())
   },
   methods: {
     getCustomerDetail() {
@@ -523,12 +463,13 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
+
         // Information Customer
         this.customerName = data.customer_name
         this.customerContact = data.customer_phone
         this.customerAddress = data.customer_address
         this.itemsDetailCustomer = data.customer_orders
+        this.infoCustomer = data
 
         // report
         this.lastOrder = data.customer_report.last_order
@@ -540,12 +481,33 @@ export default {
 
         this.loading = false
 
+        // Result date
+        console.log(moment(this.lastOrder).fromNow())
+
         return this.itemsDetailCustomer
       })
     },
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    formatStatus(value) {
+      let formatStatus = ''
+      if (value === 0) {
+        formatStatus = 'Diajukan'
+      } else if (value === 1) {
+        formatStatus = 'Dikirim'
+      } else if (value === 2) {
+        formatStatus = 'Diterima'
+      } else if (value === 3) {
+        formatStatus = 'Retur'
+      } else if (value === 4) {
+        formatStatus = 'Batal'
+      }
+      return formatStatus
+    },
+    currentDateTime() {
+      return moment().format('MMMM Do YYYY, h:mm:ss a')
     },
   },
 }
