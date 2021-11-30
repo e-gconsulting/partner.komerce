@@ -1,11 +1,11 @@
 export default {
   // Endpoints
-  loginEndpoint: '/api/login',
+  loginEndpoint: '/login',
   registerPartnerEndpoint: '/partner/register',
   registerTalentEndpoint: '/admin/talent/register',
-  refreshEndpoint: '/api/refresh_token',
+  refreshEndpoint: '/refresh_token',
   resetPasswordEndpoint: '/api/forget_password',
-  logoutEndpoint: '/api/logout',
+  logoutEndpoint: '/logout',
 
   // Komship
   registerKomshipEndpoint: '/v1/register',
