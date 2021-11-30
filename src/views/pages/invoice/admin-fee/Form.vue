@@ -11,7 +11,10 @@
           <b-form>
             <b-row>
               <b-col md="12">
-                <b-form-group label="Posisi" label-cols-md="4">
+                <b-form-group
+                  label="Posisi"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Posisi"
@@ -30,7 +33,10 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Deskripsi" label-cols-md="4">
+                <b-form-group
+                  label="Deskripsi"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Deskripsi"
@@ -51,7 +57,10 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Jenis Potongan" label-cols-md="4">
+                <b-form-group
+                  label="Jenis Potongan"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Jenis Potongan"
@@ -62,34 +71,37 @@
                       :reduce="option => option.value"
                       label="label"
                       :options="sharing_fee_type_option"
-                    >
-                    </v-select>
+                    />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Biaya Standar" label-cols-md="4">
+                <b-form-group
+                  label="Biaya Standar"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Biaya Standar"
                     rules="required|integer"
                   >
-                    <b-form-input
+                    <money
                       v-model="admin_fee"
+                      v-bind="money"
+                      class="form-control"
                       :state="
                         errors.length > 0 || submitErrors.admin_fee
                           ? false
                           : null
                       "
-                      type="number"
                     />
                     <small class="text-danger">{{
                       errors[0] || submitErrors.admin_fee
                     }}</small>
                   </validation-provider>
                 </b-form-group>
-                <hr />
+                <hr>
               </b-col>
             </b-row>
             <b-row>
@@ -101,11 +113,11 @@
               </b-col>
             </b-row>
             <b-row
-              class="mt-1"
               v-for="(
                 talent_admin_fee_discount, index
               ) in talent_admin_fee_discounts"
               :key="`talent_admin_fee_discounts_${index}`"
+              class="mt-1"
             >
               <b-col md="5">
                 <validation-provider
@@ -126,7 +138,14 @@
                   :name="`Jumlah Biaya Talent ke-${index + 1}`"
                   :rules="`required|integer|max_value:${admin_fee}`"
                 >
+                  <money
+                    v-if="admin_fee_discount_type === 'rp'"
+                    v-model="talent_admin_fee_discount.admin_fee_discount_value"
+                    v-bind="money"
+                    class="form-control"
+                  />
                   <b-form-input
+                    v-else
                     v-model="talent_admin_fee_discount.admin_fee_discount_value"
                     type="number"
                   />
@@ -139,11 +158,14 @@
                   type="button"
                   @click="removeTalentAdminFeeDiscounts(index)"
                 >
-                  <feather-icon icon="Trash2Icon" size="18" />
+                  <feather-icon
+                    icon="Trash2Icon"
+                    size="18"
+                  />
                 </b-button>
               </b-col>
               <b-col md="12">
-                <hr />
+                <hr>
               </b-col>
             </b-row>
             <b-row>
@@ -158,7 +180,10 @@
               </b-col>
             </b-row>
             <b-row>
-              <b-col md="12" class="mt-2">
+              <b-col
+                md="12"
+                class="mt-2"
+              >
                 <b-button
                   :variant="editMode ? 'warning' : 'primary'"
                   type="submit"
@@ -166,7 +191,10 @@
                   :disabled="loadingSubmit"
                   @click.prevent="submit"
                 >
-                  <b-spinner v-if="loadingSubmit" small />
+                  <b-spinner
+                    v-if="loadingSubmit"
+                    small
+                  />
                   Submit
                 </b-button>
               </b-col>
@@ -196,6 +224,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
 import vSelect from 'vue-select'
+import { Money } from 'v-money'
 
 export default {
   directives: {
@@ -215,6 +244,7 @@ export default {
     BSpinner,
     BFormTextarea,
     vSelect,
+    Money,
   },
   data() {
     return {
@@ -243,6 +273,12 @@ export default {
       ],
       admin_fee_discount_type: '',
       talent_admin_fee_discounts: [],
+      money: {
+        thousands: '.',
+        prefix: 'Rp ',
+        precision: 0,
+        masked: false,
+      },
     }
   },
   computed: {
@@ -400,7 +436,7 @@ export default {
               component: ToastificationContent,
               props: {
                 title: 'Failed',
-                text: 'Nilai diskon tidak boleh melebihi biaya standart',
+                text: 'Deskripsi tidak boleh kosong, dan nilai diskon tidak boleh melebihi biaya standart',
                 variant: 'danger',
                 attachment: 'AlertTriangleIcon',
               },

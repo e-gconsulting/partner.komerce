@@ -1,0 +1,88 @@
+#modal-10 .modal-dialog {
+  max-width: 850px;
+}
+#modal-10 .modal-body {
+  padding: 3rem;
+}
+.onboarding-popup-wrapper {
+  color: #222222;
+  text-align: center;
+}
+.onboarding-popup-title {
+  font-weight: 500;
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+.onboarding-popup-subtitle {
+  color: #828282;
+  font-size: 16px;
+  font-weight: 300;
+}
+.onboarding-popup-icon {
+  margin-top: 32px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.onboarding-popup-desc {
+  margin: 2rem 0 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.grey-box-wrapper, .grey-box-arrow {
+  display: inline-block;
+  vertical-align: middle;
+}
+.grey-box-arrow {
+  color: #222222;
+  font-size: 14px;
+  font-weight: 600;
+  margin: -25px 2rem 0;
+}
+.grey-box-wrapper-full {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+.grey-box-wrapper-small {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+}
+.grey-box-text {
+  margin-top: 12px;
+  color: #222222;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.onboarding-popup-btn-wrapper {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+  margin-top: 3rem;
+}
+
+.mid-align {
+  text-align: center;
+}
+.right-gap {
+  margin-right: 24px;
+}
+.grey-box {
+  width: 100%;
+  height: 100%;
+  background: #C4C4C4;
+  border-radius: 8px;
+}
+.org-button, .org-button:hover, .org-button:focus {
+  background-color: #F95031 !important;
+  border-color: #F95031 !important;
+  border-radius: 12px;
+  color: #FFFFFF !important;
+}
+.white-button, .white-button:hover, .white-button:focus {
+  background-color: #FFFFFF !important;
+  border-color: #F95031 !important;
+  border-radius: 12px;
+  color: #F95031 !important;
+}

@@ -75,8 +75,8 @@ export default [
   ...order,
   ...pickup,
   ...customer,
-  ...settingKompship,
   ...keuangan,
+  ...settingKompship,
   ...hiring,
 
   ...dashboardKomplace,

@@ -11,18 +11,22 @@
           <b-form>
             <b-row>
               <b-col md="12">
-                <b-form-group label="Pendapatan Minimum" label-cols-md="4">
+                <b-form-group
+                  label="Pendapatan Minimum"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Pendapatan Minimum"
                     rules="required|integer"
                   >
-                    <b-form-input
+                    <money
                       v-model="minimum_income"
+                      v-bind="money"
+                      class="form-control"
                       :state="
                         errors.length > 0 || submitErrors.name ? false : null
                       "
-                      type="number"
                     />
                     <small class="text-danger">{{
                       errors[0] || submitErrors.name
@@ -31,7 +35,10 @@
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Jenis Sharing Fee" label-cols-md="4">
+                <b-form-group
+                  label="Jenis Sharing Fee"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Jenis Sharing Fee"
@@ -42,14 +49,16 @@
                       label="label"
                       :options="sharing_fee_type_option"
                       :reduce="option => option.value"
-                    >
-                    </v-select>
+                    />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
               <b-col md="12">
-                <b-form-group label="Nilai Sharing Fee" label-cols-md="4">
+                <b-form-group
+                  label="Nilai Sharing Fee"
+                  label-cols-md="4"
+                >
                   <validation-provider
                     #default="{ errors }"
                     name="Nilai Sharing Fee"
@@ -57,12 +66,21 @@
                       sharing_fee_type === 'percentage' ? '|max_value:100' : ''
                     }`"
                   >
+                    <money
+                      v-if="sharing_fee_type === 'rp'"
+                      v-model="sharing_fee_value"
+                      v-bind="money"
+                      class="form-control"
+                      :state="
+                        errors.length > 0 || submitErrors.name ? false : null
+                      "
+                    />
                     <b-form-input
+                      v-else
                       v-model="sharing_fee_value"
                       :state="
                         errors.length > 0 || submitErrors.name ? false : null
                       "
-                      type="number"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -78,19 +96,23 @@
                     name="Nilai Maksimal Sharing Fee"
                     rules="required|integer"
                   >
-                    <b-form-input
+                    <money
                       v-model="max_nominal_sharing_fee"
+                      v-bind="money"
+                      class="form-control"
                       :state="
                         errors.length > 0 || submitErrors.name ? false : null
                       "
-                      type="number"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
                 </b-form-group>
-                <hr />
+                <hr>
               </b-col>
-              <b-col md="12" class="mt-2">
+              <b-col
+                md="12"
+                class="mt-2"
+              >
                 <b-button
                   :variant="editMode ? 'warning' : 'primary'"
                   type="submit"
@@ -98,7 +120,10 @@
                   :disabled="loadingSubmit"
                   @click.prevent="submit"
                 >
-                  <b-spinner v-if="loadingSubmit" small />
+                  <b-spinner
+                    v-if="loadingSubmit"
+                    small
+                  />
                   Submit
                 </b-button>
               </b-col>
@@ -127,6 +152,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
+import { Money } from 'v-money'
 
 export default {
   directives: {
@@ -145,6 +171,7 @@ export default {
     BButton,
     BSpinner,
     vSelect,
+    Money,
   },
   data() {
     return {
@@ -170,6 +197,12 @@ export default {
       sharing_fee_type: '',
       sharing_fee_value: '',
       max_nominal_sharing_fee: '',
+      money: {
+        thousands: '.',
+        prefix: 'Rp ',
+        precision: 0,
+        masked: false,
+      },
     }
   },
   computed: {

@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+.history-pickup-main-wrapper {
+  position: relative;
+  font-family: 'Poppins', sans-serif;
+}
+.history-pickup-title {
+  color: #222222;
+  font-weight: 600;
+  font-size: 24px;
+}
+.view-all-pickup-table {
+  min-height: 65vh;
+}
+.view-all-pickup-table th {
+  background-color: transparent !important;
+  border: none;
+  border-bottom: 2px solid #C2C2C2 !important;
+  color: #222222;
+  font-weight: 600;
+  font-size: 16px !important;
+}
+.view-all-pickup-table td {
+  font-weight: 600;
+  font-size: 14px;
+  color: #222222;
+}
+.view-all-pickup-button {
+  white-space: nowrap;
+}
+.view-all-pickup-button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+.all-pickup-details-back-btn {
+  padding: 20px;
+  font-size: 15px;
+}
+
+.all-pickup-details-main-wrapper {
+  min-height: 65vh;
+}
+
+.all-pickup-details-main-wrapper .add-pickup-input-label .col {
+  display: flex;
+  align-items: center;
+}
+.all-pickup-details-title {
+  color: #222222;
+  font-weight: 600;
+  font-size: 20px;
+  margin: 0 0 20px 50px;
+}
+
+.org-button, .org-button:hover, .org-button:focus {
+  background-color: #F95031 !important;
+  border-color: #F95031 !important;
+  border-radius: 12px;
+  color: #FFFFFF !important;
+}
+.blue-text {
+  color: #08A0F7;
+}
+.grey-text {
+  color: #828282;
+}
+.top-right {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+}

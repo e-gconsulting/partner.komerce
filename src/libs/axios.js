@@ -7,8 +7,8 @@ import useJwt from '@core/auth/jwt/useJwt'
 const { jwt } = useJwt(axios, {})
 const token = jwt.getToken()
 
+// instance for main komerce
 const axiosIns = axios.create({
-  // You can add your headers here
   baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 14000,
   headers: {
@@ -16,7 +16,7 @@ const axiosIns = axios.create({
   },
 })
 
-const axiosInsKomship = axios.create({
+const komshipAxiosIns = axios.create({
   // You can add your headers here
   headers: {
     Authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ axiosIns.interceptors.response.use(
   }
 )
 
-axiosInsKomship.interceptors.response.use(
+komshipAxiosIns.interceptors.response.use(
   response => response,
   error => {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
@@ -52,6 +52,6 @@ axiosInsKomship.interceptors.response.use(
 )
 
 Vue.prototype.$http = axiosIns
-Vue.prototype.$httpKomship = axiosInsKomship
+Vue.prototype.$http_komship = komshipAxiosIns
 
 export default axiosIns
