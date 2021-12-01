@@ -321,6 +321,19 @@ export default {
                 { action: 'manage', subject: 'Invoice' },
                 { action: 'manage', subject: 'Assignment' },
                 { action: 'manage', subject: 'JobRoleSetting' },
+
+                // Komship
+                { action: 'manage', subject: 'Komship' },
+                { action: 'manage', subject: 'Dashboard Komship Admin' },
+                { action: 'manage', subject: 'Pencairan' },
+                { action: 'manage', subject: 'Pendapatan' },
+                { action: 'manage', subject: 'Membership Komship' },
+                { action: 'manage', subject: 'Data Partner' },
+                { action: 'manage', subject: 'Arsip Partner' },
+                { action: 'manage', subject: 'Data Layanan' },
+                { action: 'manage', subject: 'Ekspedisi' },
+                { action: 'manage', subject: 'Biaya Ekspedisi' },
+                { action: 'manage', subject: 'Performa' },
               ]
               break
             case 'MANAGEMENT':
