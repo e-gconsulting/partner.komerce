@@ -144,7 +144,7 @@ export default {
       this.handleFiles(files)
     },
     handleFiles(files) {
-      const endpoint = `/api/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.$store.state.pencairan.status}`
+      const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.$store.state.pencairan.status}`
       const dataCopy = [...files]
       dataCopy.forEach(file => {
         console.log(file)

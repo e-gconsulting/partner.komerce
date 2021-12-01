@@ -510,7 +510,7 @@ export default {
         paramsTemp.shipper = params.shipper
         paramsTemp.month = params.month
       }
-      axioskomsipdev.get(`/api/v1/admin/dashboard/performance/${type}`, { params: paramsTemp })
+      axioskomsipdev.get(`/v1/admin/dashboard/performance/${type}`, { params: paramsTemp })
         .then(({ data }) => {
           if (Array.isArray(data.data)) {
             this[`categoriesChart${type}`] = []
@@ -547,7 +547,7 @@ export default {
         })
     },
     async fetchDataTop(type = '') {
-      axioskomsipdev.get(`/api/v1/admin/dashboard/top/${type}`)
+      axioskomsipdev.get(`/v1/admin/dashboard/top/${type}`)
         .then(({ data }) => {
           this[`top${type.charAt(0).toUpperCase()}${type.substring(1)}Temp`] = data.data
           this[`top${type.charAt(0).toUpperCase()}${type.substring(1)}`] = data.data.cod

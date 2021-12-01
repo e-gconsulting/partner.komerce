@@ -4,7 +4,7 @@ export default {
   registerPartnerEndpoint: '/partner/register',
   registerTalentEndpoint: '/admin/talent/register',
   refreshEndpoint: '/refresh_token',
-  resetPasswordEndpoint: '/api/forget_password',
+  resetPasswordEndpoint: '/forget_password',
   logoutEndpoint: '/logout',
 
   // Komship

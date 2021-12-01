@@ -130,7 +130,7 @@ export default {
     },
     submitData() {
       this.loadDataAwal = true
-      const endpoint = 'api/v1/admin/shipment/store'
+      const endpoint = '/v1/admin/shipment/store'
       let getData = null
       // console.log('datasubmit :', {
       //   shipping_name: this.shipping_name,

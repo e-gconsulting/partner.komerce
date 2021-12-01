@@ -72,7 +72,7 @@ export default [
         children: [
           {
             title: 'Biaya Ekspedisi',
-            icon: '',
+            icon: 'none',
             tagVariant: 'light-warning',
             route: 'cod-biaya-ekspedisi',
             resource: 'Biaya Ekspedisi',

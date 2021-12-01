@@ -394,7 +394,7 @@ export default {
     },
     fetchData(params) {
       // change this endpoint
-      const endpoint = '/api/v1/admin/withdrawal/list'
+      const endpoint = '/v1/admin/withdrawal/list'
       let getData = null
 
       if (params) {

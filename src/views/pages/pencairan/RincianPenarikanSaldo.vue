@@ -673,7 +673,7 @@ export default {
         return
       }
       // calling api for submit review
-      const endpoint = `/api/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.detailData.status}`
+      const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.detailData.status}`
       const formData = new FormData()
       formData.append('notes', this.catatanReview)
       // formData.append('yinyang.png', fs.createReadStream('./yinyang.png'));
@@ -735,7 +735,7 @@ export default {
     },
     async fetchData() {
       this.isLoadTable = true
-      const endpoint = `/api/v1/admin/withdrawal/detail/${this.$route.params.slug}`
+      const endpoint = `/v1/admin/withdrawal/detail/${this.$route.params.slug}`
       axioskomsipdev.get(endpoint)
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))

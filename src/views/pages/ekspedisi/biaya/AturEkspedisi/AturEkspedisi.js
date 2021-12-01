@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     getKota() {
-      const endpoint = 'api/v1/destination'
+      const endpoint = '/v1/destination'
       const fetchData = axioskomsipdev.get(endpoint)
       fetchData.then(async data => {
         const array = data.data.data.data
@@ -123,7 +123,7 @@ export default {
     },
     submitData() {
       console.log(this.name)
-      const endpoint = 'api/v1/admin/shippment/create'
+      const endpoint = '/v1/admin/shippment/create'
       let getData = null
       getData = axioskomsipdev.post(endpoint, {
         shipping_name: this.shipping_name,
