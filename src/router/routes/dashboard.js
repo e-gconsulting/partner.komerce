@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/',
+    path: '/admin-dashboard-komship',
     name: 'cod-dashboard',
     component: () => import('@/views/pages/dashboard-cod/Index'),
     meta: {
@@ -9,7 +9,7 @@ export default [
     },
   },
   {
-    path: '/dashboard-lama',
+    path: '/',
     name: 'dashboard-analytics',
     component: () => import('@/views/pages/dashboard/Index'),
     meta: {

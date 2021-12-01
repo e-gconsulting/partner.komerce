@@ -31,8 +31,6 @@ tagVariant
 
 */
 import dashboard from './dashboard'
-import membership from './membership'
-import ekspedisi from './ekspedisi'
 import training from './training'
 import talent from './talent'
 import partner from './partner'
@@ -55,6 +53,9 @@ import settingKompship from './setting-kompship'
 import keuangan from './keuangan'
 import hiring from './hiring'
 
+// Komship Admin
+import komship from './komship'
+
 // Komplace
 import dashboardKomplace from './dashboard-komplace'
 import monitoring from './monitoring-komplace'
@@ -64,11 +65,10 @@ import manajemenAdmin from './manajemenAdmin'
 // Array of sections
 export default [
   ...dashboard,
-  ...membership,
-  ...ekspedisi,
   ...training,
   ...talent,
   ...partner,
+  ...komship,
   ...management,
   ...masterData,
   ...assignment,

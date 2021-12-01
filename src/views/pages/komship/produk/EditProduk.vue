@@ -1108,6 +1108,8 @@ export default {
       variantStore: [],
       optionStore: [],
 
+      flavours: [],
+
       // Validation
       required,
       fieldImage: [],
@@ -1197,6 +1199,16 @@ export default {
         } else {
           this.cod = false
           this.transfer = true
+        }
+
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < data.flavors.length; i++) {
+          if (data.flavors[i] === 'COD') {
+            this.cod = true
+          }
+          if (data.flavors[i] === 'BANK TRANSFER') {
+            this.transfer = true
+          }
         }
 
         if (data.product_is_variant === '1') {
@@ -1593,9 +1605,10 @@ export default {
       }
 
       if (this.cod === true) {
-        this.flavours = 'COD'
-      } else if (this.transfer === true) {
-        this.flavours = 'BANK TRANSFER'
+        this.flavours.push('COD')
+      }
+      if (this.transfer === true) {
+        this.flavours.push('BANK TRANSFER')
       }
 
       const params = {
