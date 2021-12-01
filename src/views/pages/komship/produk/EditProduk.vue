@@ -966,7 +966,7 @@
                 @click="submitDraft"
               >
                 <b-spinner
-                  v-if="loadingSubmit"
+                  v-if="loadingSubmitDraft"
                   small
                   variant="light"
                 />
@@ -1055,6 +1055,7 @@ export default {
 
       loading: false,
       loadingSubmit: false,
+      loadingSubmitDraft: false,
       loadingSubmitVariant: false,
       partnerId: JSON.parse(localStorage.getItem('userData')),
 
@@ -1180,9 +1181,10 @@ export default {
         this.productName = data.product_name
         this.skuName = data.product_sku
         this.descriptionProduct = data.product_description
-        // if (data.product_image[0].images_path) {
-        //   this.imageInitialFile = data.product_image[0].images_path
-        // }
+        if (data.product_image[0] !== undefined) {
+          this.imageInitialFile = data.product_image[0].images_path
+        }
+        console.log(data)
         this.stockProduct = data.product_stock
         this.priceProduct = data.product_price
         this.weightProduct = data.product_weight
@@ -1331,6 +1333,26 @@ export default {
             class: 'col-action',
           },
         )
+
+        // Delete Null Data
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.formChoices1.length; x++) {
+          if (this.formChoices1[x].choices === null) {
+            this.formChoices1.splice(x, 1)
+          }
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.formChoices2.length; x++) {
+          if (this.formChoices2[x].choices === null) {
+            this.formChoices2.splice(x, 1)
+          }
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.formChoices3.length; x++) {
+          if (this.formChoices3[x].choices === null) {
+            this.formChoices3.splice(x, 1)
+          }
+        }
 
         this.loading = false
       })
@@ -1586,7 +1608,7 @@ export default {
         height: this.heightProduct,
         price: this.price,
         stock: this.stock,
-        params: 1,
+        status: 1,
         flavours: this.flavours,
         variant_option: this.variantStore,
         option: this.optionStore,
@@ -1641,7 +1663,7 @@ export default {
       })
     },
     submitDraft() {
-      this.loadingSubmit = true
+      this.loadingSubmitDraft = true
 
       if (this.formChoices3[0] !== undefined) {
         this.variantStore.push(
@@ -1755,6 +1777,7 @@ export default {
       }
 
       const params = {
+        status: 0,
         product_name: this.productName,
         sku: this.skuName,
         description: this.descriptionProduct,
@@ -1780,7 +1803,7 @@ export default {
         httpKomship.post('/v1/product/update-upload-img-product', formData, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {
-          this.loadingSubmit = false
+          this.loadingSubmitDraft = false
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -1790,8 +1813,9 @@ export default {
               variant: 'success',
             },
           })
+          this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'draft' } })
         }).catch(() => {
-          this.loadingSubmit = false
+          this.loadingSubmitDraft = false
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -1802,9 +1826,8 @@ export default {
             },
           })
         })
-        this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
       }).catch(() => {
-        this.loadingSubmit = false
+        this.loadingSubmitDraft = false
         this.$toast({
           component: ToastificationContent,
           props: {

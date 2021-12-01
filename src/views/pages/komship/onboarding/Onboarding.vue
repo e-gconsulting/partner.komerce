@@ -201,7 +201,7 @@ export default {
       }
     },
     handleRedirectToAddProduct() {
-      this.triggerUpdateOnBoardingStatus('add-produk')
+      this.triggerUpdateOnBoardingStatus('add-produk-onboarding')
     },
     handleRedirectToProfile() {
       this.triggerUpdateOnBoardingStatus('partner/profile')
@@ -211,6 +211,7 @@ export default {
     },
     updateOnboardingStatus(nextUrl) {
       return this.$http_komship.put('v1/partner/onboarding/update').then(response => {
+        console.log(response)
         if (response && response.data && response.data.code && response.data.code === 200) {
           this.$router.push(nextUrl)
         }

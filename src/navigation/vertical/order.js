@@ -15,7 +15,7 @@ export default [
       {
         title: 'Data Order',
         icon: 'None',
-        resource: 'Data Order',
+        resource: 'Tambah Order',
         route: 'data-order',
         action: 'manage',
       },

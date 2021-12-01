@@ -351,7 +351,7 @@ export default {
                 { action: 'manage', subject: 'Data Produk' },
                 { action: 'manage', subject: 'Order' },
                 { action: 'manage', subject: 'Tambah Order' },
-                { action: 'read', subject: 'Data Order' },
+                { action: 'manage', subject: 'Data Order' },
                 { action: 'manage', subject: 'Pickup' },
                 { action: 'manage', subject: 'Ajukan Pickup' },
                 { action: 'manage', subject: 'History Pickup' },
@@ -368,10 +368,10 @@ export default {
                 { action: 'manage', subject: 'Hiring' },
 
                 // Komplace
-                { action: 'manage', subject: 'Dashboard Komplace' },
-                { action: 'manage', subject: 'Monitoring' },
-                { action: 'manage', subject: 'Manajemen Admin' },
-                { action: 'manage', subject: 'Pengaturan Akun Komplace' },
+                // { action: 'manage', subject: 'Dashboard Komplace' },
+                // { action: 'manage', subject: 'Monitoring' },
+                // { action: 'manage', subject: 'Manajemen Admin' },
+                // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
               ]
               break
             case 'SDM':

@@ -55,4 +55,22 @@ export default [
       ],
     },
   },
+  {
+    path: '/add-produk-onboarding',
+    name: 'add-produk-onboarding',
+    component: () => import('@/views/pages/komship/onboarding/AddProdukOnboarding.vue'),
+    meta: {
+      name: pageName,
+      resource: 'Produk',
+      routeAllProduk: 'data-produk',
+      routeDraftProduk: 'data-produk',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: pageName.plural,
+          active: true,
+        },
+      ],
+    },
+  },
 ]
