@@ -51,7 +51,7 @@ export default {
     */
     this.dragAndDropCapable = this.determineDragAndDropCapable()
 
-    this.$nextTick(function () {
+    this.$nextTick(() => {
       if (this.dragAndDropCapable) {
       /*
           Listen to all of the drag events and bind an event listener to each
@@ -144,7 +144,7 @@ export default {
       this.handleFiles(files)
     },
     handleFiles(files) {
-      const endpoint = `/api/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.$store.state.pencairan.status}`
+      const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.$store.state.pencairan.status}`
       const dataCopy = [...files]
       dataCopy.forEach(file => {
         console.log(file)

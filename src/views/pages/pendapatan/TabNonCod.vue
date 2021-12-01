@@ -179,7 +179,7 @@ export default {
   methods: {
     fetchData(params) {
       console.log('params fetch data: ', params)
-      const endpoint = '/api/v1/admin/finance/income'
+      const endpoint = '/v1/admin/finance/income'
       let getData = null
       if (params) {
         getData = axioskomsipdev.get(endpoint, { params: { ...params, payment_method: this.payment_method } })

@@ -113,12 +113,10 @@ export default {
     // },
   },
   mounted() {
-    //
+    this.getIsland()
   },
   created() {
-    setTimeout(() => {
-      this.loadDataAwal = false
-    }, 1000)
+    //
   },
   methods: {
     tambahKriteria(criteriasDataParams) {
@@ -191,6 +189,20 @@ export default {
     },
     handleChoiceTypeVehicle(val) {
       this.vehicles = val
+    },
+    getIsland() {
+      const endpoint = '/v1/island'
+      axioskomsipdev.get(endpoint)
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          this.optionsKota = parseData
+        })
+        .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
     },
   },
 }

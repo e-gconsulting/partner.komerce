@@ -305,7 +305,7 @@ export default {
   },
   methods: {
     async fetchData() {
-      const endpoint = '/api/v1/admin/shipment'
+      const endpoint = '/v1/admin/shipment'
       let getData = null
       getData = axioskomsipdev.get(endpoint)
       getData.then(({ data }) => {
