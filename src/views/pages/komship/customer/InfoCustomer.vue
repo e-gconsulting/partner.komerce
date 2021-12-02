@@ -18,25 +18,21 @@
       <b-col
         cols="auto"
       >
-        <b-button
-          id="popover-button-danger"
-          v-ripple.400="'rgba(234, 84, 85, 0.15)'"
+
+        <b-dropdown
+          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          right
+          no-caret
           variant="primary"
-          size="sm"
-          class="btn-icon mr-2"
         >
-          <b-img
-            fluid
-            src="@core/assets/image/filter-icon-kompship.png"
-          />
-        </b-button>
-        <b-popover
-          target="popover-button-danger"
-          variant="danger"
-          triggers="focus"
-          placement="bottom"
-        >
-          <b-row class="p-50">
+          <template
+            #button-content
+          >
+            <feather-icon icon="SlidersIcon" />
+          </template>
+          <b-dropdown-form
+            style="width: 417px;"
+          >
             <b-form>
               <b-row>
                 <b-col
@@ -171,8 +167,8 @@
                 </b-col>
               </b-row>
             </b-form>
-          </b-row>
-        </b-popover>
+          </b-dropdown-form>
+        </b-dropdown>
       </b-col>
     </b-row>
 
@@ -241,14 +237,14 @@ import {
   BInputGroupPrepend,
   BButton,
   BRow,
-  BImg,
   BTable,
   VBPopover,
-  BPopover,
   BForm,
   BFormGroup,
   BCard,
   BOverlay,
+  BDropdown,
+  BDropdownForm,
 } from 'bootstrap-vue'
 import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
 import Ripple from 'vue-ripple-directive'
@@ -266,14 +262,14 @@ export default {
     BInputGroupPrepend,
     BButton,
     BRow,
-    BImg,
     BTable,
     FeatherIcon,
-    BPopover,
     BForm,
     BFormGroup,
     BOverlay,
     vSelect,
+    BDropdown,
+    BDropdownForm,
   },
   directives: {
     'b-popover': VBPopover,

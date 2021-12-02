@@ -53,6 +53,14 @@
                           drop-placeholder="Drop file disini..."
                           accept="image/*"
                         />
+                        <div v-if="imageFile !== null">
+                          <small
+                            v-if="imageFile.size > 1024 * 2048"
+                            class="text-danger"
+                          >
+                            Ukuran File Tidak Bisa Lebih dari 2 MB
+                          </small>
+                        </div>
                         <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
                     </b-col>
@@ -209,7 +217,9 @@ export default {
       skill: '',
       descriptionVideo: '',
       videoPengantar: '',
-      statusClass: '',
+      statusClass: [
+        { title: '', value: '' },
+      ],
 
       edumoClassId: '',
 
@@ -220,7 +230,7 @@ export default {
       ],
 
       statusKelasOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
 
@@ -287,7 +297,12 @@ export default {
         if (data.class_img) this.imageInitialFile = data.class_img
         this.descriptionVideo = data.class_trailer_description
         this.videoPengantar = data.class_trailer_url
-        this.statusClass = data.class_status
+        this.statusClass[0].value = data.class_status
+        if (this.statusClass[0].value === 'draft') {
+          this.statusClass[0].title = 'Private'
+        } else if (this.statusClass[0].value === 'publish') {
+          this.statusClass[0].title = 'Publish'
+        }
         this.edumoClassId = data.edumo_class_id
       })
     },

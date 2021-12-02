@@ -83,6 +83,14 @@
                             drop-placeholder="Drop file disini..."
                             accept="image/*"
                           />
+                          <div v-if="lessonThumbnail !== null">
+                            <small
+                              v-if="lessonThumbnail.size > 1024 * 2048"
+                              class="text-danger"
+                            >
+                              Ukuran File Tidak Bisa Lebih dari 2 MB
+                            </small>
+                          </div>
                           <small class="text-danger">{{ errors[0] }}</small>
                         </validation-provider>
                       </b-form-group>
@@ -246,7 +254,7 @@ export default {
       imageInitialFile: null,
 
       statusKelasOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
 
@@ -255,7 +263,7 @@ export default {
       idLessonToQuiz: null,
 
       statusLessonOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
 
@@ -290,11 +298,10 @@ export default {
           formData.append('lesson_video_description', this.videoDescription)
           formData.append('lesson_video_url', this.videoUrl)
           formData.append('lesson_module_id', this.moduleId)
-          formData.append('lesson_status', 'publish')
+          if (this.statusLesson.value) formData.append('lesson_status', this.statusLesson.value)
 
           this.$http.post(`/lms/lesson/update/${this.lessonId}`, formData)
-            .then(response => {
-              const { data } = response
+            .then(() => {
               this.$toast({
                 component: ToastificationContent,
                 props: {
@@ -304,13 +311,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
-              console.log(data)
-              if (data.message === 'Lesson with the same lesson tes already exists.' || data.message === 'Lesson no data.') {
-                this.$router.push({ name: this.$route.meta.routeAddQuiz, params: { lesson_id: this.idLessonToQuiz } })
-              }
-              if (data.message !== 'Lesson with the same lesson tes already exists.') {
-                this.$router.push({ name: this.$route.meta.routeEditQuiz, params: { lesson_id: this.idLessonToQuiz } })
-              }
+              this.$router.push({ name: this.$route.meta.routeEditQuiz, params: { lesson_id: this.idLessonToQuiz, module_id: this.moduleId } })
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -333,12 +334,16 @@ export default {
         this.videoDescription = data.lesson_video_description
         this.videoUrl = data.lesson_video_url
         if (data.lesson_thumbnail) this.imageInitialFile = data.lesson_thumbnail
+        if (data.lesson_status === 'draft') {
+          this.statusLesson = 'Private'
+        } else {
+          this.statusLesson = 'Publish'
+        }
       })
     },
     getId() {
       return this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
         const { data } = response.data
-        this.statusLesson = data.lesson_status
         this.moduleId = data.lesson_module_id
         this.idLessonToQuiz = this.lessonId
         this.loadModul()

@@ -67,6 +67,9 @@
                   >
                     <b-form-input
                       v-model="scoreStudent"
+                      type="number"
+                      :min="0"
+                      :max="100"
                       label="title"
                       @input="tableProvider"
                     />
@@ -92,6 +95,7 @@
                   </b-card>
                 </b-col>
                 <b-col
+                  v-if="startDate"
                   cols="auto"
                   md="auto"
                   class="mt-2"
@@ -170,11 +174,14 @@
           :empty-filtered-text="`Tidak ada hasil untuk kata kunci '${filter}'.`"
 
           :show-empty="!loading"
-          :items="tableProvider"
+          :items="datatable"
           :fields="tableFields"
           :filter="filter"
           :filter-included-fields="filterOn"
           :busy.sync="loading"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-compare.sync="sortCompare"
         >
 
           <template #cell(student_user_id)="data">
@@ -270,25 +277,31 @@ export default {
       filterClassId: 'Customer Service',
 
       loading: false,
-
+      datatable: [],
       fields: [
         {
           key: 'student_user_id',
           label: 'ID',
+          sortKey: 'student_user_id',
+          sortable: true,
+          sortDirection: 'desc',
         },
         {
           key: 'student_name',
           label: 'Data Diri',
+          sortable: true,
         },
         {
           key: 'student_score',
           label: 'Nilai',
+          sortable: true,
           thClass: 'text-center',
           tdClass: 'text-center',
         },
         {
           key: 'student_finish_at',
           label: 'Tanggal Lulus',
+          sortable: true,
           thClass: 'text-center',
           tdClass: 'text-center',
           formatter: value => {
@@ -316,12 +329,13 @@ export default {
         },
       ],
 
-      dataStudent: null,
       dataStudentFilter: null,
       filter: null,
       filterOn: [],
       totalStudent: 0,
 
+      sortBy: '',
+      sortDesc: false,
       startDate: null,
       endDate: null,
       scoreStudent: null,
@@ -332,6 +346,9 @@ export default {
       const fields = [...this.fields]
       return fields
     },
+    sortDirection() {
+      return this.sortDesc ? 'desc' : 'asc'
+    },
   },
   watch: {
     filterPositionId() {
@@ -340,6 +357,9 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
+  },
+  created() {
+    this.tableProvider()
   },
   methods: {
     clearDate() {
@@ -353,6 +373,8 @@ export default {
           search_finish: this.filter,
           dateFromFinish: this.startDate,
           dateToFinish: this.endDate,
+          sort_by: this.sortBy,
+          sort: this.sortDirection,
         },
       }).then(response => {
         const { data } = response.data
@@ -360,18 +382,19 @@ export default {
         this.refreshTable()
         return this.dataStudentFilter
       }).catch(() => {
-        this.dataStudent = []
+        this.datatable = []
         this.refreshTable()
-        return this.dataStudent
+        return this.datatable
       })
     },
     myArray(data) {
       if (this.scoreStudent) {
         this.dataStudentFilter = data.student.filter(item => item.student_score === Number(this.scoreStudent))
+        this.datatable = this.dataStudentFilter
       } else {
         this.dataStudentFilter = data.student
+        this.datatable = data.student
       }
-      this.dataStudent = data.student
       this.totalStudent = data.total_student_Finish
       return this.dataStudentFilter
     },
@@ -394,7 +417,14 @@ export default {
     selectPosition(data) {
       this.filterPositionId = data.class_id
       this.filterClassId = data.class_name
+      this.tableProvider()
       return data
+    },
+    sortCompare(aRow, bRow, key, sortDesc, formatter, compareOptions, compareLocale) {
+      if (key === 'student_finish_at') {
+        return aRow[key].localeCompare(bRow[key], compareLocale, compareOptions)
+      }
+      return false
     },
   },
 }

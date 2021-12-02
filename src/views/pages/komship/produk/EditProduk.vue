@@ -968,7 +968,7 @@
                 <b-spinner
                   v-if="loadingSubmitDraft"
                   small
-                  variant="light"
+                  variant="primary"
                 />
                 Simpan Draft
               </b-button>
@@ -1499,357 +1499,371 @@ export default {
     submitPublish() {
       this.loadingSubmit = true
 
-      if (this.variationName3 !== null) {
-        this.variantStore.push(
-          {
-            val: this.variationName1,
-          },
-          {
-            val: this.variationName2,
-          },
-          {
-            val: this.variationName3,
-          },
-        )
-
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.variantItems.length; x++) {
-          this.optionStore.push(
-            {
-              val: this.variantItems[x].val,
-              parent: 0,
-              stock: null,
-              price: null,
-              sold: this.variantItems[x].sold,
-              option: [],
-            },
-          )
-          // eslint-disable-next-line no-plusplus
-          for (let y = 0; y < this.variantItems[x].option.length; y++) {
-            this.optionStore[x].option.push(
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          if (this.variationName3 !== null) {
+            this.variantStore.push(
               {
-                val: this.variantItems[x].option[y].val,
-                parent: 0,
-                stock: null,
-                price: null,
-                sold: this.variantItems[x].option[y].sold,
-                option: [],
+                val: this.variationName1,
+              },
+              {
+                val: this.variationName2,
+              },
+              {
+                val: this.variationName3,
+              },
+            )
+
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < this.variantItems.length; x++) {
+              this.optionStore.push(
+                {
+                  val: this.variantItems[x].val,
+                  parent: 0,
+                  stock: null,
+                  price: null,
+                  sold: this.variantItems[x].sold,
+                  option: [],
+                },
+              )
+              // eslint-disable-next-line no-plusplus
+              for (let y = 0; y < this.variantItems[x].option.length; y++) {
+                this.optionStore[x].option.push(
+                  {
+                    val: this.variantItems[x].option[y].val,
+                    parent: 0,
+                    stock: null,
+                    price: null,
+                    sold: this.variantItems[x].option[y].sold,
+                    option: [],
+                  },
+                )
+                // eslint-disable-next-line no-plusplus
+                for (let z = 0; z < this.variantItems[x].option[y].option.length; z++) {
+                  this.optionStore[x].option[y].option.push(
+                    {
+                      val: this.variantItems[x].option[y].option[z].val,
+                      parent: 0,
+                      stock: this.variantItems[x].option[y].option[z].stock,
+                      price: this.variantItems[x].option[y].option[z].price,
+                      sold: this.variantItems[x].option[y].option[z].sold,
+                    },
+                  )
+                }
+              }
+            }
+          } else if (this.variationName3 === null && this.variationName2 !== null) {
+            this.variantStore.push(
+              {
+                val: this.variationName1,
+              },
+              {
+                val: this.variationName2,
               },
             )
             // eslint-disable-next-line no-plusplus
-            for (let z = 0; z < this.variantItems[x].option[y].option.length; z++) {
-              this.optionStore[x].option[y].option.push(
+            for (let x = 0; x < this.variantItems.length; x++) {
+              this.optionStore.push(
                 {
-                  val: this.variantItems[x].option[y].option[z].val,
+                  val: this.variantItems[x].val,
                   parent: 0,
-                  stock: this.variantItems[x].option[y].option[z].stock,
-                  price: this.variantItems[x].option[y].option[z].price,
-                  sold: this.variantItems[x].option[y].option[z].sold,
+                  stock: null,
+                  price: null,
+                  sold: this.variantItems[x].sold,
+                  option: [],
+                },
+              )
+              // eslint-disable-next-line no-plusplus
+              for (let y = 0; y < this.variantItems[x].option.length; y++) {
+                this.optionStore[x].option.push(
+                  {
+                    val: this.variantItems[x].option[y].val,
+                    parent: 0,
+                    stock: this.variantItems[x].option[y].stock,
+                    price: this.variantItems[x].option[y].price,
+                    sold: this.variantItems[x].option[y].sold,
+                  },
+                )
+              }
+            }
+          } else if (this.variationName3 === null && this.variationName2 === null && this.variationName1 !== null) {
+            this.variantStore.push(
+              {
+                val: this.variationName1,
+              },
+            )
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < this.variantItems.length; x++) {
+              this.optionStore.push(
+                {
+                  val: this.variantItems[x].val,
+                  parent: 0,
+                  stock: this.variantItems[x].stock,
+                  price: this.variantItems[x].price,
+                  sold: this.variantItems[x].sold,
                 },
               )
             }
           }
-        }
-      } else if (this.variationName3 === null && this.variationName2 !== null) {
-        this.variantStore.push(
-          {
-            val: this.variationName1,
-          },
-          {
-            val: this.variationName2,
-          },
-        )
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.variantItems.length; x++) {
-          this.optionStore.push(
-            {
-              val: this.variantItems[x].val,
-              parent: 0,
-              stock: null,
-              price: null,
-              sold: this.variantItems[x].sold,
-              option: [],
-            },
-          )
-          // eslint-disable-next-line no-plusplus
-          for (let y = 0; y < this.variantItems[x].option.length; y++) {
-            this.optionStore[x].option.push(
-              {
-                val: this.variantItems[x].option[y].val,
-                parent: 0,
-                stock: this.variantItems[x].option[y].stock,
-                price: this.variantItems[x].option[y].price,
-                sold: this.variantItems[x].option[y].sold,
-              },
-            )
+
+          if (this.cod === true) {
+            this.flavours.push('COD')
           }
-        }
-      } else if (this.variationName3 === null && this.variationName2 === null && this.variationName1 !== null) {
-        this.variantStore.push(
-          {
-            val: this.variationName1,
-          },
-        )
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.variantItems.length; x++) {
-          this.optionStore.push(
-            {
-              val: this.variantItems[x].val,
-              parent: 0,
-              stock: this.variantItems[x].stock,
-              price: this.variantItems[x].price,
-              sold: this.variantItems[x].sold,
-            },
-          )
-        }
-      }
+          if (this.transfer === true) {
+            this.flavours.push('BANK TRANSFER')
+          }
 
-      if (this.cod === true) {
-        this.flavours.push('COD')
-      }
-      if (this.transfer === true) {
-        this.flavours.push('BANK TRANSFER')
-      }
+          const params = {
+            product_name: this.productName,
+            sku: this.skuName,
+            description: this.descriptionProduct,
+            weight: this.weightProduct,
+            length: this.lengthProduct,
+            width: this.widthProduct,
+            height: this.heightProduct,
+            price: this.price,
+            stock: this.stock,
+            status: 1,
+            flavours: this.flavours,
+            variant_option: this.variantStore,
+            option: this.optionStore,
+          }
 
-      const params = {
-        product_name: this.productName,
-        sku: this.skuName,
-        description: this.descriptionProduct,
-        weight: this.weightProduct,
-        length: this.lengthProduct,
-        width: this.widthProduct,
-        height: this.heightProduct,
-        price: this.price,
-        stock: this.stock,
-        status: 1,
-        flavours: this.flavours,
-        variant_option: this.variantStore,
-        option: this.optionStore,
-      }
+          console.log(params)
 
-      console.log(params)
-
-      httpKomship.put(`/v1/product/update/${this.productId}`, params, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(() => {
-        // Update Image
-        const formData = new FormData()
-        formData.append('product_id', this.productId)
-        formData.append('image_path', this.imageFile)
-        httpKomship.post('/v1/product/update-upload-img-product', formData, {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(() => {
-          this.loadingSubmit = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              icon: 'CheckIcon',
-              text: 'Success update produk',
-              variant: 'success',
-            },
+          httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(() => {
+            // Update Image
+            const formData = new FormData()
+            formData.append('product_id', this.productId)
+            formData.append('image_path', this.imageFile)
+            httpKomship.post('/v1/product/update-upload-img-product', formData, {
+              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+            }).then(() => {
+              this.loadingSubmit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success update produk',
+                  variant: 'success',
+                },
+              })
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
+            }).catch(() => {
+              this.loadingSubmit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal update gambar produk, silahkan coba lagi!',
+                  variant: 'danger',
+                },
+              })
+            })
+          }).catch(() => {
+            this.loadingSubmit = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                icon: 'AlertCircleIcon',
+                text: 'Failed update produk',
+                variant: 'danger',
+              },
+            })
           })
-          this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
-        }).catch(() => {
+        } else {
           this.loadingSubmit = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failed',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal update gambar produk, silahkan coba lagi!',
-              variant: 'danger',
-            },
-          })
-        })
-      }).catch(() => {
-        this.loadingSubmit = false
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failed',
-            icon: 'AlertCircleIcon',
-            text: 'Failed update produk',
-            variant: 'danger',
-          },
-        })
+        }
       })
     },
     submitDraft() {
       this.loadingSubmitDraft = true
 
-      if (this.formChoices3[0] !== undefined) {
-        this.variantStore.push(
-          {
-            val: this.variationName1,
-          },
-          {
-            val: this.variationName2,
-          },
-          {
-            val: this.variationName3,
-          },
-        )
-
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.variantItems.length; x++) {
-          this.optionStore.push(
-            {
-              val: this.variantItems[x].val,
-              parent: 0,
-              stock: null,
-              price: null,
-              sold: this.variantItems[x].sold,
-              option: [],
-            },
-          )
-          // eslint-disable-next-line no-plusplus
-          for (let y = 0; y < this.variantItems[x].option.length; y++) {
-            this.optionStore[x].option.push(
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          if (this.variationName3 !== null) {
+            this.variantStore.push(
               {
-                val: this.variantItems[x].option[y].val,
-                parent: 0,
-                stock: null,
-                price: null,
-                sold: this.variantItems[x].option[y].sold,
-                option: [],
+                val: this.variationName1,
+              },
+              {
+                val: this.variationName2,
+              },
+              {
+                val: this.variationName3,
+              },
+            )
+
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < this.variantItems.length; x++) {
+              this.optionStore.push(
+                {
+                  val: this.variantItems[x].val,
+                  parent: 0,
+                  stock: null,
+                  price: null,
+                  sold: this.variantItems[x].sold,
+                  option: [],
+                },
+              )
+              // eslint-disable-next-line no-plusplus
+              for (let y = 0; y < this.variantItems[x].option.length; y++) {
+                this.optionStore[x].option.push(
+                  {
+                    val: this.variantItems[x].option[y].val,
+                    parent: 0,
+                    stock: null,
+                    price: null,
+                    sold: this.variantItems[x].option[y].sold,
+                    option: [],
+                  },
+                )
+                // eslint-disable-next-line no-plusplus
+                for (let z = 0; z < this.variantItems[x].option[y].option.length; z++) {
+                  this.optionStore[x].option[y].option.push(
+                    {
+                      val: this.variantItems[x].option[y].option[z].val,
+                      parent: 0,
+                      stock: this.variantItems[x].option[y].option[z].stock,
+                      price: this.variantItems[x].option[y].option[z].price,
+                      sold: this.variantItems[x].option[y].option[z].sold,
+                    },
+                  )
+                }
+              }
+            }
+          } else if (this.variationName3 === null && this.variationName2 !== null) {
+            this.variantStore.push(
+              {
+                val: this.variationName1,
+              },
+              {
+                val: this.variationName2,
               },
             )
             // eslint-disable-next-line no-plusplus
-            for (let z = 0; z < this.variantItems[x].option[y].option.length; z++) {
-              this.optionStore[x].option[y].option.push(
+            for (let x = 0; x < this.variantItems.length; x++) {
+              this.optionStore.push(
                 {
-                  val: this.variantItems[x].option[y].option[z].val,
+                  val: this.variantItems[x].val,
                   parent: 0,
-                  stock: this.variantItems[x].option[y].option[z].stock,
-                  price: this.variantItems[x].option[y].option[z].price,
-                  sold: this.variantItems[x].option[y].option[z].sold,
+                  stock: null,
+                  price: null,
+                  sold: this.variantItems[x].sold,
+                  option: [],
+                },
+              )
+              // eslint-disable-next-line no-plusplus
+              for (let y = 0; y < this.variantItems[x].option.length; y++) {
+                this.optionStore[x].option.push(
+                  {
+                    val: this.variantItems[x].option[y].val,
+                    parent: 0,
+                    stock: this.variantItems[x].option[y].stock,
+                    price: this.variantItems[x].option[y].price,
+                    sold: this.variantItems[x].option[y].sold,
+                  },
+                )
+              }
+            }
+          } else if (this.variationName3 === null && this.variationName2 === null && this.variationName1 !== null) {
+            this.variantStore.push(
+              {
+                val: this.variationName1,
+              },
+            )
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < this.variantItems.length; x++) {
+              this.optionStore.push(
+                {
+                  val: this.variantItems[x].val,
+                  parent: 0,
+                  stock: this.variantItems[x].stock,
+                  price: this.variantItems[x].price,
+                  sold: this.variantItems[x].sold,
                 },
               )
             }
           }
-        }
-      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
-        this.variantStore.push(
-          {
-            val: this.variationName1,
-          },
-          {
-            val: this.variationName2,
-          },
-        )
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.variantItems.length; x++) {
-          this.optionStore.push(
-            {
-              val: this.variantItems[x].val,
-              parent: 0,
-              stock: null,
-              price: null,
-              sold: this.variantItems[x].sold,
-              option: [],
-            },
-          )
-          // eslint-disable-next-line no-plusplus
-          for (let y = 0; y < this.variantItems[x].option.length; y++) {
-            this.optionStore[x].option.push(
-              {
-                val: this.variantItems[x].option[y].val,
-                parent: 0,
-                stock: this.variantItems[x].option[y].stock,
-                price: this.variantItems[x].option[y].price,
-                sold: this.variantItems[x].option[y].sold,
-              },
-            )
+
+          if (this.cod === true) {
+            this.flavours.push('COD')
           }
-        }
-      } else if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChocies1[0] !== undefined) {
-        this.variantStore.push(
-          {
-            val: this.variationName1,
-          },
-        )
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.variantItems.length; x++) {
-          this.optionStore.push(
-            {
-              val: this.variantItems[x].val,
-              parent: 0,
-              stock: this.variantItems[x].stock,
-              price: this.variantItems[x].price,
-              sold: this.variantItems[x].sold,
-            },
-          )
-        }
-      }
+          if (this.transfer === true) {
+            this.flavours.push('BANK TRANSFER')
+          }
 
-      if (this.cod === true) {
-        this.flavours = 'COD'
-      } else if (this.transfer === true) {
-        this.flavours = 'BANK TRANSFER'
-      }
+          const params = {
+            product_name: this.productName,
+            sku: this.skuName,
+            description: this.descriptionProduct,
+            weight: this.weightProduct,
+            length: this.lengthProduct,
+            width: this.widthProduct,
+            height: this.heightProduct,
+            price: this.price,
+            stock: this.stock,
+            status: 1,
+            flavours: this.flavours,
+            variant_option: this.variantStore,
+            option: this.optionStore,
+          }
 
-      const params = {
-        status: 0,
-        product_name: this.productName,
-        sku: this.skuName,
-        description: this.descriptionProduct,
-        weight: this.weightProduct,
-        length: this.lengthProduct,
-        width: this.widthProduct,
-        height: this.heightProduct,
-        price: this.price,
-        stock: this.stock,
-        flavours: this.flavours,
-        variant_option: this.variantStore,
-        option: this.optionStore,
-      }
+          console.log(params)
 
-      httpKomship.put(`/v1/product/update/${this.productId}`, params, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(() => {
-        // Update Image
-        const formData = new FormData()
-        formData.append('_method', 'post')
-        formData.append('product_id', this.productId)
-        formData.append('image_path', this.imageFile)
-        httpKomship.post('/v1/product/update-upload-img-product', formData, {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(() => {
-          this.loadingSubmitDraft = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              icon: 'CheckIcon',
-              text: 'Success update produk',
-              variant: 'success',
-            },
+          httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(() => {
+            // Update Image
+            const formData = new FormData()
+            formData.append('product_id', this.productId)
+            formData.append('image_path', this.imageFile)
+            httpKomship.post('/v1/product/update-upload-img-product', formData, {
+              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+            }).then(() => {
+              this.loadingSubmitDraft = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success update produk',
+                  variant: 'success',
+                },
+              })
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
+            }).catch(() => {
+              this.loadingSubmitDraft = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal update gambar produk, silahkan coba lagi!',
+                  variant: 'danger',
+                },
+              })
+            })
+          }).catch(() => {
+            this.loadingSubmitDraft = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failed',
+                icon: 'AlertCircleIcon',
+                text: 'Failed update produk',
+                variant: 'danger',
+              },
+            })
           })
-          this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'draft' } })
-        }).catch(() => {
+        } else {
           this.loadingSubmitDraft = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failed',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal update gambar produk',
-              variant: 'danger',
-            },
-          })
-        })
-      }).catch(() => {
-        this.loadingSubmitDraft = false
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failed',
-            icon: 'AlertCircleIcon',
-            text: 'Failed update produk',
-            variant: 'danger',
-          },
-        })
+        }
       })
     },
     addVariation() {

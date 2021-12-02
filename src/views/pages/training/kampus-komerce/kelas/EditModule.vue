@@ -66,6 +66,14 @@
                           drop-placeholder="Drop file disini..."
                           accept="image/*"
                         />
+                        <div v-if="imageFile !== null">
+                          <small
+                            v-if="imageFile.size > 1024 * 2048"
+                            class="text-danger"
+                          >
+                            Ukuran File Tidak Bisa Lebih dari 2 MB
+                          </small>
+                        </div>
                         <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
                     </b-col>
@@ -184,8 +192,10 @@ export default {
   },
   data() {
     return {
-      id: this.$route.params.module_id,
-      classId: this.$route.params.class_id,
+      id: {
+        moduleId: this.$route.params.module_id,
+        classId: this.$route.params.class_id,
+      },
       loadingSubmit: false,
       submitErrors: '',
 
@@ -204,7 +214,7 @@ export default {
       imageInitialFile: null,
 
       statusModuleOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
     }
@@ -223,7 +233,6 @@ export default {
       this.$refs.formRules.validate().then(success => {
         if (success) {
           this.loadingSubmit = true
-
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('module_title', this.moduleTitle)
@@ -233,7 +242,7 @@ export default {
           formData.append('module_trainer', this.trainerId.id)
           formData.append('module_class_id', this.id)
 
-          this.$http.post(`/lms/module/update/${this.id}`, formData)
+          this.$http.post(`/lms/module/update/${this.id.moduleId}`, formData)
             .then(() => {
               this.$toast({
                 component: ToastificationContent,
@@ -244,7 +253,7 @@ export default {
                   icon: 'CheckIcon',
                 },
               }, { timeout: 2500 })
-              this.$router.push({ name: this.$route.meta.navActiveLink })
+              this.$router.push({ name: this.$route.meta.name, params: { id: this.id.classId } })
             })
             .catch(error => {
               this.loadingSubmit = false
@@ -261,12 +270,16 @@ export default {
       })
     },
     loadForm() {
-      return this.$http.get(`/lms/module/${this.id}`).then(response => {
+      return this.$http.get(`/lms/module/${this.id.moduleId}`).then(response => {
         const { data } = response.data
         this.moduleTitle = data.module_title
         this.moduleSubtitle = data.module_subtitle
         if (data.module_thumbnail) this.imageInitialFile = data.module_thumbnail
-        this.statusModule = data.module_status
+        if (data.module_status === 'draft') {
+          this.statusModule = 'Private'
+        } else {
+          this.statusModule = 'Publish'
+        }
         this.trainerId = data.module_trainer
       })
     },

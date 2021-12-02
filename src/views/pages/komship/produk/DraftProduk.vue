@@ -21,25 +21,20 @@
                 </b-input-group>
               </b-col>
               <b-col md="auto">
-                <b-button
-                  id="popover-button-danger"
-                  v-ripple.400="'rgba(234, 84, 85, 0.15)'"
+                <b-dropdown
+                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                  right
+                  no-caret
                   variant="primary"
-                  size="sm"
-                  class="btn-icon"
                 >
-                  <b-img
-                    fluid
-                    src="@core/assets/image/filter-icon-kompship.png"
-                  />
-                </b-button>
-                <b-popover
-                  target="popover-button-danger"
-                  variant="danger"
-                  triggers="focus"
-                  placement="bottom"
-                >
-                  <b-row class="p-50">
+                  <template
+                    #button-content
+                  >
+                    <feather-icon icon="SlidersIcon" />
+                  </template>
+                  <b-dropdown-form
+                    style="width: 417px;"
+                  >
                     <b-form @submit.prevent>
                       <b-row>
                         <b-col
@@ -123,8 +118,8 @@
                         </b-col>
                       </b-row>
                     </b-form>
-                  </b-row>
-                </b-popover>
+                  </b-dropdown-form>
+                </b-dropdown>
               </b-col>
             </b-row>
           </b-form-group>
@@ -484,12 +479,13 @@ import {
   BImg,
   BAvatar,
   VBPopover,
-  BPopover,
   BOverlay,
   BContainer,
   BCollapse,
   VBToggle,
   BModal,
+  BDropdown,
+  BDropdownForm,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -507,12 +503,13 @@ export default {
     BButton,
     BImg,
     BAvatar,
-    BPopover,
     BForm,
     BOverlay,
     BContainer,
     BCollapse,
     BModal,
+    BDropdown,
+    BDropdownForm,
   },
   directives: {
     'b-popover': VBPopover,
@@ -590,7 +587,7 @@ export default {
     getProduct() {
       this.loading = true
       const params = {
-        status: '0',
+        status: 0,
       }
       if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
       if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })

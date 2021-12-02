@@ -56,7 +56,7 @@
                       <validation-provider
                         #default="{ errors }"
                         name="Thumbnail"
-                        rules="required"
+                        rules=""
                       >
                         <b-form-file
                           v-model="thumbnail"
@@ -67,6 +67,14 @@
                           drop-placeholder="Drop file disini..."
                           accept="image/*"
                         />
+                        <div v-if="thumbnail !== null">
+                          <small
+                            v-if="thumbnail.size > 1024 * 2048"
+                            class="text-danger"
+                          >
+                            Ukuran File Tidak Bisa Lebih dari 2 MB
+                          </small>
+                        </div>
                         <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
                     </b-col>

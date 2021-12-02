@@ -1036,7 +1036,7 @@
               <b-spinner
                 v-if="loadingSubmitDraft"
                 small
-                variant="light"
+                variant="primary"
               />
               Simpan Draft
             </b-button>

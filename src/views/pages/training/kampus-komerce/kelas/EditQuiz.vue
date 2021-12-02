@@ -106,7 +106,7 @@
                   pill
                   class="ml-2 mb-2"
                   tag="router-link"
-                  :to="{ name: $route.meta.routeBack, params: { module_id: moduleId } }"
+                  :to="{ name: $route.meta.routeBack, params: { module_id: id.moduleId } }"
                 >
                   Submit
                 </b-button>
@@ -216,12 +216,32 @@
                           Checklist satu untuk jawaban yang benar
                         </small>
                       </b-col>
-                      <b-col class="text-right mt-3">
+                      <b-col
+                        v-if="quizId !== ''"
+                        class="text-right mt-3"
+                      >
                         <b-button
                           variant="danger"
                           pill
                           :disabled="answer.filter(item => item.correct_answer).length === 0 || answer.filter(item => item.correct_answer === true).length > 1"
                           @click="submit"
+                        >
+                          <b-spinner
+                            v-if="loadingSubmit"
+                            small
+                          />
+                          Simpan
+                        </b-button>
+                      </b-col>
+                      <b-col
+                        v-else
+                        class="text-right mt-3"
+                      >
+                        <b-button
+                          variant="danger"
+                          pill
+                          :disabled="answer.filter(item => item.correct_answer).length === 0 || answer.filter(item => item.correct_answer === true).length > 1"
+                          @click="submitAddQuiz"
                         >
                           <b-spinner
                             v-if="loadingSubmit"
@@ -294,7 +314,10 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
-      lessonId: this.$route.params.lesson_id,
+      id: {
+        lessonId: this.$route.params.lesson_id,
+        moduleId: this.$route.params.module_id,
+      },
       loading: false,
       loadingSubmit: false,
       submitErrors: '',
@@ -350,6 +373,7 @@ export default {
       quizId: '',
 
       moduleId: 0,
+      classId: null,
 
     }
   },
@@ -369,7 +393,9 @@ export default {
     },
   },
   mounted() {
-    this.loadQuestions()
+    this.loadQuiz()
+    this.getModule()
+    this.getQuizId()
   },
   methods: {
     editQuestions(data) {
@@ -419,19 +445,18 @@ export default {
       this.$refs.table.refresh()
     },
     submit() {
-      const formDatas = {
-        _method: 'put',
-        quiz_id: this.quizId,
-        question_id: this.questionsId,
-        type: 'module',
-        ref_id: this.edumoLessonId,
-        question: this.questions,
-        question_type: 'text',
-        answers: this.answer,
-        answers_type: 'choices',
-      }
-
       this.$refs.formRules.validate().then(success => {
+        const formDatas = {
+          _method: 'put',
+          quiz_id: this.quizId,
+          question_id: this.questionsId,
+          type: 'module',
+          ref_id: this.edumoLessonId,
+          question: this.questions,
+          question_type: 'text',
+          answers: this.answer,
+          answers_type: 'choices',
+        }
         if (success) {
           this.submitErrors = ''
           this.loadingSubmit = true
@@ -464,8 +489,60 @@ export default {
         }
       })
     },
+    submitAddQuiz() {
+      const formData = new FormData()
+      formData.append('type', 'module')
+      formData.append('ref_id', this.edumoLessonId)
+      formData.append('question', this.questions)
+      formData.append('questions_type', 'text')
+      formData.append('answers', this.answer)
+      formData.append('answer_type', 'choices')
+
+      const formDatas = {
+        type: 'module',
+        ref_id: this.edumoLessonId,
+        question: this.questions,
+        questions_type: 'text',
+        answers: this.answer,
+        answer_type: 'choices',
+      }
+
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          this.submitErrors = ''
+          this.loadingSubmit = true
+
+          this.$http.post('/lms/lesson/quiz/store', formDatas)
+            .then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  text: this.successText,
+                  variant: 'success',
+                  icon: 'CheckIcon',
+                },
+              }, { timeout: 2500 })
+              this.getQuizId()
+              this.refreshTable()
+              this.loadingSubmit = false
+            })
+            .catch(error => {
+              this.loadingSubmit = false
+
+              if (error.response.status === 422) {
+                this.submitErrors = Object.fromEntries(
+                  Object.entries(error.response.data.data).map(
+                    ([key, value]) => [key, value[0]],
+                  ),
+                )
+              }
+            })
+        }
+      })
+    },
     tableProvider() {
-      return this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
+      return this.$http.get(`/lms/lesson/quiz/${this.id.lessonId}`).then(response => {
         const { data } = response.data
         return data.question
       }).catch(() => {
@@ -481,23 +558,46 @@ export default {
         return []
       })
     },
-    loadQuestions() {
-      this.$http.get(`/lms/lesson/quiz/${this.lessonId}`).then(response => {
+    getQuizId() {
+      this.$http.get(`/lms/lesson/quiz/${this.id.lessonId}`).then(response => {
         const { data } = response.data
-        console.log(data)
-        this.moduleName = data.module_title
-        this.moduleSubname = data.module_subtitle
-        this.className = data.class_skill
-        this.lessonId = data.lesson_id
-        this.moduleId = data.module_id
         this.quizId = data.quiz_id
+      })
+    },
+    loadQuiz() {
+      this.$http.get(`/lms/lesson/${this.id.lessonId}`).then(response => {
+        const { data } = response.data
+        this.lessonId = data.lesson_id
         this.getEdumoId()
       })
     },
     getEdumoId() {
-      this.$http.get(`/lms/lesson/${this.lessonId}`).then(response => {
+      this.$http.get(`/lms/lesson/${this.id.lessonId}`).then(response => {
         const { data } = response.data
         this.edumoLessonId = data.edumo_lesson_id
+        this.moduleId = data.lesson_module_id
+        this.getModule()
+      })
+    },
+    getModule() {
+      this.$http.get(`/lms/lesson/list/filter/${this.id.moduleId}`).then(response => {
+        const { data } = response.data
+        this.moduleName = data.module_title
+        this.moduleSubname = data.module_subtitle
+        this.getIdClass()
+      })
+    },
+    getIdClass() {
+      return this.$http.get(`/lms/module/${this.id.moduleId}`).then(response => {
+        const { data } = response.data
+        this.classId = data.module_class_id
+        this.loadClass()
+      })
+    },
+    loadClass() {
+      return this.$http.get(`/lms/class/${this.classId}`).then(response => {
+        const { data } = response.data
+        this.className = data.class_name
       })
     },
     addAnswer() {

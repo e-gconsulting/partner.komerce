@@ -127,7 +127,7 @@
                 variant="flat-info"
                 class="btn-icon"
                 tag="router-link"
-                :to="{ name: $route.meta.routeAddQuiz, params: { lesson_id: data.item.lesson_id }, }"
+                :to="{ name: $route.meta.routeAddQuiz, params: { lesson_id: data.item.lesson_id, module_id: data.item.module_id }, }"
               >
                 <feather-icon
                   icon="PlusIcon"
@@ -208,7 +208,7 @@ export default {
           badge: [
             {
               publish: 'Publish',
-              draft: 'Draft',
+              draft: 'Private',
             },
             {
               publish: 'light-success',
@@ -281,7 +281,11 @@ export default {
     loadModule() {
       return this.$http.get(`/lms/module/${this.moduleId}`).then(response => {
         const { data } = response.data
-        this.moduleStatus = data.module_status
+        if (data.module_status === 'draft') {
+          this.moduleStatus = 'Private'
+        } else {
+          this.moduleStatus = data.module_status
+        }
         this.moduleTitle = data.module_title
         this.moduleSubtitle = data.module_subtitle
         this.trainerName = data.module_trainer.name

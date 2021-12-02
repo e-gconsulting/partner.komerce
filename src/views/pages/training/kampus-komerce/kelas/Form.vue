@@ -54,6 +54,14 @@
                           drop-placeholder="Drop file disini..."
                           accept="image/*"
                         />
+                        <div v-if="iconFile !== null">
+                          <small
+                            v-if="iconFile.size > 1024 * 2048"
+                            class="text-danger"
+                          >
+                            Ukuran File Tidak Bisa Lebih dari 2 MB
+                          </small>
+                        </div>
                         <small class="text-danger">{{ errors[0] }}</small>
                       </validation-provider>
                     </b-col>
@@ -275,17 +283,30 @@ export default {
           if (this.statusClass) formData.append('class_status', this.statusClass.value)
 
           this.$http.post('/lms/class/store', formData)
-            .then(() => {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  text: this.successText,
-                  variant: 'success',
-                  icon: 'CheckIcon',
-                },
-              }, { timeout: 2500 })
-              this.$router.push({ name: this.$route.meta.navActiveLink })
+            .then(res => {
+              if (res.data.message === 'Class with the same Admin Marketplace already exists.' || res.data.message === 'Class with the same Advertiser already exists.' || res.data.message === 'Class with the same Customer Service already exists.') {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Gagal',
+                    text: res.data.message,
+                    variant: 'danger',
+                    icon: 'AlertCircleIcon',
+                  },
+                }, { timeout: 2500 })
+                this.loadingSubmit = false
+              } else {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    text: this.successText,
+                    variant: 'success',
+                    icon: 'CheckIcon',
+                  },
+                }, { timeout: 2500 })
+                this.$router.push({ name: this.$route.meta.navActiveLink })
+              }
             })
             .catch(error => {
               this.loadingSubmit = false

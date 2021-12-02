@@ -187,6 +187,7 @@
                             </b-col>
                           </b-row>
                           <b-button
+                            v-if="answer.length < 5"
                             class="mt-1"
                             variant="flat-success"
                             @click="addAnswer"
@@ -282,6 +283,7 @@ export default {
       loadingSubmit: false,
       submitErrors: '',
       lessonId: this.$route.params.lesson_id,
+      moduleId2: this.$route.params.module_id,
       classId: null,
 
       endpointDelete: '/lms/lesson/quiz/delete/:question_id',
@@ -340,9 +342,6 @@ export default {
     this.loadQuiz()
   },
   methods: {
-    cekValid() {
-      console.log(this.answer)
-    },
     confirmDelete(data) {
       this.$swal({
         title: 'Anda yakin?',

@@ -84,7 +84,7 @@
 
           <template #cell(action)="data">
             <span
-              v-if="isDeleted(data.item.class_id)"
+              v-if="isDeleted(data.item.module_id)"
               class="text-danger"
             >Deleted</span>
             <div v-else>
@@ -102,7 +102,7 @@
                 variant="flat-warning"
                 class="btn-icon"
                 tag="router-link"
-                :to="{ name: $route.meta.routeEdit, params: { module_id: data.item.module_id } }"
+                :to="{ name: $route.meta.routeEdit, params: { module_id: data.item.module_id, class_id: data.item.module_class_id } }"
               >
                 <feather-icon
                   icon="EditIcon"
@@ -111,7 +111,6 @@
               <b-button
                 variant="flat-danger"
                 class="btn-icon"
-                :disabled="data.item.length < 1"
                 @click="confirmDelete(data)"
               >
                 <feather-icon
@@ -197,6 +196,7 @@ export default {
         { key: 'action', label: 'Aksi' },
       ],
       module_id: 1,
+      itemsModule: null,
     }
   },
   computed: {
@@ -219,14 +219,15 @@ export default {
         },
       }).then(response => {
         const { data } = response.data
-        return data.modules
+        this.itemsModule = data.modules
+        return this.itemsModule
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
             title: 'Failure',
             icon: 'AlertCircleIcon',
-            text: 'Unable to load the table data. Please try again later or contact support.',
+            text: 'Daftar modul tidak ada',
             variant: 'danger',
           },
         })
@@ -241,30 +242,54 @@ export default {
       })
     },
     confirmDelete(data) {
-      this.$swal({
-        title: 'Anda yakin?',
-        text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus!',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-danger ml-1',
-        },
-        buttonsStyling: false,
-      }).then(result => {
-        if (result.value) {
-          this.delete(data)
-        }
-      })
+      if (this.itemsModule.length > 1) {
+        this.$swal({
+          title: 'Anda yakin?',
+          text: `Hapus satu ${this.$route.meta.name.singular} dari tabel. Aksi ini tidak dapat dibatalkan.`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Ya, Hapus!',
+          customClass: {
+            confirmButton: 'btn btn-primary',
+            cancelButton: 'btn btn-outline-danger ml-1',
+          },
+          buttonsStyling: false,
+        }).then(result => {
+          if (result.value) {
+            this.delete(data)
+          }
+        })
+      } else {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Tidak bisa hapus modul, minimal modul ada 1',
+            variant: 'danger',
+          },
+        })
+      }
     },
     delete(data) {
       this.loading = true
       const endpoint = this.endpointDelete.replace(/:module_id/g, data.item.module_id)
 
       this.$http.delete(endpoint)
-        .then(() => {
-          this.deletedIds.push(data.item.module_id)
+        .then(response => {
+          if (response.data.status === 'failed') {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                text: 'Tidak bisa delete module, module masih dalam keadaan publish',
+                variant: 'danger',
+                icon: 'AlertCircleIcon',
+              },
+            }, { timeout: 2500 })
+          } else {
+            this.deletedIds.push(data.item.module_id)
+          }
         })
         .finally(() => {
           this.loading = false
@@ -278,7 +303,7 @@ export default {
       if (!item || type !== 'row') { return }
 
       // eslint-disable-next-line consistent-return
-      if (this.isDeleted(item.module_id)) { return colorClass }
+      if (this.isDeleted(item.lesson_id)) { return colorClass }
     },
   },
 }

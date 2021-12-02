@@ -224,10 +224,6 @@ export default {
   },
   mounted() {
     this.isDeleted()
-    this.$http.get('/lms/module/list/filter/1').then(response => {
-      const { data } = response.data
-      console.log(data)
-    })
   },
   methods: {
     tableProvider() {
@@ -244,7 +240,7 @@ export default {
           props: {
             title: 'Failure',
             icon: 'AlertCircleIcon',
-            text: 'Unable to load the table data. Please try again later or contact support.',
+            text: 'Daftar kelas tidak ada',
             variant: 'danger',
           },
         })
@@ -278,8 +274,20 @@ export default {
       const endpoint = this.endpointDelete.replace(/:class_id/g, data.item.class_id)
 
       this.$http.delete(endpoint)
-        .then(() => {
-          this.deletedIds.push(data.item.class_id)
+        .then(res => {
+          if (res.data.message === 'cannot delete class, Class is still publish.') {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Tidak bisa hapus kelas, saat status kelas masih dalam keadaan publish',
+                variant: 'danger',
+              },
+            })
+          } else {
+            this.deletedIds.push(data.item.class_id)
+          }
         })
         .finally(() => {
           this.loading = false

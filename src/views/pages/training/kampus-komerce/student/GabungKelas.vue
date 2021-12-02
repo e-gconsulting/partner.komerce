@@ -61,16 +61,23 @@
             <b-card class="mb-0">
               <b-row>
                 <b-col md="2">
-                  <b-form-group
-                    label="Percentage"
+                  <validation-provider
+                    rules="min:20"
                   >
-                    <b-form-input
-                      v-model="percentageStudent"
-                      label="title"
-                      @input="filterPercent"
-                    />
-                  </b-form-group>
-                </b-col>
+                    <b-form-group
+                      label="Percentage"
+                    >
+                      <b-form-input
+                        v-model="percentageStudent"
+                        label="title"
+                        type="number"
+                        :min="0"
+                        :max="100"
+                        @input="filterPercent"
+                      />
+                    </b-form-group>
+
+                  </validation-provider></b-col>
                 <b-col
                   cols="auto"
                   md="auto"
@@ -91,6 +98,7 @@
                   </b-card>
                 </b-col>
                 <b-col
+                  v-if="startDate"
                   cols="auto"
                   md="auto"
                   class="mt-2"
@@ -170,11 +178,13 @@
           :empty-filtered-text="`Tidak ada hasil untuk kata kunci ${filter}`"
 
           :show-empty="!loading"
-          :items="tableProvider"
+          :items="datatable"
           :fields="tableFields"
           :filter="filter"
           :filter-included-fields="filterOn"
           :busy.sync="loading"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
         >
 
           <template #cell(student_user_id)="data">
@@ -230,6 +240,7 @@
 </template>
 
 <script>
+import { ValidationProvider } from 'vee-validate'
 import { dateFormat } from '@core/mixins/ui/date'
 import flatPickr from 'vue-flatpickr-component'
 import { kFormatter } from '@core/utils/filter'
@@ -251,6 +262,7 @@ import {
 } from 'bootstrap-vue'
 import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import Ripple from 'vue-ripple-directive'
+import { min } from '@validations'
 
 export default {
   directives: {
@@ -273,10 +285,12 @@ export default {
     BCollapse,
     BCard,
     flatPickr,
+    ValidationProvider,
   },
   mixins: [dateFormat],
   data() {
     return {
+      min,
       loading: false,
 
       filterPositionId: 1,
@@ -285,23 +299,29 @@ export default {
 
       classSkillJoin: '',
 
+      datatable: [],
       fields: [
         {
           key: 'student_user_id',
+          sortKey: 'student_user_id',
+          sortable: true,
           label: 'ID',
         },
         {
           key: 'student_name',
+          sortable: true,
           label: 'Data Diri',
         },
         {
           key: 'student_percentage',
+          sortable: true,
           label: 'Percentage',
           thClass: 'text-center',
           tdClass: 'text-center',
         },
         {
           key: 'student_join_at',
+          sortable: true,
           label: 'Tanggal Gabung Kelas',
           thClass: 'text-center',
           tdClass: 'text-center',
@@ -330,11 +350,12 @@ export default {
         },
       ],
 
-      dataStudent: null,
       filter: '',
       filterOn: [],
       totalStudent: 0,
 
+      sortBy: '',
+      sortDesc: false,
       startDate: null,
       endDate: null,
       percent: '',
@@ -346,6 +367,9 @@ export default {
       const fields = [...this.fields]
       return fields
     },
+    sortDirection() {
+      return this.sortDesc ? 'desc' : 'asc'
+    },
   },
   watch: {
     filterPositionId() {
@@ -354,6 +378,9 @@ export default {
   },
   mounted() {
     this.loadFilterPositions()
+  },
+  created() {
+    this.tableProvider()
   },
   methods: {
     tes() {
@@ -373,26 +400,28 @@ export default {
           search_join: this.filter,
           dateFrom: this.startDate,
           dateTo: this.endDate,
+          sort_by: this.sortBy,
+          sort: this.sortDirection,
         },
       }).then(response => {
         const { data } = response.data
         data.joined.forEach(this.myArray)
         this.refreshTable()
-        return this.dataStudent
+        return this.datatable
       }).catch(() => {
         this.refreshTable()
-        this.dataStudent = []
-        return this.dataStudent
+        this.datatable = []
+        return this.datatable
       })
     },
     myArray(data) {
       if (this.percentageStudent) {
-        this.dataStudent = data.student.filter(item => item.student_percentage === Number(this.percentageStudent))
+        this.datatable = data.student.filter(item => item.student_percentage === Number(this.percentageStudent))
       } else {
-        this.dataStudent = data.student
+        this.datatable = data.student
       }
       this.totalStudent = data.total_student_join
-      return this.dataStudent
+      return this.datatable
     },
     refreshTable() {
       this.$refs.table.refresh()
@@ -413,6 +442,7 @@ export default {
     selectPosition(data) {
       this.filterPositionId = data.class_id
       this.filterClassId = data.class_name
+      this.tableProvider()
       return data
     },
     kFormatter,

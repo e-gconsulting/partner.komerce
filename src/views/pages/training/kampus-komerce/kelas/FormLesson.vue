@@ -86,6 +86,14 @@
                             drop-placeholder="Drop file disini..."
                             accept="image/*"
                           />
+                          <div v-if="lessonThumbnail !== null">
+                            <small
+                              v-if="lessonThumbnail.size > 1024 * 2048"
+                              class="text-danger"
+                            >
+                              Ukuran File Tidak Bisa Lebih dari 2 MB
+                            </small>
+                          </div>
                           <small class="text-danger">{{ errors[0] }}</small>
                         </validation-provider>
                       </b-form-group>
@@ -171,13 +179,13 @@
                       type="submit"
                       class="mr-50"
                       :disabled="loadingSubmit"
-                      @click.prevent="submit"
+                      @click="submit"
                     >
                       <b-spinner
                         v-if="loadingSubmit"
                         small
                       />
-                      Lanjut
+                      Simpan
                     </b-button>
                   </b-col>
                 </b-row>
@@ -249,15 +257,10 @@ export default {
       lessonThumbnail: null,
       imageInitialFile: null,
 
-      trainerOptions: [
-        { title: 'Sahfri Yanto', value: 1 },
-        { title: 'Ikhtiar Rahayu', value: 2 },
-      ],
-
       statusLesson: '',
 
       statusLessonOptions: [
-        { title: 'Draft', value: 'draft' },
+        { title: 'Private', value: 'draft' },
         { title: 'Publish', value: 'publish' },
       ],
 
@@ -307,6 +310,17 @@ export default {
             })
             .catch(error => {
               this.loadingSubmit = false
+              if (error) {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Gagal',
+                    text: 'Server sedang gangguan, silahkan coba lagi',
+                    variant: 'danger',
+                    icon: 'AlertCircleIcon',
+                  },
+                }, { timeout: 2500 })
+              }
 
               if (error.response.status === 422) {
                 this.submitErrors = Object.fromEntries(
