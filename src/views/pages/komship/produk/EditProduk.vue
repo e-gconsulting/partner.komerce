@@ -185,11 +185,33 @@
                             #default="{errors}"
                             name="Variasi 1"
                           >
-                            <b-form-input
-                              v-model="variationName1"
-                              placeholder="Masukan nama variasi"
-                              :state="errors.length > 0 ? false:null"
-                            />
+                            <b-row class="d-flex align-items-center">
+                              <b-col
+                                cols="11"
+                                class=""
+                              >
+                                <b-form-input
+                                  v-model="variationName1"
+                                  placeholder="Masukan nama variasi"
+                                  :state="errors.length > 0 ? false:null"
+                                />
+                              </b-col>
+                              <b-col
+                                cols="1"
+                                class="pr-0 pl-0 text-center"
+                              >
+                                <b-button
+                                  class="btn-icon"
+                                  variant="light-dark"
+                                  size="sm"
+                                  @click="removeVariant1"
+                                >
+                                  <feather-icon
+                                    icon="Trash2Icon"
+                                  />
+                                </b-button>
+                              </b-col>
+                            </b-row>
                             <small class="text-danger">{{ errors[0] }}</small>
                           </validation-provider>
                         </b-form-group>
@@ -297,11 +319,33 @@
                             #default="{errors}"
                             name="Variasi 2"
                           >
-                            <b-form-input
-                              v-model="variationName2"
-                              placeholder="Masukan nama variasi"
-                              :state="errors.length > 0 ? false:null"
-                            />
+                            <b-row class="d-flex align-items-center">
+                              <b-col
+                                cols="11"
+                                class=""
+                              >
+                                <b-form-input
+                                  v-model="variationName2"
+                                  placeholder="Masukan nama variasi"
+                                  :state="errors.length > 0 ? false:null"
+                                />
+                              </b-col>
+                              <b-col
+                                cols="1"
+                                class="pr-0 pl-0 text-center"
+                              >
+                                <b-button
+                                  class="btn-icon"
+                                  variant="light-dark"
+                                  size="sm"
+                                  @click="removeVariant2"
+                                >
+                                  <feather-icon
+                                    icon="Trash2Icon"
+                                  />
+                                </b-button>
+                              </b-col>
+                            </b-row>
                           </validation-provider>
                         </b-form-group>
                       </b-col>
@@ -397,10 +441,32 @@
                           label="Nama"
                           label-cols-md="3"
                         >
-                          <b-form-input
-                            v-model="variationName3"
-                            placeholder="Masukan nama variasi"
-                          />
+                          <b-row class="d-flex align-items-center">
+                            <b-col
+                              cols="11"
+                              class=""
+                            >
+                              <b-form-input
+                                v-model="variationName3"
+                                placeholder="Masukan nama variasi"
+                              />
+                            </b-col>
+                            <b-col
+                              cols="1"
+                              class="pr-0 pl-0 text-center"
+                            >
+                              <b-button
+                                class="btn-icon"
+                                variant="light-dark"
+                                size="sm"
+                                @click="removeVariant3"
+                              >
+                                <feather-icon
+                                  icon="Trash2Icon"
+                                />
+                              </b-button>
+                            </b-col>
+                          </b-row>
                         </b-form-group>
                       </b-col>
 
@@ -1907,6 +1973,32 @@ export default {
     },
     updateTable() {
       this.editMode = false
+    },
+    removeVariant1() {
+      this.variationName1 = ''
+      this.variationFields1 = false
+      if (this.variationFields2 === false && this.variationFields3 === false) {
+        this.isVariation = false
+      }
+      this.formChoices1 = [{ choices: null }]
+    },
+    removeVariant2() {
+      this.variationName2 = ''
+      this.variationFields2 = false
+      this.activeAddChoices1 = true
+      if (this.variationFields1 === false && this.variationFields3 === false) {
+        this.isVariation = false
+      }
+      this.formChoices2 = [{ choices: null }]
+    },
+    removeVariant3() {
+      this.variationName3 = ''
+      this.variationFields3 = false
+      this.activeAddChoices2 = true
+      if (this.variationFields1 === false && this.variationFields2 === false) {
+        this.isVariation = false
+      }
+      this.formChoices3 = [{ choices: null }]
     },
     formatPrice(value) {
       const val = value

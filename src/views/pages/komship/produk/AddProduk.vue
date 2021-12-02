@@ -329,7 +329,7 @@
                                 class="btn-icon"
                                 variant="light-dark"
                                 size="sm"
-                                @click="removeVariant1"
+                                @click="removeVariant2"
                               >
                                 <feather-icon
                                   icon="Trash2Icon"
@@ -450,7 +450,7 @@
                               class="btn-icon"
                               variant="light-dark"
                               size="sm"
-                              @click="removeVariant1"
+                              @click="removeVariant3"
                             >
                               <feather-icon
                                 icon="Trash2Icon"
@@ -1920,6 +1920,29 @@ export default {
     },
     updateTable() {
       this.editMode = false
+    },
+    removeVariant1() {
+      this.variationName1 = ''
+      this.variationFields1 = false
+      if (this.variationFields2 === false && this.variationFields3 === false) {
+        this.isVariation = false
+      }
+    },
+    removeVariant2() {
+      this.variationName2 = ''
+      this.variationFields2 = false
+      this.activeAddChoices1 = true
+      if (this.variationFields1 === false && this.variationFields3 === false) {
+        this.isVariation = false
+      }
+    },
+    removeVariant3() {
+      this.variationName3 = ''
+      this.variationFields3 = false
+      this.activeAddChoices2 = true
+      if (this.variationFields1 === false && this.variationFields2 === false) {
+        this.isVariation = false
+      }
     },
     formatPrice(value) {
       const val = value
