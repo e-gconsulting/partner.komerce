@@ -33,7 +33,6 @@
                 size="sm"
                 style="font-weight: 400;font-size:16px;"
                 class="btn-custom btn-custom--edit"
-                @click="simpanFormEdit"
               >Simpan
               </b-button>
             </div>
@@ -305,14 +304,14 @@
                 <b-col cols="3">
                   <b-form-select
                     v-model="inputCriteria.type"
-                    :id="`inputCriteria-type-${index}`"
+                    :id="`inputCriteria-type-${inputCriteria.criteria_id}`"
                     :options="optionsCriteria"
                   />
                 </b-col>
                 <b-col cols="3">
                   <v-select
                     v-model="inputCriteria.destination"
-                    :id="`inputCriteria-destination-${index}`"
+                    :id="`inputCriteria-destination-${inputCriteria.criteria_id}`"
                     :options="optionsKota"
                     :reduce="optionsKota => optionsKota.value"
                     multiple
@@ -343,7 +342,7 @@
                   <b-input-group append="%">
                     <b-form-input
                       v-model="inputCriteria.delivery"
-                      :id="`inputCriteria-delivery-${index}`"
+                      :id="`inputCriteria-delivery-${inputCriteria.criteria_id}`"
                       :state="inputCriteria.delivery >= 0"
                       type="number"
                       min="0"
@@ -360,8 +359,8 @@
                   <b-input-group append="%">
                     <b-form-input
                       v-model="inputCriteria.retur"
+                      :id="`inputCriteria-retur-${inputCriteria.criteria_id}`"
                       :state="inputCriteria.retur >= 0"
-                      :id="`inputCriteria-retur-${index}`"
                       type="number"
                       min="0"
                       max="100"

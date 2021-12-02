@@ -55,19 +55,15 @@ export default {
       cashback_to: null,
       max_pickup_time: '',
       vehicles: '',
+      detailEkspedisi: {},
       criteriasData: [{ ...initCriteria }],
-      optionsKota: [
-        { value: null, text: 'Pilih layanan kota' },
-        { value: 'jawa_bali', text: 'Jawa & Bali' },
-        { value: 'kalimantan_sumatera', text: 'Kalimantan & Sumatera' },
-        { value: 'jakarta_batam', text: 'Jakarta & Batam' },
-      ],
+      optionsKota: [],
+      optionsKotaData: [],
       optionsCriteria: [
         { value: null, text: 'Pilih jenis pengiriman' },
         { text: 'Exclude', value: 'exclude' },
         { text: 'Include', value: 'include' },
       ],
-      selected: null,
       optionsServiceName: [
         { value: null, text: 'Pilih jenis service' },
         { text: 'Oke', value: 'oke' },
@@ -84,12 +80,17 @@ export default {
   },
   computed: {
     changeCriteriasData() {
-      const dt = [...this.criteriasData].map(x => {
-        const returnData = { ...x }
-        returnData.origin = [x.type]
-        return returnData
+      const dataBaru = [...this.criteriasData].map(x => {
+        const dt = { ...x }
+        dt.origin = [x.type]
+        this.detailEkspedisi.criterias.forEach(y => {
+          if (y.criteria_id === x.criteria_id) {
+            dt.destination = x.destination
+          }
+        })
+        return dt
       })
-      return dt
+      return dataBaru
     },
   },
   watch: {
@@ -100,23 +101,40 @@ export default {
         if (val2) {
           el.classList.add('activeChoice')
           el2.classList.remove('activeChoice')
-        } else {
+        } else if (el) {
           el.classList.add('activeChoice')
         }
       },
     },
-    // criteriasData: {
-    //   handler(val) {
-    //     console.log(val)
-    //   },
-    //   deep: true,
-    // },
+    criteriasData: {
+      handler(val) {
+        // const dataBaru = [...val].map(x => {
+        //   const dt = { ...x }
+        //   this.detailEkspedisi.criterias.forEach(y => {
+        //     if (y.criteria_id === x.criteria_id) {
+        //       dt.destination = [...y.destination, ...x.destination]
+        //     }
+        //   })
+        //   return dt
+        // })
+        // console.log(dataBaru)
+        console.log(val)
+        // this.criteriasData = dataBaru
+        // })
+      },
+      deep: true,
+    },
   },
   mounted() {
+    // this.$route.params.id,
     this.getIsland()
   },
   created() {
     //
+  },
+  updated() {
+    const el = document.getElementById(`choice${this.vehicles}`)
+    el.classList.add('activeChoice')
   },
   methods: {
     tambahKriteria(criteriasDataParams) {
@@ -128,7 +146,7 @@ export default {
     },
     submitData() {
       this.loadDataAwal = true
-      const endpoint = 'api/v1/admin/shipment/store'
+      const endpoint = `/v1/admin/shipment/update/${this.$route.params.id}`
       let getData = null
       // console.log('datasubmit :', {
       //   shipping_name: this.shipping_name,
@@ -141,7 +159,7 @@ export default {
       //   vehicles: [this.vehicles],
       //   criterias: this.changeCriteriasData,
       // })
-      getData = axioskomsipdev.post(endpoint, {
+      getData = axioskomsipdev.put(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
         cashback_from: this.cashback_from,
@@ -154,6 +172,7 @@ export default {
       })
       getData.then(data => {
         console.log(data)
+        this.$router.push('/biaya-ekspedisi')
         // {
         // status: "success",
         // code: 200,
@@ -184,9 +203,6 @@ export default {
         this.$bvModal.hide('modal-edit-akseslayanan')
       })
     },
-    simpanFormEdit() {
-      // calling api for simpan data
-    },
     handleChoiceTypeVehicle(val) {
       this.vehicles = val
     },
@@ -196,6 +212,40 @@ export default {
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
           this.optionsKota = parseData
+          this.optionsKotaData = parseData
+          this.$nextTick(() => {
+            this.getDetailEkspedisi(this.$route.params.id)
+          })
+        })
+        .catch(e => {
+          console.log('error', e)
+          this.loadDataAwal = false
+        })
+    },
+    getDetailEkspedisi(id) {
+      const endpoint = `/v1/admin/shipment/detail/${id}`
+      axioskomsipdev.get(endpoint)
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          this.detailEkspedisi = parseData
+          this.shipping_name = parseData.shipping_name
+          this.service_name = parseData.service_name.toLowerCase()
+          this.cashback_from = parseData.cashback_from
+          this.service_fee_from = parseData.service_fee_from
+          this.service_fee_to = parseData.service_fee_to
+          this.cashback_to = parseData.cashback_to
+          this.max_pickup_time = parseData.max_pickup_time
+          this.vehicles = parseData.vehicles.join().toLowerCase()
+          this.criteriasData = [...parseData.criterias].map(x => {
+            const dt = {}
+            dt.criteria_id = x.criteria_id
+            dt.destination = []
+            dt.retur = parseInt(x['retur '], 10)
+            dt.origin = x.origin_value
+            dt.type = x.type
+            dt.delivery = x.delivery
+            return dt
+          })
         })
         .catch(e => {
           console.log('error', e)

@@ -67,7 +67,6 @@ export default {
         { text: 'Exclude', value: 'exclude' },
         { text: 'Include', value: 'include' },
       ],
-      selected: null,
       optionsServiceName: [
         { value: null, text: 'Pilih jenis service' },
         { text: 'Oke', value: 'oke' },
@@ -128,7 +127,7 @@ export default {
     },
     submitData() {
       this.loadDataAwal = true
-      const endpoint = 'api/v1/admin/shipment/store'
+      const endpoint = '/v1/admin/shipment/store'
       let getData = null
       // console.log('datasubmit :', {
       //   shipping_name: this.shipping_name,
@@ -154,6 +153,7 @@ export default {
       })
       getData.then(data => {
         console.log(data)
+        this.$router.push('/biaya-ekspedisi')
         // {
         // status: "success",
         // code: 200,
@@ -183,9 +183,6 @@ export default {
       this.$nextTick(() => {
         this.$bvModal.hide('modal-edit-akseslayanan')
       })
-    },
-    simpanFormEdit() {
-      // calling api for simpan data
     },
     handleChoiceTypeVehicle(val) {
       this.vehicles = val
