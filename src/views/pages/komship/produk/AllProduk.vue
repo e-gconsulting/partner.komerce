@@ -139,276 +139,176 @@
           opacity=".5"
           rounded="sm"
         >
-          <b-container fluid>
-            <b-row>
-              <b-col
-                cols="3"
-              >
-                <strong class="ml-2">
-                  Nama Produk
-                </strong>
-              </b-col>
-              <b-col cols="3">
-                <strong class="ml-2">
-                  Variasi
-                </strong>
-              </b-col>
-              <b-col cols="2">
-                <strong class="ml-2">
-                  Harga
-                </strong>
-              </b-col>
-              <b-col cols="2">
-                <strong class="ml-2">
-                  Stock
-                </strong>
-              </b-col>
-              <b-col cols="1">
-                <strong>
-                  Terjual
-                </strong>
-              </b-col>
-              <b-col cols="1">
-                <strong class="ml-2">
-                  Aksi
-                </strong>
-              </b-col>
-            </b-row>
-            <hr style="height:1px; background-color:#828282; color: #828282; opacity: 0.5;">
-            <div v-if="variantData.length > 0">
-              <div
-                v-for="(itemsData, index) in variantData"
-                :key="index+1"
-              >
-                <b-row>
-                  <b-col
-                    cols="3"
-                    class="pb-3"
-                  >
-                    <b-row class="ml-2">
-                      <b-container
-                        fluid
-                        class="d-flex"
-                      >
-                        <div v-if="itemsData.product_image[0] !== undefined">
-                          <b-avatar
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="itemsData.product_image[0].images_path"
-                          />
-                        </div>
-                        <div v-else>
-                          <b-avatar
-                            variant="light-primary"
-                            square
-                            size="50px"
-                          />
-                        </div>
-                        <div class="ml-1">
-                          <p><strong>{{ itemsData.product_name }}</strong></p>
-                          <small>SKU: {{ itemsData.sku }}</small>
-                        </div>
-                      </b-container>
-                    </b-row>
-                  </b-col>
-                  <b-col
-                    v-if="itemsData.variants[0] !== undefined"
-                    cols="3"
-                  >
-                    <div
-                      v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
-                      :key="indexVariant+1"
-                    >
-                      <p class="ml-2">
-                        {{ itemsVariant.variant }}
-                      </p>
-                    </div>
-                  </b-col>
-                  <b-col
-                    v-else
-                    cols="3"
-                  >
-                    <p class="ml-2">
-                      Tidak Ada Variasi
-                    </p>
-                  </b-col>
-                  <b-col
-                    v-if="itemsData.variants[0] !== undefined"
-                    cols="2"
-                  >
-                    <div
-                      v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
-                      :key="indexVariant+1"
-                    >
-                      <p class="ml-2">
-                        Rp. {{ formatPrice(itemsVariant.price) }}
-                      </p>
-                    </div>
-                  </b-col>
-                  <b-col
-                    v-else
-                    cols="2"
-                  >
-                    <p class="ml-2">
-                      Rp. {{ formatPrice(itemsData.price) }}
-                    </p>
-                  </b-col>
-                  <b-col
-                    v-if="itemsData.variants[0] !== undefined"
-                    cols="2"
-                  >
-                    <div
-                      v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
-                      :key="indexVariant+1"
-                    >
-                      <p class="ml-2">
-                        {{ itemsVariant.stock }}
-                      </p>
-                    </div>
-                  </b-col>
-                  <b-col
-                    v-else
-                    cols="2"
-                  >
-                    <p class="ml-2">
-                      {{ itemsData.stock }}
-                    </p>
-                  </b-col>
-                  <b-col
-                    v-if="itemsData.variants[0] !== undefined"
-                    cols="1"
-                  >
-                    <div
-                      v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
-                      :key="indexVariant+1"
-                    >
-                      <p class="ml-2">
-                        {{ itemsVariant.sold }}
-                      </p>
-                    </div>
-                  </b-col>
-                  <b-col
-                    v-else
-                    cols="1"
-                  >
-                    <p class="ml-2">
-                      {{ itemsData.sold }}
-                    </p>
-                  </b-col>
-                  <b-col
-                    cols="1"
-                  >
-                    <b-button
-                      class="btn-icon"
-                      size="sm"
-                      variant="flat-dark"
-                      tag="router-link"
-                      :to="{ name: $route.meta.routeEdit, params: { product_id: itemsData.product_id } }"
-                    >
-                      <feather-icon
-                        icon="EditIcon"
-                      />
-                    </b-button>
-                    <b-button
-                      class="btn-icon"
-                      size="sm"
-                      variant="flat-dark"
-                      @click="showConfirmDelete(itemsData.product_id)"
-                    >
-                      <feather-icon
-                        icon="Trash2Icon"
-                      />
-                    </b-button>
-                  </b-col>
-                </b-row>
-                <b-row
-                  v-if="itemsData.variants.length > 3"
-                  class="d-flex justify-content-end mb-2"
+          <b-table
+            ref="tables"
+            striped
+            hover
+            responsive
+            class="position-relative"
+            empty-text="Tidak ada data untuk ditampilkan."
+
+            :items="variantData"
+            :fields="fields"
+            :show-empty="!loading"
+          >
+            <template #cell(product_name)="data">
+              <b-row class="ml-2">
+                <b-container
+                  fluid
+                  class="d-flex"
                 >
-                  <b-col cols="auto">
-                    <b-button
-                      v-b-toggle="`collapse-${String(index)}`"
-                      variant="flat-dark"
-                      size="sm"
-                    >
-                      Tampilkan Versi Lainnya
-                      <feather-icon
-                        icon="ChevronDownIcon"
-                      />
-                    </b-button>
-                  </b-col>
-                  <b-col cols="12">
-                    <b-collapse
-                      :id="`collapse-${String(index)}`"
-                      class="mt-2"
-                    >
-                      <b-row>
-                        <b-col cols="3" />
-                        <b-col
-                          cols="3"
-                        >
-                          <div
-                            v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
-                            :key="indexVariant+1"
-                          >
-                            <p class="ml-2">
-                              {{ itemsVariant.variant }}
-                            </p>
-                          </div>
-                        </b-col>
-                        <b-col
-                          cols="2"
-                        >
-                          <div
-                            v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
-                            :key="indexVariant+1"
-                          >
-                            <p class="ml-2">
-                              Rp. {{ formatPrice(itemsVariant.price) }}
-                            </p>
-                          </div>
-                        </b-col>
-                        <b-col
-                          cols="2"
-                        >
-                          <div
-                            v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
-                            :key="indexVariant+1"
-                          >
-                            <p class="ml-2">
-                              {{ itemsVariant.stock }}
-                            </p>
-                          </div>
-                        </b-col>
-                        <b-col
-                          cols="1"
-                        >
-                          <div
-                            v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(3,itemsData.variants.length)"
-                            :key="indexVariant+1"
-                          >
-                            <p class="ml-2">
-                              {{ itemsVariant.sold }}
-                            </p>
-                          </div>
-                        </b-col>
-                      </b-row>
-                    </b-collapse>
-                  </b-col>
-                </b-row>
-                <hr>
-              </div>
-            </div>
-            <div v-else>
-              <b-col
-                cols="12"
-                class="text-center pb-1 pt-1"
+                  <div v-if="data.item.product_image[0] !== undefined">
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="data.item.product_image[0].images_path"
+                    />
+                  </div>
+                  <div v-else>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <p><strong>{{ data.item.product_name }}</strong></p>
+                    <small>SKU: {{ data.item.sku }}</small>
+                  </div>
+                </b-container>
+              </b-row>
+            </template>
+
+            <template
+              #cell(variants)="data"
+            >
+              <div
+                v-for="(itemsVariant, indexVariant) in data.item.variants.slice(0, 3)"
+                :key="indexVariant+1"
+                class="mb-50"
               >
-                Tidak ada data yang ditampilkan
-              </b-col>
-            </div>
-          </b-container>
+                {{ itemsVariant.variant }}
+              </div>
+              <b-collapse
+                :id="`collapse-${String(data.index)}`"
+                class="mt-2"
+              >
+                <div
+                  v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
+                  :key="indexVariant+1"
+                  class="mb-50"
+                >
+                  {{ itemsVariant.variant }}
+                </div>
+              </b-collapse>
+            </template>
+
+            <template #cell(price)="data">
+              <div
+                v-for="(itemsVariant, indexVariant) in data.item.variants.slice(0, 3)"
+                :key="indexVariant+1"
+                class="mb-50"
+              >
+                Rp. {{ formatPrice(itemsVariant.price) }}
+              </div>
+              <b-collapse
+                :id="`collapse-${String(data.index)}`"
+                class="mt-2"
+              >
+                <div
+                  v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
+                  :key="indexVariant+1"
+                  class="mb-50"
+                >
+                  Rp. {{ formatPrice(itemsVariant.price) }}
+                </div>
+              </b-collapse>
+            </template>
+
+            <template #cell(stock)="data">
+              <div
+                v-for="(itemsVariant, indexVariant) in data.item.variants.slice(0, 3)"
+                :key="indexVariant+1"
+                class="mb-50"
+              >
+                {{ itemsVariant.stock }}
+              </div>
+              <b-collapse
+                :id="`collapse-${String(data.index)}`"
+                class="mt-2"
+              >
+                <div
+                  v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
+                  :key="indexVariant+1"
+                  class="mb-50"
+                >
+                  {{ itemsVariant.stock }}
+                </div>
+              </b-collapse>
+            </template>
+
+            <template #cell(sold)="data">
+              <div
+                v-for="(itemsVariant, indexVariant) in data.item.variants.slice(0, 3)"
+                :key="indexVariant+1"
+                class="mb-50"
+              >
+                {{ itemsVariant.sold }}
+              </div>
+              <b-collapse
+                :id="`collapse-${String(data.index)}`"
+                class="mt-2"
+              >
+                <div
+                  v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
+                  :key="indexVariant+1"
+                  class="mb-50"
+                >
+                  {{ itemsVariant.sold }}
+                </div>
+              </b-collapse>
+            </template>
+
+            <template #cell(action)="data">
+              <b-row>
+                <b-button
+                  class="btn-icon"
+                  size="sm"
+                  variant="flat-dark"
+                  tag="router-link"
+                  :to="{ name: $route.meta.routeEdit, params: { product_id: data.item.product_id } }"
+                >
+                  <feather-icon
+                    icon="EditIcon"
+                  />
+                </b-button>
+                <b-button
+                  class="btn-icon"
+                  size="sm"
+                  variant="flat-dark"
+                  @click="showConfirmDelete(data.item.product_id)"
+                >
+                  <feather-icon
+                    icon="Trash2Icon"
+                  />
+                </b-button>
+              </b-row>
+              <b-button
+                v-if="data.item.variants.length > 3"
+                v-b-toggle="`collapse-${String(data.index)}`"
+                class="btn-icon text-right d-flex align-items-center"
+                variant="flat-dark"
+                size="sm"
+              >
+                Tampilkan variasi lainnya
+                <feather-icon
+                  icon="ChevronDownIcon"
+                />
+              </b-button>
+            </template>
+
+          </b-table>
         </b-overlay>
       </b-col>
     </b-row>
@@ -480,16 +380,18 @@ import {
   BAvatar,
   VBPopover,
   BOverlay,
-  BContainer,
-  BCollapse,
   VBToggle,
   BModal,
   BDropdown,
   BDropdownForm,
+  BTable,
+  BContainer,
+  BCollapse,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import { heightTransition } from '@core/mixins/ui/transition'
 import httpKomship from '../setting-kompship/http_komship'
 
 export default {
@@ -505,17 +407,19 @@ export default {
     BAvatar,
     BForm,
     BOverlay,
-    BContainer,
-    BCollapse,
     BModal,
     BDropdown,
     BDropdownForm,
+    BTable,
+    BContainer,
+    BCollapse,
   },
   directives: {
     'b-popover': VBPopover,
     'b-toggle': VBToggle,
     Ripple,
   },
+  mixins: [heightTransition],
   data() {
     return {
       defaultFilter: 0,
@@ -531,24 +435,6 @@ export default {
           thClass: 'border-0 bg-white',
           tdClass: 'border-0',
         },
-        {
-          key: 'price',
-          label: 'Harga',
-          thClass: 'border-0 bg-white',
-          tdClass: 'border-0',
-        },
-        {
-          key: 'stock',
-          label: 'Stock',
-          thClass: 'border-0 bg-white',
-          tdClass: 'border-0',
-        },
-        {
-          key: 'sold',
-          label: 'Terjual',
-          thClass: 'border-0 bg-white',
-          tdClass: 'border-0',
-        },
       ],
       variantItems: [[]],
       variantItemsExpand: [[]],
@@ -560,10 +446,21 @@ export default {
         {
           key: 'variants',
           label: 'Variasi',
-          thClass: 'text-center',
         },
         {
-          key: 'action', label: 'Aksi',
+          key: 'price',
+          label: 'Harga',
+        },
+        {
+          key: 'stock',
+          label: 'Stock',
+        },
+        {
+          key: 'sold',
+          label: 'Terjual',
+        },
+        {
+          key: 'action', label: 'Aksi', class: 'col-action',
         },
       ],
       items: [],
@@ -571,6 +468,8 @@ export default {
       imageFileProduct: null,
 
       searchProduct: '',
+
+      expandCollapseIsActive: false,
 
       // Filter
       name: '',
