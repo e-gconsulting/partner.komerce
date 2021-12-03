@@ -202,12 +202,8 @@
                   {{ itemsVariant.variant }}
                 </div>
               </b-collapse>
-              <div v-if="data.item.variants.length < 0">
-                <h4>
-                  <strong>
-                    Tidak ada variasi
-                  </strong>
-                </h4>
+              <div v-if="data.item.variants.length === 0">
+                Tidak ada variasi
               </div>
             </template>
 
@@ -231,6 +227,9 @@
                   Rp. {{ formatPrice(itemsVariant.price) }}
                 </div>
               </b-collapse>
+              <div v-if="data.item.variants.length === 0">
+                Rp. {{ formatPrice(data.item.price) }}
+              </div>
             </template>
 
             <template #cell(stock)="data">
@@ -253,6 +252,9 @@
                   {{ itemsVariant.stock }}
                 </div>
               </b-collapse>
+              <div v-if="data.item.variants.length === 0">
+                {{ data.item.stock }}
+              </div>
             </template>
 
             <template #cell(sold)="data">
@@ -275,6 +277,9 @@
                   {{ itemsVariant.sold }}
                 </div>
               </b-collapse>
+              <div v-if="data.item.variants.length === 0">
+                {{ data.item.sold }}
+              </div>
             </template>
 
             <template #cell(action)="data">

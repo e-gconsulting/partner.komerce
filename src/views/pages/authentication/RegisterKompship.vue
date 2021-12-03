@@ -45,6 +45,7 @@
                       :state="errors.length > 0 || submitErrors.fullname ? false:null"
                       name="fullname"
                       required
+                      @input="resetValidationUsername"
                     />
                     <label for="fullname">
                       Nama Lengkap
@@ -75,6 +76,7 @@
                       class="bg-light"
                       :state="errors.length > 0 || submitErrors.email ? false:null"
                       required
+                      @input="resetValidationEmail"
                     />
                     <label for="emailUser">
                       Email
@@ -219,6 +221,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
+import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
 import {
   BCol,
   BNavbarBrand,
@@ -294,7 +297,7 @@ export default {
           this.loading = true
           this.error = ''
 
-          this.$httpKomship.post('/v1/register', {
+          httpKomship.post('/v1/register', {
             full_name: this.fullname,
             email: this.userEmail,
             password: this.userPassword,
@@ -360,6 +363,12 @@ export default {
       } else {
         this.errorCharPassword = ''
       }
+    },
+    resetValidationUsername() {
+      this.usernameTaken = ''
+    },
+    resetValidationEmail() {
+      this.emailTaken = ''
     },
   },
 }

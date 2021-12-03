@@ -46,11 +46,11 @@ export default [
             action: 'manage',
           },
           {
-            title: 'Arship Partner',
+            title: 'Arsip Partner',
             icon: 'none',
             tagVariant: 'light-warning',
             route: 'cod-arsip-partner',
-            resource: 'Arship Partner',
+            resource: 'Arsip Partner',
             action: 'manage',
           },
           {
