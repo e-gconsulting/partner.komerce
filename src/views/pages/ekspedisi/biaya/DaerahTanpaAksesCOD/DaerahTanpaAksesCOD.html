@@ -66,37 +66,34 @@
                 style="width: 417px;"
               >
                 <b-form-group
-                  v-model="filterDropdown.kota"
                   label="Kota / Kabupaten"
                   label-for="dropdown-form-kota"
-                  @submit.stop.prevent
                 >
                   <b-form-input
                     id="dropdown-form-kota"
+                    v-model="filterDropdown.city_name"
                     size="lg"
                     placeholder="Masukkan Kota / Kabupaten"
                   />
                 </b-form-group>
                 <b-form-group
-                  v-model="filterDropdown.camat"
                   label="Kecamatan"
                   label-for="dropdown-form-camat"
-                  @submit.stop.prevent
                 >
                   <b-form-input
                     id="dropdown-form-camat"
+                    v-model="filterDropdown.district_name"
                     size="lg"
                     placeholder="Masukkan Kecamatan"
                   />
                 </b-form-group>
                 <b-form-group
-                  v-model="filterDropdown.kodepos"
                   label="Kodepos"
                   label-for="dropdown-form-kodepos"
-                  @submit.stop.prevent
                 >
                   <b-form-input
                     id="dropdown-form-kodepos"
+                    v-model="filterDropdown.zip_code"
                     size="lg"
                     placeholder="Masukkan Kodepos"
                   />

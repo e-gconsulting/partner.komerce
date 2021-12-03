@@ -45,9 +45,9 @@ export default {
       loadDataAwal: true,
       searchTerm: '',
       filterDropdown: {
-        kota: '',
-        camat: '',
-        kodepos: '',
+        city_name: '',
+        district_name: '',
+        zip_code: '',
       },
       isLoadTable: false,
       perPage: 5,
@@ -96,7 +96,11 @@ export default {
     //
   },
   watch: {
-    //
+    // filterDropdown: {
+    //   handler(val) {
+    //     console.log(val)
+    //   },
+    // },
   },
   mounted() {
     this.getItemsData(this, x => { this.items = x })
@@ -110,13 +114,13 @@ export default {
       const paramsData = {
         page: ctx.currentPage,
         per_page: ctx.perPage,
+        ...ctx.filterDropdown,
       }
       const endpoint = '/v1/admin/no-cod'
       axioskomsipdev.get(endpoint, { params: { ...paramsData } })
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
           // console.log(parseData)
-          // this.items = parseData.data
           vm.perPage = parseData.per_page
           vm.totalRows = parseData.total
           vm.currentPage = parseData.current_page
@@ -135,22 +139,32 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
-    deleteDaerahTanpaAksesCOD() {
-      // delete data
+    deleteDaerahTanpaAksesCOD(val) {
+      console.log(val)
+      this.$bvModal.show('modal-delete-daerah')
+      // const endpoint = `/v1/admin/no-cod/delete/${val.zip_code}`
+      // axioskomsipdev.get(endpoint)
+      //   .then(({ data }) => {
+      //     console.log(data)
+      //   })
+      //   .catch(e => {
+      //     console.log('error', e)
+      //   })
     },
     handleImportExcelDaerahCOD() {
       this.$router.push('/biaya-ekspedisi/daerah-tanpa-akses/upload')
     },
     onClickResetFilterDropdown() {
-      //
+      this.filterDropdown = {
+        city_name: '',
+        district_name: '',
+        zip_code: '',
+      }
     },
     onClickTerapkanFilterDropdown() {
+      this.getItemsData(this, x => { this.items = x })
       // Close the dropdown and (by passing true) return focus to the toggle button
       this.$refs.dropdownFilter.hide(true)
-    },
-    deleteItem(row) {
-      this.$bvModal.show('modal-delete-daerah')
-      console.log(row)
     },
     handleOkModal() {
       // calling api

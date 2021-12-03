@@ -2,13 +2,13 @@
   border-radius: 16px;
   width: 56px;
   height: 56px;
-
   &--edit{
     width: 178px;
     height: 56px;
     border-radius: 12px;
   }
   &--editakseslayanan{
+    width: 261px;
     height: 56px;
 
     &btn{
@@ -16,6 +16,11 @@
       height: 56px;
     }
   }
+}
+.wrapperBtnFilter{
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
 }
 .text-32-bold{
   font-weight: 600;
