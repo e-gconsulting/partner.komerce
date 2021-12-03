@@ -33,7 +33,7 @@ export default [
   {
     path: '/biaya-ekspedisi/daerah-tanpa-akses/upload',
     name: 'cod-biaya-ekspedisi-daerah-tanpa-akses-upload',
-    component: () => import('@/views/pages/ekspedisi/biaya/UploadDokumen'),
+    component: () => import('@/views/pages/ekspedisi/biaya/UploadDokumen/index'),
     meta: {
       navActiveLink: 'cod-biaya-ekspedisi',
       type: 'add',
