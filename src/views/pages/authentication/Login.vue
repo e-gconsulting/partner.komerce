@@ -500,7 +500,7 @@ export default {
           this.$store.commit('auth/UPDATE_USER_DATA', data)
 
           this.$router
-            .replace(getHomeRouteForLoggedInUser(role))
+            .go(getHomeRouteForLoggedInUser(role))
             .then(() => {})
             .catch(error => {
               this.$refs.loginForm.setErrors(error.response.data.error)
