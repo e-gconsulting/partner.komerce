@@ -993,9 +993,10 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="weightProduct"
-                      type="number"
-                      placeholder="1000"
+                      type="text"
+                      placeholder="Berat"
                       :state="errors.length > 0 ? false:null"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       gram
@@ -1022,8 +1023,9 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="lengthProduct"
-                      type="number"
+                      type="text"
                       placeholder="P"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1035,8 +1037,9 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="widthProduct"
-                      type="number"
+                      type="text"
                       placeholder="L"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1048,8 +1051,9 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="heightProduct"
-                      type="number"
+                      type="text"
                       placeholder="T"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1146,11 +1150,11 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
+import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import httpKomship from '../setting-kompship/http_komship'
@@ -1217,10 +1221,10 @@ export default {
       productName: '',
       skuName: '',
       descriptionProduct: '',
-      weightProduct: 0,
-      lengthProduct: 0,
-      widthProduct: 0,
-      heightProduct: 0,
+      weightProduct: '',
+      lengthProduct: '',
+      widthProduct: '',
+      heightProduct: '',
       flavours: [],
       cod: true,
       transfer: true,
@@ -1281,6 +1285,13 @@ export default {
     },
   },
   methods: {
+    onlyNumber($event) {
+      // console.log($event.keyCode); //keyCodes value
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault()
+      }
+    },
     submitPublish() {
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {

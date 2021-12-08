@@ -716,6 +716,7 @@
                                 <b-form-input
                                   v-model="itemsVariant.price"
                                   class="mb-50"
+                                  @keypress="onlyNumber"
                                 />
                               </div>
                             </div>
@@ -730,6 +731,7 @@
                               <b-form-input
                                 v-model="items.price"
                                 class="mb-50"
+                                @keypress="onlyNumber"
                               />
                             </div>
                           </div>
@@ -739,6 +741,7 @@
                             <b-form-input
                               v-model="data.item.price"
                               class="mb-50"
+                              @keypress="onlyNumber"
                             />
                           </div>
                         </div>
@@ -792,6 +795,7 @@
                                 <b-form-input
                                   v-model="itemsVariant.stock"
                                   class="mb-50"
+                                  @keypress="onlyNumber"
                                 />
                               </div>
                             </div>
@@ -806,6 +810,7 @@
                               <b-form-input
                                 v-model="items.stock"
                                 class="mb-50"
+                                @keypress="onlyNumber"
                               />
                             </div>
                           </div>
@@ -815,6 +820,7 @@
                             <b-form-input
                               v-model="data.item.stock"
                               class="mb-50"
+                              @keypress="onlyNumber"
                             />
                           </div>
                         </div>
@@ -909,6 +915,7 @@
               >
                 <b-form-input
                   v-model="priceProduct"
+                  type="number"
                   placeholder="Rp  |  Masukan harga barang"
                 />
               </b-form-group>
@@ -1079,12 +1086,12 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import httpKomship from '../setting-kompship/http_komship'
 
@@ -1235,6 +1242,13 @@ export default {
     this.loadProduct()
   },
   methods: {
+    onlyNumber($event) {
+      // console.log($event.keyCode); //keyCodes value
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault()
+      }
+    },
     loadProduct() {
       this.loading = true
       if (this.variantItems !== []) {
