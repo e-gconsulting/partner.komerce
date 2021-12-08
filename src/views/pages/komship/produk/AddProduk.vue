@@ -1269,7 +1269,11 @@ export default {
       this.$refs['modal-confirm-uploadgambar'].show()
     },
     uploadgambar() {
-      console.log('upload gambar')
+      httpKomship.post('/v1/product/update-upload-img-product', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(() => {
+
+      })
     },
     submitPublish() {
       // eslint-disable-next-line no-plusplus
