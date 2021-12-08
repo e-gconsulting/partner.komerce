@@ -41,7 +41,7 @@
               >
                 <b-form-input
                   v-model="skuName"
-                  type="number"
+                  type="text"
                   placeholder="Masukan SKU produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
