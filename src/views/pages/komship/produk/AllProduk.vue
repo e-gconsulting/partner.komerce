@@ -309,8 +309,9 @@
               <b-button
                 v-if="data.item.variants.length > 3"
                 v-b-toggle="`collapse-${String(data.index)}`"
-                class="btn-icon text-right d-flex align-items-center"
-                variant="flat-dark"
+                class="btn-icon px-0"
+                variant="outline-default"
+                style="background-color:transparent;"
                 size="sm"
               >
                 Tampilkan variasi lainnya
@@ -453,26 +454,35 @@ export default {
       variantData: [],
       fields: [
         {
-          key: 'product_name', label: 'Nama Produk',
+          key: 'product_name',
+          label: 'Nama Produk',
+          tdClass: 'align-top',
         },
         {
           key: 'variants',
           label: 'Variasi',
+          tdClass: 'align-top',
         },
         {
           key: 'price',
           label: 'Harga',
+          tdClass: 'align-top',
         },
         {
           key: 'stock',
           label: 'Stock',
+          tdClass: 'align-top',
         },
         {
           key: 'sold',
           label: 'Terjual',
+          tdClass: 'align-top',
         },
         {
-          key: 'action', label: 'Aksi', class: 'col-action',
+          key: 'action',
+          label: 'Aksi',
+          class: 'col-action',
+          tdClass: 'align-top',
         },
       ],
       items: [],
