@@ -1,4 +1,4 @@
-<template>
+small<template>
   <b-card-actions
     ref="formCard"
     title="Tambah Produk"
@@ -58,6 +58,7 @@
               <validation-provider
                 #default="{errors}"
                 name="Upload Gambar"
+                rules="required"
               >
 
                 <!-- Preview Image -->
@@ -80,10 +81,17 @@
                     size="50"
                     class="btn btn-flat-primary btn-icon"
                   >
-                    <feather-icon
-                      icon="PlusIcon"
-                      size="35"
-                    />
+                    <b-button
+                      class="btn-icon"
+                      size="sm"
+                      variant="flat-dark"
+                      @click="showconfirmupload()"
+                    >
+                      <feather-icon
+                        icon="PlusIcon"
+                        size="35"
+                      />
+                    </b-button>
                   </b-avatar>
                 </label>
 
@@ -115,125 +123,207 @@
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
-          </b-col>
-
-          <b-col cols="12">
-            <b-form-group
-              label="Masukan Deskripsi"
-              label-cols-md="2"
-            >
-              <validation-provider
-                #default="{errors}"
-                name="Deskripsi"
-                rule="required"
+            <b-col cols="12">
+              <b-form-group
+                label="Masukan Deskripsi"
+                label-cols-md="2"
               >
-                <b-form-textarea
-                  id="textarea-default"
-                  v-model="descriptionProduct"
-                  placeholder="Masukan deskripsi produk kamu"
-                  rows="3"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-primary">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12">
-            <b-form-group
-              label="Variasi"
-              label-cols-md="2"
-            >
-              <b-button
-                v-if="isVariation === false"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="outline-info"
-                @click="addVariation"
-              >
-                <feather-icon
-                  icon="PlusIcon"
-                  class="mr-50"
-                />
-                <span class="align-middle">Tambahkan Variasi</span>
-              </b-button>
-
-              <transition name="fade">
-                <div
-                  v-if="variationFields1 === true"
+                <validation-provider
+                  #default="{errors}"
+                  name="Deskripsi"
+                  rule="required"
                 >
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Variasi 1"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-col cols="8">
-                      <b-form-group
-                        label="Nama"
-                        label-cols-md="3"
-                      >
-                        <validation-provider
-                          #default="{errors}"
-                          name="Variasi 1"
-                        >
-                          <b-row class="d-flex align-items-center">
-                            <b-col
-                              cols="11"
-                              class=""
-                            >
-                              <b-form-input
-                                v-model="variationName1"
-                                placeholder="Masukan nama variasi"
-                                :state="errors.length > 0 ? false:null"
-                              />
-                            </b-col>
-                            <b-col
-                              cols="1"
-                              class="pr-0 pl-0 text-center"
-                            >
-                              <b-button
-                                class="btn-icon"
-                                variant="light-dark"
-                                size="sm"
-                                @click="removeVariant1"
-                              >
-                                <feather-icon
-                                  icon="Trash2Icon"
-                                />
-                              </b-button>
-                            </b-col>
-                          </b-row>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
+                  <b-form-textarea
+                    id="textarea-default"
+                    v-model="descriptionProduct"
+                    placeholder="Masukan deskripsi produk kamu"
+                    rows="3"
+                    :state="errors.length > 0 ? false:null"
+                  />
+                  <small class="text-primary">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
 
-                    <b-col
-                      cols="8"
+            <b-col cols="12">
+              <b-form-group
+                label="Variasi"
+                label-cols-md="2"
+              >
+                <b-button
+                  v-if="isVariation === false"
+                  v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                  variant="outline-info"
+                  @click="addVariation"
+                >
+                  <feather-icon
+                    icon="PlusIcon"
+                    class="mr-50"
+                  />
+                  <span class="align-middle">Tambahkan Variasi</span>
+                </b-button>
+
+                <transition name="fade">
+                  <div
+                    v-if="variationFields1 === true"
+                  >
+                    <b-form-group
+                      v-if="isVariation === true"
+                      label="Variasi 1"
+                      label-cols-md="2"
+                      class="mt-1"
                     >
-                      <b-form-group
-                        label="Pilihan"
-                        label-cols-md="3"
+                      <b-col cols="8">
+                        <b-form-group
+                          label="Nama"
+                          label-cols-md="3"
+                        >
+                          <validation-provider
+                            #default="{errors}"
+                            name="Variasi 1"
+                          >
+                            <b-form-input
+                              v-model="variationName1"
+                              placeholder="Masukan nama variasi"
+                              :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+
+                      <b-col
+                        cols="8"
                       >
-                        <draggable v-model="myList1">
-                          <transition-group name="fade">
-                            <b-row
-                              v-for="(data, indexs) in formChoices1"
-                              :key="indexs + 1"
-                              class="d-flex align-items-center justify-content-center"
-                            >
-                              <b-col
-                                class="pt-0 pr-0 pb-0 mb-1"
+                        <b-form-group
+                          label="Pilihan"
+                          label-cols-md="3"
+                        >
+                          <draggable v-model="myList1">
+                            <transition-group name="fade">
+                              <b-row
+                                v-for="(data, indexs) in formChoices1"
+                                :key="indexs + 1"
+                                class="d-flex align-items-center justify-content-center"
                               >
-                                <validation-provider
-                                  #default="{errors}"
-                                  name="Pilihan"
+                                <b-col
+                                  class="pt-0 pr-0 pb-0 mb-1"
+                                >
+                                  <validation-provider
+                                    #default="{errors}"
+                                    name="Pilihan"
+                                  >
+                                    <b-input-group>
+                                      <b-form-input
+                                        v-model="data.choices"
+                                        placeholder="Masukan Pilihan Variasi"
+                                        :state="errors.length > 0 ? false:null"
+                                      />
+                                      <b-input-group-append is-text>
+                                        <feather-icon
+                                          icon="AlignJustifyIcon"
+                                        />
+                                      </b-input-group-append>
+                                    </b-input-group>
+                                    <small class="text-primary">{{ errors[0] }}</small>
+                                  </validation-provider>
+                                </b-col>
+                                <b-col
+                                  v-if="formChoices1.length > 1"
+                                  md="auto"
+                                  class="mb-1"
+                                >
+                                  <b-button
+                                    class="btn-icon"
+                                    variant="light-dark"
+                                    size="sm"
+                                    @click="removeChoices1(indexs)"
+                                  >
+                                    <feather-icon
+                                      icon="Trash2Icon"
+                                    />
+                                  </b-button>
+                                </b-col>
+                              </b-row>
+                            </transition-group>
+                          </draggable>
+                        </b-form-group>
+                      </b-col>
+
+                      <b-col
+                        v-if="formChoices1.length < 5"
+                        cols="8"
+                      >
+                        <b-form-group
+                          label=""
+                          label-cols-md="3"
+                        >
+                          <b-button
+                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                            variant="outline-info"
+                            @click="addChoices1"
+                          >
+                            <feather-icon
+                              icon="PlusIcon"
+                              class="mr-50"
+                            />
+                            <span class="align-middle">Tambahkan Pilihan</span>
+                          </b-button>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-group>
+                  </div>
+                </transition>
+
+                <transition name="fade">
+                  <div
+                    v-if="variationFields2 === true"
+                  >
+                    <b-form-group
+                      v-if="isVariation === true"
+                      label="Variasi 2"
+                      label-cols-md="2"
+                      class="mt-1"
+                    >
+                      <b-col cols="8">
+                        <b-form-group
+                          label="Nama"
+                          label-cols-md="3"
+                        >
+                          <validation-provider
+                            #default="{errors}"
+                            name="Variasi 2"
+                          >
+                            <b-form-input
+                              v-model="variationName2"
+                              placeholder="Masukan nama variasi"
+                              :state="errors.length > 0 ? false:null"
+                            />
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+
+                      <b-col
+                        cols="8"
+                      >
+                        <b-form-group
+                          label="Pilihan"
+                          label-cols-md="3"
+                        >
+                          <draggable v-model="myList2">
+                            <transition-group name="fade">
+                              <b-row
+                                v-for="(data, indexs) in formChoices2"
+                                :key="indexs + 1"
+                                class="d-flex align-items-center justify-content-center"
+                              >
+                                <b-col
+                                  class="pt-0 pr-0 pb-0 mb-1"
                                 >
                                   <b-input-group>
                                     <b-form-input
                                       v-model="data.choices"
                                       placeholder="Masukan Pilihan Variasi"
-                                      :state="errors.length > 0 ? false:null"
                                     />
                                     <b-input-group-append is-text>
                                       <feather-icon
@@ -241,889 +331,780 @@
                                       />
                                     </b-input-group-append>
                                   </b-input-group>
-                                  <small class="text-primary">{{ errors[0] }}</small>
-                                </validation-provider>
-                              </b-col>
-                              <b-col
-                                v-if="formChoices1.length > 1"
-                                md="auto"
-                                class="mb-1"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeChoices1(indexs)"
+                                </b-col>
+                                <b-col
+                                  v-if="formChoices2.length > 1"
+                                  md="auto"
+                                  class="mb-1"
                                 >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </transition-group>
-                        </draggable>
-                      </b-form-group>
-                    </b-col>
-
-                    <b-col
-                      v-if="formChoices1.length < 5"
-                      cols="8"
-                    >
-                      <b-form-group
-                        label=""
-                        label-cols-md="3"
-                      >
-                        <b-button
-                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                          variant="outline-info"
-                          @click="addChoices1"
-                        >
-                          <feather-icon
-                            icon="PlusIcon"
-                            class="mr-50"
-                          />
-                          <span class="align-middle">Tambahkan Pilihan</span>
-                        </b-button>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-group>
-                </div>
-              </transition>
-
-              <transition name="fade">
-                <div
-                  v-if="variationFields2 === true"
-                >
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Variasi 2"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-col cols="8">
-                      <b-form-group
-                        label="Nama"
-                        label-cols-md="3"
-                      >
-                        <validation-provider
-                          #default="{errors}"
-                          name="Variasi 2"
-                        >
-                          <b-row class="d-flex align-items-center">
-                            <b-col
-                              cols="11"
-                              class=""
-                            >
-                              <b-form-input
-                                v-model="variationName2"
-                                placeholder="Masukan nama variasi"
-                                :state="errors.length > 0 ? false:null"
-                              />
-                            </b-col>
-                            <b-col
-                              cols="1"
-                              class="pr-0 pl-0 text-center"
-                            >
-                              <b-button
-                                class="btn-icon"
-                                variant="light-dark"
-                                size="sm"
-                                @click="removeVariant2"
-                              >
-                                <feather-icon
-                                  icon="Trash2Icon"
-                                />
-                              </b-button>
-                            </b-col>
-                          </b-row>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
-
-                    <b-col
-                      cols="8"
-                    >
-                      <b-form-group
-                        label="Pilihan"
-                        label-cols-md="3"
-                      >
-                        <draggable v-model="myList2">
-                          <transition-group name="fade">
-                            <b-row
-                              v-for="(data, indexs) in formChoices2"
-                              :key="indexs + 1"
-                              class="d-flex align-items-center justify-content-center"
-                            >
-                              <b-col
-                                class="pt-0 pr-0 pb-0 mb-1"
-                              >
-                                <b-input-group>
-                                  <b-form-input
-                                    v-model="data.choices"
-                                    placeholder="Masukan Pilihan Variasi"
-                                  />
-                                  <b-input-group-append is-text>
+                                  <b-button
+                                    class="btn-icon"
+                                    variant="light-dark"
+                                    size="sm"
+                                    @click="removeChoices2(indexs)"
+                                  >
                                     <feather-icon
-                                      icon="AlignJustifyIcon"
+                                      icon="Trash2Icon"
                                     />
-                                  </b-input-group-append>
-                                </b-input-group>
-                              </b-col>
-                              <b-col
-                                v-if="formChoices2.length > 1"
-                                md="auto"
-                                class="mb-1"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeChoices2(indexs)"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </transition-group>
-                        </draggable>
-                      </b-form-group>
-                    </b-col>
+                                  </b-button>
+                                </b-col>
+                              </b-row>
+                            </transition-group>
+                          </draggable>
+                        </b-form-group>
+                      </b-col>
 
-                    <b-col
-                      v-if="formChoices2.length < 5"
-                      cols="8"
-                    >
-                      <b-form-group
-                        label=""
-                        label-cols-md="3"
+                      <b-col
+                        v-if="formChoices2.length < 5"
+                        cols="8"
                       >
-                        <b-button
-                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                          variant="outline-info"
-                          @click="addChoices2"
+                        <b-form-group
+                          label=""
+                          label-cols-md="3"
                         >
-                          <feather-icon
-                            icon="PlusIcon"
-                            class="mr-50"
-                          />
-                          <span class="align-middle">Tambahkan Pilihan</span>
-                        </b-button>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-group>
-                </div>
-              </transition>
-
-              <transition name="fade">
-                <div
-                  v-if="variationFields3 === true"
-                >
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Variasi 3"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-col cols="8">
-                      <b-form-group
-                        label="Nama"
-                        label-cols-md="3"
-                      >
-                        <b-row class="d-flex align-items-center">
-                          <b-col
-                            cols="11"
-                            class=""
+                          <b-button
+                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                            variant="outline-info"
+                            @click="addChoices2"
                           >
-                            <b-form-input
-                              v-model="variationName3"
-                              placeholder="Masukan nama variasi"
+                            <feather-icon
+                              icon="PlusIcon"
+                              class="mr-50"
                             />
-                          </b-col>
-                          <b-col
-                            cols="1"
-                            class="pr-0 pl-0 text-center"
-                          >
-                            <b-button
-                              class="btn-icon"
-                              variant="light-dark"
-                              size="sm"
-                              @click="removeVariant3"
-                            >
-                              <feather-icon
-                                icon="Trash2Icon"
-                              />
-                            </b-button>
-                          </b-col>
-                        </b-row>
-                      </b-form-group>
-                    </b-col>
+                            <span class="align-middle">Tambahkan Pilihan</span>
+                          </b-button>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-group>
+                  </div>
+                </transition>
 
-                    <b-col
-                      cols="8"
+                <transition name="fade">
+                  <div
+                    v-if="variationFields3 === true"
+                  >
+                    <b-form-group
+                      v-if="isVariation === true"
+                      label="Variasi 3"
+                      label-cols-md="2"
+                      class="mt-1"
                     >
-                      <b-form-group
-                        label="Pilihan"
-                        label-cols-md="3"
-                      >
-                        <draggable v-model="myList3">
-                          <transition-group name="fade">
-                            <b-row
-                              v-for="(data, indexs) in formChoices3"
-                              :key="indexs + 1"
-                              class="d-flex align-items-center justify-content-center"
-                            >
-                              <b-col
-                                class="pt-0 pr-0 pb-0 mb-1"
-                              >
-                                <b-input-group>
-                                  <b-form-input
-                                    v-model="data.choices"
-                                    placeholder="Masukan Pilihan Variasi"
-                                  />
-                                  <b-input-group-append is-text>
-                                    <feather-icon
-                                      icon="AlignJustifyIcon"
-                                    />
-                                  </b-input-group-append>
-                                </b-input-group>
-                              </b-col>
-                              <b-col
-                                v-if="formChoices3.length > 1"
-                                md="auto"
-                                class="mb-1"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeChoices3(indexs)"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </transition-group>
-                        </draggable>
-                      </b-form-group>
-                    </b-col>
-
-                    <b-col
-                      v-if="formChoices3.length < 5"
-                      cols="8"
-                    >
-                      <b-form-group
-                        label=""
-                        label-cols-md="3"
-                      >
-                        <b-button
-                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                          variant="outline-info"
-                          @click="addChoices3"
+                      <b-col cols="8">
+                        <b-form-group
+                          label="Nama"
+                          label-cols-md="3"
                         >
-                          <feather-icon
-                            icon="PlusIcon"
-                            class="mr-50"
+                          <b-form-input
+                            v-model="variationName3"
+                            placeholder="Masukan nama variasi"
                           />
-                          <span class="align-middle">Tambahkan Pilihan</span>
-                        </b-button>
-                      </b-form-group>
-                    </b-col>
-                  </b-form-group>
-                </div>
-              </transition>
+                        </b-form-group>
+                      </b-col>
 
-              <transition name="fade">
-                <b-form-group
-                  v-if="variationFields1 === true && activeAddChoices1 === true"
-                  label="Tambah Variasi"
-                  label-cols-md="2"
-                  class="mt-1"
-                >
-                  <b-button
-                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                    variant="outline-info"
-                    @click="addVariationItems2"
-                  >
-                    <feather-icon
-                      icon="PlusIcon"
-                      class="mr-50"
-                    />
-                    <span class="align-middle">Tambahkan Variasi</span>
-                  </b-button>
-                </b-form-group>
-              </transition>
-
-              <transition name="fade">
-                <b-form-group
-                  v-if="variationFields2 === true && activeAddChoices2 === true "
-                  label="Tambah Variasi"
-                  label-cols-md="2"
-                  class="mt-1"
-                >
-                  <b-button
-                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                    variant="outline-info"
-                    @click="addVariationItems3"
-                  >
-                    <feather-icon
-                      icon="PlusIcon"
-                      class="mr-50"
-                    />
-                    <span class="align-middle">Tambahkan Variasi</span>
-                  </b-button>
-                </b-form-group>
-              </transition>
-
-              <transition name="fade">
-                <b-form-group
-                  v-if="isVariation === true"
-                  label="Info Variasi"
-                  label-cols-md="2"
-                  class="mt-2"
-                >
-                  <b-row class="d-flex align-items-center">
-                    <b-col md="4">
-                      <b-form-input
-                        v-model="price"
-                        type="number"
-                        placeholder="Rp | Harga"
-                      />
-                    </b-col>
-
-                    <b-col md="2">
-                      <b-form-input
-                        v-model="stock"
-                        type="number"
-                        placeholder="Stok"
-                      />
-                    </b-col>
-
-                    <b-col
-                      md="6"
-                      class="d-flex align-items-center"
-                    >
-                      <div class="d-flex align-items-center">
-                        <b-button
-                          variant="primary"
-                          class="d-flex align-items-center"
-                          @click="createListVariation"
+                      <b-col
+                        cols="8"
+                      >
+                        <b-form-group
+                          label="Pilihan"
+                          label-cols-md="3"
                         >
-                          Terapkan Kesemua
-                        </b-button>
-                      </div>
-                    </b-col>
+                          <draggable v-model="myList3">
+                            <transition-group name="fade">
+                              <b-row
+                                v-for="(data, indexs) in formChoices3"
+                                :key="indexs + 1"
+                                class="d-flex align-items-center justify-content-center"
+                              >
+                                <b-col
+                                  class="pt-0 pr-0 pb-0 mb-1"
+                                >
+                                  <b-input-group>
+                                    <b-form-input
+                                      v-model="data.choices"
+                                      placeholder="Masukan Pilihan Variasi"
+                                    />
+                                    <b-input-group-append is-text>
+                                      <feather-icon
+                                        icon="AlignJustifyIcon"
+                                      />
+                                    </b-input-group-append>
+                                  </b-input-group>
+                                </b-col>
+                                <b-col
+                                  v-if="formChoices3.length > 1"
+                                  md="auto"
+                                  class="mb-1"
+                                >
+                                  <b-button
+                                    class="btn-icon"
+                                    variant="light-dark"
+                                    size="sm"
+                                    @click="removeChoices3(indexs)"
+                                  >
+                                    <feather-icon
+                                      icon="Trash2Icon"
+                                    />
+                                  </b-button>
+                                </b-col>
+                              </b-row>
+                            </transition-group>
+                          </draggable>
+                        </b-form-group>
+                      </b-col>
 
-                  </b-row>
-                </b-form-group>
-              </transition>
-
-              <transition name="fade">
-                <b-form-group
-                  v-if="isVariation === true"
-                  label="Daftar Variasi"
-                  label-cols-md="2"
-                  class="mt-2"
-                >
-                  <b-overlay
-                    :show="loading"
-                    variant="light"
-                    spinner-variant="primary"
-                    rounded="sm"
-                    opacity=".5"
-                    blur="0"
-                  >
-                    <b-table
-                      responsive
-                      class="border position-relative"
-                      :fields="fields"
-                      :items="variantItems"
-                    >
-
-                      <template #cell(variant1)="data">
-                        <div v-if="editMode === true && indexRow === data.index">
-                          <b-col
-                            cols="12"
-                            class="mb-50"
+                      <b-col
+                        v-if="formChoices3.length < 5"
+                        cols="8"
+                      >
+                        <b-form-group
+                          label=""
+                          label-cols-md="3"
+                        >
+                          <b-button
+                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                            variant="outline-info"
+                            @click="addChoices3"
                           >
-                            <b-form-input
-                              v-model="data.item.variant1.val"
+                            <feather-icon
+                              icon="PlusIcon"
+                              class="mr-50"
+                            />
+                            <span class="align-middle">Tambahkan Pilihan</span>
+                          </b-button>
+                        </b-form-group>
+                      </b-col>
+                    </b-form-group>
+                  </div>
+                </transition>
+
+                <transition name="fade">
+                  <b-form-group
+                    v-if="variationFields1 === true && activeAddChoices1 === true"
+                    label="Tambah Variasi"
+                    label-cols-md="2"
+                    class="mt-1"
+                  >
+                    <b-button
+                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                      variant="outline-info"
+                      @click="addVariationItems2"
+                    >
+                      <feather-icon
+                        icon="PlusIcon"
+                        class="mr-50"
+                      />
+                      <span class="align-middle">Tambahkan Variasi</span>
+                    </b-button>
+                  </b-form-group>
+                </transition>
+
+                <transition name="fade">
+                  <b-form-group
+                    v-if="variationFields2 === true && activeAddChoices2 === true "
+                    label="Tambah Variasi"
+                    label-cols-md="2"
+                    class="mt-1"
+                  >
+                    <b-button
+                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                      variant="outline-info"
+                      @click="addVariationItems3"
+                    >
+                      <feather-icon
+                        icon="PlusIcon"
+                        class="mr-50"
+                      />
+                      <span class="align-middle">Tambahkan Variasi</span>
+                    </b-button>
+                  </b-form-group>
+                </transition>
+
+                <transition name="fade">
+                  <b-form-group
+                    v-if="isVariation === true"
+                    label="Info Variasi"
+                    label-cols-md="2"
+                    class="mt-2"
+                  >
+                    <b-row class="d-flex align-items-center">
+                      <b-col md="4">
+                        <b-form-input
+                          v-model="price"
+                          type="number"
+                          placeholder="Rp | Harga"
+                        />
+                      </b-col>
+
+                      <b-col md="2">
+                        <b-form-input
+                          v-model="stock"
+                          type="number"
+                          placeholder="Stok"
+                        />
+                      </b-col>
+
+                      <b-col
+                        md="6"
+                        class="d-flex align-items-center"
+                      >
+                        <div class="d-flex align-items-center">
+                          <b-button
+                            variant="primary"
+                            class="d-flex align-items-center"
+                            @click="createListVariation"
+                          >
+                            Terapkan Kesemua
+                          </b-button>
+                        </div>
+                      </b-col>
+
+                    </b-row>
+                  </b-form-group>
+                </transition>
+
+                <transition name="fade">
+                  <b-form-group
+                    v-if="isVariation === true"
+                    label="Daftar Variasi"
+                    label-cols-md="2"
+                    class="mt-2"
+                  >
+                    <b-overlay
+                      :show="loading"
+                      variant="light"
+                      spinner-variant="primary"
+                      rounded="sm"
+                      opacity=".5"
+                      blur="0"
+                    >
+                      <b-table
+                        responsive
+                        class="border position-relative"
+                        :fields="fields"
+                        :items="variantItems"
+                      >
+
+                        <template #cell(variant1)="data">
+                          <div v-if="editMode === true && indexRow === data.index">
+                            <b-col
+                              cols="12"
                               class="mb-50"
-                            />
-                          </b-col>
-                        </div>
-                        <div v-else>
-                          <b-col
-                            cols="12"
-                            class="mb-50"
-                          >
-                            {{ data.item.variant1.val }}
-                          </b-col>
-                        </div>
-                      </template>
-
-                      <template #cell(variant2)="data">
-                        <div v-if="editMode === true && indexRow === data.index">
-                          <b-col
-                            cols="12"
-                            class="mb-50"
-                          >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
                             >
                               <b-form-input
-                                v-model="dataItem.variant2.val"
+                                v-model="data.item.variant1.val"
                                 class="mb-50"
                               />
-                            </div>
-                          </b-col>
-                        </div>
-                        <div v-else>
-                          <b-col
-                            cols="12"
-                            class="mb-50"
-                          >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                            </b-col>
+                          </div>
+                          <div v-else>
+                            <b-col
+                              cols="12"
+                              class="mb-50"
                             >
-                              {{ dataItem.variant2.val }}
-                            </div>
-                          </b-col>
-                        </div>
-                      </template>
+                              {{ data.item.variant1.val }}
+                            </b-col>
+                          </div>
+                        </template>
 
-                      <template #cell(variant3)="data">
-                        <div v-if="editMode === true && indexRow === data.index">
-                          <b-col
-                            cols="12"
-                            class="mb-50"
-                          >
-                            <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                        <template #cell(variant2)="data">
+                          <div v-if="editMode === true && indexRow === data.index">
+                            <b-col
+                              cols="12"
+                              class="mb-50"
                             >
                               <div
-                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                :key="indexVariant+1"
+                                v-for="(dataItem, index) in data.item.variant1.option"
+                                :key="index+1"
                               >
                                 <b-form-input
-                                  v-model="dataVariant.variant3.val"
+                                  v-model="dataItem.variant2.val"
                                   class="mb-50"
                                 />
                               </div>
-                            </div>
-                          </b-col>
-                        </div>
-                        <div v-else>
-                          <b-col
-                            cols="12"
-                            class="mb-50"
-                          >
+                            </b-col>
+                          </div>
+                          <div v-else>
+                            <b-col
+                              cols="12"
+                              class="mb-50"
+                            >
+                              <div
+                                v-for="(dataItem, index) in data.item.variant1.option"
+                                :key="index+1"
+                              >
+                                {{ dataItem.variant2.val }}
+                              </div>
+                            </b-col>
+                          </div>
+                        </template>
+
+                        <template #cell(variant3)="data">
+                          <div v-if="editMode === true && indexRow === data.index">
+                            <b-col
+                              cols="12"
+                              class="mb-50"
+                            >
+                              <div
+                                v-for="(dataItem, index) in data.item.variant1.option"
+                                :key="index+1"
+                              >
+                                <div
+                                  v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                  :key="indexVariant+1"
+                                >
+                                  <b-form-input
+                                    v-model="dataVariant.variant3.val"
+                                    class="mb-50"
+                                  />
+                                </div>
+                              </div>
+                            </b-col>
+                          </div>
+                          <div v-else>
+                            <b-col
+                              cols="12"
+                              class="mb-50"
+                            >
+                              <div
+                                v-for="(dataItem, index) in data.item.variant1.option"
+                                :key="index+1"
+                              >
+                                <div
+                                  v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                                  :key="indexVariant+1"
+                                >
+                                  {{ dataVariant.variant3.val }}
+                                </div>
+                              </div>
+                            </b-col>
+                          </div>
+                        </template>
+
+                        <template #cell(price)="data">
+                          <div v-if="editMode === true && indexRow === data.index">
                             <div
-                              v-for="(dataItem, index) in data.item.variant1.option"
-                              :key="index+1"
+                              v-if="variationName3 !== null"
                             >
-                              <div
-                                v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
                                 :key="indexVariant+1"
+                                cols="12"
                               >
-                                {{ dataVariant.variant3.val }}
-                              </div>
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  <b-form-input
+                                    v-model="itemsVariant.variant3.price"
+                                  />
+                                </div>
+                              </b-col>
                             </div>
-                          </b-col>
-                        </div>
-                      </template>
-
-                      <template #cell(price)="data">
-                        <div v-if="editMode === true && indexRow === data.index">
-                          <div
-                            v-if="variationName3 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                            <div
+                              v-if="variationName3 === null && variationName2 !== null"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
                               >
                                 <b-form-input
-                                  v-model="itemsVariant.variant3.price"
+                                  v-model="item.variant2.price"
                                 />
-                              </div>
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                             >
                               <b-form-input
-                                v-model="item.variant2.price"
+                                v-model="data.item.variant1.price"
                               />
-                            </b-col>
+                            </div>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
-                            <b-form-input
-                              v-model="data.item.variant1.price"
-                            />
-                          </div>
-                        </div>
-                        <div v-else>
-                          <div
-                            v-if="variationName3 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                          <div v-else>
+                            <div
+                              v-if="variationName3 !== null"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
                               >
-                                Rp. {{ formatPrice(itemsVariant.variant3.price) }}
-                              </div>
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  Rp. {{ formatPrice(itemsVariant.variant3.price) }}
+                                </div>
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 !== null"
                             >
-                              Rp. {{ formatPrice(item.variant2.price) }}
-                            </b-col>
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
+                              >
+                                Rp. {{ formatPrice(item.variant2.price) }}
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                            >
+                              Rp. {{ formatPrice(data.item.variant1.price) }}
+                            </div>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
-                            Rp. {{ formatPrice(data.item.variant1.price) }}
-                          </div>
-                        </div>
-                      </template>
+                        </template>
 
-                      <template #cell(stock)="data">
-                        <div v-if="editMode === true && indexRow === data.index">
-                          <div
-                            v-if="variationName3 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                        <template #cell(stock)="data">
+                          <div v-if="editMode === true && indexRow === data.index">
+                            <div
+                              v-if="variationName3 !== null"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
+                              >
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  <b-form-input
+                                    v-model="itemsVariant.variant3.stock"
+                                  />
+                                </div>
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 !== null"
+                            >
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
                               >
                                 <b-form-input
-                                  v-model="itemsVariant.variant3.stock"
+                                  v-model="item.variant2.stock"
                                 />
-                              </div>
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                             >
                               <b-form-input
-                                v-model="item.variant2.stock"
+                                v-model="data.item.variant1.stock"
                               />
-                            </b-col>
+                            </div>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
-                            <b-form-input
-                              v-model="data.item.variant1.stock"
-                            />
-                          </div>
-                        </div>
-                        <div v-else>
-                          <div
-                            v-if="variationName3 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                          <div v-else>
+                            <div
+                              v-if="variationName3 !== null"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
                               >
-                                {{ itemsVariant.variant3.stock }}
-                              </div>
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  {{ itemsVariant.variant3.stock }}
+                                </div>
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 !== null"
                             >
-                              {{ item.variant2.stock }}
-                            </b-col>
+                              <b-col
+                                v-for="(item, indexVariant) in data.item.variant1.option"
+                                :key="indexVariant+1"
+                                cols="12"
+                              >
+                                {{ item.variant2.stock }}
+                              </b-col>
+                            </div>
+                            <div
+                              v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                            >
+                              {{ data.item.variant1.stock }}
+                            </div>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
+                        </template>
+
+                        <template #cell(action)="data">
+                          <b-button
+                            variant="flat-secondary"
+                            class="btn-icon"
+                            @click="editTable(data)"
                           >
-                            {{ data.item.variant1.stock }}
-                          </div>
-                        </div>
-                      </template>
+                            <feather-icon
+                              icon="EditIcon"
+                            />
+                          </b-button>
+                          <b-button
+                            v-if="editMode === true && indexRow === data.index"
+                            variant="flat-primary"
+                            class="btn-icon"
+                            @click="updateTable(data)"
+                          >
+                            Simpan
+                          </b-button>
+                        </template>
 
-                      <template #cell(action)="data">
-                        <b-button
-                          variant="flat-secondary"
-                          class="btn-icon"
-                          @click="editTable(data)"
-                        >
-                          <feather-icon
-                            icon="EditIcon"
-                          />
-                        </b-button>
-                        <b-button
-                          v-if="editMode === true && indexRow === data.index"
-                          variant="flat-primary"
-                          class="btn-icon"
-                          @click="updateTable(data)"
-                        >
-                          Simpan
-                        </b-button>
-                      </template>
+                      </b-table>
+                    </b-overlay>
+                  </b-form-group>
+                </transition>
 
-                    </b-table>
-                  </b-overlay>
-                </b-form-group>
-              </transition>
+              </b-form-group>
+            </b-col>
 
-            </b-form-group>
-          </b-col>
-
-          <b-col
-            v-if="isVariation === false"
-            cols="12"
-          >
-            <b-form-group
-              label="Stok"
-              label-cols-md="2"
+            <b-col
+              v-if="isVariation === false"
+              cols="12"
             >
-              <validation-provider
-                #default="{errors}"
-                name="Stock"
-                rules="required"
+              <b-form-group
+                label="Stok"
+                label-cols-md="2"
               >
-                <b-form-input
-                  v-model="stockNotVariation"
-                  type="number"
-                  placeholder="Masukan jumlah stok barang"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-primary">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-          </b-col>
-
-          <b-col
-            v-if="isVariation === false"
-            cols="12"
-          >
-            <b-form-group
-              label="Harga"
-              label-cols-md="2"
-            >
-              <validation-provider
-                #default="{errors}"
-                name="Harga"
-                rules="required"
-              >
-                <b-form-input
-                  v-model="priceNotVariation"
-                  type="number"
-                  placeholder="Rp  |  Masukan harga barang"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-primary">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
-          </b-col>
-
-          <b-col cols="12">
-            <b-form-group
-              label="Pengiriman"
-              label-cols-md="2"
-            />
-          </b-col>
-
-          <b-col md="4">
-            <b-form-group
-              label="Berat"
-              label-cols-md="3"
-              class="ml-5"
-            >
-              <b-col class="d-flex align-items-center">
                 <validation-provider
-                  #default="errors"
-                  name="Berat"
+                  #default="{errors}"
+                  name="Stock"
                   rules="required"
                 >
-                  <b-input-group class="input-group-merge">
-                    <b-form-input
-                      id="hi-first-name"
-                      v-model="weightProduct"
-                      type="number"
-                      placeholder="1000"
-                      :state="errors.length > 0 ? false:null"
-                    />
-                    <b-input-group-append is-text>
-                      gram
-                    </b-input-group-append>
-                  </b-input-group>
+                  <b-form-input
+                    v-model="stockNotVariation"
+                    type="number"
+                    placeholder="Masukan jumlah stok barang"
+                    :state="errors.length > 0 ? false:null"
+                  />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
-              </b-col>
-            </b-form-group>
-          </b-col>
+              </b-form-group>
+            </b-col>
 
-          <b-col md="12">
-            <b-form-group
-              label="Ukuran"
-              label-cols-md="1"
-              content-cols-md="5"
-              class="ml-5"
+            <b-col
+              v-if="isVariation === false"
+              cols="12"
             >
-              <b-row
-                class="d-flex align-items-center"
+              <b-form-group
+                label="Harga"
+                label-cols-md="2"
+              >
+                <validation-provider
+                  #default="{errors}"
+                  name="Harga"
+                  rules="required"
+                >
+                  <b-form-input
+                    v-model="priceNotVariation"
+                    type="number"
+                    placeholder="Rp  |  Masukan harga barang"
+                    :state="errors.length > 0 ? false:null"
+                  />
+                  <small class="text-primary">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+            </b-col>
+
+            <b-col cols="12">
+              <b-form-group
+                label="Pengiriman"
+                label-cols-md="2"
+              />
+            </b-col>
+
+            <b-col md="4">
+              <b-form-group
+                label="Berat"
+                label-cols-md="3"
+                class="ml-5"
               >
                 <b-col class="d-flex align-items-center">
-                  <b-input-group class="input-group-merge">
-                    <b-form-input
-                      id="hi-first-name"
-                      v-model="lengthProduct"
-                      type="number"
-                      placeholder="P"
-                    />
-                    <b-input-group-append is-text>
-                      cm
-                    </b-input-group-append>
-                  </b-input-group>
+                  <validation-provider
+                    #default="errors"
+                    name="Berat"
+                    rules="required"
+                  >
+                    <b-input-group class="input-group-merge">
+                      <b-form-input
+                        id="hi-first-name"
+                        v-model="weightProduct"
+                        type="number"
+                        placeholder="1000"
+                        :state="errors.length > 0 ? false:null"
+                      />
+                      <b-input-group-append is-text>
+                        gram
+                      </b-input-group-append>
+                    </b-input-group>
+                    <small class="text-primary">{{ errors[0] }}</small>
+                  </validation-provider>
                 </b-col>
-                <b-col class="d-flex align-items-center">
-                  <b-input-group class="input-group-merge">
-                    <b-form-input
-                      id="hi-first-name"
-                      v-model="widthProduct"
-                      type="number"
-                      placeholder="L"
-                    />
-                    <b-input-group-append is-text>
-                      cm
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-col>
-                <b-col class="d-flex align-items-center">
-                  <b-input-group class="input-group-merge">
-                    <b-form-input
-                      id="hi-first-name"
-                      v-model="heightProduct"
-                      type="number"
-                      placeholder="T"
-                    />
-                    <b-input-group-append is-text>
-                      cm
-                    </b-input-group-append>
-                  </b-input-group>
-                </b-col>
-              </b-row>
-            </b-form-group>
-          </b-col>
+              </b-form-group>
+            </b-col>
 
-          <b-col
-            cols="10"
-            class="mt-2"
-          >
-            <b-form-group
-              label="Pembayaran"
-              label-cols-sm="2"
-            >
-              <div
-                class="demo-inline-spacing"
+            <b-col md="12">
+              <b-form-group
+                label="Ukuran"
+                label-cols-md="1"
+                content-cols-md="5"
+                class="ml-5"
               >
-                <b-form-checkbox
-                  v-model="cod"
-                  class="custom-control-primary"
+                <b-row
+                  class="d-flex align-items-center"
                 >
-                  Bayar Ditempat (COD)
-                </b-form-checkbox>
-                <b-form-checkbox
-                  v-model="transfer"
-                  class="custom-control-primary"
-                >
-                  Transfer Bank
-                </b-form-checkbox>
-              </div>
-            </b-form-group>
-          </b-col>
+                  <b-col class="d-flex align-items-center">
+                    <b-input-group class="input-group-merge">
+                      <b-form-input
+                        id="hi-first-name"
+                        v-model="lengthProduct"
+                        type="number"
+                        placeholder="P"
+                      />
+                      <b-input-group-append is-text>
+                        cm
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    <b-input-group class="input-group-merge">
+                      <b-form-input
+                        id="hi-first-name"
+                        v-model="widthProduct"
+                        type="number"
+                        placeholder="L"
+                      />
+                      <b-input-group-append is-text>
+                        cm
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-col>
+                  <b-col class="d-flex align-items-center">
+                    <b-input-group class="input-group-merge">
+                      <b-form-input
+                        id="hi-first-name"
+                        v-model="heightProduct"
+                        type="number"
+                        placeholder="T"
+                      />
+                      <b-input-group-append is-text>
+                        cm
+                      </b-input-group-append>
+                    </b-input-group>
+                  </b-col>
+                </b-row>
+              </b-form-group>
+            </b-col>
 
-          <!-- submit and reset -->
-          <b-col
-            cols="12"
-            class="d-flex justify-content-end pb-2 pr-2"
-          >
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              type="submit"
-              variant="outline-primary"
-              class="mr-1"
-              @click.prevent="submitDraft"
+            <b-col
+              cols="10"
+              class="mt-2"
             >
-              <b-spinner
-                v-if="loadingSubmitDraft"
-                small
+              <b-form-group
+                label="Pembayaran"
+                label-cols-sm="2"
+              >
+                <div
+                  class="demo-inline-spacing"
+                >
+                  <b-form-checkbox
+                    v-model="cod"
+                    class="custom-control-primary"
+                  >
+                    Bayar Ditempat (COD)
+                  </b-form-checkbox>
+                  <b-form-checkbox
+                    v-model="transfer"
+                    class="custom-control-primary"
+                  >
+                    Transfer Bank
+                  </b-form-checkbox>
+                </div>
+              </b-form-group>
+            </b-col>
+
+            <!-- submit and reset -->
+            <b-col
+              cols="12"
+              class="d-flex justify-content-end pb-2 pr-2"
+            >
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                type="submit"
+                variant="outline-primary"
+                class="mr-1"
+                @click.prevent="submitDraft"
+              >
+                <b-spinner
+                  v-if="loadingSubmitDraft"
+                  small
+                  variant="light"
+                />
+                Simpan Draft
+              </b-button>
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                type="reset"
                 variant="primary"
-              />
-              Simpan Draft
-            </b-button>
-            <b-button
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              type="reset"
-              variant="primary"
-              @click.prevent="submitPublish"
-            >
-              <b-spinner
-                v-if="loadingSubmitPublish"
-                small
-                variant="light"
-              />
-              Publish
-            </b-button>
-          </b-col>
-        </b-row>
+                @click.prevent="submitPublish"
+              >
+                <b-spinner
+                  v-if="loadingSubmitPublish"
+                  small
+                  variant="light"
+                />
+                Publish
+              </b-button>
+            </b-col>
+          </b-col></b-row>
       </b-form>
     </validation-observer>
+    <b-modal
+      ref="modal-confirm-uploadgambar"
+      no-close-on-backdrop
+      hide-header-close
+      hide-header
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
 
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-1">
+        <h4>
+          Maaf, maksimal file hanya 2 MB.
+        </h4>
+      </b-col>
+
+      <template #modal-footer>
+        <b-col
+          md="12"
+          class="d-flex justify-content-center pb-2"
+        >
+          <b-button
+            variant="primary"
+            class="mr-50"
+            @click="uploadgambar"
+          >
+            Oke
+          </b-button>
+        </b-col>
+      </template>
+
+    </b-modal>
   </b-card-actions>
 </template>
 
@@ -1140,6 +1121,7 @@ import {
   BTable,
   BFormCheckbox,
   BInputGroupAppend,
+  BImg,
   BInputGroup,
   BAvatar,
   BSpinner,
@@ -1174,6 +1156,7 @@ export default {
     ValidationObserver,
     ValidationProvider,
     BAvatar,
+    BImg,
     BSpinner,
     BOverlay,
   },
@@ -1183,6 +1166,7 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
+      modalShow: true,
       loadingSubmitPublish: false,
       loadingSubmitDraft: false,
 
@@ -1281,6 +1265,12 @@ export default {
     },
   },
   methods: {
+    showconfirmupload() {
+      this.$refs['modal-confirm-uploadgambar'].show()
+    },
+    uploadgambar() {
+      console.log('upload gambar')
+    },
     submitPublish() {
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {
@@ -1705,6 +1695,7 @@ export default {
                     variant: 'success',
                   },
                 })
+                this.$swal()
                 this.loadingSubmitPublish = false
                 this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
               }).catch(() => {
@@ -1920,29 +1911,6 @@ export default {
     },
     updateTable() {
       this.editMode = false
-    },
-    removeVariant1() {
-      this.variationName1 = ''
-      this.variationFields1 = false
-      if (this.variationFields2 === false && this.variationFields3 === false) {
-        this.isVariation = false
-      }
-    },
-    removeVariant2() {
-      this.variationName2 = ''
-      this.variationFields2 = false
-      this.activeAddChoices1 = true
-      if (this.variationFields1 === false && this.variationFields3 === false) {
-        this.isVariation = false
-      }
-    },
-    removeVariant3() {
-      this.variationName3 = ''
-      this.variationFields3 = false
-      this.activeAddChoices2 = true
-      if (this.variationFields1 === false && this.variationFields2 === false) {
-        this.isVariation = false
-      }
     },
     formatPrice(value) {
       const val = value
