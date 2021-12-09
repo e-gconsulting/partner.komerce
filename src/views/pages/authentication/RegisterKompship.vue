@@ -171,7 +171,7 @@
                         :state="errors.length > 0 || submitErrors.agree ? false:null"
                         required
                       >
-                        Saya setuju dengan syarat dan ketentuan Kompship
+                        Saya setuju dengan syarat dan ketentuan Komship
                       </b-form-checkbox>
                     </validation-provider>
                   </b-form-group>

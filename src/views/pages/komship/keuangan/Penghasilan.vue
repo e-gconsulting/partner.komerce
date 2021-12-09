@@ -77,7 +77,7 @@
               <b-form-group class="w-25 mb-0 mr-1">
                 <v-select
                   v-model="selectedPenghasilan"
-                  label="Kompship"
+                  label="Komship"
                   dir="ltr"
                   :options="optionsPenghasilan"
                   :clearable="false"
