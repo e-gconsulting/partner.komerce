@@ -1004,27 +1004,36 @@ small<template>
               cols="10"
               class="mt-2"
             >
-              <b-form-group
-                label="Pembayaran"
-                label-cols-sm="2"
+              <validation-provider
+                #default="errors"
+                name="Pembayaran"
+                rules="required"
               >
-                <div
-                  class="demo-inline-spacing"
+
+                <b-form-group
+                  label="Pembayaran"
+                  label-cols-sm="2"
                 >
-                  <b-form-checkbox
-                    v-model="cod"
-                    class="custom-control-primary"
+                  <div
+                    class="demo-inline-spacing"
                   >
-                    Bayar Ditempat (COD)
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                    v-model="transfer"
-                    class="custom-control-primary"
-                  >
-                    Transfer Bank
-                  </b-form-checkbox>
-                </div>
-              </b-form-group>
+                    <b-form-checkbox
+                      v-model="selectcod"
+                      class="custom-control-primary"
+                      @change="pilihcod"
+                    >
+                      Bayar Ditempat (COD)
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                      v-model="transfer"
+                      class="custom-control-primary"
+                    >
+                      Transfer Bank
+                    </b-form-checkbox>
+                  </div>
+                </b-form-group>
+                <small class="text-primary">{{ errors[0] }}</small>
+              </validation-provider>
             </b-col>
 
             <!-- submit and reset -->
@@ -1206,8 +1215,8 @@ export default {
       widthProduct: 0,
       heightProduct: 0,
       flavours: [],
-      cod: true,
-      transfer: true,
+      selectcod: true,
+      transfer: false,
       variantStore: [],
       optionStore: [],
       // Validation
@@ -1267,6 +1276,9 @@ export default {
   methods: {
     showconfirmupload() {
       this.$refs['modal-confirm-uploadgambar'].show()
+    },
+    pilihcod() {
+
     },
     uploadgambar() {
       httpKomship.post('/v1/product/update-upload-img-product', {
