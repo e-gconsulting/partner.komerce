@@ -15,7 +15,7 @@
       Tambah Order
     </b-card-title>
     <div class="add-order-dsc-title top-right">
-      {{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}
+      {{ profile && profile.is_komship === 1 ? 'Pengiriman Komship' : 'Pengiriman Non Komship' }}
     </div>
     <section class="add-order-form mb-4">
       <b-form-group

@@ -1,4 +1,4 @@
-small<template>
+<template>
   <b-card-actions
     ref="formCard"
     title="Tambah Produk"
