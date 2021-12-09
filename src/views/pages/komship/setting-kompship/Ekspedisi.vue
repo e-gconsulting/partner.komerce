@@ -154,7 +154,7 @@ export default {
   methods: {
     loadEkspedisi() {
       this.loading = true
-      httpKomship.get('/v1/partner/shipment/not-active?is_komship=1',
+      httpKomship.get('/v1/partner/shipment/not-active',
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {
