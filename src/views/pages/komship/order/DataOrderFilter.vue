@@ -2,8 +2,8 @@
   <div class="data-order-header-filter-wrapper">
     <b-dropdown
       id="dropdown-1"
-      class="org-button filter-button ml-1"
-      @click="() => handleShowFilter()"
+      class="button filter-button ml-1"
+      @click="handleShowFilter()"
     >
       <img
         src="@/assets/images/icons/filter-icon-kompship.png"
