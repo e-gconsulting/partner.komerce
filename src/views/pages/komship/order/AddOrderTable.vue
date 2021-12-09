@@ -73,6 +73,7 @@
               v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="plus-button"
               variant="outline-primary"
+              :disabled="inputData.item.stockDisplay === 0"
               @click="addTotalItem('+', inputData.index, inputData.item)"
             >
               +
