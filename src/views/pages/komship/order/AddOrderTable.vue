@@ -68,12 +68,12 @@
             >
               -
             </b-button>
-            <div class="input-text">{{ inputData.value }}</div>
+            <div class="input-text">{{ inputData.value - 1 }}</div>
             <b-button
               v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="plus-button"
               variant="outline-primary"
-              :disabled="inputData.item.stockDisplay === 0 || (inputData.value && inputData.item.input === 1)"
+              :disabled="inputData.item.stockDisplay === 0 || inputData.item.stockDisplay < 1 "
               @click="addTotalItem('+', inputData.index, inputData.item)"
             >
               +
