@@ -1283,8 +1283,9 @@ export default {
     uploadgambar() {
       httpKomship.post('/v1/product/update-upload-img-product', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(() => {
-
+      }).then(response => {
+        const { data } = response.data
+        console.log(data)
       })
     },
     submitPublish() {

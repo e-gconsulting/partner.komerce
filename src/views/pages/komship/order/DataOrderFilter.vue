@@ -70,7 +70,7 @@
 
               <b-col
                 cols="12"
-                class="ml-50 mt-50"
+                class="ml-50"
               >
                 <b-form-group
                   label="Metode Pembayaran"
