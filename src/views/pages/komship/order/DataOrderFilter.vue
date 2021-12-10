@@ -83,7 +83,6 @@
               </b-form-group>
             </b-col>
 
-            <!-- submit and reset -->
             <b-col
               cols="12"
               class="ml-50 mt-1"
