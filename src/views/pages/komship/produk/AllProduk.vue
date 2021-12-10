@@ -187,7 +187,7 @@
                 <b-row>
                   <b-col
                     cols="3"
-                    class="pb-3 mt-3"
+                    class="pb-3"
                   >
                     <b-row class="ml-2">
                       <b-container
@@ -220,7 +220,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="3"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -234,7 +234,7 @@
                   <b-col
                     v-else
                     cols="3"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       Tidak Ada Variasi
@@ -243,7 +243,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="2"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -257,7 +257,7 @@
                   <b-col
                     v-else
                     cols="2"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       Rp. {{ formatPrice(itemsData.price) }}
@@ -266,7 +266,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="2"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -280,7 +280,7 @@
                   <b-col
                     v-else
                     cols="2"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       {{ itemsData.stock }}
@@ -289,7 +289,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="1"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -303,7 +303,7 @@
                   <b-col
                     v-else
                     cols="1"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       {{ itemsData.sold }}
@@ -311,7 +311,7 @@
                   </b-col>
                   <b-col
                     cols="1"
-                    class="mt-4"
+                    class=""
                   >
                     <b-button
                       class="btn-icon"
@@ -328,7 +328,7 @@
                       class="btn-icon"
                       size="sm"
                       variant="flat-dark"
-                      @click="confirmDelete(itemsData.product_id)"
+                      @click="showConfirmDelete(itemsData.product_id)"
                     >
                       <feather-icon
                         icon="Trash2Icon"
@@ -342,7 +342,7 @@
                 >
                   <b-collapse
                     :id="`collapse-${String(index)}`"
-                    class="mt-2"
+                    class=""
                   >
                     <b-row>
                       <b-col cols="3" />
@@ -502,7 +502,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -529,7 +529,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -558,7 +558,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -587,7 +587,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"

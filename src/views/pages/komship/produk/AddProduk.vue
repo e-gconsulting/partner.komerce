@@ -990,7 +990,7 @@
             >
               <b-col class="d-flex align-items-center">
                 <validation-provider
-                  #default="errors"
+                  #default="{errors}"
                   name="Berat"
                   rules="required"
                 >
@@ -1222,10 +1222,10 @@ export default {
       productName: '',
       skuName: '',
       descriptionProduct: '',
-      weightProduct: 0,
-      lengthProduct: 0,
-      widthProduct: 0,
-      heightProduct: 0,
+      weightProduct: null,
+      lengthProduct: null,
+      widthProduct: null,
+      heightProduct: null,
       flavours: [],
       cod: true,
       transfer: true,
@@ -1308,6 +1308,17 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
             console.log('Variant 3')
             this.variantStore.push(
@@ -1544,6 +1555,17 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
             console.log('Variant 3')
             this.variantStore.push(
