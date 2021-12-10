@@ -1,110 +1,116 @@
 <template>
   <div class="data-order-header-filter-wrapper">
-    <b-dropdown
-      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-      right
-      no-caret
-      variant="primary"
+    <b-col
+      cols="3"
     >
-      <template
-        #button-content
+
+      <b-dropdown
+        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+        right
+        no-caret
+        variant="primary"
       >
-        <img
-          src="@/assets/images/icons/filter-icon-kompship.png"
+        <template
+          #button-content
         >
-      </template>
-      <b-dropdown-form
-        style="width: 417px;"
-      >
-        <b-form>
-          <b-row>
-            <b-col
-              cols="12"
-              class="mt-50 pr-2 pl-2"
-            >
-              <b-form-group
-                label="Tanggal"
-                label-for="dateInput"
+          <img
+            src="@/assets/images/icons/filter-icon-kompship.png"
+          >
+        </template>
+        <b-dropdown-form
+          style="width: 417px;"
+          class="ml-4"
+        >
+          <b-form>
+            <b-row>
+              <b-col
+                cols="12"
+                class="mt-50 pr-2 pl-2"
               >
-                <date-range-picker
-                  id="dateInput"
-                  ref="dateInput"
-                  v-model="dateRange"
-                  :locale-data="locale"
-                  :opens="'left'"
-                  :ranges="ranges"
-                  class="w-100 mr-1"
+                <b-form-group
+                  label="Tanggal"
+                  label-for="dateInput"
                 >
-                  <template v-slot:input="picker">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="mr-2">{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
-                      <img src="@/assets/images/icons/date-picker-icon.svg">
-                    </div>
-                  </template>
-                </date-range-picker>
-              </b-form-group>
-            </b-col>
+                  <date-range-picker
+                    id="dateInput"
+                    ref="dateInput"
+                    v-model="dateRange"
+                    :locale-data="locale"
+                    :opens="'left'"
+                    :ranges="ranges"
+                    class="w-100 mr-1"
+                  >
+                    <template v-slot:input="picker">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="mr-2">{{ formatDate(picker.startDate) }} - {{ formatDate(picker.endDate) }}</span>
+                        <img src="@/assets/images/icons/date-picker-icon.svg">
+                      </div>
+                    </template>
+                  </date-range-picker>
+                </b-form-group>
+              </b-col>
 
-            <b-col
-              cols="12"
-              class="ml-50"
-            >
-              <b-form-group
-                label="Produk"
-                label-for="productInput"
+              <b-col
+                cols="12"
+                class="ml-50"
               >
-                <v-select
-                  id="productInput"
-                  class="add-order-product-input"
-                  label="product_name"
-                  label-cols-md="2"
-                  :options="listProduct"
-                  @input="onAddProduct"
-                />
-              </b-form-group>
-            </b-col>
+                <b-form-group
+                  label="Produk"
+                  label-for="productInput"
+                >
+                  <v-select
+                    id="productInput"
+                    class="add-order-product-input"
+                    label="product_name"
+                    label-cols-md="2"
+                    :options="listProduct"
+                    @input="onAddProduct"
+                  />
+                </b-form-group>
+              </b-col>
 
-            <b-col
-              cols="12"
-              class="ml-50 mt-50"
-            >
-              <b-form-group
-                label="Metode Pembayaran"
-                label-for="metodeInput"
+              <b-col
+                cols="12"
+                class="ml-50 mt-50"
               >
-                <v-select
-                  id="metodeInput"
-                  label="value"
-                  label-cols-md="2"
-                  :value="selectedExp"
-                  :options="listExpedition"
-                  @input="onAddExpedition"
-                />
-              </b-form-group>
-            </b-col>
+                <b-form-group
+                  label="Metode Pembayaran"
+                  label-for="metodeInput"
+                >
+                  <v-select
+                    id="metodeInput"
+                    label="value"
+                    label-cols-md="2"
+                    :value="selectedExp"
+                    :options="listExpedition"
+                    @input="onAddExpedition"
+                  />
+                </b-form-group>
+              </b-col>
 
-            <b-col
-              cols="12"
-              class="ml-50 mt-1"
-            >
-              <b-button
-                class="sm-gap-r white-button"
-                variant="outline-warning"
-                @click="resetFilter"
+              <b-col
+                cols="12"
+                class="ml-50 mt-1"
               >
-                Reset
-              </b-button>
-              <b-button
-                variant="warning org-button"
-                @click="submitFilter"
-              >
-                Terapkan
-              </b-button>
-            </b-col>
-          </b-row>
-        </b-form>
-      </b-dropdown-form>
-    </b-dropdown>
+                <b-button
+                  class="sm-gap-r white-button"
+                  variant="outline-warning"
+                  @click="resetFilter"
+                >
+                  Reset
+                </b-button>
+                <b-button
+                  variant="warning org-button"
+                  @click="submitFilter"
+                >
+                  Terapkan
+                </b-button>
+              </b-col>
+            </b-row>
+          </b-form>
+        </b-dropdown-form>
+      </b-dropdown>
+    </b-col>
   </div>
 </template>
 
