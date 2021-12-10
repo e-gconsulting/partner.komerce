@@ -49,7 +49,12 @@
       </template>
 
       <template #cell(price)="priceData">
-        {{ priceData.item.is_variant ? `Rp ${numberWithCommas(genPriceText(priceData.item.selectedVariationData))}` : `Rp ${numberWithCommas(priceData.value)}` }}
+        <div v-if="priceData.item.is_variant == 0">
+          {{ `Rp ${numberWithCommas(priceData.item.price)}` }}
+        </div>
+        <div v-else>
+          {{ priceData.item.is_variant ? `Rp ${numberWithCommas(genPriceText(priceData.item.selectedVariationData))}` : `Rp ${numberWithCommas(priceData.value)}` }}
+        </div>
       </template>
 
       <template #cell(input)="inputData">
