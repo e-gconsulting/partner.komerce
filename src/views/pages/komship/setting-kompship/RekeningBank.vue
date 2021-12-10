@@ -12,6 +12,7 @@
       <b-modal
         ref="modal-pin"
         no-close-on-backdrop
+        no-close-on-esc
         hide-header-close
         hide-footer
         hide-header

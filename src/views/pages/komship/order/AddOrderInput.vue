@@ -35,6 +35,7 @@
         label-cols-md="2"
       >
         <v-select
+          v-model="productSelect"
           class="add-order-product-input"
           label="product_name"
           label-cols-md="2"
@@ -215,6 +216,7 @@ export default {
       selectedProductVariant: [],
       selectedProdukIndexOnModal: -1,
       disableSubmitBtn: this.disableSubmitButtonStatus,
+      productSelect: '',
     }
   },
   methods: {
@@ -369,11 +371,16 @@ export default {
       return false
     },
     onChangeSelectedProduct(param, itemSelectedIndex, itemSelected) {
+      console.log('onChangeSelectedProduct')
+      console.log(itemSelected)
       if (itemSelected) {
         let currentAmount = itemSelected.input
         currentAmount = param === '-' ? (currentAmount - 1) : (currentAmount + 1)
+        console.log('current amount')
+        console.log(currentAmount)
         if (currentAmount === 0) {
           this.selectedItems.splice(itemSelectedIndex, 1)
+          this.productSelect = ''
         } else {
           this.selectedItems[itemSelectedIndex].input = currentAmount
         }

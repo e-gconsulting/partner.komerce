@@ -41,7 +41,6 @@
               >
                 <b-form-input
                   v-model="skuName"
-                  type="text"
                   placeholder="Masukan SKU produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
@@ -756,6 +755,7 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.variant3.price"
+                                  type="number"
                                 />
                               </div>
                             </b-col>
@@ -770,6 +770,7 @@
                             >
                               <b-form-input
                                 v-model="item.variant2.price"
+                                type="number"
                               />
                             </b-col>
                           </div>
@@ -778,6 +779,7 @@
                           >
                             <b-form-input
                               v-model="data.item.variant1.price"
+                              type="number"
                             />
                           </div>
                         </div>
@@ -833,6 +835,7 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.variant3.stock"
+                                  type="number"
                                 />
                               </div>
                             </b-col>
@@ -847,6 +850,7 @@
                             >
                               <b-form-input
                                 v-model="item.variant2.stock"
+                                type="number"
                               />
                             </b-col>
                           </div>
@@ -855,6 +859,7 @@
                           >
                             <b-form-input
                               v-model="data.item.variant1.stock"
+                              type="number"
                             />
                           </div>
                         </div>
@@ -1409,9 +1414,13 @@ export default {
 
           if (this.cod === true) {
             this.flavours.push('COD')
+          } else {
+            this.flavours = []
           }
           if (this.transfer === true) {
             this.flavours.push('BANK TRANSFER')
+          } else {
+            this.flavours = []
           }
 
           // eslint-disable-next-line no-plusplus
@@ -1492,6 +1501,9 @@ export default {
                 })
                 this.loadinsSubmitPublish = false
               })
+            } else {
+              this.loadingSubmitPublish = false
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
             }
           }).catch(() => {
             this.$toast({
@@ -1638,9 +1650,13 @@ export default {
 
           if (this.cod === true) {
             this.flavours.push('COD')
+          } else {
+            this.flavours = []
           }
           if (this.transfer === true) {
             this.flavours.push('BANK TRANSFER')
+          } else {
+            this.flavours = []
           }
 
           // eslint-disable-next-line no-plusplus
@@ -1719,6 +1735,9 @@ export default {
                 })
                 this.loadinsSubmitPublish = false
               })
+            } else {
+              this.loadingSubmitPublish = false
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
             }
           }).catch(() => {
             this.$toast({

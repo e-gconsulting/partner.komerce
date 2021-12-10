@@ -697,10 +697,10 @@
       </div>
     </b-modal>
 
-    <onboarding
+    <!-- <onboarding
       ref="onboardingElement"
       :current-stage="0"
-    />
+    /> -->
   </div>
 </template>
 
@@ -710,6 +710,7 @@ import { mapFields } from 'vuex-map-fields'
 import {
   BFormGroup, BModal, BFormInput, BFormSelect,
 } from 'bootstrap-vue'
+import useJwt from '@/auth/jwt/useJwt'
 import PincodeInput from 'vue-pincode-input'
 import vSelect from 'vue-select'
 import moment from 'moment'
@@ -717,7 +718,7 @@ import moment from 'moment'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 // import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import Onboarding from '../onboarding/Onboarding.vue'
+// import Onboarding from '../onboarding/Onboarding.vue'
 import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
@@ -731,7 +732,7 @@ export default {
     // DateRangePicker,
     PincodeInput,
     vSelect,
-    Onboarding,
+    // Onboarding,
     PopoverInfo,
   },
   data() {
@@ -853,7 +854,9 @@ export default {
     ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
   },
   mounted() {
-    this.$http_komship.post('v1/my-profile').then(response => {
+    this.$http_komship.post('v1/my-profile', {
+      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+    }).then(response => {
       const { data } = response.data
       console.log('onboarding', data)
       if (data) {

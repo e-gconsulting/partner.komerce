@@ -24,14 +24,20 @@
             <div class="product-name-text">
               {{ nameData.value }}
             </div>
-            <b-button
-              v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
-              class="product-name-button"
-              variant="outline-primary"
-              @click="handleShowVariation(nameData.item)"
-            >
-              Pilih Variasi
-            </b-button>
+            <!-- {{ test(nameData) }} -->
+            <div v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1 && nameData.item.product_variant.length > 0">
+              <b-button
+                v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
+                class="product-name-button"
+                variant="outline-primary"
+                @click="handleShowVariation(nameData.item)"
+              >
+                Pilih Variasi
+              </b-button>
+            </div>
+            <div v-if="nameData.item.product_variant.length === 0">
+              Tidak Ada Variasi
+            </div>
             <div
               v-if="isEditable && nameData.item.selectedVariationData.length > 0"
               class="variation-text-content"
@@ -84,6 +90,7 @@
               +
             </b-button>
           </div>
+          {{ test(inputData) }}
           <div
             v-if="isEditable && (inputData.item.is_variant ? inputData.item.stockDisplay > 0 : true)"
             class="product-stock-input"
@@ -137,8 +144,21 @@ export default {
       default: false,
     },
   },
+  mounted() {
+    this.test()
+  },
   methods: {
+    test(data) {
+      console.log('input data')
+      console.log(data)
+    },
     addTotalItem(param, itemSelectedIndex, itemSelected) {
+      console.log('param')
+      console.log(param)
+      console.log('itemSelectedIndex')
+      console.log(itemSelectedIndex)
+      console.log('itemSelected')
+      console.log(itemSelected)
       this.$emit('onAddTotalItem', param, itemSelectedIndex, itemSelected)
     },
     handleShowVariation(selectedProduct) {
