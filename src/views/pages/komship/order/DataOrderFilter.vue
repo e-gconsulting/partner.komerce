@@ -18,14 +18,13 @@
           >
         </template>
         <b-dropdown-form
-          style="width: 417px;"
-          class="ml-4"
+          style="width: 314px;"
         >
           <b-form>
             <b-row>
               <b-col
                 cols="12"
-                class="mt-50 pr-2 pl-2"
+                class="ml-50"
               >
                 <b-form-group
                   label="Tanggal"
