@@ -75,6 +75,7 @@
                 <label
                   for="uploadImage"
                 >
+
                   <b-avatar
                     v-if="imageFile === null"
                     variant="light-dark"
@@ -84,8 +85,9 @@
                     <b-button
                       class="btn-icon"
                       size="sm"
-                      variant="flat-dark"
-                      @click="showconfirmupload()"
+                      type="file"
+                      name="photo"
+                      @change="updateProfile"
                     >
                       <feather-icon
                         icon="PlusIcon"
@@ -1273,16 +1275,11 @@ export default {
     },
   },
   methods: {
-    showconfirmupload() {
-      this.$refs['modal-confirm-uploadgambar'].show()
+    getProfilePhoto() {
+      const photo = (this.form.photo.length > 200) ? this.form.photo : `img/profile/${this.form.photo}`
+      return photo
     },
-    uploadgambar() {
-      const imageFile = this.$refs.inputUpload.imageFile[0]
-      console.log(imageFile)
-      httpKomship.post('/v1/product/update-upload-img-product', { 'update-upload-img-product': imageFile }).then(response => {
-        const { data } = response.data
-        console.log(data)
-      })
+    updateProfile() {
     },
     submitPublish() {
       // eslint-disable-next-line no-plusplus
