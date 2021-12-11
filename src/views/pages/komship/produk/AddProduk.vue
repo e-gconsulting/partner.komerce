@@ -1020,7 +1020,6 @@
                     <b-form-checkbox
                       v-model="selectcod"
                       class="custom-control-primary"
-                      @change="pilihcod"
                     >
                       Bayar Ditempat (COD)
                     </b-form-checkbox>
@@ -1277,13 +1276,10 @@ export default {
     showconfirmupload() {
       this.$refs['modal-confirm-uploadgambar'].show()
     },
-    pilihcod() {
-
-    },
     uploadgambar() {
-      httpKomship.post('/v1/product/update-upload-img-product', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      const imageFile = this.$refs.inputUpload.imageFile[0]
+      console.log(imageFile)
+      httpKomship.post('/v1/product/update-upload-img-product', { 'update-upload-img-product': imageFile }).then(response => {
         const { data } = response.data
         console.log(data)
       })
