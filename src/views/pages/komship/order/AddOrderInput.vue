@@ -283,7 +283,7 @@ export default {
         container.selectedVariationData = []
         container.input = 1
         container.stockDisplay = itemSelected.stock
-        container.isStockExist = itemSelected.is_variant ? (countStock(itemSelected.product_variant) > 0) : (itemSelected.stock > 0)
+        container.isStockExist = itemSelected.is_variant === '0' ? (countStock(itemSelected.product_variant) > 0) : (itemSelected.stock > 0)
 
         const findIndex = checkSameById(container.id, this.selectedItems)
         if (findIndex < 0) { /* push new item */
@@ -292,7 +292,7 @@ export default {
           selectedItemsContainer.push({ ...container })
         }
         this.selectedItems = selectedItemsContainer
-        if (!itemSelected.is_variant) {
+        if (itemSelected.is_variant === '0') {
           this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
         }
         this.onUpdateSelectedItemsOnParent()
@@ -301,6 +301,10 @@ export default {
       }
     },
     updateAllSelectedProduct(newItemToPush, oldListSelected) {
+      console.log('newItemToPush')
+      console.log(newItemToPush)
+      console.log('oldListSelected')
+      console.log(oldListSelected)
       if (newItemToPush && oldListSelected && oldListSelected.length && oldListSelected.length > 0) {
         let newListSelected = oldListSelected
         let sameStock = 0
@@ -329,7 +333,7 @@ export default {
       const newListSelected = listData
       for (let j = 0; j < listData.length; j += 1) {
         /* update all same product with same stock */
-        const fullStock = newItemToPush.is_variant ? this.genStockByVariant(newListSelected[j].selectedVariationData) : newItemToPush.stock
+        const fullStock = newItemToPush.is_variant !== '0' ? this.genStockByVariant(newListSelected[j].selectedVariationData) : newItemToPush.stock
         if (newListSelected[j].product_name === newItemToPush.product_name
           && JSON.stringify(newListSelected[j].selectedVariationData) === JSON.stringify(newItemToPush.selectedVariationData)
         ) {
@@ -367,7 +371,8 @@ export default {
       console.log(itemSelected)
       if (itemSelected) {
         let currentAmount = itemSelected.input
-        currentAmount = param === '-' ? (currentAmount - 1) : (currentAmount + 1)
+        console.log(param)
+        console.log(currentAmount = param === '-' ? (currentAmount - 1) : (currentAmount + 1))
         console.log('current amount')
         console.log(currentAmount)
         if (currentAmount === 0) {
@@ -404,7 +409,7 @@ export default {
       const conditionArr = []
       if (this.selectedItems && this.selectedItems.length && this.selectedItems.length > 0) {
         for (let j = 0; j < this.selectedItems.length; j += 1) {
-          if (this.selectedItems[j].is_variant) {
+          if (this.selectedItems[j].is_variant !== '0') {
             if (this.selectedItems[j].selectedVariationData && this.selectedItems[j].selectedVariationData.length && this.selectedItems[j].selectedVariationData.length > 0) {
               conditionArr.push(true)
             } else {
