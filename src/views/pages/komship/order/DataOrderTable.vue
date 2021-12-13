@@ -48,24 +48,30 @@
           />
         </div>
         <div class="all-check-data-order-date-text">
-          <div class="date-wrapper">{{ getDate(dateData.value) }}</div>
-          <div class="time-wrapper grey-text">{{ getTime(dateData.value) }}</div>
+          <div class="date-wrapper">
+            {{ getDate(dateData.value) }}
+          </div>
+          <div class="time-wrapper grey-text">
+            {{ getTime(dateData.value) }}
+          </div>
         </div>
       </template>
 
       <template #cell(customer_name)="nameCustomer">
-        <div class="name-wrapper">{{ nameCustomer.value }}</div>
+        <div class="name-wrapper">
+          {{ nameCustomer.value }}
+        </div>
         <div
           v-if="nameCustomer.item.is_komship === 1"
           class="tag-wrapper grey-text"
         >
-          Kompship
+          Komship
         </div>
         <div
           v-else
           class="tag-wrapper grey-text"
         >
-          Non-Kompship
+          Non-Komship
         </div>
       </template>
 
@@ -166,7 +172,9 @@
       </template>
 
       <template #cell(grand_total)="totalData">
-        <div class="price-wrapper">{{ `Rp ${numberWithCommas(totalData.value)}` }}</div>
+        <div class="price-wrapper">
+          {{ `Rp ${numberWithCommas(totalData.value)}` }}
+        </div>
         <div
           v-if="totalData.item.payment_method === 'COD'"
           class="label-wrapper"
@@ -233,7 +241,9 @@
       </template>
 
       <template #cell(district)="addressData">
-        <div class="address-wrapper">{{ addressData.value }}</div>
+        <div class="address-wrapper">
+          {{ addressData.value }}
+        </div>
         <div
           v-if="isUseDetailAddress"
           class="address-details-wrapper"
@@ -244,7 +254,9 @@
 
       <template #cell(airway_bill)="resiData">
         <div class="resi-wrapper">
-          <div class="resi-content">{{ resiData.value }}</div>
+          <div class="resi-content">
+            {{ resiData.value }}
+          </div>
           <div
             v-if="resiData.value"
             class="resi-content-icon"
@@ -256,7 +268,9 @@
       </template>
 
       <template #cell(acc_date)="accDateData">
-        <div class="date-wrapper">{{ getDate(accDateData.item.order_date) }}</div>
+        <div class="date-wrapper">
+          {{ getDate(accDateData.item.order_date) }}
+        </div>
       </template>
 
       <template #cell(details)="detailsData">

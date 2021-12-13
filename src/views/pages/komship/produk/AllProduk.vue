@@ -776,26 +776,35 @@ export default {
       variantData: [],
       fields: [
         {
-          key: 'product_name', label: 'Nama Produk',
+          key: 'product_name',
+          label: 'Nama Produk',
+          tdClass: 'align-top',
         },
         {
           key: 'variants',
           label: 'Variasi',
+          tdClass: 'align-top',
         },
         {
           key: 'price',
           label: 'Harga',
+          tdClass: 'align-top',
         },
         {
           key: 'stock',
           label: 'Stock',
+          tdClass: 'align-top',
         },
         {
           key: 'sold',
           label: 'Terjual',
+          tdClass: 'align-top',
         },
         {
-          key: 'action', label: 'Aksi', class: 'col-action',
+          key: 'action',
+          label: 'Aksi',
+          class: 'col-action',
+          tdClass: 'align-top',
         },
       ],
       items: [],

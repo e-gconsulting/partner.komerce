@@ -1,7 +1,7 @@
 <template>
   <div class="add-order-main-wrapper">
     <b-card-title class="mb-4">Tambah Order</b-card-title>
-    <div class="add-order-dsc-title top-right">{{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}</div>
+    <div class="add-order-dsc-title top-right">{{ profile && profile.is_komship === 1 ? 'Pengiriman Komship' : 'Pengiriman Non Komship' }}</div>
     <section class="add-order-form mb-4">
       <b-form-group
         class="add-order-label mb-2"
@@ -293,6 +293,7 @@ export default {
     onAddProduct(itemSelected) {
       if (itemSelected) {
         const currentIndex = this.selectedItems.length + 1
+        console.log(currentIndex)
         let container = {}
         let selectedItemsContainer = []
         container = itemSelected
@@ -305,7 +306,7 @@ export default {
         container.isStockExist = itemSelected.is_variant === '0' ? (countStock(itemSelected.product_variant) > 0) : (itemSelected.stock > 0)
 
         const findIndex = checkSameById(container.id, this.selectedItems)
-        if (findIndex < 0) { /* push new item */
+        if (findIndex < 0) {
           selectedItemsContainer.push({ ...container })
         } else {
           selectedItemsContainer.push({ ...container })
@@ -313,6 +314,7 @@ export default {
         this.selectedItems = selectedItemsContainer
         if (itemSelected.is_variant === '0') {
           this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
+          console.log(this.selectedItems)
         }
         this.onUpdateSelectedItemsOnParent()
         this.checkValidButton()
@@ -385,7 +387,6 @@ export default {
         } else {
           this.selectedItems[itemSelectedIndex].input = currentAmount
         }
-        /* update all product with same characteristics */
         this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
         this.onUpdateSelectedItemsOnParent()
         this.checkValidButton()

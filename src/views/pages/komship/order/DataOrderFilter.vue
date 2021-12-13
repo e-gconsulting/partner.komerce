@@ -15,7 +15,7 @@
       ref="popoverDataOrderFilter1"
       target="popoverDataOrderFilter1"
       triggers="click"
-      placement="bottomleft"
+      placement="top"
     >
       <b-form-group
         label="Tanggal"
@@ -203,7 +203,6 @@ export default {
         method: null,
       }
       this.$emit('onResetForm', this.filterForm)
-      this.handleHideFilter()
     },
   },
 }
