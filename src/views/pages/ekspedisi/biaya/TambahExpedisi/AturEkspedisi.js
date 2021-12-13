@@ -121,19 +121,17 @@ export default {
     }, 1000)
   },
   methods: {
+    getTimeFormatted(timeText) {
+      if (timeText) {
+        const splitTime = timeText.split(':')
+        return `${splitTime[0]} : ${splitTime[1]}`
+      }
+      return timeText
+    },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
     },
-    // desireTime() {
-    //   const splitted_time = this.desireTime.split(':')
-    //   let hour = splitted_time[0]
-    //   const minute = splitted_time[1]
-    //   const second = splitted_time[2]
-    //   if (Number(hour) < this.min_hour_limit) {
-    //     hour = this.min_hour_limit
-    //   }
-    //   this.desiredTime = `${hour}:${minute}:${second}`
-    // },
+
     tambahKriteria(criteriasDataParams) {
       criteriasDataParams.push({ ...initCriteria })
     },

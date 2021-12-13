@@ -128,6 +128,13 @@ export default {
         this.optionsKota = newdata
       })
     },
+    getTimeFormatted(timeText) {
+      if (timeText) {
+        const splitTime = timeText.split(':')
+        return `${splitTime[0]} : ${splitTime[1]}`
+      }
+      return timeText
+    },
     submitData() {
       console.log(this.name)
       const endpoint = '/v1/admin/shippment/create'
