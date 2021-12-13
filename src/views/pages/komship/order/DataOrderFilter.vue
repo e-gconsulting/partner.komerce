@@ -200,7 +200,6 @@ export default {
         method: null,
       }
       this.$emit('onResetForm', this.filterForm)
-      this.handleHideFilter()
     },
   },
 }

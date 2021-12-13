@@ -19,6 +19,6 @@ module.exports = {
     'vue/multiline-html-element-content-newline': 'off',
   },
   globals: {
-    _: "readonly"
-  }
+    _: 'readonly',
+  },
 }

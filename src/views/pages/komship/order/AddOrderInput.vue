@@ -238,25 +238,25 @@ export default {
       const currentSelectedVariation = this.selectedVariation
       for (let i = 0; i < currentSelectedVariation.variant.length; i += 1) { /* loop on selected product */
         if (currentSelectedVariation.variant[i] && currentSelectedVariation.variant[i] && variantSelected) {
-          // if (currentSelectedVariation.variant[i].variant_option) {
-          //   for (let j = 0; j < currentSelectedVariation.variant[i].variant_option.length; j += 1) { /* loop on variant items of product */
-          //     const searchParentIndex = this.findVariantIndex(currentSelectedVariation.variant[i].variant_option[j].option_name, currentSelectedVariation.selectedVariationData)
-          //     if (currentSelectedVariation.variant[i].variant_option[j].option_name === variantSelected.option_name) {
-          //       const variantSelectedIndex = this.findVariantIndex(variantSelected.option_name, currentSelectedVariation.product_variant)
-          //       if (variantSelectedIndex > -1) {
-          //         const variantIndexOnSelected = this.findVariantIndex(variantSelected.option_name, currentSelectedVariation.selectedVariationData)
-          //         if (variantIndexOnSelected > -1) {
-          //           currentSelectedVariation.selectedVariationData.splice(variantIndexOnSelected, 1)
-          //           currentSelectedVariation.selectedVariationData.push({ ...currentSelectedVariation.product_variant[variantSelectedIndex] })
-          //         } else if (variantIndexOnSelected < 0) {
-          //           currentSelectedVariation.selectedVariationData.push({ ...currentSelectedVariation.product_variant[variantSelectedIndex] })
-          //         }
-          //       }
-          //     } else if (searchParentIndex > -1) { /* allow only one variant selected */
-          //       currentSelectedVariation.selectedVariationData.splice(searchParentIndex, 1)
-          //     }
-          //   }
-          // }
+          if (currentSelectedVariation.variant[i].variant_option) {
+            for (let j = 0; j < currentSelectedVariation.variant[i].variant_option.length; j += 1) { /* loop on variant items of product */
+              const searchParentIndex = this.findVariantIndex(currentSelectedVariation.variant[i].variant_option[j].option_name, currentSelectedVariation.selectedVariationData)
+              if (currentSelectedVariation.variant[i].variant_option[j].option_name === variantSelected.option_name) {
+                const variantSelectedIndex = this.findVariantIndex(variantSelected.option_name, currentSelectedVariation.product_variant)
+                if (variantSelectedIndex > -1) {
+                  const variantIndexOnSelected = this.findVariantIndex(variantSelected.option_name, currentSelectedVariation.selectedVariationData)
+                  if (variantIndexOnSelected > -1) {
+                    currentSelectedVariation.selectedVariationData.splice(variantIndexOnSelected, 1)
+                    currentSelectedVariation.selectedVariationData.push({ ...currentSelectedVariation.product_variant[variantSelectedIndex] })
+                  } else if (variantIndexOnSelected < 0) {
+                    currentSelectedVariation.selectedVariationData.push({ ...currentSelectedVariation.product_variant[variantSelectedIndex] })
+                  }
+                }
+              } else if (searchParentIndex > -1) { /* allow only one variant selected */
+                currentSelectedVariation.selectedVariationData.splice(searchParentIndex, 1)
+              }
+            }
+          }
         }
       }
       this.selectedVariation = currentSelectedVariation

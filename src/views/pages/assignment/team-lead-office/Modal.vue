@@ -7,9 +7,9 @@
     :ok-disabled="loadingSubmit"
     ok-variant="primary"
     cancel-variant="light"
-    @ok="save"
     size="xl"
     centered
+    @ok="save"
   >
     <div class="alert alert-danger p-2">
       *Silahkan cek kembali detail assignment yang kamu buat. Pastikan semua
@@ -19,21 +19,28 @@
     <b-row>
       <b-col md="6">
         <b-row class="mb-1">
-          <b-col md="6"> No SK </b-col>
+          <b-col md="6">
+            No SK
+          </b-col>
           <b-col md="6">
             <b>{{ sk_number }}</b>
           </b-col>
         </b-row>
         <b-row class="mb-1">
-          <b-col md="6"> Dokumen </b-col>
           <b-col md="6">
-            <a :href="document_url" target="_blank"
-              ><b>{{ document_url }}</b></a
-            >
+            Dokumen
+          </b-col>
+          <b-col md="6">
+            <a
+              :href="document_url"
+              target="_blank"
+            ><b>{{ document_url }}</b></a>
           </b-col>
         </b-row>
         <b-row class="mb-1">
-          <b-col md="6"> Tanggal </b-col>
+          <b-col md="6">
+            Tanggal
+          </b-col>
           <b-col md="6">
             <b>{{ release_date | date }}</b>
           </b-col>
@@ -51,8 +58,15 @@
         <b>Kantor</b>
       </b-col>
     </b-row>
-    <b-row class="mt-1" v-for="(assignment, index) in assignments" :key="index">
-      <b-col md="2" offset-md="1">
+    <b-row
+      v-for="(assignment, index) in assignments"
+      :key="index"
+      class="mt-1"
+    >
+      <b-col
+        md="2"
+        offset-md="1"
+      >
         {{ assignment.staff ? assignment.staff.full_name : '-' }}
       </b-col>
       <b-col md="2">
@@ -60,7 +74,7 @@
       </b-col>
       <b-col md="1" />
       <b-col md="12">
-        <hr />
+        <hr>
       </b-col>
     </b-row>
   </b-modal>
@@ -70,6 +84,7 @@
 import { BRow, BCol, BModal } from 'bootstrap-vue'
 
 export default {
+  components: { BRow, BCol, BModal },
   props: {
     sk_number: {
       type: String,
@@ -90,7 +105,6 @@ export default {
       type: Array,
     },
   },
-  components: { BRow, BCol, BModal },
   methods: {
     show() {
       this.$refs.confirmationModal.show()
