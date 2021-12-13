@@ -10,6 +10,7 @@ import {
   BProgress,
   BCardBody,
   BCardHeader,
+  BModal,
 } from 'bootstrap-vue'
 
 export default {
@@ -23,6 +24,7 @@ export default {
     BProgress,
     BCardBody,
     BCardHeader,
+    BModal,
   },
   filters: {
     //
@@ -73,15 +75,14 @@ export default {
           Add an event listener for drop to the form
         */
         this.$refs.fileform.addEventListener('drop', e => {
-        /*
-            Capture the files from the drop event and add them to our local files
-            array.
-          */
           const { files } = e.dataTransfer
           for (let index = 0; index < files.length; index++) {
-            this.filesSettled.push(files[index])
+            if (files.length > 3) {
+              this.$refs.failUploadPopup.show()
+            } else {
+              this.filesSettled.push(files[index])
+            }
           }
-
           this.handleFiles(this.filesSettled)
         })
       }
