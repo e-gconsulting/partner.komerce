@@ -181,10 +181,12 @@
                 </span>
               </b-col>
               <b-col md="3">
-                <b-form-input
-                  id="max_pickup_time"
-                  v-model="max_pickup_time"
-                  placeholder="15:00 WIB"
+                <b-form-timepicker
+                id="value"
+                placeholder="15:00"
+                locale="en"
+                format="mm:ss"
+                v-model="value"
                 />
               </b-col>
             </b-row>

@@ -10,6 +10,7 @@ import {
   BFormInvalidFeedback,
   // BListGroup,
   // BListGroupItem,
+  BFormTimepicker,
   BInputGroup,
   BButton,
   BFormSelect,
@@ -37,6 +38,7 @@ export default {
     BFormSelect,
     BFormValidFeedback,
     BFormInvalidFeedback,
+    BFormTimepicker,
     // BListGroupItem,
     BButton,
     BCard,
@@ -50,10 +52,10 @@ export default {
       shipping_name: '',
       service_name: null,
       cashback_from: null,
+      value: '',
       service_fee_from: null,
       service_fee_to: null,
       cashback_to: null,
-      max_pickup_time: '',
       vehicles: '',
       criteriasData: [{ ...initCriteria }],
       optionsKota: [
@@ -105,12 +107,9 @@ export default {
         }
       },
     },
-    // criteriasData: {
-    //   handler(val) {
-    //     console.log(val)
-    //   },
-    //   deep: true,
-    // },
+    value() {
+      this.value = this.value.split(':').slice(0, 2).join(':')
+    },
   },
   mounted() {
     //
@@ -121,6 +120,16 @@ export default {
     }, 1000)
   },
   methods: {
+    // desireTime() {
+    //   const splitted_time = this.desireTime.split(':')
+    //   let hour = splitted_time[0]
+    //   const minute = splitted_time[1]
+    //   const second = splitted_time[2]
+    //   if (Number(hour) < this.min_hour_limit) {
+    //     hour = this.min_hour_limit
+    //   }
+    //   this.desiredTime = `${hour}:${minute}:${second}`
+    // },
     tambahKriteria(criteriasDataParams) {
       criteriasDataParams.push({ ...initCriteria })
     },

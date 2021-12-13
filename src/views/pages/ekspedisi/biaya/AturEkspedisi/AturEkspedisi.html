@@ -150,10 +150,14 @@
               </span>
             </b-col>
             <b-col md="3">
-              <b-form-input
-                id="max_pickup_time"
-                v-model="max_pickup_time"
-                placeholder="15:00 WIB"
+              <b-form-timepicker
+                id="value"
+                button-only
+                right
+                locale="en"
+                aria-controls="timepiker"
+                show-seconds
+                v-model="value"
               />
             </b-col>
           </b-row>
@@ -379,7 +383,7 @@
               class="mt-1 btn-custom btn-custom--edit"
               style="font-weight: 400;font-size:16px;"
               @click="saveKriteria"
-              >Save
+              >Tambah Kriteria
             </b-button>
           </b-row>
         </div>
