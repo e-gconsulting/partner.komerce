@@ -1955,7 +1955,7 @@ export default {
             height: this.heightProduct,
             price: this.price,
             stock: this.stock,
-            status: 0,
+            status: '0',
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,

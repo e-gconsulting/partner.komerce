@@ -990,7 +990,7 @@
             >
               <b-col class="d-flex align-items-center">
                 <validation-provider
-                  #default="errors"
+                  #default="{errors}"
                   name="Berat"
                   rules="required"
                 >
@@ -1079,16 +1079,19 @@
                 <b-form-checkbox
                   v-model="cod"
                   class="custom-control-primary"
+                  @change="validationPayment"
                 >
                   Bayar Ditempat (COD)
                 </b-form-checkbox>
                 <b-form-checkbox
                   v-model="transfer"
                   class="custom-control-primary"
+                  @change="validationPayment"
                 >
                   Transfer Bank
                 </b-form-checkbox>
               </div>
+              <small class="text-primary">{{ validatePayment }}</small>
             </b-form-group>
           </b-col>
 
@@ -1102,6 +1105,7 @@
               type="submit"
               variant="outline-primary"
               class="mr-1"
+              :disabled="validatePayment !== ''"
               @click.prevent="submitDraft"
             >
               <b-spinner
@@ -1115,6 +1119,7 @@
               v-ripple.400="'rgba(186, 191, 199, 0.15)'"
               type="reset"
               variant="primary"
+              :disabled="validatePayment !== ''"
               @click.prevent="submitPublish"
             >
               <b-spinner
@@ -1237,6 +1242,8 @@ export default {
       fieldPreviewImage: [],
       tesStore: [],
       productId: '',
+
+      validatePayment: '',
     }
   },
   computed: {
@@ -1308,6 +1315,17 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
             console.log('Variant 3')
             this.variantStore.push(
@@ -1544,6 +1562,17 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
             console.log('Variant 3')
             this.variantStore.push(
@@ -1966,6 +1995,13 @@ export default {
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    validationPayment() {
+      if (this.cod === false && this.transfer === false) {
+        this.validatePayment = 'Metode pembayaran harus dipilih salah satu!'
+      } else {
+        this.validatePayment = ''
+      }
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },
