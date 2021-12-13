@@ -182,11 +182,13 @@
               </b-col>
               <b-col md="3">
                 <b-form-timepicker
-                id="value"
-                placeholder="15:00"
+                ref="value"
+                v-model="timeValue"
+                right
+                aria-controls="example-input"
                 locale="en"
-                format="mm:ss"
-                v-model="value"
+                :hour12="false"
+                @context="onChangeTime"
                 />
               </b-col>
             </b-row>

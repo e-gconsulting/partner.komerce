@@ -151,13 +151,13 @@
             </b-col>
             <b-col md="3">
               <b-form-timepicker
-                id="value"
-                button-only
-                right
-                locale="en"
-                aria-controls="timepiker"
-                show-seconds
-                v-model="value"
+              ref="value"
+              v-model="timeValue"
+              right
+              aria-controls="example-input"
+              locale="en"
+              :hour12="false"
+              @context="onChangeTime"
               />
             </b-col>
           </b-row>

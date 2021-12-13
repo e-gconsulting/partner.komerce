@@ -48,6 +48,8 @@ export default {
       service_fee_to: null,
       cashback_to: null,
       max_pickup_time: '',
+      timeValue: '09:00',
+      timeValueText: '09 : 00',
       vehicles: '',
       origin: '',
       destination: '',
@@ -110,6 +112,9 @@ export default {
     }, 1000)
   },
   methods: {
+    onChangeTime(ctx) {
+      if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
+    },
     getKota() {
       const endpoint = '/v1/destination'
       const fetchData = axioskomsipdev.get(endpoint)

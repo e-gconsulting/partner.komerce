@@ -50,9 +50,10 @@ export default {
     return {
       loadDataAwal: true,
       shipping_name: '',
+      timeValue: '09:00',
+      timeValueText: '09 : 00',
       service_name: null,
       cashback_from: null,
-      value: '',
       service_fee_from: null,
       service_fee_to: null,
       cashback_to: null,
@@ -120,6 +121,9 @@ export default {
     }, 1000)
   },
   methods: {
+    onChangeTime(ctx) {
+      if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
+    },
     // desireTime() {
     //   const splitted_time = this.desireTime.split(':')
     //   let hour = splitted_time[0]
