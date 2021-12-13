@@ -128,7 +128,7 @@ export default {
 
       fieldsSendKompship: [
         {
-          key: 'send_kompship', label: 'Pengiriman Kompship',
+          key: 'send_kompship', label: 'Pengiriman Komship',
         },
       ],
 
@@ -140,7 +140,7 @@ export default {
 
       itemsSendKompship: [
         {
-          send_kompship: 'Ketika mengaktifkan pengiriman mandiri kamu akan berhenti berlangganan membership kompship dan tidak dapat menggunakan sebagian fitur Kompship.',
+          send_kompship: 'Ketika mengaktifkan pengiriman mandiri kamu akan berhenti berlangganan membership komship dan tidak dapat menggunakan sebagian fitur Komship.',
         },
       ],
 
@@ -154,7 +154,7 @@ export default {
   methods: {
     loadEkspedisi() {
       this.loading = true
-      httpKomship.get('/v1/partner/shipment/not-active?is_komship=1',
+      httpKomship.get('/v1/partner/shipment/not-active',
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {

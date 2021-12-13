@@ -15,7 +15,7 @@
       Tambah Order
     </b-card-title>
     <div class="add-order-dsc-title top-right">
-      {{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}
+      {{ profile && profile.is_komship === 1 ? 'Pengiriman Komship' : 'Pengiriman Non Komship' }}
     </div>
     <section class="add-order-form mb-4">
       <b-form-group
@@ -133,6 +133,7 @@
           ref="addShippingRef"
           class="add-order-product-input-v-select v-select-expedition-order-detail mr-1"
           label=""
+          :required="!customerShippingMethod"
           label-cols-md="2"
           :options="profile.shipping"
           @input="onAddShipping"
@@ -571,6 +572,7 @@ export default {
       this.customerShippingMethod = itemSelected
     },
     onAddExpeditionOption(itemSelected) {
+      console.log(this.profile)
       this.customerExpeditionOption = itemSelected
     },
     onAddPaymentMethod(itemSelected) {

@@ -1,11 +1,7 @@
 <template>
   <div class="add-order-main-wrapper">
-    <b-card-title class="mb-4">
-      Tambah Order
-    </b-card-title>
-    <div class="add-order-dsc-title top-right">
-      {{ profile && profile.is_komship === 1 ? 'Pengiriman Kompship' : 'Pengiriman Non Kompship' }}
-    </div>
+    <b-card-title class="mb-4">Tambah Order</b-card-title>
+    <div class="add-order-dsc-title top-right">{{ profile && profile.is_komship === 1 ? 'Pengiriman Komship' : 'Pengiriman Non Komship' }}</div>
     <section class="add-order-form mb-4">
       <b-form-group
         class="add-order-label mb-2"
@@ -13,9 +9,7 @@
         label-cols-md="2"
         label-for="input-date"
       >
-        <div class="add-order-date-label">
-          {{ dateLabel }}
-        </div>
+        <div class="add-order-date-label">{{ dateLabel }}</div>
         <b-form-datepicker
           id="input-date"
           ref="dp1"
@@ -56,9 +50,7 @@
     />
 
     <section class="view-order-summary">
-      <div class="add-order-summary-text">
-        <span>{{ selectedItems.length }}</span> Produk ditambahkan
-      </div>
+      <div class="add-order-summary-text"><span>{{ selectedItems.length }}</span> Produk ditambahkan</div>
       <div class="add-order-summary-button-wrapper">
         <b-button
           v-if="selectedItems.length > 0"

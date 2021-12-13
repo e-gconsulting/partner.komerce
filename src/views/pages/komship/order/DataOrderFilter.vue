@@ -1,22 +1,13 @@
 <template>
   <div class="data-order-header-filter-wrapper">
-    <div
-      id="popoverDataOrderFilter1"
+    <b-dropdown
+      id="dropdown-1"
       class="org-button filter-button ml-1"
-      @click="() => handleShowFilter('popoverDataOrderFilter1')"
+      @click="() => handleShowFilter()"
     >
       <img
         src="@/assets/images/icons/filter-icon-kompship.png"
       >
-    </div>
-
-    <b-popover
-      id="popoverDataOrderFilter1"
-      ref="popoverDataOrderFilter1"
-      target="popoverDataOrderFilter1"
-      triggers="blur click"
-      placement="top"
-    >
       <b-form-group
         label="Tanggal"
         label-for="dateInput"
@@ -77,7 +68,7 @@
       >
         Terapkan
       </b-button>
-    </b-popover>
+    </b-dropdown>
   </div>
 </template>
 
@@ -85,7 +76,8 @@
 import {
   BButton,
   BFormGroup,
-  BPopover,
+  // BFormInput,
+  BDropdown,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import moment from 'moment'
@@ -96,9 +88,10 @@ export default {
   components: {
     BButton,
     BFormGroup,
-    BPopover,
+    BDropdown,
     DateRangePicker,
     vSelect,
+    // BFormInput,
   },
   props: {
     listProduct: {
@@ -123,6 +116,7 @@ export default {
     return {
       selectedExp: ['COD'],
       chooseProduct: '',
+      orderku: '',
       dateRange: {
         startDate: today,
         endDate: today,
@@ -147,6 +141,9 @@ export default {
     }
   },
   methods: {
+    filterorder() {
+      console.log('tes')
+    },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
     },

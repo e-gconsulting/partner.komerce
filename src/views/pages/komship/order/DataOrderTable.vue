@@ -65,13 +65,13 @@
           v-if="nameCustomer.item.is_komship === 1"
           class="tag-wrapper grey-text"
         >
-          Kompship
+          Komship
         </div>
         <div
           v-else
           class="tag-wrapper grey-text"
         >
-          Non-Kompship
+          Non-Komship
         </div>
       </template>
 

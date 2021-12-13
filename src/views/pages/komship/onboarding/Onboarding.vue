@@ -163,9 +163,7 @@
             <div class="grey-box" />
           </div>
         </div>
-        <div class="onboarding-popup-desc">
-          Selamat kamu telah berhasil menyelesaikan latihan menggunakan Kompship. Selanjutnya kamu dapat langsung menggunakan layanan Kompship dan dapatkan segudang benefitnya.
-        </div>
+        <div class="onboarding-popup-desc">Selamat kamu telah berhasil menyelesaikan latihan menggunakan Komship. Selanjutnya kamu dapat langsung menggunakan layanan Komship dan dapatkan segudang benefitnya.</div>
       </div>
 
       <div
