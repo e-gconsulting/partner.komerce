@@ -72,7 +72,9 @@
             >
               -
             </b-button>
-            <div class="input-text">{{ inputData.value - 1 }}</div>
+            <div class="input-text">
+              {{ inputData.value - 1 }}
+            </div>
             <b-button
               v-if="inputData.item.is_variant === '0' || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="plus-button"
@@ -83,7 +85,7 @@
               +
             </b-button>
           </div>
-          {{ test(inputData) }}
+          <!-- {{ test(inputData) }} -->
           <div
             v-if="isEditable && (inputData.item.is_variant !== '0' ? inputData.item.stockDisplay > 0 : true)"
             class="product-stock-input"
@@ -137,14 +139,14 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    this.test()
-  },
+  // mounted() {
+  //   this.test()
+  // },
   methods: {
-    test(data) {
-      console.log('input data')
-      console.log(data)
-    },
+    // test(data) {
+    //   console.log('input data')
+    //   console.log(data)
+    // },
     addTotalItem(param, itemSelectedIndex, itemSelected) {
       console.log(itemSelected)
       this.$emit('onAddTotalItem', param, itemSelectedIndex, itemSelected)
