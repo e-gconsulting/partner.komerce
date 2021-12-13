@@ -41,7 +41,6 @@
               >
                 <b-form-input
                   v-model="skuName"
-                  type="number"
                   placeholder="Masukan SKU produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
@@ -1253,6 +1252,8 @@ export default {
       fieldPreviewImage: [],
       tesStore: [],
       productId: '',
+
+      validatePayment: '',
     }
   },
   computed: {
@@ -1331,6 +1332,17 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
             console.log('Variant 3')
             this.variantStore.push(
@@ -1437,9 +1449,13 @@ export default {
 
           if (this.cod === true) {
             this.flavours.push('COD')
+          } else {
+            this.flavours = []
           }
           if (this.transfer === true) {
             this.flavours.push('BANK TRANSFER')
+          } else {
+            this.flavours = []
           }
 
           // eslint-disable-next-line no-plusplus
@@ -1520,6 +1536,9 @@ export default {
                 })
                 this.loadinsSubmitPublish = false
               })
+            } else {
+              this.loadingSubmitPublish = false
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
             }
           }).catch(() => {
             this.$toast({
@@ -1560,6 +1579,17 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
             console.log('Variant 3')
             this.variantStore.push(
@@ -1666,9 +1696,13 @@ export default {
 
           if (this.cod === true) {
             this.flavours.push('COD')
+          } else {
+            this.flavours = []
           }
           if (this.transfer === true) {
             this.flavours.push('BANK TRANSFER')
+          } else {
+            this.flavours = []
           }
 
           // eslint-disable-next-line no-plusplus
@@ -1748,6 +1782,9 @@ export default {
                 })
                 this.loadinsSubmitPublish = false
               })
+            } else {
+              this.loadingSubmitPublish = false
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
             }
           }).catch(() => {
             this.$toast({
@@ -1953,6 +1990,13 @@ export default {
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    validationPayment() {
+      if (this.cod === false && this.transfer === false) {
+        this.validatePayment = 'Metode pembayaran harus dipilih salah satu!'
+      } else {
+        this.validatePayment = ''
+      }
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },

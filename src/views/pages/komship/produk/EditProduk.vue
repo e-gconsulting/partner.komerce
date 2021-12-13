@@ -66,7 +66,6 @@
                 <validation-provider
                   #default="{errors}"
                   name="Upload Gambar"
-                  rules="required"
                 >
 
                   <!-- Preview Image -->
@@ -649,6 +648,7 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.price"
+                                  type="number"
                                   class="mb-50"
                                   @keypress="onlyNumber"
                                 />
@@ -664,6 +664,7 @@
                             >
                               <b-form-input
                                 v-model="items.price"
+                                type="number"
                                 class="mb-50"
                                 @keypress="onlyNumber"
                               />
@@ -674,6 +675,7 @@
                           >
                             <b-form-input
                               v-model="data.item.price"
+                              type="number"
                               class="mb-50"
                               @keypress="onlyNumber"
                             />
@@ -728,6 +730,7 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.stock"
+                                  type="number"
                                   class="mb-50"
                                   @keypress="onlyNumber"
                                 />
@@ -743,6 +746,7 @@
                             >
                               <b-form-input
                                 v-model="items.stock"
+                                type="number"
                                 class="mb-50"
                                 @keypress="onlyNumber"
                               />
@@ -753,6 +757,7 @@
                           >
                             <b-form-input
                               v-model="data.item.stock"
+                              type="number"
                               class="mb-50"
                               @keypress="onlyNumber"
                             />
@@ -873,6 +878,7 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="weightProduct"
+                      type="number"
                       placeholder="1000"
                     />
                     <b-input-group-append is-text>
@@ -898,6 +904,7 @@
                       <b-form-input
                         id="hi-first-name"
                         v-model="lengthProduct"
+                        type="number"
                         placeholder="P"
                       />
                       <b-input-group-append is-text>
@@ -910,6 +917,7 @@
                       <b-form-input
                         id="hi-first-name"
                         v-model="widthProduct"
+                        type="number"
                         placeholder="L"
                       />
                       <b-input-group-append is-text>
@@ -922,6 +930,7 @@
                       <b-form-input
                         id="hi-first-name"
                         v-model="heightProduct"
+                        type="number"
                         placeholder="T"
                       />
                       <b-input-group-append is-text>
@@ -1107,8 +1116,8 @@ export default {
       lengthProduct: null,
       widthProduct: null,
       heightProduct: null,
-      cod: true,
-      transfer: true,
+      cod: false,
+      transfer: false,
       stockProduct: '',
       priceProduct: '',
       variantStore: [],
@@ -1203,13 +1212,6 @@ export default {
         this.lengthProduct = data.product_length
         this.widthProduct = data.product_width
         this.heightProduct = data.product_height
-        if (data.flavors === 'COD') {
-          this.cod = true
-          this.transfer = false
-        } else {
-          this.cod = false
-          this.transfer = true
-        }
 
         if (data.product_is_variant === '1') {
           this.isVariation = true
@@ -1353,20 +1355,11 @@ export default {
       this.variantItems = []
       this.fields = []
 
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices1.length; x++) {
-        this.variantItems.push({
-          val: this.formChoices1[x].choices,
-          parent: 0,
-          sold: 0,
-          stock: 0,
-          price: 0,
-          option: [],
-        })
+      if (this.variationName3 !== null) {
         // eslint-disable-next-line no-plusplus
-        for (let y = 0; y < this.formChoices2.length; y++) {
-          this.variantItems[x].option.push({
-            val: this.formChoices2[y].choices,
+        for (let x = 0; x < this.formChoices1.length; x++) {
+          this.variantItems.push({
+            val: this.formChoices1[x].choices,
             parent: 0,
             sold: 0,
             stock: 0,
@@ -1374,17 +1367,36 @@ export default {
             option: [],
           })
           // eslint-disable-next-line no-plusplus
-          for (let z = 0; z < this.formChoices3.length; z++) {
-            if (this.fieldEditVariation.options[x] !== undefined) {
-              if (this.fieldEditVariation.options[x].options[y] !== undefined) {
-                if (this.fieldEditVariation.options[x].options[y].options[z] !== undefined) {
-                  this.variantItems[x].option[y].option.push({
-                    val: this.formChoices3[z].choices,
-                    parent: 0,
-                    sold: this.fieldEditVariation.options[x].options[y].options[z].sold,
-                    stock: this.fieldEditVariation.options[x].options[y].options[z].variant_stock,
-                    price: this.fieldEditVariation.options[x].options[y].options[z].option_price,
-                  })
+          for (let y = 0; y < this.formChoices2.length; y++) {
+            this.variantItems[x].option.push({
+              val: this.formChoices2[y].choices,
+              parent: 0,
+              sold: 0,
+              stock: 0,
+              price: 0,
+              option: [],
+            })
+            // eslint-disable-next-line no-plusplus
+            for (let z = 0; z < this.formChoices3.length; z++) {
+              if (this.fieldEditVariation.options[x] !== undefined) {
+                if (this.fieldEditVariation.options[x].options[y] !== undefined) {
+                  if (this.fieldEditVariation.options[x].options[y].options[z] !== undefined) {
+                    this.variantItems[x].option[y].option.push({
+                      val: this.formChoices3[z].choices,
+                      parent: 0,
+                      sold: this.fieldEditVariation.options[x].options[y].options[z].sold,
+                      stock: this.fieldEditVariation.options[x].options[y].options[z].variant_stock,
+                      price: this.fieldEditVariation.options[x].options[y].options[z].option_price,
+                    })
+                  } else {
+                    this.variantItems[x].option[y].option.push({
+                      val: this.formChoices3[z].choices,
+                      parent: 0,
+                      sold: 0,
+                      stock: 0,
+                      price: 0,
+                    })
+                  }
                 } else {
                   this.variantItems[x].option[y].option.push({
                     val: this.formChoices3[z].choices,
@@ -1403,15 +1415,70 @@ export default {
                   price: 0,
                 })
               }
+            }
+          }
+        }
+      } else if (this.variationName3 === null && this.variationName2 !== null) {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.formChoices1.length; x++) {
+          this.variantItems.push({
+            val: this.formChoices1[x].choices,
+            parent: 0,
+            sold: 0,
+            stock: 0,
+            price: 0,
+            option: [],
+          })
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.formChoices2.length; y++) {
+            if (this.fieldEditVariation.options[x] !== undefined) {
+              if (this.fieldEditVariation.options[x].options[y] !== undefined) {
+                this.variantItems[x].option.push({
+                  val: this.formChoices2[y].choices,
+                  parent: 0,
+                  sold: this.fieldEditVariation.options[x].options[y].sold,
+                  stock: this.fieldEditVariation.options[x].options[y].variant_stock,
+                  price: this.fieldEditVariation.options[x].options[y].option_price,
+                })
+              } else {
+                this.variantItems[x].option.push({
+                  val: this.formChoices2[y].choices,
+                  parent: 0,
+                  sold: 0,
+                  stock: 0,
+                  price: 0,
+                })
+              }
             } else {
-              this.variantItems[x].option[y].option.push({
-                val: this.formChoices3[z].choices,
+              this.variantItems[x].option.push({
+                val: this.formChoices2[y].choices,
                 parent: 0,
                 sold: 0,
                 stock: 0,
                 price: 0,
               })
             }
+          }
+        }
+      } else if (this.variationName3 === null && this.variationName2 === null && this.variationName1 !== null) {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.formChoices1.length; x++) {
+          if (this.fieldEditVariation.options[x] !== undefined) {
+            this.variantItems.push({
+              val: this.formChoices1[x].choices,
+              parent: 0,
+              sold: this.fieldEditVariation.options[x].sold,
+              stock: this.fieldEditVariation.options[x].variant_stock,
+              price: this.fieldEditVariation.options[x].option_price,
+            })
+          } else {
+            this.variantItems.push({
+              val: this.formChoices1[x].choices,
+              parent: 0,
+              sold: 0,
+              stock: 0,
+              price: 0,
+            })
           }
         }
       }
