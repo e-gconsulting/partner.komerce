@@ -77,8 +77,12 @@ export default {
             Capture the files from the drop event and add them to our local files
             array.
           */
-          this.filesSettled = e.dataTransfer.files
-          this.handleFiles(e.dataTransfer.files)
+          const { files } = e.dataTransfer
+          for (let index = 0; index < files.length; index++) {
+            this.filesSettled.push(files[index])
+          }
+
+          this.handleFiles(this.filesSettled)
         })
       }
     })
@@ -126,7 +130,9 @@ export default {
               && 'FileReader' in window
     },
     uploadFile() {
-      this.$refs.filebuktitransfer.click()
+      // this.$refs.filebuktitransfer.click()
+      const fileInputElement = this.$refs.filebuktitransfer
+      fileInputElement.click()
     },
     previewFiles(event) {
       const data = event.target.files
@@ -163,7 +169,7 @@ export default {
           },
         })
           .then(({ data }) => {
-            console.log(data)
+            console.log(this.file)
             this.filesUploaded.push(data)
           })
           .catch(e => {
