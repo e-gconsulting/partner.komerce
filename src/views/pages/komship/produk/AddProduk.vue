@@ -589,7 +589,8 @@
                     <b-col md="4">
                       <b-form-input
                         v-model="price"
-                        type="number"
+                        type="text"
+                        @keypress="onlyNumber"
                         placeholder="Rp | Harga"
                       />
                     </b-col>
@@ -597,7 +598,8 @@
                     <b-col md="2">
                       <b-form-input
                         v-model="stock"
-                        type="number"
+                        @keypress="onlyNumber"
+                        type="text"
                         placeholder="Stok"
                       />
                     </b-col>
@@ -755,7 +757,8 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.variant3.price"
-                                  type="number"
+                                  type="text"
+                                  @keypress="onlyNumber"
                                 />
                               </div>
                             </b-col>
@@ -770,7 +773,8 @@
                             >
                               <b-form-input
                                 v-model="item.variant2.price"
-                                type="number"
+                                type="text"
+                                @keypress="onlyNumber"
                               />
                             </b-col>
                           </div>
@@ -779,7 +783,8 @@
                           >
                             <b-form-input
                               v-model="data.item.variant1.price"
-                              type="number"
+                              type="text"
+                              @keypress="onlyNumber"
                             />
                           </div>
                         </div>
@@ -835,7 +840,8 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.variant3.stock"
-                                  type="number"
+                                  type="text"
+                                  @keypress="onlyNumber"
                                 />
                               </div>
                             </b-col>
@@ -850,7 +856,8 @@
                             >
                               <b-form-input
                                 v-model="item.variant2.stock"
-                                type="number"
+                                type="text"
+                                @keypress="onlyNumber"
                               />
                             </b-col>
                           </div>
@@ -858,8 +865,9 @@
                             v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                           >
                             <b-form-input
+                              @keypress="onlyNumber"
                               v-model="data.item.variant1.stock"
-                              type="number"
+                              type="text"
                             />
                           </div>
                         </div>
@@ -942,7 +950,8 @@
               >
                 <b-form-input
                   v-model="stockNotVariation"
-                  type="number"
+                  type="text"
+                  @keypress="onlyNumber"
                   placeholder="Masukan jumlah stok barang"
                   :state="errors.length > 0 ? false:null"
                 />
@@ -966,7 +975,8 @@
               >
                 <b-form-input
                   v-model="priceNotVariation"
-                  type="number"
+                  type="text"
+                  @keypress="onlyNumber"
                   placeholder="Rp  |  Masukan harga barang"
                   :state="errors.length > 0 ? false:null"
                 />
@@ -993,12 +1003,14 @@
                   #default="{errors}"
                   name="Berat"
                   rules="required"
+                  @keypress="onlyNumber"
                 >
                   <b-input-group class="input-group-merge">
                     <b-form-input
                       id="hi-first-name"
                       v-model="weightProduct"
-                      type="number"
+                      type="text"
+                      @keypress="onlyNumber"
                       placeholder="1000"
                       :state="errors.length > 0 ? false:null"
                     />
@@ -1027,8 +1039,9 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="lengthProduct"
-                      type="number"
+                      type="text"
                       placeholder="P"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1040,8 +1053,9 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="widthProduct"
-                      type="number"
+                      type="text"
                       placeholder="L"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1053,8 +1067,9 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="heightProduct"
-                      type="number"
+                      type="text"
                       placeholder="T"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1293,6 +1308,13 @@ export default {
     },
   },
   methods: {
+    onlyNumber($event) {
+      // console.log($event.keyCode); //keyCodes value
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault()
+      }
+    },
     submitPublish() {
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {

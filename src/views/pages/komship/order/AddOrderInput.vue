@@ -85,14 +85,12 @@
       no-close-on-backdrop
     >
       <div class="modal-add-order-variation">
-        {{ selectedVariation.variant }}
         <b-form-group
           v-for="(selectedVar, indexVar) in selectedVariation.variant"
           :key="indexVar+'selectedVar'"
         >
-          <div v-if="selectedVariation.variant[1]">
-            <label :for="indexVar+'selectedVar'">{{ selectedVar.variant_name }}</label>
-            <!-- <b-button
+          <label :for="indexVar+'selectedVar'">{{ selectedVar.variant_name }}</label>
+          <b-button
             v-for="(selectedVarItem, indexVarItem) in selectedVar.variant_option"
             :key="indexVarItem+'selectedVarItem'"
             :class="'add-order-modal-header-item-button' + (findVariantIndex(selectedVarItem.option_name, selectedVariation.selectedVariationData) > -1 ? ' add-order-modal-selected' : '')"
@@ -100,17 +98,7 @@
             @click="updateSelectedVariation(selectedVarItem)"
           >
             {{ selectedVarItem.option_name }}
-          </b-button> -->
-            <b-button
-              v-for="(selectedVarItem, indexVarItem) in selectedVar.variant_option"
-              :key="indexVarItem+'selectedVarItem'"
-              :class="'add-order-modal-header-item-button' + (findVariantIndex(selectedVarItem.option_name, selectedVariation.selectedVariationData) > -1 ? ' add-order-modal-selected' : '')"
-              :disabled="checkStock(selectedVariation.input, selectedVarItem.option_name, selectedVariation.product_variant)"
-              @click="refactorUpdateSelectedVariation(selectedVarItem)"
-            >
-              {{ selectedVarItem.option_name }}
-            </b-button>
-          </div>
+          </b-button>
         </b-form-group>
         <div class="add-order-variation-modal-submit">
           <b-button
@@ -232,8 +220,6 @@ export default {
     },
     handleShowVariationPopUp(productData) {
       this.selectedVariation = productData
-      console.log('selectedVaritaion')
-      console.log(this.selectedVariation)
       this.$root.$emit('bv::show::modal', 'modal-1')
     },
     findVariantIndex(variantName, variantList) {
@@ -249,8 +235,6 @@ export default {
       return -1
     },
     updateSelectedVariation(variantSelected) {
-      console.log('variantSelected')
-      console.log(variantSelected)
       const currentSelectedVariation = this.selectedVariation
       for (let i = 0; i < currentSelectedVariation.variant.length; i += 1) { /* loop on selected product */
         if (currentSelectedVariation.variant[i] && currentSelectedVariation.variant[i] && variantSelected) {
@@ -277,9 +261,6 @@ export default {
       }
       this.selectedVariation = currentSelectedVariation
       this.$forceUpdate()
-    },
-    refactorUpdateSelectedVariation(data) {
-      console.log(data)
     },
     handleUpdateSelectedVariationInsideList(productData) {
       this.selectedItems = this.updateAllSelectedProduct(productData, this.selectedItems)
@@ -322,6 +303,10 @@ export default {
       }
     },
     updateAllSelectedProduct(newItemToPush, oldListSelected) {
+      // console.log('newItemToPush')
+      // console.log(newItemToPush)
+      // console.log('oldListSelected')
+      // console.log(oldListSelected)
       if (newItemToPush && oldListSelected && oldListSelected.length && oldListSelected.length > 0) {
         let newListSelected = oldListSelected
         let sameStock = 0
@@ -372,15 +357,20 @@ export default {
       return 0
     },
     checkStock(currentInput, nameToFind, variantList) {
-      console.log(currentInput)
-      console.log(nameToFind)
-      console.log(variantList)
+      if (variantList && variantList.length && variantList.length > 0 && nameToFind !== '') {
+        let isStockAvailable = false
+        for (let j = 0; j < variantList.length; j += 1) {
+          if (variantList[j] && variantList[j].name && variantList[j].name === nameToFind) {
+            isStockAvailable = ((variantList[j].stock - currentInput) > 0)
+          }
+        }
+        return isStockAvailable
+      }
       return false
     },
     onChangeSelectedProduct(param, itemSelectedIndex, itemSelected) {
       if (itemSelected) {
-        let currentAmount = itemSelected.input
-        currentAmount = param === '-' ? (currentAmount - 1) : (currentAmount + 1)
+        const currentAmount = itemSelected.input
         if (currentAmount === 0) {
           this.selectedItems.splice(itemSelectedIndex, 1)
           this.productSelect = ''

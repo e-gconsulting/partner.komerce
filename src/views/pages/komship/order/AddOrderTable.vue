@@ -21,7 +21,10 @@
             <img :src="nameData.item.product_image">
           </div>
           <div class="product-name-desc">
-            <div class="product-name-text">{{ nameData.value }}</div>
+            <div class="product-name-text">
+              {{ nameData.value }}
+            </div>
+            <!-- {{ test(nameData) }} -->
             <div v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1 && nameData.item.product_variant.length > 0">
               <b-button
                 v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
@@ -82,6 +85,7 @@
               +
             </b-button>
           </div>
+          <!-- {{ test(inputData) }} -->
           <div
             v-if="isEditable && (inputData.item.is_variant !== '0' ? inputData.item.stockDisplay > 0 : true)"
             class="product-stock-input"
@@ -135,8 +139,16 @@ export default {
       default: false,
     },
   },
+  // mounted() {
+  //   this.test()
+  // },
   methods: {
+    // test(data) {
+    //   console.log('input data')
+    //   console.log(data)
+    // },
     addTotalItem(param, itemSelectedIndex, itemSelected) {
+      console.log(itemSelected)
       this.$emit('onAddTotalItem', param, itemSelectedIndex, itemSelected)
     },
     handleShowVariation(selectedProduct) {
