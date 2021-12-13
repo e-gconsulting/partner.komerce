@@ -117,6 +117,7 @@
                 :sort-direction="sortDirection"
                 :filter="filter"
                 :filter-included-fields="filterOn"
+                @row-clicked="showDetails"
                 @filtered="onFiltered"
               >
                 <!-- A virtual composite column -->
@@ -321,7 +322,6 @@ export default {
         {
           key: 'bank_name',
           label: 'Nama Bank',
-          sortable: true,
         },
         {
           key: 'bankAccount',
@@ -356,6 +356,10 @@ export default {
     //
   },
   methods: {
+    showDetails(item) {
+      console.log(item)
+      this.$router.push({ name: 'cod-rincian-penarikan-saldo', params: { slug: item.withdrawal_id } })
+    },
     onChangeParter(value) {
       this.queryParterName = value
     },
