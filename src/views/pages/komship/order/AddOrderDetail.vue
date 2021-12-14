@@ -101,6 +101,7 @@
           placeholder="Masukan Kota/Kabupaten"
           list="city-list-id"
           @input="handleSearchCity"
+          @change="changeCity"
         />
         <datalist id="city-list-id">
           <option
@@ -133,21 +134,12 @@
           ref="addShippingRef"
           class="add-order-product-input-v-select v-select-expedition-order-detail mr-1"
           label=""
-          :required="!customerShippingMethod"
+          :required="!selectEkspedisi"
           label-cols-md="2"
-          :options="profile.shipping"
+          :options="ekspedisiArray"
           @input="onAddShipping"
         />
 
-        <v-select
-          ref="expOptionRef"
-          class="add-order-product-input-v-select v-select-expedition-order-detail"
-          label=""
-          label-cols-md="2"
-          placeholder="Opsi Pengiriman"
-          :options="expeditionOption"
-          @input="onAddExpeditionOption"
-        />
       </b-form-group>
       <b-form-group
         class="add-order-label mb-2 add-order-label-payment"
@@ -161,6 +153,27 @@
           label-cols-md="2"
           :options="profile.payment_method"
           @input="onAddPaymentMethod"
+        />
+        <div class="anchor-exp-select-wrapper">
+          <b-form-input
+            ref="selectExpRef"
+            class="anchor-exp-select"
+          />
+        </div>
+      </b-form-group>
+      <b-form-group
+        class="add-order-label mb-2 add-order-label-payment"
+        label="Opsi Pengiriman"
+        label-cols-md="3"
+      >
+        <v-select
+          ref="expOptionRef"
+          class="add-order-product-input-v-select v-select-expedition-order-detail"
+          label=""
+          label-cols-md="2"
+          placeholder="Opsi Pengiriman"
+          :options="ekspedisiArray2"
+          @input="onAddExpeditionOption"
         />
         <div class="anchor-exp-select-wrapper">
           <b-form-input
@@ -388,6 +401,7 @@ import {
   BIconChevronUp,
   BIconChevronDown,
 } from 'bootstrap-vue'
+import useJwt from '@/auth/jwt/useJwt'
 import AddOrderTable from './AddOrderTable.vue'
 
 function numberWithCommas(x) {
@@ -476,8 +490,13 @@ export default {
       dateValue: this.dateText,
       customerDate: '',
       customerName: '',
+      ekspedisiArray: [],
+      ekspedisiArray2: [],
       customerId: '',
       detailCustomerList: [],
+      userData: {},
+      selectEkspedisi: '',
+      selectEkspedisi2: '',
       customerTariffCode: '',
       customerPhone: '',
       customerPhoneCode: '+62',
@@ -516,9 +535,32 @@ export default {
     }
   },
   mounted() {
+    this.$http_komship.post('v1/my-profile', {
+      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+    }).then(response => {
+      this.userData = response.data.data
+    })
     this.onUpdateOverAllPrice()
+    this.ekspedisiArray = this.profile.shipping
   },
   methods: {
+    changeCity() {
+      if (this.selectEkspedisi !== '' && this.profile.partner_id !== '' && this.customerTariffCode !== '') {
+        return this.$http_komship.get('v1/calculate', {
+          params: {
+            shipping: this.selectEkspedisi,
+            tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
+            partner_id: this.profile.partner_id,
+          },
+        }).then(response => {
+          const res = response.data.data
+          this.ekspedisiArray2 = res.map(val => ((val.shipping_type).replace(/[0-9]/g, '') === 'CTC' ? 'REG' : (val.shipping_type).replace(/[0-9]/g, '')))
+        }).catch(_err => {
+          console.log(_err)
+        })
+      }
+      return true
+    },
     onChangeDate(ctx) {
       if (ctx && ctx.activeYMD) {
         this.customerDate = this.changeDate(ctx.activeYMD)
@@ -569,14 +611,43 @@ export default {
       this.customerDiscountNumber = this.isUseDiscount ? this.customerDiscountNumber : 0
     },
     onAddShipping(itemSelected) {
-      this.customerShippingMethod = itemSelected
+      this.selectEkspedisi = itemSelected
+      if (this.selectEkspedisi !== '' && this.profile.partner_id !== '') {
+        return this.$http_komship.get('v1/calculate', {
+          params: {
+            shipping: this.selectEkspedisi,
+            tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
+            partner_id: this.profile.partner_id,
+          },
+        }).then(response => {
+          const res = response.data.data
+          this.ekspedisiArray2 = res.map(val => ((val.shipping_type).replace(/[0-9]/g, '') === 'CTC' ? 'REG' : (val.shipping_type).replace(/[0-9]/g, '')))
+        }).catch(_err => {
+          console.log(_err)
+        })
+      }
+      return true
     },
     onAddExpeditionOption(itemSelected) {
-      console.log(this.profile)
-      this.customerExpeditionOption = itemSelected
+      this.selectEkspedisi2 = itemSelected === 'CTC' ? 'REG' : itemSelected
     },
     onAddPaymentMethod(itemSelected) {
       this.customerPaymentMethod = itemSelected
+      if (this.selectEkspedisi !== '' && this.profile.partner_id !== '') {
+        return this.$http_komship.get('v1/calculate', {
+          params: {
+            shipping: this.selectEkspedisi,
+            tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
+            partner_id: this.profile.partner_id,
+          },
+        }).then(response => {
+          const res = response.data.data
+          this.ekspedisiArray2 = res.map(val => ((val.shipping_type).replace(/[0-9]/g, '') === 'CTC' ? 'REG' : (val.shipping_type).replace(/[0-9]/g, '')))
+        }).catch(_err => {
+          console.log(_err)
+        })
+      }
+      return true
     },
     onChangePhoneCode(itemSelected) {
       this.customerPhoneCode = itemSelected
@@ -594,7 +665,7 @@ export default {
       let selectedCost = {}
       if (dataArr && dataArr.length && dataArr.length > 0) {
         for (let j = 0; j < dataArr.length; j += 1) {
-          if (dataArr[j] && dataArr[j].shipping_type && dataArr[j].shipping_type === this.customerExpeditionOption) {
+          if (dataArr[j] && dataArr[j].shipping_type && (dataArr[j].shipping_type).includes(this.selectEkspedisi2)) {
             selectedCost = dataArr[j]
           }
         }
@@ -662,11 +733,11 @@ export default {
       } else if (this.customerAddress === '') {
         this.$refs.addCustomerAddress.focus()
         countValidation += 1
-      } else if (typeof this.customerShippingMethod === 'undefined' || this.customerShippingMethod === '') {
+      } else if (typeof this.selectEkspedisi === 'undefined' || this.selectEkspedisi === '') {
         if (!this.$refs.addShippingRef.open) this.$refs.addShippingRef.select()
         this.$refs.selectExpRef.focus()
         countValidation += 1
-      } else if (typeof this.customerExpeditionOption === 'undefined' || this.customerExpeditionOption === '') {
+      } else if (typeof this.selectEkspedisi2 === 'undefined' || this.selectEkspedisi2 === '') {
         if (!this.$refs.expOptionRef.open) this.$refs.expOptionRef.select()
         this.$refs.selectExpRef.focus()
         countValidation += 1
@@ -735,8 +806,8 @@ export default {
         customer_name: this.customerName,
         customer_phone: this.customerPhoneCode !== '' ? `0${this.customerPhone}` : null,
         detail_address: this.customerAddress,
-        shipping: this.customerShippingMethod,
-        shipping_type: this.customerExpeditionOption,
+        shipping: this.selectEkspedisi,
+        shipping_type: this.selectEkspedisi2,
         payment_method: this.customerPaymentMethod,
         bank: null,
         bank_account_name: null,
@@ -749,7 +820,28 @@ export default {
         shipping_cashback: this.totalCostNumber.cashback,
         net_profit: this.totalCostNumberNetto,
       }
-      await this.storeSelectedItemsToCart(formData)
+      if (this.userData.is_onboarding === true) {
+        await this.storeSelectedItemsToCart(formData)
+      } else {
+        await this.saveOnboardingProduct(formData)
+      }
+    },
+    async saveOnboardingProduct(formdata) {
+      return this.$http_komship.post(`v1/ob/order/${this.profile.partner_id}/store`, formdata).then(response => {
+        const { data } = response.data
+        // console.log('detail post order', data)
+        if (data) {
+          this.isSubmitting = false
+          if (this.profile.is_onboarding) {
+            this.$emit('onBoardingShow')
+          } else {
+            this.handleShowPopUp()
+          }
+        }
+      }).catch(() => {
+        this.isSubmitting = false
+        this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
+      })
     },
     async storeSelectedItemsToCart(formData) {
       const allItemsToPost = this.genCart(this.selectedItems)
@@ -782,7 +874,7 @@ export default {
       return this.$http_komship.get('v1/calculate', {
         params: {
           discount: this.customerDiscountNumber,
-          shipping: this.customerShippingMethod,
+          shipping: this.selectEkspedisi,
           tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
           payment_method: this.customerPaymentMethod,
           cart: this.sumAllProduct,
@@ -792,9 +884,11 @@ export default {
         // console.log('dataCost', data)
         this.totalCostNumber = this.findCorrectData(data)
         this.calculateOnView()
-      }).catch(() => {
+      }).catch(error => {
+        console.log(error.response)
+        const { data } = error.response
         this.isCalculating = false
-        this.alertFail('Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.')
+        this.alertFail(data.message !== '' ? data.message : 'Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.')
       })
     },
     onPostOrder(formData) {

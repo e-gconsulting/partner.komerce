@@ -68,6 +68,7 @@
           Batalkan
         </b-button>
         <b-button
+          v-if="selectedItems.length > 0"
           class="next-button"
           :disabled="disableSubmitBtn"
           @click="onUpdateScreenViewParent"
