@@ -12,32 +12,13 @@
             </h3>
           </div>
           <div class="wrappertab__content">
-            <div
-              class="d-flex justify-content-end"
-            >
-              <!-- filter -->
-              <b-form-group class="mb-0">
-                <b-input-group
-                  class="input-group-merge"
-                >
-                  <b-input-group-prepend is-text>
-                    <feather-icon icon="SearchIcon" />
-                  </b-input-group-prepend>
-                  <b-form-input
-                    id="filterSearch"
-                    v-model="filter"
-                    type="search"
-                    placeholder="Search..."
-                    debounce="500"
-                  />
-                </b-input-group>
-              </b-form-group>
-            </div>
             <div class="mt-2">
               <b-table
                 striped
                 hover
                 responsive
+                style="color: #222222 !important;"
+                :head-variant="'light'"
                 :per-page="perPage"
                 :current-page="currentPage"
                 :items="items"
@@ -53,20 +34,33 @@
                 <template #thead-top="">
                   <b-tr>
                     <b-th
-                      variant="default"
-                      class="text-center"
+                      class="font-weight-bolder text-capitalize"
                     >Ekpedisi</b-th>
                     <b-th
-                      variant="default"
-                      class="text-center"
+                      class="font-weight-bolder text-capitalize"
                       colspan="2"
                     >Dari Ekspedisi</b-th>
                     <b-th
-                      variant="default"
-                      class="text-center"
+                      class="font-weight-bolder text-capitalize"
                       colspan="2"
                     >Ke Pengguna</b-th>
+                    <b-th></b-th>
                   </b-tr>
+                </template>
+                <template #head(shipping_name)="data">
+                  <span class="font-weight-bolder text-capitalize">{{ data.label }}</span>
+                </template>
+                <template #head(cashback_from)="data">
+                  <span class="font-weight-bolder text-capitalize">{{ data.label }}</span>
+                </template>
+                <template #head(service_fee_from)="data">
+                  <span class="font-weight-bolder text-capitalize">{{ data.label }}</span>
+                </template>
+                <template #head(cashback_to)="data">
+                  <span class="font-weight-bolder text-capitalize">{{ data.label }}</span>
+                </template>
+                <template #head(service_fee_to)="data">
+                  <span class="font-weight-bolder text-capitalize">{{ data.label }}</span>
                 </template>
                 <template #cell(editExpedition)="data">
                   <b-button
@@ -166,10 +160,10 @@
           <b-button
             variant="gradient-danger"
             size="lg"
-            class="btn-icon rounded-circle btn-float-custom"
+            class="btn-icon rounded btn-float-custom"
             @click="$router.push('/biaya-ekspedisi/tambah')"
           >
-            <feather-icon icon="PlusIcon" />
+            <feather-icon icon="PlusIcon" /> TAMBAHKAN EKSPEDISI
           </b-button>
         </b-card-body>
       </b-card>
@@ -200,11 +194,11 @@ import {
   BModal,
   BSpinner,
   BFormGroup,
-  BFormInput,
+  // BFormInput,
   BFormSelect,
-  BInputGroup,
+  // BInputGroup,
   BPagination,
-  BInputGroupPrepend,
+  // BInputGroupPrepend,
 } from 'bootstrap-vue'
 import axioskomsipdev from '@/libs/axioskomsipdev'
 
@@ -221,11 +215,11 @@ export default {
     BSpinner,
     BCardBody,
     BFormGroup,
-    BFormInput,
+    // BFormInput,
     BFormSelect,
-    BInputGroup,
+    // BInputGroup,
     BPagination,
-    BInputGroupPrepend,
+    // BInputGroupPrepend,
   },
   data() {
     return {
