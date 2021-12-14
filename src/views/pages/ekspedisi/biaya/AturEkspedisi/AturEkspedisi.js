@@ -36,11 +36,9 @@ export default {
     // BFormGroup,
     BInputGroup,
     BFormSelect,
-    BFormTimepicker,
-    // BFormCheckbox,
-    // BListGroup,
     BFormValidFeedback,
     BFormInvalidFeedback,
+    BFormTimepicker,
     // BListGroupItem,
     BButton,
     BCard,
@@ -52,19 +50,20 @@ export default {
     return {
       loadDataAwal: true,
       shipping_name: '',
+      max_pickup_time: '09:00',
       service_name: null,
       cashback_from: null,
       service_fee_from: null,
       service_fee_to: null,
       cashback_to: null,
-      max_pickup_time: '',
-      timeValue: '09:00',
-      timeValueText: '09 : 00',
       vehicles: [],
-      detailEkspedisi: {},
       criteriasData: [{ ...initCriteria }],
-      optionsKota: [],
-      optionsKotaData: [],
+      optionsKota: [
+        { value: null, text: 'Pilih layanan kota' },
+        { value: 'jawa_bali', text: 'Jawa & Bali' },
+        { value: 'kalimantan_sumatera', text: 'Kalimantan & Sumatera' },
+        { value: 'jakarta_batam', text: 'Jakarta & Batam' },
+      ],
       optionsCriteria: [
         { value: null, text: 'Pilih jenis pengiriman' },
         { text: 'Exclude', value: 'exclude' },
@@ -86,46 +85,26 @@ export default {
   },
   computed: {
     changeCriteriasData() {
-      const dataBaru = [...this.criteriasData].map(x => {
-        const dt = { ...x }
-        dt.origin = [x.type]
-        this.detailEkspedisi.criterias.forEach(y => {
-          if (y.criteria_id === x.criteria_id) {
-            dt.destination = y.destination_value
-          }
-        })
-        return dt
+      const dt = [...this.criteriasData].map(x => {
+        const returnData = { ...x }
+        returnData.origin = [x.type]
+        return returnData
       })
-      return dataBaru
+      return dt
     },
   },
   watch: {
-    //
+    value() {
+      this.value = this.value.split(':').slice(0, 2).join(':')
+    },
   },
   mounted() {
-    // this.$route.params.id,
     this.getIsland()
   },
   created() {
     //
   },
-  updated() {
-    this.vehicles.forEach(x => {
-      const el = document.getElementById(`choice${x.toLowerCase()}`)
-      el.classList.add('activeChoice')
-    })
-  },
   methods: {
-    onChangeTime(ctx) {
-      if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
-    },
-    tambahKriteria(criteriasDataParams) {
-      criteriasDataParams.push({ ...initCriteria })
-    },
-    hapusKriteria(index) {
-      if (index === 0) return
-      this.criteriasData.splice(index, 1)
-    },
     getTimeFormatted(timeText) {
       if (timeText) {
         const splitTime = timeText.split(':')
@@ -133,9 +112,20 @@ export default {
       }
       return timeText
     },
+    onChangeTime(ctx) {
+      if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
+    },
+
+    tambahKriteria(criteriasDataParams) {
+      criteriasDataParams.push({ ...initCriteria })
+    },
+    hapusKriteria(index) {
+      if (index === 0) return
+      this.criteriasData.splice(index, 1)
+    },
     submitData() {
       this.loadDataAwal = true
-      const endpoint = `/v1/admin/shipment/update/${this.$route.params.id}`
+      const endpoint = '/v1/admin/shipment/store'
       let getData = null
       // console.log('datasubmit :', {
       //   shipping_name: this.shipping_name,
@@ -145,10 +135,10 @@ export default {
       //   service_fee_to: this.service_fee_to,
       //   cashback_to: this.cashback_to,
       //   max_pickup_time: this.max_pickup_time,
-      //   vehicles: this.vehicles,
+      //   vehicles: [this.vehicles],
       //   criterias: this.changeCriteriasData,
       // })
-      getData = axioskomsipdev.put(endpoint, {
+      getData = axioskomsipdev.post(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
         cashback_from: this.cashback_from,
@@ -159,7 +149,8 @@ export default {
         vehicles: this.vehicles,
         criterias: this.changeCriteriasData,
       })
-      getData.then(() => {
+      getData.then(data => {
+        console.log(data)
         this.$router.push('/biaya-ekspedisi')
         // {
         // status: "success",
@@ -210,48 +201,6 @@ export default {
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
           this.optionsKota = parseData
-          this.optionsKotaData = parseData
-          this.$nextTick(() => {
-            this.getDetailEkspedisi(this.$route.params.id)
-          })
-        })
-        .catch(e => {
-          console.log('error', e)
-          this.loadDataAwal = false
-        })
-    },
-    getDetailEkspedisi(id) {
-      const endpoint = `/v1/admin/shipment/detail/${id}`
-      axioskomsipdev.get(endpoint)
-        .then(({ data }) => {
-          const parseData = JSON.parse(JSON.stringify(data.data))
-          this.detailEkspedisi = parseData
-          this.shipping_name = parseData.shipping_name
-          this.service_name = parseData.service_name.toLowerCase()
-          this.cashback_from = parseData.cashback_from
-          this.service_fee_from = parseData.service_fee_from
-          this.service_fee_to = parseData.service_fee_to
-          this.cashback_to = parseData.cashback_to
-          this.max_pickup_time = parseData.max_pickup_time
-          this.vehicles = parseData.vehicles
-          this.criteriasData = [...parseData.criterias].map(x => {
-            const dt = {}
-            const dest = []
-            // merge array for destinaton
-            x.destination_value.forEach((dataDest, idxDest) => {
-              dest.push({
-                value: dataDest,
-                label: x.destination[idxDest],
-              })
-            })
-            dt.criteria_id = x.criteria_id
-            dt.destination = dest
-            dt.retur = parseInt(x.retur, 10)
-            dt.origin = x.origin_value
-            dt.type = x.type
-            dt.delivery = x.delivery
-            return dt
-          })
         })
         .catch(e => {
           console.log('error', e)

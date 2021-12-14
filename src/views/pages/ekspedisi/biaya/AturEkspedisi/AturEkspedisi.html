@@ -169,49 +169,49 @@
             </b-row>
           </div>
 
-        <div class="mt-2">
-          <h3 style="font-weight: 600;font-size: 20px;color: #222222;">
-            Penjemputan Barang
-          </h3>
-          <b-row class="mt-1 align-items-center">
-            <b-col md="3">
-              <span style="font-weight: 400;font-size:16px;color:#222222;">
-                Maksimal Penjemputan
-              </span>
-            </b-col>
-            <b-col md="3">
-              <b-form-timepicker
-              ref="value"
-              v-model="timeValue"
-              right
-              aria-controls="example-input"
-              locale="en"
-              :hour12="false"
-              @context="onChangeTime"
-              />
-            </b-col>
-          </b-row>
-          <b-row class="mt-1 align-items-center">
-            <b-col md="3">
-              <span style="font-weight: 400;font-size:16px;color:#222222;">
-                Kendaraan
-              </span>
-            </b-col>
-            <b-col md="3">
-              <div class="d-flex justify-content-between">
-                <div
-                  id="choicemotor"
-                  class="choiceTypeVehicle"
-                  @click="handleChoiceTypeVehicle('motor')"
-                >
-                  <img
-                    :src="require('@/assets/images/elements/expedisimotor.png')"
-                    alt="motor"
-                    width="40px"
-                    height="26px"
-                  />
-                  <span>Motor</span>
-                </div>
+          <div class="mt-2">
+            <h3 style="font-weight: 600;font-size: 20px;color: #222222;">
+              Penjemputan Barang
+            </h3>
+            <b-row class="mt-1 align-items-center">
+              <b-col md="3">
+                <span style="font-weight: 400;font-size:16px;color:#222222;">
+                  Maksimal Penjemputan
+                </span>
+              </b-col>
+              <b-col md="3">
+                <b-form-timepicker
+                ref="max_pickup_time"
+                v-model="max_pickup_time"
+                right
+                aria-controls="example-input"
+                locale="en"
+                :hour12="false"
+                @context="onChangeTime"
+                />
+              </b-col>
+            </b-row>
+            <b-row class="mt-1 align-items-center">
+              <b-col md="3">
+                <span style="font-weight: 400;font-size:16px;color:#222222;">
+                  Kendaraan
+                </span>
+              </b-col>
+              <b-col md="3">
+                <div class="d-flex justify-content-between">
+                  <div
+                    id="choicemotor"
+                    class="choiceTypeVehicle"
+                    @click="handleChoiceTypeVehicle('motor')"
+                  >
+                    <img
+                      :src="require('@/assets/images/elements/expedisimotor.png')"
+                      alt="motor"
+                      width="40px"
+                      height="26px"
+                    />
+                    <span>Motor</span>
+                  </div>
 
                   <div
                     id="choicemobil"
@@ -228,17 +228,17 @@
                   </div>
 
                   <div
-                    id="choicetruck"
+                    id="choicetruk"
                     class="choiceTypeVehicle"
-                    @click="handleChoiceTypeVehicle('truck')"
+                    @click="handleChoiceTypeVehicle('truk')"
                   >
                     <img
                       :src="require('@/assets/images/elements/expedisitruk.png')"
-                      alt="truck"
+                      alt="truk"
                       width="34px"
                       height="30px"
                     />
-                    <span>Truck</span>
+                    <span>Truk</span>
                   </div>
                 </div>
               </b-col>
@@ -308,14 +308,14 @@
                 <b-col cols="3">
                   <b-form-select
                     v-model="inputCriteria.type"
-                    :id="`inputCriteria-type-${inputCriteria.criteria_id}`"
+                    :id="`inputCriteria-type-${index}`"
                     :options="optionsCriteria"
                   />
                 </b-col>
                 <b-col cols="3">
                   <v-select
                     v-model="inputCriteria.destination"
-                    :id="`inputCriteria-destination-${inputCriteria.criteria_id}`"
+                    :id="`inputCriteria-destination-${index}`"
                     :options="optionsKota"
                     :reduce="optionsKota => optionsKota.value"
                     multiple
@@ -346,7 +346,7 @@
                   <b-input-group append="%">
                     <b-form-input
                       v-model="inputCriteria.delivery"
-                      :id="`inputCriteria-delivery-${inputCriteria.criteria_id}`"
+                      :id="`inputCriteria-delivery-${index}`"
                       :state="inputCriteria.delivery >= 0"
                       type="number"
                       min="0"
@@ -363,8 +363,8 @@
                   <b-input-group append="%">
                     <b-form-input
                       v-model="inputCriteria.retur"
-                      :id="`inputCriteria-retur-${inputCriteria.criteria_id}`"
                       :state="inputCriteria.retur >= 0"
+                      :id="`inputCriteria-retur-${index}`"
                       type="number"
                       min="0"
                       max="100"
