@@ -91,7 +91,7 @@ export default {
         dt.origin = [x.type]
         this.detailEkspedisi.criterias.forEach(y => {
           if (y.criteria_id === x.criteria_id) {
-            dt.destination = x.destination
+            dt.destination = y.destination_value
           }
         })
         return dt
@@ -110,7 +110,6 @@ export default {
     //
   },
   updated() {
-    console.log('asd')
     this.vehicles.forEach(x => {
       const el = document.getElementById(`choice${x.toLowerCase()}`)
       el.classList.add('activeChoice')
@@ -119,19 +118,6 @@ export default {
   methods: {
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
-    },
-    getKota() {
-      const endpoint = '/v1/destination'
-      const fetchData = axioskomsipdev.get(endpoint)
-      fetchData.then(async data => {
-        const array = data.data.data.data
-        const newdata = await array.map(val => ({
-          id: val.value,
-          name: val.label,
-        }))
-        console.log('Kota', newdata)
-        this.optionsKota = newdata
-      })
     },
     tambahKriteria(criteriasDataParams) {
       criteriasDataParams.push({ ...initCriteria })
@@ -159,7 +145,7 @@ export default {
       //   service_fee_to: this.service_fee_to,
       //   cashback_to: this.cashback_to,
       //   max_pickup_time: this.max_pickup_time,
-      //   vehicles: [this.vehicles],
+      //   vehicles: this.vehicles,
       //   criterias: this.changeCriteriasData,
       // })
       getData = axioskomsipdev.put(endpoint, {
@@ -173,8 +159,7 @@ export default {
         vehicles: this.vehicles,
         criterias: this.changeCriteriasData,
       })
-      getData.then(data => {
-        console.log(data)
+      getData.then(() => {
         this.$router.push('/biaya-ekspedisi')
         // {
         // status: "success",
