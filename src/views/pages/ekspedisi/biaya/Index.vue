@@ -25,11 +25,10 @@
                   </b-input-group-prepend>
                   <b-form-input
                     id="filterSearch"
-                    v-model="search"
+                    v-model="filter"
                     type="search"
                     placeholder="Search..."
                     debounce="500"
-                    @input="onChange"
                   />
                 </b-input-group>
               </b-form-group>
@@ -335,9 +334,6 @@ export default {
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
-    },
-    onChange() {
-      //
     },
     editExpedition(val) {
       this.$router.push(`/biaya-ekspedisi/${val}/edit`)
