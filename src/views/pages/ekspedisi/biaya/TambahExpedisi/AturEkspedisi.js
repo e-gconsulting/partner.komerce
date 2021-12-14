@@ -50,7 +50,7 @@ export default {
     return {
       loadDataAwal: true,
       shipping_name: '',
-      timeValue: '09:00',
+      max_pickup_time: '09:00',
       timeValueText: '09 : 00',
       service_name: null,
       cashback_from: null,
