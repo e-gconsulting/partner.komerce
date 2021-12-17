@@ -684,7 +684,7 @@ export default {
     },
     // ==================================================================
     createPin() {
-      httpKomship.post('https://komshipdev.komerce.id/api/v1/pin/store', {
+      httpKomship.post('https://komship.komerce.id/api/v1/pin/store', {
         pin: this.dataPin,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -742,7 +742,7 @@ export default {
       })
     },
     confirmCreatePin() {
-      httpKomship.get('https://komshipdev.komerce.id/api/v1/pin/check', {
+      httpKomship.get('https://komship.komerce.id/api/v1/pin/check', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {
         this.$swal({
