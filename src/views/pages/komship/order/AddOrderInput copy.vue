@@ -29,6 +29,7 @@
         label-cols-md="2"
       >
         <v-select
+          v-model="productSelect"
           class="add-order-product-input"
           label="product_name"
           label-cols-md="2"
@@ -38,7 +39,7 @@
       </b-form-group>
     </section>
 
-    <!-- <add-order-table
+    <add-order-table
       ref="tableAddOrderOne"
       :items="selectedItems"
       :fields="fields"
@@ -46,130 +47,7 @@
       :is-editable="true"
       @onShowPopUp="handleShowVariationPopUp"
       @onAddTotalItem="onChangeSelectedProduct"
-    /> -->
-
-    <b-table
-      ref="tableAddOrderOne"
-      :items="itemsOrder"
-      :fields="fieldsOrder"
-    >
-
-      <template #cell(no)="data">
-        {{ data.index+1 }}
-      </template>
-
-      <template #cell(product_name)="data">
-        <b-row class="align-items-center">
-          <b-col
-            cols="auto"
-            class="pr-0"
-          >
-            <b-avatar
-              variant="light-primary"
-              size="50px"
-              square
-            />
-          </b-col>
-          <b-col cols="auto">
-            <h4>
-              <strong>
-                {{ data.value }}
-              </strong>
-            </h4>
-            <b-button
-              variant="outline-primary"
-              class="btn-icon"
-              @click="chooseVariation(data)"
-            >
-              Pilih variasi
-            </b-button>
-          </b-col>
-        </b-row>
-      </template>
-
-      <template #cell(price)="data">
-        <h4>
-          <strong>
-            {{ data.value }}
-          </strong>
-        </h4>
-      </template>
-
-      <template #cell(jumlah)>
-        <h4>
-          <strong>
-            0
-          </strong>
-        </h4>
-      </template>
-
-      <template #cell(subtotal)>
-        <h4>
-          <strong>
-            0
-          </strong>
-        </h4>
-      </template>
-    </b-table>
-
-    <!-- Modal Choose Variation -->
-    <b-modal
-      id="modal-choose-variation"
-      ok-only
-      ok-variant="danger"
-      ok-title="Accept"
-      modal-class="modal-danger"
-      centered
-    >
-
-      <!-- Parent Variant -->
-      <b-row class="ml-50">
-        <h4>
-          <strong>
-            {{ itemsChooseVariation.item.variant[0].variant_name }}
-          </strong>
-        </h4>
-      </b-row>
-      <b-row class="mb-2 ml-50">
-        <div
-          v-for="(itemsVariant, indexVariant) in itemsChooseVariation.item.variant[0].variant_option"
-          :key="indexVariant+1"
-        >
-          <b-button
-            :variant="isActiveVariant === itemsVariant.option_name ? 'outline-primary' : 'outline-dark'"
-            class="btn-icon m-50"
-            :pressed="isActiveVariant === itemsVariant.option_name"
-            @click="selectVariation(itemsVariant)"
-          >
-            {{ itemsVariant.option_name }}
-          </b-button>
-        </div>
-      </b-row>
-
-      <!-- First Child -->
-      <b-row class="ml-50">
-        <h4>
-          <strong>
-            {{ itemsChooseVariation.item.variant[1].variant_name }}
-          </strong>
-        </h4>
-      </b-row>
-      <b-row class="mb-2 ml-50">
-        <div
-          v-for="(itemsVariant, indexVariant) in itemsChooseVariation.item.variant[1].variant_option"
-          :key="indexVariant+1"
-        >
-          <b-button
-            :variant="isActiveVariantFirstChild === itemsVariant.option_name ? 'outline-primary' : 'outline-dark'"
-            class="btn-icon m-50"
-            :pressed="isActiveVariantFirstChild === itemsVariant.option_name"
-            @click="selectVariationFirstChild(itemsVariant)"
-          >
-            {{ itemsVariant.option_name }}
-          </b-button>
-        </div>
-      </b-row>
-    </b-modal>
+    />
 
     <section class="view-order-summary">
       <div class="add-order-summary-text"><span>{{ selectedItems.length }}</span> Produk ditambahkan</div>
@@ -198,7 +76,7 @@
         </b-button>
       </div>
     </section>
-    <!-- <b-modal
+    <b-modal
       id="modal-1"
       ref="modalVariationAddOrder"
       hide-footer
@@ -206,32 +84,70 @@
       centered
       no-close-on-backdrop
     >
-      <div class="modal-add-order-variation">
-        <b-form-group
-          v-for="(selectedVar, indexVar) in selectedVariation.variant"
-          :key="indexVar+'selectedVar'"
+      <!-- Variation 1 -->
+      <b-row class="p-1">
+        <div
+          v-for="(variantItems, index) in selectedVariation1"
+          :key="index+1"
         >
-          <label :for="indexVar+'selectedVar'">{{ selectedVar.variant_name }}</label>
-          <b-button
-            v-for="(selectedVarItem, indexVarItem) in selectedVar.variant_option"
-            :key="indexVarItem+'selectedVarItem'"
-            :class="'add-order-modal-header-item-button' + (findVariantIndex(selectedVarItem.option_name, selectedVariation.selectedVariationData) > -1 ? ' add-order-modal-selected' : '')"
-            :disabled="!checkStock(selectedVariation.input, selectedVarItem.option_name, selectedVariation.product_variant)"
-            @click="updateSelectedVariation(selectedVarItem)"
-          >
-            {{ selectedVarItem.option_name }}
-          </b-button>
-        </b-form-group>
-        <div class="add-order-variation-modal-submit">
-          <b-button
-            class="next-button"
-            @click="() => handleUpdateSelectedVariationInsideList(selectedVariation)"
-          >
-            Ok
-          </b-button>
+          <h5>
+            <strong>
+              {{ variantItems.variant_name }}
+            </strong>
+          </h5>
+          <b-col class="d-flex flex-wrap">
+            <div
+              v-for="(variantOptionItems, indexVariantOption) in variantItems.variant_option"
+              :key="`${indexVariantOption}-position-variant`"
+            >
+              <b-button
+                :variant="isActiveVariant1 === variantOptionItems.option_name ? 'outline-primary' : 'outline-dark'"
+                class="btn-icon m-50"
+                :pressed="isActiveVariant1 === variantOptionItems.option_name"
+                @click="selectVariation1(variantOptionItems)"
+              >
+                {{ variantOptionItems.option_name }}
+              </b-button>
+            </div>
+          </b-col>
         </div>
+      </b-row>
+
+      <!-- Variation 2 -->
+      <b-row class="p-1">
+        <div>
+          <h5>
+            <strong>
+              {{ selectedVariation2[0] }}
+            </strong>
+          </h5>
+          <b-col class="d-flex flex-wrap">
+            <div
+              v-for="(variantOptionItems, indexVariantOption) in selectedOptionVariant2"
+              :key="`${indexVariantOption}-position-variant`"
+            >
+              <b-button
+                :variant="isActiveVariant2 === variantOptionItems.name ? 'outline-primary' : 'outline-dark'"
+                class="btn-icon m-50"
+                :pressed="isActiveVariant2 === variantOptionItems.name"
+                @click="selectVariation2(variantOptionItems)"
+              >
+                {{ variantOptionItems.name }}
+              </b-button>
+            </div>
+          </b-col>
+        </div>
+      </b-row>
+
+      <div class="add-order-variation-modal-submit">
+        <b-button
+          class="next-button"
+          @click="() => handleUpdateSelectedVariationInsideList(selectedVariation)"
+        >
+          Ok
+        </b-button>
       </div>
-    </b-modal> -->
+    </b-modal>
   </div>
 </template>
 
@@ -242,13 +158,10 @@ import {
   BFormDatepicker,
   BFormGroup,
   BButton,
-  BTable,
-  BRow,
   BCol,
-  BAvatar,
+  BRow,
 } from 'bootstrap-vue'
-
-// import AddOrderTable from './AddOrderTable.vue'
+import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {
   if (dateString && dateString !== '') {
@@ -263,6 +176,27 @@ function changeDate(dateString) {
   return dateString
 }
 
+function checkSameById(itemId, listData) {
+  const index = -1
+  for (let i = 0; i < listData.length; i += 1) {
+    if (listData && listData[i] && listData[i].id && listData[i].id === itemId) return i
+  }
+  return index
+}
+
+function countStock(listData) {
+  if (listData && listData.length && listData.length > 0) {
+    let stockAmount = -1
+    for (let i = 0; i < listData.length; i += 1) {
+      if (listData[i].stock) {
+        stockAmount += listData[i].stock
+      }
+    }
+    return stockAmount
+  }
+  return -1
+}
+
 export default {
   components: {
     BCardTitle,
@@ -270,11 +204,9 @@ export default {
     BFormGroup,
     BButton,
     vSelect,
-    // AddOrderTable,
-    BTable,
-    BRow,
+    AddOrderTable,
     BCol,
-    BAvatar,
+    BRow,
   },
   props: {
     screens: {
@@ -315,68 +247,20 @@ export default {
       ],
       selectedItems: this.listSelected,
       selectedVariation: [],
+      selectedVariation1: [],
+      selectedVariation2: [],
+      selectedOptionVariant2: [],
       selectedProductVariant: [],
       selectedProdukIndexOnModal: -1,
       disableSubmitBtn: this.disableSubmitButtonStatus,
+      productSelect: '',
 
-      // Refactor
-      itemsOrder: [],
-      fieldsOrder: [
-        {
-          key: 'no',
-          label: 'No',
-        },
-        {
-          key: 'product_name',
-          label: 'Nama Produk',
-        },
-        {
-          key: 'price',
-          label: 'Harga Satuan',
-          tdClass: 'text-center',
-          thClass: 'text-center',
-        },
-        {
-          key: 'jumlah',
-          label: 'Jumlah',
-        },
-        {
-          key: 'subtotal',
-          label: 'Subtotal',
-          tdClass: 'text-center',
-          thClass: 'text-center',
-        },
-      ],
-      itemsChooseVariation: {
-        item: {
-          variant: [
-            {
-              variant_name: null,
-              variant_option: [],
-            },
-            {
-              variant_name: null,
-              variant_option: [],
-            },
-          ],
-        },
-      },
-      isActiveVariant: '',
-      isActiveVariantFirstChild: '',
+      isActiveVariant1: '',
+      isActiveVariant2: '',
+      isActiveVariant3: '',
     }
   },
   methods: {
-    chooseVariation(data) {
-      console.log(data)
-      this.itemsChooseVariation = data
-      this.$root.$emit('bv::show::modal', 'modal-choose-variation')
-    },
-    selectVariation(data) {
-      this.isActiveVariant = data.option_name
-    },
-    selectVariationFirstChild(data) {
-      this.isActiveVariantFirstChild = data.option_name
-    },
     onChangeDate(ctx) {
       if (ctx && ctx.activeYMD) {
         this.dateLabel = changeDate(ctx.activeYMD)
@@ -384,6 +268,28 @@ export default {
       }
     },
     handleShowVariationPopUp(productData) {
+      if (this.isActiveVariant1 !== '') {
+        this.isActiveVariant1 = ''
+      }
+      if (this.isActiveVariant2 !== '') {
+        this.isActiveVariant2 = ''
+      }
+      if (this.isActiveVariant3 !== '') {
+        this.isActiveVariant3 = ''
+      }
+      if (this.selectedVariation1 !== []) {
+        this.selectedVariation1 = []
+      }
+      if (this.selectedVariation2 !== []) {
+        this.selectedVariation2 = []
+      }
+      if (productData.variant[0] !== undefined) {
+        this.selectedVariation1.push(productData.variant[0])
+      }
+      if (productData.variant[1] !== undefined) {
+        this.selectedOptionVariant2 = productData.product_variant
+        this.selectedVariation2.push(productData.variant[1].variant_name)
+      }
       this.selectedVariation = productData
       this.$root.$emit('bv::show::modal', 'modal-1')
     },
@@ -400,6 +306,8 @@ export default {
       return -1
     },
     updateSelectedVariation(variantSelected) {
+      console.log('variantSelected')
+      console.log(variantSelected)
       const currentSelectedVariation = this.selectedVariation
       for (let i = 0; i < currentSelectedVariation.variant.length; i += 1) { /* loop on selected product */
         if (currentSelectedVariation.variant[i] && currentSelectedVariation.variant[i] && variantSelected) {
@@ -427,6 +335,9 @@ export default {
       this.selectedVariation = currentSelectedVariation
       this.$forceUpdate()
     },
+    refactorUpdateSelectedVariation(data) {
+      console.log(data)
+    },
     handleUpdateSelectedVariationInsideList(productData) {
       this.selectedItems = this.updateAllSelectedProduct(productData, this.selectedItems)
       /* reset the variable after update the variation option : when user click ok button on variation popup */
@@ -438,12 +349,32 @@ export default {
     },
     onAddProduct(itemSelected) {
       if (itemSelected) {
-        this.itemsOrder.push(itemSelected)
-      } else if (itemSelected === null) {
-        this.itemsOrder.splice(1, 1)
+        const currentIndex = this.selectedItems.length + 1
+        let container = {}
+        let selectedItemsContainer = []
+        container = itemSelected
+        selectedItemsContainer = this.selectedItems
+        container.no = currentIndex
+        container.id = `selectedProduct${itemSelected.product_id + (Math.floor(Math.random() * 1000))}`
+        container.selectedVariationData = []
+        container.input = 1
+        container.stockDisplay = itemSelected.stock
+        container.isStockExist = itemSelected.is_variant === '0' ? (countStock(itemSelected.product_variant) > 0) : (itemSelected.stock > 0)
+
+        const findIndex = checkSameById(container.id, this.selectedItems)
+        if (findIndex < 0) { /* push new item */
+          selectedItemsContainer.push({ ...container })
+        } else {
+          selectedItemsContainer.push({ ...container })
+        }
+        this.selectedItems = selectedItemsContainer
+        if (itemSelected.is_variant === '0') {
+          this.selectedItems = this.updateAllSelectedProduct(itemSelected, this.selectedItems)
+        }
+        this.onUpdateSelectedItemsOnParent()
+        this.checkValidButton()
+        this.$refs.tableAddOrderOne.refreshTable()
       }
-      console.log('itemsOrder')
-      console.log(this.itemsOrder)
     },
     updateAllSelectedProduct(newItemToPush, oldListSelected) {
       if (newItemToPush && oldListSelected && oldListSelected.length && oldListSelected.length > 0) {
@@ -457,6 +388,7 @@ export default {
               newListSelected[j].stockDisplay = this.genStockByVariant(newListSelected[j].selectedVariationData)
             }
           }
+
           /* generate same stock to set it later */
           if (newListSelected[j].product_name === newItemToPush.product_name
             && JSON.stringify(newListSelected[j].selectedVariationData) === JSON.stringify(newItemToPush.selectedVariationData)
@@ -473,7 +405,7 @@ export default {
       const newListSelected = listData
       for (let j = 0; j < listData.length; j += 1) {
         /* update all same product with same stock */
-        const fullStock = newItemToPush.is_variant ? this.genStockByVariant(newListSelected[j].selectedVariationData) : newItemToPush.stock
+        const fullStock = newItemToPush.is_variant !== '0' ? this.genStockByVariant(newListSelected[j].selectedVariationData) : newItemToPush.stock
         if (newListSelected[j].product_name === newItemToPush.product_name
           && JSON.stringify(newListSelected[j].selectedVariationData) === JSON.stringify(newItemToPush.selectedVariationData)
         ) {
@@ -495,23 +427,32 @@ export default {
       return 0
     },
     checkStock(currentInput, nameToFind, variantList) {
-      if (variantList && variantList.length && variantList.length > 0 && nameToFind !== '') {
-        let isStockAvailable = false
-        for (let j = 0; j < variantList.length; j += 1) {
-          if (variantList[j] && variantList[j].name && variantList[j].name === nameToFind) {
-            isStockAvailable = ((variantList[j].stock - currentInput) > 0)
-          }
+      let isStockAvailable = false
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < variantList.length; x++) {
+        if (variantList[x].stock === 0) {
+          isStockAvailable = false
+        } else {
+          isStockAvailable = true
         }
-        return isStockAvailable
       }
-      return false
+      return isStockAvailable
     },
     onChangeSelectedProduct(param, itemSelectedIndex, itemSelected) {
+      console.log('param')
+      console.log(param)
+      console.log('itemSelectedIndex')
+      console.log(itemSelectedIndex)
+      console.log('itemSelected')
+      console.log(itemSelected)
+      console.log('selectedItems')
+      console.log(this.selectedItems)
       if (itemSelected) {
         let currentAmount = itemSelected.input
         currentAmount = param === '-' ? (currentAmount - 1) : (currentAmount + 1)
         if (currentAmount === 0) {
           this.selectedItems.splice(itemSelectedIndex, 1)
+          this.productSelect = ''
         } else {
           this.selectedItems[itemSelectedIndex].input = currentAmount
         }
@@ -543,7 +484,7 @@ export default {
       const conditionArr = []
       if (this.selectedItems && this.selectedItems.length && this.selectedItems.length > 0) {
         for (let j = 0; j < this.selectedItems.length; j += 1) {
-          if (this.selectedItems[j].is_variant) {
+          if (this.selectedItems[j].is_variant !== '0') {
             if (this.selectedItems[j].selectedVariationData && this.selectedItems[j].selectedVariationData.length && this.selectedItems[j].selectedVariationData.length > 0) {
               conditionArr.push(true)
             } else {
@@ -560,6 +501,27 @@ export default {
     },
     onUpdateEnableSubmitButton(value) {
       this.$emit('onUpdateSubmitButtonStatus', value)
+    },
+    selectVariation1(data) {
+      console.log('selectVariation1')
+      console.log(data)
+      this.isActiveVariant1 = data.option_name
+      this.selectedVariation.selectedVariationData.push({
+        variationFirst: data,
+      })
+      console.log('selectedVariation')
+      console.log(this.selectedVariation)
+      this.$forceUpdate()
+    },
+    selectVariation2(data) {
+      console.log('selectVariation2')
+      console.log(data)
+      this.isActiveVariant2 = data.name
+      this.selectedVariation.selectedVariationData.push({
+        variationSecond: data,
+      })
+      console.log('selectedVariation')
+      console.log(this.selectedVariation)
     },
   },
 }

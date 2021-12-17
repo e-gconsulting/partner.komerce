@@ -200,7 +200,7 @@
                             variant="light-primary"
                             square
                             size="50px"
-                            :src="itemsData.product_image[0].image"
+                            :src="itemsData.product_image[0].images_path"
                           />
                           <b-avatar
                             v-else
@@ -402,29 +402,20 @@
                   class="d-flex justify-content-end mb-2"
                 >
                   <b-col cols="auto">
-                    <div v-if="expandIsActive === false">
+                    <div>
                       <b-button
                         v-b-toggle="`collapse-${String(index)}`"
                         variant="flat-dark"
                         size="sm"
-                        @click="buttonToExpand"
                       >
-                        Tampilkan Versi Lainnya
+                        <span class="when-opened">
+                          Tutup
+                        </span>
+                        <span class="when-closed">
+                          Tampilkan variasi lainnya
+                        </span>
                         <feather-icon
                           icon="ChevronDownIcon"
-                        />
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        v-b-toggle="`collapse-${String(index)}`"
-                        variant="flat-dark"
-                        size="sm"
-                        @click="buttonToCloseExpand"
-                      >
-                        Tutup
-                        <feather-icon
-                          icon="ChevronUpIcon"
                         />
                       </b-button>
                     </div>
@@ -806,8 +797,6 @@ export default {
 
       expandCollapseIsActive: false,
 
-      expandIsActive: false,
-
       // Filter
       name: '',
       stockFrom: '',
@@ -885,12 +874,6 @@ export default {
         })
       })
     },
-    buttonToExpand() {
-      this.expandIsActive = true
-    },
-    buttonToCloseExpand() {
-      this.expandIsActive = false
-    },
     resetFilter() {
       this.name = ''
       this.stockFrom = ''
@@ -921,9 +904,6 @@ export default {
     [dir] .table-list-product {
         display: none;
     }
-    /* [dir] .item-student-responsive {
-        display: inline-block;
-    } */
 }
 
 @media only screen and (min-width: 923px) {
@@ -934,5 +914,10 @@ export default {
         display: none;
     }
 }
+
+.collapsed > .when-opened,
+    :not(.collapsed) > .when-closed {
+        display: none;
+    }
 
 </style>

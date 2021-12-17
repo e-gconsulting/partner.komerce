@@ -41,7 +41,6 @@
               >
                 <b-form-input
                   v-model="skuName"
-                  type="number"
                   placeholder="Masukan SKU produk kamu"
                   :state="errors.length > 0 ? false:null"
                 />
@@ -176,11 +175,33 @@
                           #default="{errors}"
                           name="Variasi 1"
                         >
-                          <b-form-input
-                            v-model="variationName1"
-                            placeholder="Masukan nama variasi"
-                            :state="errors.length > 0 ? false:null"
-                          />
+                          <b-row class="d-flex align-items-center">
+                            <b-col
+                              cols="11"
+                              class=""
+                            >
+                              <b-form-input
+                                v-model="variationName1"
+                                placeholder="Masukan nama variasi"
+                                :state="errors.length > 0 ? false:null"
+                              />
+                            </b-col>
+                            <b-col
+                              cols="1"
+                              class="pr-0 pl-0 text-center"
+                            >
+                              <b-button
+                                class="btn-icon"
+                                variant="light-dark"
+                                size="sm"
+                                @click="removeVariant1"
+                              >
+                                <feather-icon
+                                  icon="Trash2Icon"
+                                />
+                              </b-button>
+                            </b-col>
+                          </b-row>
                           <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                       </b-form-group>
@@ -288,11 +309,33 @@
                           #default="{errors}"
                           name="Variasi 2"
                         >
-                          <b-form-input
-                            v-model="variationName2"
-                            placeholder="Masukan nama variasi"
-                            :state="errors.length > 0 ? false:null"
-                          />
+                          <b-row class="d-flex align-items-center">
+                            <b-col
+                              cols="11"
+                              class=""
+                            >
+                              <b-form-input
+                                v-model="variationName2"
+                                placeholder="Masukan nama variasi"
+                                :state="errors.length > 0 ? false:null"
+                              />
+                            </b-col>
+                            <b-col
+                              cols="1"
+                              class="pr-0 pl-0 text-center"
+                            >
+                              <b-button
+                                class="btn-icon"
+                                variant="light-dark"
+                                size="sm"
+                                @click="removeVariant2"
+                              >
+                                <feather-icon
+                                  icon="Trash2Icon"
+                                />
+                              </b-button>
+                            </b-col>
+                          </b-row>
                         </validation-provider>
                       </b-form-group>
                     </b-col>
@@ -388,10 +431,32 @@
                         label="Nama"
                         label-cols-md="3"
                       >
-                        <b-form-input
-                          v-model="variationName3"
-                          placeholder="Masukan nama variasi"
-                        />
+                        <b-row class="d-flex align-items-center">
+                          <b-col
+                            cols="11"
+                            class=""
+                          >
+                            <b-form-input
+                              v-model="variationName3"
+                              placeholder="Masukan nama variasi"
+                            />
+                          </b-col>
+                          <b-col
+                            cols="1"
+                            class="pr-0 pl-0 text-center"
+                          >
+                            <b-button
+                              class="btn-icon"
+                              variant="light-dark"
+                              size="sm"
+                              @click="removeVariant3"
+                            >
+                              <feather-icon
+                                icon="Trash2Icon"
+                              />
+                            </b-button>
+                          </b-col>
+                        </b-row>
                       </b-form-group>
                     </b-col>
 
@@ -690,6 +755,7 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.variant3.price"
+                                  type="number"
                                 />
                               </div>
                             </b-col>
@@ -704,6 +770,7 @@
                             >
                               <b-form-input
                                 v-model="item.variant2.price"
+                                type="number"
                               />
                             </b-col>
                           </div>
@@ -712,6 +779,7 @@
                           >
                             <b-form-input
                               v-model="data.item.variant1.price"
+                              type="number"
                             />
                           </div>
                         </div>
@@ -767,6 +835,7 @@
                               >
                                 <b-form-input
                                   v-model="itemsVariant.variant3.stock"
+                                  type="number"
                                 />
                               </div>
                             </b-col>
@@ -781,6 +850,7 @@
                             >
                               <b-form-input
                                 v-model="item.variant2.stock"
+                                type="number"
                               />
                             </b-col>
                           </div>
@@ -789,6 +859,7 @@
                           >
                             <b-form-input
                               v-model="data.item.variant1.stock"
+                              type="number"
                             />
                           </div>
                         </div>
@@ -919,7 +990,7 @@
             >
               <b-col class="d-flex align-items-center">
                 <validation-provider
-                  #default="errors"
+                  #default="{errors}"
                   name="Berat"
                   rules="required"
                 >
@@ -1008,16 +1079,19 @@
                 <b-form-checkbox
                   v-model="cod"
                   class="custom-control-primary"
+                  @change="validationPayment"
                 >
                   Bayar Ditempat (COD)
                 </b-form-checkbox>
                 <b-form-checkbox
                   v-model="transfer"
                   class="custom-control-primary"
+                  @change="validationPayment"
                 >
                   Transfer Bank
                 </b-form-checkbox>
               </div>
+              <small class="text-primary">{{ validatePayment }}</small>
             </b-form-group>
           </b-col>
 
@@ -1030,6 +1104,7 @@
               v-ripple.400="'rgba(186, 191, 199, 0.15)'"
               type="reset"
               variant="primary"
+              :disabled="validatePayment !== ''"
               @click.prevent="submitPublish"
             >
               <b-spinner
@@ -1076,9 +1151,10 @@ import draggable from 'vuedraggable'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import Onboarding from './Onboarding.vue'
-// import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
+import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -1110,8 +1186,9 @@ export default {
   data() {
     return {
       loadingSubmitPublish: false,
-      loading: false,
+      loadingSubmitDraft: false,
 
+      loading: false,
       isVariation: false,
       formChoices1: [{ choices: null }],
       formChoices2: [{ choices: null }],
@@ -1126,6 +1203,7 @@ export default {
       variationName2: null,
       variationName3: null,
       variantChoices1: null,
+
       // Table
       fields: [],
       variantItems: [],
@@ -1138,25 +1216,29 @@ export default {
       imageInitialFile: null,
       editMode: false,
       indexRow: null,
+
       // Data Store
       productName: '',
       skuName: '',
       descriptionProduct: '',
-      weightProduct: 0,
-      lengthProduct: 0,
-      widthProduct: 0,
-      heightProduct: 0,
+      weightProduct: null,
+      lengthProduct: null,
+      widthProduct: null,
+      heightProduct: null,
       flavours: [],
       cod: true,
       transfer: true,
       variantStore: [],
       optionStore: [],
+
       // Validation
       required,
       fieldImage: [],
       fieldPreviewImage: [],
       tesStore: [],
       productId: '',
+
+      validatePayment: '',
     }
   },
   computed: {
@@ -1217,6 +1299,10 @@ export default {
   },
   methods: {
     submitPublish() {
+      setTimeout(() => {
+        if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
+        this.loadingSubmitPublish = false
+      }, 2000)
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {
         if (this.formChoices1[x].choices === null) {
@@ -1238,7 +1324,19 @@ export default {
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.lengthProduct === null) {
+            this.lengthProduct = 0
+          }
+
+          if (this.widthProduct === null) {
+            this.widthProduct = 0
+          }
+
+          if (this.heightProduct === null) {
+            this.heightProduct = 0
+          }
           if (this.formChoices3[0] !== undefined) {
+            console.log('Variant 3')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1287,6 +1385,7 @@ export default {
               }
             }
           } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
+            console.log('variant 2')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1319,6 +1418,7 @@ export default {
               }
             }
           } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
+            console.log('varian 1')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1336,12 +1436,18 @@ export default {
               )
             }
           }
+          console.log('variantItems')
+          console.log(this.variantItems)
 
           if (this.cod === true) {
             this.flavours.push('COD')
+          } else {
+            this.flavours = []
           }
           if (this.transfer === true) {
             this.flavours.push('BANK TRANSFER')
+          } else {
+            this.flavours = []
           }
 
           // eslint-disable-next-line no-plusplus
@@ -1365,10 +1471,79 @@ export default {
             }
           }
 
-          setTimeout(() => {
-            if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
+          console.log('variantStore')
+          console.log(this.variantStore)
+          console.log('optionStore')
+          console.log(this.optionStore)
+
+          httpKomship.post('/v1/ob/product/create/1', {
+            product_name: this.productName,
+            sku: this.skuName,
+            description: this.descriptionProduct,
+            weight: this.weightProduct,
+            length: this.lengthProduct,
+            width: this.widthProduct,
+            height: this.heightProduct,
+            price: this.priceNotVariation,
+            stock: this.stockNotVariation,
+            flavours: this.flavours,
+            variant_option: this.variantStore,
+            option: this.optionStore,
+          }, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+          }).then(response => {
+            this.productId = response.data.data.product_id
+            console.log(response.data.data)
+            if (this.imageFile !== null) {
+              // Store image
+              const formData = new FormData()
+              formData.append('product_id', response.data.data.product_id)
+              formData.append('image_path', this.imageFile)
+              httpKomship.post('/v1/ob/product/upload-image', formData,
+                {
+                  headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+                }).then(() => {
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success menambahkan produk',
+                    variant: 'success',
+                  },
+                })
+                this.loadingSubmitPublish = false
+              }).catch(() => {
+                this.loadingSubmit = false
+                this.$toast({
+                  component: ToastificationContentVue,
+                  props: {
+                    title: 'Gagal',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal menambahkan produk, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
+                })
+              })
+            } else {
+              this.loadingSubmitPublish = false
+              setTimeout(() => {
+                if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
+                this.loadingSubmitPublish = false
+              }, 2000)
+            }
+          }).catch(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal menambahkan produk, silahkan coba lagi!',
+                variant: 'danger',
+              },
+            })
             this.loadingSubmitPublish = false
-          }, 2000)
+          })
         } else {
           this.loadingSubmitPublish = false
         }
@@ -1398,6 +1573,7 @@ export default {
         }
       }
       if (this.formChoices3[0] !== undefined) {
+        console.log('variant 3')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1435,6 +1611,7 @@ export default {
         }
       }
       if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
+        console.log('variant 2')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1460,6 +1637,7 @@ export default {
         }
       }
       if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
+        console.log('variant 1')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1510,6 +1688,7 @@ export default {
           class: 'col-action',
         },
       )
+      console.log(this.variantItems)
       return this.variantItems
     },
     addVariation() {
@@ -1554,12 +1733,39 @@ export default {
     updateTable() {
       this.editMode = false
     },
+    removeVariant1() {
+      this.variationName1 = ''
+      this.variationFields1 = false
+      if (this.variationFields2 === false && this.variationFields3 === false) {
+        this.isVariation = false
+      }
+    },
+    removeVariant2() {
+      this.variationName2 = ''
+      this.variationFields2 = false
+      this.activeAddChoices1 = true
+      if (this.variationFields1 === false && this.variationFields3 === false) {
+        this.isVariation = false
+      }
+    },
+    removeVariant3() {
+      this.variationName3 = ''
+      this.variationFields3 = false
+      this.activeAddChoices2 = true
+      if (this.variationFields1 === false && this.variationFields2 === false) {
+        this.isVariation = false
+      }
+    },
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
-    handlePublishButton() {
-      if (this.profile.is_onboarding) this.$refs.onboardingElement.showModal()
+    validationPayment() {
+      if (this.cod === false && this.transfer === false) {
+        this.validatePayment = 'Metode pembayaran harus dipilih salah satu!'
+      } else {
+        this.validatePayment = ''
+      }
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },

@@ -941,7 +941,7 @@
                 rules="required"
               >
                 <b-form-input
-                  v-model="stockNotVariation"
+                  v-model="stockProduct"
                   type="number"
                   placeholder="Masukan jumlah stok barang"
                   :state="errors.length > 0 ? false:null"
@@ -965,7 +965,7 @@
                 rules="required"
               >
                 <b-form-input
-                  v-model="priceNotVariation"
+                  v-model="priceProduct"
                   type="number"
                   placeholder="Rp  |  Masukan harga barang"
                   :state="errors.length > 0 ? false:null"
@@ -1211,18 +1211,18 @@ export default {
       variationName2: null,
       variationName3: null,
       variantChoices1: null,
+
       // Table
       fields: [],
       variantItems: [],
       stock: '',
       price: '',
-      stockNotVariation: '',
-      priceNotVariation: '',
       fieldEditData: '',
       imageFile: null,
       imageInitialFile: null,
       editMode: false,
       indexRow: null,
+
       // Data Store
       productName: '',
       skuName: '',
@@ -1236,13 +1236,15 @@ export default {
       transfer: true,
       variantStore: [],
       optionStore: [],
+      priceProduct: 0,
+      stockProduct: 0,
+
       // Validation
       required,
       fieldImage: [],
       fieldPreviewImage: [],
       tesStore: [],
       productId: '',
-
       validatePayment: '',
     }
   },
@@ -1475,8 +1477,8 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.priceNotVariation,
-            stock: this.stockNotVariation,
+            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
+            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
@@ -1722,8 +1724,8 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.price,
-            stock: this.stock,
+            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
+            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,

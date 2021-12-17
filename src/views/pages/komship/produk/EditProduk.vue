@@ -1156,8 +1156,8 @@ export default {
       // Table
       fields: [],
       variantItems: [],
-      stock: '',
-      price: '',
+      stock: null,
+      price: null,
 
       fieldEditData: '',
 
@@ -1178,8 +1178,8 @@ export default {
       heightProduct: null,
       cod: false,
       transfer: false,
-      stockProduct: '',
-      priceProduct: '',
+      stockProduct: 0,
+      priceProduct: 0,
       variantStore: [],
       optionStore: [],
 
@@ -1281,6 +1281,8 @@ export default {
 
         if (data.product_is_variant === '1') {
           this.isVariation = true
+          this.stockProduct = 0
+          this.priceProduct = 0
         }
 
         if (data.variants[0] !== undefined) {
@@ -1394,18 +1396,14 @@ export default {
             label: String(this.variationName3),
           })
         }
-        if (this.price !== null) {
-          this.fields.push({
-            key: 'price',
-            label: 'Harga',
-          })
-        }
-        if (this.stock !== null) {
-          this.fields.push({
-            key: 'stock',
-            label: 'Stok',
-          })
-        }
+        this.fields.push({
+          key: 'price',
+          label: 'Harga',
+        })
+        this.fields.push({
+          key: 'stock',
+          label: 'Stok',
+        })
         this.fields.push(
           {
             key: 'action',
@@ -1609,18 +1607,14 @@ export default {
           label: String(this.variationName3),
         })
       }
-      if (this.price !== null) {
-        this.fields.push({
-          key: 'price',
-          label: 'Harga',
-        })
-      }
-      if (this.stock !== null) {
-        this.fields.push({
-          key: 'stock',
-          label: 'Stok',
-        })
-      }
+      this.fields.push({
+        key: 'price',
+        label: 'Harga',
+      })
+      this.fields.push({
+        key: 'stock',
+        label: 'Stok',
+      })
       this.fields.push(
         {
           key: 'action',
@@ -1754,8 +1748,8 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.price,
-            stock: this.stock,
+            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
+            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
             status: 1,
             flavours: this.flavours,
             variant_option: this.variantStore,
@@ -1953,9 +1947,9 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.price,
-            stock: this.stock,
-            status: '0',
+            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
+            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
+            status: 0,
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,

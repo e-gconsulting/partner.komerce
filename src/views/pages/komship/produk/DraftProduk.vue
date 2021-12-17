@@ -187,7 +187,7 @@
                 <b-row>
                   <b-col
                     cols="3"
-                    class="pb-3 mt-3"
+                    class="pb-3"
                   >
                     <b-row class="ml-2">
                       <b-container
@@ -200,7 +200,7 @@
                             variant="light-primary"
                             square
                             size="50px"
-                            :src="itemsData.product_image[0].image"
+                            :src="itemsData.product_image[0].images_path"
                           />
                           <b-avatar
                             v-else
@@ -220,7 +220,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="3"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -234,7 +234,7 @@
                   <b-col
                     v-else
                     cols="3"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       Tidak Ada Variasi
@@ -243,7 +243,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="2"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -257,7 +257,7 @@
                   <b-col
                     v-else
                     cols="2"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       Rp. {{ formatPrice(itemsData.price) }}
@@ -266,7 +266,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="2"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -280,7 +280,7 @@
                   <b-col
                     v-else
                     cols="2"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       {{ itemsData.stock }}
@@ -289,7 +289,7 @@
                   <b-col
                     v-if="itemsData.variants[0] !== undefined"
                     cols="1"
-                    class="mt-2"
+                    class=""
                   >
                     <div
                       v-for="(itemsVariant, indexVariant) in itemsData.variants.slice(0,3)"
@@ -303,7 +303,7 @@
                   <b-col
                     v-else
                     cols="1"
-                    class="d-flex align-items-center"
+                    class=""
                   >
                     <p class="ml-2">
                       {{ itemsData.sold }}
@@ -311,7 +311,7 @@
                   </b-col>
                   <b-col
                     cols="1"
-                    class="mt-4"
+                    class=""
                   >
                     <b-button
                       class="btn-icon"
@@ -328,7 +328,7 @@
                       class="btn-icon"
                       size="sm"
                       variant="flat-dark"
-                      @click="confirmDelete(itemsData.product_id)"
+                      @click="showConfirmDelete(itemsData.product_id)"
                     >
                       <feather-icon
                         icon="Trash2Icon"
@@ -342,7 +342,7 @@
                 >
                   <b-collapse
                     :id="`collapse-${String(index)}`"
-                    class="mt-2"
+                    class=""
                   >
                     <b-row>
                       <b-col cols="3" />
@@ -402,29 +402,20 @@
                   class="d-flex justify-content-end mb-2"
                 >
                   <b-col cols="auto">
-                    <div v-if="expandIsActive === false">
+                    <div>
                       <b-button
                         v-b-toggle="`collapse-${String(index)}`"
                         variant="flat-dark"
                         size="sm"
-                        @click="buttonToExpand"
                       >
-                        Tampilkan Versi Lainnya
+                        <span class="when-opened">
+                          Tutup
+                        </span>
+                        <span class="when-closed">
+                          Tampilkan variasi lainnya
+                        </span>
                         <feather-icon
                           icon="ChevronDownIcon"
-                        />
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        v-b-toggle="`collapse-${String(index)}`"
-                        variant="flat-dark"
-                        size="sm"
-                        @click="buttonToCloseExpand"
-                      >
-                        Tutup
-                        <feather-icon
-                          icon="ChevronUpIcon"
                         />
                       </b-button>
                     </div>
@@ -502,7 +493,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -529,7 +520,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -558,7 +549,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -587,7 +578,7 @@
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
-                  class="mt-2"
+                  class=""
                 >
                   <div
                     v-for="(itemsVariant, indexVariant) in data.item.variants.slice(3, data.item.variants.length)"
@@ -806,8 +797,6 @@ export default {
 
       expandCollapseIsActive: false,
 
-      expandIsActive: false,
-
       // Filter
       name: '',
       stockFrom: '',
@@ -885,12 +874,6 @@ export default {
         })
       })
     },
-    buttonToExpand() {
-      this.expandIsActive = true
-    },
-    buttonToCloseExpand() {
-      this.expandIsActive = false
-    },
     resetFilter() {
       this.name = ''
       this.stockFrom = ''
@@ -921,9 +904,6 @@ export default {
     [dir] .table-list-product {
         display: none;
     }
-    /* [dir] .item-student-responsive {
-        display: inline-block;
-    } */
 }
 
 @media only screen and (min-width: 923px) {
@@ -934,5 +914,10 @@ export default {
         display: none;
     }
 }
+
+.collapsed > .when-opened,
+    :not(.collapsed) > .when-closed {
+        display: none;
+    }
 
 </style>
