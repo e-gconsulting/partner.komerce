@@ -10,7 +10,7 @@
           </b-input-group-prepend>
           <b-form-input
             v-model="customerName"
-            placeholder="Example"
+            placeholder="Masukan Nama Customer"
             @input="filterCustomer"
           />
         </b-input-group>

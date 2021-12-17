@@ -1,3 +1,5 @@
+/* eslint-disable no-return-assign */
+/* eslint-disable consistent-return */
 import vSelect from 'vue-select'
 import axioskomsipdev from '@/libs/axioskomsipdev'
 
@@ -121,6 +123,34 @@ export default {
     }, 1000)
   },
   methods: {
+    changeCashbackTo(val) {
+      if (val > 100 || val.length > 3) {
+        return this.cashback_to = 100
+      }
+    },
+    changeSff(val) {
+      if (val > 100 || val.length > 3) {
+        return this.service_fee_from = 100
+      }
+    },
+    changeSft(val) {
+      if (val > 100 || val.length > 3) {
+        return this.service_fee_to = 100
+      }
+    },
+    changeCashbackFrom(val) {
+      if (val > 100 || val.length > 3) {
+        return this.cashback_from = 100
+      }
+    },
+    onlyNumber($event) {
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault()
+      }
+
+      // console.log($event.keyCode); //keyCodes value
+    },
     tambahKriteria(criteriasDataParams) {
       criteriasDataParams.push({ ...initCriteria })
     },
