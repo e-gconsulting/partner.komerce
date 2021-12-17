@@ -44,7 +44,7 @@
                       class="font-weight-bolder text-capitalize"
                       colspan="2"
                     >Ke Pengguna</b-th>
-                    <b-th></b-th>
+                    <b-th />
                   </b-tr>
                 </template>
                 <template #head(shipping_name)="data">
@@ -158,8 +158,8 @@
 
           </div>
           <b-button
-            variant="gradient-danger"
-            size="lg"
+            variant="outline-primary"
+            size="sm"
             class="btn-icon rounded btn-float-custom"
             @click="$router.push('/biaya-ekspedisi/tambah')"
           >
