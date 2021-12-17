@@ -250,7 +250,7 @@ export default {
       this.filterForm = {
         date: {},
         product: '',
-        method: null,
+        method: this.selectedExp && this.selectedExp.length > 0 ? this.selectedExp[0] : '',
       }
       this.$emit('onResetForm', this.filterForm)
     },
