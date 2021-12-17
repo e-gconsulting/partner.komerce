@@ -38,8 +38,6 @@
 import {
   BCard,
 } from 'bootstrap-vue'
-// import useJwt from '@/auth/jwt/useJwt'
-// import axios2 from '../setting-kompship/baseUrl'
 import AddOrderInput from './AddOrderInput.vue'
 import AddOrderDetail from './AddOrderDetail.vue'
 import Onboarding from '../onboarding/Onboarding.vue'
@@ -91,7 +89,6 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
         console.log('failed to get the profile data')
@@ -101,7 +98,6 @@ export default {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
         console.log('failed to get the product data by partner')
