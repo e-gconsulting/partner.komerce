@@ -416,6 +416,11 @@
                         </span>
                         <feather-icon
                           icon="ChevronDownIcon"
+                          class="when-closed"
+                        />
+                        <feather-icon
+                          icon="ChevronUpIcon"
+                          class="when-opened"
                         />
                       </b-button>
                     </div>
@@ -627,9 +632,19 @@
                 variant="flat-dark"
                 size="sm"
               >
-                Tampilkan variasi lainnya
+                <span class="when-opened">
+                  Tutup
+                </span>
+                <span class="when-closed">
+                  Tampilkan variasi lainnya
+                </span>
                 <feather-icon
                   icon="ChevronDownIcon"
+                  class="when-closed"
+                />
+                <feather-icon
+                  icon="ChevronUpIcon"
+                  class="when-opened"
                 />
               </b-button>
             </template>
@@ -825,7 +840,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
         this.variantData = data
         this.loading = false
         return this.variantData

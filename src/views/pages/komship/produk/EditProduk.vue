@@ -1253,7 +1253,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
         this.fieldEditVariation = data
         this.productName = data.product_name
         this.skuName = data.product_sku
@@ -1261,7 +1260,6 @@ export default {
         if (data.product_image[0] !== undefined) {
           this.imageInitialFile = data.product_image[0].images_path
         }
-        console.log(data)
         this.stockProduct = data.product_stock
         this.priceProduct = data.product_price
         this.weightProduct = data.product_weight
@@ -1566,8 +1564,6 @@ export default {
           }
         }
       }
-
-      console.log(this.variantItems)
 
       // Delete empty choices
       // eslint-disable-next-line no-plusplus
@@ -1954,8 +1950,6 @@ export default {
             variant_option: this.variantStore,
             option: this.optionStore,
           }
-
-          console.log(params)
 
           httpKomship.put(`/v1/product/update/${this.productId}`, params, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
