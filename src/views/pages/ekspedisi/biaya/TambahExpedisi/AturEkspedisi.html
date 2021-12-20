@@ -33,7 +33,6 @@
                 size="sm"
                 style="font-weight: 400;font-size:16px;"
                 class="btn-custom btn-custom--edit"
-                @click="simpanFormEdit"
               >Simpan
               </b-button>
             </div>
@@ -193,10 +192,12 @@
                 </span>
               </b-col>
               <b-col md="3">
-                <b-form-input
-                  id="max_pickup_time"
-                  v-model="max_pickup_time"
-                  placeholder="15:00 WIB"
+                <b-form-timepicker
+                v-model="max_pickup_time"
+                aria-controls="example-input"
+                locale="en"
+                :hour12="false"
+                @context="onChangeTime"
                 />
               </b-col>
             </b-row>
@@ -328,7 +329,7 @@
                     :options="optionsKota"
                     :reduce="optionsKota => optionsKota.value"
                     multiple
-                    label="text"
+                    label="label"
                   />
                 </b-col>
               </b-row>

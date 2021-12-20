@@ -73,6 +73,7 @@
                 <label
                   for="uploadImage"
                 >
+
                   <b-avatar
                     v-if="imageFile === null"
                     variant="light-dark"
@@ -590,17 +591,17 @@
                       <b-form-input
                         v-model="price"
                         type="text"
-                        @keypress="onlyNumber"
                         placeholder="Rp | Harga"
+                        @keypress="onlyNumber"
                       />
                     </b-col>
 
                     <b-col md="2">
                       <b-form-input
                         v-model="stock"
-                        @keypress="onlyNumber"
                         type="text"
                         placeholder="Stok"
+                        @keypress="onlyNumber"
                       />
                     </b-col>
 
@@ -865,9 +866,9 @@
                             v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
                           >
                             <b-form-input
-                              @keypress="onlyNumber"
                               v-model="data.item.variant1.stock"
                               type="text"
+                              @keypress="onlyNumber"
                             />
                           </div>
                         </div>
@@ -951,9 +952,9 @@
                 <b-form-input
                   v-model="stockNotVariation"
                   type="text"
-                  @keypress="onlyNumber"
                   placeholder="Masukan jumlah stok barang"
                   :state="errors.length > 0 ? false:null"
+                  @keypress="onlyNumber"
                 />
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
@@ -976,9 +977,9 @@
                 <b-form-input
                   v-model="priceNotVariation"
                   type="text"
-                  @keypress="onlyNumber"
                   placeholder="Rp  |  Masukan harga barang"
                   :state="errors.length > 0 ? false:null"
+                  @keypress="onlyNumber"
                 />
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
@@ -1010,9 +1011,9 @@
                       id="hi-first-name"
                       v-model="weightProduct"
                       type="text"
-                      @keypress="onlyNumber"
                       placeholder="1000"
                       :state="errors.length > 0 ? false:null"
+                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       gram

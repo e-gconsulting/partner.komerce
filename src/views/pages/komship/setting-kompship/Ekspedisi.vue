@@ -140,7 +140,7 @@ export default {
 
       itemsSendKompship: [
         {
-          send_kompship: 'Ketika mengaktifkan pengiriman mandiri kamu akan berhenti berlangganan membership komship dan tidak dapat menggunakan sebagian fitur Komship.',
+          send_kompship: 'Ketika mengaktifkan pengiriman Non Komship, maka kamu tidak mendapatkan cashback dan fitur lainnya yang ada di membership Komship (Mandiri menjadi Non Komship) ',
         },
       ],
 
