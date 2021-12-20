@@ -796,6 +796,19 @@ export default {
     },
     onPostOrder(formData) {
       this.isSubmitting = true
+      if (formData.bank === null) {
+        // eslint-disable-next-line no-param-reassign
+        formData.bank = 0
+      }
+      if (formData.bank_account_name === null) {
+        // eslint-disable-next-line no-param-reassign
+        formData.bank_account_name = 0
+      }
+      if (formData.bank_account_no === null) {
+        // eslint-disable-next-line no-param-reassign
+        formData.bank_account_no = 0
+      }
+      console.log(formData)
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
         if (data) {

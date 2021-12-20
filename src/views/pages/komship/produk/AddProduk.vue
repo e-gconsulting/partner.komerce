@@ -950,8 +950,8 @@
                 rules="required"
               >
                 <b-form-input
-                  v-model="stockNotVariation"
-                  type="text"
+                  v-model="stockProduct"
+                  type="number"
                   placeholder="Masukan jumlah stok barang"
                   :state="errors.length > 0 ? false:null"
                   @keypress="onlyNumber"
@@ -975,8 +975,8 @@
                 rules="required"
               >
                 <b-form-input
-                  v-model="priceNotVariation"
-                  type="text"
+                  v-model="priceProduct"
+                  type="number"
                   placeholder="Rp  |  Masukan harga barang"
                   :state="errors.length > 0 ? false:null"
                   @keypress="onlyNumber"
@@ -1227,18 +1227,18 @@ export default {
       variationName2: null,
       variationName3: null,
       variantChoices1: null,
+
       // Table
       fields: [],
       variantItems: [],
       stock: '',
       price: '',
-      stockNotVariation: '',
-      priceNotVariation: '',
       fieldEditData: '',
       imageFile: null,
       imageInitialFile: null,
       editMode: false,
       indexRow: null,
+
       // Data Store
       productName: '',
       skuName: '',
@@ -1252,13 +1252,15 @@ export default {
       transfer: true,
       variantStore: [],
       optionStore: [],
+      priceProduct: 0,
+      stockProduct: 0,
+
       // Validation
       required,
       fieldImage: [],
       fieldPreviewImage: [],
       tesStore: [],
       productId: '',
-
       validatePayment: '',
     }
   },
@@ -1350,7 +1352,6 @@ export default {
             this.heightProduct = 0
           }
           if (this.formChoices3[0] !== undefined) {
-            console.log('Variant 3')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1399,7 +1400,6 @@ export default {
               }
             }
           } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
-            console.log('variant 2')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1432,7 +1432,6 @@ export default {
               }
             }
           } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
-            console.log('varian 1')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1450,8 +1449,6 @@ export default {
               )
             }
           }
-          console.log('variantItems')
-          console.log(this.variantItems)
 
           if (this.cod === true) {
             this.flavours.push('COD')
@@ -1485,11 +1482,6 @@ export default {
             }
           }
 
-          console.log('variantStore')
-          console.log(this.variantStore)
-          console.log('optionStore')
-          console.log(this.optionStore)
-
           httpKomship.post('/v1/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
@@ -1498,8 +1490,8 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.priceNotVariation,
-            stock: this.stockNotVariation,
+            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
+            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
@@ -1507,7 +1499,6 @@ export default {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
             this.productId = response.data.data.product_id
-            console.log(response.data.data)
             if (this.imageFile !== null) {
               // Store image
               const formData = new FormData()
@@ -1597,7 +1588,6 @@ export default {
             this.heightProduct = 0
           }
           if (this.formChoices3[0] !== undefined) {
-            console.log('Variant 3')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1646,7 +1636,6 @@ export default {
               }
             }
           } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
-            console.log('variant 2')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1679,7 +1668,6 @@ export default {
               }
             }
           } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
-            console.log('varian 1')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1697,8 +1685,6 @@ export default {
               )
             }
           }
-          console.log('variantItems')
-          console.log(this.variantItems)
 
           if (this.cod === true) {
             this.flavours.push('COD')
@@ -1732,11 +1718,6 @@ export default {
             }
           }
 
-          console.log('variantStore')
-          console.log(this.variantStore)
-          console.log('optionStore')
-          console.log(this.optionStore)
-
           httpKomship.post('/v1/product/create/0', {
             product_name: this.productName,
             sku: this.skuName,
@@ -1745,8 +1726,8 @@ export default {
             length: this.lengthProduct,
             width: this.widthProduct,
             height: this.heightProduct,
-            price: this.price,
-            stock: this.stock,
+            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
+            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
             flavours: this.flavours,
             variant_option: this.variantStore,
             option: this.optionStore,
@@ -1754,7 +1735,6 @@ export default {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
             this.productId = response.data.data.product_id
-            console.log(response.data.data)
             if (this.imageFile !== null) {
               // Store image
               const formData = new FormData()
@@ -1832,7 +1812,6 @@ export default {
         }
       }
       if (this.formChoices3[0] !== undefined) {
-        console.log('variant 3')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1870,7 +1849,6 @@ export default {
         }
       }
       if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
-        console.log('variant 2')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1896,7 +1874,6 @@ export default {
         }
       }
       if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
-        console.log('variant 1')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1947,7 +1924,6 @@ export default {
           class: 'col-action',
         },
       )
-      console.log(this.variantItems)
       return this.variantItems
     },
     addVariation() {
