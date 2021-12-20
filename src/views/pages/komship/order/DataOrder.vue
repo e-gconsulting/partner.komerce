@@ -184,7 +184,7 @@ export default {
         if (type === 'send') {
           newItem = oldItem
         } else {
-          for (let i = 0; i < oldItem.length; i += 1) {
+          for (let i = 0; i < oldItem.length; i += 2) {
             if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
               newItem.push(oldItem[i])
             }
@@ -193,7 +193,7 @@ export default {
         if (type === 'sent') {
           newItem = oldItem
         } else {
-          for (let i = 0; i < oldItem.length; i += 1) {
+          for (let i = 0; i < oldItem.length; i += 3) {
             if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
               newItem.push(oldItem[i])
             }
@@ -202,7 +202,7 @@ export default {
         if (type === 'received') {
           newItem = oldItem
         } else {
-          for (let i = 0; i < oldItem.length; i += 1) {
+          for (let i = 0; i < oldItem.length; i += 4) {
             if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
               newItem.push(oldItem[i])
             }
@@ -211,7 +211,7 @@ export default {
         if (type === 'retur') {
           newItem = oldItem
         } else {
-          for (let i = 0; i < oldItem.length; i += 1) {
+          for (let i = 0; i < oldItem.length; i += 5) {
             if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
               newItem.push(oldItem[i])
             }
