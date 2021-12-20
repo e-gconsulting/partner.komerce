@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import { ToastPlugin, ModalPlugin, PopoverPlugin } from 'bootstrap-vue'
-import { VuePlugin } from 'vuera'
+
 import VueCompositionAPI from '@vue/composition-api'
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
@@ -33,7 +33,7 @@ import '@/libs/filters'
 Vue.use(ToastPlugin)
 Vue.use(ModalPlugin)
 Vue.use(PopoverPlugin)
-Vue.use(VuePlugin)
+
 // Composition API
 Vue.use(VueCompositionAPI)
 Vue.use(Dropdown)

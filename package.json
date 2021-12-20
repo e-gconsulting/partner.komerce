@@ -82,7 +82,6 @@
     "vue2-google-maps": "^0.10.7",
     "vue2-leaflet": "2.5.2",
     "vuedraggable": "2.24.3",
-    "vuera": "^0.2.7",
     "vuex": "3.6.0",
     "vuex-map-fields": "^1.4.1",
     "vuex-persistedstate": "^4.1.0"
