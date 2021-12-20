@@ -181,6 +181,42 @@ export default {
             }
           }
         }
+        if (type === 'send') {
+          newItem = oldItem
+        } else {
+          for (let i = 0; i < oldItem.length; i += 2) {
+            if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
+              newItem.push(oldItem[i])
+            }
+          }
+        }
+        if (type === 'sent') {
+          newItem = oldItem
+        } else {
+          for (let i = 0; i < oldItem.length; i += 3) {
+            if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
+              newItem.push(oldItem[i])
+            }
+          }
+        }
+        if (type === 'received') {
+          newItem = oldItem
+        } else {
+          for (let i = 0; i < oldItem.length; i += 4) {
+            if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
+              newItem.push(oldItem[i])
+            }
+          }
+        }
+        if (type === 'retur') {
+          newItem = oldItem
+        } else {
+          for (let i = 0; i < oldItem.length; i += 5) {
+            if (oldItem[i] && oldItem[i].order_status.toLowerCase() === this.filterHeaderOption[type]) {
+              newItem.push(oldItem[i])
+            }
+          }
+        }
       }
       this.tableData.items = newItem
       this.excelData.items = newItem
@@ -188,7 +224,7 @@ export default {
     handleCountNeedToSendOrder() {
       let needToSendCounterTmp = 0
       for (let i = 0; i < this.tableItemsAllData.length; i += 1) {
-        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'perlu dikirim') {
+        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'Perlu dikirim') {
           needToSendCounterTmp += 1
         }
       }
