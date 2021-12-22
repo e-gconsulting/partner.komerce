@@ -113,7 +113,6 @@
         <div
           id="input-pickup-vehicle"
           class="add-pickup-input-vehicle-btn-wrapper"
-          @click="handlechoicevehicle(motor)"
         >
           <b-button
             v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
