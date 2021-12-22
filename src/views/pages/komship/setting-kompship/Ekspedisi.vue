@@ -128,7 +128,7 @@ export default {
 
       fieldsSendKompship: [
         {
-          key: 'send_kompship', label: 'Pengiriman non komship',
+          key: 'send_kompship', label: 'Pengiriman  komship',
         },
       ],
 

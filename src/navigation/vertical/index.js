@@ -51,6 +51,8 @@ import pickup from './pickup'
 import customer from './customer'
 import settingKompship from './setting-kompship'
 import keuangan from './keuangan'
+// import hiring from './hiring'
+
 // Komship Admin
 import komship from './komship'
 
@@ -79,6 +81,7 @@ export default [
   ...customer,
   ...keuangan,
   ...settingKompship,
+  // ...hiring,
 
   ...dashboardKomplace,
   ...monitoring,
