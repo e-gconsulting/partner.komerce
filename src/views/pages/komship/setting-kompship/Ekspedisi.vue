@@ -128,7 +128,7 @@ export default {
 
       fieldsSendKompship: [
         {
-          key: 'send_kompship', label: 'Pengiriman Komship',
+          key: 'send_kompship', label: 'Pengiriman non komship',
         },
       ],
 
@@ -140,7 +140,7 @@ export default {
 
       itemsSendKompship: [
         {
-          send_kompship: 'Ketika mengaktifkan pengiriman Non Komship, maka kamu tidak mendapatkan cashback dan fitur lainnya yang ada di membership Komship (Mandiri menjadi Non Komship) ',
+          send_kompship: 'Ketika mengaktifkan pengiriman Non Komship, maka kamu tidak mendapatkan cashback dan fitur lainnya yang ada di membership Komship ',
         },
       ],
 
