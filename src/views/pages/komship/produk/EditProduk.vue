@@ -890,7 +890,6 @@
             </b-col>
 
             <b-col
-              v-if="isVariation === false"
               cols="12"
             >
               <b-form-group
@@ -899,6 +898,8 @@
               >
                 <b-form-input
                   v-model="stockProduct"
+                  type="text"
+                  @keypress="onlyNumber"
                   placeholder="Masukan jumlah stok barang"
                 />
               </b-form-group>
@@ -914,6 +915,8 @@
               >
                 <b-form-input
                   v-model="priceProduct"
+                  type="text"
+                  @keypress="onlyNumber"
                   placeholder="Rp  |  Masukan harga barang"
                 />
               </b-form-group>
@@ -937,7 +940,8 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="weightProduct"
-                      type="number"
+                      type="text"
+                      @keypress="onlyNumber"
                       placeholder="1000"
                     />
                     <b-input-group-append is-text>
@@ -963,7 +967,8 @@
                       <b-form-input
                         id="hi-first-name"
                         v-model="lengthProduct"
-                        type="number"
+                        type="text"
+                        @keypress="onlyNumber"
                         placeholder="P"
                       />
                       <b-input-group-append is-text>
@@ -976,7 +981,8 @@
                       <b-form-input
                         id="hi-first-name"
                         v-model="widthProduct"
-                        type="number"
+                        type="text"
+                        @keypress="onlyNumber"
                         placeholder="L"
                       />
                       <b-input-group-append is-text>
@@ -989,7 +995,8 @@
                       <b-form-input
                         id="hi-first-name"
                         v-model="heightProduct"
-                        type="number"
+                        type="text"
+                        @keypress="onlyNumber"
                         placeholder="T"
                       />
                       <b-input-group-append is-text>
@@ -1244,6 +1251,13 @@ export default {
     this.loadProduct()
   },
   methods: {
+    onlyNumber($event) {
+      // console.log($event.keyCode); //keyCodes value
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
+        $event.preventDefault()
+      }
+    },
     loadProduct() {
       this.loading = true
       if (this.variantItems !== []) {
