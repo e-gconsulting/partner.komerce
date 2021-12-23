@@ -761,8 +761,8 @@ export default {
             cartItem = {
               product_id: dataArr[j].product_id,
               product_name: dataArr[j].product_name,
-              variant_id: isVariant ? variantData.id : null,
-              variant_name: isVariant ? variantData.name : null,
+              variant_id: isVariant ? variantData.id : 0,
+              variant_name: isVariant ? variantData.name : 0,
               product_price: isVariant ? variantData.price : dataArr[j].price,
               product_weight: dataArr[j].weight,
               qty: dataArr[j].stockToDisplay,
