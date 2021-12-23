@@ -15,7 +15,7 @@
                   </b-input-group-prepend>
                   <b-form-input
                     v-model="searchProduct"
-                    placeholder="Cari Nama Produk atau SKU"
+                    placeholder="Example"
                     @input="getProduct"
                   />
                 </b-input-group>

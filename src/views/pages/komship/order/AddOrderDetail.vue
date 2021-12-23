@@ -199,7 +199,6 @@
           type="number"
           class="add-order-product-input-v-select"
           placeholder="0"
-          @input="maxPotongan"
         />
       </b-form-group>
     </section>
@@ -593,7 +592,7 @@ export default {
       let selectedCost = {}
       if (dataArr && dataArr.length && dataArr.length > 0) {
         for (let j = 0; j < dataArr.length; j += 1) {
-          if (dataArr[j] && dataArr[j].shipping_type) {
+          if (dataArr[j] && dataArr[j].shipping_type && dataArr[j].shipping_type === this.customerExpeditionOption) {
             selectedCost = dataArr[j]
           }
         }
@@ -646,19 +645,6 @@ export default {
         },
         buttonsStyling: false,
       })
-    },
-    alertSuccess(textWarn) {
-      return this.$swal({
-        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
-        imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-        showCloseButton: false,
-        focusConfirm: true,
-        confirmButtonText: 'Oke',
-        customClass: {
-          confirmButton: 'btn bg-green btn-primary rounded-lg',
-        },
-        buttonsStyling: false,
-      }).then(() => this.$router.push('/data-order'))
     },
     formCheck() {
       let countValidation = 0
@@ -761,7 +747,6 @@ export default {
         shipping_cashback: this.totalCostNumber.cashback,
         net_profit: this.totalCostNumberNetto,
       }
-      // console.log(this.totalCostNumber.shipping_cost)
       await this.storeSelectedItemsToCart(formData)
     },
     async storeSelectedItemsToCart(formData) {
@@ -771,6 +756,7 @@ export default {
       this.storeOrder(formData)
     },
     async storeOrder(formData) {
+      // console.log('formData', formData)
       await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
@@ -801,12 +787,12 @@ export default {
         },
       }).then(response => {
         const { data } = response.data
+        // console.log('dataCost', data)
         this.totalCostNumber = this.findCorrectData(data)
         this.calculateOnView()
-      }).catch(err => {
-        const { message } = err.response.data
+      }).catch(() => {
         this.isCalculating = false
-        this.alertFail(message !== '' || message !== null ? message : 'Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.')
+        this.alertFail('Unable to calculate the table data. Please check on Ekspedisi, Opsi Pengiriman, and Metode Pembayaran and try again later or contact support.')
       })
     },
     onPostOrder(formData) {
@@ -826,15 +812,14 @@ export default {
       console.log(formData)
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
-        console.log(response)
-        this.alertSuccess('Berhasil tambah')
+        // console.log('detail post order', data)
         if (data) {
-          // this.isSubmitting = false
-          // if (this.profile.is_onboarding) {
-          //   this.$emit('onBoardingShow')
-          // } else {
-          //   this.handleShowPopUp()
-          // }
+          this.isSubmitting = false
+          if (this.profile.is_onboarding) {
+            this.$emit('onBoardingShow')
+          } else {
+            this.handleShowPopUp()
+          }
         }
       }).catch(() => {
         this.isSubmitting = false
@@ -844,16 +829,11 @@ export default {
     onPostCart(cartItem) {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
+        // console.log('detail post cart', data)
         this.cartOrder = data.cart_id
       }).catch(() => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
-    },
-    maxPotongan() {
-      if (this.customerDiscountNumber > this.sumAllProduct) {
-        this.customerDiscountNumber = this.sumAllProduct
-      }
-      this.$forceUpdate()
     },
   },
 }

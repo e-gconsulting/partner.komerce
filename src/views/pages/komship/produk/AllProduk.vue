@@ -15,7 +15,7 @@
                   </b-input-group-prepend>
                   <b-form-input
                     v-model="searchProduct"
-                    placeholder="Cari Nama Produk atau SKU"
+                    placeholder="Example"
                     @input="getProduct"
                   />
                 </b-input-group>
@@ -782,35 +782,26 @@ export default {
       variantData: [],
       fields: [
         {
-          key: 'product_name',
-          label: 'Nama Produk',
-          tdClass: 'align-top',
+          key: 'product_name', label: 'Nama Produk',
         },
         {
           key: 'variants',
           label: 'Variasi',
-          tdClass: 'align-top',
         },
         {
           key: 'price',
           label: 'Harga',
-          tdClass: 'align-top',
         },
         {
           key: 'stock',
           label: 'Stock',
-          tdClass: 'align-top',
         },
         {
           key: 'sold',
           label: 'Terjual',
-          tdClass: 'align-top',
         },
         {
-          key: 'action',
-          label: 'Aksi',
-          class: 'col-action',
-          tdClass: 'align-top',
+          key: 'action', label: 'Aksi', class: 'col-action',
         },
       ],
       items: [],

@@ -73,7 +73,6 @@
                 <label
                   for="uploadImage"
                 >
-
                   <b-avatar
                     v-if="imageFile === null"
                     variant="light-dark"
@@ -590,18 +589,16 @@
                     <b-col md="4">
                       <b-form-input
                         v-model="price"
-                        type="text"
+                        type="number"
                         placeholder="Rp | Harga"
-                        @keypress="onlyNumber"
                       />
                     </b-col>
 
                     <b-col md="2">
                       <b-form-input
                         v-model="stock"
-                        type="text"
+                        type="number"
                         placeholder="Stok"
-                        @keypress="onlyNumber"
                       />
                     </b-col>
 
@@ -744,82 +741,59 @@
 
                       <template #cell(price)="data">
                         <div v-if="editMode === true && indexRow === data.index">
-                          <div
-                            v-if="variationName3 !== null"
-                          >
+                          <div v-if="data.item.variant1.option !== undefined">
                             <b-col
                               v-for="(item, indexVariant) in data.item.variant1.option"
                               :key="indexVariant+1"
                               cols="12"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
-                              >
+                              <div v-if="item.variant2.option !== undefined">
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  <b-form-input
+                                    v-model="itemsVariant.variant3.price"
+                                    type="number"
+                                  />
+                                </div>
+                              </div>
+                              <div v-else>
                                 <b-form-input
-                                  v-model="itemsVariant.variant3.price"
-                                  type="text"
-                                  @keypress="onlyNumber"
+                                  v-model="item.variant2.price"
+                                  type="number"
                                 />
                               </div>
                             </b-col>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
-                            >
-                              <b-form-input
-                                v-model="item.variant2.price"
-                                type="text"
-                                @keypress="onlyNumber"
-                              />
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
+                          <div v-else>
                             <b-form-input
                               v-model="data.item.variant1.price"
-                              type="text"
-                              @keypress="onlyNumber"
+                              type="number"
                             />
                           </div>
                         </div>
                         <div v-else>
-                          <div
-                            v-if="variationName3 !== null"
-                          >
+                          <div v-if="data.item.variant1.option !== undefined">
                             <b-col
                               v-for="(item, indexVariant) in data.item.variant1.option"
                               :key="indexVariant+1"
                               cols="12"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
-                              >
-                                Rp. {{ formatPrice(itemsVariant.variant3.price) }}
+                              <div v-if="item.variant2.option !== undefined">
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  Rp. {{ formatPrice(itemsVariant.variant3.price) }}
+                                </div>
+                              </div>
+                              <div v-else>
+                                Rp. {{ formatPrice(item.variant2.price) }}
                               </div>
                             </b-col>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
-                            >
-                              Rp. {{ formatPrice(item.variant2.price) }}
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
+                          <div v-else>
                             Rp. {{ formatPrice(data.item.variant1.price) }}
                           </div>
                         </div>
@@ -827,82 +801,59 @@
 
                       <template #cell(stock)="data">
                         <div v-if="editMode === true && indexRow === data.index">
-                          <div
-                            v-if="variationName3 !== null"
-                          >
+                          <div v-if="data.item.variant1.option !== undefined">
                             <b-col
                               v-for="(item, indexVariant) in data.item.variant1.option"
                               :key="indexVariant+1"
                               cols="12"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
-                              >
+                              <div v-if="item.variant2.option !== undefined">
+                                <div
+                                  v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
+                                  :key="indexVariantPrice+1"
+                                >
+                                  <b-form-input
+                                    v-model="itemsVariant.variant3.stock"
+                                    type="number"
+                                  />
+                                </div>
+                              </div>
+                              <div v-else>
                                 <b-form-input
-                                  v-model="itemsVariant.variant3.stock"
-                                  type="text"
-                                  @keypress="onlyNumber"
+                                  v-model="item.variant2.stock"
+                                  type="number"
                                 />
                               </div>
                             </b-col>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
-                            >
-                              <b-form-input
-                                v-model="item.variant2.stock"
-                                type="text"
-                                @keypress="onlyNumber"
-                              />
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
+                          <div v-else>
                             <b-form-input
                               v-model="data.item.variant1.stock"
-                              type="text"
-                              @keypress="onlyNumber"
+                              type="number"
                             />
                           </div>
                         </div>
                         <div v-else>
-                          <div
-                            v-if="variationName3 !== null"
-                          >
+                          <div v-if="data.item.variant1.option !== undefined">
                             <b-col
                               v-for="(item, indexVariant) in data.item.variant1.option"
                               :key="indexVariant+1"
                               cols="12"
                             >
-                              <div
-                                v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                :key="indexVariantPrice+1"
-                              >
-                                {{ itemsVariant.variant3.stock }}
+                              <div v-if="item.variant2.option !== undefined">
+                                <div
+                                  v-for="(itemsVariant, indexVariantStock) in item.variant2.option"
+                                  :key="indexVariantStock+1"
+                                >
+                                  {{ itemsVariant.variant3.stock }}
+                                </div>
+                              </div>
+                              <div v-else>
+                                {{ item.variant2.stock }}
                               </div>
                             </b-col>
                           </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 !== null"
-                          >
-                            <b-col
-                              v-for="(item, indexVariant) in data.item.variant1.option"
-                              :key="indexVariant+1"
-                              cols="12"
-                            >
-                              {{ item.variant2.stock }}
-                            </b-col>
-                          </div>
-                          <div
-                            v-if="variationName3 === null && variationName2 === null && variationName1 !== null"
-                          >
+                          <div v-else>
                             {{ data.item.variant1.stock }}
                           </div>
                         </div>
@@ -954,7 +905,6 @@
                   type="number"
                   placeholder="Masukan jumlah stok barang"
                   :state="errors.length > 0 ? false:null"
-                  @keypress="onlyNumber"
                 />
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
@@ -979,7 +929,6 @@
                   type="number"
                   placeholder="Rp  |  Masukan harga barang"
                   :state="errors.length > 0 ? false:null"
-                  @keypress="onlyNumber"
                 />
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
@@ -1004,16 +953,14 @@
                   #default="{errors}"
                   name="Berat"
                   rules="required"
-                  @keypress="onlyNumber"
                 >
                   <b-input-group class="input-group-merge">
                     <b-form-input
                       id="hi-first-name"
                       v-model="weightProduct"
-                      type="text"
+                      type="number"
                       placeholder="1000"
                       :state="errors.length > 0 ? false:null"
-                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       gram
@@ -1040,9 +987,8 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="lengthProduct"
-                      type="text"
+                      type="number"
                       placeholder="P"
-                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1054,9 +1000,8 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="widthProduct"
-                      type="text"
+                      type="number"
                       placeholder="L"
-                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1068,9 +1013,8 @@
                     <b-form-input
                       id="hi-first-name"
                       v-model="heightProduct"
-                      type="text"
+                      type="number"
                       placeholder="T"
-                      @keypress="onlyNumber"
                     />
                     <b-input-group-append is-text>
                       cm
@@ -1311,13 +1255,6 @@ export default {
     },
   },
   methods: {
-    onlyNumber($event) {
-      // console.log($event.keyCode); //keyCodes value
-      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
-      if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
-        $event.preventDefault()
-      }
-    },
     submitPublish() {
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {
@@ -1917,6 +1854,12 @@ export default {
           label: 'Stok',
         })
       }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.fields.length; x++) {
+        if (this.fields[x].key === 'action') {
+          this.fields.splice(x, 1)
+        }
+      }
       this.fields.push(
         {
           key: 'action',
@@ -1924,6 +1867,8 @@ export default {
           class: 'col-action',
         },
       )
+
+      console.log(this.variantItems)
       return this.variantItems
     },
     addVariation() {
@@ -1935,11 +1880,13 @@ export default {
       this.variationFields2 = true
       this.activeAddChoices2 = true
       this.activeAddChoices1 = false
+      this.formChoices2.push({ choices: null })
     },
     addVariationItems3() {
       this.variationFields3 = true
       this.activeAddChoices3 = true
       this.activeAddChoices2 = false
+      this.formChoices3.push({ choices: null })
     },
     addChoices1() {
       this.formChoices1.push({ choices: null })
@@ -1969,18 +1916,31 @@ export default {
       this.editMode = false
     },
     removeVariant1() {
-      this.variationName1 = ''
-      this.variationFields1 = false
-      if (this.variationFields2 === false && this.variationFields3 === false) {
-        this.isVariation = false
+      if (this.variationFields2 === true && this.variationFields3 !== true) {
+        this.variationFields2 = false
+        this.variationName2 = ''
+        this.variationName1 = ''
+      } else if (this.variationFields3 === true) {
+        this.variationFields3 = false
+        this.variationName3 = ''
+        this.variationName1 = ''
+      } else {
+        this.variationName1 = ''
+        this.variationFields1 = false
+        if (this.variationFields2 === false && this.variationFields3 === false) {
+          this.isVariation = false
+        }
       }
     },
     removeVariant2() {
-      this.variationName2 = ''
-      this.variationFields2 = false
-      this.activeAddChoices1 = true
-      if (this.variationFields1 === false && this.variationFields3 === false) {
-        this.isVariation = false
+      if (this.variationFields3 === true) {
+        this.variationName3 = ''
+        this.variationFields3 = false
+        this.variationName2 = ''
+      } else {
+        this.variationName2 = ''
+        this.variationFields2 = false
+        this.activeAddChoices1 = true
       }
     },
     removeVariant3() {
