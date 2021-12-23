@@ -198,7 +198,7 @@ export default {
         }
         .pickup-label-key {
           font-weight: 400;
-          color: #828282;
+          color: #151515;
           width: 227px;
         }
         .pickup-label-value {

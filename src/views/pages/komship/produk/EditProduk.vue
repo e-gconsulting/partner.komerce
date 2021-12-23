@@ -529,6 +529,22 @@
                     class="mt-2"
                   >
                     <b-row class="d-flex align-items-center">
+                      <b-col md="3">
+                        <b-form-input
+                          v-model="product_price"
+                          type="text"
+                          placeholder="Rp  |  Harga"
+                          @keypress="onlyNumber"
+                        />
+                      </b-col>
+                      <b-col md="2">
+                        <b-form-input
+                          v-model="stok"
+                          type="text"
+                          placeholder="Stok"
+                          @keypress="onlyNumber"
+                        />
+                      </b-col>
                       <b-col
                         md="6"
                         class="d-flex align-items-center"
@@ -1078,7 +1094,7 @@ export default {
       formChoices1: [{ choices: null }],
       formChoices2: [{ choices: null }],
       formChoices3: [{ choices: null }],
-
+      stok: '',
       variationFields1: false,
       variationFields2: false,
       variationFields3: false,
