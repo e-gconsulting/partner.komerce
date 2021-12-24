@@ -2,8 +2,15 @@
   <div class="w-full h-full">
     <div class="flex flex-col space-y-4 border border-black">
       <div class="grid grid-cols-3 gap-2">
-        <div class="col-span-1">
-          Barcode
+        <div class="col-span-1 flex flex-col space-x-1">
+          <barcode
+            value="value-to-render"
+            format="CODE39"
+            width="194"
+            height="70"
+          >
+            Show this if the rendering fails.
+          </barcode>
         </div>
         <div class="col-span-1">
           Logo Expedisi
@@ -19,7 +26,9 @@
           </h3>
           <div class="flex flex-row space-x-2">
             <feather-icon icon="user-icon" />
-            <div class="text-base text-black font-light">Wahyu</div>
+            <div class="text-base text-black font-light">
+              Wahyu
+            </div>
           </div>
         </div>
         <div class="col-span-1">
@@ -31,8 +40,13 @@
 </template>
 
 <script>
-export default {
 
+import VueBarcode from 'vue-barcode'
+
+export default {
+  components: {
+    barcode: VueBarcode,
+  },
 }
 </script>
 

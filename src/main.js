@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import { ToastPlugin, ModalPlugin, PopoverPlugin } from 'bootstrap-vue'
-
 import VueCompositionAPI from '@vue/composition-api'
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'

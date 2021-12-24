@@ -150,23 +150,23 @@ export default {
         vehicles: this.vehicles,
         criterias: this.changeCriteriasData,
       })
-      getData.then(data => {
-        console.log(data)
-        this.$router.push('/biaya-ekspedisi')
-        // {
-        // status: "success",
-        // code: 200,
-        // message: "Success Create data Shipment"}
-        // const parseData = JSON.parse(JSON.stringify(data.data))
-        // this.items = parseData
-        // this.totalRows = parseData.length
-      })
-        .catch(e => {
-          console.log('error', e)
-        })
-        .finally(() => {
-          this.loadDataAwal = false
-        })
+      // getData.then(data => {
+      //   console.log(data)
+      //   this.$router.push('/biaya-ekspedisi')
+      //   // {
+      //   // status: "success",
+      //   // code: 200,
+      //   // message: "Success Create data Shipment"}
+      //   // const parseData = JSON.parse(JSON.stringify(data.data))
+      //   // this.items = parseData
+      //   // this.totalRows = parseData.length
+      // })
+      //   .catch(e => {
+      //     console.log('error', e)
+      //   })
+      //   .finally(() => {
+      //     this.loadDataAwal = false
+      //   })
     },
     checkAksesLayanan() {
       //
