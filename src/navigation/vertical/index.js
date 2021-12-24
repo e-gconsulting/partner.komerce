@@ -41,7 +41,7 @@ import settingAndPrivacy from './setting-and-privacy'
 
 // Partner
 import talentPool from './talent-pool'
-import wishlist from './wishlist'
+// import wishlist from './wishlist'
 
 // Komship
 import dashboardKompship from './dashboard-kompship'
@@ -89,5 +89,5 @@ export default [
   ...manajemenAdmin,
 
   ...talentPool,
-  ...wishlist,
+  // ...wishlist,
 ]
