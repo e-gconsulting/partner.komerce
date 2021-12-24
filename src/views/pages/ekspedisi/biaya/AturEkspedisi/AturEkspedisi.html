@@ -302,7 +302,7 @@
               <b-row class="my-1">
                 <b-col cols="3">
                   <span style="font-weight: 400;font-size:16px;color:#222222;">
-                    Daerah</span
+                    Asal</span
                   >
                 </b-col>
                 <b-col cols="3">
@@ -311,6 +311,23 @@
                     :id="`inputCriteria-type-${index}`"
                     :options="optionsCriteria"
                   />
+                </b-col>
+                <b-col cols="3">
+                  <v-select
+                    v-model="inputCriteria.origin"
+                    :id="`inputCriteria-origin-${index}`"
+                    :options="optionsKota"
+                    :reduce="optionsKota => optionsKota.value"
+                    multiple
+                    label="label"
+                  />
+                </b-col>
+              </b-row>
+              <b-row class="my-1">
+                <b-col cols="3">
+                  <span style="font-weight: 400;font-size:16px;color:#222222;">
+                    Destinasi</span
+                  >
                 </b-col>
                 <b-col cols="3">
                   <v-select

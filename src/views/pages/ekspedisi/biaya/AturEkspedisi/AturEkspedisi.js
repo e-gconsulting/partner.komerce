@@ -100,6 +100,7 @@ export default {
   },
   mounted() {
     this.getIsland()
+    this.getDetail()
   },
   created() {
     //
@@ -125,7 +126,7 @@ export default {
     },
     submitData() {
       this.loadDataAwal = true
-      const endpoint = '/v1/admin/shipment/store'
+      const endpoint = `/v1/admin/shipment/update/${this.$route.params.id}`
       let getData = null
       // console.log('datasubmit :', {
       //   shipping_name: this.shipping_name,
@@ -138,7 +139,7 @@ export default {
       //   vehicles: [this.vehicles],
       //   criterias: this.changeCriteriasData,
       // })
-      getData = axioskomsipdev.post(endpoint, {
+      getData = axioskomsipdev.put(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
         cashback_from: this.cashback_from,
@@ -203,6 +204,28 @@ export default {
           this.optionsKota = parseData
         })
         .catch(e => {
+          console.log('error', e)
+        })
+        .finally(() => {
+          this.loadDataAwal = false
+        })
+    },
+
+    getDetail() {
+      const enpoint = `/v1/admin/shipment/detail/${this.$route.params.id}`
+      axioskomsipdev.get(enpoint)
+        .then(({ data }) => {
+          const res = data.data
+          this.shipping_name = res.shipping_name
+          this.service_fee_from = res.service_fee_from
+          this.cashback_to = res.cashback_to
+          this.cashback_from = res.cashback_from
+          this.service_fee_to = res.service_fee_to
+          const onlyLeters = res.service_name.replace(/[^a-zA-Z]+/g, '').toLowerCase()
+          // const serviceName = onlyLeters.charAt(0).toUpperCase() + onlyLeters.slice(1)
+          this.service_name = onlyLeters
+          console.log(onlyLeters)
+        }).catch(e => {
           console.log('error', e)
         })
         .finally(() => {
