@@ -1880,13 +1880,11 @@ export default {
       this.variationFields2 = true
       this.activeAddChoices2 = true
       this.activeAddChoices1 = false
-      this.formChoices2.push({ choices: null })
     },
     addVariationItems3() {
       this.variationFields3 = true
       this.activeAddChoices3 = true
       this.activeAddChoices2 = false
-      this.formChoices3.push({ choices: null })
     },
     addChoices1() {
       this.formChoices1.push({ choices: null })
@@ -1905,6 +1903,7 @@ export default {
     },
     removeChoices3(index) {
       this.formChoices3.splice(index, 1)
+      console.log('variant3', this.formChoices3)
     },
     editTable(data) {
       this.indexRow = data.index
@@ -1920,10 +1919,12 @@ export default {
         this.variationFields2 = false
         this.variationName2 = ''
         this.variationName1 = ''
+        this.activeAddChoices1 = true
       } else if (this.variationFields3 === true) {
         this.variationFields3 = false
         this.variationName3 = ''
         this.variationName1 = ''
+        this.activeAddChoices2 = true
       } else {
         this.variationName1 = ''
         this.variationFields1 = false
@@ -1937,6 +1938,7 @@ export default {
         this.variationName3 = ''
         this.variationFields3 = false
         this.variationName2 = ''
+        this.activeAddChoices2 = true
       } else {
         this.variationName2 = ''
         this.variationFields2 = false

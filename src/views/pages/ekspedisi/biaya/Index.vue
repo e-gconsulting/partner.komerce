@@ -65,7 +65,8 @@
                 <template #cell(editExpedition)="data">
                   <b-button
                     variant="flat-default"
-                    @click="editExpedition(data.item.shipping_id)"
+                    tag="router-link"
+                    :to="{ name: $route.meta.routeDetail, params: { shipping_id: data.item.shipping_id } }"
                   >
                     <feather-icon icon="EditIcon" />
                   </b-button>

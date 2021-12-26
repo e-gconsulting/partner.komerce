@@ -65,6 +65,7 @@ export default {
   },
   data() {
     return {
+
       currentView: 'all',
       searchFilterText: '',
       isDetail: false,
@@ -246,8 +247,13 @@ export default {
       })
     },
     getOrder() {
-      return this.$http_komship.get(`v1/order/${this.profile.partner_id}`).then(response => {
+      return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: {
+          page: this.currentPage,
+        },
+      }).then(response => {
         const { data } = response.data.data
+        console.log(data)
         // console.log('listAllOrder', data)
         this.tableItemsAllData = data
         this.tableData.items = data

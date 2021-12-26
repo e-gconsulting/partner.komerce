@@ -1,5 +1,5 @@
 import vSelect from 'vue-select'
-import axioskomsipdev from '@/libs/axioskomsipdev'
+import axioskomsipdev from '@/views/pages/komship/setting-kompship/http_komship'
 
 import {
   BRow,
@@ -20,6 +20,14 @@ import {
 } from 'bootstrap-vue'
 
 const initCriteria = {
+  origin: [],
+  destination: [],
+  delivery: 0,
+  retur: 0,
+  type: null,
+}
+
+const initCriteriaStore = {
   origin: [],
   destination: [],
   delivery: 0,
@@ -48,6 +56,7 @@ export default {
   },
   data() {
     return {
+      shippingId: this.$route.params.shipping_id,
       loadDataAwal: true,
       shipping_name: '',
       max_pickup_time: '09:00',
@@ -58,6 +67,7 @@ export default {
       cashback_to: null,
       vehicles: [],
       criteriasData: [{ ...initCriteria }],
+      criteriasDataStoreUpdate: [{ ...initCriteriaStore }],
       optionsKota: [
         { value: null, text: 'Pilih layanan kota' },
         { value: 'jawa_bali', text: 'Jawa & Bali' },
@@ -118,7 +128,13 @@ export default {
     },
 
     tambahKriteria(criteriasDataParams) {
-      criteriasDataParams.push({ ...initCriteria })
+      criteriasDataParams.push({
+        origin: [],
+        destination: [],
+        delivery: 0,
+        retur: 0,
+        type: null,
+      })
     },
     hapusKriteria(index) {
       if (index === 0) return
@@ -128,17 +144,17 @@ export default {
       this.loadDataAwal = true
       const endpoint = `/v1/admin/shipment/update/${this.$route.params.id}`
       let getData = null
-      // console.log('datasubmit :', {
-      //   shipping_name: this.shipping_name,
-      //   service_name: this.service_name,
-      //   cashback_from: this.cashback_from,
-      //   service_fee_from: this.service_fee_from,
-      //   service_fee_to: this.service_fee_to,
-      //   cashback_to: this.cashback_to,
-      //   max_pickup_time: this.max_pickup_time,
-      //   vehicles: [this.vehicles],
-      //   criterias: this.changeCriteriasData,
-      // })
+      console.log('datasubmit :', {
+        shipping_name: this.shipping_name,
+        service_name: this.service_name,
+        cashback_from: this.cashback_from,
+        service_fee_from: this.service_fee_from,
+        service_fee_to: this.service_fee_to,
+        cashback_to: this.cashback_to,
+        max_pickup_time: this.max_pickup_time,
+        vehicles: [this.vehicles],
+        criterias: this.criteriasDataStoreUpdate,
+      })
       getData = axioskomsipdev.put(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
@@ -202,6 +218,7 @@ export default {
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
           this.optionsKota = parseData
+          console.log('optionsKota', this.optionsKota)
         })
         .catch(e => {
           console.log('error', e)
@@ -212,10 +229,19 @@ export default {
     },
 
     getDetail() {
-      const enpoint = `/v1/admin/shipment/detail/${this.$route.params.id}`
+      // eslint-disable-next-line array-callback-return
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.criteriasData.length; x++) {
+        if (this.criteriasData[x].origin !== []) this.criteriasData[x].origin = []
+        if (this.criteriasData[x].destination !== []) this.criteriasData[x].destination = []
+        if (this.criteriasDataStoreUpdate[x].origin !== []) this.criteriasDataStoreUpdate[x].origin = []
+        if (this.criteriasDataStoreUpdate[x].destination !== []) this.criteriasDataStoreUpdate[x].destination = []
+      }
+      const enpoint = `/v1/admin/shipment/detail/${this.shippingId}`
       axioskomsipdev.get(enpoint)
         .then(({ data }) => {
           const res = data.data
+          console.log(res)
           this.shipping_name = res.shipping_name
           this.service_fee_from = res.service_fee_from
           this.cashback_to = res.cashback_to
@@ -224,7 +250,42 @@ export default {
           const onlyLeters = res.service_name.replace(/[^a-zA-Z]+/g, '').toLowerCase()
           // const serviceName = onlyLeters.charAt(0).toUpperCase() + onlyLeters.slice(1)
           this.service_name = onlyLeters
-          console.log(onlyLeters)
+          // eslint-disable-next-line no-plusplus
+          for (let x = 0; x < res.criterias.length; x++) {
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < res.criterias[x].origin.length; y++) {
+              // eslint-disable-next-line no-plusplus
+              for (let z = 0; z < this.criteriasData.length; z++) {
+                this.criteriasData[x].origin.push(
+                  {
+                    label: res.criterias[x].origin[y],
+                    value: res.criterias[x].origin_value[y],
+                  },
+                )
+                this.criteriasData[x].type = res.criterias[x].type
+                this.criteriasData[x].retur = res.criterias[x].retur
+                this.criteriasData[x].delivery = res.criterias[x].delivery
+                this.criteriasDataStoreUpdate[x].type = res.criterias[x].type
+                this.criteriasDataStoreUpdate[x].retur = res.criterias[x].retur
+                this.criteriasDataStoreUpdate[x].delivery = res.criterias[x].delivery
+                this.criteriasDataStoreUpdate[x].origin.push(Number(res.criterias[x].origin_value[y]))
+              }
+            }
+            // eslint-disable-next-line no-plusplus
+            for (let y = 0; y < res.criterias[x].destination.length; y++) {
+              // eslint-disable-next-line no-plusplus
+              for (let z = 0; z < this.criteriasData.length; z++) {
+                this.criteriasData[x].destination.push(
+                  {
+                    label: res.criterias[x].destination[y],
+                    value: res.criterias[x].destination_value[y],
+                  },
+                )
+                this.criteriasDataStoreUpdate[x].destination.push(Number(res.criterias[x].destination_value[y]))
+              }
+            }
+          }
+          console.log(this.criteriasDataStoreUpdate)
         }).catch(e => {
           console.log('error', e)
         })

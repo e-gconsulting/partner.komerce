@@ -2066,10 +2066,12 @@ export default {
         this.variationFields2 = false
         this.variationName2 = ''
         this.variationName1 = ''
+        this.activeAddChoices1 = true
       } else if (this.variationFields3 === true) {
         this.variationFields3 = false
         this.variationName3 = ''
         this.variationName1 = ''
+        this.activeAddChoices2 = true
       } else {
         this.variationName1 = ''
         this.variationFields1 = false
@@ -2084,6 +2086,7 @@ export default {
         this.variationName3 = ''
         this.variationFields3 = false
         this.variationName2 = ''
+        this.activeAddChoices2 = true
       } else {
         this.variationName2 = ''
         this.variationFields2 = false
