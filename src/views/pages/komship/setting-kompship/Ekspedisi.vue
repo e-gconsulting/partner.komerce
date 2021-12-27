@@ -65,7 +65,7 @@
         </b-col>
       </b-row>
 
-      <b-row class="mt-3">
+      <!-- <b-row class="mt-3">
         <b-col>
           <b-table
             :fields="fieldsSendKompship"
@@ -73,7 +73,7 @@
             class="border"
           />
         </b-col>
-      </b-row>
+      </b-row> -->
     </b-card>
   </b-overlay>
 
