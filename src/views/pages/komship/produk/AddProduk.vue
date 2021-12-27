@@ -52,6 +52,7 @@
           <b-col cols="12">
             <b-form-group
               label="Upload Gambar"
+              prop="uploadLogo"
               label-cols-md="2"
             >
               <validation-provider
@@ -61,23 +62,26 @@
 
                 <!-- Preview Image -->
                 <transition name="fade">
-                  <b-avatar
-                    v-if="imageFile !== null"
-                    variant="light-primary"
-                    size="50"
-                    :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
-                    class="mr-50"
-                  />
-                </transition>
+                  <div class="form-input col col-xs-12 col-sm-8 col-md-10">
+                    <b-avatar
+                      v-if="imageFile !== null"
+                      variant="light-primary"
+                      size="50"
+                      :rules="rulesimage"
+                      :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
+                      class="mr-50"
+                    />
+                  </div></transition>
                 <!-- Button Upload Image -->
                 <label
                   for="uploadImage"
                 >
-
                   <b-avatar
                     v-if="imageFile === null"
                     variant="light-dark"
                     size="50"
+                    type="file"
+                    name="photo"
                     class="btn btn-flat-primary btn-icon"
                   >
                     <feather-icon
@@ -85,35 +89,35 @@
                       size="35"
                     />
                   </b-avatar>
-                </label>
+                  <label>
 
-                <label
-                  v-if="imageFile !== null"
-                  for="uploadImage"
-                  class="btn btn-flat-dark btn-icon"
-                >
-                  <feather-icon
-                    icon="EditIcon"
-                    size="20"
-                  />
-                </label>
+                    <label
+                      v-if="imageFile !== null"
+                      for="uploadImage"
+                      class="btn btn-flat-dark btn-icon"
+                    >
+                      <feather-icon
+                        icon="EditIcon"
+                        size="20"
+                      />
+                    </label>
 
-                <!-- Field Gambar -->
-                <b-form-file
-                  id="uploadImage"
-                  v-model="imageFile"
-                  :state="errors.length > 0 ? false : null"
-                  :placeholder="
-                    imageInitialFile
-                      ? imageInitialFile.split('/').pop()
-                      : `Pilih atau drop file disini...`
-                  "
-                  drop-placeholder="Drop file disini..."
-                  accept="image/*"
-                  class="d-none"
-                />
-                <small class="text-primary">{{ errors[0] }}</small>
-              </validation-provider>
+                    <!-- Field Gambar -->
+                    <b-form-file
+                      id="uploadImage"
+                      v-model="imageFile"
+                      :state="errors.length > 0 ? false : null"
+                      :placeholder="
+                        imageInitialFile
+                          ? imageInitialFile.split('/').pop()
+                          : `Pilih atau drop file disini...`
+                      "
+                      drop-placeholder="Drop file disini..."
+                      accept="image/*"
+                      class="d-none"
+                    />
+                    <small class="text-primary">{{ errors[0] }}</small>
+                  </label></label></validation-provider>
             </b-form-group>
           </b-col>
 
@@ -1211,8 +1215,10 @@ export default {
     return {
       loadingSubmitPublish: false,
       loadingSubmitDraft: false,
-
       loading: false,
+      rulesimage: [
+        value => !value || value.size > 2024 || 'avatar size should be less than 2 MB !',
+      ],
       isVariation: false,
       formChoices1: [{ choices: null }],
       formChoices2: [{ choices: null }],
@@ -1309,6 +1315,23 @@ export default {
     },
   },
   methods: {
+    uploadImage() {
+      const imageSize = this.imageFile.size / 1024 / 1024
+      if (imageSize <= 3) {
+        const formData = new FormData()
+        formData.append('image_path', this.imageFile)
+        httpKomship
+          .post('v1/product/upload-img-product', {
+          })
+          .then(res => {
+            console.log(res.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        console.log(this.imageFile)
+      }
+    },
     onlyNumber($event) {
       // console.log($event.keyCode); //keyCodes value
       const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
