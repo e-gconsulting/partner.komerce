@@ -52,7 +52,7 @@
           <div id="chart">
             <vue-apex-charts
               type="bar"
-              height="150"
+              :height="heightBar"
               :options="chartOptions"
               :series="series"
             />
@@ -105,11 +105,12 @@ export default {
       series: [{
         data: [],
       }],
+      heightBar: 290,
       chartOptions: {
         colors: '#34A770',
         chart: {
           type: 'bar',
-          height: 150,
+          height: this.heightBar,
         },
         plotOptions: {
           bar: {
@@ -157,6 +158,11 @@ export default {
         this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories.length)
         const { data } = response.data
         this.city = data.city
+        if (this.city.length === 5) this.heightBar = 290
+        if (this.city.length === 4) this.heightBar = 250
+        if (this.city.length === 3) this.heightBar = 210
+        if (this.city.length === 2) this.heightBar = 150
+        if (this.city.length === 1) this.heightBar = 120
         this.loading = false
         data.city.forEach(this.myArray)
         this.series = [

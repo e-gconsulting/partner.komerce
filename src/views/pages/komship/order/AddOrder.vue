@@ -77,6 +77,8 @@ export default {
       if (dateVal) this.dateText = dateVal
     },
     updateSelectedItems(newListSelected) {
+      console.log('newListSelected')
+      console.log(newListSelected)
       if (newListSelected) this.listSelected = newListSelected
     },
     updateScreenView(value) {
@@ -93,6 +95,7 @@ export default {
         const { data } = response.data
         // console.log('this.profile', data)
         this.profile = data
+        console.log(this.profile)
       }).catch(() => {
         console.log('failed to get the profile data')
       })

@@ -11,9 +11,7 @@
         v-if="!isEditable"
         #head(input)="totalData"
       >
-        <div class="div-mid-text">
-          {{ totalData.label }}
-        </div>
+        <div class="div-mid-text">{{ totalData.label }}</div>
       </template>
       <template #cell(product_name)="nameData">
         <div class="add-product-name-wrapper">
@@ -21,23 +19,15 @@
             <img :src="nameData.item.product_image">
           </div>
           <div class="product-name-desc">
-            <div class="product-name-text">
-              {{ nameData.value }}
-            </div>
-            <!-- {{ test(nameData) }} -->
-            <div v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1 && nameData.item.product_variant.length > 0">
-              <b-button
-                v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
-                class="product-name-button"
-                variant="outline-primary"
-                @click="handleShowVariation(nameData.item)"
-              >
-                Pilih Variasi
-              </b-button>
-            </div>
-            <div v-if="nameData.item.product_variant.length === 0">
-              Tidak Ada Variasi
-            </div>
+            <div class="product-name-text">{{ nameData.value }}</div>
+            <b-button
+              v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
+              class="product-name-button"
+              variant="outline-primary"
+              @click="handleShowVariation(nameData.item)"
+            >
+              Pilih Variasi
+            </b-button>
             <div
               v-if="isEditable && nameData.item.selectedVariationData.length > 0"
               class="variation-text-content"
@@ -55,7 +45,7 @@
       </template>
 
       <template #cell(price)="priceData">
-        {{ priceData.item.is_variant !== '0' ? `Rp ${numberWithCommas(genPriceText(priceData.item.selectedVariationData))}` : `Rp ${numberWithCommas(priceData.item.price)}` }}
+        {{ priceData.item.is_variant ? `Rp ${numberWithCommas(genPriceText(priceData.item.selectedVariationData))}` : `Rp ${numberWithCommas(priceData.value)}` }}
       </template>
 
       <template #cell(input)="inputData">
@@ -65,46 +55,40 @@
             class="product-total-input-wrapper"
           >
             <b-button
-              v-if="inputData.item.is_variant === '0' || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
+              v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="minus-button"
               variant="outline-primary"
               @click="addTotalItem('-', inputData.index, inputData.item)"
             >
               -
             </b-button>
-            <div class="input-text">
-              {{ inputData.value - 1 }}
-            </div>
+            <div class="input-text">{{ inputData.value }}</div>
             <b-button
-              v-if="inputData.item.is_variant === '0' || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
+              v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="plus-button"
               variant="outline-primary"
-              :disabled="inputData.item.stockDisplay === 0"
               @click="addTotalItem('+', inputData.index, inputData.item)"
             >
               +
             </b-button>
           </div>
-          <!-- {{ test(inputData) }} -->
           <div
-            v-if="isEditable && (inputData.item.is_variant !== '0' ? inputData.item.stockDisplay > 0 : true)"
+            v-if="isEditable && (inputData.item.is_variant ? inputData.item.stockDisplay > 0 : true)"
             class="product-stock-input"
           >
-            {{ `Stok tersedia: ${inputData.item.is_variant !== '0' ? inputData.item.stockDisplay : inputData.item.stockDisplay}` }}
+            {{ `Stok tersedia: ${inputData.item.is_variant ? inputData.item.stockDisplay : inputData.item.stockDisplay}` }}
           </div>
           <div
             v-if="!isEditable"
             class="product-total-input-wrapper no-mg"
           >
-            <div class="input-text div-mid-text">
-              {{ inputData.value }}
-            </div>
+            <div class="input-text div-mid-text">{{ inputData.value }}</div>
           </div>
         </div>
       </template>
 
       <template #cell(subtotal)="subtotalData">
-        {{ subtotalData.item.is_variant !== '0' ? `Rp ${numberWithCommas(genPriceText(subtotalData.item.selectedVariationData) * subtotalData.item.input)}` : `Rp ${numberWithCommas(subtotalData.item.price * subtotalData.item.input)}` }}
+        {{ subtotalData.item.is_variant ? `Rp ${numberWithCommas(genPriceText(subtotalData.item.selectedVariationData) * subtotalData.item.input)}` : `Rp ${numberWithCommas(subtotalData.item.price * subtotalData.item.input)}` }}
       </template>
     </b-table>
   </section>
@@ -139,16 +123,8 @@ export default {
       default: false,
     },
   },
-  // mounted() {
-  //   this.test()
-  // },
   methods: {
-    // test(data) {
-    //   console.log('input data')
-    //   console.log(data)
-    // },
     addTotalItem(param, itemSelectedIndex, itemSelected) {
-      console.log(itemSelected)
       this.$emit('onAddTotalItem', param, itemSelectedIndex, itemSelected)
     },
     handleShowVariation(selectedProduct) {
@@ -209,9 +185,7 @@ export default {
     },
   },
 }
-
 </script>
 
 <style>
-
 </style>

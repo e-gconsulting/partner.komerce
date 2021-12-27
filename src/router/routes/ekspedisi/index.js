@@ -4,6 +4,7 @@ export default [
     name: 'cod-biaya-ekspedisi',
     component: () => import('@/views/pages/ekspedisi/biaya/Index'),
     meta: {
+      routeDetail: 'cod-biaya-ekspedisi-edit',
       resource: 'Dashboard',
       action: 'read',
     },
@@ -42,7 +43,7 @@ export default [
     },
   },
   {
-    path: '/biaya-ekspedisi/:id/edit',
+    path: '/biaya-ekspedisi/:shipping_id/edit',
     name: 'cod-biaya-ekspedisi-edit',
     component: () => import('../../../views/pages/ekspedisi/biaya/AturEkspedisi/index'),
     meta: {

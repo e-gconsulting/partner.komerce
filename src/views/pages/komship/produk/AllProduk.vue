@@ -200,7 +200,7 @@
                             variant="light-primary"
                             square
                             size="50px"
-                            :src="itemsData.product_image[0].image"
+                            :src="itemsData.product_image[0].images_path"
                           />
                           <b-avatar
                             v-else
@@ -402,29 +402,25 @@
                   class="d-flex justify-content-end mb-2"
                 >
                   <b-col cols="auto">
-                    <div v-if="expandIsActive === false">
+                    <div>
                       <b-button
                         v-b-toggle="`collapse-${String(index)}`"
                         variant="flat-dark"
                         size="sm"
-                        @click="buttonToExpand"
                       >
-                        Tampilkan Versi Lainnya
+                        <span class="when-opened">
+                          Tutup
+                        </span>
+                        <span class="when-closed">
+                          Tampilkan variasi lainnya
+                        </span>
                         <feather-icon
                           icon="ChevronDownIcon"
+                          class="when-closed"
                         />
-                      </b-button>
-                    </div>
-                    <div v-else>
-                      <b-button
-                        v-b-toggle="`collapse-${String(index)}`"
-                        variant="flat-dark"
-                        size="sm"
-                        @click="buttonToCloseExpand"
-                      >
-                        Tutup
                         <feather-icon
                           icon="ChevronUpIcon"
+                          class="when-opened"
                         />
                       </b-button>
                     </div>
@@ -636,9 +632,19 @@
                 variant="flat-dark"
                 size="sm"
               >
-                Tampilkan variasi lainnya
+                <span class="when-opened">
+                  Tutup
+                </span>
+                <span class="when-closed">
+                  Tampilkan variasi lainnya
+                </span>
                 <feather-icon
                   icon="ChevronDownIcon"
+                  class="when-closed"
+                />
+                <feather-icon
+                  icon="ChevronUpIcon"
+                  class="when-opened"
                 />
               </b-button>
             </template>
@@ -776,35 +782,26 @@ export default {
       variantData: [],
       fields: [
         {
-          key: 'product_name',
-          label: 'Nama Produk',
-          tdClass: 'align-top',
+          key: 'product_name', label: 'Nama Produk',
         },
         {
           key: 'variants',
           label: 'Variasi',
-          tdClass: 'align-top',
         },
         {
           key: 'price',
           label: 'Harga',
-          tdClass: 'align-top',
         },
         {
           key: 'stock',
           label: 'Stock',
-          tdClass: 'align-top',
         },
         {
           key: 'sold',
           label: 'Terjual',
-          tdClass: 'align-top',
         },
         {
-          key: 'action',
-          label: 'Aksi',
-          class: 'col-action',
-          tdClass: 'align-top',
+          key: 'action', label: 'Aksi', class: 'col-action',
         },
       ],
       items: [],
@@ -814,8 +811,6 @@ export default {
       searchProduct: '',
 
       expandCollapseIsActive: false,
-
-      expandIsActive: false,
 
       // Filter
       name: '',
@@ -845,7 +840,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
         this.variantData = data
         this.loading = false
         return this.variantData
@@ -894,12 +888,6 @@ export default {
         })
       })
     },
-    buttonToExpand() {
-      this.expandIsActive = true
-    },
-    buttonToCloseExpand() {
-      this.expandIsActive = false
-    },
     resetFilter() {
       this.name = ''
       this.stockFrom = ''
@@ -930,9 +918,6 @@ export default {
     [dir] .table-list-product {
         display: none;
     }
-    /* [dir] .item-student-responsive {
-        display: inline-block;
-    } */
 }
 
 @media only screen and (min-width: 923px) {
@@ -943,5 +928,10 @@ export default {
         display: none;
     }
 }
+
+.collapsed > .when-opened,
+    :not(.collapsed) > .when-closed {
+        display: none;
+    }
 
 </style>

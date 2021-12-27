@@ -150,13 +150,13 @@
           v-if="detailOrder.is_komship"
           class="data-order-detail-status top-right org-text mt-2"
         >
-          Pengiriman Komship
+          Pengiriman Kompship
         </div>
         <div
           v-else
           class="data-order-detail-status top-right org-text mt-2"
         >
-          Pengiriman Non Komship
+          Pengiriman Non Kompship
         </div>
         <section>
           <b-form-group

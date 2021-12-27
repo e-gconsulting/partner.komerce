@@ -43,6 +43,9 @@ import dashboardKomplace from './routes/komplace/dashboard/index'
 import monitoring from './routes/komplace/monitoring/index'
 import manajemenAdmin from './routes/komplace/manajemenAdmin/index'
 import pengaturanKomplace from './routes/komplace/pengaturan/index'
+//
+
+import cetaklabel from './routes/cetak-label'
 
 Vue.use(VueRouter)
 
@@ -87,6 +90,7 @@ const router = new VueRouter({
     ...parentProfile,
     ...wishlist,
     ...jobRoleSetting,
+    ...cetaklabel,
     {
       path: '*',
       redirect: 'error-404',
@@ -98,12 +102,10 @@ router.beforeEach((to, _, next) => {
   const isLoggedIn = isUserLoggedIn()
 
   if (to.name === 'unauthenticated' || to.name === 'error-404') {
-    console.log('unauthenticated', isLoggedIn)
     return next()
   }
 
   if (!canNavigate(to) && !isLoggedIn) {
-    console.log('canNavigate', isLoggedIn)
     // Redirect to login if not logged in
     return next({ name: 'auth-login' })
   }

@@ -697,10 +697,10 @@
       </div>
     </b-modal>
 
-    <!-- <onboarding
+    <onboarding
       ref="onboardingElement"
       :current-stage="0"
-    /> -->
+    />
   </div>
 </template>
 
@@ -718,7 +718,7 @@ import moment from 'moment'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 // import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-// import Onboarding from '../onboarding/Onboarding.vue'
+import Onboarding from '../onboarding/Onboarding.vue'
 import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
@@ -732,7 +732,7 @@ export default {
     // DateRangePicker,
     PincodeInput,
     vSelect,
-    // Onboarding,
+    Onboarding,
     PopoverInfo,
   },
   data() {
@@ -1183,6 +1183,9 @@ export default {
 }
 .bg-orange2 {
   background-color: #f95031 !important;
+}
+.bg-green {
+  background-color: #0faa60 !important;
 }
 .card,
 .rounded-16 {
