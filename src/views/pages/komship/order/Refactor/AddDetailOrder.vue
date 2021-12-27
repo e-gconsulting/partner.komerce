@@ -196,6 +196,7 @@
             type="number"
             class="add-order-product-input-v-select"
             placeholder="0"
+            @input="onCountButtonClicked"
           />
         </b-form-group>
       </section>
@@ -375,13 +376,13 @@
           <span>Total Pembayaran : <span class="orange-bold">{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</span></span>
         </div>
         <div class="add-order-summary-button-wrapper">
-          <b-button
+          <!-- <b-button
             v-if="!isCalculating"
             class="next-button no-mg-mobile"
             @click="onCountButtonClicked"
           >
             Hitung
-          </b-button>
+          </b-button> -->
           <b-button
             v-if="isCalculating"
             class="next-button no-mg-mobile"
@@ -701,6 +702,7 @@ export default {
     useDiscount() {
       this.isUseDiscount = !this.isUseDiscount
       this.customerDiscountNumber = this.isUseDiscount ? this.customerDiscountNumber : 0
+      this.onCountButtonClicked()
     },
     onAddShipping(itemSelected) {
       this.customerShippingMethod = itemSelected
@@ -712,6 +714,7 @@ export default {
     },
     onAddPaymentMethod(itemSelected) {
       this.customerPaymentMethod = itemSelected
+      this.onCountButtonClicked()
     },
     onChangePhoneCode(itemSelected) {
       this.customerPhoneCode = itemSelected

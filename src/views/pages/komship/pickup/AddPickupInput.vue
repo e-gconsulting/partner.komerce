@@ -388,6 +388,7 @@ export default {
         address_detail: this.addressDetailText,
         orders: this.selectedOrderId,
       }
+      console.log(formData)
       // console.log('formData', formData)
       if (this.$route.name === 'ajukan-pickup') {
         await this.storePickupReq(formData)

@@ -85,9 +85,7 @@
         </b-button>
       </div>
     </div>
-
     <div
-      v-else
       class="add-pickup-input-notice-filled mb-2"
     >
       <div
