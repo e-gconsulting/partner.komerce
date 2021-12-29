@@ -82,6 +82,7 @@
                       variant="outline-primary"
                       size="lg"
                       class="mr-2"
+                      @click="resetFormFilter()"
                     >
                       Reset
                     </b-button>
@@ -332,6 +333,9 @@ export default {
     this.fetchData()
   },
   methods: {
+    resetFormFilter() {
+      this.statusFilter = null
+    },
     searching() {
       this.fetchData(this.searchTerm, null)
     },
