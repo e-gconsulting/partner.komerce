@@ -646,6 +646,7 @@ export default {
         props: {
           title: 'Success copy to clipboard',
           icon: 'BellIcon',
+          variant: 'success',
         },
       })
     },

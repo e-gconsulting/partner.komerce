@@ -1832,7 +1832,7 @@ export default {
   margin: 27.79px 0px 40px;
 }
 .modalUploadWarning__img {
-  margin-top: 47.79px;
+  margin: 47.79px auto 0px;
 }
 .modalUploadWarning__btn {
   margin-bottom: 40px;
