@@ -83,7 +83,7 @@
           </p>
         </template>
         <template #cell(resi)="data">
-          {{ data.item.airway_bill !== undefined || data.item.airway_bill !== null ? data.item.airway_bill : '-' }}
+          {{ data.item.airway_bill }}
         </template>
       </b-table>
 
@@ -313,6 +313,9 @@ export default {
         {
           key: 'resi',
           label: 'resi',
+          formatter(value) {
+            return value === null ? '-' : value
+          },
         },
       ],
 
@@ -320,6 +323,8 @@ export default {
       printOption: 1,
 
       valuePrint: [],
+
+      idOrderFromHistory: this.$route.params.selected_order.data_order,
     }
   },
   mounted() {
@@ -327,10 +332,31 @@ export default {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       this.profile = response.data.data
-      console.log('profile', this.profile)
+      console.log('profile', this.profile.partner_id)
+      this.getOrder()
     })
+    this.items = this.selectedOrder
+    console.log('idOrder', this.idOrderFromHistory)
   },
   methods: {
+    getOrder() {
+      this.$http_komship.get(`/v1/order/${this.profile.partner_id}`).then(response => {
+        console.log('result', response)
+        const { data } = response.data.data
+        this.items = data
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.idOrderFromHistory.length; y++) {
+            if (this.items[x].order_id !== this.idOrderFromHistory[y].order_id) {
+              this.items.splice(x, 1)
+            }
+          }
+        }
+        console.log('itemsResult', this.items)
+        return this.items
+      })
+    },
     onShowModalPrint() {
       this.$bvModal.show('modal-8')
       // this.$refs.addPickupPopUpPrint.showModal()
