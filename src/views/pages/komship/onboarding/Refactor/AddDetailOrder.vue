@@ -543,6 +543,7 @@ export default {
       customerPhoneCode: '+62',
       customerPhoneCodeList: ['+62'],
       customerAddress: '',
+      customerZipcode: '',
       customerCity: '',
       destinationCity: [],
       customerPaymentMethod: '',
@@ -806,6 +807,7 @@ export default {
           this.customerId = chosenCustomerData.customer_id
           this.customerPhone = chosenCustomerData.phone[0] === '0' ? chosenCustomerData.phone.substring(1) : chosenCustomerData.phone
           this.customerAddress = chosenCustomerData.address
+          this.customerZipcode = chosenCustomerData.zip_code
         } else {
           this.customerId = 0
         }
@@ -835,6 +837,7 @@ export default {
         customer_name: this.customerName,
         customer_phone: this.customerPhoneCode !== '' ? `0${this.customerPhone}` : null,
         detail_address: this.customerAddress,
+        zip_code: this.customerZipcode,
         shipping: this.customerShippingMethod,
         shipping_type: this.customerExpeditionOption,
         payment_method: this.customerPaymentMethod,
@@ -853,8 +856,22 @@ export default {
     },
     async storeSelectedItemsToCart(formData) {
       const allItemsToPost = this.genCart(this.itemsCheckoutOrder)
-      await this.onPostCart(allItemsToPost)
-      Object.assign(formData, { cart: this.cartOrder })
+      const dataCartItem = [...allItemsToPost].map(x => {
+        const dt = {}
+        dt.product_id = x.product_id
+        dt.product_name = x.product_name
+        dt.product_variant_id = x.variant_id
+        dt.product_variant_name = x.variant_name
+        dt.product_price = x.product_price
+        dt.weight = x.product_weight
+        dt.qty = x.qty
+        dt.subtotal = x.subtotal
+
+        return dt
+      })
+      // await this.onPostCart(allItemsToPost, formData)
+      // Object.assign(formData, { cart: this.cartOrder })
+      Object.assign(formData, { products: dataCartItem })
       this.storeOrder(formData)
     },
     async storeOrder(formData) {
@@ -919,6 +936,7 @@ export default {
             this.handleShowPopUp()
           }
         }
+        this.$router.push('/data-order')
       }).catch(() => {
         this.isSubmitting = false
         this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
