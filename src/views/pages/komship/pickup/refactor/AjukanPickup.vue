@@ -188,7 +188,7 @@
               v-for="(items, index) in data.item.product"
               :key="index+1"
             >
-              <b-row class="ml-2">
+              <b-row class="ml-2 mb-2">
                 <b-container
                   fluid
                   class="d-flex"
@@ -215,7 +215,7 @@
               v-for="(items, index) in data.item.product"
               :key="index+1"
             >
-              <h5><strong>{{ items.qty }}</strong></h5>
+              <h5 class="mb-3"><strong>{{ items.qty }}</strong></h5>
             </div>
           </template>
 

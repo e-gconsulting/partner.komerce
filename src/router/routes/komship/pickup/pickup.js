@@ -6,7 +6,7 @@ export default [
     meta: {
       name: 'ajukan-pickup',
       routeDetailBefore: 'detail-orderan-pickup-before',
-      routeDetailAfter: 'detail-orderan-pickup-after',
+      routeDetailAfter: 'history-pickup',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [
@@ -23,6 +23,24 @@ export default [
     component: () => import('@/views/pages/komship/pickup/HistoryPickup.vue'),
     meta: {
       name: 'history-pickup',
+      routeDetailHistory: 'history-pickup-detail',
+      resource: 'Pickup',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'History Pickup',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/history-pickup-detail/:order_data_id',
+    name: 'history-pickup-detail',
+    component: () => import('@/views/pages/komship/pickup/refactor/HistoryPickupDetail.vue'),
+    meta: {
+      name: 'history-pickup-detail',
+      routeDetailOrderan: 'detail-orderan-pickup-after',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [
