@@ -4,7 +4,6 @@
     <!-- Modal Create PIN -->
     <b-modal
       ref="create-pin"
-      no-close-on-backdrop
       hide-header-close
       hide-footer
       hide-header
