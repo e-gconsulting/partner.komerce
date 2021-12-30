@@ -2,9 +2,10 @@ export default [
   {
     path: '/ajukan-pickup',
     name: 'ajukan-pickup',
-    component: () => import('@/views/pages/komship/pickup/AjukanPickup.vue'),
+    component: () => import('@/views/pages/komship/pickup/refactor/AjukanPickup.vue'),
     meta: {
       name: 'ajukan-pickup',
+      routeDetailBefore: 'detail-orderan-pickup-before',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [
@@ -26,6 +27,22 @@ export default [
       breadcrumb: [
         {
           text: 'History Pickup',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/detail-orderan-pickup',
+    name: 'detail-orderan-pickup-before',
+    component: () => import('@/views/pages/komship/pickup/refactor/AddPickupDetails.vue'),
+    meta: {
+      name: 'detail-orderan-pickup-before',
+      resource: 'Pickup',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Detail Orderan Pickup',
           active: true,
         },
       ],
