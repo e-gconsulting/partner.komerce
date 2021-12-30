@@ -232,7 +232,8 @@
               <b-button
                 class="btn-icon"
                 variant="flat-info"
-                @click="detailOrder(itemsPreviewProductOrder)"
+                tag="router-link"
+                :to="{ name: $route.meta.routeDetailBefore, params: { selected_order: selectedOrderToStore } }"
               >
                 Lihat detail...
               </b-button>
@@ -378,7 +379,7 @@
         <b-button
           class="org-button"
           tag="router-link"
-          :to="{ name: $route.meta.routeDetailBefore, params: { selected_order: selectedOrderToStore } }"
+          :to="{ name: $route.meta.routeDetailAfter, params: { selected_order: selectedOrderToStore } }"
         >
           Oke
         </b-button>
@@ -476,6 +477,8 @@ export default {
       namePic: '',
       picPhone: '',
       addressId: '',
+
+      selectedOrderFromDetail: this.$route.params.selected_order_from_detail,
     }
   },
   async mounted() {
@@ -486,8 +489,11 @@ export default {
       this.profile = response.data.data
       console.log('profile', this.profile)
     })
+    if (this.selectedOrderFromDetail) {
+      this.selectedOrderToStore = this.selectedOrderFromDetail
+      this.itemsPreviewProductOrder = this.selectedOrderFromDetail
+    }
     await this.getAddress()
-    this.$refs['modal-success-request-pickup'].show()
   },
   methods: {
     getDataOrderToStore(data, dataItems) {
@@ -584,34 +590,24 @@ export default {
         console.log('fail to get list order')
       })
     },
-    async submitPickup() {
+    submitPickup() {
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.selectedOrderToStore.length; x++) {
         this.selectedOrdersId.push(this.selectedOrderToStore[x].order_id)
       }
-      const params = await {
+      const params = {
         partner_name: this.profile.user_fullname,
         pickup_date: this.changeDate(this.dateValue, 2),
         pickup_time: this.timeValue,
         pic: this.namePic,
+        pic_phone: this.picPhone,
         vehicle: this.chosenVehicle,
         address_id: this.addressId,
         address_detail: this.addressDetail,
         orders: this.selectedOrdersId,
       }
-      // const formData = new FormData()
-      // formData.append('partner_name', this.profile.user_fullname)
-      // formData.append('pickup_date', this.changeDate(this.dateValue, 2))
-      // formData.append('pickup_time', this.timeValue)
-      // formData.append('pic', this.namePic)
-      // formData.append('vehicle', this.chosenVehicle)
-      // formData.append('address_id', this.addressId)
-      // formData.append('address_detail', this.addressDetail)
-      // formData.append('orders', this.selectedOrdersId)
 
-      httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, {
-        params,
-      })
+      httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
         .then(response => {
           console.log(response)
           this.$refs['modal-success-request-pickup'].show()
