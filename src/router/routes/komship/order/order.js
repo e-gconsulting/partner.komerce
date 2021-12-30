@@ -48,4 +48,36 @@ export default [
       ],
     },
   },
+  {
+    path: '/add-order-onboarding',
+    name: 'add-order-onboarding',
+    component: () => import('@/views/pages/komship/onboarding/AddOrder.vue'),
+    meta: {
+      name: 'add-order-onboarding',
+      resource: 'Order',
+      routeDetail: 'detail-add-order-onboarding',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Add Order Onboarding',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/add-order-onboarding/detail-checkout',
+    name: 'detail-add-order-onboarding',
+    component: () => import('@/views/pages/komship/onboarding/Refactor/AddDetailOrder.vue'),
+    meta: {
+      resource: 'Order',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Add Order Onboarding',
+          active: true,
+        },
+      ],
+    },
+  },
 ]
