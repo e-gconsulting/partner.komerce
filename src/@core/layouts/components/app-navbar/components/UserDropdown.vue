@@ -27,7 +27,7 @@
       </b-avatar>
     </template>
 
-    <b-dropdown-item
+    <!-- <b-dropdown-item
       v-if="profileRoute"
       link-class="d-flex align-items-center"
       :to="{ name: profileRoute }"
@@ -38,7 +38,7 @@
         class="mr-50"
       />
       <span>Profile</span>
-    </b-dropdown-item>
+    </b-dropdown-item> -->
     <b-dropdown-item
       link-class="d-flex align-items-center"
       @click="skin = isDark ? 'light' : 'dark'"
