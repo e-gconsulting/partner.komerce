@@ -936,6 +936,7 @@ export default {
             this.handleShowPopUp()
           }
         }
+        this.$router.push('/data-order')
       }).catch(() => {
         this.isSubmitting = false
         this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
