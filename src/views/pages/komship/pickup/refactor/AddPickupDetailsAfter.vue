@@ -87,13 +87,6 @@
         </template>
       </b-table>
 
-      <add-pickup-popup-print
-        ref="addPickupPopUpPrint"
-        :selected-option="printOption"
-        @onChangeOption="handleChangeOption"
-        @onSubmitOption="onSubmitPrint"
-      />
-
       <pickup-label-print
         ref="printLabelContent"
         :print-option="printOption"
@@ -169,13 +162,13 @@
                     <h3 class="text-lg w-full justify-center text-black flex center">
                       PENGIRIM
                     </h3>
-                    <div class="flex  flex-row space-x-2">
+                    <div class="flex flex-row space-x-2">
                       <feather-icon icon="user-icon" />
                       <div class="text-base text-black font-light">
                         {{ profile.user_name }}
                       </div>
                     </div>
-                    <div class="flex  flex-row space-x-2">
+                    <div class="flex flex-row space-x-2">
                       <feather-icon icon="user-icon" />
                       <div class="text-base text-black font-light">
                         {{ profile.user_phone }}
@@ -213,8 +206,8 @@
                   </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                  <div class="col-span-1 border-black text-6xl py-2 px-2  border flex justify-center text-black font-black">
-                    {{ itemsPrint.shipping }}
+                  <div class="col-span-1 border-black text-4xl py-2 px-2  border flex justify-center text-black font-black">
+                    {{ itemsPrint.payment_method }}
                   </div>
                   <div class="col-span-2 border-black px-2 py-2 items-center justify-center border flex flex-row space-x-2">
                     <div class="font-bold text-black">
@@ -255,7 +248,9 @@
       </vue-html2pdf>
     </b-row>
     <AddPickupPopupPrint
+      :selected-option="printOption"
       @onSubmitOption="onSubmitOptionPrint"
+      @onChangeOption="handleChangeOption"
     />
   </b-card>
 </template>

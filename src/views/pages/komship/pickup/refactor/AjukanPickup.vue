@@ -573,7 +573,6 @@ export default {
       if (vehicle) this.chosenVehicle = vehicle
     },
     chooseOrder() {
-      this.$refs['modal-success-request-pickup'].show()
       this.$refs['popup-order'].show()
     },
     getListOrderByPartner() {
