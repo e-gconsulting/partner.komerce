@@ -173,7 +173,7 @@
               class="btn-icon"
               variant="flat-info"
               tag="router-link"
-              :to="{ name: $route.meta.routeDetailOrderan, params: { selected_order: itemsDataOrder } }"
+              :to="{ name: $route.meta.routeDetailOrderan, params: { selected_order_from_history: itemsDataOrder } }"
             >
               Lihat detail...
             </b-button>
