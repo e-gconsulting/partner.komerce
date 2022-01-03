@@ -383,14 +383,14 @@
           >
             Hitung
           </b-button> -->
-          <b-button
+          <!-- <b-button
             v-if="isCalculating"
             class="next-button no-mg-mobile"
             disabled
             @click="onCountButtonClicked"
           >
             Please wait...
-          </b-button>
+          </b-button> -->
           <b-button
             v-if="isValidOrder && !isSubmitting"
             class="next-button"
@@ -464,6 +464,7 @@ import {
   BCol,
   BAvatar,
 } from 'bootstrap-vue'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
 function numberWithCommas(x) {
   if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
@@ -568,6 +569,7 @@ export default {
       dateValue: this.dateText,
       customerDate: '',
       customerName: '',
+      address_id: null,
       customerId: '',
       detailCustomerList: [],
       customerTariffCode: '',
@@ -642,14 +644,13 @@ export default {
     this.onUpdateOverAllPrice()
     this.getProfile()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
+    this.address_id = this.$route.params.address_id
   },
   methods: {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
-        console.log(this.profile)
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -794,6 +795,19 @@ export default {
         buttonsStyling: false,
       })
     },
+    alertSuccess(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-success btn-success rounded-lg',
+        },
+        buttonsStyling: false,
+      }).then(() => this.$router.push({ name: 'data-order' }))
+    },
     formCheck() {
       let countValidation = 0
       if (this.customerName === '') {
@@ -885,6 +899,7 @@ export default {
         shipping_type: this.customerExpeditionOption,
         payment_method: this.customerPaymentMethod,
         bank: null,
+        partner_address_id: this.address_id,
         bank_account_name: null,
         bank_account_no: null,
         subtotal: this.sumAllProduct,
@@ -927,6 +942,7 @@ export default {
       this.isCalculating = true
       return this.$http_komship.get('v1/calculate', {
         params: {
+          partner_address_id: this.address_id,
           discount: this.customerDiscountNumber,
           shipping: this.customerShippingMethod,
           tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
@@ -959,7 +975,6 @@ export default {
         // eslint-disable-next-line no-param-reassign
         formData.bank_account_no = 0
       }
-      console.log(formData)
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
         // console.log('detail post order', data)
@@ -971,6 +986,7 @@ export default {
             this.handleShowPopUp()
           }
         }
+        this.alertSuccess('Berhasil Tambah Order')
       }).catch(() => {
         this.isSubmitting = false
         this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
