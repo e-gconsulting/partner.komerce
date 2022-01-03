@@ -31,6 +31,27 @@
       </b-form-group>
       <b-form-group
         class="add-order-label"
+        label="Kirim Dari"
+        label-cols-md="2"
+      >
+        <b-form-select
+          v-model="choosenAddres"
+          class="add-order-product-input"
+          label="product_name"
+          label-cols-md="2"
+          @input="onChangeAddress"
+        >
+          <b-form-select-option
+            v-for="item in addressList"
+            :key="item.value"
+            :value="item.value"
+          >
+            {{ item.text }}
+          </b-form-select-option>
+        </b-form-select>
+      </b-form-group>
+      <b-form-group
+        class="add-order-label"
         label="Pilih Produk"
         label-cols-md="2"
       >
@@ -403,7 +424,7 @@
           class="next-button"
           :disabled="buttonNext"
           tag="router-link"
-          :to="{ name: $route.meta.routeDetail, params: { itemsOrder } }"
+          :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres } }"
         >
           Lanjutkan
         </b-button>
@@ -419,12 +440,16 @@ import {
   BFormDatepicker,
   BFormGroup,
   BButton,
+  BFormSelect,
+  BFormSelectOption,
   BTable,
   BRow,
   BCol,
   BAvatar,
 } from 'bootstrap-vue'
 
+import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from '../setting-kompship/http_komship'
 // import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {
@@ -447,6 +472,8 @@ export default {
     BFormGroup,
     BButton,
     vSelect,
+    BFormSelect,
+    BFormSelectOption,
     // AddOrderTable,
     BTable,
     BRow,
@@ -566,14 +593,31 @@ export default {
       totalToOrder: 1,
 
       choosenProduct: '',
-
       buttonNext: true,
       buttonParentVariant: true,
       buttonVariationSecond: true,
       buttonVariationFirst: true,
+      addressList: [],
     }
   },
+  mounted() {
+    this.getAddress()
+  },
   methods: {
+    getAddress() {
+      httpKomship.get('/v1/address', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(async response => {
+        const { data } = response.data
+        const sortData = data.slice().sort((a, b) => b.is_default - a.is_default)
+
+        this.addressList = await sortData.map(val => ({
+          value: val.address_id,
+          text: val.address_name,
+        }))
+        this.choosenAddres = this.addressList[0].value
+      })
+    },
     chooseVariation(data) {
       this.buttonParentVariant = true
       this.buttonVariationFirst = true
@@ -839,6 +883,9 @@ export default {
       this.onUpdateSelectedItemsOnParent()
       this.checkValidButton()
       this.$refs.tableAddOrderOne.refreshTable()
+    },
+    onChangeAddress(item) {
+      this.choosenAddres = item
     },
     onAddProduct(itemSelected) {
       console.log('itemSelected', itemSelected)
