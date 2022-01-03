@@ -414,7 +414,7 @@ export default {
           props: {
             title: 'Gagal',
             icon: 'AlertCircleIcon',
-            text: 'Gagal meload order, silahkan coba lagi!',
+            text: 'Gagal meload data, silahkan coba lagi!',
             variant: 'danger',
           },
         })
@@ -463,7 +463,7 @@ export default {
           props: {
             title: 'Gagal',
             icon: 'AlertCircleIcon',
-            text: 'Gagal meload kendaraan, silahkan refresh halaman!',
+            text: 'Gagal meload data, silahkan refresh halaman!',
             variant: 'danger',
           },
         })
@@ -483,15 +483,15 @@ export default {
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.items.length; x++) {
           this.items[x].printIsActive = true
+          this.fieldItemsPrint.push(this.items[x])
         }
-        this.fieldItemsPrint = this.items
       } else {
         console.log(false)
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.items.length; x++) {
           this.items[x].printIsActive = false
+          this.fieldItemsPrint = []
         }
-        this.fieldItemsPrint = []
       }
       this.$refs.tableOrder.refresh()
     },
