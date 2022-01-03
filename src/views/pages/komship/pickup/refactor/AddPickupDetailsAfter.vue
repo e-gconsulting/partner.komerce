@@ -1,14 +1,5 @@
 <template>
   <b-card>
-    <b-button
-      variant="primary"
-      tag="router-link"
-      :to="{ name: $route.meta.routeBack, params: { selected_order_from_detail: selectedOrder } }"
-    >
-      <b-icon-chevron-left
-        aria-hidden="true"
-      />
-    </b-button>
     <b-row class="justify-content-end">
       <h4 class="mr-3">
         <strong>
@@ -21,7 +12,7 @@
         variant="primary"
         @click="onShowModalPrint"
       >
-        + Print Semua Label
+        + Print Label
       </b-button>
     </b-row>
 
@@ -31,14 +22,24 @@
         :items="items"
       >
         <template #cell(date_order)="data">
-          <h5>
-            <strong>
-              {{ data.item.order_date }}
-            </strong>
-          </h5>
-          <p>
-            {{ data.item.shipping }}
-          </p>
+          <b-row>
+            <div class="d-flex">
+              <b-form-checkbox
+                value="A"
+                class="custom-control-primary mt-1"
+              />
+              <div>
+                <h5>
+                  <strong>
+                    {{ data.item.order_date }}
+                  </strong>
+                </h5>
+                <p>
+                  {{ data.item.shipping }}
+                </p>
+              </div>
+            </div>
+          </b-row>
         </template>
         <template #cell(pelanggan)="data">
           <h5>
@@ -115,7 +116,7 @@
       >
         <section slot="pdf-content">
           <div
-            v-for="(itemsPrint, index) in selectedOrder"
+            v-for="(itemsPrint, index) in items"
             :key="index+1"
           >
             <div
@@ -128,15 +129,14 @@
               >
                 <div class="grid grid-cols-3 gap-8 ">
                   <div class="col-span-1 items-center justify-center flex flex-col space-y-2">
-                    <div class="font-bold">
-                      Nomor Resi
-                    </div>
-                    <barcode
-                      :value="itemsPrint.airway_bill"
-                      height="32"
-                    >
-                      Show this if the rendering fails.
-                    </barcode>
+                    <h4 class="text-black">
+                      <strong>
+                        Order ID
+                      </strong>
+                    </h4>
+                    <h4 class="text-black">
+                      {{ itemsPrint.order_no }}
+                    </h4>
                   </div>
                   <div class="col-span-1 flex items-center justify-center ">
                     <b-img
@@ -159,63 +159,97 @@
                   class="grid grid-cols-2 gap-2"
                 >
                   <div class="col-span-1 px-2 py-1 border border-black flex flex-col space-y-1">
-                    <h3 class="text-lg w-full justify-center text-black flex center">
-                      PENGIRIM
-                    </h3>
-                    <div class="flex flex-row space-x-2">
-                      <feather-icon icon="user-icon" />
-                      <div class="text-base text-black font-light">
-                        {{ profile.user_name }}
-                      </div>
+                    <div class="text-lg w-full justify-center text-black flex center">
+                      <h4 class="text-black">
+                        <strong>
+                          PENGIRIM
+                        </strong>
+                      </h4>
                     </div>
-                    <div class="flex flex-row space-x-2">
-                      <feather-icon icon="user-icon" />
-                      <div class="text-base text-black font-light">
-                        {{ profile.user_phone }}
-                      </div>
-                    </div>
-                    <div class="flex  flex-row space-x-2">
-                      <feather-icon icon="user-icon" />
-                      <div class="text-base text-black font-light">
-                        {{ profile.user_address }}
-                      </div>
-                    </div>
+                    <b-list-group>
+                      <b-list-group-item class="d-flex border-0">
+                        <span class="mr-1 text-black">
+                          <feather-icon
+                            icon="UserIcon"
+                            size="16"
+                          />
+                        </span>
+                        <span class="text-black">{{ profile.user_name }} </span>
+                      </b-list-group-item>
+
+                      <b-list-group-item class="d-flex border-0">
+                        <span class="mr-1 text-black">
+                          <feather-icon
+                            icon="PhoneIcon"
+                            size="17"
+                          />
+                        </span>
+                        <span class="text-black">{{ profile.user_phone }}</span>
+                      </b-list-group-item>
+
+                      <b-list-group-item class="d-flex border-0">
+                        <span class="mr-1 text-black">
+                          <feather-icon
+                            icon="MapPinIcon"
+                            size="16"
+                          />
+                        </span>
+                        <span class="text-black">{{ profile.user_address }}</span>
+                      </b-list-group-item>
+                    </b-list-group>
                   </div>
                   <div class="col-span-1 px-2 py-1 border border-black">
-                    <h3 class="text-lg w-full justify-center text-black flex center">
-                      PENERIMA
-                    </h3>
-                    <div class="flex  flex-row space-x-2">
-                      <feather-icon icon="user-icon" />
-                      <div class="text-base text-black font-light">
-                        {{ itemsPrint.customer_name }}
-                      </div>
+                    <div class="text-lg w-full justify-center text-black flex center">
+                      <h4 class="text-black">
+                        <strong>
+                          PENERIMA
+                        </strong>
+                      </h4>
                     </div>
-                    <div class="flex  flex-row space-x-2">
-                      <feather-icon icon="user-icon" />
-                      <div class="text-base text-black font-light">
-                        082134567890
-                      </div>
-                    </div>
-                    <div class="flex  flex-row space-x-2">
-                      <feather-icon icon="user-icon" />
-                      <div class="text-base text-black font-light">
-                        {{ itemsPrint.detail_address }}
-                      </div>
-                    </div>
+                    <b-list-group>
+                      <b-list-group-item class="d-flex border-0">
+                        <span class="mr-1 text-black">
+                          <feather-icon
+                            icon="UserIcon"
+                            size="16"
+                          />
+                        </span>
+                        <span class="text-black">{{ itemsPrint.customer_name }} </span>
+                      </b-list-group-item>
+
+                      <b-list-group-item class="d-flex border-0">
+                        <span class="mr-1 text-black">
+                          <feather-icon
+                            icon="PhoneIcon"
+                            size="17"
+                          />
+                        </span>
+                        <span class="text-black">082134567890</span>
+                      </b-list-group-item>
+
+                      <b-list-group-item class="d-flex border-0">
+                        <span class="mr-1 text-black">
+                          <feather-icon
+                            icon="MapPinIcon"
+                            size="16"
+                          />
+                        </span>
+                        <span class="text-black">{{ `${itemsPrint.district}, ${itemsPrint.detail_address}` }}</span>
+                      </b-list-group-item>
+                    </b-list-group>
                   </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
-                  <div class="col-span-1 border-black text-4xl py-2 px-2  border flex justify-center text-black font-black">
+                  <div class="col-span-1 border-black text-4xl py-2 px-2 border flex justify-center text-black font-black text-center items-center">
                     {{ itemsPrint.payment_method }}
                   </div>
                   <div class="col-span-2 border-black px-2 py-2 items-center justify-center border flex flex-row space-x-2">
-                    <div class="font-bold text-black">
-                      Order ID
-                    </div>
                     <div class="flex flex-col justify-center">
+                      <h4 class="font-bold text-black text-center">
+                        Nomor Resi
+                      </h4>
                       <barcode
-                        :value="itemsPrint.order_no"
+                        :value="itemsPrint.airway_bill"
                         height="33"
                       >
                         Show this if the rendering fails.
@@ -262,9 +296,11 @@ import {
   BTable,
   BContainer,
   BAvatar,
-  BIconChevronLeft,
   BButton,
   BImg,
+  BListGroup,
+  BListGroupItem,
+  BFormCheckbox,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -280,13 +316,15 @@ export default {
     BTable,
     BContainer,
     BAvatar,
-    BIconChevronLeft,
     BButton,
     VueHtml2pdf,
     barcode: VueBarcode,
     AddPickupPopupPrint,
     PickupLabelPrint,
     BImg,
+    BListGroup,
+    BListGroupItem,
+    BFormCheckbox,
   },
 
   data() {
@@ -325,12 +363,13 @@ export default {
 
       valuePrint: [],
 
-      idOrderFromHistory: this.$route.params.selected_order.data_order,
+      idOrderFromHistory: this.$route.params.selected_order_from_history.data_order,
       idOrder: [],
     }
   },
   mounted() {
     this.items = this.selectedOrder
+    console.log('selectedOrder', this.selectedOrder)
     this.getProfile()
   },
   methods: {
@@ -343,6 +382,7 @@ export default {
       }).then(response => {
         const { data } = response.data.data
         this.items = data
+        console.log('itemsOrder', this.items)
         return this.items
       }).catch(() => {
         this.$toast({
