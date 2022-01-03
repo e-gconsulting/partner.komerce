@@ -10,6 +10,7 @@
     <b-row class="justify-content-end mr-3 mt-2 mb-5">
       <b-button
         variant="primary"
+        :disabled="fieldItemsPrint.length === 0"
         @click="onShowModalPrint"
       >
         + Print Label
@@ -18,15 +19,27 @@
 
     <b-row>
       <b-table
+        ref="tableOrder"
         :fields="fields"
         :items="items"
       >
+        <template #head(date_order)="data">
+          <b-row class="align-items-center">
+            <b-form-checkbox
+              v-model="allSelectItemPrint"
+              class="custom-control-primary"
+              @change="getAllItemPrint"
+            />
+            <span>{{ data.label }}</span>
+          </b-row>
+        </template>
         <template #cell(date_order)="data">
           <b-row>
             <div class="d-flex">
               <b-form-checkbox
-                value="A"
+                v-model="data.item.printIsActive"
                 class="custom-control-primary mt-1"
+                @change="getItemPrint(data)"
               />
               <div>
                 <h5>
@@ -116,7 +129,7 @@
       >
         <section slot="pdf-content">
           <div
-            v-for="(itemsPrint, index) in items"
+            v-for="(itemsPrint, index) in fieldItemsPrint"
             :key="index+1"
           >
             <div
@@ -301,6 +314,7 @@ import {
   BListGroup,
   BListGroupItem,
   BFormCheckbox,
+  BIconFileEarmarkEaselFill,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -365,6 +379,12 @@ export default {
 
       idOrderFromHistory: this.$route.params.selected_order_from_history.data_order,
       idOrder: [],
+
+      selectItemPrint: false,
+      allSelectItemPrint: false,
+
+      fieldItemsPrint: [],
+      disableButtonPrint: true,
     }
   },
   mounted() {
@@ -377,11 +397,15 @@ export default {
       this.idOrderFromHistory.map(items => this.idOrder.push(items.id))
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
         params: {
-          order_id: Number(this.idOrder.toString()),
+          order_id: this.idOrder.toString(),
         },
       }).then(response => {
         const { data } = response.data.data
         this.items = data
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          Object.assign(this.items[x], { printIsActive: false })
+        }
         console.log('itemsOrder', this.items)
         return this.items
       }).catch(() => {
@@ -444,6 +468,32 @@ export default {
           },
         })
       })
+    },
+    getItemPrint(data) {
+      if (data.item.printIsActive === true) {
+        this.fieldItemsPrint.push(data.item)
+      }
+      if (data.item.printIsActive === false) {
+        this.fieldItemsPrint.splice(data.index, 1)
+      }
+    },
+    getAllItemPrint() {
+      if (this.allSelectItemPrint === true) {
+        console.log(true)
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          this.items[x].printIsActive = true
+        }
+        this.fieldItemsPrint = this.items
+      } else {
+        console.log(false)
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          this.items[x].printIsActive = false
+        }
+        this.fieldItemsPrint = []
+      }
+      this.$refs.tableOrder.refresh()
     },
   },
 }
