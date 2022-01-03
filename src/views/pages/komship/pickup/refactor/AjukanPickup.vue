@@ -412,6 +412,7 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
@@ -481,19 +482,29 @@ export default {
       selectedOrderFromDetail: this.$route.params.selected_order_from_detail,
     }
   },
-  async mounted() {
+  mounted() {
     this.$http_komship.post('v1/my-profile', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       this.userData = response.data.data
       this.profile = response.data.data
       console.log('profile', this.profile)
+    }).catch(() => {
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: 'Gagal',
+          icon: 'AlertCircleIcon',
+          text: 'Gagal meload kendaraan, silahkan refresh halaman!',
+          variant: 'danger',
+        },
+      })
     })
     if (this.selectedOrderFromDetail) {
       this.selectedOrderToStore = this.selectedOrderFromDetail
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
-    await this.getAddress()
+    this.getAddress()
   },
   methods: {
     getDataOrderToStore(data, dataItems) {
@@ -606,11 +617,22 @@ export default {
         address_detail: this.addressDetail,
         orders: this.selectedOrdersId,
       }
+      console.log(params)
 
       httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
         .then(response => {
           console.log(response)
           this.$refs['modal-success-request-pickup'].show()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal mengajukan pickup, silahkan coba lagi!',
+              variant: 'danger',
+            },
+          })
         })
     },
     handleSubmitPopUpSuccess() {

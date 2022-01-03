@@ -268,6 +268,7 @@ import {
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
 import PickupLabelPrint from '../PickupLabelPrint.vue'
@@ -325,36 +326,34 @@ export default {
       valuePrint: [],
 
       idOrderFromHistory: this.$route.params.selected_order.data_order,
+      idOrder: [],
     }
   },
   mounted() {
-    this.$http_komship.post('v1/my-profile', {
-      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-    }).then(response => {
-      this.profile = response.data.data
-      console.log('profile', this.profile.partner_id)
-      this.getOrder()
-    })
     this.items = this.selectedOrder
-    console.log('idOrder', this.idOrderFromHistory)
+    this.getProfile()
   },
   methods: {
     getOrder() {
-      this.$http_komship.get(`/v1/order/${this.profile.partner_id}`).then(response => {
-        console.log('result', response)
+      this.idOrderFromHistory.map(items => this.idOrder.push(items.id))
+      this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
+        params: {
+          order_id: Number(this.idOrder.toString()),
+        },
+      }).then(response => {
         const { data } = response.data.data
         this.items = data
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.items.length; x++) {
-          // eslint-disable-next-line no-plusplus
-          for (let y = 0; y < this.idOrderFromHistory.length; y++) {
-            if (this.items[x].order_id !== this.idOrderFromHistory[y].order_id) {
-              this.items.splice(x, 1)
-            }
-          }
-        }
-        console.log('itemsResult', this.items)
         return this.items
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload order, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
       })
     },
     onShowModalPrint() {
@@ -386,6 +385,25 @@ export default {
       } else {
         this.$router.push('history-pickup')
       }
+    },
+    getProfile() {
+      this.$http_komship.post('v1/my-profile', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        this.profile = response.data.data
+        console.log('profile', this.profile.partner_id)
+        this.getOrder()
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload kendaraan, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
+      })
     },
   },
 }
