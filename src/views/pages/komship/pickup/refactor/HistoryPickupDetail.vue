@@ -174,11 +174,20 @@
                           {{ data.item.product_name }}
                         </strong>
                       </h5>
-                      <span class="text-black">
-                        <strong>
-                          {{ data.item.product_variant_name }}
-                        </strong>
-                      </span>
+                      <div v-if="data.item.product_variant_name !== ''">
+                        <span class="text-black">
+                          <strong>
+                            {{ data.item.product_variant_name }}
+                          </strong>
+                        </span>
+                      </div>
+                      <div v-else>
+                        <span class="text-black">
+                          <strong>
+                            Tidak ada variasi
+                          </strong>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </b-row>

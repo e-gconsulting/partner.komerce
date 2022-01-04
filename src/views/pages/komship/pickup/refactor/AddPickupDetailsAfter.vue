@@ -73,11 +73,18 @@
                       {{ itemsProduct.product_name }}
                     </strong>
                   </p>
-                  <p class="text-primary">
-                    <strong>
-                      {{ itemsProduct.variant_name }}
-                    </strong>
-                  </p>
+                  <div v-if="itemsProduct.variant_name !== ''">
+                    <p class="text-primary">
+                      <strong>
+                        {{ itemsProduct.variant_name }}
+                      </strong>
+                    </p>
+                  </div>
+                  <div v-else>
+                    <p class="text-primary">
+                      Tidak ada variasi
+                    </p>
+                  </div>
                 </div>
               </b-container>
             </b-row>
