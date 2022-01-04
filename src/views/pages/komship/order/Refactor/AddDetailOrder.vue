@@ -18,20 +18,8 @@
           label-for="input-date2"
         >
           <div class="add-order-date-label">
-            {{ customerDate }}
+            {{ date }}
           </div>
-          <b-form-datepicker
-            id="input-date2"
-            ref="dp2"
-            v-model="dateValue"
-            class="add-order-date-button"
-            button-only
-            @context="onChangeDate"
-          >
-            <template v-slot:button-content>
-              <img src="@/assets/images/icons/date-picker-icon.svg">
-            </template>
-          </b-form-datepicker>
         </b-form-group>
         <b-form-group
           class="add-order-label mb-2 add-order-label-payment"
@@ -467,6 +455,7 @@
 
 <script>
 import vSelect from 'vue-select'
+import dateFormat from 'dateformat'
 import {
   BCardTitle,
   BFormDatepicker,
@@ -487,7 +476,11 @@ import {
   BCol,
   BAvatar,
 } from 'bootstrap-vue'
-import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
+
+import {
+  formatFullDate,
+} from 'node-format-date'
+import { formatDate } from '@/@core/utils/filter'
 
 function numberWithCommas(x) {
   if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
@@ -553,7 +546,6 @@ function getVariantPerItem(listData) {
 export default {
   components: {
     BCardTitle,
-    BFormDatepicker,
     BFormInput,
     BFormGroup,
     BFormTextarea,
@@ -620,6 +612,7 @@ export default {
       isValidOrder: false,
       isCalculating: false,
       isSubmitting: false,
+      date: null,
       fields: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
@@ -663,6 +656,9 @@ export default {
     }
   },
   mounted() {
+    const currentDate = new Date()
+    this.customerDate = dateFormat(currentDate, 'yyyy-mm-dd')
+    this.date = formatFullDate(currentDate)
     this.onUpdateOverAllPrice()
     this.getProfile()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
