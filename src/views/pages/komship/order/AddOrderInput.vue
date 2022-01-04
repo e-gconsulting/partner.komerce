@@ -14,20 +14,8 @@
         label-for="input-date"
       >
         <div class="add-order-date-label">
-          {{ dateLabel }}
+          {{ date }}
         </div>
-        <b-form-datepicker
-          id="input-date"
-          ref="dp1"
-          v-model="dateValue"
-          class="add-order-date-button"
-          button-only
-          @context="onChangeDate"
-        >
-          <template v-slot:button-content>
-            <img src="@/assets/images/icons/date-picker-icon.svg">
-          </template>
-        </b-form-datepicker>
       </b-form-group>
       <b-form-group
         class="add-order-label"
@@ -467,6 +455,10 @@ import {
   BAvatar,
 } from 'bootstrap-vue'
 
+import dateFormat from 'dateformat'
+import {
+  formatFullDate,
+} from 'node-format-date'
 import useJwt from '@/auth/jwt/useJwt'
 import httpKomship from '../setting-kompship/http_komship'
 // import AddOrderTable from './AddOrderTable.vue'
@@ -487,7 +479,6 @@ function changeDate(dateString) {
 export default {
   components: {
     BCardTitle,
-    BFormDatepicker,
     BFormGroup,
     BButton,
     vSelect,
@@ -621,6 +612,9 @@ export default {
     }
   },
   mounted() {
+    const currentDate = new Date()
+    this.customerDate = dateFormat(currentDate, 'yyyy-mm-dd')
+    this.date = formatFullDate(currentDate)
     this.getAddress()
   },
   methods: {
