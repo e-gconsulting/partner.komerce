@@ -423,6 +423,99 @@
       </b-row>
 
     </b-card>
+
+    <!-- confirm Delete Address -->
+    <b-modal
+      ref="modal-confirm-delete-address"
+      no-close-on-backdrop
+      hide-header-close
+      hide-header
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-1">
+        <h4>
+          Anda yakin ingin hapus satu alamat ?
+        </h4>
+      </b-col>
+
+      <template #modal-footer>
+        <b-col
+          md="12"
+          class="d-flex justify-content-center pb-2"
+        >
+          <b-button
+            variant="primary"
+            class="mr-50"
+            @click="deleteAddress"
+          >
+            Hapus
+          </b-button>
+          <b-button
+            variant="flat-primary"
+            @click="closeConfirmDelete"
+          >
+            Batal
+          </b-button>
+        </b-col>
+      </template>
+
+    </b-modal>
+
+    <b-modal
+      ref="modal-validate-address"
+      no-close-on-backdrop
+      hide-header-close
+      hide-header
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-1">
+        <h4>
+          Kamu tidak dapat menghapus alamat penjemputan yang menjadi alamat utama.
+        </h4>
+      </b-col>
+
+      <template #modal-footer>
+        <b-col
+          md="12"
+          class="d-flex justify-content-center pb-2"
+        >
+          <b-button
+            variant="primary"
+            class="mr-50"
+            @click="closeAlertCannotDelete"
+          >
+            Oke
+          </b-button>
+        </b-col>
+      </template>
+
+    </b-modal>
   </b-overlay>
 </template>
 
@@ -444,6 +537,8 @@ import {
   BOverlay,
   BFormCheckbox,
   BSpinner,
+  BModal,
+  BImg,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import httpKomship from './http_komship'
@@ -464,6 +559,8 @@ export default {
     ValidationProvider,
     ValidationObserver,
     BSpinner,
+    BModal,
+    BImg,
   },
   directives: {
     Ripple,
@@ -472,16 +569,11 @@ export default {
     return {
       loading: false,
       loadingSubmit: false,
-
       isDefault: false,
-
       dataAddress: [],
-
       itemsOrigin: [],
       codeOrigin: [],
-
       fieldOrigin: '',
-
       formAddAddress: false,
 
       // Edit Mode
@@ -504,6 +596,7 @@ export default {
       fieldAddOrigin: '',
 
       tes: null,
+      dataDelete: null,
 
       // Validation
       required,
@@ -641,30 +734,21 @@ export default {
       }
     },
     confirmDelete(data) {
-      this.$swal({
-        title: 'Anda yakin?',
-        text: 'Ingin hapus satu Alamat ?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus!',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-danger ml-1',
-        },
-        buttonsStyling: false,
-      }).then(result => {
-        if (result.value) {
-          this.delete(data)
-        }
-      })
+      this.dataDelete = data
+      this.$refs['modal-confirm-delete-address'].show()
     },
-    delete(data) {
-      httpKomship.delete(`/v1/address/delete/${data.address_id}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      })
-        .then(() => {
-          this.getAddress()
+    deleteAddress() {
+      if (this.dataDelete.is_default !== 1) {
+        httpKomship.delete(`/v1/address/delete/${this.dataDelete.address_id}`, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         })
+          .then(() => {
+            this.getAddress()
+          })
+      } else {
+        this.$refs['modal-confirm-delete-address'].hide()
+        this.$refs['modal-validate-address'].show()
+      }
     },
     onSearchOrigin(search, loading) {
       if (search.length) {
@@ -691,6 +775,12 @@ export default {
     },
     changeEditMode() {
       this.editMode = false
+    },
+    closeConfirmDelete() {
+      this.$refs['modal-confirm-delete-address'].hide()
+    },
+    closeAlertCannotDelete() {
+      this.$refs['modal-validate-address'].hide()
     },
   },
 

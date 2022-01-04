@@ -65,6 +65,7 @@
                     variant="light-primary"
                     square
                     size="50px"
+                    :src="itemsProduct.product_image"
                   />
                 </div>
                 <div class="ml-1">
