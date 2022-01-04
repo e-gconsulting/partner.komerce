@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <h3>
+    <h3 class="text-black">
       <strong>
         Riwayat Pengajuan Pickup
       </strong>
@@ -8,7 +8,7 @@
 
     <b-row class="mt-3 justify-content-center">
       <b-col cols="11">
-        <h4>
+        <h4 class="text-black">
           <strong>
             Penjemputan
           </strong>
@@ -25,10 +25,11 @@
             label="Alamat"
             label-for="h-first-name"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <b-row class="mt-50">
               <b-col md="10">
-                <h5>
+                <h5 class="text-black">
                   <strong>
                     {{ addressName }}
                   </strong>
@@ -45,6 +46,7 @@
             label="Tanggal"
             label-for="h-email"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <div class="add-pickup-input-date-label mt-50">
               {{ dateLabel }}
@@ -56,6 +58,7 @@
             label="Waktu Jemput"
             label-for="h-number"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <p class="mt-50">
               {{ timeValueText }}
@@ -67,6 +70,7 @@
             label="Kendaraan"
             label-for="h-password"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <div
               id="input-pickup-vehicle"
@@ -96,17 +100,21 @@
             </div>
           </b-form-group>
         </b-col>
-        <b-col cols="11">
+        <b-col
+          class="mt-1"
+          cols="11"
+        >
           <b-form-group
             label="Orderan"
             label-for="h-password"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           />
         </b-col>
       </b-row>
 
       <div v-if="selectedOrderToStore === []">
-        <b-row class="justify-content-center mt-1">
+        <b-row class="justify-content-center">
           <b-col
             cols="11"
             class="d-flex justify-content-between"
@@ -131,42 +139,65 @@
           </b-col>
         </b-row>
       </div>
-      <b-table
-        :fields="fieldsPreviewProductOrder"
-        :items="itemsPreviewProductOrder"
-      >
-        <template #cell(product)="data">
-          <b-row class="ml-2">
-            <b-container
-              fluid
-              class="d-flex"
-            >
-              <div>
-                <b-avatar
-                  variant="light-primary"
-                  square
-                  size="50px"
-                  :src="data.item.product_image"
-                />
-              </div>
-              <div class="ml-1">
-                <h5><strong>{{ data.item.product_name }}</strong></h5>
-                <span><strong>{{ data.item.product_variant_name }}</strong></span>
-              </div>
-            </b-container>
-          </b-row>
-        </template>
 
-        <template #cell(total)="data">
-          <h5><strong>{{ data.item.qty }}</strong></h5>
-        </template>
+      <b-row class="justify-content-center mt-1">
+        <b-col cols="11">
+          <b-table
+            :fields="fieldsPreviewProductOrder"
+            :items="itemsPreviewProductOrder"
+          >
+            <template #cell(product)="data">
+              <b-row class="">
+                <div
+                  fluid
+                  class="d-flex"
+                >
+                  <div>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="data.item.product_image"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <h5 class="text-black">
+                      <strong>
+                        {{ data.item.product_name }}
+                      </strong>
+                    </h5>
+                    <span class="text-black">
+                      <strong>
+                        {{ data.item.product_variant_name }}
+                      </strong>
+                    </span>
+                  </div>
+                </div>
+              </b-row>
+            </template>
 
-      </b-table>
+            <template #cell(total)="data">
+              <h5 class="text-black">
+                <strong>
+                  {{ data.item.qty }}
+                </strong>
+              </h5>
+            </template>
+
+          </b-table>
+        </b-col>
+      </b-row>
 
       <b-row class="justify-content-center mb-1">
         <b-col
+          class="mb-1"
           cols="11"
-          class="d-flex justify-content-between"
+        >
+          <hr style="height:2px;border-width:0;color:#ebe9f1;background-color:#ebe9f1">
+        </b-col>
+        <b-col
+          cols="11"
+          class="d-flex justify-content-between pl-0"
         >
           <div>
             <b-button
@@ -179,15 +210,12 @@
             </b-button>
           </div>
           <div>
-            <span>
+            <span class="text-black">
               <strong>
-                Total produk: {{ itemsPreviewProductOrder.length }}
+                Total: {{ itemsPreviewProductOrder.length }}
               </strong>
             </span>
           </div>
-        </b-col>
-        <b-col cols="11">
-          <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
         </b-col>
       </b-row>
 
@@ -206,7 +234,6 @@ import {
   BButton,
   BTable,
   BAvatar,
-  BContainer,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
@@ -223,7 +250,6 @@ export default {
     BButton,
     BTable,
     BAvatar,
-    BContainer,
   },
   directives: {
     Ripple,
@@ -249,13 +275,15 @@ export default {
         {
           key: 'product',
           label: 'Produk',
-          thClass: 'bg-white border-top-0',
+          thClass: 'bg-white text-black text-start pl-0 ml-0 border-top-0',
+          tdClass: 'text-start pl-1 border-top-0',
         },
         {
           key: 'total',
           label: 'Jumlah',
-          tdClass: 'text-center',
-          thClass: 'text-center bg-white border-top-0',
+          tdClass: 'text-center border-top-0',
+          thClass: 'text-center text-black bg-white border-top-0',
+          class: 'col-action',
         },
       ],
       itemsPreviewProductOrder: [],
