@@ -2,7 +2,7 @@ export default [
   {
     path: '/data-order',
     name: 'data-order',
-    component: () => import('@/views/pages/komship/order/DataOrder.vue'),
+    component: () => import('@/views/pages/komship/order/DataOrder/Index.vue'),
     meta: {
       name: 'data-order',
       resource: 'Order',
