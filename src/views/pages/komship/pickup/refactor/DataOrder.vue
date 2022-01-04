@@ -31,6 +31,12 @@ export default {
     BCard,
     DataOrderTable,
   },
+  props: {
+    passAddressId: {
+      type: Number,
+      default: 0,
+    },
+  },
   data() {
     return {
 
@@ -84,6 +90,7 @@ export default {
   },
   async mounted() {
     this.reload()
+    console.log('addressId', this.passAddressId)
   },
   methods: {
     getSelectOrder(data) {
@@ -260,7 +267,8 @@ export default {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
           page: this.currentPage,
-          // order_status: 0,
+          order_status: 0,
+          partner_address_id: this.passAddressId,
         },
       }).then(response => {
         const { data } = response.data.data

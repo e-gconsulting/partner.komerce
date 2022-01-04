@@ -358,6 +358,7 @@
       size="lg"
     >
       <data-order
+        :pass-address-id="addressId"
         @passDataOrderToParent="getDataOrderToStore"
       />
     </b-modal>
