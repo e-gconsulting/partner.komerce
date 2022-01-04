@@ -461,6 +461,7 @@ export default {
   mounted() {
     this.items = this.selectedOrder
     console.log('selectedOrder', this.selectedOrder)
+    console.log('idOrderFromHistory', this.idOrderFromHistory)
     this.getProfile()
   },
   methods: {
@@ -476,6 +477,15 @@ export default {
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.items.length; x++) {
           Object.assign(this.items[x], { printIsActive: false })
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.idOrderFromHistory.length; x++) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.items.length; y++) {
+            if (this.items[y].order_id === this.idOrderFromHistory[x].id) {
+              Object.assign(this.items[y], { customer_phone: this.idOrderFromHistory[y].customer_phone })
+            }
+          }
         }
         console.log('itemsOrder', this.items)
         this.loading = false
