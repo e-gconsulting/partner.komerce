@@ -34,7 +34,7 @@
               <b-form-input type="date" />
             </b-col>
             <b-col md="6">
-              <b-form-input />
+              <b-form-input type="date" />
             </b-col>
           </b-row>
           <label class="mt-1">Produk</label>
@@ -124,7 +124,39 @@
         </div>
       </template>
       <template #cell(grand_total)="data">
-        Rp. {{ formatNumber(data.item.grand_total) }}
+        Rp. {{ formatNumber(data.item.grand_total) }}<br>
+        <span
+          v-if="data.item.payment_method === 'COD'"
+          class="text-primary"
+        >
+          COD
+        </span>
+        <div
+          v-else-if="data.item.payment_method === 'BANK TRANSFER'"
+          class="d-flex"
+        >
+          <span class="text-primary">Transfer</span>
+          <img
+            :id="`iconInfo` + data.item.order_id"
+            src="@/assets/images/icons/info-circle.svg"
+            class="icon-info"
+          >
+          <b-popover
+            triggers="hover"
+            :target="`iconInfo` + data.item.order_id"
+            placement="bottomleft"
+          >
+            <label>Nama Bank:</label><br>
+            <span class="font-bold">{{ data.item.bank }}</span><br>
+            <label>No Rekening:</label><br>
+            <span class="font-bold">{{ data.item.bank_account_no }}</span><br>
+            <label>Pemilik Rekening:</label><br>
+            <span class="font-bold">{{ data.item.bank_account_name }}</span><br>
+          </b-popover>
+        </div>
+      </template>
+      <template #cell(details)>
+        <a class="button-detail">Lihat Detail</a>
       </template>
     </b-table>
     <b-row>
@@ -177,9 +209,7 @@ export default {
         { key: 'order_date', label: 'Tanggal Order', thClass: 'align-middle' },
         { key: 'customer_name', label: 'Pelanggan', thClass: 'align-middle' },
         { key: 'product', label: 'Produk', thClass: 'align-middle' },
-        {
-          key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle text-center', tdClass: 'text-center',
-        },
+        { key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle' },
         { key: 'order_status', label: 'Status', thClass: 'align-middle' },
         { key: 'details', label: 'Rincian', thClass: 'align-middle' },
       ],
@@ -236,5 +266,18 @@ export default {
   padding-left: 40px;
   height: 45px;
   border-radius: 12px;
+}
+.button-detail {
+  font-size: 14px;
+  color: #08A0F7!important;
+}
+.button-detail:hover {
+  color: #c3c3c3!important;
+}
+.icon-info {
+  width: 20px;
+  height: 20px;
+  margin-left: 3px;
+  cursor: pointer;
 }
 </style>
