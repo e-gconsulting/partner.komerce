@@ -26,39 +26,23 @@
           label="Nama Pelanggan"
           label-cols-md="3"
         >
-          <v-select
+          <b-form-input
+            ref="addCustomerName"
             v-model="customerName"
-            :options="customersList"
-            label="name"
-            class=" add-order-product-input-v-select add-order-product-input-v-select-payment"
-            label-cols-md="2"
-            @input="handleChangeCustomer"
-          >
-            <template
-              slot="option"
-              slot-scope="option"
+            class="add-order-product-input-v-select"
+            placeholder="Masukkan Nama"
+            list="customer-list-id"
+            @input="handleSearchCustomer"
+            @change="handleChangeCustomer"
+          />
+          <datalist id="customer-list-id">
+            <option
+              v-for="(customerItem, customerItemIndex) in detailCustomerList"
+              :key="'optionCustomer'+customerItemIndex"
             >
-              <div
-                style="fontSize:14px"
-                class="px-1 overflow-hidden"
-              >
-                <div class="row">
-                  <b>{{ option.name }}</b>
-                </div>
-                <div class="row">
-                  {{ option.phone }}
-                </div>
-                <div class="row">
-                  {{ option.address }}
-                </div>
-              </div>
-              <!-- <span
-                class="fa"
-                :class="option.icon"
-              />
-              {{ option.title }} -->
-            </template>
-          </v-select>
+              {{ customerItem.name }}, {{ customerItem.phone }}, {{ customerItem.address }}
+            </option>
+          </datalist>
         </b-form-group>
         <b-form-group
           class="add-order-label mb-2"
@@ -526,8 +510,6 @@ function countTotalPrice(listData) {
 }
 
 function getVariantPerItem(listData) {
-  console.log('listData')
-  console.log(listData)
   if (listData && listData.itemSelected !== {}) {
     const variantData = {}
     // for (let i = 0; i < listData.selectedVariationData.length; i += 1) {
@@ -670,7 +652,6 @@ export default {
       return this.$http_komship.get('v1/customer').then(response => {
         const { data } = response.data
         this.customersList = data
-        console.log('response', data)
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -737,8 +718,6 @@ export default {
       this.customerShippingMethod = itemSelected
     },
     onAddExpeditionOption(itemSelected) {
-      console.log('onAddExpeditionOption')
-      console.log(itemSelected)
       this.customerExpeditionOption = itemSelected
     },
     onAddPaymentMethod(itemSelected) {
@@ -758,18 +737,14 @@ export default {
       this.$router.push('data-order')
     },
     findCorrectData(dataArr) {
-      console.log(dataArr)
       let selectedCost = {}
       if (dataArr && dataArr.length && dataArr.length > 0) {
         for (let j = 0; j < dataArr.length; j += 1) {
           if (dataArr[j].shipping_type) {
             selectedCost = dataArr[j]
-            console.log('tes')
           }
         }
       }
-      console.log('selectedCost')
-      console.log(selectedCost)
       return selectedCost
     },
     calculateOnView() {
@@ -800,10 +775,6 @@ export default {
               qty: dataArr[j].stockToDisplay,
               subtotal: dataArr[j].stockToDisplay * (isVariant ? variantData.price : dataArr[j].price),
             }
-            console.log('cartItem')
-            console.log(cartItem)
-            console.log('dataArr')
-            console.log(dataArr)
             newCart.push({ ...cartItem })
           }
         }
@@ -879,15 +850,17 @@ export default {
     },
     findCustomer(names, listArr) {
       for (let j = 0; j < listArr.length; j += 1) {
-        if (listArr[j] && listArr[j].name === names.name) {
+        if (listArr[j] && listArr[j].name === names) {
           return listArr[j]
         }
       }
       return {}
     },
-    handleChangeCustomer(text) {
-      if (text && this.customersList.length && this.customersList.length > 0) {
-        const chosenCustomerData = this.findCustomer(text, this.customersList)
+    handleChangeCustomer(_text) {
+      const split = _text.split(',')
+      const text = split[0]
+      if (text && this.detailCustomerList.length && this.detailCustomerList.length > 0) {
+        const chosenCustomerData = this.findCustomer(text, this.detailCustomerList)
         if (chosenCustomerData && chosenCustomerData.customer_id) {
           this.customerName = chosenCustomerData.name
           this.customerTariffCode = chosenCustomerData.tariff_code
@@ -1001,7 +974,6 @@ export default {
       }
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
-        // console.log('detail post order', data)
         if (data) {
           this.isSubmitting = false
           if (this.profile.is_onboarding !== true) {
@@ -1019,7 +991,6 @@ export default {
     onPostCart(cartItem) {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
-        // console.log('detail post cart', data)
         this.cartOrder = data.cart_id
       }).catch(() => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
