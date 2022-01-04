@@ -250,7 +250,7 @@
                           size="17"
                         />
                       </span>
-                      <span class="text-black">082134567890</span>
+                      <span class="text-black">{{ itemsPrint.customer_phone }}</span>
                     </b-list-group-item>
 
                     <b-list-group-item class="d-flex border-0">
@@ -266,8 +266,26 @@
                 </div>
               </div>
               <div class="grid grid-cols-3 gap-2">
-                <div class="col-span-1 border-black text-4xl py-2 px-2 border flex justify-center text-black font-black text-center items-center">
-                  {{ itemsPrint.payment_method }}
+                <div class="col-span-1 border-black text-4xl py-2 px-2 border text-black font-black text-center flex justify-center items-center">
+                  <b-row class="align-items-center">
+                    <b-col cols="12">
+                      <h1 class="text-black">
+                        <strong>
+                          {{ itemsPrint.payment_method }}
+                        </strong>
+                      </h1>
+                    </b-col>
+                    <b-col
+                      v-if="itemsPrint.payment_method === 'COD'"
+                      cols="12"
+                    >
+                      <h3 class="text-black">
+                        <strong>
+                          Rp. {{ formatPrice(itemsPrint.grand_total) }}
+                        </strong>
+                      </h3>
+                    </b-col>
+                  </b-row>
                 </div>
                 <div class="col-span-2 border-black px-2 py-2 items-center justify-center border flex flex-row space-x-2">
                   <div class="flex flex-col justify-center">
@@ -283,21 +301,50 @@
                   </div>
                 </div>
               </div>
-              <div
-                v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                :key="indexProduct+1"
-              >
-                <div class="grid grid-cols-3 gap-2">
-                  <div class="col-span-1 border-black text-xl py-2 px-2  border flex text-black font-black">
-                    Kuantitas : {{ dataProduct.qty }}
+              <div class="grid grid-cols-3 gap-2">
+                <div class="col-span-1 border-black text-xl py-2 px-2  border flex text-black font-black">
+                  Kuantitas : <b-list-group
+                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                    :key="indexProduct+1"
+                  >
+                    <b-list-group-item class="pt-0 pb-0 pr-0 border-0">
+                      <span>
+                        {{ calculateQty(dataProduct.qty) }}
+                      </span>
+                    </b-list-group-item>
+                  </b-list-group>
+                </div>
+                <div class="col-span-2 border-black px-2 py-2 items-center  border flex flex-row space-x-2">
+                  <div class="text-xl text-black font-black">
+                    <b-row>
+                      <div>
+                        ISI PAKET:
+                      </div>
+                      <div>
+                        <b-list-group
+                          v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                          :key="indexProduct+1"
+                        >
+                          <b-list-group-item class="pt-0 pb-0 border-0">
+                            <span>
+                              {{ dataProduct.product_name }},
+                            </span>
+                          </b-list-group-item>
+                        </b-list-group>
+                      </div>
+                    </b-row>
                   </div>
-                  <div class="col-span-2 border-black px-2 py-2 items-center  border flex flex-row space-x-2">
-                    <div class="text-xl text-black font-black">
-                      ISI PAKET : {{ dataProduct.product_name }}
-                    </div>
-                    <div class="text-xl text-black font-medium">
-                      {{ dataProduct.variant_name }}
-                    </div>
+                  <div class="text-xl text-black font-medium">
+                    <b-list-group
+                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                      :key="indexProduct+1"
+                    >
+                      <b-list-group-item class="pt-0 pb-0 pl-0 border-0">
+                        <span>
+                          {{ dataProduct.variant_name }}
+                        </span>
+                      </b-list-group-item>
+                    </b-list-group>
                   </div>
                 </div>
               </div>
@@ -326,6 +373,7 @@ import {
   BListGroup,
   BListGroupItem,
   BOverlay,
+  BCol,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -350,6 +398,7 @@ export default {
     BListGroup,
     BListGroupItem,
     BOverlay,
+    BCol,
   },
 
   data() {
@@ -441,6 +490,7 @@ export default {
             variant: 'danger',
           },
         })
+        this.loading = false
       })
     },
     onShowModalPrint() {
@@ -505,6 +555,15 @@ export default {
       }
       this.fieldItemsPrint.push(data.item)
       this.$bvModal.show('modal-8')
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    calculateQty(value) {
+      let result = 0
+      result += Number(value)
+      return result
     },
   },
 }
