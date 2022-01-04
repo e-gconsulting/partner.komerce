@@ -13,6 +13,7 @@
       :items="items"
       :fields="fields"
       class="view-data-order-table"
+      empty-text="Tidak ada data untuk ditampilkan."
       responsive
     >
       <template
