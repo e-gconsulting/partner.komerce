@@ -34,27 +34,43 @@
           </b-form-datepicker>
         </b-form-group>
         <b-form-group
-          class="add-order-label mb-2"
+          class="add-order-label mb-2 add-order-label-payment"
           label="Nama Pelanggan"
           label-cols-md="3"
         >
-          <b-form-input
-            ref="addCustomerName"
+          <v-select
             v-model="customerName"
-            class="add-order-product-input-v-select"
-            placeholder="Masukkan Nama"
-            list="customer-list-id"
-            @input="handleSearchCustomer"
-            @change="handleChangeCustomer"
-          />
-          <datalist id="customer-list-id">
-            <option
-              v-for="(customerItem, customerItemIndex) in detailCustomerList"
-              :key="'optionCustomer'+customerItemIndex"
+            :options="customersList"
+            label="name"
+            class=" add-order-product-input-v-select add-order-product-input-v-select-payment"
+            label-cols-md="2"
+            @input="handleChangeCustomer"
+          >
+            <template
+              slot="option"
+              slot-scope="option"
             >
-              {{ customerItem.name }}
-            </option>
-          </datalist>
+              <div
+                style="fontSize:14px"
+                class="px-1 overflow-hidden"
+              >
+                <div class="row">
+                  <b>{{ option.name }}</b>
+                </div>
+                <div class="row">
+                  {{ option.phone }}
+                </div>
+                <div class="row">
+                  {{ option.address }}
+                </div>
+              </div>
+              <!-- <span
+                class="fa"
+                :class="option.icon"
+              />
+              {{ option.title }} -->
+            </template>
+          </v-select>
         </b-form-group>
         <b-form-group
           class="add-order-label mb-2"
@@ -133,7 +149,14 @@
             label-cols-md="2"
             :options="profile.shipping"
             @input="onAddShipping"
-          />
+          >
+            <span
+              slot="no-options"
+              style="fontSize:14px;"
+            >
+              {{ !profile.shipping ? 'Anda belum memilih ekspedisi' : (profile.shipping === null ? 'Sedang Memuat ...' : 'Belum ada Ekspedisi, tambahkan dahulu.') }}
+            </span>
+          </v-select>
 
           <v-select
             ref="expOptionRef"
@@ -506,7 +529,6 @@ function countTotalPrice(listData) {
   //     }
   //     return totalPrice
   //   }
-  console.log(listData)
   return 0
 }
 
@@ -607,7 +629,7 @@ export default {
       ],
       selectedItems: this.listSelected,
       cartOrder: [],
-
+      customersList: [],
       profile: [],
       itemsCheckoutOrder: [],
       fieldsOrder: [
@@ -645,8 +667,18 @@ export default {
     this.getProfile()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
     this.address_id = this.$route.params.address_id
+    this.getCustomer()
   },
   methods: {
+    getCustomer() {
+      return this.$http_komship.get('v1/customer').then(response => {
+        const { data } = response.data
+        this.customersList = data
+        console.log('response', data)
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
@@ -851,15 +883,15 @@ export default {
     },
     findCustomer(names, listArr) {
       for (let j = 0; j < listArr.length; j += 1) {
-        if (listArr[j] && listArr[j].name === names) {
+        if (listArr[j] && listArr[j].name === names.name) {
           return listArr[j]
         }
       }
       return {}
     },
     handleChangeCustomer(text) {
-      if (text && this.detailCustomerList.length && this.detailCustomerList.length > 0) {
-        const chosenCustomerData = this.findCustomer(text, this.detailCustomerList)
+      if (text && this.customersList.length && this.customersList.length > 0) {
+        const chosenCustomerData = this.findCustomer(text, this.customersList)
         if (chosenCustomerData && chosenCustomerData.customer_id) {
           this.customerName = chosenCustomerData.name
           this.customerTariffCode = chosenCustomerData.tariff_code
@@ -919,7 +951,6 @@ export default {
       this.storeOrder(formData)
     },
     async storeOrder(formData) {
-      // console.log('formData', formData)
       await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
@@ -951,9 +982,6 @@ export default {
         },
       }).then(response => {
         const { data } = response.data
-        // console.log('dataCost', data)
-        console.log('totalCostNumber')
-        console.log(data)
         this.totalCostNumber = this.findCorrectData(data)
         this.calculateOnView()
       }).catch(() => {
@@ -993,7 +1021,6 @@ export default {
       })
     },
     onPostCart(cartItem) {
-      console.log(cartItem)
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
         // console.log('detail post cart', data)

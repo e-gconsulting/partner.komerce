@@ -62,7 +62,20 @@
           label-cols-md="2"
           :options="listProduct"
           @input="onAddProduct"
-        />
+        >
+          <span
+            v-if="productCount===null"
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Belum ada produk, tambahkan dahulu.
+          </span>
+        </v-select>
       </b-form-group>
     </section>
 
@@ -401,34 +414,40 @@
     </b-modal>
 
     <section class="view-order-summary">
-      <div class="add-order-summary-text">
-        <span>{{ itemsOrder.length }}</span> Produk ditambahkan
-      </div>
-      <div class="add-order-summary-button-wrapper">
-        <b-button
-          v-if="selectedItems.length > 0"
-          class="cancel-button"
-          variant="outline-primary"
-          @click="deleteAllSelectedItems"
-        >
-          Batalkan
-        </b-button>
-        <b-button
-          v-else
-          class="cancel-button hide"
-          variant="outline-primary"
-        >
-          Batalkan
-        </b-button>
-        <b-button
-          class="next-button"
-          :disabled="buttonNext"
-          tag="router-link"
-          :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres } }"
-        >
-          Lanjutkan
-        </b-button>
-      </div>
+      <b-row>
+        <b-col class="text-left">
+          <div class="add-order-summary-text text-left">
+            <span>{{ itemsOrder.length }}</span> Produk ditambahkan
+          </div>
+        </b-col>
+        <b-col class="text-right">
+          <div class="add-order-summary-button-wrapper text-right">
+            <b-button
+              v-if="itemsOrder.length > 0"
+              class="cancel-button"
+              variant="outline-primary"
+              @click="deleteAllSelectedItems"
+            >
+              Batalkan
+            </b-button>
+            <b-button
+              v-else
+              class="cancel-button hide"
+              variant="outline-primary"
+            >
+              Batalkan
+            </b-button>
+            <b-button
+              class="next-button"
+              :disabled="buttonNext"
+              tag="router-link"
+              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres } }"
+            >
+              Lanjutkan
+            </b-button>
+          </div>
+        </b-col>
+      </b-row>
     </section>
   </div>
 </template>
@@ -524,6 +543,7 @@ export default {
       disableSubmitBtn: this.disableSubmitButtonStatus,
 
       dataTree: [],
+      productCount: null,
 
       // Refactor
       itemsOrder: [],
@@ -810,6 +830,7 @@ export default {
         this.itemsOrder.splice(data.index, 1)
         this.choosenProduct = ''
         this.listProduct.unshift(data.item)
+        this.productCount = this.listProduct.length
         this.$refs.tableAddOrderOne.refresh()
       }
     },
@@ -888,8 +909,6 @@ export default {
       this.choosenAddres = item
     },
     onAddProduct(itemSelected) {
-      console.log('itemSelected', itemSelected)
-      console.log('listProduct', this.listProduct)
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.listProduct.length; x++) {
         if (this.listProduct[x].product_name === itemSelected.product_name) {
@@ -1000,6 +1019,8 @@ export default {
     },
     deleteAllSelectedItems() {
       this.selectedItems = []
+      this.itemsOrder = []
+      this.productCount = null
       this.resetTmpContainerOnTable()
       this.onUpdateSelectedItemsOnParent()
     },

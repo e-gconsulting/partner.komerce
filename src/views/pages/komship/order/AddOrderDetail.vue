@@ -131,12 +131,19 @@
       >
         <v-select
           ref="addShippingRef"
+          v-model="customerShippingMethod"
           class="add-order-product-input-v-select v-select-expedition-order-detail mr-1"
-          label=""
+          label="product_name"
           label-cols-md="2"
           :options="profile.shipping"
           @input="onAddShipping"
-        />
+        >
+          <span
+            slot="no-options"
+          >
+            {{ !profile.shipping ? 'Ekspedisi belum diatur.' : (profile.shipping === null ? 'Sedang Memuat ...' : 'Belum ada Ekspedisi, tambahkan dahulu.') }}
+          </span>
+        </v-select>
 
         <v-select
           ref="expOptionRef"
@@ -501,6 +508,7 @@ export default {
       totalCostNumber: [],
       visibleCollapse: true,
       isValidOrder: false,
+      expedisiCount: null,
       isCalculating: false,
       isSubmitting: false,
       fields: [
@@ -515,6 +523,12 @@ export default {
     }
   },
   mounted() {
+    console.log('res')
+    console.log('res', this.profile)
+    console.log('res', this.profile.shipping)
+    if (this.profile) {
+      this.expedisiCount = 0
+    }
     this.onUpdateOverAllPrice()
   },
   methods: {
