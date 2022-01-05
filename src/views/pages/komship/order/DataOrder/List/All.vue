@@ -31,10 +31,20 @@
           <label>Tanggal</label>
           <b-row>
             <b-col md="6">
-              <b-form-input type="date" />
+              <flat-pickr
+                v-model="startDate"
+                class="form-control"
+                placeholder="Start Date"
+                :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+              />
             </b-col>
             <b-col md="6">
-              <b-form-input type="date" />
+              <flat-pickr
+                v-model="endDate"
+                class="form-control"
+                placeholder="Start Date"
+                :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+              />
             </b-col>
           </b-row>
           <label class="mt-1">Produk</label>
@@ -45,15 +55,22 @@
             @input="getProduct()"
           />
           <label class="mt-1">Metode Pembayaran</label>
-          <v-select :options="['COD', 'Transfer']" />
+          <v-select
+            v-model="paymentMethod"
+            :options="['COD', 'BANK TRANSFER']"
+          />
           <b-row class="mx-auto mt-2">
             <b-button
               variant="outline-primary"
               class="mr-1"
+              @click.prevent="resetFilter()"
             >
               Reset
             </b-button>
-            <b-button variant="primary">
+            <b-button
+              variant="primary"
+              @click.prevent="filterData()"
+            >
               Terapkan
             </b-button>
           </b-row>
@@ -244,10 +261,12 @@ import {
 import moment from 'moment'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css'
+import flatPickr from 'vue-flatpickr-component'
+import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 
 export default {
   components: {
-    BTable, BRow, BCol, BFormGroup, BFormSelect, BPagination, BFormInput, BIconSearch, BButton, BPopover, vSelect, BCollapse, BIconChevronUp, BIconChevronDown,
+    BTable, BRow, BCol, BFormGroup, BFormSelect, BPagination, BFormInput, BIconSearch, BButton, BPopover, vSelect, BCollapse, BIconChevronUp, BIconChevronDown, flatPickr,
   },
   directives: {
     'b-toggle': VBToggle,
@@ -302,15 +321,40 @@ export default {
     moment() {
       return moment().format('DD-MM-YYYY hh:mm')
     },
+    // eslint-disable-next-line camelcase
     async fetchData(search) {
       this.loadTable = true
       const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
-        params: { customer_name: search },
+        params: {
+          customer_name: search,
+        },
       })
       const { data } = await order.data.data
       this.items = await data
       this.totalRows = await data.length
       this.loadTable = false
+    },
+    async filterData() {
+      this.loadTable = true
+      const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: {
+          customer_name: this.customerName,
+          payment_method: this.paymentMethod,
+          start_date: this.startDate,
+          end_date: this.endDate,
+        },
+      })
+      const { data } = await order.data.data
+      this.items = await data
+      this.totalRows = await data.length
+      this.loadTable = false
+    },
+    resetFilter() {
+      this.startDate = null
+      this.endDate = null
+      this.customerName = null
+      this.paymentMethod = null
+      return this.filterData()
     },
     async getProduct() {
       const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
