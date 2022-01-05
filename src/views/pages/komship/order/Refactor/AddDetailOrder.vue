@@ -283,7 +283,18 @@
           label="Total Harga Produk"
           label-cols-md="5"
         >
-          <div>{{ `Rp ${onNumberWithCommas(sumAllProduct)}` }}</div>
+          <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+
+          <div v-else>
+            {{ `Rp ${onNumberWithCommas(sumAllProduct)}` }}
+          </div>
         </b-form-group>
         <b-form-group
           class="mb-2"
@@ -298,7 +309,17 @@
           label="Potongan Harga"
           label-cols-md="5"
         >
-          <div>{{ `- Rp ${onNumberWithCommas(customerDiscountNumber)}` }}</div>
+          <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+          <div v-else>
+            {{ `- Rp ${onNumberWithCommas(customerDiscountNumber)}` }}
+          </div>
         </b-form-group>
         <b-form-group
           v-else
@@ -347,28 +368,70 @@
             :label="`Biaya ${customerPaymentMethod !== '' ? `${customerPaymentMethod}` : ''} (${serviceFeeLabel}% sudah termasuk PPN)`"
             label-cols-md="6"
           >
-            <div>{{ `- Rp ${onNumberWithCommas(serviceFeeCutCost)}` }}</div>
+            <div
+              v-if="isCalculating"
+            >
+              <b-spinner
+                variant="primary"
+                label="Spinning"
+              />
+            </div>
+            <div v-else>
+              {{ `- Rp ${onNumberWithCommas(serviceFeeCutCost)}` }}
+            </div>
           </b-form-group>
           <b-form-group
             class="mb-2"
             :label="`Ongkos Kirim (dipotong cashback ${cashbackLabel}%)`"
             label-cols-md="5"
           >
-            <div>{{ `- Rp ${onNumberWithCommas(sendCostNumberCut)}` }}</div>
+            <div
+              v-if="isCalculating"
+            >
+              <b-spinner
+                variant="primary"
+                label="Spinning"
+              />
+            </div>
+            <div v-else>
+              {{ `- Rp ${onNumberWithCommas(sendCostNumberCut)}` }}
+            </div>
           </b-form-group>
           <b-form-group
             class="orange-bold mb-2"
             label="Penghasilan bersih yang kamu dapatkan"
             label-cols-md="5"
           >
-            <div>{{ `Rp ${onNumberWithCommas(totalCostNumberNetto)}` }}</div>
+            <div
+              v-if="isCalculating"
+            >
+              <b-spinner
+                variant="primary"
+                label="Spinning"
+              />
+            </div>
+            <div v-else>
+              {{ `Rp ${onNumberWithCommas(totalCostNumberNetto)}` }}
+            </div>
           </b-form-group>
         </b-collapse>
       </section>
 
       <section class="view-order-summary view-order-summary-details-mobile">
         <div class="add-order-summary-text detail-add-order-summary-text">
-          <span>Total Pembayaran : <span class="orange-bold">{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</span></span>
+          <span>Total Pembayaran : <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+            <span
+              v-else
+              class="orange-bold"
+            >{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</span>
+          </span>
         </div>
         <div class="add-order-summary-button-wrapper">
           <!-- <b-button
@@ -449,6 +512,7 @@ import {
   BInputGroup,
   BInputGroupPrepend,
   BCollapse,
+  BSpinner,
   BButton,
   BIconCircle,
   BIconCheckCircleFill,
@@ -545,6 +609,7 @@ export default {
     BCol,
     BRow,
     BAvatar,
+    BSpinner,
   },
   props: {
     screens: {
@@ -566,6 +631,7 @@ export default {
       customerDate: '',
       customerName: '',
       address_id: null,
+      isLoadingCount: false,
       customerId: '',
       detailCustomerList: [],
       customerTariffCode: '',
@@ -952,6 +1018,7 @@ export default {
       }).then(response => {
         const { data } = response.data
         this.totalCostNumber = this.findCorrectData(data)
+        this.isCalculating = false
         this.calculateOnView()
       }).catch(() => {
         this.isCalculating = false
