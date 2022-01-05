@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <h3>
+    <h3 class="text-black">
       <strong>
         Pengajuan Pickup
       </strong>
@@ -8,7 +8,7 @@
 
     <b-row class="mt-3 justify-content-center">
       <b-col cols="11">
-        <h4>
+        <h4 class="text-black">
           <strong>
             Penjemputan
           </strong>
@@ -25,10 +25,11 @@
             label="Alamat"
             label-for="h-first-name"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <b-row>
               <b-col md="10">
-                <h5>
+                <h5 class="text-black">
                   <strong>
                     {{ addressName }}
                   </strong>
@@ -55,6 +56,7 @@
             label="Tanggal"
             label-for="h-email"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <div class="add-pickup-input-date-label">
               {{ dateLabel }}
@@ -78,6 +80,7 @@
             label="Waktu Jemput"
             label-for="h-number"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <b-input-group>
               <b-form-input
@@ -111,6 +114,7 @@
             label="Kendaraan"
             label-for="h-password"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           >
             <div
               id="input-pickup-vehicle"
@@ -148,6 +152,7 @@
             label="Orderan"
             label-for="h-password"
             label-cols-md="2"
+            label-class="text-black font-weight-bold"
           />
         </b-col>
       </b-row>
@@ -159,14 +164,14 @@
             class="d-flex justify-content-between"
           >
             <div>
-              <h5>
+              <h5 class="text-black">
                 <strong>
                   Produk
                 </strong>
               </h5>
             </div>
             <div>
-              <h5>
+              <h5 class="text-black">
                 <strong>
                   Jumlah
                 </strong>
@@ -202,8 +207,8 @@
                     />
                   </div>
                   <div class="ml-1">
-                    <h5><strong>{{ items.product_name }}</strong></h5>
-                    <span><strong>{{ items.variant_name }}</strong></span>
+                    <h5 class="text-black"><strong>{{ items.product_name }}</strong></h5>
+                    <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
                   </div>
                 </b-container>
               </b-row>
@@ -215,7 +220,7 @@
               v-for="(items, index) in data.item.product"
               :key="index+1"
             >
-              <h5 class="mb-3"><strong>{{ items.qty }}</strong></h5>
+              <h5 class="mb-3 text-black"><strong>{{ items.qty }}</strong></h5>
             </div>
           </template>
 
@@ -239,7 +244,7 @@
               </b-button>
             </div>
             <div>
-              <span>
+              <span class="text-black">
                 <strong>
                   Total produk: {{ getTotalProductOrder(itemsPreviewProductOrder) }}
                 </strong>
@@ -464,13 +469,14 @@ export default {
         {
           key: 'product',
           label: 'Produk',
-          thClass: 'bg-white border-top-0',
+          thClass: 'bg-white border-top-0 text-black',
+          tdClass: 'text-black',
         },
         {
           key: 'total',
           label: 'Jumlah',
-          tdClass: 'text-center',
-          thClass: 'text-center bg-white border-top-0',
+          tdClass: 'text-center text-black',
+          thClass: 'text-center bg-white border-top-0 text-black',
         },
       ],
       itemsPreviewProductOrder: [],

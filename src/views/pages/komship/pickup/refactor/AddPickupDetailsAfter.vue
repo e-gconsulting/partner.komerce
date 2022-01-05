@@ -74,7 +74,7 @@
                       {{ itemsProduct.product_name }}
                     </strong>
                   </p>
-                  <div v-if="itemsProduct.variant_name !== ''">
+                  <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
                     <p class="text-primary">
                       <strong>
                         {{ itemsProduct.variant_name }}
@@ -311,16 +311,21 @@
               </div>
               <div class="grid grid-cols-3 gap-2">
                 <div class="col-span-1 border-black text-xl py-2 px-2  border flex text-black font-black">
-                  Kuantitas : <b-list-group
-                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                    :key="indexProduct+1"
-                  >
-                    <b-list-group-item class="pt-0 pb-0 pr-0 border-0">
-                      <span>
-                        {{ calculateQty(dataProduct.qty) }}
-                      </span>
-                    </b-list-group-item>
-                  </b-list-group>
+                  <div v-if="itemsPrint.product.length === 1">
+                    <b-row>
+                      Kuantitas: <div
+                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                        :key="indexProduct+1"
+                      >
+                        <span class="ml-1">
+                          {{ dataProduct.qty }}
+                        </span>
+                      </div>
+                    </b-row>
+                  </div>
+                  <div v-else>
+                    Kuantitas : {{ itemsPrint.qtyTotal }}
+                  </div>
                 </div>
                 <div class="col-span-2 border-black px-2 py-2 items-center  border flex flex-row space-x-2">
                   <div class="text-xl text-black font-black">
@@ -328,16 +333,21 @@
                       <div>
                         ISI PAKET:
                       </div>
-                      <div>
+                      <div class="ml-1">
                         <b-list-group
                           v-for="(dataProduct, indexProduct) in itemsPrint.product"
                           :key="indexProduct+1"
                         >
-                          <b-list-group-item class="pt-0 pb-0 border-0">
-                            <span>
-                              {{ dataProduct.product_name }},
-                            </span>
-                          </b-list-group-item>
+                          <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
+                            <b-list-group-item class="pt-0 pb-1 border-0">
+                              <span class="ml-1">
+                                {{ dataProduct.product_name }},
+                              </span>
+                            </b-list-group-item>
+                          </div>
+                          <div v-else>
+                            {{ dataProduct.product_name }} <span class="ml-1">{{ dataProduct.qty+'X' }}</span>
+                          </div>
                         </b-list-group>
                       </div>
                     </b-row>
@@ -347,11 +357,14 @@
                       v-for="(dataProduct, indexProduct) in itemsPrint.product"
                       :key="indexProduct+1"
                     >
-                      <b-list-group-item class="pt-0 pb-0 pl-0 border-0">
-                        <span>
-                          {{ dataProduct.variant_name }}
-                        </span>
-                      </b-list-group-item>
+                      <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
+                        <b-list-group-item class="pt-0 pb-1 pl-0 border-0">
+                          <span>
+                            {{ dataProduct.variant_name }} : {{ dataProduct.qty+'X' }}
+                          </span>
+                        </b-list-group-item>
+                      </div>
+                      <div v-else />
                     </b-list-group>
                   </div>
                 </div>
@@ -464,6 +477,8 @@ export default {
 
       fieldItemsPrint: [],
       disableButtonPrint: true,
+      qtyLabel: [],
+      countQty: 0,
     }
   },
   mounted() {
@@ -571,17 +586,23 @@ export default {
       if (this.fieldItemsPrint !== []) {
         this.fieldItemsPrint = []
       }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < data.item.product.length; x++) {
+        this.qtyLabel.push(data.item.product[x].qty)
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < this.qtyLabel.length; i++) {
+        this.countQty += this.qtyLabel[i]
+      }
+      Object.assign(data.item, { qtyTotal: this.countQty })
+      console.log('countQty', this.countQty - 1)
       this.fieldItemsPrint.push(data.item)
+      console.log('fieldItemsPrint', this.fieldItemsPrint)
       this.$bvModal.show('modal-8')
     },
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    },
-    calculateQty(value) {
-      let result = 0
-      result += Number(value)
-      return result
     },
   },
 }
