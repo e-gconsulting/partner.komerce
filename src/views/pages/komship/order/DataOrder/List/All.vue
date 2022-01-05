@@ -90,36 +90,70 @@
         </span>
       </template>
       <template #cell(product)="data">
-        <div
-          v-for="item in data.item.product"
-          :key="item.detail_id"
-          class="d-flex mb-1"
-        >
-          <div v-if="item.product_image === null">
-            <img
-              style="width:50px;height:50px;"
-              :src="require('@/assets/images/avatars/image-null.png')"
+        <div>
+          <div class="d-flex">
+            <div v-if="data.item.product[0].product_image === null">
+              <img
+                style="width:50px;height:50px;"
+                :src="require('@/assets/images/avatars/image-null.png')"
+              >
+            </div>
+            <div v-else>
+              <img
+                style="width:50px;height:50px;"
+                :src="data.item.product[0].product_image"
+                :alt="data.item.product[0].product_image"
+              >
+            </div>
+            <div
+              class="ml-1"
+              style="width:70%;"
             >
-          </div>
-          <div v-else>
-            <img
-              style="width:50px;height:50px;"
-              :src="item.product_image"
-              :alt="item.product_image"
+              <span class="font-bold">{{ data.item.product[0].product_name }}</span><br>
+              <span class="text-primary">{{ data.item.product[0].variant_name }}</span>
+            </div>
+            <div
+              class="ml-1 font-bold"
+              style="10%"
             >
+              x{{ data.item.product[0].qty }}
+            </div>
           </div>
-          <div
-            class="ml-1"
-            style="width:70%;"
-          >
-            <span class="font-bold">{{ item.product_name }}</span><br>
-            <span class="text-primary">{{ item.variant_name }}</span>
-          </div>
-          <div
-            class="ml-1 font-bold"
-            style="10%"
-          >
-            x{{ item.qty }}
+          <div v-if="data.item.product.length > 1">
+            <b-collapse :id="'collapse-'+data.item.order_id">
+              <div
+                v-for="item in data.item.product.slice(1)"
+                :key="item.order_id"
+                class="d-flex mt-1"
+              >
+                <div v-if="item.product_image === null">
+                  <img
+                    style="width:50px;height:50px;"
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                  >
+                </div>
+                <div v-else>
+                  <img
+                    style="width:50px;height:50px;"
+                    :src="item.product_image"
+                    :alt="item.product_image"
+                  >
+                </div>
+                <div
+                  class="ml-1"
+                  style="width:70%;"
+                >
+                  <span class="font-bold">{{ item.product_name }}</span><br>
+                  <span class="text-primary">{{ item.variant_name }}</span>
+                </div>
+                <div
+                  class="ml-1 font-bold"
+                  style="10%"
+                >
+                  x{{ item.qty }}
+                </div>
+              </div>
+            </b-collapse>
           </div>
         </div>
       </template>
@@ -155,8 +189,21 @@
           </b-popover>
         </div>
       </template>
-      <template #cell(details)>
-        <a class="button-detail">Lihat Detail</a>
+      <template #cell(details)="data">
+        <a class="button-detail inline-flex">Lihat Detail</a>
+        <div
+          v-if="data.item.product.length > 1"
+        >
+          <b-button
+            v-b-toggle="'collapse-'+data.item.order_id"
+            class="buttonCollapse px-0 text-right mt-1 relative"
+            variant="none"
+            size="sm"
+          >
+            <span class="when-open">Tutup <b-icon-chevron-up /></span>
+            <span class="when-closed">{{ data.item.product.length - 1 }} Produk lainnya <b-icon-chevron-down /></span>
+          </b-button>
+        </div>
       </template>
     </b-table>
     <b-row>
@@ -191,7 +238,7 @@
 </template>
 <script>
 import {
-  BTable, BRow, BCol, BFormGroup, BFormSelect, BPagination, BFormInput, BIconSearch, BButton, BPopover,
+  BTable, BRow, BCol, BFormGroup, BFormSelect, BPagination, BFormInput, BIconSearch, BButton, BPopover, BCollapse, VBToggle, BIconChevronUp, BIconChevronDown,
 } from 'bootstrap-vue'
 import moment from 'moment'
 import vSelect from 'vue-select'
@@ -199,19 +246,34 @@ import 'vue-select/dist/vue-select.css'
 
 export default {
   components: {
-    BTable, BRow, BCol, BFormGroup, BFormSelect, BPagination, BFormInput, BIconSearch, BButton, BPopover, vSelect,
+    BTable, BRow, BCol, BFormGroup, BFormSelect, BPagination, BFormInput, BIconSearch, BButton, BPopover, vSelect, BCollapse, BIconChevronUp, BIconChevronDown,
+  },
+  directives: {
+    'b-toggle': VBToggle,
   },
   data() {
     return {
       profile: {},
       items: [],
       fields: [
-        { key: 'order_date', label: 'Tanggal Order', thClass: 'align-middle' },
-        { key: 'customer_name', label: 'Pelanggan', thClass: 'align-middle' },
-        { key: 'product', label: 'Produk', thClass: 'align-middle' },
-        { key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle' },
-        { key: 'order_status', label: 'Status', thClass: 'align-middle' },
-        { key: 'details', label: 'Rincian', thClass: 'align-middle' },
+        {
+          key: 'order_date', label: 'Tanggal Order', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'customer_name', label: 'Pelanggan', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'product', label: 'Produk', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'order_status', label: 'Status', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
+        },
       ],
       formSearch: null,
       paymentMethod: [],
@@ -279,5 +341,13 @@ export default {
   height: 20px;
   margin-left: 3px;
   cursor: pointer;
+}
+.collapsed > .when-open,
+.not-collapsed > .when-closed {
+  display: none;
+}
+.buttonCollapse {
+  margin-left: -50px;
+  width:130px;
 }
 </style>
