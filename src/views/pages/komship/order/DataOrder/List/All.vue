@@ -66,6 +66,7 @@
       responsive
       :items="items"
       :fields="fields"
+      :busy="loadTable"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :per-page="perPage"
@@ -275,6 +276,7 @@ export default {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
         },
       ],
+      loadTable: false,
       formSearch: null,
       paymentMethod: [],
       productList: [],
@@ -301,12 +303,14 @@ export default {
       return moment().format('DD-MM-YYYY hh:mm')
     },
     async fetchData(search) {
+      this.loadTable = true
       const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: { customer_name: search },
       })
       const { data } = await order.data.data
       this.items = await data
       this.totalRows = await data.length
+      this.loadTable = false
     },
     async getProduct() {
       const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
