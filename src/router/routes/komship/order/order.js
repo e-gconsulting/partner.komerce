@@ -6,10 +6,27 @@ export default [
     meta: {
       name: 'data-order',
       resource: 'Order',
+      routeDetail: 'detail-order',
       action: 'manage',
       breadcrumb: [
         {
           text: 'Data Order',
+          active: true,
+        },
+      ],
+    },
+  },
+  {
+    path: '/detail-order/:order_id',
+    name: 'detail-order',
+    component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
+    meta: {
+      name: 'detail-order',
+      resource: 'Order',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Detail Order',
           active: true,
         },
       ],

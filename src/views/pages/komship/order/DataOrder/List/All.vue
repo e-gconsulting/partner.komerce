@@ -208,13 +208,19 @@
         </div>
       </template>
       <template #cell(details)="data">
-        <a class="button-detail inline-flex">Lihat Detail</a>
+        <b-button
+          variant="none"
+          class="button-detail d-flex"
+          :to="{ name: $route.meta.routeDetail, params: { order_id: data.item.order_id } }"
+        >
+          Lihat Detail
+        </b-button>
         <div
           v-if="data.item.product.length > 1"
         >
           <b-button
             v-b-toggle="'collapse-'+data.item.order_id"
-            class="buttonCollapse px-0 text-right mt-1 relative"
+            class="buttonCollapse px-0 text-right relative"
             variant="none"
             size="sm"
           >
@@ -300,6 +306,8 @@ export default {
       paymentMethod: [],
       productList: [],
       productFilter: null,
+      startDate: '',
+      endDate: '',
       sortBy: 'order_date',
       sortDesc: true,
       perPage: 5,
