@@ -743,6 +743,7 @@ export default {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         })
           .then(() => {
+            this.$refs['modal-confirm-delete-address'].hide()
             this.getAddress()
           })
       } else {

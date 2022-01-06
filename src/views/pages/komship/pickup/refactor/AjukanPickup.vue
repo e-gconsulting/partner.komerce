@@ -19,7 +19,7 @@
       </b-col>
     </b-row>
     <b-form @submit.prevent>
-      <b-row class="justify-content-center">
+      <b-row class="justify-content-center mb-1">
         <b-col cols="11">
           <b-form-group
             label="Alamat"
@@ -183,48 +183,76 @@
           </b-col>
         </b-row>
       </div>
+
       <div v-if="selectedOrderToStore[0] !== undefined">
-        <b-table
-          :fields="fieldsPreviewProductOrder"
-          :items="itemsPreviewProductOrder"
-        >
-          <template #cell(product)="data">
-            <div
-              v-for="(items, index) in data.item.product"
-              :key="index+1"
+        <b-row>
+          <b-col class="d-flex justify-content-end">
+            <b-button
+              variant="primary"
+              class="mr-3"
+              @click="chooseOrder"
             >
-              <b-row class="ml-2 mb-2">
-                <b-container
-                  fluid
-                  class="d-flex"
+              Pilih orderan
+            </b-button>
+          </b-col>
+        </b-row>
+      </div>
+
+      <div v-if="selectedOrderToStore[0] !== undefined">
+        <b-row class="justify-content-center">
+          <b-col cols="11">
+            <b-table
+              :fields="fieldsPreviewProductOrder"
+              :items="itemsPreviewProductOrder"
+            >
+              <template #cell(product)="data">
+                <div
+                  v-for="(items, index) in data.item.product"
+                  :key="index+1"
                 >
-                  <div>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="items.product_image"
-                    />
-                  </div>
-                  <div class="ml-1">
-                    <h5 class="text-black"><strong>{{ items.product_name }}</strong></h5>
-                    <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
-                  </div>
-                </b-container>
-              </b-row>
-            </div>
-          </template>
+                  <b-row class="mb-2">
+                    <b-container
+                      fluid
+                      class="d-flex"
+                    >
+                      <div>
+                        <b-avatar
+                          variant="light-primary"
+                          square
+                          size="50px"
+                          :src="items.product_image"
+                        />
+                      </div>
+                      <div class="ml-1">
+                        <h5 class="text-black"><strong>{{ items.product_name }}</strong></h5>
+                        <div v-if="items.variant_name !== '0' && items.variant_name !== ''">
+                          <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
+                        </div>
+                        <div v-else>
+                          <span class="text-black">
+                            <strong>
+                              Tidak ada variasi
+                            </strong>
+                          </span>
+                        </div>
+                      </div>
+                    </b-container>
+                  </b-row>
+                </div>
+              </template>
 
-          <template #cell(total)="data">
-            <div
-              v-for="(items, index) in data.item.product"
-              :key="index+1"
-            >
-              <h5 class="mb-3 text-black"><strong>{{ items.qty }}</strong></h5>
-            </div>
-          </template>
+              <template #cell(total)="data">
+                <div
+                  v-for="(items, index) in data.item.product"
+                  :key="index+1"
+                >
+                  <h5 class="mb-3 text-black"><strong>{{ items.qty }}</strong></h5>
+                </div>
+              </template>
 
-        </b-table>
+            </b-table>
+          </b-col>
+        </b-row>
       </div>
 
       <div v-if="selectedOrderToStore[0] !== undefined">
@@ -257,31 +285,33 @@
         </b-row>
       </div>
 
-      <b-row class="justify-content-center mt-3 mb-1">
-        <b-col
-          cols="11"
-          class="d-flex justify-content-between"
-        >
-          <div>
-            <h5>
-              <strong>
-                Pilih orderan yang akan di pickup
-              </strong>
-            </h5>
-          </div>
-          <div>
-            <b-button
-              variant="primary"
-              @click="chooseOrder"
-            >
-              Pilih orderan
-            </b-button>
-          </div>
-        </b-col>
-        <b-col cols="11">
-          <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
-        </b-col>
-      </b-row>
+      <div v-if="selectedOrderToStore[0] === undefined">
+        <b-row class="justify-content-center mt-3 mb-1">
+          <b-col
+            cols="11"
+            class="d-flex justify-content-between"
+          >
+            <div>
+              <h5>
+                <strong>
+                  Pilih orderan yang akan di pickup
+                </strong>
+              </h5>
+            </div>
+            <div>
+              <b-button
+                variant="primary"
+                @click="chooseOrder"
+              >
+                Pilih orderan
+              </b-button>
+            </div>
+          </b-col>
+          <b-col cols="11">
+            <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
+          </b-col>
+        </b-row>
+      </div>
 
       <b-row class="justify-content-center mb-1">
         <b-col cols="11">
@@ -469,14 +499,15 @@ export default {
         {
           key: 'product',
           label: 'Produk',
-          thClass: 'bg-white border-top-0 text-black',
-          tdClass: 'text-black',
+          thClass: 'bg-white border-top-0 text-black pl-0 ml-0',
+          tdClass: 'text-black pl-0 ml-0',
         },
         {
           key: 'total',
           label: 'Jumlah',
           tdClass: 'text-center text-black',
           thClass: 'text-center bg-white border-top-0 text-black',
+          class: 'col-action',
         },
       ],
       itemsPreviewProductOrder: [],
