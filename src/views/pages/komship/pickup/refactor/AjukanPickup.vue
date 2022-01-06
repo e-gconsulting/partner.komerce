@@ -19,7 +19,7 @@
       </b-col>
     </b-row>
     <b-form @submit.prevent>
-      <b-row class="justify-content-center">
+      <b-row class="justify-content-center mb-1">
         <b-col cols="11">
           <b-form-group
             label="Alamat"
@@ -183,48 +183,76 @@
           </b-col>
         </b-row>
       </div>
+
       <div v-if="selectedOrderToStore[0] !== undefined">
-        <b-table
-          :fields="fieldsPreviewProductOrder"
-          :items="itemsPreviewProductOrder"
-        >
-          <template #cell(product)="data">
-            <div
-              v-for="(items, index) in data.item.product"
-              :key="index+1"
+        <b-row>
+          <b-col class="d-flex justify-content-end">
+            <b-button
+              variant="primary"
+              class="mr-3"
+              @click="chooseOrder"
             >
-              <b-row class="ml-2 mb-2">
-                <b-container
-                  fluid
-                  class="d-flex"
+              Pilih orderan
+            </b-button>
+          </b-col>
+        </b-row>
+      </div>
+
+      <div v-if="selectedOrderToStore[0] !== undefined">
+        <b-row class="justify-content-center">
+          <b-col cols="11">
+            <b-table
+              :fields="fieldsPreviewProductOrder"
+              :items="itemsPreviewProductOrder"
+            >
+              <template #cell(product)="data">
+                <div
+                  v-for="(items, index) in data.item.product"
+                  :key="index+1"
                 >
-                  <div>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="items.product_image"
-                    />
-                  </div>
-                  <div class="ml-1">
-                    <h5 class="text-black"><strong>{{ items.product_name }}</strong></h5>
-                    <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
-                  </div>
-                </b-container>
-              </b-row>
-            </div>
-          </template>
+                  <b-row class="mb-2">
+                    <b-container
+                      fluid
+                      class="d-flex"
+                    >
+                      <div>
+                        <b-avatar
+                          variant="light-primary"
+                          square
+                          size="50px"
+                          :src="items.product_image"
+                        />
+                      </div>
+                      <div class="ml-1">
+                        <h5 class="text-black"><strong>{{ items.product_name }}</strong></h5>
+                        <div v-if="items.variant_name !== '0' && items.variant_name !== ''">
+                          <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
+                        </div>
+                        <div v-else>
+                          <span class="text-black">
+                            <strong>
+                              Tidak ada variasi
+                            </strong>
+                          </span>
+                        </div>
+                      </div>
+                    </b-container>
+                  </b-row>
+                </div>
+              </template>
 
-          <template #cell(total)="data">
-            <div
-              v-for="(items, index) in data.item.product"
-              :key="index+1"
-            >
-              <h5 class="mb-3 text-black"><strong>{{ items.qty }}</strong></h5>
-            </div>
-          </template>
+              <template #cell(total)="data">
+                <div
+                  v-for="(items, index) in data.item.product"
+                  :key="index+1"
+                >
+                  <h5 class="mb-3 text-black"><strong>{{ items.qty }}</strong></h5>
+                </div>
+              </template>
 
-        </b-table>
+            </b-table>
+          </b-col>
+        </b-row>
       </div>
 
       <div v-if="selectedOrderToStore[0] !== undefined">
@@ -257,31 +285,33 @@
         </b-row>
       </div>
 
-      <b-row class="justify-content-center mt-3 mb-1">
-        <b-col
-          cols="11"
-          class="d-flex justify-content-between"
-        >
-          <div>
-            <h5>
-              <strong>
-                Pilih orderan yang akan di pickup
-              </strong>
-            </h5>
-          </div>
-          <div>
-            <b-button
-              variant="primary"
-              @click="chooseOrder"
-            >
-              Pilih orderan
-            </b-button>
-          </div>
-        </b-col>
-        <b-col cols="11">
-          <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
-        </b-col>
-      </b-row>
+      <div v-if="selectedOrderToStore[0] === undefined">
+        <b-row class="justify-content-center mt-3 mb-1">
+          <b-col
+            cols="11"
+            class="d-flex justify-content-between"
+          >
+            <div>
+              <h5>
+                <strong>
+                  Pilih orderan yang akan di pickup
+                </strong>
+              </h5>
+            </div>
+            <div>
+              <b-button
+                variant="primary"
+                @click="chooseOrder"
+              >
+                Pilih orderan
+              </b-button>
+            </div>
+          </b-col>
+          <b-col cols="11">
+            <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
+          </b-col>
+        </b-row>
+      </div>
 
       <b-row class="justify-content-center mb-1">
         <b-col cols="11">
@@ -324,14 +354,15 @@
       modal-class="modal-primary"
       centered
     >
+
       <div
         v-for="(items, index) in itemsAddress"
         :key="index+1"
       >
         <b-form-radio
-          v-model="items.is_default"
+          v-model="valueAddressIsActive"
           name="some-radios"
-          value="1"
+          :value="items.address_id"
           @change="handleSelectedAddress(items)"
         >
           <div class="d-flex">
@@ -469,14 +500,15 @@ export default {
         {
           key: 'product',
           label: 'Produk',
-          thClass: 'bg-white border-top-0 text-black',
-          tdClass: 'text-black',
+          thClass: 'bg-white border-top-0 text-black pl-0 ml-0',
+          tdClass: 'text-black pl-0 ml-0',
         },
         {
           key: 'total',
           label: 'Jumlah',
           tdClass: 'text-center text-black',
           thClass: 'text-center bg-white border-top-0 text-black',
+          class: 'col-action',
         },
       ],
       itemsPreviewProductOrder: [],
@@ -485,6 +517,8 @@ export default {
       namePic: '',
       picPhone: '',
       addressId: '',
+
+      valueAddressIsActive: 0,
 
       selectedOrderFromDetail: this.$route.params.selected_order_from_detail,
     }
@@ -559,17 +593,18 @@ export default {
         const { data } = response.data
         console.log('address', data)
         this.itemsAddress = data
-        // eslint-disable-next-line array-callback-return
-        data.map(items => {
-          if (items.is_default === 1) {
-            this.addressName = items.address_name
-            this.addressDetail = items.address_detail
-            this.selectedAddress = items.is_default
-            this.namePic = items.pic
-            this.addressId = items.address_id
-            this.picPhone = items.phone
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.itemsAddress.length; x++) {
+          if (this.itemsAddress[x].is_default === 1) {
+            this.addressName = this.itemsAddress[x].address_name
+            this.addressDetail = this.itemsAddress[x].address_detail
+            this.selectedAddress = this.itemsAddress[x].is_default
+            this.namePic = this.itemsAddress[x].pic
+            this.addressId = this.itemsAddress[x].address_id
+            this.picPhone = this.itemsAddress[x].phone
+            this.valueAddressIsActive = this.itemsAddress[x].address_id
           }
-        })
+        }
       })
     },
     openPopUpAddress() {
@@ -585,6 +620,7 @@ export default {
       this.namePic = data.pic
       this.addressId = data.address_id
       this.picPhone = data.phone
+      this.valueAddressIsActive = data.address_id
       console.log('PIC', this.namePic)
     },
     onChooseVehicle(vehicle) {

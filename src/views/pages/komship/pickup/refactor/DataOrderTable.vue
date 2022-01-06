@@ -1,11 +1,11 @@
 <template>
   <section :class="'view-data-order-table-wrapper'">
     <b-row class="justify-content-center mb-1">
-      <h5>
+      <h3 class="text-black">
         <strong>
           Pilih orderan
         </strong>
-      </h5>
+      </h3>
     </b-row>
     <b-table
       :ref="tableRefName"
@@ -54,24 +54,30 @@
           />
         </div>
         <div class="all-check-data-order-date-text">
-          <div class="date-wrapper">{{ getDate(dateData.value) }}</div>
-          <div class="time-wrapper grey-text">{{ getTime(dateData.value) }}</div>
+          <div class="date-wrapper">
+            {{ getDate(dateData.value) }}
+          </div>
+          <div class="time-wrapper grey-text">
+            {{ getTime(dateData.value) }}
+          </div>
         </div>
       </template>
 
       <template #cell(customer_name)="nameCustomer">
-        <div class="name-wrapper">{{ nameCustomer.value }}</div>
+        <div class="name-wrapper">
+          {{ nameCustomer.value }}
+        </div>
         <div
           v-if="nameCustomer.item.is_komship === 1"
           class="tag-wrapper grey-text"
         >
-          Kompship
+          Komship
         </div>
         <div
           v-else
           class="tag-wrapper grey-text"
         >
-          Non-Kompship
+          Non-Komship
         </div>
       </template>
 
@@ -95,8 +101,17 @@
                     <div class="product-name-text">
                       {{ prodItem.product_name }}
                     </div>
-                    <div class="product-name-variant-wrapper org-text">
-                      {{ prodItem.variant_name.replace(' -', ',') }}
+                    <div v-if="prodItem.variant_name !== '0' || prodItem.variant_name !== ''">
+                      <div class="product-name-variant-wrapper org-text">
+                        {{ prodItem.variant_name.replace(' -', ',') }}
+                      </div>
+                    </div>
+                    <div v-else>
+                      <span class="text-primary">
+                        <strong>
+                          Tidak ada variasi
+                        </strong>
+                      </span>
                     </div>
                   </div>
                   <div class="product-name-qty">
@@ -114,8 +129,17 @@
                   <div class="product-name-text">
                     {{ prodItem.product_name }}
                   </div>
-                  <div class="product-name-variant-wrapper org-text">
-                    {{ prodItem.variant_name.replace(' -', ',') }}
+                  <div v-if="prodItem.variant_name !== '0' && prodItem.variant_name !== ''">
+                    <div class="product-name-variant-wrapper org-text">
+                      {{ prodItem.variant_name.replace(' -', ',') }}
+                    </div>
+                  </div>
+                  <div v-else>
+                    <span class="text-primary">
+                      <strong>
+                        Tidak ada variasi
+                      </strong>
+                    </span>
                   </div>
                 </div>
                 <div class="product-name-qty">
@@ -140,8 +164,17 @@
                 <div class="product-name-text">
                   {{ prodItem.product_name }}
                 </div>
-                <div class="product-name-variant-wrapper org-text">
-                  {{ prodItem.variant_name.replace(' -', ',') }}
+                <div v-if="prodItem.variant_name !== '0' && prodItem.variant_name !== ''">
+                  <div class="product-name-variant-wrapper org-text">
+                    {{ prodItem.variant_name.replace(' -', ',') }}
+                  </div>
+                </div>
+                <div v-else>
+                  <span class="text-primary">
+                    <strong>
+                      Tidak ada variasi
+                    </strong>
+                  </span>
                 </div>
               </div>
               <div class="product-name-qty">
@@ -172,12 +205,14 @@
       </template>
 
       <template #cell(grand_total)="totalData">
-        <div class="price-wrapper">{{ `Rp ${numberWithCommas(totalData.value)}` }}</div>
+        <div class="price-wrapper">
+          {{ `Rp ${numberWithCommas(totalData.value)}` }}
+        </div>
         <div
           v-if="totalData.item.payment_method === 'COD'"
           class="label-wrapper"
         >
-          {{ totalData.item.payment_methode }}
+          {{ totalData.item.payment_method }}
         </div>
         <div
           v-else
@@ -239,7 +274,9 @@
       </template>
 
       <template #cell(district)="addressData">
-        <div class="address-wrapper">{{ addressData.value }}</div>
+        <div class="address-wrapper">
+          {{ addressData.value }}
+        </div>
         <div
           v-if="isUseDetailAddress"
           class="address-details-wrapper"
@@ -250,7 +287,9 @@
 
       <template #cell(airway_bill)="resiData">
         <div class="resi-wrapper">
-          <div class="resi-content">{{ resiData.value }}</div>
+          <div class="resi-content">
+            {{ resiData.value }}
+          </div>
           <div
             v-if="resiData.value"
             class="resi-content-icon"
@@ -262,7 +301,19 @@
       </template>
 
       <template #cell(acc_date)="accDateData">
-        <div class="date-wrapper">{{ getDate(accDateData.item.order_date) }}</div>
+        <div class="date-wrapper">
+          {{ getDate(accDateData.item.order_date) }}
+        </div>
+      </template>
+
+      <template #cell(address)="data">
+        <b-row>
+          <span class="text-black">
+            <strong>
+              {{ data.item.district }}
+            </strong>
+          </span>, <span class="text-black"><strong>{{ data.item.detail_address }}</strong></span>
+        </b-row>
       </template>
 
       <template #cell(details)="detailsData">
