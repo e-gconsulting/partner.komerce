@@ -52,16 +52,17 @@
           @input="onAddProduct"
         >
           <span
-            v-if="productCount===null"
+            v-if="productCount===0"
             slot="no-options"
           >
-            Sedang Memuat ...
+
+            Belum ada produk, tambahkan dahulu.
           </span>
           <span
             v-else
             slot="no-options"
           >
-            Belum ada produk, tambahkan dahulu.
+            Sedang Memuat ...
           </span>
         </v-select>
       </b-form-group>
@@ -519,6 +520,7 @@ export default {
   data() {
     return {
       dateValue: this.dateText,
+      listProduct2: [],
       dateLabel: '',
       fields: [
         { key: 'no', label: 'No' },
@@ -616,6 +618,7 @@ export default {
     this.customerDate = dateFormat(currentDate, 'yyyy-mm-dd')
     this.date = formatFullDate(currentDate)
     this.getAddress()
+    this.listProduct2 = this.listProduct
   },
   methods: {
     getAddress() {
@@ -823,7 +826,7 @@ export default {
       if (data.item.stockToDisplay < 1) {
         this.itemsOrder.splice(data.index, 1)
         this.choosenProduct = ''
-        this.listProduct.unshift(data.item)
+        this.listProduct2.unshift(data.item)
         this.productCount = this.listProduct.length
         this.$refs.tableAddOrderOne.refresh()
       }
@@ -904,9 +907,9 @@ export default {
     },
     onAddProduct(itemSelected) {
       // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.listProduct.length; x++) {
-        if (this.listProduct[x].product_name === itemSelected.product_name) {
-          this.listProduct.splice(x, 1)
+      for (let x = 0; x < this.listProduct2.length; x++) {
+        if (this.listProduct2[x].product_name === itemSelected.product_name) {
+          this.listProduct2.splice(x, 1)
         }
       }
       Object.assign(itemSelected, { stockToDisplay: 1 })
@@ -1014,6 +1017,7 @@ export default {
     deleteAllSelectedItems() {
       this.selectedItems = []
       this.itemsOrder = []
+
       this.productCount = null
       this.resetTmpContainerOnTable()
       this.onUpdateSelectedItemsOnParent()
