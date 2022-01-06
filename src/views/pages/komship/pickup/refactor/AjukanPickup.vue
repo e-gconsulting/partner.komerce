@@ -354,14 +354,16 @@
       modal-class="modal-primary"
       centered
     >
+
+      {{ itemsAddress }}
       <div
         v-for="(items, index) in itemsAddress"
         :key="index+1"
       >
         <b-form-radio
-          v-model="items.is_default"
+          v-model="valueAddressIsActive"
           name="some-radios"
-          value="1"
+          :value="items.address_id"
           @change="handleSelectedAddress(items)"
         >
           <div class="d-flex">
@@ -517,6 +519,8 @@ export default {
       picPhone: '',
       addressId: '',
 
+      valueAddressIsActive: 0,
+
       selectedOrderFromDetail: this.$route.params.selected_order_from_detail,
     }
   },
@@ -590,17 +594,18 @@ export default {
         const { data } = response.data
         console.log('address', data)
         this.itemsAddress = data
-        // eslint-disable-next-line array-callback-return
-        data.map(items => {
-          if (items.is_default === 1) {
-            this.addressName = items.address_name
-            this.addressDetail = items.address_detail
-            this.selectedAddress = items.is_default
-            this.namePic = items.pic
-            this.addressId = items.address_id
-            this.picPhone = items.phone
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.itemsAddress.length; x++) {
+          if (this.itemsAddress[x].is_default === 1) {
+            this.addressName = this.itemsAddress[x].address_name
+            this.addressDetail = this.itemsAddress[x].address_detail
+            this.selectedAddress = this.itemsAddress[x].is_default
+            this.namePic = this.itemsAddress[x].pic
+            this.addressId = this.itemsAddress[x].address_id
+            this.picPhone = this.itemsAddress[x].phone
+            this.valueAddressIsActive = this.itemsAddress[x].address_id
           }
-        })
+        }
       })
     },
     openPopUpAddress() {
@@ -616,6 +621,7 @@ export default {
       this.namePic = data.pic
       this.addressId = data.address_id
       this.picPhone = data.phone
+      this.valueAddressIsActive = data.address_id
       console.log('PIC', this.namePic)
     },
     onChooseVehicle(vehicle) {
