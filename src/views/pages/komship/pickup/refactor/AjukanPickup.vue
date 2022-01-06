@@ -355,7 +355,6 @@
       centered
     >
 
-      {{ itemsAddress }}
       <div
         v-for="(items, index) in itemsAddress"
         :key="index+1"

@@ -1,11 +1,11 @@
 <template>
   <section :class="'view-data-order-table-wrapper'">
     <b-row class="justify-content-center mb-1">
-      <h5>
+      <h3 class="text-black">
         <strong>
           Pilih orderan
         </strong>
-      </h5>
+      </h3>
     </b-row>
     <b-table
       :ref="tableRefName"

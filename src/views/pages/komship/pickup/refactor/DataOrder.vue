@@ -1,34 +1,27 @@
 <template>
   <div>
-    <b-card
-      class="data-order-main-wrapper"
-    >
-      <data-order-table
-        v-if="!isDetail"
-        ref="tableDataOrderOne"
-        :fields="tableData.header"
-        :items="tableData.items"
-        :current-view="currentView"
-        :search-text="searchFilterText"
-        table-ref-name="tableDataOrder"
-        @passDataToParentTable="getDataOrderFromChild"
-        @onOpenDetailView="openDetailView"
-      />
-    </b-card>
+    <data-order-table
+      v-if="!isDetail"
+      ref="tableDataOrderOne"
+      :fields="tableData.header"
+      :items="tableData.items"
+      :current-view="currentView"
+      :search-text="searchFilterText"
+      table-ref-name="tableDataOrder"
+      @passDataToParentTable="getDataOrderFromChild"
+      @onOpenDetailView="openDetailView"
+    />
   </div>
 </template>
 
 <script>
 import {
   BCard,
-  BButton,
-  BRow,
 } from 'bootstrap-vue'
 import DataOrderTable from './DataOrderTable.vue'
 
 export default {
   components: {
-    BCard,
     DataOrderTable,
   },
   props: {
