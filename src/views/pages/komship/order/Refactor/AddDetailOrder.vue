@@ -1011,7 +1011,7 @@ export default {
           partner_address_id: this.address_id,
           discount: this.customerDiscountNumber,
           shipping: this.customerShippingMethod,
-          tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
+          tariff_code: this.findCity(this.customerCity, this.destinationCity).value,
           payment_method: this.customerPaymentMethod,
           cart: this.sumAllProduct,
         },
