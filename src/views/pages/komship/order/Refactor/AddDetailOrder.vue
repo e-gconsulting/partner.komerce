@@ -868,7 +868,7 @@ export default {
         focusConfirm: true,
         confirmButtonText: 'Oke',
         customClass: {
-          confirmButton: 'btn bg-success btn-success rounded-lg',
+          confirmButton: 'btn bg-success btn-primary rounded-lg',
         },
         buttonsStyling: false,
       }).then(() => this.$router.push({ name: 'data-order' }))
