@@ -57,9 +57,12 @@
             <div>
               <h5 class="text-black">
                 <strong>
-                  {{ data.item.order_date }}
+                  {{ convertDate(data.item.order_date) }}
                 </strong>
               </h5>
+              <p>
+                {{ convertTime(data.item.order_date) }}
+              </p>
               <p>
                 {{ data.item.shipping }}
               </p>
@@ -413,6 +416,7 @@ import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import { dateFormat } from '@core/mixins/ui/date'
 import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
 import PickupLabelPrint from '../PickupLabelPrint.vue'
 
@@ -435,7 +439,7 @@ export default {
     BCol,
     BFormCheckbox,
   },
-
+  mixins: [dateFormat],
   data() {
     return {
       loading: false,
@@ -448,6 +452,7 @@ export default {
           label: 'Tanggal Order',
           thClass: 'bg-white border-top-0 border-bottom-0 text-black',
           tdClass: 'border-bottom-0 align-top',
+          formatter: value => this.dateFormat(value, 'dd mmm yyyy'),
         },
         {
           key: 'pelanggan',
@@ -633,6 +638,20 @@ export default {
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    convertDate(value) {
+      let result = value
+      if (value !== '0000-00-00 00:00:00') {
+        result = this.dateFormat(value, 'dd-mm-yyyy')
+      }
+      return result
+    },
+    convertTime(value) {
+      let result = ''
+      if (value !== '0000-00-00 00:00:00') {
+        result = this.dateFormat(value, 'HH:MM')
+      }
+      return result
     },
   },
 }
