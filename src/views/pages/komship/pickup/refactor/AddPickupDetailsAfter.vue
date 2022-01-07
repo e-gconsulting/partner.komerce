@@ -9,10 +9,12 @@
     </b-row>
     <b-row class="justify-content-end mr-3 mt-2 mb-5">
       <b-button
-        variant="primary"
+        :variant="disableButtonPrint === true ? 'dark' : 'primary'"
+        :disabled="disableButtonPrint"
+        :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
         @click="onShowModalPrint"
       >
-        + Print Semua Label
+        Print Label
       </b-button>
     </b-row>
 
@@ -33,15 +35,36 @@
         :fields="fields"
         :items="items"
       >
+        <template #head(date_order)="data">
+          <b-row class="align-items-center">
+            <b-form-checkbox
+              v-model="allSelectItemPrint"
+              class="custom-control-primary"
+              @change="getAllItemPrint"
+            />
+            <span>{{ data.label }}</span>
+          </b-row>
+        </template>
         <template #cell(date_order)="data">
-          <h5 class="text-black">
-            <strong>
-              {{ data.item.order_date }}
-            </strong>
-          </h5>
-          <p>
-            {{ data.item.shipping }}
-          </p>
+          <b-row>
+            <div>
+              <b-form-checkbox
+                v-model="data.item.printIsActive"
+                class="custom-control-primary"
+                @change="getItemPrint(data)"
+              />
+            </div>
+            <div>
+              <h5 class="text-black">
+                <strong>
+                  {{ data.item.order_date }}
+                </strong>
+              </h5>
+              <p>
+                {{ data.item.shipping }}
+              </p>
+            </div>
+          </b-row>
         </template>
         <template #cell(pelanggan)="data">
           <h5 class="text-black text-top">
@@ -106,17 +129,6 @@
             <span class="text-black">
               {{ data.item.airway_bill }}
             </span>
-            <b-button
-              v-model="data.item.printIsActive"
-              class="btn-icon"
-              size="sm"
-              variant="flat-dark"
-              @click="getItemPrint(data)"
-            >
-              <feather-icon
-                icon="PrinterIcon"
-              />
-            </b-button>
           </b-row>
         </template>
       </b-table>
@@ -395,6 +407,7 @@ import {
   BListGroupItem,
   BOverlay,
   BCol,
+  BFormCheckbox,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -420,6 +433,7 @@ export default {
     BListGroupItem,
     BOverlay,
     BCol,
+    BFormCheckbox,
   },
 
   data() {
@@ -527,10 +541,6 @@ export default {
       })
     },
     onShowModalPrint() {
-      if (this.fieldItemsPrint !== []) {
-        this.fieldItemsPrint = []
-      }
-      this.fieldItemsPrint = this.items
       console.log('fieldItemsPrint', this.fieldItemsPrint)
       this.$bvModal.show('modal-8')
       // this.$refs.addPickupPopUpPrint.showModal()
@@ -582,23 +592,43 @@ export default {
       })
     },
     getItemPrint(data) {
-      console.log('dataPrint', data)
-      if (this.fieldItemsPrint !== []) {
-        this.fieldItemsPrint = []
+      if (data.item.printIsActive === true) {
+        this.disableButtonPrint = false
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < data.item.product.length; x++) {
+          this.qtyLabel.push(data.item.product[x].qty)
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < this.qtyLabel.length; i++) {
+          this.countQty += this.qtyLabel[i]
+        }
+        Object.assign(data.item, { qtyTotal: this.countQty })
+        this.fieldItemsPrint.push(data.item)
       }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < data.item.product.length; x++) {
-        this.qtyLabel.push(data.item.product[x].qty)
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.qtyLabel.length; i++) {
-        this.countQty += this.qtyLabel[i]
-      }
-      Object.assign(data.item, { qtyTotal: this.countQty })
-      console.log('countQty', this.countQty - 1)
-      this.fieldItemsPrint.push(data.item)
+      if (data.item.printIsActive === false) this.fieldItemsPrint.splice(data.index, 1)
+      if (this.fieldItemsPrint[0] === undefined) this.disableButtonPrint = true
       console.log('fieldItemsPrint', this.fieldItemsPrint)
-      this.$bvModal.show('modal-8')
+      console.log('items', this.items)
+    },
+    getAllItemPrint() {
+      if (this.allSelectItemPrint === true) {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          this.items[x].printIsActive = true
+          this.fieldItemsPrint.push(this.items[x])
+        }
+        this.disableButtonPrint = false
+      }
+      if (this.allSelectItemPrint === false) {
+        this.fieldItemsPrint = []
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          this.items[x].printIsActive = false
+        }
+        this.disableButtonPrint = true
+      }
+      this.$refs.tableOrder.refresh()
+      console.log('fieldItemsPrint', this.fieldItemsPrint)
     },
     formatPrice(value) {
       const val = value
