@@ -166,7 +166,7 @@
           </template>
         </b-table>
         <hr>
-        <b-row class="mt-4">
+        <b-row class="mt-3">
           <b-col
             lg="3"
           />
