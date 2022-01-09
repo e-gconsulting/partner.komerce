@@ -57,11 +57,16 @@
           </b-row>
           <label class="mt-1">Produk</label>
           <v-select
-            v-model="productFilter"
+            v-model="productName"
             :options="productList"
+            :reduce="(option) => option.product_name"
             label="product_name"
-            @input="getProduct()"
-          />
+          >
+            <span
+              slot="no-options"
+              @click="$refs.select.open = false"
+            />
+          </v-select>
           <label class="mt-1">Metode Pembayaran</label>
           <v-select
             v-model="paymentMethod"
@@ -300,8 +305,7 @@ export default {
       formSearch: null,
       paymentMethod: [],
       productList: [],
-      productFilter: null,
-      customerName: null,
+      productName: [],
       startDate: '',
       endDate: '',
       currentPage: 1,
@@ -322,6 +326,7 @@ export default {
     this.fetchData().catch(error => {
       console.error(error)
     })
+    this.getProduct()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -335,7 +340,8 @@ export default {
       this.profile = await dataProfile
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
-          customer_name: search || this.customerName,
+          customer_name: search,
+          product_name: this.productName,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
           end_date: this.endDate,
@@ -354,13 +360,16 @@ export default {
     resetFilter() {
       this.startDate = null
       this.endDate = null
-      this.customerName = null
+      this.productName = null
       this.paymentMethod = null
       return this.fetchData()
     },
-    getProduct() {
-      const product = this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
-      const { data } = product.data
+    async getProduct() {
+      const profile = await this.$http_komship.post('v1/my-profile')
+      const dataProfile = await profile.data.data
+      this.profile = await dataProfile
+      const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
+      const { data } = await product.data
       this.productList = data
     },
   },
