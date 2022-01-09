@@ -325,8 +325,8 @@ export default {
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-    moment() {
-      return moment().format('DD-MM-YYYY hh:mm')
+    moment(date) {
+      return moment(date).format('DD-MM-YYYY hh:mm')
     },
     async fetchData(search) {
       this.loadTable = true
