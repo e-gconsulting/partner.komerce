@@ -6,9 +6,9 @@
       >
         <b-button
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          @click.prevent="tableProvider"
           class="btn-icon"
           variant="primary"
+          @click.prevent="tableProvider"
         >
           <feather-icon icon="RotateCwIcon" />
         </b-button>
