@@ -2,6 +2,18 @@
   <b-card>
     <b-row class="d-flex justify-content-end align-items-center">
       <b-col
+        cols="auto"
+      >
+        <b-button
+          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+          class="btn-icon"
+          variant="primary"
+          @click.prevent="tableProvider"
+        >
+          <feather-icon icon="RotateCwIcon" />
+        </b-button>
+      </b-col>
+      <b-col
         cols="3"
       >
         <b-input-group class="input-group-merge">
@@ -186,18 +198,38 @@
         responsive
         class="position-relative mt-2"
         empty-text="Tidak ada data untuk ditampilkan."
-
         :items="itemsCustomer"
         :fields="fields"
         :show-empty="!loading"
+        @row-clicked="onRowClicked"
       >
+        <!-- Template head -->
+        <template #head(customer_name)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(customer_address)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(total_order)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(total_pcs)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(total_spent)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(last_order)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
 
+        <!-- Template cell -->
         <template #cell(customer_name)="data">
           {{ data.item.customer_name }}
         </template>
 
         <template #cell(customer_address)="data">
-          {{ data.item.customer_address }}
+          {{ data.item.customer_address.toLowerCase() }}
         </template>
 
         <template #cell(total_order)="data">
@@ -210,17 +242,6 @@
 
         <template #cell(total_spent)="data">
           Rp. {{ formatPrice(data.value) }}
-        </template>
-
-        <template #cell(action)="data">
-          <b-button
-            size="sm"
-            variant="flat-info"
-            tag="router-link"
-            :to="{ name: $route.meta.routeDetail, params: { customer_id: data.item.customer_id } }"
-          >
-            Lihat Detail
-          </b-button>
         </template>
 
       </b-table>
@@ -288,10 +309,12 @@ export default {
         {
           key: 'customer_name',
           label: 'Nama Customer',
+          sortable: true,
         },
         {
           key: 'customer_address',
           label: 'Alamat',
+          tdClass: 'capitalizeText',
         },
         {
           key: 'total_order',
@@ -330,10 +353,6 @@ export default {
             newFormat.join('')
             return this.dateFormat(String(newFormat.join('')), 'dd mmmm yyyy')
           },
-        },
-        {
-          key: 'action',
-          label: 'Aksi',
         },
       ],
 
@@ -421,10 +440,19 @@ export default {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
+    onRowClicked(item) {
+      this.$router.push({
+        name: this.$route.meta.routeDetail,
+        params: { customer_id: item.customer_id },
+      })
+    },
   },
 }
 </script>
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+.capitalizeText {
+  text-transform: capitalize;
+}
 </style>
