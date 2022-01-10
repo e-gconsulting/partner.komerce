@@ -18,7 +18,7 @@
       <div class="content-body">
         <b-alert
           v-height-fade
-          :show="this.$store.state.auth.userData.is_komship !== 1"
+          :show="this.$store.state.auth.userData.is_komship !== 1 && partnerProfileIncomplete"
           dismissible
           fade
           variant="primary"
