@@ -301,7 +301,15 @@
           label="Ongkos Kirim"
           label-cols-md="5"
         >
-          <div>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
+        <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+          <div  v-else>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
         </b-form-group>
         <b-form-group
           v-if="isUseDiscount"
