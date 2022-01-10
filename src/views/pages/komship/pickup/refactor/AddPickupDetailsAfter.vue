@@ -159,7 +159,6 @@
       pdf-orientation="portrait"
 
       pdf-content-width="100%"
-      @progress="onProgress($event)"
       @hasStartedGeneration="hasStartedGeneration()"
       @hasGenerated="hasGenerated($event)"
     >
@@ -243,7 +242,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ profile.user_address }}</span>
+                      <span class="text-black">{{ idOrderFromHistory.address_name }}</span>
                     </b-list-group-item>
                   </b-list-group>
                 </div>
@@ -375,7 +374,7 @@
                       <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                         <b-list-group-item class="pt-0 pb-1 pl-0 border-0">
                           <span>
-                            {{ dataProduct.variant_name }} : {{ dataProduct.qty+'X' }}
+                            {{ dataProduct.variant_name }}: {{ dataProduct.qty+'X' }}
                           </span>
                         </b-list-group-item>
                       </div>
@@ -488,7 +487,7 @@ export default {
 
       valuePrint: [],
 
-      idOrderFromHistory: this.$route.params.selected_order_from_history.data_order,
+      idOrderFromHistory: this.$route.params.selected_order_from_history,
       idOrder: [],
 
       selectItemPrint: false,
@@ -508,7 +507,7 @@ export default {
   },
   methods: {
     getOrder() {
-      this.idOrderFromHistory.map(items => this.idOrder.push(items.id))
+      this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
         params: {
           order_id: this.idOrder.toString(),
@@ -521,11 +520,11 @@ export default {
           Object.assign(this.items[x], { printIsActive: false })
         }
         // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.idOrderFromHistory.length; x++) {
+        for (let x = 0; x < this.idOrderFromHistory.data_order.length; x++) {
           // eslint-disable-next-line no-plusplus
           for (let y = 0; y < this.items.length; y++) {
-            if (this.items[y].order_id === this.idOrderFromHistory[x].id) {
-              Object.assign(this.items[y], { customer_phone: this.idOrderFromHistory[y].customer_phone })
+            if (this.items[y].order_id === this.idOrderFromHistory.data_order[x].id) {
+              Object.assign(this.items[y], { customer_phone: this.idOrderFromHistory.data_order[y].customer_phone })
             }
           }
         }

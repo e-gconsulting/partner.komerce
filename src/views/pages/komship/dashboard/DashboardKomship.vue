@@ -859,6 +859,7 @@ export default {
     }).then(response => {
       const { data } = response.data
       console.log('onboarding', data)
+      console.log('state profile', this.$store.state.auth.userData)
       if (data) {
         if (data.is_onboarding) this.$refs.onboardingElement.showModal()
       }
