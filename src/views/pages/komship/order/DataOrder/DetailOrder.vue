@@ -55,7 +55,7 @@
             cols="6"
             class="font-bold"
           >
-            {{ orderData.order_date }}
+            {{ moment(orderData.order_date) }}
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -87,7 +87,7 @@
             </b-alert>
           </b-col>
         </b-row>
-        <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada 13 Agustus 2021 16:00 WIB</span>
+        <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
       </div>
       <h4 class="font-bold mt-2 mb-1">
         Informasi Pengirim
@@ -289,6 +289,7 @@
 import {
   BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, VBModal, BTable,
 } from 'bootstrap-vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -318,6 +319,12 @@ export default {
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    moment(date) {
+      return moment(date).format('DD MMMM YYYY')
+    },
+    postDate(date) {
+      return moment(date).format('DD MMMM YYYY hh:mm')
+    },
     async fetchData() {
       const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
       const { data } = await order.data
