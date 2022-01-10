@@ -51,7 +51,7 @@
                 v-model="endDate"
                 class="form-control"
                 placeholder="End Date"
-                :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
               />
             </b-col>
           </b-row>
