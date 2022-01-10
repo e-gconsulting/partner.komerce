@@ -352,7 +352,7 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
+        console.log('detailPickup', data)
         this.itemsDataOrder = data
         this.addressName = data.address_name
         this.addressDetail = data.address_detail

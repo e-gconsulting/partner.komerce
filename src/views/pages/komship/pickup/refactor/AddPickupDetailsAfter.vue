@@ -9,10 +9,12 @@
     </b-row>
     <b-row class="justify-content-end mr-3 mt-2 mb-5">
       <b-button
-        variant="primary"
+        :variant="disableButtonPrint === true ? 'dark' : 'primary'"
+        :disabled="disableButtonPrint"
+        :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
         @click="onShowModalPrint"
       >
-        + Print Semua Label
+        Print Label
       </b-button>
     </b-row>
 
@@ -33,15 +35,39 @@
         :fields="fields"
         :items="items"
       >
+        <template #head(date_order)="data">
+          <b-row class="align-items-center">
+            <b-form-checkbox
+              v-model="allSelectItemPrint"
+              class="custom-control-primary"
+              @change="getAllItemPrint"
+            />
+            <span>{{ data.label }}</span>
+          </b-row>
+        </template>
         <template #cell(date_order)="data">
-          <h5 class="text-black">
-            <strong>
-              {{ data.item.order_date }}
-            </strong>
-          </h5>
-          <p>
-            {{ data.item.shipping }}
-          </p>
+          <b-row>
+            <div>
+              <b-form-checkbox
+                v-model="data.item.printIsActive"
+                class="custom-control-primary"
+                @change="getItemPrint(data)"
+              />
+            </div>
+            <div>
+              <h5 class="text-black">
+                <strong>
+                  {{ convertDate(data.item.order_date) }}
+                </strong>
+              </h5>
+              <p>
+                {{ convertTime(data.item.order_date) }}
+              </p>
+              <p>
+                {{ data.item.shipping }}
+              </p>
+            </div>
+          </b-row>
         </template>
         <template #cell(pelanggan)="data">
           <h5 class="text-black text-top">
@@ -106,17 +132,6 @@
             <span class="text-black">
               {{ data.item.airway_bill }}
             </span>
-            <b-button
-              v-model="data.item.printIsActive"
-              class="btn-icon"
-              size="sm"
-              variant="flat-dark"
-              @click="getItemPrint(data)"
-            >
-              <feather-icon
-                icon="PrinterIcon"
-              />
-            </b-button>
           </b-row>
         </template>
       </b-table>
@@ -144,7 +159,6 @@
       pdf-orientation="portrait"
 
       pdf-content-width="100%"
-      @progress="onProgress($event)"
       @hasStartedGeneration="hasStartedGeneration()"
       @hasGenerated="hasGenerated($event)"
     >
@@ -228,7 +242,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ profile.user_address }}</span>
+                      <span class="text-black">{{ idOrderFromHistory.address_name }}</span>
                     </b-list-group-item>
                   </b-list-group>
                 </div>
@@ -360,7 +374,7 @@
                       <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                         <b-list-group-item class="pt-0 pb-1 pl-0 border-0">
                           <span>
-                            {{ dataProduct.variant_name }} : {{ dataProduct.qty+'X' }}
+                            {{ dataProduct.variant_name }}: {{ dataProduct.qty+'X' }}
                           </span>
                         </b-list-group-item>
                       </div>
@@ -395,11 +409,13 @@ import {
   BListGroupItem,
   BOverlay,
   BCol,
+  BFormCheckbox,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import { dateFormat } from '@core/mixins/ui/date'
 import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
 import PickupLabelPrint from '../PickupLabelPrint.vue'
 
@@ -420,8 +436,9 @@ export default {
     BListGroupItem,
     BOverlay,
     BCol,
+    BFormCheckbox,
   },
-
+  mixins: [dateFormat],
   data() {
     return {
       loading: false,
@@ -434,6 +451,7 @@ export default {
           label: 'Tanggal Order',
           thClass: 'bg-white border-top-0 border-bottom-0 text-black',
           tdClass: 'border-bottom-0 align-top',
+          formatter: value => this.dateFormat(value, 'dd mmm yyyy'),
         },
         {
           key: 'pelanggan',
@@ -469,7 +487,7 @@ export default {
 
       valuePrint: [],
 
-      idOrderFromHistory: this.$route.params.selected_order_from_history.data_order,
+      idOrderFromHistory: this.$route.params.selected_order_from_history,
       idOrder: [],
 
       selectItemPrint: false,
@@ -489,7 +507,7 @@ export default {
   },
   methods: {
     getOrder() {
-      this.idOrderFromHistory.map(items => this.idOrder.push(items.id))
+      this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
         params: {
           order_id: this.idOrder.toString(),
@@ -502,11 +520,11 @@ export default {
           Object.assign(this.items[x], { printIsActive: false })
         }
         // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.idOrderFromHistory.length; x++) {
+        for (let x = 0; x < this.idOrderFromHistory.data_order.length; x++) {
           // eslint-disable-next-line no-plusplus
           for (let y = 0; y < this.items.length; y++) {
-            if (this.items[y].order_id === this.idOrderFromHistory[x].id) {
-              Object.assign(this.items[y], { customer_phone: this.idOrderFromHistory[y].customer_phone })
+            if (this.items[y].order_id === this.idOrderFromHistory.data_order[x].id) {
+              Object.assign(this.items[y], { customer_phone: this.idOrderFromHistory.data_order[y].customer_phone })
             }
           }
         }
@@ -527,10 +545,6 @@ export default {
       })
     },
     onShowModalPrint() {
-      if (this.fieldItemsPrint !== []) {
-        this.fieldItemsPrint = []
-      }
-      this.fieldItemsPrint = this.items
       console.log('fieldItemsPrint', this.fieldItemsPrint)
       this.$bvModal.show('modal-8')
       // this.$refs.addPickupPopUpPrint.showModal()
@@ -582,27 +596,61 @@ export default {
       })
     },
     getItemPrint(data) {
-      console.log('dataPrint', data)
-      if (this.fieldItemsPrint !== []) {
-        this.fieldItemsPrint = []
+      if (data.item.printIsActive === true) {
+        this.disableButtonPrint = false
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < data.item.product.length; x++) {
+          this.qtyLabel.push(data.item.product[x].qty)
+        }
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < this.qtyLabel.length; i++) {
+          this.countQty += this.qtyLabel[i]
+        }
+        Object.assign(data.item, { qtyTotal: this.countQty })
+        this.fieldItemsPrint.push(data.item)
       }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < data.item.product.length; x++) {
-        this.qtyLabel.push(data.item.product[x].qty)
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.qtyLabel.length; i++) {
-        this.countQty += this.qtyLabel[i]
-      }
-      Object.assign(data.item, { qtyTotal: this.countQty })
-      console.log('countQty', this.countQty - 1)
-      this.fieldItemsPrint.push(data.item)
+      if (data.item.printIsActive === false) this.fieldItemsPrint.splice(data.index, 1)
+      if (this.fieldItemsPrint[0] === undefined) this.disableButtonPrint = true
       console.log('fieldItemsPrint', this.fieldItemsPrint)
-      this.$bvModal.show('modal-8')
+      console.log('items', this.items)
+    },
+    getAllItemPrint() {
+      if (this.allSelectItemPrint === true) {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          this.items[x].printIsActive = true
+          this.fieldItemsPrint.push(this.items[x])
+        }
+        this.disableButtonPrint = false
+      }
+      if (this.allSelectItemPrint === false) {
+        this.fieldItemsPrint = []
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.items.length; x++) {
+          this.items[x].printIsActive = false
+        }
+        this.disableButtonPrint = true
+      }
+      this.$refs.tableOrder.refresh()
+      console.log('fieldItemsPrint', this.fieldItemsPrint)
     },
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    convertDate(value) {
+      let result = value
+      if (value !== '0000-00-00 00:00:00') {
+        result = this.dateFormat(value, 'dd-mm-yyyy')
+      }
+      return result
+    },
+    convertTime(value) {
+      let result = ''
+      if (value !== '0000-00-00 00:00:00') {
+        result = this.dateFormat(value, 'HH:MM')
+      }
+      return result
     },
   },
 }
