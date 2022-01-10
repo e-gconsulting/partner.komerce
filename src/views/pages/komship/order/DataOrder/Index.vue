@@ -4,16 +4,26 @@
       <h3 class="font-bold">
         Data Order
       </h3>
-      <b-dropdown
-        id="dropdown-1"
-        variant="outline-primary"
-        size="sm"
-        right
-        text="Export"
-      >
-        <b-dropdown-item>Export Excel</b-dropdown-item>
-        <b-dropdown-item>Export CSV</b-dropdown-item>
-      </b-dropdown>
+      <div>
+        <b-button
+          v-if="tabIndex === 1"
+          variant="primary"
+          size="sm"
+          class="mr-1"
+        >
+          Ajukan Pickup
+        </b-button>
+        <b-dropdown
+          id="dropdown-1"
+          variant="outline-primary"
+          size="sm"
+          right
+          text="Export"
+        >
+          <b-dropdown-item>Export Excel</b-dropdown-item>
+          <b-dropdown-item>Export CSV</b-dropdown-item>
+        </b-dropdown>
+      </div>
     </div>
     <b-tabs
       v-model="tabIndex"
@@ -54,7 +64,7 @@
 </template>
 <script>
 import {
-  BCard, BTabs, BTab, BDropdown, BDropdownItem,
+  BCard, BTabs, BTab, BDropdown, BDropdownItem, BButton,
 } from 'bootstrap-vue'
 import All from './List/All.vue'
 import Sent from './List/Sent.vue'
@@ -64,7 +74,7 @@ import Retur from './List/Retur.vue'
 
 export default {
   components: {
-    BCard, BTabs, BTab, BDropdown, BDropdownItem, All, Sent, Send, Received, Retur,
+    BCard, BTabs, BTab, BDropdown, BDropdownItem, All, Sent, Send, Received, Retur, BButton,
   },
   data() {
     const tabs = ['semua', 'perlu-dikirim', 'dikirim', 'diterima', 'retur']

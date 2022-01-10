@@ -1,0 +1,389 @@
+<template>
+  <b-card>
+    <b-row class="mb-4 px-1">
+      <b-button
+        variant="primary"
+        class="rounded-lg"
+        size="sm"
+        to="/data-order"
+      >
+        <b-icon-chevron-left />
+      </b-button>
+    </b-row>
+    <div class="d-flex justify-between">
+      <h3 class="font-bold mb-3">
+        Detail Order
+      </h3>
+      <div>
+        <b-button
+          variant="primary"
+          size="sm"
+          @click="addResi"
+        >
+          Masukkan Resi
+        </b-button>
+        <b-button
+          variant="none"
+          class="text-primary"
+          size="sm"
+        >
+          Batal
+        </b-button>
+      </div>
+    </div>
+    <b-container>
+      <h4 class="font-bold mb-1">
+        Informasi Order
+      </h4>
+      <div class="border px-2 pt-2">
+        <b-row class="mb-1">
+          <b-col cols="6">
+            No Order
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            {{ orderData.order_no }}
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col cols="6">
+            Tanggal Order
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            {{ moment(orderData.order_date) }}
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col cols="6">
+            Metode Pembayaran
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            {{ orderData.payment_method }}
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col cols="6">
+            Status
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            <b-alert
+              show
+              :variant="setAlert(orderData.order_status)"
+              class="px-1 w-36 text-center"
+              style="padding: 5px 0;"
+            >
+              {{ orderData.order_status }}
+            </b-alert>
+          </b-col>
+        </b-row>
+        <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
+      </div>
+      <h4 class="font-bold mt-2 mb-1">
+        Informasi Pengirim
+      </h4>
+      <div class="border px-2 pt-2 pb-1">
+        <b-row class="mb-1">
+          <b-col cols="6">
+            <div class="d-flex">
+              <img
+                src="@/assets/images/icons/profile-placehold.svg"
+              >
+              <div class="ml-1 my-auto">
+                <span class="font-bold">{{ orderData.customer_name }}</span><br>
+                <span>{{ orderData.customer_phone }}</span>
+              </div>
+            </div>
+          </b-col>
+          <b-col
+            cols="6"
+            class="text-right text-primary font-bold"
+          >
+            Pengiriman <span v-if="orderData.is_komship === 0">Non </span>Komship
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col cols="6">
+            Ekspedisi
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            {{ orderData.shipping }}
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col cols="6">
+            No Resi
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            {{ orderData.airway_bill }}<span v-if="orderData.airway_bill === null">-</span>
+          </b-col>
+        </b-row>
+        <b-row class="mb-1">
+          <b-col cols="6">
+            Detail Alamat
+          </b-col>
+          <b-col
+            cols="6"
+            class="font-bold"
+          >
+            {{ orderData.detail_address }}
+          </b-col>
+        </b-row>
+      </div>
+      <h4 class="font-bold mt-2 mb-1">
+        Informasi Penjualan
+      </h4>
+      <div class="border pb-2">
+        <b-table
+          responsive
+          :fields="fieldOrder"
+          :items="itemOrder"
+        >
+          <template #cell(no)="data">
+            {{ data.index + 1 }}
+          </template>
+          <template #cell(price)="data">
+            Rp. {{ formatNumber(data.item.price) }}
+          </template>
+          <template #cell(subtotal)="data">
+            Rp. {{ formatNumber(data.item.price * data.item.qty) }}
+          </template>
+        </b-table>
+        <hr>
+        <b-row class="mt-3">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+          >
+            Total Harga Produk
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right"
+          >
+            Rp. {{ formatNumber(orderData.subtotal) }}
+          </b-col>
+        </b-row>
+        <b-row class="mt-1">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+          >
+            Ongkos Kirim
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right"
+          >
+            Rp. {{ formatNumber(orderData.shipping_cost) }}
+          </b-col>
+        </b-row>
+        <b-row class="mt-1">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+          >
+            Potongan Harga
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right"
+          >
+            Rp. {{ formatNumber(orderData.discount) }}
+          </b-col>
+        </b-row>
+        <hr>
+        <b-row class="mt-2">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+            class="font-bold text-xl"
+          >
+            Total Pembayaran ({{ orderData.payment_method }}) :
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right font-bold text-primary text-xl"
+          >
+            Rp. {{ formatNumber(orderData.subtotal + orderData.shipping_cost - orderData.discount) }}
+          </b-col>
+        </b-row>
+        <b-row class="mt-1">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+          >
+            Biaya {{ orderData.payment_method }} (2,8 sudah termasuk PPN)
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right"
+          >
+            Rp. {{ formatNumber(orderData.service_fee) }}
+          </b-col>
+        </b-row>
+        <b-row class="mt-1">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+          >
+            Cashback Ongkir (2,5%)
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right"
+          >
+            Rp. {{ formatNumber(orderData.shipping_cashback) }}
+          </b-col>
+        </b-row>
+        <b-row class="mt-1">
+          <b-col
+            lg="3"
+          />
+          <b-col
+            lg="5"
+            class="text-primary font-bold"
+          >
+            Penghasilan bersih yang kamu dapatkan
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right text-primary font-bold"
+          >
+            Rp. {{ formatNumber(orderData.net_profit) }}
+          </b-col>
+        </b-row>
+      </div>
+    </b-container>
+  </b-card>
+</template>
+<script>
+import {
+  BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, VBModal, BTable,
+} from 'bootstrap-vue'
+import moment from 'moment'
+
+export default {
+  components: {
+    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable,
+  },
+  directives: { VBModal },
+  data() {
+    return {
+      profile: {},
+      orderData: [],
+      statusOrder: null,
+      fieldOrder: [
+        { key: 'no', label: 'No' },
+        { key: 'product_name', label: 'Nama Produk' },
+        { key: 'price', label: 'Harga Satuan' },
+        { key: 'qty', label: 'Jumlah' },
+        { key: 'subtotal', label: 'Sub Total' },
+      ],
+      itemOrder: [],
+    }
+  },
+  async created() {
+    const profile = await this.$http_komship.post('v1/my-profile')
+    const dataProfile = await profile.data.data
+    this.profile = await dataProfile
+    this.fetchData()
+  },
+  methods: {
+    formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    moment(date) {
+      return moment(date).format('DD MMMM YYYY')
+    },
+    postDate(date) {
+      return moment(date).format('DD MMMM YYYY hh:mm')
+    },
+    async fetchData() {
+      const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
+      const { data } = await order.data
+      this.orderData = await data
+      this.itemOrder = await data.product
+    },
+    setAlert(status) {
+      if (status === 'Perlu Dikirim') {
+        this.statusOrder = 'warning'
+      } else if (status === 'Dikirim') {
+        this.statusOrder = 'primary'
+      } else if (status === 'Diterima') {
+        this.statusOrder = 'success'
+      } else if (status === 'Retur') {
+        this.statusOrder = 'danger'
+      }
+    },
+    addResi() {
+      this.$swal.fire({
+        title: 'Tambah Resi',
+        input: 'text',
+        inputAttributes: {
+          autocapitalize: 'off',
+        },
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Cek Resi',
+        confirmButtonColor: '#F95031',
+        cancelButtonText: 'Batal',
+        showLoaderOnConfirm: true,
+        preConfirm: resi => this.$http_komship.get(`v1/check-awb/${resi}/${this.$route.params.order_id}`)
+          .then(response => {
+            if (!response.data.status) {
+              console.log(response.data.status)
+              throw new Error(response.data.error)
+            }
+            return response.data
+          })
+          .catch(error => {
+            this.$swal.showValidationMessage(
+              'No Resi Tidak Valid',
+            )
+          }),
+        allowOutsideClick: () => !this.$swal.isLoading(),
+      }).then(result => {
+        if (result.status === 'success') {
+          this.$swal.fire({
+            title: 'Tambah Resi',
+            text: result,
+          })
+        }
+      })
+    },
+  },
+}
+</script>
+<style>
+.swal2-input:focus, .swal2-textarea:focus {
+  border: 1px solid #c2c2c2;
+    box-shadow: none;
+}
+</style>
