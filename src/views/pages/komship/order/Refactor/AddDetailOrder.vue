@@ -301,7 +301,15 @@
           label="Ongkos Kirim"
           label-cols-md="5"
         >
-          <div>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
+        <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+          <div  v-else>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
         </b-form-group>
         <b-form-group
           v-if="isUseDiscount"
@@ -755,7 +763,8 @@ export default {
       return numberWithCommas(x)
     },
     onUpdateAllPrice() {
-      this.sumAllProductWithShipPrice = this.sumAllProduct + this.sendCostNumber - this.customerDiscountNumber
+      // eslint-disable-next-line radix
+      this.sumAllProductWithShipPrice = parseInt(this.sumAllProduct) + parseInt(this.sendCostNumber) - parseInt(this.customerDiscountNumber)
     },
     onUpdateNettoPrice() {
       this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost - this.sendCostNumberCut
@@ -868,7 +877,7 @@ export default {
         focusConfirm: true,
         confirmButtonText: 'Oke',
         customClass: {
-          confirmButton: 'btn bg-success btn-primary rounded-lg',
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
         },
         buttonsStyling: false,
       }).then(() => this.$router.push({ name: 'data-order' }))
