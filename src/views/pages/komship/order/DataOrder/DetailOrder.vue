@@ -16,9 +16,9 @@
       </h3>
       <div>
         <b-button
-          v-b-modal="'checkResi'"
           variant="primary"
           size="sm"
+          @click="addResi"
         >
           Masukkan Resi
         </b-button>
@@ -283,22 +283,16 @@
         </b-row>
       </div>
     </b-container>
-    <b-modal
-      id="checkResi"
-      title="Tambah Resi"
-    >
-      cek
-    </b-modal>
   </b-card>
 </template>
 <script>
 import {
-  BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BModal, VBModal, BTable,
+  BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, VBModal, BTable,
 } from 'bootstrap-vue'
 
 export default {
   components: {
-    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BModal, BTable,
+    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable,
   },
   directives: { VBModal },
   data() {
@@ -341,6 +335,48 @@ export default {
         this.statusOrder = 'danger'
       }
     },
+    addResi() {
+      this.$swal.fire({
+        title: 'Tambah Resi',
+        input: 'text',
+        inputAttributes: {
+          autocapitalize: 'off',
+        },
+        showCloseButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Cek Resi',
+        confirmButtonColor: '#F95031',
+        cancelButtonText: 'Batal',
+        showLoaderOnConfirm: true,
+        preConfirm: resi => this.$http_komship.get(`v1/check-awb/${resi}/${this.$route.params.order_id}`)
+          .then(response => {
+            if (!response.data.status) {
+              console.log(response.data.status)
+              throw new Error(response.data.error)
+            }
+            return response.data
+          })
+          .catch(error => {
+            this.$swal.showValidationMessage(
+              'No Resi Tidak Valid',
+            )
+          }),
+        allowOutsideClick: () => !this.$swal.isLoading(),
+      }).then(result => {
+        if (result.status === 'success') {
+          this.$swal.fire({
+            title: 'Tambah Resi',
+            text: result,
+          })
+        }
+      })
+    },
   },
 }
 </script>
+<style>
+.swal2-input:focus, .swal2-textarea:focus {
+  border: 1px solid #c2c2c2;
+    box-shadow: none;
+}
+</style>
