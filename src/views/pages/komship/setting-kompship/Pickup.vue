@@ -447,7 +447,7 @@
 
       <b-col class="text-center mt-1">
         <h4>
-          Anda yakin ingin hapus satu alamat ?
+          Ingin hapus Alamat ini ?
         </h4>
       </b-col>
 
