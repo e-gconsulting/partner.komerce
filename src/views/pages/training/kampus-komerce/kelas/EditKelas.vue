@@ -24,7 +24,7 @@
                   >
                     <v-select
                       v-model="skill"
-                      :options="skillOptions"
+                      :options="skillItems"
                       label="title"
                       :searchable="false"
                       :state="errors.length > 0 ? false:null"
@@ -223,11 +223,7 @@ export default {
 
       edumoClassId: '',
 
-      skillOptions: [
-        { title: 'Advertiser', value: 'Advertiser' },
-        { title: 'Customer Service', value: 'Customer Service' },
-        { title: 'Admin Marketplace', value: 'Admin Marketplace' },
-      ],
+      skillItems: [],
 
       statusKelasOptions: [
         { title: 'Private', value: 'draft' },
@@ -246,8 +242,9 @@ export default {
       return 'Satu Kelas berhasil di perbaharui'
     },
   },
-  mounted() {
+  async mounted() {
     this.loadForm()
+    this.loadSkills()
   },
   methods: {
     submit() {
@@ -257,7 +254,7 @@ export default {
 
           const formData = new FormData()
           formData.append('_method', 'put')
-          if (this.skill.value) formData.append('class_skill', this.skill.value)
+          if (this.skill) formData.append('class_skill', this.skill)
           if (this.imageFile) formData.append('class_img', this.imageFile)
           formData.append('class_trailer_url', this.videoPengantar)
           formData.append('class_trailer_description', this.descriptionVideo)
@@ -305,6 +302,19 @@ export default {
         }
         this.edumoClassId = data.edumo_class_id
       })
+    },
+    loadSkills(search) {
+      return this.$http.get('/skill', {
+        params: {
+          keyword: search,
+          sort: 'name',
+          direction: 'asc',
+        },
+      })
+        .then(async response => {
+          const { data } = response.data.data
+          this.skillItems = data.map(skill => skill.name)
+        })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
   },
