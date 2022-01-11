@@ -18,7 +18,7 @@
           label-for="input-date2"
         >
           <div class="add-order-date-label">
-            {{ date }}
+            {{ dateLabel }}
           </div>
         </b-form-group>
         <b-form-group
@@ -635,9 +635,10 @@ export default {
   },
   data() {
     return {
-      dateValue: this.dateText,
       customerDate: '',
       customerName: '',
+      dateValue: '',
+      dateLabel: '',
       address_id: null,
       isLoadingCount: false,
       customerId: '',
@@ -719,6 +720,8 @@ export default {
     this.getProfile()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
     this.address_id = this.$route.params.address_id
+    this.dateValue = this.$route.params.dateValue
+    this.dateLabel = this.$route.params.dateLabel
     this.getCustomer()
   },
   methods: {
