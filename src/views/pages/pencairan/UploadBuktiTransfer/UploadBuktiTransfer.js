@@ -1,8 +1,6 @@
 /* eslint-disable no-plusplus */
 import axioskomsipdev from '@/libs/axioskomsipdev'
 import {
-  // BRow,
-  // BCol,
   BImg,
   BCard,
   BButton,
@@ -15,8 +13,6 @@ import {
 
 export default {
   components: {
-    // BRow,
-    // BCol,
     BImg,
     BCard,
     BButton,
@@ -25,9 +21,6 @@ export default {
     BCardBody,
     BCardHeader,
     BModal,
-  },
-  filters: {
-    //
   },
   data() {
     return {
@@ -39,12 +32,6 @@ export default {
       maxProgressUpload: 100,
       dragAndDropCapable: false,
     }
-  },
-  computed: {
-    //
-  },
-  watch: {
-    //
   },
   mounted() {
     this.loadDataAwal = false
@@ -79,11 +66,9 @@ export default {
           for (let index = 0; index < files.length; index++) {
             if (files.length > 3) {
               this.$refs.failUploadPopup.show()
-            } else {
-              this.filesSettled.push(files[index])
             }
           }
-          this.handleFiles(this.filesSettled)
+          this.handleFiles(files)
         })
       }
     })
@@ -92,18 +77,6 @@ export default {
       */
 
     // Set the initial number of items
-  },
-  created() {
-    //
-    // const eventNames = ['dragenter', 'dragover', 'dragleave', 'drop']
-    // const dropArea = this.$refs['drop-upload-area']
-    // eventNames.forEach(eventName => {
-    //   console.log(eventName)
-    //   dropArea.addEventListener(eventName, this.preventDefaults, false)
-    //   if (eventName === 'drop') {
-    //     dropArea.addEventListener('drop', this.handleDrop, false)
-    //   }
-    // })
   },
   methods: {
     /*
@@ -137,26 +110,21 @@ export default {
     },
     previewFiles(event) {
       const data = event.target.files
-      this.filesSettled = data
       this.handleFiles(data)
     },
     preventDefaults(e) {
       e.preventDefault()
       e.stopPropagation()
     },
-    handleDrop(e) {
-      const { files } = e.dataTransfer
-      console.log('dt :', e, e.dataTransfer)
-      console.log('files :', files)
-      this.handleFiles(files)
-    },
     handleFiles(files) {
-      const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}?status=${this.$store.state.pencairan.status}`
+      const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}`
       const dataCopy = [...files]
       dataCopy.forEach(file => {
-        console.log(file)
+        this.filesSettled = [...this.filesSettled, file]
         const formData = new FormData()
         formData.append('file', file)
+        formData.append('withdrawal_id', this.$route.params.slug)
+        formData.append('status', this.$store.state.pencairan.status)
         axioskomsipdev.put(endpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -170,7 +138,7 @@ export default {
           },
         })
           .then(({ data }) => {
-            console.log(this.file)
+            // console.log(this.file)
             this.filesUploaded.push(data)
           })
           .catch(e => {
@@ -198,11 +166,20 @@ export default {
         //   .catch(err => console.log(err))
       })
     },
+    handleBatalDataUpload(file) {
+      const fileListArr = Array.from(this.filesSettled)
+      // notes: ketika nama file sama dan ada bnyak akan ke filter(hapus) semua
+      const filteredFiles = fileListArr.filter(x => (x.name !== file.name && x.lastModified !== file.lastModified))
+      this.filesSettled = filteredFiles
+      this.fileUploadCount = filteredFiles.length
+      this.filesUploaded = filteredFiles
+      // this.$nextTick(() => {
+      //   console.log(this.filesSettled)
+      // })
+    },
     handleKonfirmasi() {
-      // caling api
-      // this.$http.post(url,params,{})
       // back to rincian routes
-      // this.$router.go(-1)
+      this.$router.go(-1)
     },
     calculateSizeFile(size) {
       const sizesUnit = ['Bytes', 'KB', 'MB', 'GB', 'TB']
