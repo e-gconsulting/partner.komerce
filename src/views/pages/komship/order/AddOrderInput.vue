@@ -14,8 +14,25 @@
         label-for="input-date"
       >
         <div class="add-order-date-label">
-          {{ date }}
+          {{ dateLabel }}
         </div>
+        <b-form-datepicker
+          id="input-date"
+          ref="dp1"
+          v-model="dateValue"
+          :min="new Date()"
+          class="add-order-date-button"
+          button-only
+          @context="onChangeDate"
+        >
+          <template v-slot:button-content>
+            <feather-icon
+              icon="CalendarIcon"
+              size="21"
+              class="text-danger stroke-current"
+            />
+          </template>
+        </b-form-datepicker>
       </b-form-group>
       <b-form-group
         class="add-order-label"
@@ -430,7 +447,7 @@
               class="next-button"
               :disabled="buttonNext"
               tag="router-link"
-              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres } }"
+              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres, date: dateValue, dateLabel: dateLabel } }"
             >
               Lanjutkan
             </b-button>
@@ -486,6 +503,7 @@ export default {
     BFormSelect,
     BFormSelectOption,
     // AddOrderTable,
+    BFormDatepicker,
     BTable,
     BRow,
     BCol,
@@ -614,9 +632,9 @@ export default {
     }
   },
   mounted() {
-    const currentDate = new Date()
-    this.customerDate = dateFormat(currentDate, 'yyyy-mm-dd')
-    this.date = formatFullDate(currentDate)
+    this.dateValue = formatFullDate(new Date())
+    this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
+    this.date = formatFullDate(this.dateValue)
     this.getAddress()
     this.listProduct2 = this.listProduct
   },
@@ -844,10 +862,8 @@ export default {
       return result
     },
     onChangeDate(ctx) {
-      if (ctx && ctx.activeYMD) {
-        this.dateLabel = changeDate(ctx.activeYMD)
-        this.$emit('onUpdateDate', ctx.activeYMD)
-      }
+      this.dateLabel = changeDate(ctx.activeYMD)
+      this.$emit('onUpdateDate', ctx.activeYMD)
     },
     handleShowVariationPopUp(productData) {
       this.selectedVariation = productData
