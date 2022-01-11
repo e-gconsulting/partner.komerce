@@ -10,27 +10,9 @@
         <b-icon-chevron-left />
       </b-button>
     </b-row>
-    <div class="d-flex justify-between">
-      <h3 class="font-bold mb-3">
-        Detail Order
-      </h3>
-      <div>
-        <b-button
-          variant="primary"
-          size="sm"
-          @click="addResi"
-        >
-          Masukkan Resi
-        </b-button>
-        <b-button
-          variant="none"
-          class="text-primary"
-          size="sm"
-        >
-          Batal
-        </b-button>
-      </div>
-    </div>
+    <h3 class="font-bold mb-3">
+      Detail Order
+    </h3>
     <b-container>
       <h4 class="font-bold mb-1">
         Informasi Order
@@ -342,48 +324,6 @@ export default {
         this.statusOrder = 'danger'
       }
     },
-    addResi() {
-      this.$swal.fire({
-        title: 'Tambah Resi',
-        input: 'text',
-        inputAttributes: {
-          autocapitalize: 'off',
-        },
-        showCloseButton: true,
-        showCancelButton: true,
-        confirmButtonText: 'Cek Resi',
-        confirmButtonColor: '#F95031',
-        cancelButtonText: 'Batal',
-        showLoaderOnConfirm: true,
-        preConfirm: resi => this.$http_komship.get(`v1/check-awb/${resi}/${this.$route.params.order_id}`)
-          .then(response => {
-            if (!response.data.status) {
-              console.log(response.data.status)
-              throw new Error(response.data.error)
-            }
-            return response.data
-          })
-          .catch(error => {
-            this.$swal.showValidationMessage(
-              'No Resi Tidak Valid',
-            )
-          }),
-        allowOutsideClick: () => !this.$swal.isLoading(),
-      }).then(result => {
-        if (result.status === 'success') {
-          this.$swal.fire({
-            title: 'Tambah Resi',
-            text: result,
-          })
-        }
-      })
-    },
   },
 }
 </script>
-<style>
-.swal2-input:focus, .swal2-textarea:focus {
-  border: 1px solid #c2c2c2;
-    box-shadow: none;
-}
-</style>
