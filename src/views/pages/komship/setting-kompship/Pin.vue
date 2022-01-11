@@ -46,6 +46,7 @@
 
     <b-modal
       id="modal-confirm-create-new-pin"
+      ref="modal-confirm-create-new-pin"
       no-close-on-backdrop
       hide-header-close
       hide-footer
@@ -70,9 +71,17 @@
         <CodeInput
           :loading="false"
           class="input"
-          @change="onChange"
-          @complete="onComplete"
+          @change="onChangeConfirm"
+          @complete="onCompleteConfirm"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-2">
+        <span class="text-primary">
+          <strong>
+            {{ errorConfirmPin }}
+          </strong>
+        </span>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -80,8 +89,44 @@
           variant="primary"
           @click="confirmCreatePin"
         >
+          <b-spinner
+            v-if="loadingSubmit"
+            variant="light"
+            small
+          />
           Konfirmasi
         </b-button>
+      </b-col>
+
+    </b-modal>
+
+    <!-- Notif Success Create Pin -->
+    <b-modal
+      ref="modal-success-create-pin"
+      hide-footer
+      modal-class="modal-dark"
+      centered
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-success.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-1">
+        <h4 class="text-black">
+          <strong>
+            PIN Berhasil Dibuat
+          </strong>
+        </h4>
+        <p class="text-black">
+          Selamat kamu telah berhasil mengamankan saldo yang kamu miliki
+        </p>
       </b-col>
 
     </b-modal>
@@ -652,6 +697,7 @@ export default {
     return {
       loadingSubmit: false,
       dataPin: null,
+      confirmDataPin: null,
 
       errorConfirmPin: '',
       errorMatchesPin: '',
@@ -698,6 +744,12 @@ export default {
     onComplete(v) {
       this.dataPin = v
     },
+    onChangeConfirm(v) {
+      this.dataPinConfirm = v
+    },
+    onCompleteConfirm(v) {
+      this.dataPinConfirm = v
+    },
     showModal() {
       httpKomship.get('/v1/pin/check', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -734,32 +786,32 @@ export default {
       })
     },
     confirmCreatePin() {
-      httpKomship.get('/v1/pin/check', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(() => {
-        this.$swal({
-          title: 'PIN Berhasil Dibuat',
-          text: 'Selamat kamu telah berhasil mengamankan saldo yang kamu miliki',
-          icon: 'success',
-          showCancelButton: false,
-          showConfirmButton: false,
-          customClass: {
-            confirmButton: 'btn btn-primary',
-            cancelButton: 'btn btn-outline-primary ml-1',
-          },
-          buttonsStyling: false,
+      this.loadingSubmit = true
+      if (this.dataPin === this.dataPinConfirm) {
+        httpKomship.post('/v1/pin/store', {
+          pin: this.dataPin,
+        }, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(() => {
+          this.loadingSubmit = false
+          this.$refs['modal-success-create-pin'].show()
+          this.$refs['modal-confirm-create-new-pin'].hide()
+        }).catch(() => {
+          this.loadingSubmit = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal konfirmasi buat pin',
+              variant: 'danger',
+            },
+          })
         })
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal konfirmasi buat pin',
-            variant: 'danger',
-          },
-        })
-      })
+      } else {
+        this.loadingSubmit = false
+        this.errorConfirmPin = 'PIN harus sama'
+      }
     },
     changePin() {
       this.$refs['modal-change-pin'].show()

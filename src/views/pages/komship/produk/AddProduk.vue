@@ -1147,7 +1147,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
-import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider, number } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
