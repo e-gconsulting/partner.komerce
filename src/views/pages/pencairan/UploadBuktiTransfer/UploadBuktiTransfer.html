@@ -66,14 +66,13 @@
                   </b-button>
                 </div>
                 <span class="text-24-normal" style="color: #222222;">
-                  {{ fileUploadCount }} dari {{ filesSettled.length }} diupload
+                  {{ fileUploadCount }} dari {{ filesUploaded.length }} diupload
                 </span>
                 <div class="mt-1">
                   <b-card no-body>
                     <b-card-body style="padding:0;">
                       <div
                         v-for="filebeingUpload in filesSettled"
-                        :key="filebeingUpload.lastModified + 1"
                         style="display: grid;grid-row-gap: 1rem;"
                       >
                         <div class="d-flex align-items-center">
@@ -90,6 +89,7 @@
                               <span
                                 class="text-bukti-transfer"
                                 style="color: #E31A1A;cursor: pointer;"
+                                @click="handleBatalDataUpload(filebeingUpload)"
                               >
                                 Batal
                               </span>
