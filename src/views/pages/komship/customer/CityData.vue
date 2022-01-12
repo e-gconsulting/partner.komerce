@@ -7,7 +7,6 @@
     opacity=".5"
     rounded="sm"
   >
-  
     <b-card>
 
       <b-row class="mt-3">
