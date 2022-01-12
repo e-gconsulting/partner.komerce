@@ -102,7 +102,7 @@
             cols="6"
             class="text-right text-primary font-bold"
           >
-            Pengiriman <span v-if="orderData.is_komship === 0">Non </span>Komship
+            Pengiriman Komship
           </b-col>
         </b-row>
         <b-row class="mb-1">
