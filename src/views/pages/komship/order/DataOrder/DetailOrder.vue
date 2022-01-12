@@ -313,10 +313,18 @@ export default {
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
-      return moment(date).format('DD MMMM YYYY')
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD MMMM YYYY')
+      }
+      return date
     },
     postDate(date) {
-      return moment(date).format('DD MMMM YYYY hh:mm')
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD MMMM YYYY hh:mm')
+      }
+      return date
     },
     async fetchData() {
       const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
