@@ -148,7 +148,10 @@
                 style="width:70%;"
               >
                 <span class="font-bold">{{ data.item.product[0].product_name }}</span><br>
-                <span class="text-primary">{{ data.item.product[0].variant_name }}</span>
+                <span
+                  v-if="data.item.product[0].variant_name !== '0'"
+                  class="text-primary"
+                >{{ data.item.product[0].variant_name }}</span>
               </div>
               <div
                 class="ml-1 font-bold"
