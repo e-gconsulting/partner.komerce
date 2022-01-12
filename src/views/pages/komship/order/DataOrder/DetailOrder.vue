@@ -10,9 +10,20 @@
         <b-icon-chevron-left />
       </b-button>
     </b-row>
-    <h3 class="font-bold mb-3">
-      Detail Order
-    </h3>
+    <div class="d-flex justify-between">
+      <h3 class="font-bold mb-3">
+        Detail Order
+      </h3>
+      <b-button
+        v-if="orderData.order_status === 'Diajukan'"
+        variant="default"
+        size="sm"
+        class="my-auto text-primary font-bold"
+        @click="cancelOrder"
+      >
+        Batal
+      </b-button>
+    </div>
     <b-container>
       <h4 class="font-bold mb-1">
         Informasi Order
@@ -61,7 +72,7 @@
           >
             <b-alert
               show
-              :variant="setAlert(orderData.order_status)"
+              :variant="statusOrder"
               class="px-1 w-36 text-center"
               style="padding: 5px 0;"
             >
@@ -312,9 +323,10 @@ export default {
       const { data } = await order.data
       this.orderData = await data
       this.itemOrder = await data.product
+      this.statusOrder = await this.setAlert(data.order_status)
     },
     setAlert(status) {
-      if (status === 'Perlu Dikirim') {
+      if (status === 'Diajukan') {
         this.statusOrder = 'warning'
       } else if (status === 'Dikirim') {
         this.statusOrder = 'primary'
@@ -322,7 +334,34 @@ export default {
         this.statusOrder = 'success'
       } else if (status === 'Retur') {
         this.statusOrder = 'danger'
+      } else if (status === 'Batal') {
+        this.statusOrder = 'secondary'
       }
+      return this.statusOrder
+    },
+    cancelOrder() {
+      // eslint-disable-next-line global-require
+      const logoWarning = require('@/assets/images/icons/popup-warning.png')
+      // eslint-disable-next-line global-require
+      const logoSuccess = require('@/assets/images/icons/success.svg')
+      this.$swal.fire({
+        title: 'Kamu yakin ingin<br>menghapus Order?',
+        imageUrl: logoWarning,
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal',
+        cancelButtonColor: '#FFFFFF',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(isConfirm => {
+        if (isConfirm.value === true) {
+          this.$http_komship.delete(`v1/order/${this.profile.partner_id}/delete/${this.$route.params.order_id}`)
+            .then(response => {
+              this.fetchData()
+            })
+        }
+      })
     },
   },
 }
