@@ -301,7 +301,7 @@
           label="Ongkos Kirim"
           label-cols-md="5"
         >
-          <div
+        <div
             v-if="isCalculating"
           >
             <b-spinner
@@ -309,9 +309,7 @@
               label="Spinning"
             />
           </div>
-          <div v-else>
-            {{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}
-          </div>
+          <div  v-else>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
         </b-form-group>
         <b-form-group
           v-if="isUseDiscount"
@@ -1067,7 +1065,7 @@ export default {
       }).catch(error => {
         this.isSubmitting = false
         if (error.response.data.code === 406) {
-          return this.alertFail('saldo tidak cukup')
+          return this.alertFail('Maaf, saldo anda tidak cukup')
         }
         return this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
