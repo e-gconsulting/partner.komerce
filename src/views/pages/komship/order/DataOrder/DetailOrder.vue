@@ -122,9 +122,16 @@
           </b-col>
           <b-col
             cols="6"
-            class="font-bold"
+            class="font-bold d-flex"
           >
-            {{ orderData.airway_bill }}<span v-if="orderData.airway_bill === null">-</span>
+            {{ orderData.airway_bill }}
+            <img
+              v-if="orderData.airway_bill"
+              src="@/assets/images/icons/copy.png"
+              class="copy-resi"
+              @click.prevent="copyResi(orderData.airway_bill)"
+            >
+            <span v-if="orderData.airway_bill === null">-</span>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -238,7 +245,7 @@
             lg="3"
             class="text-right"
           >
-            Rp. {{ formatNumber(orderData.service_fee) }}
+            Rp. {{ formatNumber(orderData.shipping_cost) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -350,8 +357,6 @@ export default {
     cancelOrder() {
       // eslint-disable-next-line global-require
       const logoWarning = require('@/assets/images/icons/popup-warning.png')
-      // eslint-disable-next-line global-require
-      const logoSuccess = require('@/assets/images/icons/success.svg')
       this.$swal.fire({
         title: 'Kamu yakin ingin<br>menghapus Order?',
         imageUrl: logoWarning,
@@ -371,6 +376,22 @@ export default {
         }
       })
     },
+    async copyResi(resi) {
+      try {
+        await navigator.clipboard.writeText(resi)
+        console.log('Copied')
+      } catch ($e) {
+        console.log('Cannot Copy')
+      }
+    },
   },
 }
 </script>
+<style>
+.copy-resi{
+  margin-left: 3px;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
+}
+</style>
