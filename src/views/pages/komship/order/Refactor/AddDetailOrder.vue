@@ -301,7 +301,7 @@
           label="Ongkos Kirim"
           label-cols-md="5"
         >
-        <div
+          <div
             v-if="isCalculating"
           >
             <b-spinner
@@ -309,7 +309,9 @@
               label="Spinning"
             />
           </div>
-          <div  v-else>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
+          <div v-else>
+            {{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}
+          </div>
         </b-form-group>
         <b-form-group
           v-if="isUseDiscount"
@@ -1062,16 +1064,19 @@ export default {
           }
         }
         this.alertSuccess('Berhasil Tambah Order')
-      }).catch(() => {
+      }).catch(error => {
         this.isSubmitting = false
-        this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
+        if (error.response.data.code === 406) {
+          return this.alertFail('saldo tidak cukup')
+        }
+        return this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
     onPostCart(cartItem) {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
         this.cartOrder = data.cart_id
-      }).catch(() => {
+      }).catch(err => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
