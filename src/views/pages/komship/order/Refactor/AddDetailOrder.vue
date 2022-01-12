@@ -1064,7 +1064,10 @@ export default {
         this.alertSuccess('Berhasil Tambah Order')
       }).catch(error => {
         this.isSubmitting = false
-        this.alertFail(error.response.data.message)
+        if (error.response.data.code === 406) {
+          return this.alertFail('Maaf, saldo anda tidak cukup')
+        }
+        return this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
     onPostCart(cartItem) {
