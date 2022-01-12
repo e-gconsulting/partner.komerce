@@ -1064,6 +1064,7 @@ export default {
         this.alertSuccess('Berhasil Tambah Order')
       }).catch(error => {
         this.isSubmitting = false
+
         if (error.response.data.code === 406) {
           return this.alertFail('Maaf, saldo anda tidak cukup')
         }
@@ -1074,7 +1075,7 @@ export default {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
         this.cartOrder = data.cart_id
-      }).catch(err => {
+      }).catch(() => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
