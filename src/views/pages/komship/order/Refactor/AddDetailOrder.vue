@@ -872,6 +872,25 @@ export default {
         buttonsStyling: false,
       })
     },
+    alertFailBalance(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCancelButton: true,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        cancelButtonText: 'Cek Saldo',
+        customClass: {
+          confirmButton: 'btn border btn-outline rounded-lg',
+          cancelButton: 'btn bg-orange2  btn-primary  rounded-lg',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (!result.isConfirmed) {
+          this.$router.push({ name: 'saldo' })
+        }
+      })
+    },
     alertSuccess(textWarn) {
       this.$swal({
         title: `<span class="font-weight-bold h4">${textWarn}</span>`,
@@ -1064,9 +1083,8 @@ export default {
         this.alertSuccess('Berhasil Tambah Order')
       }).catch(error => {
         this.isSubmitting = false
-
         if (error.response.data.code === 406) {
-          return this.alertFail('Maaf, saldo anda tidak cukup')
+          return this.alertFailBalance('Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda')
         }
         return this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
@@ -1075,7 +1093,7 @@ export default {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
         this.cartOrder = data.cart_id
-      }).catch(() => {
+      }).catch(err => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
