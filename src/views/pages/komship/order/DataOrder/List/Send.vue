@@ -128,7 +128,7 @@
           </span>
         </template>
         <template #cell(product)="data">
-          <div>
+          <div v-if="data.item.product[0]">
             <div class="d-flex">
               <div v-if="data.item.product[0].product_image === null">
                 <img
