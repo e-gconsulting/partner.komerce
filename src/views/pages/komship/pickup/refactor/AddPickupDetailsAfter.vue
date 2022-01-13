@@ -242,7 +242,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ idOrderFromHistory.address_name }}</span>
+                      <span class="text-black">{{ idOrderFromHistory.district }}</span>
                     </b-list-group-item>
                   </b-list-group>
                 </div>
