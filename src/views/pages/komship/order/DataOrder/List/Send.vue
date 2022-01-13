@@ -128,7 +128,7 @@
           </span>
         </template>
         <template #cell(product)="data">
-          <div>
+          <div v-if="data.item.product[0]">
             <div class="d-flex">
               <div v-if="data.item.product[0].product_image === null">
                 <img
@@ -148,7 +148,10 @@
                 style="width:70%;"
               >
                 <span class="font-bold">{{ data.item.product[0].product_name }}</span><br>
-                <span class="text-primary">{{ data.item.product[0].variant_name }}</span>
+                <span
+                  v-if="data.item.product[0].variant_name !== '0'"
+                  class="text-primary"
+                >{{ data.item.product[0].variant_name }}</span>
               </div>
               <div
                 class="ml-1 font-bold"
@@ -342,7 +345,11 @@ export default {
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
-      return moment(date).format('DD-MM-YYYY hh:mm')
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD-MM-YYYY hh:mm')
+      }
+      return date
     },
     async fetchData(search) {
       this.loadTable = true

@@ -7,12 +7,13 @@
     opacity=".5"
     rounded="sm"
   >
+
     <b-card>
 
       <b-row class="mt-3">
         <b-col>
           <h3 class="mb-50 mb-md-0">
-            Rangking Kota Customer
+            Ranking Kota Customer
           </h3>
         </b-col>
         <b-col cols="auto">
@@ -51,6 +52,7 @@
         >
           <div id="chart">
             <vue-apex-charts
+            ref="realtimeChart"
               type="bar"
               :height="heightBar"
               :options="chartOptions"
@@ -105,7 +107,7 @@ export default {
       series: [{
         data: [],
       }],
-      heightBar: 290,
+      heightBar: 120,
       chartOptions: {
         colors: '#34A770',
         chart: {
@@ -216,6 +218,7 @@ export default {
 </script>
 
 <style lang="scss">
+
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
-@import '~@core/scss/vue/libs/vue-flatpicker.scss';
+
 </style>
