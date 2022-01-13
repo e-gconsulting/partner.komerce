@@ -636,9 +636,19 @@ export default {
     this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
     this.date = formatFullDate(this.dateValue)
     this.getAddress()
+    // this.getProfile()
     this.listProduct2 = this.listProduct
+    this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
   },
   methods: {
+    getProfile() {
+      return this.$http_komship.post('v1/my-profile').then(response => {
+        const { data } = response.data
+        this.profile = data
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
     getAddress() {
       httpKomship.get('/v1/address', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
