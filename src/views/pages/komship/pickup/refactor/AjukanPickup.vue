@@ -423,6 +423,30 @@
       </div>
     </b-modal>
 
+    <!-- Modal Failed Pickup -->
+    <b-modal
+      ref="modal-failed-request-pickup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <div class="image-wrapper">
+          <img src="@/assets/images/icons/fail.svg">
+        </div>
+        <div class="text-wrapper mb-3 px-2">
+          Mohon maaf , ekpedisi sedang terkendala.
+          Silahkan refresh halaman
+        </div>
+        <b-button
+          class="org-button"
+          @click="closePopupFailedPickup"
+        >
+          Oke
+        </b-button>
+      </div>
+    </b-modal>
+
   </b-card>
 </template>
 
@@ -536,7 +560,7 @@ export default {
         props: {
           title: 'Gagal',
           icon: 'AlertCircleIcon',
-          text: 'Gagal meload kendaraan, silahkan refresh halaman!',
+          text: 'Gagal meload data, silahkan refresh halaman!',
           variant: 'danger',
         },
       })
@@ -553,7 +577,7 @@ export default {
       this.itemsPreviewProductOrder = data
       console.log('dataOrder', data)
       console.log('selectedOrderToStore', this.selectedOrderToStore)
-      console.log('dataItems', dataItems)
+      console.log('itemsPreviewProductOrder', this.itemsPreviewProductOrder)
       this.$refs['popup-order'].hide()
     },
     changeDate(dateString, type) {
@@ -665,7 +689,11 @@ export default {
       httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
         .then(response => {
           console.log(response)
-          this.$refs['modal-success-request-pickup'].show()
+          if (response.data.code !== 500) {
+            this.$refs['modal-success-request-pickup'].show()
+          } else {
+            this.$refs['modal-failed-request-pickup'].show()
+          }
         }).catch(() => {
           this.$toast({
             component: ToastificationContent,
@@ -696,6 +724,9 @@ export default {
         }
       }
       return value
+    },
+    closePopupFailedPickup() {
+      this.$refs['modal-failed-request-pickup'].hide()
     },
   },
 }

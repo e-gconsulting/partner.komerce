@@ -328,9 +328,14 @@
                     name="Nama Bank"
                     rules="required"
                   >
-                    <b-form-input
+                    <v-select
                       v-model="fieldAddBankName"
-                      :state="errors.length > 0 ? false:null"
+                      label="name"
+                      :reduce="option => option.name"
+                      :options="banks"
+                      :filterable="true"
+                      :state="errors.length > 0 ? false : null"
+                      placeholder="Ketik untuk mencari..."
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
