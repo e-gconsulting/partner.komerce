@@ -123,9 +123,6 @@ export default {
         },
         dataLabels: {
           enabled: true,
-          // formatter: function(val) {
-          //   return val + "%"
-          //   },
           offsetX: -6,
           style: {
             fontSize: '12px',
@@ -151,9 +148,6 @@ export default {
     this.getData()
   },
   methods: {
-    // formatter(val) {
-    //   return val + "%"
-    // },
     changeData() {
       this.loading = true
       const params = {
