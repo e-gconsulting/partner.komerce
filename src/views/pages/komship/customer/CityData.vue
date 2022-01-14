@@ -151,9 +151,6 @@ export default {
     this.getData()
   },
   methods: {
-    // formatter(val) {
-    //   return val + "%"
-    // },
     changeData() {
       this.loading = true
       const params = {
