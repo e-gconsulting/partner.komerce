@@ -1,18 +1,7 @@
 <template>
   <b-card>
+          <h4><strong>Customer</strong></h4>
     <b-row class="d-flex justify-content-end align-items-center">
-      <b-col
-        cols="auto"
-      >
-        <b-button
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          class="btn-icon"
-          variant="primary"
-          @click.prevent="tableProvider"
-        >
-          <feather-icon icon="RotateCwIcon" />
-        </b-button>
-      </b-col>
       <b-col
         cols="3"
       >
@@ -59,7 +48,7 @@
                       label="label"
                       :options="itemsDestinations"
                       :reduce="items => items.city_name"
-                      placeholder="Ketik untuk mencari..."
+                      placeholder="Masukan nama Provinsi atau Kota"
                       @search="onSearchDestination"
                     />
                   </b-form-group>
@@ -76,6 +65,7 @@
                       <b-form-input
                         v-model="spentFrom"
                         class=""
+                        placeholder="Rp.10.000.000"
                       />
                       <b-button
                         class="btn-icon"
@@ -89,6 +79,7 @@
                       <b-form-input
                         v-model="spentTo"
                         class="mr-1"
+                         placeholder="Rp.10.000.000"
                       />
                     </div>
                   </b-form-group>
@@ -105,6 +96,7 @@
                       <b-form-input
                         v-model="pcsFrom"
                         class=""
+                        placeholder="0"
                       />
                       <b-button
                         class="btn-icon"
@@ -118,6 +110,7 @@
                       <b-form-input
                         v-model="pcsTo"
                         class="mr-1"
+                        placeholder="0"
                       />
                     </div>
                   </b-form-group>
@@ -134,6 +127,7 @@
                       <b-form-input
                         v-model="orderFrom"
                         class=""
+                        placeholder="0"
                       />
                       <b-button
                         class="btn-icon"
@@ -147,6 +141,7 @@
                       <b-form-input
                         v-model="orderTo"
                         class="mr-1"
+                        placeholder="0"
                       />
                     </div>
                   </b-form-group>
@@ -192,6 +187,9 @@
       blur="0"
     >
       <b-table
+        id="pagination"
+        :per-page="perpage"
+        :current-page="currentPage"
         ref="tables"
         striped
         hover
@@ -248,7 +246,6 @@
     </b-overlay>
   </b-card>
 </template>
-
 <script>
 import {
   BCol,
@@ -262,6 +259,7 @@ import {
   BForm,
   BFormGroup,
   BCard,
+
   BOverlay,
   BDropdown,
   BDropdownForm,
@@ -299,7 +297,9 @@ export default {
   data() {
     return {
       loading: false,
-
+      currentPage: 1,
+      perpage: 100,
+      rows: 200,
       selected: 1,
       options: [
         { value: 1, text: 'Kabupaten' },
@@ -336,6 +336,7 @@ export default {
         {
           key: 'last_order',
           label: 'Terakhir Order',
+          sortable: true,
           formatter: value => {
             if (!value || value === '00-00-0000') return '-'
             value.split('')
@@ -360,8 +361,8 @@ export default {
 
       // Params Filter
       productName: '',
-      spentFrom: null,
-      spentTo: null,
+      spentFrom: '',
+      spentTo: '',
       orderFrom: null,
       orderTo: null,
       pcsFrom: null,
