@@ -404,7 +404,7 @@
               />
             </div>
             <div v-else>
-              {{ `- Rp ${onNumberWithCommas(sendCostNumberCut)}` }}
+              {{ ` Rp ${onNumberWithCommas(sendCostNumberCut-sendCostNumber)}` }}
             </div>
           </b-form-group>
           <b-form-group
@@ -801,7 +801,7 @@ export default {
       this.sumAllProductWithShipPrice = parseInt(this.sumAllProduct) + parseInt(this.sendCostNumber) - parseInt(this.customerDiscountNumber)
     },
     onUpdateNettoPrice() {
-      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost - this.sendCostNumberCut
+      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost + (this.sendCostNumberCut - this.sendCostNumber)
     },
     onUpdateOverAllPrice() {
       this.sumAllProduct = countTotalPrice(this.itemsCheckoutOrder)
@@ -856,7 +856,7 @@ export default {
     },
     calculateOnView() {
       this.sendCostNumber = this.totalCostNumber && typeof this.totalCostNumber.shipping_cost !== 'undefined' ? this.totalCostNumber.shipping_cost : 0
-      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? this.totalCostNumber.service_fee : 0
+      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? Math.ceil(this.totalCostNumber.service_fee) : 0
       this.sendCostNumberCut = this.totalCostNumber && typeof this.totalCostNumber.cashback !== 'undefined' ? this.totalCostNumber.cashback : 0
       this.serviceFeeLabel = this.totalCostNumber && typeof this.totalCostNumber.service_fee_percentage !== 'undefined' ? this.totalCostNumber.service_fee_percentage.toString().replace('.', ',') : 0
       this.cashbackLabel = this.totalCostNumber && typeof this.totalCostNumber.cashback_percentage !== 'undefined' ? this.totalCostNumber.cashback_percentage.toString().replace('.', ',') : 0
