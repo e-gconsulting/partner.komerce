@@ -570,6 +570,7 @@ export default {
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
     this.getAddress()
+    this.$refs['popup-order'].show()
   },
   methods: {
     getDataOrderToStore(data, dataItems) {
