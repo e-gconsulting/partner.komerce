@@ -1,5 +1,7 @@
 import Vue from 'vue'
-import { ToastPlugin, ModalPlugin, PopoverPlugin } from 'bootstrap-vue'
+import {
+  ToastPlugin, ModalPlugin, PopoverPlugin, BootstrapVue, IconsPlugin,
+} from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
@@ -37,6 +39,8 @@ Vue.use(PopoverPlugin)
 Vue.use(VueCompositionAPI)
 Vue.use(Dropdown)
 // Lodash
+Vue.use(BootstrapVue)
+Vue.use(IconsPlugin)
 Vue.use(VueLodash, { lodash })
 Vue.use(money, { precision: 0 })
 
