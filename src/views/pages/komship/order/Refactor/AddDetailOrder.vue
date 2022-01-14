@@ -720,39 +720,14 @@ export default {
     this.customerDate = dateFormat(currentDate, 'yyyy-mm-dd')
     this.date = formatFullDate(currentDate)
     this.onUpdateOverAllPrice()
-    this.getProfile()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
     this.address_id = this.$route.params.address_id
     this.dateValue = this.$route.params.dateValue
     this.dateLabel = this.$route.params.dateLabel
-    this.getCustomer()
     this.itemsOrder = this.$route.params.itemsOrder
     this.choosenAddres = this.$route.params.choosenAddres
-    const arrayCart = this.itemsOrder.map(val => ({
-      product_id: val.product_id,
-      product_name: val.product_name,
-      variant_id: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].options_id : 0,
-      variant_name: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].name : '',
-      product_price: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price,
-      qty: val.stockToDisplay,
-      subtotal: val.stockToDisplay * (typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price),
-    }))
-
-    this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`).then(async res => {
-      const { code } = res.data
-      if (code === 200) {
-        return this.$http_komship.post('v1/cart/bulk-store', arrayCart).then(async result => {
-          console.log(result)
-          const codeRes = result.data.code
-          if (codeRes === 200) {
-            this.cartId = result.data.data.cart_id
-          }
-        })
-      }
-      return false
-    }).catch(err => {
-      console.log(err)
-    })
+    this.getProfile()
+    this.getCustomer()
   },
   methods: {
     getCustomer() {
@@ -767,6 +742,32 @@ export default {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
         this.profile = data
+        const arrayCart = this.itemsOrder.map(val => ({
+          product_id: val.product_id,
+          product_name: val.product_name,
+          variant_id: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].options_id : 0,
+          variant_name: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].name : '',
+          product_price: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price,
+          qty: val.stockToDisplay,
+          subtotal: val.stockToDisplay * (typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price),
+        }))
+
+        this.$http_komship.delete(`v1/cart/clear/${data.user_id}`).then(async res => {
+          const { code } = res.data
+          console.log('delete', res.data)
+          if (code === 200) {
+            return this.$http_komship.post('v1/cart/bulk-store', arrayCart).then(async result => {
+              console.log(result)
+              const codeRes = result.data.code
+              if (codeRes === 200) {
+                this.cartId = result.data.data.cart_id
+              }
+            })
+          }
+          return false
+        }).catch(err => {
+          console.log(err)
+        })
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -846,11 +847,9 @@ export default {
     },
     findCorrectData(dataArr) {
       let selectedCost = {}
-      if (dataArr && dataArr.length && dataArr.length > 0) {
-        for (let j = 0; j < dataArr.length; j += 1) {
-          if (dataArr[j].shipping_type) {
-            selectedCost = dataArr[j]
-          }
+      for (let j = 0; j < dataArr.length; j += 1) {
+        if ((dataArr[j].shipping_type).substring(0, 3) === this.customerExpeditionOption) {
+          selectedCost = dataArr[j]
         }
       }
       return selectedCost
