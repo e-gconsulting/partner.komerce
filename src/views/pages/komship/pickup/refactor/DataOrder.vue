@@ -1,28 +1,39 @@
 <template>
   <div>
-    <data-order-table
-      v-if="!isDetail"
-      ref="tableDataOrderOne"
-      :fields="tableData.header"
-      :items="tableData.items"
-      :current-view="currentView"
-      :search-text="searchFilterText"
-      table-ref-name="tableDataOrder"
-      @passDataToParentTable="getDataOrderFromChild"
-      @onOpenDetailView="openDetailView"
-    />
+    <b-overlay
+      variant="light"
+      :show="loading"
+      spinner-variant="primary"
+      blur="0"
+      opacity=".5"
+      rounded="sm"
+    >
+      <data-order-table
+        v-if="!isDetail"
+        ref="tableDataOrderOne"
+        :fields="tableData.header"
+        :items="tableData.items"
+        :current-view="currentView"
+        :search-text="searchFilterText"
+        table-ref-name="tableDataOrder"
+        @passDataToParentTable="getDataOrderFromChild"
+        @onOpenDetailView="openDetailView"
+      />
+    </b-overlay>
   </div>
 </template>
 
 <script>
 import {
   BCard,
+  BOverlay,
 } from 'bootstrap-vue'
 import DataOrderTable from './DataOrderTable.vue'
 
 export default {
   components: {
     DataOrderTable,
+    BOverlay,
   },
   props: {
     passAddressId: {
@@ -32,6 +43,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
 
       currentView: 'all',
       searchFilterText: '',
@@ -257,6 +269,7 @@ export default {
       })
     },
     getOrder() {
+      this.loading = true
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
           page: this.currentPage,
@@ -270,8 +283,10 @@ export default {
         this.tableData.items = data
         this.excelData.items = data
         this.handleCountNeedToSendOrder()
+        this.loading = false
       }).catch(() => {
         this.alertFail('Unable to get the list of the order. Please try again later or contact support.')
+        this.loading = false
       })
     },
     getOrderDetail(orderId) {

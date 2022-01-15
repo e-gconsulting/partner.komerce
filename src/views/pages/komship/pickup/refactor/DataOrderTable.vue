@@ -12,6 +12,7 @@
       :filter="searchText"
       :items="items"
       :fields="fields"
+      :per-page="perPage"
       class="view-data-order-table"
       empty-text="Tidak ada data untuk ditampilkan."
       responsive
@@ -330,6 +331,33 @@
 
     </b-table>
 
+    <b-row class="justify-content-between mt-5 mx-50 mb-2">
+      <div>
+        <span class="text-black mr-1">
+          <strong>
+            List per halaman:
+          </strong>
+        </span>
+        <b-button
+          v-for="(itemsPage, index) in valuePerpage"
+          :key="index+1"
+          :variant="valuePerpageIsActive === itemsPage.value ? 'primary' : 'flat-dark'"
+          class="btn-icon mr-1"
+          size="sm"
+          @click="changePerpage(itemsPage)"
+        >
+          {{ itemsPage.value }}
+        </b-button>
+      </div>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        first-number
+        last-number
+      />
+    </b-row>
+
     <b-row class="justify-content-end pb-50 mr-50">
       <b-button
         variant="primary"
@@ -356,7 +384,7 @@ import {
   BCollapse,
   BRow,
   // BCol,
-  // BPagination,
+  BPagination,
 } from 'bootstrap-vue'
 
 export default {
@@ -374,7 +402,7 @@ export default {
     BCollapse,
     BRow,
     // BCol,
-    // BPagination,
+    BPagination,
   },
   props: {
     tableRefName: {
@@ -408,11 +436,30 @@ export default {
       selectedOrder: [],
       isCheckedAll: false,
       itemOrderTable: [],
+
+      valuePerpage: [
+        {
+          value: 50,
+        },
+        {
+          value: 100,
+        },
+        {
+          value: 200,
+        },
+      ],
+
+      currentPage: 1,
+      perPage: 50,
+      rows: 0,
+
+      valuePerpageIsActive: 50,
     }
   },
-  mounted() {
+  async mounted() {
     this.setStartValue()
-    this.itemOrderTable = this.items
+    this.itemOrderTable = await this.items
+    this.rows = this.items.length
   },
   methods: {
     getDate(dateVal) {
@@ -549,6 +596,10 @@ export default {
     },
     getSelectedOrder() {
       this.$emit('passDataToParentTable', this.selectedOrder)
+    },
+    changePerpage(data) {
+      this.valuePerpageIsActive = data.value
+      this.perPage = data.value
     },
   },
 }
