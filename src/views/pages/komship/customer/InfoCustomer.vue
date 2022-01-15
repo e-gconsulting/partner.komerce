@@ -244,12 +244,19 @@
         </template>
 
       </b-table>
-
+       <b-pagination
+      v-model="currentPage"
+      :total-rows="totalinforCustomer"
+      :per-page="perPage"
+      class="mt-4"
+    >
+      <template #first-text><span class="text-dark">Lihat per halaman</span></template>
+       </b-pagination>
       <b-pagination
         v-model="currentPage"
         size="md"
         class="float-right mr-2"
-        :total-rows="totalItems"
+        :total-rows="totalinforCustomer"
         :per-page="perPage"
       />
     </b-overlay>
@@ -382,7 +389,7 @@ export default {
       loadTable: false,
       currentPage: 1,
       perPage: 10,
-      totalItems: 0,
+      totalinforCustomer: 0,
     }
   },
   watch: {
@@ -392,6 +399,11 @@ export default {
           console.error(error)
         })
       },
+    },
+  },
+  computed: {
+    rows() {
+      return this.itemsCustomer.length
     },
   },
   mounted() {
