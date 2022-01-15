@@ -102,6 +102,7 @@
               </div>
               <div class="mt-1">
                 <strong>Rata - rata Belanja</strong>
+
               </div>
 
             </b-col>
@@ -384,12 +385,12 @@ import {
   BContainer,
   BCollapse,
   VBToggle,
-  // VBTooltip,
+
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
 import httpKomship from '../setting-kompship/http_komship'
-// import Ripple from 'vue-ripple-directive'
+
 export default {
   components: {
     BCard,
@@ -404,8 +405,7 @@ export default {
   },
   directives: {
     'b-toggle': VBToggle,
-    // 'b-tooltip':VBTooltip,
-    //  Ripple,
+
   },
   data() {
     return {
@@ -511,8 +511,8 @@ export default {
       // }
       return formatStatus
     },
-    currentDateTime() {
-      return moment().format('MMMM Do YYYY, h:mm:ss a')
+    currentTime() {
+      return moment().format(' h:mm:ss a')
     },
   },
 }

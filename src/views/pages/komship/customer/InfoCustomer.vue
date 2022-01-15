@@ -1,7 +1,7 @@
 <template>
-  <b-card>
-          <h4><strong>Customer</strong></h4>
-    <b-row class="d-flex justify-content-end align-items-center">
+ <b-card>
+    <h4><strong>Customer</strong></h4>
+        <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
       >
@@ -12,7 +12,7 @@
           <b-form-input
             v-model="customerName"
             placeholder="Masukan Nama Customer"
-            @input="filterCustomer"
+            @input="datapagination(filterCustomer)"
           />
         </b-input-group>
       </b-col>
@@ -79,7 +79,7 @@
                       <b-form-input
                         v-model="spentTo"
                         class="mr-1"
-                         placeholder="Rp.10.000.000"
+                        placeholder="Rp.10.000.000"
                       />
                     </div>
                   </b-form-group>
@@ -179,18 +179,19 @@
     </b-row>
 
     <b-overlay
+      variant="light"
       :show="loading"
       spinner-variant="primary"
-      variant="light"
-      rounded="sm"
-      opacity=".5"
       blur="0"
+      opacity=".5"
+      rounded="sm"
+
     >
       <b-table
         id="pagination"
-        :per-page="perpage"
+        :per-page="0"
         :current-page="currentPage"
-        ref="tables"
+
         striped
         hover
         responsive
@@ -201,7 +202,7 @@
         :show-empty="!loading"
         @row-clicked="onRowClicked"
       >
-        <!-- Template head -->
+
         <template #head(customer_name)="data">
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
@@ -243,6 +244,14 @@
         </template>
 
       </b-table>
+
+      <b-pagination
+        v-model="currentPage"
+        size="md"
+        class="float-right mr-2"
+        :total-rows="totalItems"
+        :per-page="perPage"
+      />
     </b-overlay>
   </b-card>
 </template>
@@ -255,16 +264,16 @@ import {
   BButton,
   BRow,
   BTable,
-  VBPopover,
   BForm,
   BFormGroup,
   BCard,
-
   BOverlay,
+  VBPopover,
   BDropdown,
+  BPagination,
   BDropdownForm,
 } from 'bootstrap-vue'
-import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
+
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
@@ -281,12 +290,12 @@ export default {
     BButton,
     BRow,
     BTable,
-    FeatherIcon,
     BForm,
     BFormGroup,
     BOverlay,
     vSelect,
     BDropdown,
+    BPagination,
     BDropdownForm,
   },
   directives: {
@@ -294,17 +303,14 @@ export default {
     Ripple,
   },
   mixins: [dateFormat],
+
   data() {
     return {
       loading: false,
-      currentPage: 1,
-      perpage: 100,
-      rows: 200,
       selected: 1,
       options: [
         { value: 1, text: 'Kabupaten' },
       ],
-
       fields: [
         {
           key: 'customer_name',
@@ -358,11 +364,9 @@ export default {
       ],
 
       itemsCustomer: [],
-
-      // Params Filter
       productName: '',
-      spentFrom: '',
-      spentTo: '',
+      spentFrom: null,
+      spentTo: null,
       orderFrom: null,
       orderTo: null,
       pcsFrom: null,
@@ -375,9 +379,25 @@ export default {
 
       endpoint: null,
       url: '/v1/customers',
+      loadTable: false,
+      currentPage: 1,
+      perPage: 10,
+      totalItems: 0,
     }
   },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.filterCustomer().catch(error => {
+          console.error(error)
+        })
+      },
+    },
+  },
   mounted() {
+    this.filterCustomer().catch(error => {
+      console.error(error)
+    })
     this.tableProvider()
   },
   methods: {
@@ -404,6 +424,7 @@ export default {
       if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
+      if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
 
       httpKomship.get('/v1/customers', {
         params,
