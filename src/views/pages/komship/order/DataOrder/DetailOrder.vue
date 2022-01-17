@@ -14,22 +14,15 @@
       <h3 class="font-bold mb-3">
         Detail Order
       </h3>
-      <div>
-        <b-button
-          variant="primary"
-          size="sm"
-          @click="addResi"
-        >
-          Masukkan Resi
-        </b-button>
-        <b-button
-          variant="none"
-          class="text-primary"
-          size="sm"
-        >
-          Batal
-        </b-button>
-      </div>
+      <b-button
+        v-if="orderData.order_status === 'Diajukan'"
+        variant="default"
+        size="sm"
+        class="my-auto text-primary font-bold"
+        @click="cancelOrder"
+      >
+        Batal
+      </b-button>
     </div>
     <b-container>
       <h4 class="font-bold mb-1">
@@ -79,7 +72,7 @@
           >
             <b-alert
               show
-              :variant="setAlert(orderData.order_status)"
+              :variant="statusOrder"
               class="px-1 w-36 text-center"
               style="padding: 5px 0;"
             >
@@ -109,7 +102,7 @@
             cols="6"
             class="text-right text-primary font-bold"
           >
-            Pengiriman <span v-if="orderData.is_komship === 0">Non </span>Komship
+            Pengiriman Komship
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -129,9 +122,16 @@
           </b-col>
           <b-col
             cols="6"
-            class="font-bold"
+            class="font-bold d-flex"
           >
-            {{ orderData.airway_bill }}<span v-if="orderData.airway_bill === null">-</span>
+            {{ orderData.airway_bill }}
+            <img
+              v-if="orderData.airway_bill"
+              src="@/assets/images/icons/copy.png"
+              class="copy-resi"
+              @click.prevent="copyResi(orderData.airway_bill)"
+            >
+            <span v-if="orderData.airway_bill === null">-</span>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -245,7 +245,7 @@
             lg="3"
             class="text-right"
           >
-            Rp. {{ formatNumber(orderData.service_fee) }}
+            Rp. {{ formatNumber(orderData.shipping_cost) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -320,19 +320,28 @@ export default {
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
-      return moment(date).format('DD MMMM YYYY')
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD MMMM YYYY')
+      }
+      return date
     },
     postDate(date) {
-      return moment(date).format('DD MMMM YYYY hh:mm')
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD MMMM YYYY hh:mm')
+      }
+      return date
     },
     async fetchData() {
       const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
       const { data } = await order.data
       this.orderData = await data
       this.itemOrder = await data.product
+      this.statusOrder = await this.setAlert(data.order_status)
     },
     setAlert(status) {
-      if (status === 'Perlu Dikirim') {
+      if (status === 'Diajukan') {
         this.statusOrder = 'warning'
       } else if (status === 'Dikirim') {
         this.statusOrder = 'primary'
@@ -340,50 +349,49 @@ export default {
         this.statusOrder = 'success'
       } else if (status === 'Retur') {
         this.statusOrder = 'danger'
+      } else if (status === 'Batal') {
+        this.statusOrder = 'secondary'
       }
+      return this.statusOrder
     },
-    addResi() {
+    cancelOrder() {
+      // eslint-disable-next-line global-require
+      const logoWarning = require('@/assets/images/icons/popup-warning.png')
       this.$swal.fire({
-        title: 'Tambah Resi',
-        input: 'text',
-        inputAttributes: {
-          autocapitalize: 'off',
-        },
-        showCloseButton: true,
+        title: 'Kamu yakin ingin<br>menghapus Order?',
+        imageUrl: logoWarning,
         showCancelButton: true,
-        confirmButtonText: 'Cek Resi',
-        confirmButtonColor: '#F95031',
-        cancelButtonText: 'Batal',
         showLoaderOnConfirm: true,
-        preConfirm: resi => this.$http_komship.get(`v1/check-awb/${resi}/${this.$route.params.order_id}`)
-          .then(response => {
-            if (!response.data.status) {
-              console.log(response.data.status)
-              throw new Error(response.data.error)
-            }
-            return response.data
-          })
-          .catch(error => {
-            this.$swal.showValidationMessage(
-              'No Resi Tidak Valid',
-            )
-          }),
-        allowOutsideClick: () => !this.$swal.isLoading(),
-      }).then(result => {
-        if (result.status === 'success') {
-          this.$swal.fire({
-            title: 'Tambah Resi',
-            text: result,
-          })
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal',
+        cancelButtonColor: '#FFFFFF',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(isConfirm => {
+        if (isConfirm.value === true) {
+          this.$http_komship.delete(`v1/order/${this.profile.partner_id}/delete/${this.$route.params.order_id}`)
+            .then(response => {
+              this.fetchData()
+            })
         }
       })
+    },
+    async copyResi(resi) {
+      try {
+        await navigator.clipboard.writeText(resi)
+        console.log('Copied')
+      } catch ($e) {
+        console.log('Cannot Copy')
+      }
     },
   },
 }
 </script>
 <style>
-.swal2-input:focus, .swal2-textarea:focus {
-  border: 1px solid #c2c2c2;
-    box-shadow: none;
+.copy-resi{
+  margin-left: 3px;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
 }
 </style>

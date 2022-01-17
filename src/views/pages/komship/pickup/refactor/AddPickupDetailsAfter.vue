@@ -222,7 +222,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ profile.user_name }} </span>
+                      <span class="text-black">{{ profile.partner_business_name }} </span>
                     </b-list-group-item>
 
                     <b-list-group-item class="d-flex border-0">
@@ -242,7 +242,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ idOrderFromHistory.address_name }}</span>
+                      <span class="text-black">{{ idOrderFromHistory.district }}</span>
                     </b-list-group-item>
                   </b-list-group>
                 </div>
