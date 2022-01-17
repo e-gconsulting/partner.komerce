@@ -632,7 +632,8 @@ export default {
     }
   },
   mounted() {
-    this.dateValue = formatFullDate(new Date())
+    this.dateValue = dateFormat(new Date(), 'yyyy-mm-dd')
+    console.log(this.dateValue)
     this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
     this.date = formatFullDate(this.dateValue)
     this.getAddress()
@@ -873,6 +874,7 @@ export default {
     },
     onChangeDate(ctx) {
       this.dateLabel = changeDate(ctx.activeYMD)
+      this.dateValue = ctx.activeYMD
       this.$emit('onUpdateDate', ctx.activeYMD)
     },
     handleShowVariationPopUp(productData) {

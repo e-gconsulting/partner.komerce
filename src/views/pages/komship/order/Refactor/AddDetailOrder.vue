@@ -722,7 +722,8 @@ export default {
     this.onUpdateOverAllPrice()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
     this.address_id = this.$route.params.address_id
-    this.dateValue = this.$route.params.dateValue
+    this.dateValue = this.$route.params.date
+    console.log(this.dateValue)
     this.dateLabel = this.$route.params.dateLabel
     this.itemsOrder = this.$route.params.itemsOrder
     this.choosenAddres = this.$route.params.choosenAddres
@@ -1012,7 +1013,7 @@ export default {
     async submitOrder() {
       const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       const formData = {
-        date: this.changeDate(this.dateValue, 2),
+        date: this.dateValue,
         tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : cityChosen.value,
         subdistrict_name: cityChosen.subdistrict_name,
         district_name: cityChosen.district_name,
