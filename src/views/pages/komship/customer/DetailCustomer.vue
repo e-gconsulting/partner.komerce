@@ -27,7 +27,7 @@
             />
             <a
               class="text-white"
-              :href="`https://wa.me/+62 ${customerContact}`"
+              :href="`https://api.whatsapp.com/send?phone=62 ${customerContact}` " target="blank"
             >
               <span class="align-middle">Hubungi Customer</span>
             </a>
@@ -45,7 +45,7 @@
           />
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>+62 {{ customerContact }}</span>
+            <span>{{ customerContact }}</span>
           </div>
         </b-col>
         <b-col md="5">
@@ -387,6 +387,7 @@ import {
   BContainer,
   BCollapse,
   VBToggle,
+  VBPopover,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
@@ -407,6 +408,7 @@ export default {
   },
   directives: {
     'b-toggle': VBToggle,
+    'b-popover': VBPopover,
   },
   data() {
     return {
