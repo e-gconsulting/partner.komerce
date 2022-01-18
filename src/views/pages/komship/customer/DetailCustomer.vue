@@ -102,7 +102,9 @@
               </div>
               <div class="mt-1">
                 <strong>Rata - rata Belanja</strong>
+
               </div>
+
             </b-col>
             <b-col>
               <div class="mt-1">
@@ -383,6 +385,7 @@ import {
   BContainer,
   BCollapse,
   VBToggle,
+
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
@@ -402,12 +405,13 @@ export default {
   },
   directives: {
     'b-toggle': VBToggle,
+
   },
   data() {
     return {
       loading: false,
       customerId: this.$route.params.customer_id,
-
+      orderId: this.$route.params.orderId,
       // Information Customer
       customerName: '',
       customerContact: '',
@@ -491,21 +495,24 @@ export default {
     },
     formatStatus(value) {
       let formatStatus = ''
-      if (value === 0) {
-        formatStatus = 'Diajukan'
-      } else if (value === 1) {
-        formatStatus = 'Dikirim'
-      } else if (value === 2) {
+      if (value === 1) {
         formatStatus = 'Diterima'
-      } else if (value === 3) {
-        formatStatus = 'Retur'
-      } else if (value === 4) {
-        formatStatus = 'Batal'
       }
+      // if (value === 0) {
+      //   formatStatus = 'Diajukan'
+      // } else if (value === 1) {
+      //   formatStatus = 'Dikirim'
+      // } else if (value === 2) {
+      //   formatStatus = 'Diterima'
+      // } else if (value === 3) {
+      //   formatStatus = 'Retur'
+      // } else if (value === 4) {
+      //   formatStatus = 'Batal'
+      // }
       return formatStatus
     },
-    currentDateTime() {
-      return moment().format('MMMM Do YYYY, h:mm:ss a')
+    currentTime() {
+      return moment().format(' h:mm:ss a')
     },
   },
 }
