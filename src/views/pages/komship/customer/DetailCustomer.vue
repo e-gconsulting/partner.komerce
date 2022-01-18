@@ -27,7 +27,7 @@
             />
             <a
               class="text-white"
-              :href="`https://api.whatsapp.com/send?phone=62 ${customerContact}` " target="blank"
+              :href="`https://api.whatsapp.com/send?phone=+62 ${customerContact}` " target="blank"
             >
               <span class="align-middle">Hubungi Customer</span>
             </a>
