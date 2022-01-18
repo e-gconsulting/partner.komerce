@@ -371,7 +371,7 @@ export default {
         if (isConfirm.value === true) {
           this.$http_komship.delete(`v1/order/${this.profile.partner_id}/delete/${this.$route.params.order_id}`)
             .then(response => {
-              this.fetchData()
+              this.$router.go('/data-order')
             })
         }
       })
