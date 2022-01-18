@@ -282,7 +282,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ `${itemsPrint.district}, ${itemsPrint.detail_address}` }}</span>
+                      <span class="text-black">{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</span>
                     </b-list-group-item>
                   </b-list-group>
                 </div>
@@ -525,6 +525,7 @@ export default {
           for (let y = 0; y < this.items.length; y++) {
             if (this.items[y].order_id === this.idOrderFromHistory.data_order[x].id) {
               Object.assign(this.items[y], { customer_phone: this.idOrderFromHistory.data_order[y].customer_phone })
+              Object.assign(this.items[y], { customer_detail_address: this.idOrderFromHistory.data_order[y].address_with_destination })
             }
           }
         }

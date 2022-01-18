@@ -132,6 +132,7 @@ export default {
         const response = await axiosKomship(partnerId).get(
           'v1/dashboard/partner/balanceSummary',
         )
+        console.log('response balance summary', response)
         commit('UPDATE_ِِBALANCE_SUMMARY', response.data.data)
       } catch (e) {
         console.error(e)

@@ -497,6 +497,7 @@ export default {
         shipping_cashback: this.totalCostNumber.cashback,
         net_profit: this.totalCostNumberNetto,
       }
+      console.log(formData)
       await this.storeSelectedItemsToCart(formData)
     },
     async storeSelectedItemsToCart(formData) {
@@ -559,6 +560,7 @@ export default {
         // eslint-disable-next-line no-param-reassign
         formData.bank_account_no = 0
       }
+      console.log('formData', formData)
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
         if (data) {
