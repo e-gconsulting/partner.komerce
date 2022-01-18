@@ -27,7 +27,7 @@
             />
             <a
               class="text-white"
-              :href="`https://wa.me/${customerContact}`"
+              :href="`https://wa.me/+62 ${customerContact}`"
             >
               <span class="align-middle">Hubungi Customer</span>
             </a>
@@ -45,7 +45,7 @@
           />
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>{{ customerContact }}</span>
+            <span>+62 {{ customerContact }}</span>
           </div>
         </b-col>
         <b-col md="5">
@@ -102,6 +102,9 @@
               </div>
               <div class="mt-1">
                 <strong>Rata - rata Belanja</strong>
+              <b-icon-info-circle
+              v-b-popover.hover.top title="Rata-rata Belanja Sejumlah" class="ml-1"
+              />
               </div>
             </b-col>
             <b-col>
@@ -379,6 +382,7 @@ import {
   BImg,
   BAvatar,
   BOverlay,
+  BIconInfoCircle,
   BCard,
   BContainer,
   BCollapse,
@@ -396,6 +400,7 @@ export default {
     BCol,
     BImg,
     BAvatar,
+    BIconInfoCircle,
     BOverlay,
     BContainer,
     BCollapse,
