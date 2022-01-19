@@ -29,7 +29,17 @@
               class="statusWrapper d-flex align-items-center justify-content-center"
               :class="detailData.status.toLowerCase() | changeStatus"
             >
-              {{ detailData.status }}
+              {{ 
+                detailData.status ==='canceled' ? 'Dibatalkan' :(
+                  detailData.status ==='on_review' ? 'Sedang Direview' :(
+                    detailData.status ==='completed' ? 'Disetujui' :(
+                      detailData.status ==='rejected' ? 'Ditolak' :(
+                        detailData.status ==='requested' ? 'Perlu Disetujui' : '-'
+                        ) 
+                   ) 
+                  ) 
+                ) 
+               }}
             </div>
           </b-col>
         </b-row>
