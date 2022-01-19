@@ -45,11 +45,11 @@
           />
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>{{ customerContact }}</span>
+            <span>{{formatphone (customerContact) }}</span>
           </div>
         </b-col>
         <b-col md="5">
-          <span>{{ customerAddress }}</span>
+          <span> {{ customerAddress }}</span>
         </b-col>
       </b-row>
 
@@ -491,6 +491,12 @@ export default {
 
         return this.itemsDetailCustomer
       })
+    },
+    formatphone(nomor) {
+      if (nomor !== null) {
+       nomor = nomor.substring(1)
+      }
+      return '+62'+nomor
     },
     formatPrice(value) {
       const val = value
