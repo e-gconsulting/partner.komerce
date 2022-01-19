@@ -27,7 +27,7 @@
             />
             <a
               class="text-white"
-              :href="`https://wa.me/${customerContact}`"
+              :href="`https://api.whatsapp.com/send?phone=+62 ${customerContact}` " target="blank"
             >
               <span class="align-middle">Hubungi Customer</span>
             </a>
@@ -45,11 +45,11 @@
           />
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>{{ customerContact }}</span>
+            <span>{{formatphone (customerContact) }}</span>
           </div>
         </b-col>
         <b-col md="5">
-          <span>{{ customerAddress }}</span>
+          <span> {{ customerAddress }}</span>
         </b-col>
       </b-row>
 
@@ -102,6 +102,10 @@
               </div>
               <div class="mt-1">
                 <strong>Rata - rata Belanja</strong>
+              <b-icon-info-circle
+              v-b-popover.hover.top title="Rata-rata Belanja Sejumlah" class="ml-1"
+              />
+
 
               </div>
 
@@ -381,11 +385,12 @@ import {
   BImg,
   BAvatar,
   BOverlay,
+  BIconInfoCircle,
   BCard,
   BContainer,
   BCollapse,
   VBToggle,
-
+  VBPopover,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
@@ -399,13 +404,14 @@ export default {
     BCol,
     BImg,
     BAvatar,
+    BIconInfoCircle,
     BOverlay,
     BContainer,
     BCollapse,
   },
   directives: {
     'b-toggle': VBToggle,
-
+    'b-popover': VBPopover,
   },
   data() {
     return {
@@ -488,6 +494,12 @@ export default {
 
         return this.itemsDetailCustomer
       })
+    },
+    formatphone(nomor) {
+      if (nomor !== null) {
+       nomor = nomor.substring(1)
+      }
+      return '+62'+nomor
     },
     formatPrice(value) {
       const val = value
