@@ -233,7 +233,7 @@ export default {
       const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}`
       const formData = new FormData()
       formData.append('withdrawal_id', this.$route.params.slug)
-      formData.append('status', this.detailData.status)
+      formData.append('_method', 'PUT')
       axioskomsipdev.put(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
