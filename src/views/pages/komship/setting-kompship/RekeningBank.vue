@@ -445,15 +445,36 @@
       centered
     >
 
+      <b-col
+        v-if="errorConfirmOtp === true"
+        class="d-flex justify-content-center mt-2"
+      >
+        <b-badge variant="light-primary">
+          <div class="d-flex align-items-center">
+            <b-button
+              variant="flat-primary"
+              class="btn-icon"
+              size="sm"
+              @click="handleCloseNotifError"
+            >
+              <feather-icon
+                icon="XCircleIcon"
+              />
+            </b-button>
+            Upss, kode verifikasi (OTP) salah
+          </div>
+        </b-badge>
+      </b-col>
+
       <b-col class="d-flex justify-content-center mt-2">
         <h4>
-          <strong>Verifikasi Email</strong>
+          <strong>Verifikasi Nomor Hp</strong>
         </h4>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
         <small class="text-center">
-          <strong>Masukan kode verifikasi (OTP) yang dikirimkan ke No. {{ phoneUser }}</strong>
+          <strong>Mohon verifikasi identitas kamu dengan memasukan Kode Verifikasi (OTP) yang dikirimkan via SMS ke Nomor kamu {{ phoneUser }}</strong>
         </small>
       </b-col>
 
@@ -468,33 +489,53 @@
         </div>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
-        <small class="text-primary">
-          <strong>
-            {{ errorConfirmOtp }}
-          </strong>>
-        </small>
+      <b-col
+        v-if="countSubmit > 1 && countCanResendOtp > 0"
+        class="d-flex justify-content-center mt-2"
+      >
+        <b-badge variant="light-warning">
+          <div class="d-flex">
+            <feather-icon
+              icon="AlertCircleIcon"
+              class="mr-50"
+            />
+            {{ validateResendOtp }}
+          </div>
+        </b-badge>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-1">
-        <div v-if="countOtp > 0">
+      <b-col
+        v-if="validateResendOtp === ''"
+        class="d-flex justify-content-center mt-1"
+      >
+        <div v-if="countOtp > 0 && countSubmit !== 2">
           <small>Kirim Ulang({{ countOtp }})</small>
         </div>
         <div v-else>
-          <b-button
-            variant="flat-primary"
-            size="sm"
-            class="btn-icon"
-            @click="sendOtpAgain"
-          >
-            Kirim Ulang
-          </b-button>
+          <div v-if="countSubmit < 2">
+            <b-button
+              variant="flat-primary"
+              size="sm"
+              class="btn-icon"
+              @click="sendOtpAgain"
+            >
+              Kirim Ulang
+            </b-button>
+          </div>
         </div>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
+          variant="flat-primary"
+          class="btn-icon mr-1"
+          @click.prevent="handleClosePopupOtp"
+        >
+          Kembali
+        </b-button>
+        <b-button
           variant="primary"
+          class="btn-icon"
           @click.prevent="submitRekening"
         >
           Konfirmasi
@@ -591,7 +632,12 @@ export default {
 
       countOtp: 60,
 
-      errorConfirmOtp: '',
+      errorConfirmOtp: false,
+
+      countSubmit: 0,
+
+      validateResendOtp: '',
+      countCanResendOtp: 0,
     }
   },
   mounted() {
@@ -613,58 +659,68 @@ export default {
     },
     submitVerification() {
       // Verification
-      this.loadingSubmit = true
-      this.$refs.formRulesAdd.validate().then(success => {
-        if (success) {
-          const formData = new FormData()
-          formData.append('_method', 'post')
-          httpKomship.post('/v1/partner/sms/otp', formData, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          },
-          {
-            params: {
-              phone_number: this.phoneNumber,
-            },
-          }).then(response => {
-            console.log(response)
-            this.loadingSubmit = false
-            this.$refs['modal-verification-submit'].show()
-            this.countDownTimerOtp()
-          }).catch(() => {
-            this.loadingSubmit = false
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal kirim otp, silahkan coba lagi',
-                variant: 'danger',
-              },
+      if (this.validateResendOtp === '') {
+        this.loadingSubmit = true
+        this.$refs.formRulesAdd.validate().then(success => {
+          if (success) {
+            const formData = new FormData()
+            formData.append('_method', 'post')
+            formData.append('phone_number', this.phoneNumber)
+            httpKomship.post('/v1/partner/sms/otp', formData, {
+              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+            }).then(response => {
+              console.log(response)
+              this.loadingSubmit = false
+              this.$refs['modal-verification-submit'].show()
+              this.countDownTimerOtp()
+            }).catch(() => {
+              this.loadingSubmit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal kirim otp, silahkan coba lagi',
+                  variant: 'danger',
+                },
+              })
             })
-          })
-        } else {
-          this.loadingSubmit = false
-        }
-      })
+          } else {
+            this.loadingSubmit = false
+          }
+        })
+      } else {
+        this.$refs['modal-verification-submit'].show()
+      }
     },
     sendOtpAgain() {
-      this.countOtp = 60
-      const formData = new FormData()
-      formData.append('_method', 'post')
-      httpKomship.post('v1/send-otp', formData, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(() => {}).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal kirim OTP, silahkan coba lagi',
-            variant: 'danger',
-          },
+      this.countSubmit += 1
+      console.log(this.countSubmit)
+      if (this.countOtp < 2) {
+        this.countOtp = 60
+        const formData = new FormData()
+        formData.append('_method', 'post')
+        formData.append('phone_number', this.phoneNumber)
+        httpKomship.post('/v1/partner/sms/otp', formData, {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(() => {}).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal kirim OTP, silahkan coba lagi',
+              variant: 'danger',
+            },
+          })
         })
-      })
-      this.countDownTimerOtp()
+        this.countDownTimerOtp()
+      }
+      if (this.countSubmit > 1) {
+        this.validateResendOtp = 'Kirim ulang sudah melewati batas'
+        this.countCanResendOtp = 60
+        this.countDownTimerResend()
+      }
     },
     submitRekening() {
       httpKomship.post('/v1/partner/sms/otp/verification').then(response => {
@@ -684,7 +740,7 @@ export default {
           })
         } else {
           this.loadingSubmit = false
-          this.errorConfirmOtp = 'OTP tidak valid'
+          this.errorConfirmOtp = true
         }
       })
     },
@@ -857,7 +913,8 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        this.phoneUser = data.user_phone.replace(`${data.user_phone.substr(3, 7)}`, '****')
+        // this.phoneUser = data.user_phone.replace(`${data.user_phone.substr(3, 7)}`, '****')
+        this.phoneUser = data.user_phone
         this.phoneNumber = data.user_phone
         console.log(data)
       }).catch(() => {
@@ -871,6 +928,24 @@ export default {
           },
         })
       })
+    },
+    handleClosePopupOtp() {
+      this.$refs['modal-verification-submit'].hide()
+    },
+    handleCloseNotifError() {
+      this.errorConfirmOtp = false
+    },
+    countDownTimerResend() {
+      if (this.countCanResendOtp > 0) {
+        setTimeout(() => {
+          this.countCanResendOtp -= 1
+          this.countDownTimerResend()
+        }, 1000)
+      }
+      if (this.countCanResendOtp === 0) {
+        this.validateResendOtp = ''
+        this.countSubmit = 0
+      }
     },
   },
 
