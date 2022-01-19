@@ -435,9 +435,14 @@ export default {
       this.fieldLogoBusiness.push({ logo: '' })
     },
     updateProfile() {
+      console.log('imageFile', this.imageFile)
+      console.log('imageInitialFile', this.imageInitialFile)
       this.loadingSubmit = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          if (this.imageInitialFile.includes('http')) {
+            this.imageInitialFile = ''
+          }
           const formData = new FormData()
           formData.append('id', this.id)
           formData.append('username', this.username)
@@ -505,6 +510,7 @@ export default {
         this.noHP = data.user_phone
         this.emailUser = data.user_email
         this.address = data.user_address
+        console.log('image', data.partner_business_logo)
         if (data.partner_business_logo) this.imageInitialFile = data.partner_business_logo
         this.nameBusiness = data.partner_business_name
         this.location = data.user_address_default.detail_address
