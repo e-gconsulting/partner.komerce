@@ -105,7 +105,10 @@
               <b-icon-info-circle
               v-b-popover.hover.top title="Rata-rata Belanja Sejumlah" class="ml-1"
               />
+
+
               </div>
+
             </b-col>
             <b-col>
               <div class="mt-1">
@@ -414,7 +417,7 @@ export default {
     return {
       loading: false,
       customerId: this.$route.params.customer_id,
-
+      orderId: this.$route.params.orderId,
       // Information Customer
       customerName: '',
       customerContact: '',
@@ -504,21 +507,24 @@ export default {
     },
     formatStatus(value) {
       let formatStatus = ''
-      if (value === 0) {
-        formatStatus = 'Diajukan'
-      } else if (value === 1) {
-        formatStatus = 'Dikirim'
-      } else if (value === 2) {
+      if (value === 1) {
         formatStatus = 'Diterima'
-      } else if (value === 3) {
-        formatStatus = 'Retur'
-      } else if (value === 4) {
-        formatStatus = 'Batal'
       }
+      // if (value === 0) {
+      //   formatStatus = 'Diajukan'
+      // } else if (value === 1) {
+      //   formatStatus = 'Dikirim'
+      // } else if (value === 2) {
+      //   formatStatus = 'Diterima'
+      // } else if (value === 3) {
+      //   formatStatus = 'Retur'
+      // } else if (value === 4) {
+      //   formatStatus = 'Batal'
+      // }
       return formatStatus
     },
-    currentDateTime() {
-      return moment().format('MMMM Do YYYY, h:mm:ss a')
+    currentTime() {
+      return moment().format(' h:mm:ss a')
     },
   },
 }

@@ -253,13 +253,30 @@
           </div>
         </template>
       </b-table>
-      <b-pagination
-        v-model="currentPage"
-        size="md"
-        class="float-right mr-2"
-        :total-rows="totalItems"
-        :per-page="perPage"
-      />
+      <div class="d-flex justify-between align-middle">
+        <div>
+          <span class="mr-1">List per halaman</span>
+          <b-button
+            v-for="page in pageOptions"
+            :key="page"
+            :variant="page === perPage ? 'primary' : 'light'"
+            size="sm"
+            class="btnPage"
+            @click="setPage(page)"
+          >
+            {{ page }}
+          </b-button>
+        </div>
+        <b-pagination
+          v-model="currentPage"
+          size="md"
+          class="float-right mr-2"
+          :total-rows="totalItems"
+          :per-page="perPage"
+          first-number
+          last-number
+        />
+      </div>
     </b-overlay>
   </div>
 </template>
@@ -313,7 +330,8 @@ export default {
       startDate: '',
       endDate: '',
       currentPage: 1,
-      perPage: 10,
+      perPage: 50,
+      pageOptions: [50, 100, 200],
       totalItems: 0,
     }
   },
@@ -353,11 +371,11 @@ export default {
           start_date: this.startDate,
           end_date: this.endDate,
           page: this.currentPage,
+          total_per_page: this.perPage,
         },
       })
         .then(res => {
           const { data } = res.data
-          this.perPage = data.per_page
           this.totalItems = data.total
           this.loadTable = false
           return data.data
@@ -375,6 +393,10 @@ export default {
       const product = this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
       const { data } = product.data
       this.productList = data
+    },
+    async setPage(totalPage) {
+      this.perPage = totalPage
+      this.fetchData()
     },
   },
 }
@@ -412,5 +434,9 @@ export default {
 .buttonCollapse {
   margin-left: -50px;
   width:130px;
+}
+.btnPage {
+  padding: 4px 7px;
+  margin-right: 5px;
 }
 </style>

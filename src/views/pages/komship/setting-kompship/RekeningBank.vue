@@ -398,7 +398,7 @@
                   type="reset"
                   variant="primary"
                   class="mr-1"
-                  @click="submitVerification"
+                  @click.prevent="submitVerification"
                 >
                   <b-spinner
                     v-if="loadingSubmit"
@@ -453,23 +453,27 @@
 
       <b-col class="d-flex justify-content-center mt-1">
         <small class="text-center">
-          <strong>Masukan kode verifikasi (OTP) yang dikirimkan ke email maung@******.com</strong>
+          <strong>Masukan kode verifikasi (OTP) yang dikirimkan ke No. {{ phoneUser }}</strong>
         </small>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
         <div style="display: flex; flex-direction: row;">
-          <vue-otp-input
-            ref="otpInput"
-            input-classes="otp-input"
-            separator="-"
-            :num-inputs="4"
-            :should-auto-focus="true"
-            :is-input-num="true"
-            @on-change="handleOnChange"
-            @on-complete="handleOnComplete"
+          <CodeInput
+            :loading="false"
+            class="input"
+            @change="onChange"
+            @complete="onComplete"
           />
         </div>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center mt-1">
+        <small class="text-primary">
+          <strong>
+            {{ errorConfirmOtp }}
+          </strong>>
+        </small>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
@@ -502,7 +506,6 @@
 </template>
 
 <script>
-import VueOtpInput from '@bachdgvn/vue-otp-input'
 import CodeInput from 'vue-verification-code-input'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -544,7 +547,6 @@ export default {
     BOverlay,
     BSpinner,
     vSelect,
-    VueOtpInput,
   },
   directives: {
     'b-modal': VBModal,
@@ -583,13 +585,20 @@ export default {
       fieldAddAccountNo: '',
       fieldAddAccountName: '',
 
+      phoneUser: '',
+
+      phoneNumber: '',
+
       countOtp: 60,
+
+      errorConfirmOtp: '',
     }
   },
   mounted() {
     this.showModal()
     this.getBank()
     this.loadBanks()
+    this.getProfile()
   },
   methods: {
     getBank() {
@@ -605,25 +614,37 @@ export default {
     submitVerification() {
       // Verification
       this.loadingSubmit = true
-      const formData = new FormData()
-      formData.append('_method', 'post')
-      httpKomship.post('v1/send-otp', formData, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(() => {
-        this.loadingSubmit = false
-        this.$refs['modal-verification-submit'].show()
-        this.countDownTimerOtp()
-      }).catch(() => {
-        this.loadingSubmit = false
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal kirim email, silahkan coba lagi',
-            variant: 'danger',
+      this.$refs.formRulesAdd.validate().then(success => {
+        if (success) {
+          const formData = new FormData()
+          formData.append('_method', 'post')
+          httpKomship.post('/v1/partner/sms/otp', formData, {
+            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           },
-        })
+          {
+            params: {
+              phone_number: this.phoneNumber,
+            },
+          }).then(response => {
+            console.log(response)
+            this.loadingSubmit = false
+            this.$refs['modal-verification-submit'].show()
+            this.countDownTimerOtp()
+          }).catch(() => {
+            this.loadingSubmit = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal kirim otp, silahkan coba lagi',
+                variant: 'danger',
+              },
+            })
+          })
+        } else {
+          this.loadingSubmit = false
+        }
       })
     },
     sendOtpAgain() {
@@ -646,8 +667,8 @@ export default {
       this.countDownTimerOtp()
     },
     submitRekening() {
-      this.$refs.formRulesAdd.validate().then(success => {
-        if (success) {
+      httpKomship.post('/v1/partner/sms/otp/verification').then(response => {
+        if (response.message === 'Successfully Verification OTP.') {
           httpKomship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
@@ -659,9 +680,11 @@ export default {
             this.loadingSubmit = false
             this.getBank()
             this.fieldActionAddRekening = false
+            this.$refs['modal-verification-submit'].hide()
           })
         } else {
           this.loadingSubmit = false
+          this.errorConfirmOtp = 'OTP tidak valid'
         }
       })
     },
@@ -828,6 +851,26 @@ export default {
     },
     changeEditMode() {
       this.editMode = false
+    },
+    getProfile() {
+      this.$http_komship.post('v1/my-profile', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        this.phoneUser = data.user_phone.replace(`${data.user_phone.substr(3, 7)}`, '****')
+        this.phoneNumber = data.user_phone
+        console.log(data)
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
+      })
     },
   },
 
