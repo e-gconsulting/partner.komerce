@@ -1,403 +1,247 @@
 <template>
-  <div class="container p-0">
-    <div class="card">
-      <div class="card-header">
+  <b-card>
+    <h2 class="font-bold mb-2">
+      Rincian Saldo
+    </h2>
+    <b-row class="mb-1">
+      <b-col cols="6">
+        <div
+          style="border: 1px solid #E2E2E2; border-radius: 8px;"
+          class="w-80 text-xl px-1 py-2"
+        >
+          Saldo: <span class="text-primary font-bold">Rp. {{ formatNumber(totalSaldo) }}</span>
+        </div>
+      </b-col>
+      <b-col cols="6">
+        <div class="w-48 ml-auto">
+          <b-form-select
+            v-model="selectedFilter"
+            :options="optionsFilter"
+            @change="fetchData"
+          />
+        </div>
+      </b-col>
+    </b-row>
+    <b-overlay
+      variant="light"
+      :show="loadTable"
+      spinner-variant="primary"
+      blur="0"
+      opacity=".5"
+      rounded="sm"
+    >
+      <b-table
+        responsive
+        show-empty
+        empty-text="Tidak ada data untuk ditampilkan."
+        :items="items"
+        :fields="fields"
+      >
+        <template #head(shipping_cost)="data">
+          <span class="d-flex">{{ data.label }}
+            <img
+              id="ongkosKirim"
+              src="@/assets/images/icons/info-circle-dark.svg"
+              class="w-5 h-5"
+              style="margin-left:5px;cursor:pointer;"
+            >
+          </span>
+          <b-tooltip
+            target="ongkosKirim"
+            triggers="hover"
+          >
+            Ongkos kirim dari orderan.
+          </b-tooltip>
+        </template>
+        <template #head(service_fee)="data">
+          <span class="d-flex">{{ data.label }}
+            <img
+              id="biayaCOD"
+              src="@/assets/images/icons/info-circle-dark.svg"
+              class="w-5 h-5"
+              style="margin-left:5px;cursor:pointer;"
+            >
+          </span>
+          <b-tooltip
+            target="biayaCOD"
+            triggers="hover"
+          >
+            Biaya COD dari orderan yang menggunakan layanan COD.
+          </b-tooltip>
+        </template>
+        <template #cell(order_date)="data">
+          {{ moment(data.item.order_date) }}
+        </template>
+        <template #cell(payment_method)="data">
+          {{ data.item.payment_method }}
+          <span
+            v-if="data.item.status === 'Retur'"
+            class="text-muted"
+          ><br>Retur</span>
+        </template>
+        <template #cell(grand_total)="data">
+          Rp. {{ formatNumber(data.item.grand_total) }}
+        </template>
+        <template #cell(shipping_cost)="data">
+          Rp. {{ formatNumber(data.item.shipping_cost) }}
+        </template>
+        <template #cell(service_fee)="data">
+          <span v-if="data.item.service_fee !== '-'">Rp. {{ formatNumber(data.item.service_fee) }}</span>
+          <span v-else>-</span>
+        </template>
+        <template #cell(amount)="data">
+          <span
+            v-if="data.item.payment_method === 'BANK TRANSFER'"
+            class="text-primary"
+          >
+            -Rp.{{ formatNumber(data.item.amount) }}
+          </span>
+          <span
+            v-else
+            class="text-success"
+          >
+            +Rp.{{ formatNumber(data.item.amount) }}
+          </span>
+        </template>
+      </b-table>
+      <div class="d-flex justify-between align-middle">
         <div>
-          <p class="h-text-lg mb-0">
-            Rincian Saldo
-          </p>
+          <span class="mr-1">List per halaman</span>
+          <b-button
+            v-for="page in pageOptions"
+            :key="page"
+            :variant="page === perPage ? 'primary' : 'light'"
+            size="sm"
+            class="btnPage"
+            @click="setPage(page)"
+          >
+            {{ page }}
+          </b-button>
         </div>
+        <b-pagination
+          v-model="currentPage"
+          size="md"
+          class="float-right mr-2"
+          :total-rows="totalItems"
+          :per-page="perPage"
+          first-number
+          last-number
+        />
       </div>
-      <div class="card-body px-0">
-        <div class="row justify-content-between px-2">
-          <div class="col-12 col-md-4">
-            <div class="rounded border p-1">
-              <p class="h-text-md mb-0">
-                <span class="font-weight-normal">Total Saldo: </span>
-                <span class="text-orange">{{ formatRupiah(totalSaldo) }}</span>
-              </p>
-              <!-- <p class="h-text-md mb-0">
-                <span class="font-weight-normal">Saldo Awal: </span>
-                {{ formatRupiah(saldoAwal) }}
-              </p> -->
-            </div>
-          </div>
-          <div class="col-12 col-md-2">
-            <!-- <div class="w-25"> -->
-            <b-form-group class="mb-0">
-              <v-select
-                id="select_saldo"
-                v-model="selectedSaldo"
-                dir="ltr"
-                :options="optionsSaldo"
-                :clearable="false"
-                @input="handleChangeSaldo"
-              />
-            </b-form-group>
-            <!-- </div> -->
-          </div>
-          <table class="table table-borderless mt-3">
-            <thead>
-              <tr>
-                <th
-                  v-for="title in tableTitles"
-                  :key="title"
-                  class="
-                    h-text-sm
-                    transform-none
-                    h-text-dark
-                    bg-white
-                    h-border-bottom
-                    pb-2
-                  "
-                  scope="col"
-                >
-                  {{ title }}
-                  <img
-                    v-if="
-                      tableTitles.indexOf(title) == 3 ||
-                        tableTitles.indexOf(title) == 4
-                    "
-                    src="@/assets/images/icons/info-circle-dark.svg"
-                    alt="Info"
-                  >
-                </th>
-              </tr>
-            </thead>
-            <tbody class="h-text-xs">
-              <tr
-                v-for="rincian in rincianSaldos"
-                :key="rincianSaldos.indexOf(rincian)"
-                :class="
-                  'py-1' +
-                    (rincianSaldos.indexOf(rincian) != rincianSaldos.length - 1
-                      ? ' border-bottom'
-                      : '')
-                "
-              >
-                <th>
-                  <p class="mb-0 h-text-dark">
-                    {{ rincian.tanggal }}
-                  </p>
-                </th>
-                <td>
-                  <p class="mb-0 h-text-dark font-weight-bold">
-                    {{
-                      rincian.jenisOrder
-                    }}
-                  </p>
-                  <p
-                    v-if="rincian.retur"
-                    class="text-xxs mb-0"
-                  >
-                    Retur
-                  </p>
-                </td>
-                <td class="h-text-dark font-weight-bold">
-                  {{ formatRupiah(rincian.nilaiOrder) }}
-                </td>
-                <td>
-                  <p class="mb-0 h-text-dark font-weight-bold">
-                    {{ formatRupiah(rincian.ongkir) }}
-                  </p>
-                  <p
-                    v-if="rincian.ongkirTambahan"
-                    class="text-xxs mb-0 font-weight-bold"
-                  >
-                    {{ formatRupiah(rincian.ongkirTambahan) }}
-                  </p>
-                </td>
-                <td class="h-text-dark font-weight-bold">
-                  {{
-                    rincian.biayaCod !== null
-                      ? formatRupiah(rincian.biayaCod)
-                      : '-'
-                  }}
-                </td>
-                <td
-                  :class="
-                    'font-weight-bold ' +
-                      (rincian.negative ? 'text-danger' : 'text-success')
-                  "
-                >
-                  {{
-                    (rincian.negative ? '-' : '+') + formatRupiah(rincian.saldo)
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
+    </b-overlay>
+  </b-card>
 </template>
-
 <script>
+import {
+  BCard, BRow, BCol, BFormSelect, BTable, BButton, BPagination, BOverlay, BTooltip,
+} from 'bootstrap-vue'
+import moment from 'moment'
 import { mapState } from 'vuex'
-import { mapFields } from 'vuex-map-fields'
-import { BFormGroup } from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import 'vue-select/dist/vue-select.css'
 
 export default {
   components: {
-    BFormGroup,
-    vSelect,
+    BCard, BRow, BCol, BFormSelect, BTable, BButton, BPagination, BOverlay, BTooltip,
   },
   data() {
     return {
-      tableTitles: [
-        'Tanggal',
-        'Jenis Order',
-        'Nilai Order',
-        'Ongkos Kirim',
-        'Biaya COD',
-        'Saldo',
+      selectedFilter: '7 Hari Terakhir',
+      optionsFilter: ['7 Hari Terakhir', '1 Bulan Terakhir', '3 Bulan Terakhir'],
+      items: [],
+      fields: [
+        {
+          key: 'order_date', label: 'Tanggal', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'payment_method', label: 'Jenis Order', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'grand_total', label: 'Nilai Order', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'shipping_cost', label: 'Ongkos Kirim', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'service_fee', label: 'Biaya COD', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'amount', label: 'Jumlah', thClass: 'align-middle', tdClass: 'align-top',
+        },
       ],
-      tableHeadInfos: [3, 4],
+      loadTable: false,
+      startDate: null,
+      endDate: null,
+      pageOptions: [20, 50],
+      currentPage: 1,
+      perPage: 20,
+      totalItems: 0,
     }
   },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.fetchData().catch(error => {
+          console.error(error)
+        })
+      },
+    },
+  },
+  mounted() {
+    this.fetchData().catch(error => {
+      console.error(error)
+    })
+  },
   computed: {
-    ...mapFields('saldoDetail', { selectedSaldo: 'selectedSaldo' }),
-    ...mapState('saldoDetail', ['totalSaldo', 'rincianSaldos', 'optionsSaldo']),
+    ...mapState('saldoDetail', ['totalSaldo']),
   },
   beforeMount() {
     this.$store.dispatch('saldoDetail/init')
   },
   methods: {
-    formatRibuan(x) {
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    moment(date) {
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD-MM-YYYY')
+      }
+      return ''
     },
-    formatRupiah(x) {
-      if (x === '-') return '-'
-      return `Rp ${this.formatRibuan(x)}`
+    getDate() {
+      const today = new Date()
+      this.endDate = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`
+      if (this.selectedFilter === '7 Hari Terakhir') {
+        const last = new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000))
+        this.startDate = `${last.getFullYear()}-${last.getMonth() + 1}-${last.getDate()}`
+      } else if (this.selectedFilter === '1 Bulan Terakhir') {
+        const last = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000))
+        this.startDate = `${last.getFullYear()}-${last.getMonth() + 1}-${last.getDate()}`
+      } else if (this.selectedFilter === '3 Bulan Terakhir') {
+        const last = new Date(today.getTime() - (90 * 24 * 60 * 60 * 1000))
+        this.startDate = `${last.getFullYear()}-${last.getMonth() + 1}-${last.getDate()}`
+      }
     },
-    handleChangeSaldo() {
-      this.$store.dispatch('saldoDetail/getRincianSaldo')
+    async fetchData() {
+      this.loadTable = true
+      this.getDate()
+      this.items = await this.$http_komship.get('v1/partner/order-transaction-balance', {
+        params: {
+          start_date: this.startDate,
+          end_date: this.endDate,
+          page: this.currentPage,
+          total_per_page: this.perPage,
+        },
+      })
+        .then(res => {
+          const { data } = res.data
+          this.totalItems = data.total
+          this.loadTable = false
+          return data.data
+        })
+        .catch(error => console.log(error))
+    },
+    setPage(totalPage) {
+      this.perPage = totalPage
+      this.fetchData()
     },
   },
 }
 </script>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-
-.container {
-  font-family: 'Poppins', sans-serif;
-}
-.h-text-lg {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 36px;
-  letter-spacing: 0.5px;
-  text-align: left;
-  color: #222222;
-}
-.h-text-md {
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 27px;
-  letter-spacing: 0.5px;
-  text-align: left;
-  color: #222222;
-}
-.h-text-sm {
-  font-size: 16px !important;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.h-text-xs {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 21px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.text-xxs {
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 18px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.text-orange {
-  color: #ff6a3a;
-}
-.h-text-dark {
-  color: #222222 !important;
-}
-.transform-none {
-  text-transform: none !important;
-}
-.h-border-bottom {
-  border-bottom: 2px solid #c2c2c2 !important;
-}
-.text-danger {
-  color: #e31a1a;
-}
-.text-success {
-  color: #34a770;
-}
-
-.bg-orange {
-  background-color: #ff6a3a !important;
-}
-.bg-orange2 {
-  background-color: #f95031 !important;
-}
-.card,
-.rounded-16 {
-  border-radius: 16px !important;
-}
-.first-card-header-text {
-  font-family: Poppins;
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 30px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.saldo-texts {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 21px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.h-text-xl {
-  font-size: 32px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 48px;
-  letter-spacing: 0.5px;
-  text-align: left;
-  color: #222222;
-}
-.order-head-text {
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 24px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.order-body-text {
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 36px;
-  letter-spacing: 0.5px;
-  text-align: left;
-  color: #222222;
-}
-.container {
-  font-family: 'Poppins', sans-serif;
-}
-.ms-8 {
-  margin-left: 8px;
-}
-.me-8 {
-  margin-right: 8px;
-}
-.mb-8 {
-  margin-bottom: 8px;
-}
-.py-9 {
-  padding-top: 9px;
-  padding-bottom: 9px;
-}
-.mx-16 {
-  margin-left: 16px;
-  margin-right: 16px;
-}
-.my-24 {
-  margin-top: 24px;
-  margin-bottom: 24px;
-}
-.p-12 {
-  padding: 12px;
-}
-.h-text-dark {
-  color: #222222;
-}
-.border-gray {
-  border: 1px solid #e2e2e2;
-}
-.list-text-1 {
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 27px;
-  letter-spacing: 0.5px;
-  text-align: left;
-}
-.list-text-2 {
-  font-size: 18px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 27px;
-  letter-spacing: 0.5px;
-  text-align: right;
-}
-.list-text-3 {
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 21px;
-  letter-spacing: 0.5px;
-  text-align: right;
-}
-.text-green {
-  color: #34a770;
-}
-.h-badge-success {
-  background-color: #dcf3eb;
-  color: #34a770;
-}
-.h-badge-danger {
-  background-color: #ffeded;
-  color: #e31a1a;
-}
-#select_saldo > div {
-  border: none;
-  padding-left: 0px;
-}
-#select_saldo > div > .vs__selected-options,
-#select_saldo > div > .vs__selected-options > .vs__selected {
-  padding-left: 0px;
-  margin-left: 0;
-}
-.select-chart {
-  right: 42px;
-  width: 38%;
-}
-.h-70 {
-  height: 70%;
-}
-.w-30 {
-  width: 30%;
-}
-.blurry {
-  filter: blur(7px);
-  pointer-events: none;
-  user-select: none;
-}
-.pos-center {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.dropdown-item {
-  width: 100% !important;
-}
-</style>

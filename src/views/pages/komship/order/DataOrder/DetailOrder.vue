@@ -229,7 +229,7 @@
             lg="3"
             class="text-right font-bold text-primary text-xl"
           >
-            Rp. {{ formatNumber(orderData.subtotal + orderData.shipping_cost - orderData.discount) }}
+            Rp. {{ formatNumber(orderData.grandtotal) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -239,13 +239,13 @@
           <b-col
             lg="5"
           >
-            Biaya {{ orderData.payment_method }} (2,8 sudah termasuk PPN)
+            Biaya {{ orderData.payment_method }} ({{ orderData.service_fee_to }}% sudah termasuk PPN)
           </b-col>
           <b-col
             lg="3"
             class="text-right"
           >
-            Rp. {{ formatNumber(orderData.shipping_cost) }}
+            Rp. {{ formatNumber(orderData.service_fee) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -255,7 +255,7 @@
           <b-col
             lg="5"
           >
-            Cashback Ongkir (2,5%)
+            Cashback Ongkir ({{ orderData.cashback_to }}%)
           </b-col>
           <b-col
             lg="3"
