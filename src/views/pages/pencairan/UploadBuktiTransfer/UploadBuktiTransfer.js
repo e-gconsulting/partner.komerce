@@ -124,7 +124,8 @@ export default {
         const formData = new FormData()
         formData.append('file', file)
         formData.append('withdrawal_id', this.$route.params.slug)
-        formData.append('status', this.$store.state.pencairan.status)
+        formData.append('status', 'on_review')
+        formData.append('notes', '')
         axioskomsipdev.put(endpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',

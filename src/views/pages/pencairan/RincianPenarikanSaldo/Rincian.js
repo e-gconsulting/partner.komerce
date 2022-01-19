@@ -6,20 +6,9 @@ import {
   BFormTextarea,
   BImg,
   BFormGroup,
-  // BDropdownForm,
   BBadge,
-  // BAvatar,
   BTable,
   BPagination,
-  // BTableSimple,
-  // BThead,
-  // BTbody,
-  // BTh,
-  // BTr,
-  // BTd,
-  // BInputGroup,
-  // BInputGroupPrepend,
-  // BDropdown,
   BButton,
   BSpinner,
   BCardBody,
@@ -38,22 +27,10 @@ export default {
     BCard,
     BModal,
     BFormTextarea,
-    // BFormInput,
     BBadge,
-    // BAvatar,
     BTable,
     BPagination,
-    // BTableSimple,
-    // BThead,
-    // BTbody,
-    // BTh,
-    // BTr,
-    // BTd,
-    // BInputGroup,
     BFormGroup,
-    // BDropdownForm,
-    // BInputGroupPrepend,
-    // BDropdown,
     BButton,
     BSpinner,
     BCardBody,
@@ -225,8 +202,8 @@ export default {
       const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}`
       const formData = new FormData()
       formData.append('notes', this.catatanReview)
-      formData.append('withdrawal_id', this.$route.params.slug)
-      formData.append('status', this.detailData.status)
+      formData.append('_method', 'PUT')
+      formData.append('status', 'on_review')
       // formData.append('yinyang.png', fs.createReadStream('./yinyang.png'));
       // res.data.files; // 'yinyang.png': an extremely long binary string
       // res.data.form; // form: { id: '1', string: 'Text we want to add to the submit' }
