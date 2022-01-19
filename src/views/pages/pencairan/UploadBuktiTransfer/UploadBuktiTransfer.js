@@ -122,11 +122,12 @@ export default {
       dataCopy.forEach(file => {
         this.filesSettled = [...this.filesSettled, file]
         const formData = new FormData()
-        formData.append('file', file)
+        formData.append('transfer_proof', file)
         formData.append('withdrawal_id', this.$route.params.slug)
-        formData.append('status', 'on_review')
+        formData.append('status', 'completed')
         formData.append('notes', '')
-        axioskomsipdev.put(endpoint, formData, {
+        formData.append('_method', 'PUT')
+        this.$http.post(endpoint, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
