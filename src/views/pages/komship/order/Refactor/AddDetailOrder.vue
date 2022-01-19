@@ -404,7 +404,7 @@
               />
             </div>
             <div v-else>
-              {{ `- Rp ${onNumberWithCommas(sendCostNumberCut)}` }}
+              {{ ` Rp ${onNumberWithCommas(sendCostNumberCut-sendCostNumber)}` }}
             </div>
           </b-form-group>
           <b-form-group
@@ -539,6 +539,8 @@ import {
   formatFullDate,
 } from 'node-format-date'
 import { formatDate } from '@/@core/utils/filter'
+import httpKomship from '@/libs/http_komship'
+import useJwt from '@/@core/auth/jwt/useJwt'
 
 function numberWithCommas(x) {
   if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
@@ -672,6 +674,7 @@ export default {
       isValidOrder: false,
       isCalculating: false,
       isSubmitting: false,
+      detail_address: {},
       date: null,
       fields: [
         { key: 'no', label: 'No' },
@@ -722,14 +725,23 @@ export default {
     this.onUpdateOverAllPrice()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
     this.address_id = this.$route.params.address_id
-    this.dateValue = this.$route.params.dateValue
+    this.dateValue = this.$route.params.date
     this.dateLabel = this.$route.params.dateLabel
     this.itemsOrder = this.$route.params.itemsOrder
     this.choosenAddres = this.$route.params.choosenAddres
     this.getProfile()
     this.getCustomer()
+    this.getAddress()
   },
   methods: {
+    getAddress() {
+      return this.$http_komship.get(`v1/address/${this.address_id}`).then(response => {
+        const { data } = response.data
+        this.detail_address = data
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
     getCustomer() {
       return this.$http_komship.get('v1/customer').then(response => {
         const { data } = response.data
@@ -801,7 +813,7 @@ export default {
       this.sumAllProductWithShipPrice = parseInt(this.sumAllProduct) + parseInt(this.sendCostNumber) - parseInt(this.customerDiscountNumber)
     },
     onUpdateNettoPrice() {
-      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost - this.sendCostNumberCut
+      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost + (this.sendCostNumberCut - this.sendCostNumber)
     },
     onUpdateOverAllPrice() {
       this.sumAllProduct = countTotalPrice(this.itemsCheckoutOrder)
@@ -848,7 +860,8 @@ export default {
     findCorrectData(dataArr) {
       let selectedCost = {}
       for (let j = 0; j < dataArr.length; j += 1) {
-        if ((dataArr[j].shipping_type).substring(0, 3) === this.customerExpeditionOption) {
+        const newShip = (dataArr[j].shipping_type).substring(0, 3) === 'CTC' ? 'REG' : dataArr[j].shipping_type
+        if (newShip.substring(0, 3) === this.customerExpeditionOption) {
           selectedCost = dataArr[j]
         }
       }
@@ -856,7 +869,7 @@ export default {
     },
     calculateOnView() {
       this.sendCostNumber = this.totalCostNumber && typeof this.totalCostNumber.shipping_cost !== 'undefined' ? this.totalCostNumber.shipping_cost : 0
-      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? this.totalCostNumber.service_fee : 0
+      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? Math.ceil(this.totalCostNumber.service_fee) : 0
       this.sendCostNumberCut = this.totalCostNumber && typeof this.totalCostNumber.cashback !== 'undefined' ? this.totalCostNumber.cashback : 0
       this.serviceFeeLabel = this.totalCostNumber && typeof this.totalCostNumber.service_fee_percentage !== 'undefined' ? this.totalCostNumber.service_fee_percentage.toString().replace('.', ',') : 0
       this.cashbackLabel = this.totalCostNumber && typeof this.totalCostNumber.cashback_percentage !== 'undefined' ? this.totalCostNumber.cashback_percentage.toString().replace('.', ',') : 0
@@ -1012,7 +1025,7 @@ export default {
     async submitOrder() {
       const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       const formData = {
-        date: this.changeDate(this.dateValue, 2),
+        date: this.dateValue,
         tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : cityChosen.value,
         subdistrict_name: cityChosen.subdistrict_name,
         district_name: cityChosen.district_name,
@@ -1038,6 +1051,9 @@ export default {
         net_profit: this.totalCostNumberNetto,
       }
       await this.storeSelectedItemsToCart(formData)
+    },
+    validateShippingType() {
+
     },
     async storeSelectedItemsToCart(formData) {
       const allItemsToPost = this.genCart(this.itemsCheckoutOrder)
