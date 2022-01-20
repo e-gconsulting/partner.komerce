@@ -107,7 +107,7 @@ export default {
       series: [{
         data: [],
       }],
-      heightBar: 120,
+      heightBar: 300,
       chartOptions: {
         colors: '#34A770',
         chart: {
@@ -123,24 +123,29 @@ export default {
           },
         },
         dataLabels: {
-          enabled: true,
-          offsetX: -6,
+          // enabled: true,
+          offsetX: 30,
           style: {
             fontSize: '12px',
-            colors: ['#fff'],
+            colors: ['black'],
           },
         },
         stroke: {
-          show: true,
+          // show: true,
           width: 1,
           colors: ['#fff'],
         },
         tooltip: {
-          shared: true,
+          enabled: false,
+          shared: false,
           intersect: false,
+          x: {
+            show: false,
+          },
         },
         xaxis: {
           categories: [],
+          max: 100,
         },
       },
     }
@@ -169,7 +174,7 @@ export default {
         data.city.forEach(this.myArray)
         this.series = [
           {
-            data: this.getPercentage(data.city),
+            data: this.getPercentage(data.city_name),
           },
         ]
         return this.city

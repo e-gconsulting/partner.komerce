@@ -107,10 +107,11 @@ export default {
       series: [{
         data: [],
       }],
-      heightBar: 0,
+      heightBar: 250,
       chartOptions: {
         colors: '#34A770',
         chart: {
+          stacked: true,
           type: 'bar',
           height: this.heightBar,
         },
@@ -124,10 +125,10 @@ export default {
         },
         dataLabels: {
           enabled: true,
-          offsetX: -6,
+          offsetX: 40,
           style: {
             fontSize: '12px',
-            colors: ['#fff'],
+            colors: ['black'],
           },
         },
         stroke: {
@@ -136,11 +137,16 @@ export default {
           colors: ['#fff'],
         },
         tooltip: {
+          enabled: false,
           shared: false,
           intersect: false,
+          x: {
+            show: false,
+          },
         },
         xaxis: {
           categories: [],
+          max: 100,
         },
       },
     }
@@ -177,6 +183,9 @@ export default {
         ]
       })
     },
+    // formatter: function(val) {
+    //   return val.toString() + '%'
+    // },
     getData() {
       this.loading = true
       const params = {

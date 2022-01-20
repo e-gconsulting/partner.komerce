@@ -200,6 +200,7 @@
         empty-text="Tidak ada data untuk ditampilkan."
         :items="itemsCustomer"
         :fields="fields"
+        :per-page="perPage"
         :show-empty="!loading"
         @row-clicked="onRowClicked"
       >
@@ -246,6 +247,30 @@
 
       </b-table>
     </b-overlay>
+    <b-row class="justify-content-between mt-5 mx-50 mb-2">
+      <div>
+        <span class="text-black mr-1">
+            List per halaman
+        </span>
+        <b-button
+          v-for="(paginationitems, index) in valuePerpage"
+          :key="index+1"
+          :variant="valuePerpageIsActive === paginationitems.value ? 'primary' : 'flat-dark'"
+          class="btn-icon mr-1"
+          size="sm"
+          @click="halamancustomerfilter(paginationitems)"
+        >
+          {{ paginationitems.value }}
+        </b-button>
+      </div>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        first-number
+        last-number
+      />
+    </b-row>
   </b-card>
 </template>
 
@@ -262,6 +287,7 @@ import {
   BForm,
   BFormGroup,
   BCard,
+  BPagination,
   BOverlay,
   BDropdown,
   BDropdownForm,
@@ -282,6 +308,7 @@ export default {
     BInputGroupPrepend,
     BButton,
     BRow,
+    BPagination,
     BTable,
     FeatherIcon,
     BForm,
@@ -299,10 +326,24 @@ export default {
   data() {
     return {
       loading: false,
-
+      currentPage: 1,
+      perPage: 50,
+      valuePerpageIsActive: 50,
+      rows: 0,
       selected: 1,
       options: [
         { value: 1, text: 'Kabupaten' },
+      ],
+      valuePerpage: [
+        {
+          value: 50,
+        },
+        {
+          value: 100,
+        },
+        {
+          value: 200,
+        },
       ],
 
       fields: [
@@ -378,8 +419,13 @@ export default {
   },
   mounted() {
     this.tableProvider()
+    this.rows = this.items.length
   },
   methods: {
+    halamancustomerfilter(data) {
+      this.valuePerpageIsActive = data.value
+      this.perPage = data.value
+    },
     tableProvider() {
       this.loading = true
       httpKomship.get('/v1/customers', {
@@ -403,7 +449,7 @@ export default {
       if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
-
+      if (this.pagination) Object.assign(params, { pagination: this.pagination })
       httpKomship.get('/v1/customers', {
         params,
       }, {
