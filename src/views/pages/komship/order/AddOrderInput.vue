@@ -20,14 +20,40 @@
           id="input-date"
           ref="dp1"
           v-model="dateValue"
+          :min="new Date()"
           class="add-order-date-button"
           button-only
           @context="onChangeDate"
         >
           <template v-slot:button-content>
-            <img src="@/assets/images/icons/date-picker-icon.svg">
+            <feather-icon
+              icon="CalendarIcon"
+              size="21"
+              class="text-danger stroke-current"
+            />
           </template>
         </b-form-datepicker>
+      </b-form-group>
+      <b-form-group
+        class="add-order-label"
+        label="Kirim Dari"
+        label-cols-md="2"
+      >
+        <b-form-select
+          v-model="choosenAddres"
+          class="add-order-product-input"
+          label="product_name"
+          label-cols-md="2"
+          @input="onChangeAddress"
+        >
+          <b-form-select-option
+            v-for="item in addressList"
+            :key="item.value"
+            :value="item.value"
+          >
+            {{ item.text }}
+          </b-form-select-option>
+        </b-form-select>
       </b-form-group>
       <b-form-group
         class="add-order-label"
@@ -41,7 +67,21 @@
           label-cols-md="2"
           :options="listProduct"
           @input="onAddProduct"
-        />
+        >
+          <span
+            v-if="productCount===0"
+            slot="no-options"
+          >
+
+            Belum ada produk, tambahkan dahulu.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
       </b-form-group>
     </section>
 
@@ -380,34 +420,40 @@
     </b-modal>
 
     <section class="view-order-summary">
-      <div class="add-order-summary-text">
-        <span>{{ itemsOrder.length }}</span> Produk ditambahkan
-      </div>
-      <div class="add-order-summary-button-wrapper">
-        <b-button
-          v-if="selectedItems.length > 0"
-          class="cancel-button"
-          variant="outline-primary"
-          @click="deleteAllSelectedItems"
-        >
-          Batalkan
-        </b-button>
-        <b-button
-          v-else
-          class="cancel-button hide"
-          variant="outline-primary"
-        >
-          Batalkan
-        </b-button>
-        <b-button
-          class="next-button"
-          :disabled="buttonNext"
-          tag="router-link"
-          :to="{ name: $route.meta.routeDetail, params: { itemsOrder } }"
-        >
-          Lanjutkan
-        </b-button>
-      </div>
+      <b-row>
+        <b-col class="text-left">
+          <div class="add-order-summary-text text-left">
+            <span>{{ itemsOrder.length }}</span> Produk ditambahkan
+          </div>
+        </b-col>
+        <b-col class="text-right">
+          <div class="add-order-summary-button-wrapper text-right">
+            <b-button
+              v-if="itemsOrder.length > 0"
+              class="cancel-button"
+              variant="outline-primary"
+              @click="deleteAllSelectedItems"
+            >
+              Batalkan
+            </b-button>
+            <b-button
+              v-else
+              class="cancel-button hide"
+              variant="outline-primary"
+            >
+              Batalkan
+            </b-button>
+            <b-button
+              class="next-button"
+              :disabled="buttonNext"
+              tag="router-link"
+              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres, date: dateValue, dateLabel: dateLabel } }"
+            >
+              Lanjutkan
+            </b-button>
+          </div>
+        </b-col>
+      </b-row>
     </section>
   </div>
 </template>
@@ -419,12 +465,20 @@ import {
   BFormDatepicker,
   BFormGroup,
   BButton,
+  BFormSelect,
+  BFormSelectOption,
   BTable,
   BRow,
   BCol,
   BAvatar,
 } from 'bootstrap-vue'
 
+import dateFormat from 'dateformat'
+import {
+  formatFullDate,
+} from 'node-format-date'
+import useJwt from '@/auth/jwt/useJwt'
+import httpKomship from '../setting-kompship/http_komship'
 // import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {
@@ -443,11 +497,13 @@ function changeDate(dateString) {
 export default {
   components: {
     BCardTitle,
-    BFormDatepicker,
     BFormGroup,
     BButton,
     vSelect,
+    BFormSelect,
+    BFormSelectOption,
     // AddOrderTable,
+    BFormDatepicker,
     BTable,
     BRow,
     BCol,
@@ -482,6 +538,7 @@ export default {
   data() {
     return {
       dateValue: this.dateText,
+      listProduct2: [],
       dateLabel: '',
       fields: [
         { key: 'no', label: 'No' },
@@ -497,6 +554,7 @@ export default {
       disableSubmitBtn: this.disableSubmitButtonStatus,
 
       dataTree: [],
+      productCount: null,
 
       // Refactor
       itemsOrder: [],
@@ -566,14 +624,46 @@ export default {
       totalToOrder: 1,
 
       choosenProduct: '',
-
       buttonNext: true,
       buttonParentVariant: true,
       buttonVariationSecond: true,
       buttonVariationFirst: true,
+      addressList: [],
     }
   },
+  mounted() {
+    this.dateValue = dateFormat(new Date(), 'yyyy-mm-dd')
+    console.log(this.dateValue)
+    this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
+    this.date = formatFullDate(this.dateValue)
+    this.getAddress()
+    // this.getProfile()
+    this.listProduct2 = this.listProduct
+    this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+  },
   methods: {
+    getProfile() {
+      return this.$http_komship.post('v1/my-profile').then(response => {
+        const { data } = response.data
+        this.profile = data
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
+    getAddress() {
+      httpKomship.get('/v1/address', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(async response => {
+        const { data } = response.data
+        const sortData = data.slice().sort((a, b) => b.is_default - a.is_default)
+
+        this.addressList = await sortData.map(val => ({
+          value: val.address_id,
+          text: val.address_name,
+        }))
+        this.choosenAddres = this.addressList[0].value
+      })
+    },
     chooseVariation(data) {
       this.buttonParentVariant = true
       this.buttonVariationFirst = true
@@ -765,7 +855,8 @@ export default {
       if (data.item.stockToDisplay < 1) {
         this.itemsOrder.splice(data.index, 1)
         this.choosenProduct = ''
-        this.listProduct.unshift(data.item)
+        this.listProduct2.unshift(data.item)
+        this.productCount = this.listProduct.length
         this.$refs.tableAddOrderOne.refresh()
       }
     },
@@ -782,10 +873,9 @@ export default {
       return result
     },
     onChangeDate(ctx) {
-      if (ctx && ctx.activeYMD) {
-        this.dateLabel = changeDate(ctx.activeYMD)
-        this.$emit('onUpdateDate', ctx.activeYMD)
-      }
+      this.dateLabel = changeDate(ctx.activeYMD)
+      this.dateValue = ctx.activeYMD
+      this.$emit('onUpdateDate', ctx.activeYMD)
     },
     handleShowVariationPopUp(productData) {
       this.selectedVariation = productData
@@ -840,13 +930,15 @@ export default {
       this.checkValidButton()
       this.$refs.tableAddOrderOne.refreshTable()
     },
+    onChangeAddress(item) {
+      console.log(item)
+      this.choosenAddres = item
+    },
     onAddProduct(itemSelected) {
-      console.log('itemSelected', itemSelected)
-      console.log('listProduct', this.listProduct)
       // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.listProduct.length; x++) {
-        if (this.listProduct[x].product_name === itemSelected.product_name) {
-          this.listProduct.splice(x, 1)
+      for (let x = 0; x < this.listProduct2.length; x++) {
+        if (this.listProduct2[x].product_name === itemSelected.product_name) {
+          this.listProduct2.splice(x, 1)
         }
       }
       Object.assign(itemSelected, { stockToDisplay: 1 })
@@ -953,6 +1045,9 @@ export default {
     },
     deleteAllSelectedItems() {
       this.selectedItems = []
+      this.itemsOrder = []
+
+      this.productCount = null
       this.resetTmpContainerOnTable()
       this.onUpdateSelectedItemsOnParent()
     },

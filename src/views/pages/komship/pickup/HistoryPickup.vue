@@ -15,21 +15,30 @@
       Riwayat Pengajuan Pickup
     </div>
 
-    <history-pickup-table
-      v-if="currentView === 'all'"
-      ref="allPickupTable1"
-      :items="items"
-      :fields="fields"
-      table-ref-name="allPickupTable1"
-      @onDetailsClicked="handleDetailsButtonClicked"
-    />
+    <b-overlay
+      variant="light"
+      :show="loading"
+      spinner-variant="primary"
+      blur="0"
+      opacity=".5"
+      rounded="sm"
+    >
+      <history-pickup-table
+        v-if="currentView === 'all'"
+        ref="allPickupTable1"
+        :items="items"
+        :fields="fields"
+        table-ref-name="allPickupTable1"
+        @onDetailsClicked="handleDetailsButtonClicked"
+      />
 
-    <history-pickup-details
-      v-else
-      :items="detailsItem"
-      :items-arr="itemsArr"
-      @onBackButtonClicked="() => handleDetailsButtonClicked('all', {})"
-    />
+      <history-pickup-details
+        v-else
+        :items="detailsItem"
+        :items-arr="itemsArr"
+        @onBackButtonClicked="() => handleDetailsButtonClicked('all', {})"
+      />
+    </b-overlay>
 
   </b-card>
 </template>
@@ -37,6 +46,7 @@
 <script>
 import {
   BCard,
+  BOverlay,
 } from 'bootstrap-vue'
 import HistoryPickupTable from './HistoryPickupTable.vue'
 import HistoryPickupDetails from './HistoryPickupDetails.vue'
@@ -46,9 +56,11 @@ export default {
     BCard,
     HistoryPickupTable,
     HistoryPickupDetails,
+    BOverlay,
   },
   data() {
     return {
+      loading: false,
       currentView: 'all',
       detailsItem: {},
       fields: [
@@ -99,7 +111,6 @@ export default {
       this.loading = true
       await this.getProfile()
       await this.getPickup()
-      this.loading = false
     },
     async openDetailView(data) {
       if (data) {
@@ -112,6 +123,7 @@ export default {
         // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
+        this.loading = false
         console.log('gagal fetch profile')
       })
     },
@@ -120,7 +132,9 @@ export default {
         const { data } = response.data
         // console.log('listAllPickup', data)
         this.items = data
+        this.loading = false
       }).catch(() => {
+        this.loading = false
         this.alertFail('Unable to get the list of the pickup. Please try again later or contact support.')
       })
     },

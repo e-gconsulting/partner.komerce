@@ -18,23 +18,11 @@
           label-for="input-date2"
         >
           <div class="add-order-date-label">
-            {{ customerDate }}
+            {{ dateLabel }}
           </div>
-          <b-form-datepicker
-            id="input-date2"
-            ref="dp2"
-            v-model="dateValue"
-            class="add-order-date-button"
-            button-only
-            @context="onChangeDate"
-          >
-            <template v-slot:button-content>
-              <img src="@/assets/images/icons/date-picker-icon.svg">
-            </template>
-          </b-form-datepicker>
         </b-form-group>
         <b-form-group
-          class="add-order-label mb-2"
+          class="add-order-label mb-2 add-order-label-payment"
           label="Nama Pelanggan"
           label-cols-md="3"
         >
@@ -52,7 +40,7 @@
               v-for="(customerItem, customerItemIndex) in detailCustomerList"
               :key="'optionCustomer'+customerItemIndex"
             >
-              {{ customerItem.name }}
+              {{ customerItem.name }}, {{ customerItem.phone }}, {{ customerItem.address }}
             </option>
           </datalist>
         </b-form-group>
@@ -133,7 +121,14 @@
             label-cols-md="2"
             :options="profile.shipping"
             @input="onAddShipping"
-          />
+          >
+            <span
+              slot="no-options"
+              style="fontSize:14px;"
+            >
+              {{ !profile.shipping ? 'Anda belum memilih ekspedisi' : (profile.shipping === null ? 'Sedang Memuat ...' : 'Belum ada Ekspedisi, tambahkan dahulu.') }}
+            </span>
+          </v-select>
 
           <v-select
             ref="expOptionRef"
@@ -288,14 +283,35 @@
           label="Total Harga Produk"
           label-cols-md="5"
         >
-          <div>{{ `Rp ${onNumberWithCommas(sumAllProduct)}` }}</div>
+          <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+
+          <div v-else>
+            {{ `Rp ${onNumberWithCommas(sumAllProduct)}` }}
+          </div>
         </b-form-group>
         <b-form-group
           class="mb-2"
           label="Ongkos Kirim"
           label-cols-md="5"
         >
-          <div>{{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}</div>
+          <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+          <div v-else>
+            {{ `Rp ${onNumberWithCommas(sendCostNumber)}` }}
+          </div>
         </b-form-group>
         <b-form-group
           v-if="isUseDiscount"
@@ -303,7 +319,17 @@
           label="Potongan Harga"
           label-cols-md="5"
         >
-          <div>{{ `- Rp ${onNumberWithCommas(customerDiscountNumber)}` }}</div>
+          <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+          <div v-else>
+            {{ `- Rp ${onNumberWithCommas(customerDiscountNumber)}` }}
+          </div>
         </b-form-group>
         <b-form-group
           v-else
@@ -352,28 +378,70 @@
             :label="`Biaya ${customerPaymentMethod !== '' ? `${customerPaymentMethod}` : ''} (${serviceFeeLabel}% sudah termasuk PPN)`"
             label-cols-md="6"
           >
-            <div>{{ `- Rp ${onNumberWithCommas(serviceFeeCutCost)}` }}</div>
+            <div
+              v-if="isCalculating"
+            >
+              <b-spinner
+                variant="primary"
+                label="Spinning"
+              />
+            </div>
+            <div v-else>
+              {{ `- Rp ${onNumberWithCommas(serviceFeeCutCost)}` }}
+            </div>
           </b-form-group>
           <b-form-group
             class="mb-2"
             :label="`Ongkos Kirim (dipotong cashback ${cashbackLabel}%)`"
             label-cols-md="5"
           >
-            <div>{{ `- Rp ${onNumberWithCommas(sendCostNumberCut)}` }}</div>
+            <div
+              v-if="isCalculating"
+            >
+              <b-spinner
+                variant="primary"
+                label="Spinning"
+              />
+            </div>
+            <div v-else>
+              {{ ` Rp ${onNumberWithCommas(sendCostNumberCut-sendCostNumber)}` }}
+            </div>
           </b-form-group>
           <b-form-group
             class="orange-bold mb-2"
             label="Penghasilan bersih yang kamu dapatkan"
             label-cols-md="5"
           >
-            <div>{{ `Rp ${onNumberWithCommas(totalCostNumberNetto)}` }}</div>
+            <div
+              v-if="isCalculating"
+            >
+              <b-spinner
+                variant="primary"
+                label="Spinning"
+              />
+            </div>
+            <div v-else>
+              {{ `Rp ${onNumberWithCommas(totalCostNumberNetto)}` }}
+            </div>
           </b-form-group>
         </b-collapse>
       </section>
 
       <section class="view-order-summary view-order-summary-details-mobile">
         <div class="add-order-summary-text detail-add-order-summary-text">
-          <span>Total Pembayaran : <span class="orange-bold">{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</span></span>
+          <span>Total Pembayaran : <div
+            v-if="isCalculating"
+          >
+            <b-spinner
+              variant="primary"
+              label="Spinning"
+            />
+          </div>
+            <span
+              v-else
+              class="orange-bold"
+            >{{ `Rp ${onNumberWithCommas(sumAllProductWithShipPrice)}` }}</span>
+          </span>
         </div>
         <div class="add-order-summary-button-wrapper">
           <!-- <b-button
@@ -383,14 +451,14 @@
           >
             Hitung
           </b-button> -->
-          <b-button
+          <!-- <b-button
             v-if="isCalculating"
             class="next-button no-mg-mobile"
             disabled
             @click="onCountButtonClicked"
           >
             Please wait...
-          </b-button>
+          </b-button> -->
           <b-button
             v-if="isValidOrder && !isSubmitting"
             class="next-button"
@@ -444,6 +512,7 @@
 
 <script>
 import vSelect from 'vue-select'
+import dateFormat from 'dateformat'
 import {
   BCardTitle,
   BFormDatepicker,
@@ -453,6 +522,7 @@ import {
   BInputGroup,
   BInputGroupPrepend,
   BCollapse,
+  BSpinner,
   BButton,
   BIconCircle,
   BIconCheckCircleFill,
@@ -464,6 +534,13 @@ import {
   BCol,
   BAvatar,
 } from 'bootstrap-vue'
+
+import {
+  formatFullDate,
+} from 'node-format-date'
+import { formatDate } from '@/@core/utils/filter'
+import httpKomship from '@/libs/http_komship'
+import useJwt from '@/@core/auth/jwt/useJwt'
 
 function numberWithCommas(x) {
   if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
@@ -505,13 +582,10 @@ function countTotalPrice(listData) {
   //     }
   //     return totalPrice
   //   }
-  console.log(listData)
   return 0
 }
 
 function getVariantPerItem(listData) {
-  console.log('listData')
-  console.log(listData)
   if (listData && listData.itemSelected !== {}) {
     const variantData = {}
     // for (let i = 0; i < listData.selectedVariationData.length; i += 1) {
@@ -530,7 +604,6 @@ function getVariantPerItem(listData) {
 export default {
   components: {
     BCardTitle,
-    BFormDatepicker,
     BFormInput,
     BFormGroup,
     BFormTextarea,
@@ -548,6 +621,7 @@ export default {
     BCol,
     BRow,
     BAvatar,
+    BSpinner,
   },
   props: {
     screens: {
@@ -565,9 +639,13 @@ export default {
   },
   data() {
     return {
-      dateValue: this.dateText,
       customerDate: '',
       customerName: '',
+      dateValue: '',
+      dateLabel: '',
+      cartId: '',
+      address_id: null,
+      isLoadingCount: false,
       customerId: '',
       detailCustomerList: [],
       customerTariffCode: '',
@@ -596,6 +674,8 @@ export default {
       isValidOrder: false,
       isCalculating: false,
       isSubmitting: false,
+      detail_address: {},
+      date: null,
       fields: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
@@ -605,7 +685,7 @@ export default {
       ],
       selectedItems: this.listSelected,
       cartOrder: [],
-
+      customersList: [],
       profile: [],
       itemsCheckoutOrder: [],
       fieldsOrder: [
@@ -639,17 +719,67 @@ export default {
     }
   },
   mounted() {
+    const currentDate = new Date()
+    this.customerDate = dateFormat(currentDate, 'yyyy-mm-dd')
+    this.date = formatFullDate(currentDate)
     this.onUpdateOverAllPrice()
-    this.getProfile()
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
+    this.address_id = this.$route.params.address_id
+    this.dateValue = this.$route.params.date
+    this.dateLabel = this.$route.params.dateLabel
+    this.itemsOrder = this.$route.params.itemsOrder
+    this.choosenAddres = this.$route.params.choosenAddres
+    this.getProfile()
+    this.getCustomer()
+    this.getAddress()
   },
   methods: {
+    getAddress() {
+      return this.$http_komship.get(`v1/address/${this.address_id}`).then(response => {
+        const { data } = response.data
+        this.detail_address = data
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
+    getCustomer() {
+      return this.$http_komship.get('v1/customer').then(response => {
+        const { data } = response.data
+        this.customersList = data
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
-        console.log(this.profile)
+        const arrayCart = this.itemsOrder.map(val => ({
+          product_id: val.product_id,
+          product_name: val.product_name,
+          variant_id: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].options_id : 0,
+          variant_name: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].name : '',
+          product_price: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price,
+          qty: val.stockToDisplay,
+          subtotal: val.stockToDisplay * (typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price),
+        }))
+
+        this.$http_komship.delete(`v1/cart/clear/${data.user_id}`).then(async res => {
+          const { code } = res.data
+          console.log('delete', res.data)
+          if (code === 200) {
+            return this.$http_komship.post('v1/cart/bulk-store', arrayCart).then(async result => {
+              console.log(result)
+              const codeRes = result.data.code
+              if (codeRes === 200) {
+                this.cartId = result.data.data.cart_id
+              }
+            })
+          }
+          return false
+        }).catch(err => {
+          console.log(err)
+        })
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -679,10 +809,11 @@ export default {
       return numberWithCommas(x)
     },
     onUpdateAllPrice() {
-      this.sumAllProductWithShipPrice = this.sumAllProduct + this.sendCostNumber - this.customerDiscountNumber
+      // eslint-disable-next-line radix
+      this.sumAllProductWithShipPrice = parseInt(this.sumAllProduct) + parseInt(this.sendCostNumber) - parseInt(this.customerDiscountNumber)
     },
     onUpdateNettoPrice() {
-      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost - this.sendCostNumberCut
+      this.totalCostNumberNetto = this.sumAllProductWithShipPrice - this.serviceFeeCutCost + (this.sendCostNumberCut - this.sendCostNumber)
     },
     onUpdateOverAllPrice() {
       this.sumAllProduct = countTotalPrice(this.itemsCheckoutOrder)
@@ -708,8 +839,6 @@ export default {
       this.customerShippingMethod = itemSelected
     },
     onAddExpeditionOption(itemSelected) {
-      console.log('onAddExpeditionOption')
-      console.log(itemSelected)
       this.customerExpeditionOption = itemSelected
     },
     onAddPaymentMethod(itemSelected) {
@@ -729,23 +858,18 @@ export default {
       this.$router.push('data-order')
     },
     findCorrectData(dataArr) {
-      console.log(dataArr)
       let selectedCost = {}
-      if (dataArr && dataArr.length && dataArr.length > 0) {
-        for (let j = 0; j < dataArr.length; j += 1) {
-          if (dataArr[j].shipping_type) {
-            selectedCost = dataArr[j]
-            console.log('tes')
-          }
+      for (let j = 0; j < dataArr.length; j += 1) {
+        const newShip = (dataArr[j].shipping_type).substring(0, 3) === 'CTC' ? 'REG' : dataArr[j].shipping_type
+        if (newShip.substring(0, 3) === this.customerExpeditionOption) {
+          selectedCost = dataArr[j]
         }
       }
-      console.log('selectedCost')
-      console.log(selectedCost)
       return selectedCost
     },
     calculateOnView() {
       this.sendCostNumber = this.totalCostNumber && typeof this.totalCostNumber.shipping_cost !== 'undefined' ? this.totalCostNumber.shipping_cost : 0
-      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? this.totalCostNumber.service_fee : 0
+      this.serviceFeeCutCost = this.totalCostNumber && typeof this.totalCostNumber.service_fee !== 'undefined' ? Math.ceil(this.totalCostNumber.service_fee) : 0
       this.sendCostNumberCut = this.totalCostNumber && typeof this.totalCostNumber.cashback !== 'undefined' ? this.totalCostNumber.cashback : 0
       this.serviceFeeLabel = this.totalCostNumber && typeof this.totalCostNumber.service_fee_percentage !== 'undefined' ? this.totalCostNumber.service_fee_percentage.toString().replace('.', ',') : 0
       this.cashbackLabel = this.totalCostNumber && typeof this.totalCostNumber.cashback_percentage !== 'undefined' ? this.totalCostNumber.cashback_percentage.toString().replace('.', ',') : 0
@@ -771,10 +895,6 @@ export default {
               qty: dataArr[j].stockToDisplay,
               subtotal: dataArr[j].stockToDisplay * (isVariant ? variantData.price : dataArr[j].price),
             }
-            console.log('cartItem')
-            console.log(cartItem)
-            console.log('dataArr')
-            console.log(dataArr)
             newCart.push({ ...cartItem })
           }
         }
@@ -793,6 +913,38 @@ export default {
         },
         buttonsStyling: false,
       })
+    },
+    alertFailBalance(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        showCancelButton: true,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        cancelButtonText: 'Cek Saldo',
+        customClass: {
+          confirmButton: 'btn border btn-outline rounded-lg',
+          cancelButton: 'btn bg-orange2  btn-primary  rounded-lg',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (!result.isConfirmed) {
+          this.$router.push({ name: 'saldo' })
+        }
+      })
+    },
+    alertSuccess(textWarn) {
+      this.$swal({
+        title: `<span class="font-weight-bold h4">${textWarn}</span>`,
+        imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
+        showCloseButton: false,
+        focusConfirm: true,
+        confirmButtonText: 'Oke',
+        customClass: {
+          confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+        },
+        buttonsStyling: false,
+      }).then(() => this.$router.push({ name: 'data-order' }))
     },
     formCheck() {
       let countValidation = 0
@@ -843,7 +995,9 @@ export default {
       }
       return {}
     },
-    handleChangeCustomer(text) {
+    handleChangeCustomer(_text) {
+      const split = _text.split(',')
+      const text = split[0]
       if (text && this.detailCustomerList.length && this.detailCustomerList.length > 0) {
         const chosenCustomerData = this.findCustomer(text, this.detailCustomerList)
         if (chosenCustomerData && chosenCustomerData.customer_id) {
@@ -871,7 +1025,7 @@ export default {
     async submitOrder() {
       const cityChosen = this.findCity(this.customerCity, this.destinationCity)
       const formData = {
-        date: this.changeDate(this.dateValue, 2),
+        date: this.dateValue,
         tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : cityChosen.value,
         subdistrict_name: cityChosen.subdistrict_name,
         district_name: cityChosen.district_name,
@@ -885,6 +1039,7 @@ export default {
         shipping_type: this.customerExpeditionOption,
         payment_method: this.customerPaymentMethod,
         bank: null,
+        partner_address_id: this.address_id,
         bank_account_name: null,
         bank_account_no: null,
         subtotal: this.sumAllProduct,
@@ -897,6 +1052,9 @@ export default {
       }
       await this.storeSelectedItemsToCart(formData)
     },
+    validateShippingType() {
+
+    },
     async storeSelectedItemsToCart(formData) {
       const allItemsToPost = this.genCart(this.itemsCheckoutOrder)
       await this.onPostCart(allItemsToPost)
@@ -904,7 +1062,6 @@ export default {
       this.storeOrder(formData)
     },
     async storeOrder(formData) {
-      // console.log('formData', formData)
       await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
@@ -927,18 +1084,17 @@ export default {
       this.isCalculating = true
       return this.$http_komship.get('v1/calculate', {
         params: {
+          partner_address_id: this.address_id,
           discount: this.customerDiscountNumber,
           shipping: this.customerShippingMethod,
-          tariff_code: this.customerTariffCode !== '' ? this.customerTariffCode : this.findCity(this.customerCity, this.destinationCity).value,
+          tariff_code: this.findCity(this.customerCity, this.destinationCity).value,
           payment_method: this.customerPaymentMethod,
-          cart: this.sumAllProduct,
+          cart: this.cartId.toString(),
         },
       }).then(response => {
         const { data } = response.data
-        // console.log('dataCost', data)
-        console.log('totalCostNumber')
-        console.log(data)
         this.totalCostNumber = this.findCorrectData(data)
+        this.isCalculating = false
         this.calculateOnView()
       }).catch(() => {
         this.isCalculating = false
@@ -959,10 +1115,8 @@ export default {
         // eslint-disable-next-line no-param-reassign
         formData.bank_account_no = 0
       }
-      console.log(formData)
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
-        // console.log('detail post order', data)
         if (data) {
           this.isSubmitting = false
           if (this.profile.is_onboarding !== true) {
@@ -971,18 +1125,20 @@ export default {
             this.handleShowPopUp()
           }
         }
-      }).catch(() => {
+        this.alertSuccess('Berhasil Tambah Order')
+      }).catch(error => {
         this.isSubmitting = false
-        this.alertFail('Unable to Send Your Order. Please and try again later or contact support.')
+        if (error.response.data.code === 406) {
+          return this.alertFailBalance('Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda')
+        }
+        return this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },
     onPostCart(cartItem) {
-      console.log(cartItem)
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
-        // console.log('detail post cart', data)
         this.cartOrder = data.cart_id
-      }).catch(() => {
+      }).catch(err => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')
       })
     },

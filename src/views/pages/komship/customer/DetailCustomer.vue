@@ -27,7 +27,8 @@
             />
             <a
               class="text-white"
-              :href="`https://wa.me/${customerContact}`"
+              :href="`https://api.whatsapp.com/send?phone=+62 ${customerContact}` "
+              target="blank"
             >
               <span class="align-middle">Hubungi Customer</span>
             </a>
@@ -45,11 +46,11 @@
           />
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>{{ customerContact }}</span>
+            <span>{{ formatphone (customerContact) }}</span>
           </div>
         </b-col>
         <b-col md="5">
-          <span>{{ customerAddress }}</span>
+          <span> {{ customerAddress }}</span>
         </b-col>
       </b-row>
 
@@ -102,7 +103,14 @@
               </div>
               <div class="mt-1">
                 <strong>Rata - rata Belanja</strong>
+                <b-icon-info-circle
+                  v-b-popover.hover.top
+                  title="Rata-rata Belanja Sejumlah"
+                  class="ml-1"
+                />
+
               </div>
+
             </b-col>
             <b-col>
               <div class="mt-1">
@@ -379,10 +387,12 @@ import {
   BImg,
   BAvatar,
   BOverlay,
+  BIconInfoCircle,
   BCard,
   BContainer,
   BCollapse,
   VBToggle,
+  VBPopover,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import moment from 'moment'
@@ -396,18 +406,20 @@ export default {
     BCol,
     BImg,
     BAvatar,
+    BIconInfoCircle,
     BOverlay,
     BContainer,
     BCollapse,
   },
   directives: {
     'b-toggle': VBToggle,
+    'b-popover': VBPopover,
   },
   data() {
     return {
       loading: false,
       customerId: this.$route.params.customer_id,
-
+      orderId: this.$route.params.orderId,
       // Information Customer
       customerName: '',
       customerContact: '',
@@ -485,27 +497,37 @@ export default {
         return this.itemsDetailCustomer
       })
     },
+    formatphone(nomor) {
+      if (nomor !== null) {
+        // eslint-disable-next-line no-param-reassign
+        nomor = nomor.substring(1)
+      }
+      return `+62${nomor}`
+    },
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     formatStatus(value) {
       let formatStatus = ''
-      if (value === 0) {
-        formatStatus = 'Diajukan'
-      } else if (value === 1) {
-        formatStatus = 'Dikirim'
-      } else if (value === 2) {
+      if (value === 1) {
         formatStatus = 'Diterima'
-      } else if (value === 3) {
-        formatStatus = 'Retur'
-      } else if (value === 4) {
-        formatStatus = 'Batal'
       }
+      // if (value === 0) {
+      //   formatStatus = 'Diajukan'
+      // } else if (value === 1) {
+      //   formatStatus = 'Dikirim'
+      // } else if (value === 2) {
+      //   formatStatus = 'Diterima'
+      // } else if (value === 3) {
+      //   formatStatus = 'Retur'
+      // } else if (value === 4) {
+      //   formatStatus = 'Batal'
+      // }
       return formatStatus
     },
-    currentDateTime() {
-      return moment().format('MMMM Do YYYY, h:mm:ss a')
+    currentTime() {
+      return moment().format(' h:mm:ss a')
     },
   },
 }

@@ -697,10 +697,10 @@
       </div>
     </b-modal>
 
-    <onboarding
+    <!-- <onboarding
       ref="onboardingElement"
       :current-stage="0"
-    />
+    /> -->
   </div>
 </template>
 
@@ -718,7 +718,7 @@ import moment from 'moment'
 import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
 // import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import Onboarding from '../onboarding/Onboarding.vue'
+// import Onboarding from '../onboarding/Onboarding.vue'
 import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
 
 export default {
@@ -732,7 +732,7 @@ export default {
     // DateRangePicker,
     PincodeInput,
     vSelect,
-    Onboarding,
+    // Onboarding,
     PopoverInfo,
   },
   data() {
@@ -859,6 +859,7 @@ export default {
     }).then(response => {
       const { data } = response.data
       console.log('onboarding', data)
+      console.log('state profile', this.$store.state.auth.userData)
       if (data) {
         if (data.is_onboarding) this.$refs.onboardingElement.showModal()
       }

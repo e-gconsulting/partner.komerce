@@ -594,16 +594,16 @@
                     <b-col md="4">
                       <b-form-input
                         v-model="price"
-                        type="number"
                         placeholder="Rp | Harga"
+                        @keypress="formatStock($event)"
                       />
                     </b-col>
 
                     <b-col md="2">
                       <b-form-input
                         v-model="stock"
-                        type="number"
                         placeholder="Stok"
+                        @keypress="formatStock($event)"
                       />
                     </b-col>
 
@@ -907,9 +907,9 @@
               >
                 <b-form-input
                   v-model="stockProduct"
-                  type="number"
                   placeholder="Masukan jumlah stok barang"
                   :state="errors.length > 0 ? false:null"
+                  @keypress="formatStock($event)"
                 />
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
@@ -931,9 +931,9 @@
               >
                 <b-form-input
                   v-model="priceProduct"
-                  type="number"
                   placeholder="Rp  |  Masukan harga barang"
                   :state="errors.length > 0 ? false:null"
+                  @keypress="formatStock($event)"
                 />
                 <small class="text-primary">{{ errors[0] }}</small>
               </validation-provider>
@@ -1147,7 +1147,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
-import { ValidationObserver, ValidationProvider } from 'vee-validate'
+import { ValidationObserver, ValidationProvider, number } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
@@ -2010,6 +2010,12 @@ export default {
     handleOkModalValidationUpload() {
       this.imageFile = null
       this.$refs['modal-validation-upload'].hide()
+    },
+    formatStock($event) {
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
+        $event.preventDefault()
+      }
     },
   },
 }
