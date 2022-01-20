@@ -126,7 +126,7 @@ export default {
         },
         {
           key: 'shipping_profit',
-          label: 'Profit Non COD',
+          label: 'Profit Ongkir',
           sortable: true,
           formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
@@ -169,17 +169,11 @@ export default {
     // Set the initial number of items
     // items set after calling api
     this.totalRows = this.items.length
-  },
-  created() {
     this.fetchData()
-    // check data from API when there is withdrawal pending/process in api
-    // get data for series performa expedisi and performa partner
-    // get data for select option kurir
-    // get data for select option bulan or just hardcode
   },
   methods: {
     fetchData(params) {
-      console.log('params fetch data: ', params)
+      // console.log('params fetch data: ', params)
       const endpoint = '/v1/admin/finance/income'
       let getData = null
       if (params) {
