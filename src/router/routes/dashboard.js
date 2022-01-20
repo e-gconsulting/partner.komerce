@@ -2,7 +2,7 @@ export default [
   {
     path: '/admin-dashboard-komship',
     name: 'cod-dashboard',
-    component: () => import('@/views/pages/dashboard-cod/Index'),
+    component: () => import('@/views/pages/dashboard-cod'),
     meta: {
       resource: 'Dashboard',
       action: 'read',
