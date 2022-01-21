@@ -178,7 +178,7 @@ export default {
   },
   methods: {
     fetchData(params) {
-      console.log('params fetch data: ', params)
+      // console.log('params fetch data: ', params)
       const endpoint = '/v1/admin/finance/income'
       let getData = null
       if (params) {

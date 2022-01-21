@@ -539,6 +539,8 @@ import {
   formatFullDate,
 } from 'node-format-date'
 import { formatDate } from '@/@core/utils/filter'
+import httpKomship from '@/libs/http_komship'
+import useJwt from '@/@core/auth/jwt/useJwt'
 
 function numberWithCommas(x) {
   if (x) return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.')
@@ -672,6 +674,7 @@ export default {
       isValidOrder: false,
       isCalculating: false,
       isSubmitting: false,
+      detail_address: {},
       date: null,
       fields: [
         { key: 'no', label: 'No' },
@@ -723,14 +726,22 @@ export default {
     this.itemsCheckoutOrder = this.$route.params.itemsOrder
     this.address_id = this.$route.params.address_id
     this.dateValue = this.$route.params.date
-    console.log(this.dateValue)
     this.dateLabel = this.$route.params.dateLabel
     this.itemsOrder = this.$route.params.itemsOrder
     this.choosenAddres = this.$route.params.choosenAddres
     this.getProfile()
     this.getCustomer()
+    this.getAddress()
   },
   methods: {
+    getAddress() {
+      return this.$http_komship.get(`v1/address/${this.address_id}`).then(response => {
+        const { data } = response.data
+        this.detail_address = data
+      }).catch(() => {
+        console.log('failed to get the profile data')
+      })
+    },
     getCustomer() {
       return this.$http_komship.get('v1/customer').then(response => {
         const { data } = response.data
@@ -849,7 +860,8 @@ export default {
     findCorrectData(dataArr) {
       let selectedCost = {}
       for (let j = 0; j < dataArr.length; j += 1) {
-        if ((dataArr[j].shipping_type).substring(0, 3) === this.customerExpeditionOption) {
+        const newShip = (dataArr[j].shipping_type).substring(0, 3) === 'CTC' ? 'REG' : dataArr[j].shipping_type
+        if (newShip.substring(0, 3) === this.customerExpeditionOption) {
           selectedCost = dataArr[j]
         }
       }
@@ -1039,6 +1051,9 @@ export default {
         net_profit: this.totalCostNumberNetto,
       }
       await this.storeSelectedItemsToCart(formData)
+    },
+    validateShippingType() {
+
     },
     async storeSelectedItemsToCart(formData) {
       const allItemsToPost = this.genCart(this.itemsCheckoutOrder)

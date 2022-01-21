@@ -1,0 +1,277 @@
+<section id="dashboard-cod">
+  <div v-if="!loadDataAwal">
+    <b-row class="match-height mb-md-1">
+      <b-col>
+        <h3 class="mb-50 mb-md-1">
+          Dashboard
+        </h3>
+        <div>
+          <b-alert
+            v-if="alertshow"
+            show
+            variant="warning"
+            class="d-flex justify-content-between align-items-center px-1 wrapper-warning-pemintaan-saldo"
+          >
+            <span class="text-warning-pemintaan-saldo">
+              Anda masih memiliki permintaan penarikan saldo, segera cek sekarang!
+            </span>
+            <b-button
+              variant="gradient-warning"
+              class="btn-warning-pemintaan-saldo"
+            >
+              <span>11</span>
+            </b-button>
+          </b-alert>
+        </div>
+      </b-col>
+    </b-row>
+    <b-row class="match-height">
+      <b-col lg="6">
+        <b-card no-body>
+          <b-card-header class="custom-card-header">
+            <b-row style="width: 100%;">
+              <b-col
+                md="12"
+                class="dashboard-report-wrapper"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4 class="card-title mb-50 mb-sm-0">
+                    Performa Ekspedisi
+                  </h4>
+                  <b-button
+                    variant="outline"
+                    class="button-custom"
+                    @click="toPage('/performa-ekspedisi')"
+                  >
+                    <feather-icon
+                      icon="ChevronRightIcon"
+                    />
+                  </b-button>
+                </div>
+              </b-col>
+            </b-row>
+          </b-card-header>
+
+          <b-card-body>
+            <b-row class="select-form">
+              <b-col
+                md="2"
+              />
+              <b-col
+                md="3"
+              />
+              <b-col
+                md="3"
+                class="mb-50 mb-xs-1"
+              >
+                <b-form-select
+                  v-model="selectedEkspedisi.shipper"
+                  :options="optionsKurir"
+                />
+              </b-col>
+              <b-col
+                md="4"
+                class="custom-selected-filter"
+              >
+                <b-form-select
+                  v-model="selectedEkspedisi.month"
+                  :options="optionsBulan"
+                />
+              </b-col>
+            </b-row>
+            <div style="transform: translateY(-5px);">
+              <vue-apex-charts
+                type="area"
+                height="400"
+                :options="categoriesChartShippingComp"
+                :series="seriesChartshipping"
+              />
+            </div>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      <b-col lg="6">
+        <b-card no-body>
+          <b-card-header>
+            <div
+              class="d-flex justify-content-between align-items-center"
+              style="width: 100%;"
+            >
+              <h4 class="card-title mb-50 mb-sm-0">
+                Top Ekspedisi
+              </h4>
+              <div class="d-flex align-items-center justify-content-end">
+                <b-button-group>
+                  <b-button
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
+                    @click="choosenFilterTop('cod', 'filterTopEkspedisi')"
+                  >
+                    COD
+                  </b-button>
+                  <b-button
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
+                    @click="choosenFilterTop('non_cod', 'filterTopEkspedisi')"
+                  >
+                    Non-COD
+                  </b-button>
+                </b-button-group>
+              </div>
+            </div>
+          </b-card-header>
+          <b-card-body>
+            <div class="tbl-dashboard-top">
+              <b-list-group v-if="topShipping.length > 0">
+                <b-list-group-item
+                  v-for="(row, index) in topShipping"
+                  :key="index"
+                  class="d-flex justify-content-between align-items-center"
+                >
+                  <div class="d-flex justify-content-between">
+                    <b-avatar
+                      :src="row.avatar || 'https://via.placeholder.com/52x52'"
+                      class="mr-1"
+                    />
+                    <span class="text-top-each-item">{{ row.shipping }}</span>
+                  </div>
+                  <span class="total-top-each-item">
+                    {{ row.profit }}
+                  </span>
+                </b-list-group-item>
+              </b-list-group>
+              <span v-else>
+                No Data
+              </span>
+            </div>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
+
+    <b-row class="match-height">
+      <b-col lg="6">
+        <b-card no-body>
+          <b-card-header class="custom-card-header">
+            <b-row style="width: 100%;">
+              <b-col
+                md="12"
+                class="dashboard-report-wrapper"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <h4 class="card-title mb-50 mb-sm-0">
+                    Performa Partner
+                  </h4>
+                  <b-button
+                    variant="outline"
+                    class="button-custom"
+                    @click="toPage('/pendapatan')"
+                  >
+                    <feather-icon
+                      icon="ChevronRightIcon"
+                    />
+                  </b-button>
+                </div>
+              </b-col>
+            </b-row>
+          </b-card-header>
+
+          <b-card-body>
+            <b-row class="select-form">
+              <b-col
+                md="4"
+              />
+              <b-col
+                md="4"
+              />
+              <b-col
+                md="4"
+                class="custom-selected-filter"
+              >
+                <b-form-select
+                  v-model="selectedPartner.month"
+                  :options="optionsBulan"
+                />
+              </b-col>
+            </b-row>
+            <div style="transform: translateY(-5px);">
+              <vue-apex-charts
+                type="area"
+                height="400"
+                :options="categoriesChartPartnerComp"
+                :series="seriesChartpartner"
+              />
+            </div>
+          </b-card-body>
+        </b-card>
+      </b-col>
+      <b-col lg="6">
+        <b-card no-body>
+          <b-card-header>
+            <div
+              class="d-flex justify-content-between align-items-center"
+              style="width: 100%;"
+            >
+              <h4 class="card-title mb-50 mb-sm-0">
+                Top Partner
+              </h4>
+              <div class="d-flex align-items-center justify-content-end">
+                <b-button-group>
+                  <b-button
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
+                    @click="choosenFilterTop('cod', 'filterTopPartner')"
+                  >
+                    COD
+                  </b-button>
+                  <b-button
+                    variant="outline-secondary"
+                    class="btn-custom-topcodnoncod"
+                    @click="choosenFilterTop('non_cod', 'filterTopPartner')"
+                  >
+                    Non-COD
+                  </b-button>
+                </b-button-group>
+              </div>
+            </div>
+          </b-card-header>
+          <b-card-body>
+            <div class="tbl-dashboard-top">
+              <b-list-group v-if="topPartner.length > 0">
+                <b-list-group-item
+                  v-for="(row, index) in topPartner"
+                  :key="index"
+                  class="d-flex justify-content-between align-items-center"
+                >
+                  <div class="d-flex justify-content-between">
+                    <b-avatar
+                      :src="row.avatar || 'https://via.placeholder.com/52x52'"
+                      class="mr-1"
+                    />
+                    <span class="text-top-each-item">{{ row.partner }}</span>
+                  </div>
+                  <span class="total-top-each-item">
+                    {{ row.profit }}
+                  </span>
+                </b-list-group-item>
+              </b-list-group>
+              <span v-else>
+                No Data
+              </span>
+            </div>
+          </b-card-body>
+        </b-card>
+      </b-col>
+    </b-row>
+  </div>
+
+  <div
+    v-else
+    class="text-center"
+  >
+    <b-spinner
+      variant="primary"
+      label="Text Centered"
+    />
+  </div>
+</section>

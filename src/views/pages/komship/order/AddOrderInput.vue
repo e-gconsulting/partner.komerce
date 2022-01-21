@@ -931,6 +931,7 @@ export default {
       this.$refs.tableAddOrderOne.refreshTable()
     },
     onChangeAddress(item) {
+      console.log(item)
       this.choosenAddres = item
     },
     onAddProduct(itemSelected) {

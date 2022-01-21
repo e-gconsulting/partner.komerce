@@ -171,9 +171,9 @@
             Ganti PIN
           </b-button>
           <b-button
-            v-b-modal.modal-forgot-pin
             variant="outline-primary"
             class="ml-1"
+            @click="showPopupForgotPin"
           >
             Lupa PIN
           </b-button>
@@ -340,7 +340,7 @@
     <!-- =================================================================================================== -->
     <!-- Forgot PIN -->
     <b-modal
-      id="modal-forgot-pin"
+      ref="modal-forgot-pin"
       hide-header-close
       hide-footer
       hide-header
@@ -431,8 +431,8 @@
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
-          v-b-modal.forgot-create-new-pin
           variant="primary"
+          @click="handleForgotCreateNewPin"
         >
           Ganti PIN
         </b-button>
@@ -441,7 +441,7 @@
     </b-modal>
 
     <b-modal
-      id="forgot-create-new-pin"
+      ref="forgot-create-new-pin"
       no-close-on-backdrop
       hide-header-close
       hide-footer
@@ -467,8 +467,8 @@
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
-          v-b-modal.forgot-confirm-new-pin
           variant="primary"
+          @click="handleForgotConfirmNewPin"
         >
           Ganti PIN
         </b-button>
@@ -477,7 +477,7 @@
     </b-modal>
 
     <b-modal
-      id="forgot-confirm-new-pin"
+      ref="forgot-confirm-new-pin"
       no-close-on-backdrop
       hide-header-close
       hide-footer
@@ -504,6 +504,7 @@
       <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
           variant="primary"
+          :disabled="matchesPin !== dataPin || dataPin === null"
           @click="tes()"
         >
           Ganti PIN
@@ -532,7 +533,7 @@
 
       <b-col class="d-flex justify-content-center mt-1">
         <small class="text-center">
-          <strong>Masukan kode verifikasi (OTP) yang dikirimkan ke No maung@******.com</strong>
+          <strong>Masukan kode verifikasi (OTP) yang dikirimkan ke email {{ emailUser }}</strong>
         </small>
       </b-col>
 
@@ -569,9 +570,9 @@
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
-          v-b-modal.forgot-create-new-pin-email
           variant="primary"
           :disabled="dataPin === null || dataPin.length < 4"
+          @click="handleChangePinByEmail"
         >
           Ganti PIN
         </b-button>
@@ -580,7 +581,7 @@
     </b-modal>
 
     <b-modal
-      id="forgot-create-new-pin-email"
+      ref="forgot-create-new-pin-email"
       no-close-on-backdrop
       no-close-on-esc
       hide-header-close
@@ -607,7 +608,6 @@
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
         <b-button
-          v-b-modal.forgot-confirm-new-pin-email
           variant="primary"
           @click="handleChangeNewPin"
         >
@@ -618,7 +618,7 @@
     </b-modal>
 
     <b-modal
-      id="forgot-confirm-new-pin-email"
+      ref="forgot-confirm-new-pin-email"
       no-close-on-backdrop
       no-close-on-esc
       hide-header-close
@@ -707,10 +707,13 @@ export default {
 
       countOtp: 60,
       sendOtpEmail: false,
+
+      emailUser: '',
     }
   },
   mounted() {
     this.showModal()
+    this.getProfile()
   },
   methods: {
     // Handle OTP
@@ -773,6 +776,7 @@ export default {
       })
     },
     tes() {
+      this.$refs['forgot-confirm-new-pin-email'].hide()
       this.$swal({
         text: 'PIN Berhasil Diganti',
         icon: 'success',
@@ -898,6 +902,7 @@ export default {
       }
     },
     forgotPinByEmail() {
+      this.$refs['modal-forgot-pin'].hide()
       this.$refs['modal-forgot-email-pin'].show()
       this.loadingSubmit = true
       const formData = new FormData()
@@ -940,8 +945,43 @@ export default {
       this.countDownTimerOtp()
     },
     handleChangeNewPin() {
+      this.$refs['forgot-create-new-pin-email'].hide()
+      this.$refs['forgot-confirm-new-pin-email'].show()
       this.matchesPin = this.dataPin
       this.dataPin = null
+    },
+    getProfile() {
+      this.$http_komship.post('v1/my-profile', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+        const { data } = response.data
+        this.emailUser = data.user_email.replace(`${data.user_email.substr(3, 7)}`, '****')
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
+      })
+    },
+    handleForgotCreateNewPin() {
+      this.$refs['modal-forgot-no-pin'].hide()
+      this.$refs['forgot-create-new-pin'].show()
+    },
+    handleForgotConfirmNewPin() {
+      this.$refs['forgot-create-new-pin'].hide()
+      this.$refs['forgot-confirm-new-pin'].show()
+    },
+    handleChangePinByEmail() {
+      this.$refs['modal-forgot-email-pin'].hide()
+      this.$refs['forgot-create-new-pin-email'].show()
+    },
+    showPopupForgotPin() {
+      this.$refs['modal-forgot-pin'].show()
     },
   },
 }
