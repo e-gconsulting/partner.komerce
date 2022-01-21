@@ -449,7 +449,7 @@ export default {
       if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
-      if (this.pagination) Object.assign(params, { pagination: this.pagination })
+      // if (this.pagination) Object.assign(params, { pagination: this.pagination })
       httpKomship.get('/v1/customers', {
         params,
       }, {
