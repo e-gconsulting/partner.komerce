@@ -115,6 +115,7 @@ export default {
               download: false,
             },
           },
+          width: 3,
           type: 'bar',
           height: this.heightBar,
         },
