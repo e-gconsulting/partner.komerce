@@ -49,7 +49,8 @@
           md="8"
           class="mt-50"
         >
-          <div id="chart"
+          <div
+            id="chart"
           >
             <vue-apex-charts
               ref="realtimeChart"
@@ -111,7 +112,11 @@ export default {
       chartOptions: {
         colors: '#34A770',
         chart: {
-          stacked: true,
+          toolbar: {
+            tools: {
+              download: false,
+            },
+          },
           type: 'bar',
           height: this.heightBar,
         },
@@ -130,6 +135,9 @@ export default {
             fontSize: '12px',
             colors: ['black'],
           },
+          formatter(val) {
+            return val ? `${val.toFixed(0)}%` : ''
+          },
         },
         stroke: {
           show: true,
@@ -147,6 +155,9 @@ export default {
         xaxis: {
           categories: [],
           max: 100,
+          margin: {
+            right: 1,
+          },
         },
       },
     }
@@ -183,9 +194,6 @@ export default {
         ]
       })
     },
-    // formatter: function(val) {
-    //   return val.toString() + '%'
-    // },
     getData() {
       this.loading = true
       const params = {

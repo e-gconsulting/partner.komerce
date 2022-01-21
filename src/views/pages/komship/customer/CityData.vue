@@ -52,7 +52,7 @@
         >
           <div id="chart">
             <vue-apex-charts
-            ref="realtimeChart"
+              ref="realtimeChart"
               type="bar"
               :height="heightBar"
               :options="chartOptions"
@@ -94,7 +94,6 @@ export default {
   data() {
     return {
       loading: false,
-
       rangkingCity: 0,
       rangkingCityOptions: [
         { text: 'Bulan ini', value: 0 },
@@ -111,6 +110,11 @@ export default {
       chartOptions: {
         colors: '#34A770',
         chart: {
+          toolbar: {
+            tools: {
+              download: false,
+            },
+          },
           type: 'bar',
           height: this.heightBar,
         },
@@ -123,21 +127,21 @@ export default {
           },
         },
         dataLabels: {
-          // enabled: true,
           offsetX: 30,
           style: {
             fontSize: '12px',
             colors: ['black'],
           },
+          formatter(val) {
+            return val ? `${val.toFixed(0)}%` : ''
+          },
         },
         stroke: {
-          // show: true,
-          width: 1,
+          width: 2,
           colors: ['#fff'],
         },
         tooltip: {
           enabled: false,
-          shared: false,
           intersect: false,
           x: {
             show: false,
