@@ -27,7 +27,8 @@
             />
             <a
               class="text-white"
-              :href="`https://api.whatsapp.com/send?phone=+62 ${customerContact}` " target="blank"
+              :href="`https://api.whatsapp.com/send?phone=+62 ${customerContact}` "
+              target="blank"
             >
               <span class="align-middle">Hubungi Customer</span>
             </a>
@@ -45,7 +46,7 @@
           />
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>{{formatphone (customerContact) }}</span>
+            <span>{{ formatphone (customerContact) }}</span>
           </div>
         </b-col>
         <b-col md="5">
@@ -102,10 +103,14 @@
               </div>
               <div class="mt-1">
                 <strong>Rata - rata Belanja</strong>
-              <b-icon-info-circle
-              v-b-popover.hover.top title="Rata-rata Belanja Sejumlah" class="ml-1"
-              />
+                <b-icon-info-circle
+                  v-b-popover.hover.top
+                  title="Rata-rata Belanja Sejumlah"
+                  class="ml-1"
+                />
+
               </div>
+
             </b-col>
             <b-col>
               <div class="mt-1">
@@ -414,7 +419,7 @@ export default {
     return {
       loading: false,
       customerId: this.$route.params.customer_id,
-
+      orderId: this.$route.params.orderId,
       // Information Customer
       customerName: '',
       customerContact: '',
@@ -494,9 +499,10 @@ export default {
     },
     formatphone(nomor) {
       if (nomor !== null) {
-       nomor = nomor.substring(1)
+        // eslint-disable-next-line no-param-reassign
+        nomor = nomor.substring(1)
       }
-      return '+62'+nomor
+      return `+62${nomor}`
     },
     formatPrice(value) {
       const val = value
@@ -504,6 +510,9 @@ export default {
     },
     formatStatus(value) {
       let formatStatus = ''
+      if (value === 1) {
+        formatStatus = 'Diterima'
+      }
       if (value === 0) {
         formatStatus = 'Diajukan'
       } else if (value === 1) {
@@ -517,8 +526,8 @@ export default {
       }
       return formatStatus
     },
-    currentDateTime() {
-      return moment().format('MMMM Do YYYY, h:mm:ss a')
+    currentTime() {
+      return moment().format(' h:mm:ss a')
     },
   },
 }

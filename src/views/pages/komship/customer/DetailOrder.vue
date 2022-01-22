@@ -121,7 +121,7 @@
                 />
                 <div>
                   <h5><strong>{{ customerOrderName }}</strong></h5>
-                  <span>{{ customerOrderPhone }}</span>
+                  <span>{{ formatphone(customerOrderPhone) }}</span>
                 </div>
               </b-col>
             </b-list-group-item>
@@ -471,6 +471,13 @@ export default {
         this.loading = false
         return this.items
       })
+    },
+    formatphone(nomor) {
+      if (nomor !== null) {
+        // eslint-disable-next-line no-param-reassign
+        nomor = nomor.substring(1)
+      }
+      return `+62${nomor}`
     },
     getPartner() {
       httpKomship.post('/v1/my-profile', {}, {
