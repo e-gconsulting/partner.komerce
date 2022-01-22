@@ -475,7 +475,7 @@ export default {
     formatphone(nomor) {
       if (nomor !== null) {
         // eslint-disable-next-line no-param-reassign
-        nomor = nomor.substring(1)
+        nomor = nomor.substring(0)
       }
       return `+62${nomor}`
     },
