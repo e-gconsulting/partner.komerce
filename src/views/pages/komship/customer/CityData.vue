@@ -51,7 +51,7 @@
         >
           <div id="chart">
             <vue-apex-charts
-            ref="realtimeChart"
+              ref="realtimeChart"
               type="bar"
               :height="heightBar"
               :options="chartOptions"
@@ -93,7 +93,6 @@ export default {
   data() {
     return {
       loading: false,
-
       rangkingCity: 0,
       rangkingCityOptions: [
         { text: 'Bulan ini', value: 0 },
@@ -106,10 +105,16 @@ export default {
       series: [{
         data: [],
       }],
-      heightBar: 120,
+      heightBar: 300,
       chartOptions: {
         colors: '#34A770',
         chart: {
+          toolbar: {
+            tools: {
+              download: false,
+            },
+          },
+          width: 3,
           type: 'bar',
           height: this.heightBar,
         },
@@ -122,24 +127,29 @@ export default {
           },
         },
         dataLabels: {
-          enabled: true,
-          offsetX: -6,
+          offsetX: 30,
           style: {
             fontSize: '12px',
-            colors: ['#fff'],
+            colors: ['black'],
+          },
+          formatter(val) {
+            return val ? `${val.toFixed(0)}%` : ''
           },
         },
         stroke: {
-          show: true,
-          width: 1,
+          width: 2,
           colors: ['#fff'],
         },
         tooltip: {
-          shared: true,
+          enabled: false,
           intersect: false,
+          x: {
+            show: false,
+          },
         },
         xaxis: {
           categories: [],
+          max: 100,
         },
       },
     }
@@ -168,7 +178,7 @@ export default {
         data.city.forEach(this.myArray)
         this.series = [
           {
-            data: this.getPercentage(data.city),
+            data: this.getPercentage(data.city_name),
           },
         ]
         return this.city

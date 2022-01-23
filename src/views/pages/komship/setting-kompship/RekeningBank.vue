@@ -723,7 +723,12 @@ export default {
       }
     },
     submitRekening() {
-      httpKomship.post('/v1/partner/sms/otp/verification').then(response => {
+      if (this.errorConfirmOtp === true) {
+        this.errorConfirmOtp = false
+      }
+      const formData = new FormData()
+      formData.append('otp', this.dataPin)
+      httpKomship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.message === 'Successfully Verification OTP.') {
           httpKomship.post('/v1/bank-account/store',
             {
