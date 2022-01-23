@@ -354,7 +354,12 @@
   width: 100%;
   margin: 0 0 40px;
 }
-
+.btn-outline {
+  outline: #F95031;
+  margin-right: 16px;
+  background: #fff !important;
+  color: #F95031;
+}
 /* Tablet & mobile view */
 @media only screen and (max-width: 991px) {
   .add-order-dsc-title {

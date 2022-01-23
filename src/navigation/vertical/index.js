@@ -41,7 +41,7 @@ import settingAndPrivacy from './setting-and-privacy'
 
 // Partner
 import talentPool from './talent-pool'
-import wishlist from './wishlist'
+// import wishlist from './wishlist'
 
 // Komship
 import dashboardKompship from './dashboard-kompship'
@@ -51,7 +51,7 @@ import pickup from './pickup'
 import customer from './customer'
 import settingKompship from './setting-kompship'
 import keuangan from './keuangan'
-import hiring from './hiring'
+// import hiring from './hiring'
 
 // Komship Admin
 import komship from './komship'
@@ -81,7 +81,7 @@ export default [
   ...customer,
   ...keuangan,
   ...settingKompship,
-  ...hiring,
+  // ...hiring,
 
   ...dashboardKomplace,
   ...monitoring,
@@ -89,5 +89,5 @@ export default [
   ...manajemenAdmin,
 
   ...talentPool,
-  ...wishlist,
+  // ...wishlist,
 ]

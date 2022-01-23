@@ -238,7 +238,7 @@ export default {
         this.handleRedirectToAddProduct()
       } else if (typeof currentStages !== 'undefined') {
         if (currentStages === 3) {
-          this.$router.push('add-order')
+          this.$router.push('add-order-onboarding')
         } else if (currentStages === 5) {
           this.$router.push('ajukan-pickup')
         } else {
@@ -257,7 +257,6 @@ export default {
     },
     updateOnboardingStatus(nextUrl) {
       return this.$http_komship.put('v1/partner/onboarding/update').then(response => {
-        console.log(response)
         if (response && response.data && response.data.code && response.data.code === 200) {
           this.$router.push(nextUrl)
         }

@@ -82,6 +82,7 @@
                       variant="outline-primary"
                       size="lg"
                       class="mr-2"
+                      @click="resetFormFilter()"
                     >
                       Reset
                     </b-button>
@@ -299,8 +300,8 @@ export default {
       totalRows: 1,
       currentPage: 1,
       sortBy: '',
-      sortDesc: false,
-      sortDirection: 'asc',
+      sortDesc: true,
+      sortDirection: 'desc',
       filter: null,
       filterOn: [],
       items: [],
@@ -332,6 +333,9 @@ export default {
     this.fetchData()
   },
   methods: {
+    resetFormFilter() {
+      this.statusFilter = null
+    },
     searching() {
       this.fetchData(this.searchTerm, null)
     },
@@ -386,7 +390,7 @@ export default {
         params: { status, search },
       }).then(response => {
         const { data } = response.data
-        this.items = data
+        this.items = [...data].sort((a, b) => b.withdrawal_id - a.withdrawal_id)
         this.totalRows = data.length
       })
         .catch(e => {

@@ -65,7 +65,7 @@
         </b-col>
       </b-row>
 
-      <b-row class="mt-3">
+      <!-- <b-row class="mt-3">
         <b-col>
           <b-table
             :fields="fieldsSendKompship"
@@ -73,7 +73,7 @@
             class="border"
           />
         </b-col>
-      </b-row>
+      </b-row> -->
     </b-card>
   </b-overlay>
 
@@ -128,7 +128,7 @@ export default {
 
       fieldsSendKompship: [
         {
-          key: 'send_kompship', label: 'Pengiriman Komship',
+          key: 'send_kompship', label: 'Pengiriman  komship',
         },
       ],
 
@@ -140,7 +140,7 @@ export default {
 
       itemsSendKompship: [
         {
-          send_kompship: 'Ketika mengaktifkan pengiriman Non Komship, maka kamu tidak mendapatkan cashback dan fitur lainnya yang ada di membership Komship (Mandiri menjadi Non Komship) ',
+          send_kompship: 'Ketika mengaktifkan pengiriman Non Komship, maka kamu tidak mendapatkan cashback dan fitur lainnya yang ada di membership Komship. ',
         },
       ],
 

@@ -1128,7 +1128,7 @@ export default {
       formChoices1: [{ choices: null }],
       formChoices2: [{ choices: null }],
       formChoices3: [{ choices: null }],
-
+      stok: '',
       variationFields1: false,
       variationFields2: false,
       variationFields3: false,
@@ -1422,8 +1422,6 @@ export default {
 
         this.loading = false
       })
-      console.log('loadProduct')
-      console.log(this.variantItems)
     },
     updateVariation() {
       if (this.stock === null) {
@@ -1465,8 +1463,8 @@ export default {
                       val: this.formChoices3[z].choices,
                       parent: 0,
                       sold: this.fieldEditVariation.options[x].options[y].options[z].sold,
-                      stock: this.fieldEditVariation.options[x].options[y].options[z].variant_stock,
-                      price: this.fieldEditVariation.options[x].options[y].options[z].option_price,
+                      stock: this.stock,
+                      price: this.price,
                     })
                   } else {
                     this.variantItems[x].option[y].option.push({
@@ -1570,9 +1568,6 @@ export default {
         }
       }
 
-      console.log('fieldEditVariation')
-      console.log(this.fieldEditVariation)
-
       // Delete empty choices
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.formChoices1.length; x++) {
@@ -1634,8 +1629,6 @@ export default {
           class: 'col-action',
         },
       )
-      console.log('updateVariation')
-      console.log(this.variantItems)
     },
     submitPublish() {
       this.loadingSubmit = true
@@ -1769,8 +1762,6 @@ export default {
             variant_option: this.variantStore,
             option: this.optionStore,
           }
-
-          console.log(params)
 
           httpKomship.put(`/v1/product/update/${this.productId}`, params, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -2066,10 +2057,12 @@ export default {
         this.variationFields2 = false
         this.variationName2 = ''
         this.variationName1 = ''
+        this.activeAddChoices1 = true
       } else if (this.variationFields3 === true) {
         this.variationFields3 = false
         this.variationName3 = ''
         this.variationName1 = ''
+        this.activeAddChoices2 = true
       } else {
         this.variationName1 = ''
         this.variationFields1 = false
@@ -2084,6 +2077,7 @@ export default {
         this.variationName3 = ''
         this.variationFields3 = false
         this.variationName2 = ''
+        this.activeAddChoices2 = true
       } else {
         this.variationName2 = ''
         this.variationFields2 = false

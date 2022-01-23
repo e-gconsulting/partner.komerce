@@ -44,6 +44,7 @@
             </div>
           </div>
           <b-tabs
+            v-model="tabActiveIndex"
             content-class="mt-1"
             class="mt-1"
             active-nav-item-class="font-weight-bold text-danger"
@@ -55,6 +56,8 @@
               title="COD"
             >
               <tab-cod
+                ref="dataTabCOD"
+                lazy
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -127,13 +130,20 @@ export default {
       totalCod: 0,
       totalOngkir: 0,
       loadDataAwal: true,
+      tabActiveIndex: 0,
     }
   },
   computed: {
     //
   },
   watch: {
-    //
+    tabActiveIndex: {
+      handler(val) {
+        if (val === 0) {
+          this.$refs.dataTabCOD.fetchData()
+        }
+      },
+    },
   },
   mounted() {
     //

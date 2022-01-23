@@ -272,6 +272,21 @@
       </template>
 
     </b-table>
+
+    <!-- <b-row>
+      <b-col
+        cols="12"
+        class="d-flex justify-content-end"
+      >
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+          first-number
+          last-number
+        />
+      </b-col>
+    </b-row> -->
   </section>
 </template>
 
@@ -288,6 +303,9 @@ import {
   BPopover,
   BFormGroup,
   BCollapse,
+  // BRow,
+  // BCol,
+  // BPagination,
 } from 'bootstrap-vue'
 
 export default {
@@ -303,6 +321,9 @@ export default {
     BPopover,
     BFormGroup,
     BCollapse,
+    // BRow,
+    // BCol,
+    // BPagination,
   },
   props: {
     tableRefName: {

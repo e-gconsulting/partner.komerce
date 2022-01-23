@@ -30,13 +30,15 @@
         </div>
       </template>
 
-      <template #cell(button)="buttonData">
-        <div
-          class="view-all-pickup-button blue-text"
-          @click="() => handleShowDetail(buttonData.item)"
+      <template #cell(button)="data">
+        <b-button
+          variant="flat-info"
+          class="btn-icon"
+          tag="router-link"
+          :to="{ name: $route.meta.routeDetailHistory, params: { order_data_id: data.item.id } }"
         >
           Lihat detail...
-        </div>
+        </b-button>
       </template>
 
     </b-table>
@@ -46,11 +48,13 @@
 <script>
 import {
   BTable,
+  BButton,
 } from 'bootstrap-vue'
 
 export default {
   components: {
     BTable,
+    BButton,
   },
   props: {
     tableRefName: {

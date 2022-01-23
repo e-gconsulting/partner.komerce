@@ -1,6 +1,7 @@
 <template>
-  <b-card>
-    <b-row class="d-flex justify-content-end align-items-center">
+ <b-card>
+    <h4><strong>Customer</strong></h4>
+        <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
       >
@@ -11,7 +12,7 @@
           <b-form-input
             v-model="customerName"
             placeholder="Masukan Nama Customer"
-            @input="filterCustomer"
+            @input="datapagination(filterCustomer)"
           />
         </b-input-group>
       </b-col>
@@ -47,7 +48,7 @@
                       label="label"
                       :options="itemsDestinations"
                       :reduce="items => items.city_name"
-                      placeholder="Ketik untuk mencari..."
+                      placeholder="Masukan nama Provinsi atau Kota"
                       @search="onSearchDestination"
                     />
                   </b-form-group>
@@ -64,6 +65,7 @@
                       <b-form-input
                         v-model="spentFrom"
                         class=""
+                        placeholder="Rp.10.000.000"
                       />
                       <b-button
                         class="btn-icon"
@@ -77,6 +79,7 @@
                       <b-form-input
                         v-model="spentTo"
                         class="mr-1"
+                        placeholder="Rp.10.000.000"
                       />
                     </div>
                   </b-form-group>
@@ -93,6 +96,7 @@
                       <b-form-input
                         v-model="pcsFrom"
                         class=""
+                        placeholder="0"
                       />
                       <b-button
                         class="btn-icon"
@@ -106,6 +110,7 @@
                       <b-form-input
                         v-model="pcsTo"
                         class="mr-1"
+                        placeholder="0"
                       />
                     </div>
                   </b-form-group>
@@ -122,6 +127,7 @@
                       <b-form-input
                         v-model="orderFrom"
                         class=""
+                        placeholder="0"
                       />
                       <b-button
                         class="btn-icon"
@@ -135,6 +141,7 @@
                       <b-form-input
                         v-model="orderTo"
                         class="mr-1"
+                        placeholder="0"
                       />
                     </div>
                   </b-form-group>
@@ -172,32 +179,56 @@
     </b-row>
 
     <b-overlay
+      variant="light"
       :show="loading"
       spinner-variant="primary"
-      variant="light"
-      rounded="sm"
-      opacity=".5"
       blur="0"
+      opacity=".5"
+      rounded="sm"
+
     >
       <b-table
-        ref="tables"
+        id="pagination"
+        :per-page="0"
+        :current-page="currentPage"
+
         striped
         hover
         responsive
         class="position-relative mt-2"
         empty-text="Tidak ada data untuk ditampilkan."
-
         :items="itemsCustomer"
         :fields="fields"
         :show-empty="!loading"
+        @row-clicked="onRowClicked"
       >
 
+        <template #head(customer_name)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(customer_address)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(total_order)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(total_pcs)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(total_spent)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+        <template #head(last_order)="data">
+          <span class="capitalizeText">{{ data.label }}</span>
+        </template>
+
+        <!-- Template cell -->
         <template #cell(customer_name)="data">
           {{ data.item.customer_name }}
         </template>
 
         <template #cell(customer_address)="data">
-          {{ data.item.customer_address }}
+          {{ data.item.customer_address.toLowerCase() }}
         </template>
 
         <template #cell(total_order)="data">
@@ -212,22 +243,25 @@
           Rp. {{ formatPrice(data.value) }}
         </template>
 
-        <template #cell(action)="data">
-          <b-button
-            size="sm"
-            variant="flat-info"
-            tag="router-link"
-            :to="{ name: $route.meta.routeDetail, params: { customer_id: data.item.customer_id } }"
-          >
-            Lihat Detail
-          </b-button>
-        </template>
-
       </b-table>
+       <b-pagination
+      v-model="currentPage"
+      :total-rows="totalinforCustomer"
+      :per-page="perPage"
+      class="mt-4"
+    >
+      <template #first-text><span class="text-dark">Lihat per halaman</span></template>
+       </b-pagination>
+      <b-pagination
+        v-model="currentPage"
+        size="md"
+        class="float-right mr-2"
+        :total-rows="totalinforCustomer"
+        :per-page="perPage"
+      />
     </b-overlay>
   </b-card>
 </template>
-
 <script>
 import {
   BCol,
@@ -237,15 +271,16 @@ import {
   BButton,
   BRow,
   BTable,
-  VBPopover,
   BForm,
   BFormGroup,
   BCard,
   BOverlay,
+  VBPopover,
   BDropdown,
+  BPagination,
   BDropdownForm,
 } from 'bootstrap-vue'
-import FeatherIcon from '@/@core/components/feather-icon/FeatherIcon.vue'
+
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
@@ -262,12 +297,12 @@ export default {
     BButton,
     BRow,
     BTable,
-    FeatherIcon,
     BForm,
     BFormGroup,
     BOverlay,
     vSelect,
     BDropdown,
+    BPagination,
     BDropdownForm,
   },
   directives: {
@@ -275,23 +310,24 @@ export default {
     Ripple,
   },
   mixins: [dateFormat],
+
   data() {
     return {
       loading: false,
-
       selected: 1,
       options: [
         { value: 1, text: 'Kabupaten' },
       ],
-
       fields: [
         {
           key: 'customer_name',
           label: 'Nama Customer',
+          sortable: true,
         },
         {
           key: 'customer_address',
           label: 'Alamat',
+          tdClass: 'capitalizeText',
         },
         {
           key: 'total_order',
@@ -313,6 +349,7 @@ export default {
         {
           key: 'last_order',
           label: 'Terakhir Order',
+          sortable: true,
           formatter: value => {
             if (!value || value === '00-00-0000') return '-'
             value.split('')
@@ -331,15 +368,9 @@ export default {
             return this.dateFormat(String(newFormat.join('')), 'dd mmmm yyyy')
           },
         },
-        {
-          key: 'action',
-          label: 'Aksi',
-        },
       ],
 
       itemsCustomer: [],
-
-      // Params Filter
       productName: '',
       spentFrom: null,
       spentTo: null,
@@ -355,9 +386,30 @@ export default {
 
       endpoint: null,
       url: '/v1/customers',
+      loadTable: false,
+      currentPage: 1,
+      perPage: 10,
+      totalinforCustomer: 0,
     }
   },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.filterCustomer().catch(error => {
+          console.error(error)
+        })
+      },
+    },
+  },
+  computed: {
+    rows() {
+      return this.itemsCustomer.length
+    },
+  },
   mounted() {
+    this.filterCustomer().catch(error => {
+      console.error(error)
+    })
     this.tableProvider()
   },
   methods: {
@@ -384,6 +436,7 @@ export default {
       if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
+      if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
 
       httpKomship.get('/v1/customers', {
         params,
@@ -421,10 +474,19 @@ export default {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
+    onRowClicked(item) {
+      this.$router.push({
+        name: this.$route.meta.routeDetail,
+        params: { customer_id: item.customer_id },
+      })
+    },
   },
 }
 </script>
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+.capitalizeText {
+  text-transform: capitalize;
+}
 </style>

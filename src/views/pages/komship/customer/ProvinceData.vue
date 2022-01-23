@@ -11,7 +11,7 @@
       <b-row>
         <b-col>
           <h3 class="mb-50 mb-md-0">
-            Rangking Provinsi Customer
+            Ranking Provinsi Customer
           </h3>
         </b-col>
         <b-col cols="auto">
@@ -49,10 +49,12 @@
           md="8"
           class="mt-50"
         >
-          <div id="chart">
+          <div id="chart"
+          >
             <vue-apex-charts
+              ref="realtimeChart"
               type="bar"
-              height="150"
+              :height="heightBar"
               :options="chartOptions"
               :series="series"
             />
@@ -105,11 +107,12 @@ export default {
       series: [{
         data: [],
       }],
+      heightBar: 0,
       chartOptions: {
         colors: '#34A770',
         chart: {
           type: 'bar',
-          height: 150,
+          height: this.heightBar,
         },
         plotOptions: {
           bar: {
@@ -133,7 +136,7 @@ export default {
           colors: ['#fff'],
         },
         tooltip: {
-          shared: true,
+          shared: false,
           intersect: false,
         },
         xaxis: {
@@ -184,6 +187,11 @@ export default {
       }).then(response => {
         const { data } = response.data
         this.province = data.province
+        if (this.province.length === 5) this.heightBar = 290
+        if (this.province.length === 4) this.heightBar = 250
+        if (this.province.length === 3) this.heightBar = 210
+        if (this.province.length === 2) this.heightBar = 150
+        if (this.province.length === 1) this.heightBar = 120
         this.loading = false
         data.province.forEach(this.myArray)
         this.series = [
@@ -213,6 +221,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~@core/scss/vue/libs/vue-flatpicker.scss';
 @import '~@core/scss/vue/libs/vue-flatpicker.scss';
 </style>
