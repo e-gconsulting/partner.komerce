@@ -16,7 +16,10 @@
     </div>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Tanggal</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Tanggal</label>
       </b-col>
       <b-col
         md="4"
@@ -27,7 +30,10 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Nama Pelanggan</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Nama Pelanggan</label>
       </b-col>
       <b-col
         md="4"
@@ -53,7 +59,10 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">No Telepon</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >No Telepon</label>
       </b-col>
       <b-col
         md="4"
@@ -72,21 +81,35 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Kota/Kabupaten</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Masukan Kota/Kabupaten</label>
       </b-col>
       <b-col md="5">
         <v-select
+          ref="selectDestination"
           v-model="destination"
           :options="listDestination"
           placeholder="Masukan Kota/Kabupaten"
           @search="getDestination"
           @input="getShippingType"
-        />
+        >
+          <span
+            slot="no-options"
+            @click="$refs.selectDestination.open = false"
+          >
+            Tidak ada data untuk ditampilkan.
+          </span>
+        </v-select>
       </b-col>
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Alamat Detail</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Alamat Detail</label>
       </b-col>
       <b-col
         md="4"
@@ -100,7 +123,10 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Metode Pembayaran</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Metode Pembayaran</label>
       </b-col>
       <b-col
         md="4"
@@ -115,7 +141,10 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Ekspedisi</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Ekspedisi</label>
       </b-col>
       <b-col
         md="4"
@@ -132,17 +161,28 @@
         class="font-bold"
       >
         <v-select
+          ref="selectTypeShipping"
           v-model="typeShipping"
           :options="listTypeShipping"
           label="shipping_type"
-          placeholder="Jenis Pengiriman"
+          placeholder="Opsi Pengiriman"
           @input="calculate"
-        />
+        >
+          <span
+            slot="no-options"
+            @click="$refs.selectTypeShipping.open = false"
+          >
+            Tidak ada data untuk ditampilkan.
+          </span>
+        </v-select>
       </b-col>
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Gunakan Potongan Saldo</label>
+        <label
+          class="text-lg"
+          style="color:#828282;"
+        >Gunakan Potongan Saldo</label>
       </b-col>
       <b-col
         md="4"
@@ -162,7 +202,10 @@
     >
       <b-row class="mb-1">
         <b-col md="3">
-          <label class="text-lg">Nominal Potongan</label>
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Nominal Potongan</label>
         </b-col>
         <b-col
           md="4"
@@ -409,7 +452,7 @@ export default {
       orderDate: moment().format('YYYY/MM/DD'),
       customerName: null,
       listCustomer: [],
-      customerId: null,
+      customerId: 0,
       customerPhone: null,
       detailAddress: null,
       destination: null,
@@ -426,7 +469,7 @@ export default {
       cashback: null,
       cashbackPercentage: null,
       potonganSaldo: false,
-      discount: null,
+      discount: 0,
       subTotal: null,
       netProfit: null,
       grandTotal: null,
@@ -538,11 +581,17 @@ export default {
             const { data } = res.data
             this.listTypeShipping = data
           })
-          .catch(err => {
-            console.log(err)
+          .catch(() => {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Mohon maaf, perhitungan biaya terjadi kesalahan Silahkan pilih ulang ekspedisi anda atau refresh halaman.</span>',
+              imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+              confirmButtonText: 'Oke',
+              confirmButtonClass: 'btn btn-primary',
+            })
           })
       } else {
         this.typeShipping = null
+        this.isCalculate = false
         this.listTypeShipping = []
       }
       return this.listTypeShipping
@@ -586,10 +635,11 @@ export default {
     },
     async submit() {
       if (this.customerName && this.customerPhone && this.detailAddress !== null) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, {
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, [{
           date: this.orderDate,
           tariff_code: this.destination.value,
           subdistrict_name: this.destination.subdistrict_name,
+          zip_code: this.destination.zip_code,
           district_name: this.destination.district_name,
           city_name: this.destination.city_name,
           is_komship: this.profile.is_komship,
@@ -600,10 +650,10 @@ export default {
           shipping: this.shipping,
           shipping_type: this.typeShipping.shipping_type,
           payment_method: this.paymentMethod,
-          bank: null,
+          bank: 0,
           partner_address_id: this.profile.user_address_default.address_id,
-          bank_account_name: null,
-          bank_account_no: null,
+          bank_account_name: 0,
+          bank_account_no: 0,
           subtotal: this.subTotal,
           grandtotal: this.grandTotal,
           shipping_cost: this.shippingCost,
@@ -611,25 +661,45 @@ export default {
           discount: this.discount,
           shipping_cashback: this.cashback,
           net_profit: this.netProfit,
+          cart: this.cartId.toString(),
+        }]).then(() => {
+          this.$swal({
+            title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+            imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
+            confirmButtonText: 'Oke',
+            confirmButtonClass: 'btn btn-primary',
+          }).then(() => {
+            this.$router.go('/data-order')
+          })
+        }).catch(() => {
+          this.$swal({
+            title: '<span class="font-weight-bold h4">Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkah cek kembali saldo anda.</span>',
+            imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+            showCancelButton: true,
+            confirmButtonText: 'Cek Saldo',
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonClass: 'btn btn-outline-primary text-primary',
+            cancelButtonColor: '#FFFFFF',
+          }).then(result => {
+            if (result.isConfirmed) {
+              this.$router.push({ name: 'saldo' })
+            }
+          })
         })
       } else {
         this.$swal({
           title: '<span class="font-weight-bold h4">Tidak Boleh Ada Field Yang Kosong!</span>',
           imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-          showCloseButton: false,
-          focusConfirm: true,
           confirmButtonText: 'Oke',
-          customClass: {
-            confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-          },
-          buttonsStyling: false,
+          confirmButtonClass: 'btn btn-primary',
         })
       }
     },
   },
 }
 </script>
-<style>
+<style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 .collapsed > .when-open,
 .not-collapsed > .when-closed {
   display: none;
