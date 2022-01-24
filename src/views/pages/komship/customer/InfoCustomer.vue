@@ -1,7 +1,7 @@
 <template>
- <b-card>
+  <b-card>
     <h4><strong>Customer</strong></h4>
-        <b-row class="d-flex justify-content-end align-items-center">
+    <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
       >
@@ -185,7 +185,6 @@
       blur="0"
       opacity=".5"
       rounded="sm"
-
     >
       <b-table
         id="pagination"
@@ -199,7 +198,6 @@
         empty-text="Tidak ada data untuk ditampilkan."
         :items="itemsCustomer"
         :fields="fields"
-        :per-page="perPage"
         :show-empty="!loading"
         @row-clicked="onRowClicked"
       >
@@ -245,14 +243,16 @@
         </template>
 
       </b-table>
-       <b-pagination
-      v-model="currentPage"
-      :total-rows="totalinforCustomer"
-      :per-page="perPage"
-      class="mt-4"
-    >
-      <template #first-text><span class="text-dark">Lihat per halaman</span></template>
-       </b-pagination>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalinforCustomer"
+        :per-page="perPage"
+        class="mt-4"
+      >
+        <template #first-text>
+          <span class="text-dark">Lihat per halaman</span>
+        </template>
+      </b-pagination>
       <b-pagination
         v-model="currentPage"
         size="md"
@@ -303,7 +303,6 @@ import {
   BOverlay,
   VBPopover,
   BDropdown,
-  BPagination,
   BDropdownForm,
 } from 'bootstrap-vue'
 
@@ -329,7 +328,6 @@ export default {
     BOverlay,
     vSelect,
     BDropdown,
-    BPagination,
     BDropdownForm,
   },
   directives: {
@@ -430,10 +428,14 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      currentPage: 1,
-      perPage: 10,
+
       totalinforCustomer: 0,
     }
+  },
+  computed: {
+    itemcustomers() {
+      return this.itemsCustomer.length
+    },
   },
   watch: {
     currentPage: {
@@ -442,11 +444,6 @@ export default {
           console.error(error)
         })
       },
-    },
-  },
-  computed: {
-    rows() {
-      return this.itemsCustomer.length
     },
   },
   mounted() {
@@ -486,7 +483,6 @@ export default {
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
       // if (this.pagination) Object.assign(params, { pagination: this.pagination })
       if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
-
 
       httpKomship.get('/v1/customers', {
         params,
