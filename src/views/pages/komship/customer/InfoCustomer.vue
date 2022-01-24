@@ -19,7 +19,6 @@
       <b-col
         cols="auto"
       >
-
         <b-dropdown
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           right
@@ -222,28 +221,6 @@
         <template #head(last_order)="data">
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
-
-        <!-- Template cell -->
-        <template #cell(customer_name)="data">
-          {{ data.item.customer_name }}
-        </template>
-
-        <template #cell(customer_address)="data">
-          {{ data.item.customer_address.toLowerCase() }}
-        </template>
-
-        <template #cell(total_order)="data">
-          {{ data.item.total_order }}
-        </template>
-
-        <template #cell(total_pcs)="data">
-          {{ data.item.total_pcs }}
-        </template>
-
-        <template #cell(total_spent)="data">
-          Rp. {{ formatPrice(data.value) }}
-        </template>
-
       </b-table>
        <b-pagination
       v-model="currentPage"

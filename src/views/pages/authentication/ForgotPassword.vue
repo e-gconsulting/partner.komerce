@@ -1,141 +1,138 @@
 <template>
-  <div class="auth-wrapper auth-v2">
-
+  <div class="auth-wrapper auth-v1 px-2">
     <b-row class="auth-inner m-0">
-      <!-- Left Text-->
-      <b-col
-        lg="8"
-        class="bg-google d-none d-lg-flex align-items-center px-5"
-        :style="{
-          backgroundImage: `url('${imgUrl}')`,
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPositionX: 'center',
-        }"
-      >
-
-        <!-- Brand logo-->
-        <b-link class="brand-logo d-none d-lg-flex">
-          <b-img
-            :src="appLogoImage"
-            alt="logo"
-            class="flat-image"
-            style="width: 36px"
-          />
-          <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
-            <span class="text-white">{{ appName }}</span>
-          </h2>
+      <b-card class="text-white mt-2">
+        <b-link class="brand-logo text-center">
+          <b-link class="brand-logo d-none d-lg-flex text-center">
+            <b-img
+              :src="appLogoImage"
+              alt="logo"
+              class="flat-image-dark text-center"
+              style="width: 216px; text-align:center;"
+            />
+          </b-link>
         </b-link>
-        <!-- /Brand logo-->
 
-        <div
-          class="w-100 d-lg-flex align-items-center justify-content-center px-5"
-        />
-      </b-col>
-      <!-- /Left Text-->
-
-      <!-- Login-->
-      <b-col
-        lg="4"
-        class="d-flex align-items-center auth-bg px-2 p-lg-5"
-      >
-
-        <!-- Brand logo-->
-        <b-link class="brand-logo d-flex d-lg-none">
-          <b-img
-            :src="appLogoImage"
-            alt="logo"
-            style="width: 36px"
-          />
-          <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
-            {{ appName }}
-          </h2>
-        </b-link>
-        <!-- /Brand logo-->
-
-        <b-col
-          sm="8"
-          md="6"
-          lg="12"
-          class="px-xl-2 mx-auto"
+        <b-card-title class="mb-1 text-center">
+          Lupa Password
+        </b-card-title>
+        <b-card-text class="mb-2 text-center text-black">
+          Tautan untuk mengatur ulang password
+          akan dikirim melalui email.
+        </b-card-text>
+        <b-alert
+          variant="danger"
+          :show="!!error"
         >
-          <b-card-title
-            class="mb-1 font-weight-bold"
-            title-tag="h2"
+          <div class="alert-body">
+            <span>{{ error }}</span>
+          </div>
+        </b-alert>
+        <b-alert
+          variant="danger"
+          :show="!!error"
+        >
+          <div class="alert-body">
+            <span>{{ error }}</span>
+          </div>
+        </b-alert>
+        <!-- form -->
+        <validation-observer
+          ref="loginForm"
+        >
+          <b-form
+            class="auth-login-form mt-2"
+            @submit.prevent="submit"
           >
-            Reset Password
-          </b-card-title>
-          <b-card-text class="mb-2">
-            Tautan untuk mengatur ulang password akan dikirim melalui email.
-          </b-card-text>
-
-          <b-alert
-            variant="danger"
-            :show="!!error"
-          >
-            <div class="alert-body">
-              <span>{{ error }}</span>
-            </div>
-          </b-alert>
-
-          <!-- form -->
-          <validation-observer
-            ref="loginForm"
-            #default="{invalid}"
-          >
-            <b-form
-              class="auth-login-form mt-2"
-              @submit.prevent="submit"
+            <!-- email -->
+            <b-form-group
+              label="Email"
+              label-for="login-email"
             >
-              <!-- email -->
-              <b-form-group
-                label="Email"
-                label-for="login-email"
+              <validation-provider
+                #default="{ errors }"
+                name="Email"
+                vid="email"
+                rules="required|email"
               >
-                <validation-provider
-                  #default="{ errors }"
-                  name="Email"
-                  vid="email"
-                  rules="required|email"
-                >
-                  <b-form-input
-                    id="login-email"
-                    v-model="userEmail"
-                    :state="errors.length > 0 ? false:null"
-                    name="login-email"
-                    placeholder="john@example.com"
-                  />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- submit buttons -->
+                <b-form-input
+                  id="login-email"
+                  v-model="userEmail"
+                  :state="errors.length > 0 ? false:null"
+                  name="login-email"
+                  placeholder="john@example.com"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+            <b-card-text class="text-center mt-2">
+              <span class="text-black">Ayoo! kembali </span>
+              <b-link
+                :to="{name:'auth-login'}"
+              >
+                <span>&nbsp;masuk</span>
+              </b-link>
+            </b-card-text>
+            <!-- submit buttons -->
+            <div class="inline-spacing">
               <b-button
                 type="submit"
                 variant="primary"
                 block
-                :disabled="invalid || loading"
+                @click="showmodal"
               >
                 <b-spinner
                   v-if="loading"
                   small
                 />
-                Kirim
+                kirim
               </b-button>
-            </b-form>
-          </validation-observer>
-
-          <b-card-text class="text-center mt-2">
-            <span>Kembali ke halaman</span>
-            <b-link
-              :to="{name:'auth-login'}"
+            </div>
+            <b-modal
+              ref="my-modal"
+              hide-footer
+              modal-class="modal-dark"
+              centered
             >
-              <span>&nbsp;Login</span>
-            </b-link>
-          </b-card-text>
-        </b-col>
-      </b-col>
-      <!-- /Login-->
+
+              <b-col
+                md="12"
+                class="d-flex justify-content-center pt-3"
+              >
+                <b-img
+                  width="100"
+                  src="@core/assets/image/iconsquare-popup-success.png"
+                />
+              </b-col>
+
+              <b-col class="text-center mt-1">
+                <h4 class="text-black">
+                  <strong>
+                    Tautan untuk mengatur ulang password
+                    berhasil dikirim melalui email. Silahkan cek email Kamu.
+                  </strong>
+                </h4>
+                <p
+                  class="text-black"
+                  style="color:#828282"
+                >
+                  kirim ulang
+                </p>
+              </b-col>
+              <b-button
+                type="submit"
+                variant="primary"
+                block
+                :to="{name:'auth-login'}"
+              >
+                Kembali Masuk
+              </b-button>
+
+            </b-modal>
+          </b-form>
+        </validation-observer>
+        <!-- </b-col> -->
+      </b-card>
     </b-row>
   </div>
 </template>
@@ -144,7 +141,7 @@
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BRow, BCol, BAlert, BLink, BFormGroup, BFormInput, BCardText, BCardTitle, BImg, BForm, BSpinner, BButton, VBTooltip,
+  BRow, BCol, BModal, BAlert, BLink, BFormGroup, BFormInput, BCardText, BCardTitle, BImg, BForm, BSpinner, BButton, VBTooltip,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
@@ -163,6 +160,7 @@ export default {
     BLink,
     BFormGroup,
     BFormInput,
+    BModal,
     BCardText,
     BCardTitle,
     BImg,
@@ -178,7 +176,7 @@ export default {
       error: '',
       status: '',
       userEmail: '',
-      sideImg: require('@/assets/images/illustration/auth-illustration.png'),
+      // sideImg: require('@/assets/images/illustration/auth-illustration.png'),
       loading: false,
 
       // validation rules
@@ -200,16 +198,33 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
-    imgUrl() {
-      if (store.state.appConfig.layout.skin === 'dark') {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.sideImg = require('@/assets/images/illustration/auth-illustration.png')
-        return this.sideImg
-      }
-      return this.sideImg
-    },
+    // imgUrl() {
+    //   if (store.state.appConfig.layout.skin === 'dark') {
+    //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+    //     this.sideImg = require('@/assets/images/illustration/auth-illustration.png')
+    //     return this.sideImg
+    //   }
+    //   return this.sideImg
+    // },
   },
+  // created: {
+  // this.countdown()
+  // },
   methods: {
+    showmodal() {
+      this.$refs['my-modal'].toggle('#toggle-btn')
+    },
+    countdown() {
+      if (this.countdown > 0) {
+        setTimeout(() => {
+          this.countdown = 1
+          this.countdown()
+        }, 1000)
+      }
+    },
+    handleRedirectToDataOrder() {
+      this.$router.push('forgot-password')
+    },
     submit() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
