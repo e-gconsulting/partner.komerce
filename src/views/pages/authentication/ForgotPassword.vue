@@ -112,12 +112,16 @@
                     berhasil dikirim melalui email. Silahkan cek email Kamu.
                   </strong>
                 </h4>
-                <p
-                  class="text-black"
-                  style="color:#828282"
-                >
-                  kirim ulang
-                </p>
+                <div class="alert-body">
+                  <span>{{ error }}</span>
+                  <b-link
+                    v-if="showResendEmailVerification"
+                    class="ml-50"
+                    @click="resendEmailVerification"
+                  >
+                    <u>Kirim ulang</u>
+                  </b-link>
+                </div>
               </b-col>
               <b-button
                 type="submit"
@@ -129,6 +133,7 @@
               </b-button>
 
             </b-modal>
+
           </b-form>
         </validation-observer>
         <!-- </b-col> -->
@@ -175,6 +180,7 @@ export default {
     return {
       error: '',
       status: '',
+      showResendEmailVerification: true,
       userEmail: '',
       // sideImg: require('@/assets/images/illustration/auth-illustration.png'),
       loading: false,
@@ -211,6 +217,27 @@ export default {
   // this.countdown()
   // },
   methods: {
+    resendEmailVerification() {
+      this.showResendEmailVerification = true
+      this.error = ''
+
+      this.$http
+        .get(`/resend_verification_email/${this.userId}`)
+        .then(() => {
+          this.userId = ''
+
+          this.$swal({
+            title: 'Terkirim',
+            text: 'Harap periksa email anda untuk verifikasi akun Anda.',
+            icon: 'success',
+            confirmButtonText: 'Mengerti',
+            customClass: {
+              confirmButton: 'btn btn-primary',
+            },
+          })
+        })
+        .catch(() => {})
+    },
     showmodal() {
       this.$refs['my-modal'].toggle('#toggle-btn')
     },

@@ -1,150 +1,151 @@
 <template>
   <div class="auth-wrapper auth-v1 px-2">
     <b-row class="auth-inner m-0">
-      <b-card class="text-white mt-2">
-        <!-- <b-col
-          lg="12"
-          :style="{
-            backgroundImage: `url('${imgUrl}')`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPositionX: 'center',
-          }"
-        > -->
-        <b-link class="brand-logo">
-          <b-link class="brand-logo d-none d-lg-flex text-center">
-            <b-img
-              :src="appLogoImage"
-              alt="logo"
-              class="flat-image-dark text-center"
-              style="width: 216px"
-            />
-          </b-link>
-
-        </b-link>
-        <b-card-title class="mb-1 text-center">
-          Masuk
-        </b-card-title>
-        <b-card-text class="mb-2 text-center text-black">
-          Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
-        </b-card-text>
-        <b-alert
-          variant="danger"
-          :show="!!error"
-        >
-          <div class="alert-body">
-            <span>{{ error }}</span>
-            <b-link
-              v-if="showResendEmailVerification"
-              class="ml-50"
-              @click="resendEmailVerification"
-            >
-              <u>Kirim ulang</u>
+      <b-col
+        lg="12"
+        style="width:1440px;"
+        :style="{
+          backgroundImage: `url('${imgUrl}')`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundPositionX: 'center',
+        }"
+      >
+        <b-card class="text-white mt-2">
+          <b-link class="brand-logo">
+            <b-link class="brand-logo d-none d-lg-flex text-center">
+              <b-img
+                :src="appLogoImage"
+                alt="logo"
+                class="flat-image-dark text-center"
+                style="width: 216px"
+              />
             </b-link>
-          </div>
-        </b-alert>
-        <!-- form -->
-        <validation-observer
-          ref="loginForm"
-          #default="{invalid}"
-        >
-          <b-form
-            class="auth-login-form mt-2"
-            @submit.prevent="login"
+
+          </b-link>
+          <b-card-title class="mb-1 text-center">
+            Masuk
+          </b-card-title>
+          <b-card-text class="mb-2 text-center text-black">
+            Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
+          </b-card-text>
+          <b-alert
+            variant="danger"
+            :show="!!error"
           >
-
-            <b-form-group
-              label="Username atau Email"
-              label-for="login-email"
+            <div class="alert-body">
+              <span>{{ error }}</span>
+              <b-link
+                v-if="showResendEmailVerification"
+                class="ml-50"
+                @click="resendEmailVerification"
+              >
+                <u>Kirim ulang</u>
+              </b-link>
+            </div>
+          </b-alert>
+          <!-- form -->
+          <validation-observer
+            ref="loginForm"
+            #default="{invalid}"
+          >
+            <b-form
+              class="auth-login-form mt-2"
+              @submit.prevent="login"
             >
-              <validation-provider
-                #default="{ errors }"
-                label="Username atau Email"
-                vid="email"
-                rules="required"
-                :custom-messages="custommessages1"
-              >
-                <b-form-input
-                  id="login-email"
-                  v-model="usernameEmail"
-                  :state="errors.length > 0 ? false : null"
-                  name="login-email"
-                  placeholder="john@mail.com"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-            </b-form-group>
 
-            <!-- forgot password -->
-            <b-form-group>
-              <label for="login-password">Password</label>
-              <validation-provider
-                #default="{ errors }"
-                name="Password"
-                vid="password"
-                rules="required"
-                :custom-messages="custommessages"
+              <b-form-group
+                label="Username atau Email"
+                label-for="login-email"
               >
-                <b-input-group
-                  class="input-group-merge"
-                  :class="errors.length > 0 ? 'is-invalid' : null"
+                <validation-provider
+                  #default="{ errors }"
+                  label="Username atau Email"
+                  vid="email"
+                  rules="required|email"
+                  :custom-messages="custommessages1"
                 >
                   <b-form-input
-                    id="login-password"
-                    v-model="password"
+                    id="login-email"
+                    v-model="usernameEmail"
                     :state="errors.length > 0 ? false : null"
-                    class="form-control-merge"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="Password"
+                    name="login-email"
+                    placeholder="john@mail.com"
                   />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+              </b-form-group>
+
+              <!-- forgot password -->
+              <b-form-group>
+                <label for="login-password">Password</label>
+                <validation-provider
+                  #default="{ errors }"
+                  name="Password"
+                  vid="password"
+                  rules="required"
+                  :custom-messages="custommessages"
+                >
+                  <b-input-group
+                    class="input-group-merge"
+                    :class="errors.length > 0 ? 'is-invalid' : null"
+                  >
+                    <b-form-input
+                      id="login-password"
+                      v-model="password"
+                      :state="errors.length > 0 ? false : null"
+                      class="form-control-merge"
+                      :type="passwordFieldType"
+                      name="login-password"
+                      placeholder="Password"
                     />
-                  </b-input-group-append>
-                </b-input-group>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-              <div class="d-flex justify-content-left text-left">
-                <b-link :to="{ name: 'auth-forgot-password' }">
-                  <small style="margin-right:10px;">Lupa Password?</small>
-                </b-link>
-              </div>
-            </b-form-group>
+                    <b-input-group-append is-text>
+                      <feather-icon
+                        class="cursor-pointer"
+                        :icon="passwordToggleIcon"
+                        @click="togglePasswordVisibility"
+                      />
+                    </b-input-group-append>
+                  </b-input-group>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+                <div class="d-flex justify-content-left text-left">
+                  <b-link :to="{ name: 'auth-forgot-password' }">
+                    <small style="margin-right:10px;">Lupa Password?</small>
+                  </b-link>
+                </div>
+              </b-form-group>
 
-            <!-- checkbox -->
-            <b-form-group v-if="false">
-              <b-form-checkbox
-                id="remember-me"
-                v-model="status"
-                name="checkbox-1"
+              <!-- checkbox -->
+              <b-form-group v-if="false">
+                <b-form-checkbox
+                  id="remember-me"
+                  v-model="status"
+                  name="checkbox-1"
+                >
+                  Remember Me
+                </b-form-checkbox>
+              </b-form-group>
+
+              <!-- submit buttons -->
+              <b-button
+                type="submit"
+                variant="primary"
+                block
+                :disabled="invalid || loading"
               >
-                Remember Me
-              </b-form-checkbox>
-            </b-form-group>
-
-            <!-- submit buttons -->
-            <b-button
-              type="submit"
-              variant="primary"
-              block
-              :disabled="invalid || loading"
-            >
-              <b-spinner
-                v-if="loading"
-                small
-              />
-              Masuk
-            </b-button>
-          </b-form>
-        </validation-observer>
+                <b-spinner
+                  v-if="loading"
+                  small
+                />
+                Masuk
+              </b-button>
+            </b-form>
+          </validation-observer>
 
         <!-- </b-col> -->
-      </b-card>
-    </b-row>
+        </b-card>
+      </b-col></b-row>
   </div>
 
 </template>
@@ -173,6 +174,7 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
+import moment from 'moment'
 
 export default {
   directives: {
@@ -203,15 +205,17 @@ export default {
       showResendEmailVerification: true,
       usernameEmail: '',
       password: '',
+      sideImg: require('@/assets/images/illustration/auth-illustration2.png'),
       loading: false,
       // validation rules
       required,
-      email,
+      // email,
       custommessages: {
         required: 'Mohon masukan password Kamu.',
       },
       custommessages1: {
         required: 'Mohon masukan username atau email.',
+        email: 'Maaf, username atau password yang Kamu masukan salah.',
       },
     }
   },
@@ -228,6 +232,14 @@ export default {
   computed: {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+    },
+    imgUrl() {
+      if (store.state.appConfig.layout.skin === 'dark') {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.sideImg = require('@/assets/images/illustration/auth-illustration2.png')
+        return this.sideImg
+      }
+      return this.sideImg
     },
   },
   methods: {
