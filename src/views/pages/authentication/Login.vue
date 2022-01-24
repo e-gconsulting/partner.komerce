@@ -1,208 +1,170 @@
 <template>
-  <div class="auth-wrapper auth-v2">
+  <div class="auth-wrapper auth-v1 px-2">
     <b-row class="auth-inner m-0">
-      <!-- Left Text-->
-      <b-col
-        lg="8"
-        class="bg-google d-none d-lg-flex align-items-center px-5"
-        :style="{
-          backgroundImage: `url('${imgUrl}')`,
-          backgroundSize: 'contain',
-          backgroundRepeat: 'no-repeat',
-          backgroundPositionX: 'center',
-        }"
-      >
-        <!-- Brand logo-->
-        <b-link class="brand-logo d-none d-lg-flex">
-          <b-img
-            :src="appLogoImage"
-            alt="logo"
-            class="flat-image-light"
-            style="width: 36px"
-          />
-          <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
-            <span class="text-white">{{ appName }}</span>
-          </h2>
-        </b-link>
-        <!-- /Brand logo-->
-        <div
-          class="w-100 d-lg-flex align-items-center justify-content-center px-5"
-        />
-      </b-col>
-      <!-- /Left Text-->
-
-      <!-- Login-->
-      <b-col
-        lg="4"
-        class="d-flex align-items-center auth-bg px-2 p-lg-5"
-      >
-        <!-- Brand logo-->
-        <b-link class="brand-logo d-flex d-lg-none">
-          <b-img
-            :src="appLogoImage"
-            alt="logo"
-            style="width: 36px"
-          />
-          <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
-            {{ appName }}
-          </h2>
-        </b-link>
-        <!-- /Brand logo-->
-
-        <b-col
-          sm="8"
-          md="6"
+      <b-card class="text-white mt-2">
+        <!-- <b-col
           lg="12"
-          class="px-xl-2 mx-auto"
+          :style="{
+            backgroundImage: `url('${imgUrl}')`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPositionX: 'center',
+          }"
+        > -->
+        <b-link class="brand-logo">
+          <b-link class="brand-logo d-none d-lg-flex text-center">
+            <b-img
+              :src="appLogoImage"
+              alt="logo"
+              class="flat-image-dark text-center"
+              style="width: 216px"
+            />
+          </b-link>
+
+        </b-link>
+        <b-card-title class="mb-1 text-center">
+          Masuk
+        </b-card-title>
+        <b-card-text class="mb-2 text-center text-black">
+          Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
+        </b-card-text>
+        <b-alert
+          variant="danger"
+          :show="!!error"
         >
-          <b-card-title
-            class="mb-1 font-weight-bold"
-            title-tag="h2"
-          >
-            Masuk
-          </b-card-title>
-          <b-card-text class="mb-2">
-            Silahkan masuk menggunakan akun Anda
-          </b-card-text>
-
-          <b-alert
-            variant="danger"
-            :show="!!error"
-          >
-            <div class="alert-body">
-              <span>{{ error }}</span>
-              <b-link
-                v-if="showResendEmailVerification"
-                class="ml-50"
-                @click="resendEmailVerification"
-              >
-                <u>Kirim ulang</u>
-              </b-link>
-            </div>
-          </b-alert>
-
-          <!-- form -->
-          <validation-observer
-            ref="loginForm"
-            #default="{ invalid }"
-          >
-            <b-form
-              class="auth-login-form mt-2"
-              @submit.prevent="login"
+          <div class="alert-body">
+            <span>{{ error }}</span>
+            <b-link
+              v-if="showResendEmailVerification"
+              class="ml-50"
+              @click="resendEmailVerification"
             >
-              <!-- email -->
-              <b-form-group
+              <u>Kirim ulang</u>
+            </b-link>
+          </div>
+        </b-alert>
+        <!-- form -->
+        <validation-observer
+          ref="loginForm"
+          #default="{invalid}"
+        >
+          <b-form
+            class="auth-login-form mt-2"
+            @submit.prevent="login"
+          >
+
+            <b-form-group
+              label="Username atau Email"
+              label-for="login-email"
+            >
+              <validation-provider
+                #default="{ errors }"
                 label="Username atau Email"
-                label-for="login-email"
+                vid="email"
+                rules="required"
+                :custom-messages="custommessages1"
               >
-                <validation-provider
-                  #default="{ errors }"
-                  label="Username atau Email"
-                  vid="email"
-                  rules="required"
+                <b-form-input
+                  id="login-email"
+                  v-model="usernameEmail"
+                  :state="errors.length > 0 ? false : null"
+                  name="login-email"
+                  placeholder="john@mail.com"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+
+            <!-- forgot password -->
+            <b-form-group>
+              <label for="login-password">Password</label>
+              <validation-provider
+                #default="{ errors }"
+                name="Password"
+                vid="password"
+                rules="required"
+                :custom-messages="custommessages"
+              >
+                <b-input-group
+                  class="input-group-merge"
+                  :class="errors.length > 0 ? 'is-invalid' : null"
                 >
                   <b-form-input
-                    id="login-email"
-                    v-model="usernameEmail"
+                    id="login-password"
+                    v-model="password"
                     :state="errors.length > 0 ? false : null"
-                    name="login-email"
-                    placeholder="john@mail.com"
+                    class="form-control-merge"
+                    :type="passwordFieldType"
+                    name="login-password"
+                    placeholder="Password"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
-
-              <!-- forgot password -->
-              <b-form-group>
-                <div class="d-flex justify-content-between">
-                  <label for="login-password">Password</label>
-                  <b-link :to="{ name: 'auth-forgot-password' }">
-                    <small>Lupa Password?</small>
-                  </b-link>
-                </div>
-                <validation-provider
-                  #default="{ errors }"
-                  name="Password"
-                  vid="password"
-                  rules="required"
-                >
-                  <b-input-group
-                    class="input-group-merge"
-                    :class="errors.length > 0 ? 'is-invalid' : null"
-                  >
-                    <b-form-input
-                      id="login-password"
-                      v-model="password"
-                      :state="errors.length > 0 ? false : null"
-                      class="form-control-merge"
-                      :type="passwordFieldType"
-                      name="login-password"
-                      placeholder="Password"
+                  <b-input-group-append is-text>
+                    <feather-icon
+                      class="cursor-pointer"
+                      :icon="passwordToggleIcon"
+                      @click="togglePasswordVisibility"
                     />
-                    <b-input-group-append is-text>
-                      <feather-icon
-                        class="cursor-pointer"
-                        :icon="passwordToggleIcon"
-                        @click="togglePasswordVisibility"
-                      />
-                    </b-input-group-append>
-                  </b-input-group>
-                  <small class="text-danger">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-form-group>
+                  </b-input-group-append>
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+              <div class="d-flex justify-content-left text-left">
+                <b-link :to="{ name: 'auth-forgot-password' }">
+                  <small style="margin-right:10px;">Lupa Password?</small>
+                </b-link>
+              </div>
+            </b-form-group>
 
-              <!-- checkbox -->
-              <b-form-group v-if="false">
-                <b-form-checkbox
-                  id="remember-me"
-                  v-model="status"
-                  name="checkbox-1"
-                >
-                  Remember Me
-                </b-form-checkbox>
-              </b-form-group>
-
-              <!-- submit buttons -->
-              <b-button
-                type="submit"
-                variant="primary"
-                block
-                :disabled="invalid || loading"
+            <!-- checkbox -->
+            <b-form-group v-if="false">
+              <b-form-checkbox
+                id="remember-me"
+                v-model="status"
+                name="checkbox-1"
               >
-                <b-spinner
-                  v-if="loading"
-                  small
-                />
-                Masuk
-              </b-button>
-            </b-form>
-          </validation-observer>
-        </b-col>
-      </b-col>
-      <!-- /Login-->
+                Remember Me
+              </b-form-checkbox>
+            </b-form-group>
+
+            <!-- submit buttons -->
+            <b-button
+              type="submit"
+              variant="primary"
+              block
+              :disabled="invalid || loading"
+            >
+              <b-spinner
+                v-if="loading"
+                small
+              />
+              Masuk
+            </b-button>
+          </b-form>
+        </validation-observer>
+
+        <!-- </b-col> -->
+      </b-card>
     </b-row>
   </div>
+
 </template>
 
 <script>
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BRow,
-  BCol,
-  BAlert,
-  BLink,
-  BFormGroup,
-  BFormInput,
-  BInputGroupAppend,
-  BInputGroup,
-  BFormCheckbox,
-  BCardText,
-  BCardTitle,
-  BImg,
-  BForm,
-  BSpinner,
   BButton,
+  BForm,
+  BFormInput,
+  BFormGroup,
+  BCard,
+  BCardTitle,
+  BLink,
+  BCardText,
+  BInputGroup,
+  BInputGroupAppend,
+  BFormCheckbox,
+  BAlert,
   VBTooltip,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
@@ -217,21 +179,18 @@ export default {
     'b-tooltip': VBTooltip,
   },
   components: {
-    BRow,
-    BCol,
-    BAlert,
-    BLink,
-    BFormGroup,
-    BFormInput,
-    BInputGroupAppend,
-    BInputGroup,
-    BFormCheckbox,
-    BCardText,
-    BCardTitle,
-    BImg,
-    BForm,
     BButton,
-    BSpinner,
+    BForm,
+    BAlert,
+    BFormInput,
+    BFormGroup,
+    BCard,
+    BCardTitle,
+    BLink,
+    BCardText,
+    BInputGroup,
+    BInputGroupAppend,
+    BFormCheckbox,
     ValidationProvider,
     ValidationObserver,
   },
@@ -241,15 +200,19 @@ export default {
       userId: '',
       error: '',
       status: '',
-      showResendEmailVerification: false,
+      showResendEmailVerification: true,
       usernameEmail: '',
       password: '',
-      sideImg: require('@/assets/images/illustration/auth-illustration.png'),
       loading: false,
-
       // validation rules
       required,
       email,
+      custommessages: {
+        required: 'Mohon masukan password Kamu.',
+      },
+      custommessages1: {
+        required: 'Mohon masukan username atau email.',
+      },
     }
   },
   setup() {
@@ -266,21 +229,13 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
-    imgUrl() {
-      if (store.state.appConfig.layout.skin === 'dark') {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.sideImg = require('@/assets/images/illustration/auth-illustration.png')
-        return this.sideImg
-      }
-      return this.sideImg
-    },
   },
   methods: {
     login() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
-          this.showResendEmailVerification = false
+          this.showResendEmailVerification = true
           this.error = ''
           this.userId = ''
 
@@ -540,7 +495,7 @@ export default {
         })
     },
     resendEmailVerification() {
-      this.showResendEmailVerification = false
+      this.showResendEmailVerification = true
       this.error = ''
 
       this.$http
