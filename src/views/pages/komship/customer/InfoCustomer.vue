@@ -184,13 +184,10 @@
       blur="0"
       opacity=".5"
       rounded="sm"
-
     >
       <b-table
         id="pagination"
-        :per-page="0"
         :current-page="currentPage"
-
         striped
         hover
         responsive
@@ -405,8 +402,7 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      currentPage: 1,
-      perPage: 10,
+      // perPage: 10,
       totalinforCustomer: 0,
     }
   },
@@ -420,6 +416,7 @@ export default {
     },
   },
   computed: {
+    // eslint-disable-next-line vue/no-dupe-keys
     rows() {
       return this.itemsCustomer.length
     },
@@ -461,7 +458,6 @@ export default {
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
       // if (this.pagination) Object.assign(params, { pagination: this.pagination })
       if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
-
 
       httpKomship.get('/v1/customers', {
         params,
