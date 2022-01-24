@@ -166,6 +166,7 @@
           :options="listTypeShipping"
           label="shipping_type"
           placeholder="Opsi Pengiriman"
+          :disabled="!isTypeShipping"
           @input="calculate"
         >
           <span
@@ -449,6 +450,7 @@ export default {
       arrayCart: [],
       cartId: null,
       isCalculate: false,
+      isTypeShipping: false,
       orderDate: moment().format('YYYY/MM/DD'),
       customerName: null,
       listCustomer: [],
@@ -567,6 +569,9 @@ export default {
         })
     },
     async getShippingType() {
+      if (this.potonganSaldo === false && this.discount === null) {
+        this.discount = 0
+      }
       if (this.destination && this.shipping && this.profile && this.paymentMethod !== null) {
         await this.$http_komship.get('v1/calculate', {
           params: {
@@ -574,11 +579,14 @@ export default {
             tariff_code: this.destination.value,
             payment_method: this.paymentMethod,
             shipping: this.shipping,
+            discount: this.discount,
             partner_address_id: this.profile.user_address_default.address_id,
+            cart: this.cartId.toString(),
           },
         })
           .then(res => {
             const { data } = res.data
+            this.isTypeShipping = true
             this.listTypeShipping = data
           })
           .catch(() => {
@@ -591,6 +599,7 @@ export default {
           })
       } else {
         this.typeShipping = null
+        this.isTypeShipping = false
         this.isCalculate = false
         this.listTypeShipping = []
       }
@@ -669,7 +678,7 @@ export default {
             confirmButtonText: 'Oke',
             confirmButtonClass: 'btn btn-primary',
           }).then(() => {
-            this.$router.go('/data-order')
+            this.$router.push('/data-order')
           })
         }).catch(() => {
           this.$swal({
@@ -699,7 +708,7 @@ export default {
 }
 </script>
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.pushogleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 .collapsed > .when-open,
 .not-collapsed > .when-closed {
   display: none;
