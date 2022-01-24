@@ -276,7 +276,6 @@ import {
   BForm,
   BFormGroup,
   BCard,
-  BPagination,
   BOverlay,
   VBPopover,
   BDropdown,
@@ -306,7 +305,6 @@ export default {
     BOverlay,
     vSelect,
     BDropdown,
-    BPagination,
     BDropdownForm,
   },
   directives: {
