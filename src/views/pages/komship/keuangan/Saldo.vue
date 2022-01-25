@@ -289,7 +289,36 @@
                     </p>
                   </td>
                   <td class="h-text-dark">
-                    {{ riwayat.status }}
+                    <div
+                      v-if="riwayat.status==='completed'"
+                      class="text-success"
+                    >
+                      Disetujui
+                    </div>
+                    <div
+                      v-if="riwayat.status==='requested'"
+                      class="text-warning"
+                    >
+                      Perlu Disetujui
+                    </div>
+                    <div
+                      v-if="riwayat.status==='on_review'"
+                      class="text-warning"
+                    >
+                      Sedang Direview
+                    </div>
+                    <div
+                      v-if="riwayat.status==='rejected'"
+                      class="text-danger"
+                    >
+                      Ditolak
+                    </div>
+                    <div
+                      v-if="riwayat.status==='rejected'"
+                      class="text-danger"
+                    >
+                      Dibatalkan
+                    </div>
                   </td>
                   <!-- <td class="h-text-dark">
                     {{ formatRupiah(riwayat.saldo) }}

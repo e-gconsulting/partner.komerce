@@ -13,25 +13,23 @@
         <span
           v-if="statusPenerimaan.toLowerCase() === 'completed'"
           class="font-weight-bold rounded status-success"
-        >{{ statusPenerimaan }}</span>
+        >Disetujui</span>
         <span
           v-else-if="statusPenerimaan.toLowerCase() === 'on_review'"
           class="font-weight-bold rounded status-warning"
-        >{{ statusPenerimaan }}</span>
+        >Sedang Direview</span>
         <span
           v-else-if="statusPenerimaan.toLowerCase() === 'requested'"
           class="font-weight-bold rounded status-warning"
-        >{{ statusPenerimaan }}</span>
+        >Perlu Disetujui</span>
         <span
           v-else-if="statusPenerimaan.toLowerCase() === 'canceled'"
           class="font-weight-bold rounded status-danger"
-        >{{ statusPenerimaan }}</span>
+        >Dibatalkan</span>
         <span
           v-else
           class="font-weight-bold rounded status-danger"
-        >{{
-          statusPenerimaan
-        }}</span>
+        >Dibatalkan</span>
       </div>
       <div class="card-body px-0">
         <div class="row px-2">
@@ -182,13 +180,16 @@ export default {
       tableTitles: [
         'Tanggal',
         'Jenis Order',
-        'Nilai Order',
+        'Nilai Orders',
         'Ongkos Kirim',
         'Biaya COD',
         'Saldo',
       ],
       tableHeadInfos: [3, 4],
     }
+  },
+  mounted() {
+    this.fetchData()
   },
   methods: {
     formatRibuan(x) {
@@ -197,6 +198,18 @@ export default {
     formatRupiah(x) {
       if (x === '-') return x
       return `Rp ${this.formatRibuan(x)}`
+    },
+    async fetchData() {
+      this.loadTable = true
+      this.getDate()
+      this.items = await this.$http_komship.get('v1/partner/order-transaction-balance')
+        .then(res => {
+          const { data } = res.data
+          this.totalItems = data.total
+          this.loadTable = false
+          return data.data
+        })
+        .catch(error => console.log(error))
     },
   },
   computed: {
@@ -214,6 +227,7 @@ export default {
     this.$store.commit('saldoPenarikan/UPDATE_ID', this.$route.params.id)
     this.$store.dispatch('saldoPenarikan/init')
   },
+
 }
 </script>
 
