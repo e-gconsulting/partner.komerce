@@ -447,6 +447,7 @@ export default {
   data() {
     return {
       profile: null,
+      addressId: null,
       arrayCart: [],
       cartId: null,
       isCalculate: false,
@@ -496,6 +497,7 @@ export default {
     }
   },
   created() {
+    this.addressId = this.$route.params.address_id
     this.getProfile()
   },
   methods: {
@@ -512,6 +514,7 @@ export default {
     },
     async getCart() {
       this.itemsOrder = this.$route.params.itemsOrder
+      console.log(this.itemsOrder)
       this.arrayCart = this.itemsOrder.map(val => ({
         product_id: val.product_id,
         product_name: val.product_name,
@@ -580,7 +583,7 @@ export default {
             payment_method: this.paymentMethod,
             shipping: this.shipping,
             discount: this.discount,
-            partner_address_id: this.profile.user_address_default.address_id,
+            partner_address_id: this.addressId,
             cart: this.cartId.toString(),
           },
         })
@@ -617,7 +620,7 @@ export default {
             payment_method: this.paymentMethod,
             shipping: this.shipping,
             discount: this.discount,
-            partner_address_id: this.profile.user_address_default.address_id,
+            partner_address_id: this.addressId,
             cart: this.cartId.toString(),
           },
         })
@@ -660,7 +663,7 @@ export default {
           shipping_type: this.typeShipping.shipping_type,
           payment_method: this.paymentMethod,
           bank: 0,
-          partner_address_id: this.profile.user_address_default.address_id,
+          partner_address_id: this.addressId,
           bank_account_name: 0,
           bank_account_no: 0,
           subtotal: this.subTotal,
