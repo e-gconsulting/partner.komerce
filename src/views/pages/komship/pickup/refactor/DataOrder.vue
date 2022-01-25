@@ -278,7 +278,7 @@ export default {
         },
       }).then(response => {
         const { data } = response.data.data
-        // console.log('listAllOrder', data)
+        console.log('listAllOrder', response)
         this.tableItemsAllData = data
         this.tableData.items = data
         this.excelData.items = data

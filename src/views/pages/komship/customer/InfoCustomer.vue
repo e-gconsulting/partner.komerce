@@ -198,7 +198,6 @@
         empty-text="Tidak ada data untuk ditampilkan."
         :items="itemsCustomer"
         :fields="fields"
-        :per-page="perPage"
         :show-empty="!loading"
         @row-clicked="onRowClicked"
       >
@@ -280,7 +279,6 @@ import {
   BOverlay,
   VBPopover,
   BDropdown,
-  BPagination,
   BDropdownForm,
 } from 'bootstrap-vue'
 
@@ -306,7 +304,6 @@ export default {
     BOverlay,
     vSelect,
     BDropdown,
-    BPagination,
     BDropdownForm,
   },
   directives: {
@@ -407,8 +404,6 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      currentPage: 1,
-      perPage: 10,
       totalinforCustomer: 0,
     }
   },
@@ -422,7 +417,7 @@ export default {
     },
   },
   computed: {
-    rows() {
+    rowss() {
       return this.itemsCustomer.length
     },
   },
@@ -463,7 +458,6 @@ export default {
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
       // if (this.pagination) Object.assign(params, { pagination: this.pagination })
       if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
-
 
       httpKomship.get('/v1/customers', {
         params,
