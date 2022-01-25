@@ -117,15 +117,15 @@ export default {
       e.stopPropagation()
     },
     handleFiles(files) {
-      const endpoint = `/v1/admin/withdrawal/update/${this.$route.params.slug}`
+      const endpoint = `/v1/admin/withdrawal/upload/${this.$route.params.slug}`
       const dataCopy = [...files]
       dataCopy.forEach(file => {
         this.filesSettled = [...this.filesSettled, file]
         const formData = new FormData()
         formData.append('transfer_proof', file)
         formData.append('withdrawal_id', this.$route.params.slug)
-        formData.append('status', 'completed')
-        formData.append('notes', '')
+        // formData.append('status', 'completed')
+        // formData.append('notes', '')
         formData.append('_method', 'PUT')
         this.$http.post(endpoint, formData, {
           headers: {

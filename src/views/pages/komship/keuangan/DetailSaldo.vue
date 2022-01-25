@@ -176,6 +176,9 @@ export default {
       totalItems: 0,
     }
   },
+  computed: {
+    ...mapState('saldoDetail', ['totalSaldo']),
+  },
   watch: {
     currentPage: {
       handler(value) {
@@ -189,9 +192,6 @@ export default {
     this.fetchData().catch(error => {
       console.error(error)
     })
-  },
-  computed: {
-    ...mapState('saldoDetail', ['totalSaldo']),
   },
   beforeMount() {
     this.$store.dispatch('saldoDetail/init')

@@ -1,7 +1,7 @@
 <template>
- <b-card>
+  <b-card>
     <h4><strong>Customer</strong></h4>
-        <b-row class="d-flex justify-content-end align-items-center">
+    <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
       >
@@ -184,13 +184,10 @@
       blur="0"
       opacity=".5"
       rounded="sm"
-
     >
       <b-table
         id="pagination"
-        :per-page="0"
         :current-page="currentPage"
-
         striped
         hover
         responsive
@@ -221,14 +218,16 @@
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
       </b-table>
-       <b-pagination
-      v-model="currentPage"
-      :total-rows="totalinforCustomer"
-      :per-page="perPage"
-      class="mt-4"
-    >
-      <template #first-text><span class="text-dark">Lihat per halaman</span></template>
-       </b-pagination>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalinforCustomer"
+        :per-page="perPage"
+        class="mt-4"
+      >
+        <template #first-text>
+          <span class="text-dark">Lihat per halaman</span>
+        </template>
+      </b-pagination>
       <b-pagination
         v-model="currentPage"
         size="md"
@@ -275,7 +274,6 @@ import {
   BForm,
   BFormGroup,
   BCard,
-  BPagination,
   BOverlay,
   VBPopover,
   BDropdown,
@@ -297,7 +295,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BRow,
-    BPagination,
     BTable,
     BForm,
     BFormGroup,
@@ -407,6 +404,11 @@ export default {
       totalinforCustomer: 0,
     }
   },
+  computed: {
+    rowss() {
+      return this.itemsCustomer.length
+    },
+  },
   watch: {
     currentPage: {
       handler(value) {
@@ -414,11 +416,6 @@ export default {
           console.error(error)
         })
       },
-    },
-  },
-  computed: {
-    rowss() {
-      return this.itemsCustomer.length
     },
   },
   mounted() {

@@ -224,7 +224,9 @@
                         />
                       </div>
                       <div class="ml-1">
-                        <h5 class="text-black"><strong>{{ items.product_name }}</strong></h5>
+                        <h5 class="text-black">
+                          <strong>{{ items.product_name }}</strong>
+                        </h5>
                         <div v-if="items.variant_name !== '0' && items.variant_name !== ''">
                           <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
                         </div>
@@ -246,7 +248,9 @@
                   v-for="(items, index) in data.item.product"
                   :key="index+1"
                 >
-                  <h5 class="mb-3 text-black"><strong>{{ items.qty }}</strong></h5>
+                  <h5 class="mb-3 text-black">
+                    <strong>{{ items.qty }}</strong>
+                  </h5>
                 </div>
               </template>
 
