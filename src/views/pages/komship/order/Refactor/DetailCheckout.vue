@@ -322,7 +322,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ discount }}
+          Rp. {{ formatNumber(discount) }}
         </b-col>
       </b-row>
       <b-row>
@@ -391,7 +391,7 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(cashback) }}
+            - Rp. {{ formatNumber(shippingCost - cashback) }}
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg text-primary">
@@ -531,6 +531,7 @@ export default {
               .then(async result => {
                 if (result.data.code === 200) {
                   this.cartId = result.data.data.cart_id
+                  console.log(this.cartId)
                 }
               })
           }
@@ -647,7 +648,7 @@ export default {
     },
     async submit() {
       if (this.customerName && this.customerPhone && this.detailAddress !== null) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, [{
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, {
           date: this.orderDate,
           tariff_code: this.destination.value,
           subdistrict_name: this.destination.subdistrict_name,
@@ -673,8 +674,8 @@ export default {
           discount: this.discount,
           shipping_cashback: this.cashback,
           net_profit: this.netProfit,
-          cart: this.cartId.toString(),
-        }]).then(() => {
+          cart: this.cartId,
+        }).then(() => {
           this.$swal({
             title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
             imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
@@ -683,21 +684,22 @@ export default {
           }).then(() => {
             this.$router.push('/data-order')
           })
-        }).catch(() => {
-          this.$swal({
-            title: '<span class="font-weight-bold h4">Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkah cek kembali saldo anda.</span>',
-            imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-            showCancelButton: true,
-            confirmButtonText: 'Cek Saldo',
-            confirmButtonClass: 'btn btn-primary',
-            cancelButtonClass: 'btn btn-outline-primary text-primary',
-            cancelButtonColor: '#FFFFFF',
-          }).then(result => {
-            if (result.isConfirmed) {
-              this.$router.push({ name: 'saldo' })
-            }
-          })
         })
+        // .catch(() => {
+        //   this.$swal({
+        //     title: '<span class="font-weight-bold h4">Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkah cek kembali saldo anda.</span>',
+        //     imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+        //     showCancelButton: true,
+        //     confirmButtonText: 'Cek Saldo',
+        //     confirmButtonClass: 'btn btn-primary',
+        //     cancelButtonClass: 'btn btn-outline-primary text-primary',
+        //     cancelButtonColor: '#FFFFFF',
+        //   }).then(result => {
+        //     if (result.isConfirmed) {
+        //       this.$router.push({ name: 'saldo' })
+        //     }
+        //   })
+        // })
       } else {
         this.$swal({
           title: '<span class="font-weight-bold h4">Tidak Boleh Ada Field Yang Kosong!</span>',
