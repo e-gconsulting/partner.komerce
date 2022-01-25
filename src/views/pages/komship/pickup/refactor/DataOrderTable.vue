@@ -17,6 +17,7 @@
       empty-text="Tidak ada data untuk ditampilkan."
       responsive
     >
+
       <template
         #head(order_date)="data"
       >
