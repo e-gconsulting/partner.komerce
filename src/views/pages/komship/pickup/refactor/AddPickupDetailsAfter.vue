@@ -120,7 +120,7 @@
         <template #cell(address)="data">
           <h5 class="text-black">
             <strong>
-              {{ data.item.district }}
+              {{ data.item.customer_detail_address }}
             </strong>
           </h5>
           <p>
