@@ -54,6 +54,7 @@
                 name="Email"
                 vid="email"
                 rules="required|email"
+                :custom-messages="custommessages3"
               >
                 <b-form-input
                   id="login-email"
@@ -112,14 +113,16 @@
                     berhasil dikirim melalui email. Silahkan cek email Kamu.
                   </strong>
                 </h4>
-                <div class="alert-body">
-                  <span>{{ error }}</span>
+                <div>
                   <b-link
                     v-if="showResendEmailVerification"
                     class="ml-50"
                     @click="resendEmailVerification"
                   >
-                    <u>Kirim ulang</u>
+                    <span :to="{name:'auth-login'}">Kirim ulang ({{ time }})</span>
+                    <!-- <span
+                      :to="{name:'auth-login'}"
+                    >Kirim ulang</span> -->
                   </b-link>
                 </div>
               </b-col>
@@ -133,7 +136,12 @@
               </b-button>
 
             </b-modal>
-
+            <div class="mt-1">
+            <!-- <p
+            v-else
+            >
+            </p> -->
+            </div>
           </b-form>
         </validation-observer>
         <!-- </b-col> -->
@@ -153,6 +161,7 @@ import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import store from '@/store/index'
 import { $themeConfig } from '@themeConfig'
+import moment from 'moment'
 
 export default {
   directives: {
@@ -180,14 +189,21 @@ export default {
     return {
       error: '',
       status: '',
-      showResendEmailVerification: true,
       userEmail: '',
+      showResendEmailVerification: true,
+      date: moment(60 * 1000),
       // sideImg: require('@/assets/images/illustration/auth-illustration.png'),
       loading: false,
+      custommessages3: {
+        required: 'Mohon masukkan email',
+        email: 'Belum ada akun yang menggunakan email ini.',
+      },
+      password: '',
+      // validation
+      required,
 
       // validation rules
-      required,
-      email,
+      // email,
     }
   },
   setup() {
@@ -204,19 +220,19 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
-    // imgUrl() {
-    //   if (store.state.appConfig.layout.skin === 'dark') {
-    //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    //     this.sideImg = require('@/assets/images/illustration/auth-illustration.png')
-    //     return this.sideImg
-    //   }
-    //   return this.sideImg
-    // },
+    time() {
+      return this.date.format('ss')
+    },
   },
-  // created: {
-  // this.countdown()
-  // },
+  mounted() {
+    clearInterval(() => {
+      this.date = moment(this.date.subtract(1, 'seconds'))
+    }, 1000)
+  },
   methods: {
+    showmodal() {
+      this.$refs['my-modal'].toggle('#toggle-btn')
+    },
     resendEmailVerification() {
       this.showResendEmailVerification = true
       this.error = ''
@@ -238,27 +254,24 @@ export default {
         })
         .catch(() => {})
     },
-    showmodal() {
-      this.$refs['my-modal'].toggle('#toggle-btn')
-    },
     countdown() {
-      if (this.countdown > 0) {
+      if (this.countdown === 0) {
         setTimeout(() => {
           this.countdown = 1
           this.countdown()
         }, 1000)
       }
     },
-    handleRedirectToDataOrder() {
-      this.$router.push('forgot-password')
+    handleRedirectTodataforgot() {
+      this.$router.push('login')
     },
     submit() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
           this.error = ''
-
-          useJwt.resetPassword({
+          this.showResendEmailVerification = true
+          useJwt.forgotpassword({
             email: this.userEmail,
           })
             .then(response => {
