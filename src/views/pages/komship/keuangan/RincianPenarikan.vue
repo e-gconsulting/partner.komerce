@@ -33,7 +33,7 @@
       </div>
       <div class="card-body px-0">
         <div class="row px-2">
-          <div class="col-12 col-md-4">
+          <div class="col-md-6">
             <div class="rounded border p-1">
               <p class="h-text-md mb-0">
                 <span class="font-weight-normal">Total Saldo: </span>
@@ -43,7 +43,7 @@
               </p>
             </div>
           </div>
-          <div class="col-12 col-md-5">
+          <div class="col-md-6 mt-md-2">
             <div class="rounded border p-1">
               <p class="h-text-md mb-0">
                 <span
@@ -58,100 +58,111 @@
               </p>
             </div>
           </div>
-          <table class="table table-borderless mt-3">
-            <thead>
-              <tr>
-                <th
-                  v-for="title in tableTitles"
-                  :key="title"
-                  class="
-                      h-text-sm
-                      transform-none
-                      h-text-dark
-                      bg-white
-                      h-border-bottom
-                      pb-2
-                    "
-                  scope="col"
-                >
-                  {{ title }}
-                  <popover-info
-                    v-if="
-                      tableTitles.indexOf(title) == 3
-                    "
-                    text="Ongkos kirim dari orderan."
-                  />
-                  <popover-info
-                    v-if="
-                      tableTitles.indexOf(title) == 4
-                    "
-                    text="Biaya COD dari orderan yang menggunakan layanan COD."
-                  />
-                </th>
-              </tr>
-            </thead>
-            <tbody class="h-text-xs">
-              <tr
-                v-for="rincian in rincianSaldos"
-                :key="rincianSaldos.indexOf(rincian)"
-                :class="
-                  'py-1' +
-                    (rincianSaldos.indexOf(rincian) != rincianSaldos.length - 1
-                      ? ' border-bottom'
-                      : '')
-                "
+          <div class="col-12 mt-2">
+            <b-overlay
+              variant="light"
+              :show="loadTable"
+              spinner-variant="primary"
+              blur="0"
+              opacity=".5"
+              rounded="sm"
+            >
+              <b-table
+                responsive
+                show-empty
+                empty-text="Tidak ada data untuk ditampilkan."
+                :items="list"
+                :fields="fields"
               >
-                <th>
-                  <p class="mb-0 h-text-dark">
-                    {{ rincian.tanggal }}
-                  </p>
-                </th>
-                <td>
-                  <p class="mb-0 h-text-dark font-weight-bold">
-                    {{ rincian.jenisOrder }}
-                  </p>
-                  <p
-                    v-if="rincian.retur"
-                    class="text-xxs mb-0"
+                <template #head(shipping_cost)="data">
+                  <span class="d-flex">{{ data.label }}
+                    <img
+                      id="ongkosKirim"
+                      src="@/assets/images/icons/info-circle-dark.svg"
+                      class="w-5 h-5"
+                      style="margin-left:5px;cursor:pointer;"
+                    >
+                  </span>
+                  <b-tooltip
+                    target="ongkosKirim"
+                    triggers="hover"
                   >
-                    Retur
-                  </p>
-                </td>
-                <td class="h-text-dark font-weight-bold">
-                  {{ formatRupiah(rincian.nilaiOrder) }}
-                </td>
-                <td>
-                  <p class="mb-0 h-text-dark font-weight-bold">
-                    {{ formatRupiah(rincian.ongkir) }}
-                  </p>
-                  <p
-                    v-if="rincian.ongkirTambahan"
-                    class="text-xxs mb-0 font-weight-bold"
+                    Ongkos kirim dari orderan.
+                  </b-tooltip>
+                </template>
+                <template #head(service_fee)="data">
+                  <span class="d-flex">{{ data.label }}
+                    <img
+                      id="biayaCOD"
+                      src="@/assets/images/icons/info-circle-dark.svg"
+                      class="w-5 h-5"
+                      style="margin-left:5px;cursor:pointer;"
+                    >
+                  </span>
+                  <b-tooltip
+                    target="biayaCOD"
+                    triggers="hover"
                   >
-                    {{ formatRupiah(rincian.ongkirTambahan) }}
-                  </p>
-                </td>
-                <td class="h-text-dark font-weight-bold">
-                  {{
-                    rincian.biayaCod !== null
-                      ? formatRupiah(rincian.biayaCod)
-                      : '-'
-                  }}
-                </td>
-                <td
-                  :class="
-                    'font-weight-bold ' +
-                      (rincian.negative ? 'text-danger' : 'text-success')
-                  "
-                >
-                  {{
-                    (rincian.negative ? '-' : '+') +
-                      formatRupiah(rincian.saldo)
-                  }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    Biaya COD dari orderan yang menggunakan layanan COD.
+                  </b-tooltip>
+                </template>
+                <template #cell(order_date)="data">
+                  {{ moment(data.item.date_transaction) }}
+                </template>
+                <template #cell(payment_method)="data">
+                  {{ data.item.payment_method }}
+                  <span
+                    v-if="data.item.order_status === 'Retur'"
+                    class="text-muted"
+                  ><br>Retur</span>
+                </template>
+                <template #cell(grand_total)="data">
+                  {{ data.item.transaction_type }}
+                </template>
+                <template #cell(shipping_cost)="data">
+                  Rp. {{ formatNumber(data.item.saldo) }}
+                </template>
+                <template #cell(amount)="data">
+                  <span
+                    v-if="data.item.payment_method === 'BANK TRANSFER'"
+                    class="text-primary"
+                  >
+                    -Rp.{{ formatNumber(data.item.amount) }}
+                  </span>
+                  <span
+                    v-else
+                    class="text-success"
+                  >
+                    +Rp.{{ formatNumber(data.item.amount) }}
+                  </span>
+                </template>
+              </b-table>
+              <div class="d-flex justify-between align-middle">
+                <div>
+                  <span class="mr-1">List per halaman</span>
+                  <b-button
+                    v-for="page in pageOptions"
+                    :key="page"
+                    :variant="page === perPage ? 'primary' : 'light'"
+                    size="sm"
+                    class="btnPage"
+                    @click="setPage(page)"
+                  >
+                    {{ page }}
+                  </b-button>
+                </div>
+                <b-pagination
+                  v-model="currentPage"
+                  size="md"
+                  class="float-right mr-2"
+                  :total-rows="totalItems"
+                  :per-page="perPage"
+                  first-number
+                  last-number
+                />
+              </div>
+            </b-overlay>
+          </div>
         </div>
       </div>
       <div class="card-footer">
@@ -159,8 +170,7 @@
           Catatan:
         </p>
         <p>
-          Penarikan saldo kamu memerlukan review oleh pihak admin, dikarenakan
-          adanya kejanggalan dalam pendapatan kamu.
+          {{notes == null || notes == '' ? 'Tidak ada catatan': notes}}
         </p>
       </div>
     </div>
@@ -169,14 +179,40 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
+import {
+  BTable, BButton, BPagination, BOverlay, BTooltip,
+} from 'bootstrap-vue'
+import moment from 'moment'
 
 export default {
   components: {
-    PopoverInfo,
+    BTable, BButton, BPagination, BOverlay, BTooltip,
+
   },
   data() {
     return {
+      items: [],
+      fields: [
+        {
+          key: 'date_transaction', label: 'Tanggal', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'payment_method', label: 'Jenis Order', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'transaction_type', label: 'Nilai Order', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'saldo', label: 'Ongkos Kirim', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'order_status', label: 'Biaya COD', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'amount', label: 'Jumlah', thClass: 'align-middle', tdClass: 'align-top',
+        },
+      ],
+      loadTable: false,
       tableTitles: [
         'Tanggal',
         'Jenis Order',
@@ -186,12 +222,38 @@ export default {
         'Saldo',
       ],
       tableHeadInfos: [3, 4],
+      startDate: null,
+      endDate: null,
+      pageOptions: [20, 50],
+      currentPage: 1,
+      perPage: 20,
+      totalItems: 0,
+      list: [],
     }
   },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.fetchData().catch(error => {
+          console.error(error)
+        })
+      },
+    },
+  },
   mounted() {
-    this.fetchData()
+    this.fetchData().catch(error => {
+      console.error(error)
+    })
   },
   methods: {
+    formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    moment(date) {
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('DD-MM-YYYY')
+      }
+      return ''
+    },
     formatRibuan(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
@@ -199,17 +261,33 @@ export default {
       if (x === '-') return x
       return `Rp ${this.formatRibuan(x)}`
     },
+    fetchKmPoint() {
+
+    },
     async fetchData() {
       this.loadTable = true
-      this.getDate()
-      this.items = await this.$http_komship.get('v1/partner/order-transaction-balance')
+      await this.$http_komship.get('v1/partner/order-transaction-balance', {
+        params: {
+          start_date: this.startDate,
+          end_date: this.endDate,
+          page: this.currentPage,
+          total_per_page: this.perPage,
+        },
+      })
         .then(res => {
           const { data } = res.data
           this.totalItems = data.total
           this.loadTable = false
-          return data.data
+          this.list = data.data
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          this.loadTable = false
+          console.log(error)
+        })
+    },
+    setPage(totalPage) {
+      this.perPage = totalPage
+      this.fetchData()
     },
   },
   computed: {
@@ -220,12 +298,15 @@ export default {
       'nominalPenarikan',
       'statusPenerimaan',
       'rincianSaldos',
+      'notes',
     ]),
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },
   beforeMount() {
     this.$store.commit('saldoPenarikan/UPDATE_ID', this.$route.params.id)
     this.$store.dispatch('saldoPenarikan/init')
+    this.$store.dispatch('saldoPenarikan/UPDATE_DETAIL_SALDO', this.$route.params.id)
+    this.fetchData()
   },
 
 }
