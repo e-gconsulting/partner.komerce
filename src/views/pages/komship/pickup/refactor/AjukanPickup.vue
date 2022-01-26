@@ -391,6 +391,7 @@
 
     <!-- Popup order -->
     <b-modal
+      id="popupOrder"
       ref="popup-order"
       hide-footer
       modal-class="modal-primary"
@@ -399,7 +400,7 @@
     >
       <data-order
         :pass-address-id="addressId"
-        @passDataOrderToParent="getDataOrderToStore"
+        @passDataToParent="getDataOrderToStore"
       />
     </b-modal>
 
@@ -656,7 +657,7 @@ export default {
       if (vehicle) this.chosenVehicle = vehicle
     },
     chooseOrder() {
-      this.$refs['popup-order'].show()
+      this.$bvModal.show('popupOrder')
     },
     getListOrderByPartner() {
       const partnerId = this.profile.partner_id
