@@ -175,6 +175,9 @@
           >
             Tidak ada data untuk ditampilkan.
           </span>
+          <template #option="{ shipping_type }">
+            {{ nameTypeShipping(shipping_type) }}
+          </template>
         </v-select>
       </b-col>
     </b-row>
@@ -645,6 +648,22 @@ export default {
         this.isCalculate = false
       }
       return this.isCalculate
+    },
+    nameTypeShipping(data) {
+      if (data === 'OKE19') {
+        return 'OKE'
+      } if (data === 'REG19') {
+        return 'REG'
+      } if (data === 'YES19') {
+        return 'YES'
+      } if (data === 'CTCOKE19') {
+        return 'OKE'
+      } if (data === 'CTCYES19') {
+        return 'YES'
+      } if (data === 'CTC19') {
+        return 'REG'
+      }
+      return ''
     },
     async submit() {
       if (this.customerName && this.customerPhone && this.detailAddress !== null) {
