@@ -120,9 +120,6 @@
                     @click="resendEmailVerification"
                   >
                     <span :to="{name:'auth-login'}">Kirim ulang ({{ time }})</span>
-                    <!-- <span
-                      :to="{name:'auth-login'}"
-                    >Kirim ulang</span> -->
                   </b-link>
                 </div>
               </b-col>
@@ -255,7 +252,7 @@ export default {
         .catch(() => {})
     },
     countdown() {
-      if (this.countdown === 0) {
+      if (this.countdown <= 0) {
         setTimeout(() => {
           this.countdown = 1
           this.countdown()

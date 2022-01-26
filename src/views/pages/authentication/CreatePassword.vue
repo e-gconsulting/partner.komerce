@@ -1,7 +1,6 @@
 <template>
   <div class="auth-wrapper auth-v1 px-2">
     <div class="auth-inner py-2">
-      <!-- Reset Password v1 -->
       <b-card class="text-white mt-2">
         <b-link class="brand-logo text-center">
           <b-link class="brand-logo d-none d-lg-flex text-center">
@@ -13,47 +12,46 @@
             />
           </b-link>
         </b-link>
-        <b-card-title class="mb-1">
+        <b-card-title class="mb-1 text-center">
           Ubah Password
         </b-card-title>
-        <b-card-text class="mb-2">
-          Masukan password baru Kamu
-        </b-card-text>
+        <b-card-title class="mb-1 text-center">
+          Masukkan password Kamu
+        </b-card-title>
 
-        <!-- form -->
         <validation-observer ref="simpleRules">
           <b-form
             class="auth-reset-password-form mt-2"
             @submit.prevent="submit"
           >
 
-            <!-- password -->
             <b-form-group
-              label="password baru"
-              label-for="reset-password-new"
+              label-for="reset-password-confirm"
+              label=" Password baru"
             >
               <validation-provider
                 #default="{ errors }"
-                name="Password"
-                vid="Password"
+                name="Confirm Password"
                 rules="required|password"
+                :custom-messages="custommessages5"
               >
                 <b-input-group
                   class="input-group-merge"
-                  :class="errors.length > 0 ? 'is-invalid':null"
+                  :class="errors.length > 0"
                 >
                   <b-form-input
-                    id="reset-password-new"
-                    v-model="password"
-                    :type="password1FieldType"
-                    :state="errors.length > 0 ? false:null"
+                    id="reset-password-confirm"
+                    v-model="cPassword"
+                    :type="password2FieldType"
                     class="form-control-merge"
+                    :state="errors.length > 0 ? false:null"
+                    name="reset-password-confirm"
                   />
                   <b-input-group-append is-text>
                     <feather-icon
                       class="cursor-pointer"
-                      :icon="password1ToggleIcon"
-                      @click="togglePassword1Visibility"
+                      :icon="password2ToggleIcon"
+                      @click="togglePassword2Visibility"
                     />
                   </b-input-group-append>
                 </b-input-group>
@@ -64,16 +62,17 @@
             <!-- confirm password -->
             <b-form-group
               label-for="reset-password-confirm"
-              label="Confirm Password"
+              label="Konfirmasi Password baru"
             >
               <validation-provider
                 #default="{ errors }"
                 name="Confirm Password"
-                rules="required|confirmed:Password"
+                rules="required|password"
+                :custom-messages="custommessages4"
               >
                 <b-input-group
                   class="input-group-merge"
-                  :class="errors.length > 0 ? 'is-invalid':null"
+                  :class="errors.length > 0"
                 >
                   <b-form-input
                     id="reset-password-confirm"
@@ -82,7 +81,6 @@
                     class="form-control-merge"
                     :state="errors.length > 0 ? false:null"
                     name="reset-password-confirm"
-                    placeholder="············"
                   />
                   <b-input-group-append is-text>
                     <feather-icon
@@ -101,14 +99,49 @@
               block
               type="submit"
               variant="primary"
+              @click="showmodal"
             >
               buat password
             </b-button>
           </b-form>
         </validation-observer>
+        <b-modal
+          ref="ubah-password"
+          hide-footer
+          modal-class="modal-dark"
+          centered
+        >
 
+          <b-col
+            md="12"
+            class="d-flex justify-content-center pt-3"
+          >
+            <b-img
+              width="100"
+              src="@core/assets/image/iconsquare-popup-success.png"
+            />
+          </b-col>
+
+          <b-col class="text-center mt-1">
+            <h4 class="text-black">
+              <strong>
+                Password telah berhasil diubah.
+              </strong>
+            </h4>
+
+          </b-col>
+          <b-button
+            type="submit"
+            variant="primary"
+            block
+            :to="{name:'auth-login'}"
+            @click="submit"
+          >
+            Kembali Masuk
+          </b-button>
+
+        </b-modal>
       </b-card>
-    <!-- /Reset Password v1 -->
     </div>
   </div>
 </template>
@@ -116,24 +149,20 @@
 <script>
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-
 import {
-  BCard, BCardTitle, BCardText, BForm, BFormGroup, BInputGroup, BInputGroupAppend, BLink, BFormInput, BButton,
+  BCard, BCardTitle, BForm, BFormGroup, BInputGroup, BInputGroupAppend, BLink, BFormInput, BButton,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import store from '@/store/index'
 import { $themeConfig } from '@themeConfig'
-import moment from 'moment'
 
 export default {
   components: {
     BCard,
     BButton,
     BCardTitle,
-    BCardText,
     BForm,
     BFormGroup,
     BInputGroup,
@@ -146,22 +175,22 @@ export default {
   mixins: [togglePasswordVisibility],
   data() {
     return {
-      error: '',
+      // error: '',
       cPassword: '',
       status: '',
-      userEmail: '',
-      // sideImg: require('@/assets/images/illustration/auth-illustration.png'),
       loading: false,
-      custommessages3: {
-        required: 'Mohon masukkan email',
-        email: 'Belum ada akun yang menggunakan email ini.',
+      custommessages4: {
+        required: 'Mohon masukkan password',
+        password: '',
+      },
+      custommessages5: {
+        required: 'Mohon masukkan password',
+        password: 'pasword tidak sama',
       },
       // validation rules
-      required,
-      password: '',
+      // Password: '',
       password1FieldType: 'password',
       password2FieldType: 'password',
-      // email,
     }
   },
   setup() {
@@ -181,18 +210,10 @@ export default {
     password2ToggleIcon() {
       return this.password2FieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
-    // imgUrl() {
-    //   if (store.state.appConfig.layout.skin === 'dark') {
-    //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    //     this.sideImg = require('@/assets/images/illustration/auth-illustration.png')
-    //     return this.sideImg
-    //   }
-    //   return this.sideImg
-    // },
   },
   methods: {
-    handleRedirectTodataforgot() {
-      this.$router.push('partner.id')
+    showmodal() {
+      this.$refs['ubah-password'].toggle('#togggle-btn')
     },
     togglePassword2Visibility() {
       this.password2FieldType = this.password2FieldType === 'password' ? 'text' : 'password'
@@ -201,12 +222,12 @@ export default {
       this.password1FieldType = this.password1FieldType === 'password' ? 'text' : 'password'
     },
     submit() {
-      this.$refs.loginForm.validate().then(success => {
+      this.$refs.changepassword.validate().then(success => {
         if (success) {
           this.loading = true
           this.error = ''
 
-          useJwt.resetPassword({
+          useJwt.changepassword({
             password: this.password,
             cPassword: this.cPassword,
           })
