@@ -188,7 +188,6 @@ export default {
         password: 'pasword tidak sama',
       },
       // validation rules
-      // Password: '',
       password1FieldType: 'password',
       password2FieldType: 'password',
     }

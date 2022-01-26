@@ -296,7 +296,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BRow,
-    BPagination,
     BTable,
     BForm,
     BFormGroup,
@@ -403,7 +402,6 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      // perPage: 10,
       totalinforCustomer: 0,
     }
   },
