@@ -64,10 +64,10 @@
                 <small class="text-danger">{{ errors[0] }} </small>
                 <div>
                   <small
-                    v-if="emailTaken"
+                    v-if="emailverifikasi"
                     class="text-danger"
                   >
-                    {{ emailTaken }}
+                    {{ emailverifikasi }}
                   </small>
                 </div>
               </validation-provider>
@@ -197,7 +197,7 @@ export default {
   data() {
     return {
       userId: '',
-      emailTaken: '',
+      emailverifikasi: '',
       error: '',
       errorcharemail: '',
       status: '',
@@ -248,7 +248,7 @@ export default {
         if (success) {
           this.loading = true
           this.showResendEmailVerification = true
-          this.emailTaken = ''
+          this.emailverifikasi = ''
           this.userId = ''
 
           useJwt
@@ -261,7 +261,7 @@ export default {
               if (response.data.status === false) {
                 this.error = response.data.message
                 this.loading = false
-                this.emailTaken = 'Maaf, username atau password yang Kamu masukan salah.'
+                this.emailverifikasi = 'Maaf, username atau password yang Kamu masukan salah.'
               } else {
                 useJwt.setToken(response.data.data.token)
                 this.getUser(response.data.data)
