@@ -41,12 +41,7 @@
           {{ moment(data.item.date_transaction) }}
         </template>
         <template #cell(transaction_type)="data">
-          <div v-if="data.item.order_id !== 0">
-            {{ data.item.payment_method }}
-          </div>
-          <div v-else>
-            {{ statusTransaction(data.item.transaction_type) }}
-          </div>
+          {{ statusTransaction(data.item.transaction_type, data.item.payment_method) }}
         </template>
         <template #cell(amount)="data">
           <span
@@ -189,21 +184,25 @@ export default {
         this.startDate = `${last.getFullYear()}-${last.getMonth() + 1}-${last.getDate()}`
       }
     },
-    statusTransaction(data) {
-      if (data === 'shopping') {
-        return 'Belanja Talent'
-      } if (data === 'topup') {
+    statusTransaction(type, method) {
+      if (type === 'topup') {
         return 'Top Up Saldo'
-      } if (data === 'withdrawal') {
+      } if (type === 'shopping') {
+        return 'Belanja (Keperluan Talent)'
+      } if (type === 'withdrawal') {
         return 'Penarikan Saldo'
-      } if (data === 'orderku_done') {
-        return 'Orderan COD'
-      } if (data === 'orderku_ongkir') {
-        return 'Orderan Non COD'
-      } if (data === 'orderku_retur') {
-        return 'Orderan Non COD'
+      } if (type === 'orderku_done') {
+        return 'Orderan COD (Diterima)'
+      } if (type === 'orderku_cancel') {
+        return 'Orderan Non COD (Cancel)'
+      } if (type === 'orderku_ongkir') {
+        return 'Orderan Non COD (Ongkir)'
+      } if (type === 'orderku_retur' && method === 'COD') {
+        return 'Orderan COD (Retur)'
+      } if (type === 'orderku_retur' && method === 'BANK TRANSFER') {
+        return 'Orderan Non COD (Retur)'
       }
-      return ''
+      return null
     },
     async fetchData() {
       this.loadTable = true
