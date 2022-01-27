@@ -8,11 +8,13 @@ export default {
     id: '',
     dateStart: '',
     dateEnd: '',
+    timeEnd: '',
     totalSaldo: 0,
     nominalPenarikan: 0,
     statusPenerimaan: '',
     rincianSaldos: [],
     previous_request_withdrawal_date: '',
+    previous_request_withdrawal_time: '',
     notes: '',
   },
   getters: {
@@ -34,6 +36,8 @@ export default {
       state.notes = detailSaldo.notes
       state.previous_request_withdrawal_date = moment(detailSaldo.previous_request_withdrawal_date).format('DD MMMM YYYY')
       state.dateEnd = moment(detailSaldo.created_at).format('DD MMMM YYYY')
+      state.timeEnd = moment(detailSaldo.created_at).format('HH:MM')
+      state.previous_request_withdrawal_time = moment(detailSaldo.created_at).format('HH:MM')
       state.nominalPenarikan = detailSaldo.nominal
       state.statusPenerimaan = detailSaldo.status
     },
