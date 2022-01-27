@@ -109,7 +109,7 @@
                 <template #cell(order_date)="data">
                   {{ moment(data.item.date_transaction) }}
                 </template>
-                <template #cell(grand_total)="data">
+                <template #cell(transaction_type)="data">
                   <div v-if="data.item.transaction_type === 'top_up'">
                     Top UP Saldo
                   </div>
@@ -117,25 +117,55 @@
                     Penarikan Saldo
                   </div>
                   <div v-else-if="data.item.transaction_type === 'shopping'">
-                    Belanja (Keperluan Talent)
+                    <div class="text-black text-md">
+                      Belanja
+                    </div>
+                    <div class="text-xs text-secondary">
+                      Keperluan talent
+                    </div>
                   </div>
                   <div v-else-if="data.item. transaction_type === 'orderku_done'">
-                    Orderan COD (Diterima)
+                    <div class="text-black text-md">
+                      Orderan COD
+                    </div>
+                    <div class="text-xs text-secondary">
+                      Diterima
+                    </div>
                   </div>
                   <div v-else-if="data.item.transaction_type === 'orderku_ongkir'">
-                    Orderan Non COD (Ongkir)
+                    <div class="text-black text-md">
+                      Orderan Non COD
+                    </div>
+                    <div class="text-xs text-secondary">
+                      Ongkir
+                    </div>
                   </div>
                   <div v-else-if="data.item.transaction_type === 'orderku_cancel'">
-                    Orderan Non COD (Dibatalkan)
+                    <div class="text-black text-md">
+                      Orderan Non COD
+                    </div>
+                    <div class="text-xs text-secondary">
+                      Dibatalkan
+                    </div>
                   </div>
                   <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method COD)'">
-                    Orderan COD (Retur)
+                    <div class="text-black text-md">
+                      Orderan COD
+                    </div>
+                    <div class="text-xs text-secondary">
+                      Retur
+                    </div>
                   </div>
                   <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method Bank Transfer)'">
-                    Orderan Non COD (Retur)
+                    <div class="text-black text-md">
+                      Orderan Non COD
+                    </div>
+                    <div class="text-xs text-secondary">
+                      Retur
+                    </div>
                   </div>
                   <div v-else>
-                    {{ data.item.transaction_type }}
+                    -
                   </div>
                 </template>
                 <template #cell(amount)="data">
@@ -153,10 +183,16 @@
                   </span>
                 </template>
                 <template #cell(saldo)="data">
-                  {{ formatNumber(data.item.saldo) }}
+                  Rp. {{ formatNumber(data.item.saldo) }}
                 </template>
                 <template #cell(action)="data">
+                  <p
+                    v-if="
+                      data.item.transaction_type === 'topup' || data.item.transaction_type === 'withdrawal' || data.item.transaction_type === 'shopping'
+                    "
+                  />
                   <a
+                    v-else
                     :href="'/detail-order/' + data.item.id"
                     class="text-info"
                   >
