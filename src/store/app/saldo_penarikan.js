@@ -12,6 +12,8 @@ export default {
     nominalPenarikan: 0,
     statusPenerimaan: '',
     rincianSaldos: [],
+    previous_request_withdrawal_date: '',
+    notes: '',
   },
   getters: {
     sisaSaldo(state) {
@@ -29,7 +31,8 @@ export default {
       state.dateStart = moment(
         detailSaldo.previous_request_withdrawal_date,
       ).format('DD MMMM YYYY')
-      // state.dateStart = '2021-10-5'
+      state.notes = detailSaldo.notes
+      state.previous_request_withdrawal_date = moment(detailSaldo.previous_request_withdrawal_date).format('DD MMMM YYYY')
       state.dateEnd = moment(detailSaldo.created_at).format('DD MMMM YYYY')
       state.nominalPenarikan = detailSaldo.nominal
       state.statusPenerimaan = detailSaldo.status

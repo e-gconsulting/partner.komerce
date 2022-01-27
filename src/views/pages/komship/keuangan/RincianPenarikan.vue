@@ -7,7 +7,7 @@
             Rincian Penarikan
           </p>
           <p class="h-text-sm font-weight-normal">
-            {{ dateStart }} - {{ dateEnd }}
+            {{ previous_request_withdrawal_date }} - {{ dateEnd }}
           </p>
         </div>
         <span
@@ -43,7 +43,7 @@
               </p>
             </div>
           </div>
-          <div class="col-md-6 mt-md-2">
+          <div class="col-md-6 mt-2 mt-md-0">
             <div class="rounded border p-1">
               <p class="h-text-md mb-0">
                 <span
@@ -265,9 +265,11 @@ export default {
 
     },
     async fetchData() {
+      const user = JSON.parse(localStorage.getItem('userData'))
       this.loadTable = true
       await this.$http_komship.get('v1/partner/order-transaction-balance', {
         params: {
+          user_id: user.id,
           start_date: this.startDate,
           end_date: this.endDate,
           page: this.currentPage,
@@ -299,6 +301,7 @@ export default {
       'statusPenerimaan',
       'rincianSaldos',
       'notes',
+      'previous_request_withdrawal_date',
     ]),
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },

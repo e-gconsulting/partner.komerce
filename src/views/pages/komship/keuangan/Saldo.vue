@@ -620,6 +620,7 @@ export default {
       last30,
       firstDateOfMonth,
       lastDateOfMonth,
+      user: {},
       tableTitles: [
         'Tanggal',
         'Tujuan Penarikan',
@@ -637,6 +638,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.user)
     if (!window.snapScriptLoaded) {
       const snapScriptEl = document.createElement('script')
       snapScriptEl.setAttribute(
