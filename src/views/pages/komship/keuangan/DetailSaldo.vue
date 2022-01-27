@@ -38,10 +38,34 @@
         :fields="fields"
       >
         <template #cell(date_transaction)="data">
-          {{ moment(data.item.date_transaction) }}
+          <span>{{ moment(data.item.date_transaction) }}</span><br>
+          <span class="text-muted">{{ momentTime(data.item.date_transaction) }}</span>
         </template>
         <template #cell(transaction_type)="data">
-          {{ statusTransaction(data.item.transaction_type, data.item.payment_method) }}
+          <span v-if="data.item.transaction_type === 'topup'">
+            Top Up Saldo
+          </span>
+          <span v-if="data.item.transaction_type === 'shopping'">
+            Belanja (Keperluan Talent)
+          </span>
+          <span v-if="data.item.transaction_type === 'withdrawal'">
+            Penarikan Saldo
+          </span>
+          <span v-if="data.item.transaction_type === 'orderku_done'">
+            Orderan COD<br><span class="text-muted">Diterima</span>
+          </span>
+          <span v-if="data.item.transaction_type === 'orderku_cancel'">
+            Orderan Non COD<br><span class="text-muted">Cancel</span>
+          </span>
+          <span v-if="data.item.transaction_type === 'orderku_ongkir'">
+            Orderan Non COD<br><span class="text-muted">Ongkir</span>
+          </span>
+          <span v-if="data.item.transaction_type === 'orderku_retur' && data.item.payment_method === 'COD'">
+            Orderan Non COD<br><span class="text-muted">Retur</span>
+          </span>
+          <span v-if="data.item.transaction_type === 'orderku_retur' && data.item.payment_method === 'BANK TRANSFER'">
+            Orderan Non COD<br><span class="text-muted">Retur</span>
+          </span>
         </template>
         <template #cell(amount)="data">
           <span
@@ -167,6 +191,13 @@ export default {
       const validDate = moment(date)
       if (validDate.isValid()) {
         return moment(date).format('DD-MM-YYYY')
+      }
+      return ''
+    },
+    momentTime(date) {
+      const validDate = moment(date)
+      if (validDate.isValid()) {
+        return moment(date).format('hh:mm')
       }
       return ''
     },
