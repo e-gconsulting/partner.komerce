@@ -188,9 +188,11 @@
                 <template #cell(action)="data">
                   <p
                     v-if="
-                      data.item.transaction_type === 'topup' || data.item.transaction_type === 'withdrawal' || data.item.transaction_type === 'shopping'
+                      data.item.transaction_type === 'topup' || data.item.transaction_type === 'withdrawal' || data.item.transaction_type === 'shopping' || typeof data.item.order_id=== undefined
                     "
-                  />
+                  >
+                  -
+                  </p>
                   <a
                     v-else
                     :href="'/detail-order/' + data.item.id"
