@@ -105,7 +105,7 @@
               </div>
             </div>
           </div>
-          <div class="card-body pb-0 mb-0">
+          <div v-if="JSON.stringify(this.rekening) !== JSON.stringify({})" class="card-body pb-0 mb-0">
             <p class="h-text-md mt-1 mb-0">
               {{ rekening.nama }}
               <img
@@ -116,6 +116,11 @@
             </p>
             <p class="h-text-xs mb-0">
               {{ `${rekening.bank} - ${rekening.noRek}` }}
+            </p>
+          </div>
+          <div v-else class="card-body pb-0 mb-0">
+            <p class="h-text-md mt-1 mb-0">
+              Rekening belum ada
             </p>
           </div>
         </div>
@@ -638,7 +643,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.user)
     if (!window.snapScriptLoaded) {
       const snapScriptEl = document.createElement('script')
       snapScriptEl.setAttribute(
