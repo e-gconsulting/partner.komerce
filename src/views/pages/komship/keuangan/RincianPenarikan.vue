@@ -109,18 +109,8 @@
                 <template #cell(order_date)="data">
                   {{ moment(data.item.date_transaction) }}
                 </template>
-                <template #cell(payment_method)="data">
-                  {{ data.item.payment_method }}
-                  <span
-                    v-if="data.item.order_status === 'Retur'"
-                    class="text-muted"
-                  ><br>Retur</span>
-                </template>
                 <template #cell(grand_total)="data">
                   {{ data.item.transaction_type }}
-                </template>
-                <template #cell(shipping_cost)="data">
-                  Rp. {{ formatNumber(data.item.saldo) }}
                 </template>
                 <template #cell(amount)="data">
                   <span
@@ -135,6 +125,17 @@
                   >
                     +Rp.{{ formatNumber(data.item.amount) }}
                   </span>
+                </template>
+                <template #cell(saldo)="data">
+                  {{ formatNumber(data.item.saldo) }}
+                </template>
+                <template #cell(action)="data">
+                  <a
+                    :href="'/detail-order/' + data.item.id"
+                    class="text-info"
+                  >
+                    Lihat Detail
+                  </a>
                 </template>
               </b-table>
               <div class="d-flex justify-between align-middle">
@@ -170,7 +171,7 @@
           Catatan:
         </p>
         <p>
-          {{notes == null || notes == '' ? 'Tidak ada catatan': notes}}
+          {{ notes == null || notes == '' ? 'Tidak ada catatan': notes }}
         </p>
       </div>
     </div>
@@ -197,19 +198,16 @@ export default {
           key: 'date_transaction', label: 'Tanggal', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'payment_method', label: 'Jenis Order', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'transaction_type', label: 'Jenis Transaksi', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'transaction_type', label: 'Nilai Order', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'amount', label: 'Jumlah', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
           key: 'saldo', label: 'Ongkos Kirim', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'order_status', label: 'Biaya COD', thClass: 'align-middle', tdClass: 'align-top',
-        },
-        {
-          key: 'amount', label: 'Jumlah', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'action', label: '', thClass: 'align-middle', tdClass: 'align-top',
         },
       ],
       loadTable: false,
