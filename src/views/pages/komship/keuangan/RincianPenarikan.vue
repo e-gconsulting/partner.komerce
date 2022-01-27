@@ -7,7 +7,7 @@
             Rincian Penarikan
           </p>
           <p class="h-text-sm font-weight-normal">
-            {{ previous_request_withdrawal_date }} - {{ dateEnd }}
+            {{ `${indoDate(previous_request_withdrawal_date)}( ${previous_request_withdrawal_time} WIB)` }} - {{ `${indoDate(dateEnd)}( ${timeEnd} WIB)` }}
           </p>
         </div>
         <span
@@ -315,6 +315,35 @@ export default {
       }
       return ''
     },
+    indoDate(string) {
+      const newString = string.toLowerCase()
+      if (newString.indexOf('january')) {
+        return string.replace('January', 'Januari')
+      } if (newString.indexOf('february')) {
+        return string.replace('February', 'Februari')
+      } if (newString.indexOf('march')) {
+        return string.replace('March', 'Maret')
+      } if (newString.indexOf('april')) {
+        return string.replace('April', 'April')
+      } if (newString.indexOf('may')) {
+        return string.replace('May', 'Mei')
+      } if (newString.indexOf('june')) {
+        return string.replace('June', 'Juni')
+      } if (newString.indexOf('july')) {
+        return string.replace('July', 'Juli')
+      } if (newString.indexOf('august')) {
+        return string.replace('August', 'Agustus')
+      } if (newString.indexOf('september')) {
+        return string.replace('September', 'September')
+      } if (newString.indexOf('october')) {
+        return string.replace('October', 'Oktober')
+      } if (newString.indexOf('november')) {
+        return string.replace('November', 'November')
+      } if (newString.indexOf('december')) {
+        return string.replace('December', 'Desember')
+      }
+      return string
+    },
     formatRibuan(x) {
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
@@ -357,12 +386,14 @@ export default {
     ...mapState('saldoPenarikan', [
       'dateStart',
       'dateEnd',
+      'timeEnd',
       'totalSaldo',
       'nominalPenarikan',
       'statusPenerimaan',
       'rincianSaldos',
       'notes',
       'previous_request_withdrawal_date',
+      'previous_request_withdrawal_time',
     ]),
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },
