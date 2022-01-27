@@ -110,7 +110,7 @@
                   {{ moment(data.item.date_transaction) }}
                 </template>
                 <template #cell(transaction_type)="data">
-                  <div v-if="data.item.transaction_type === 'top_up'">
+                  <div v-if="data.item.transaction_type === 'topup'">
                     Top UP Saldo
                   </div>
                   <div v-else-if="data.item.transaction_type === 'withdrawal'">
@@ -170,8 +170,9 @@
                 </template>
                 <template #cell(amount)="data">
                   <span
-                    v-if="data.item.payment_method === 'BANK TRANSFER'"
-                    class="text-primary"
+                    v-if="parseInt(data.item.amount) < 0"
+                    class="
+                    text-primary"
                   >
                     -Rp.{{ formatNumber(data.item.amount) }}
                   </span>
