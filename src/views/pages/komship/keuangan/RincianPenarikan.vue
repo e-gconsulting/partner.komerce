@@ -204,7 +204,7 @@ export default {
           key: 'amount', label: 'Jumlah', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'saldo', label: 'Ongkos Kirim', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'saldo', label: 'Saldo', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
           key: 'action', label: '', thClass: 'align-middle', tdClass: 'align-top',
