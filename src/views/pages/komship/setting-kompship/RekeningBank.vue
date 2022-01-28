@@ -630,7 +630,7 @@ export default {
 
       phoneNumber: '',
 
-      countOtp: 6,
+      countOtp: 60,
 
       errorConfirmOtp: false,
 
@@ -697,7 +697,7 @@ export default {
       this.countSubmit += 1
       console.log(this.countSubmit)
       if (this.countOtp < 2) {
-        this.countOtp = 6
+        this.countOtp = 60
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneNumber)
@@ -718,7 +718,7 @@ export default {
       }
       if (this.countSubmit > 1) {
         this.validateResendOtp = 'Kirim ulang sudah melewati batas'
-        this.countCanResendOtp = 6
+        this.countCanResendOtp = 60
         this.countDownTimerResend()
       }
     },
