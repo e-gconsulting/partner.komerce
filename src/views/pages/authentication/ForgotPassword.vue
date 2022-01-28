@@ -20,22 +20,7 @@
           Tautan untuk mengatur ulang password
           akan dikirim melalui email.
         </b-card-text>
-        <b-alert
-          variant="danger"
-          :show="!!error"
-        >
-          <div class="alert-body">
-            <span>{{ error }}</span>
-          </div>
-        </b-alert>
-        <b-alert
-          variant="danger"
-          :show="!!error"
-        >
-          <div class="alert-body">
-            <span>{{ error }}</span>
-          </div>
-        </b-alert>
+
         <!-- form -->
         <validation-observer
           ref="loginForm"
@@ -46,23 +31,46 @@
           >
             <!-- email -->
             <b-form-group
-              label="Email"
+              label="Username atau Email"
               label-for="login-email"
             >
               <validation-provider
                 #default="{ errors }"
-                name="Email"
+                label="Username atau Email"
                 vid="email"
-                rules="required|email"
+                rules="required"
+                :custom-messages="custommessages"
               >
+                <div>
+                  <b-alert
+                    variant="danger"
+                    :hidden="!!error"
+                  >
+                    <div class="alert-body">
+                      <b-link
+                        v-if="showResendEmailVerification"
+                        class="ml-50"
+                        @click="resendEmailVerification"
+                      />
+                    </div>
+                  </b-alert>
+                </div>
                 <b-form-input
                   id="login-email"
-                  v-model="userEmail"
-                  :state="errors.length > 0 ? false:null"
+                  v-model="usernameEmail"
+                  :state="errors.length > 0 ? false : null"
                   name="login-email"
-                  placeholder="john@example.com"
+                  placeholder="john@mail.com"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-danger">{{ errors[0] }} </small>
+                <div>
+                  <small
+                    v-if="emailverifikasi"
+                    class="text-danger"
+                  >
+                    {{ emailverifikasi }}
+                  </small>
+                </div>
               </validation-provider>
             </b-form-group>
             <b-card-text class="text-center mt-2">
@@ -112,12 +120,26 @@
                     berhasil dikirim melalui email. Silahkan cek email Kamu.
                   </strong>
                 </h4>
-                <p
-                  class="text-black"
-                  style="color:#828282"
-                >
-                  kirim ulang
-                </p>
+                <div>
+                  <b-alert
+                    :show="dismissCountDown"
+                    dismissible
+                    variant="warning"
+                    @dismissed="dismissCountDown=0"
+                    @dismiss-count-down="countDownChanged"
+                  >
+                    <b-link
+                      v-if="showResendEmailVerification"
+                      class="ml-50"
+                      @click="resendEmailVerification"
+                    >
+                      <span
+                        :to="{name:'auth-login'}"
+                        @click="showAlert"
+                      >Kirim ulang {{ dismissCountDown }} seconds</span>
+                    </b-link>
+                  </b-alert>
+                </div>
               </b-col>
               <b-button
                 type="submit"
@@ -129,6 +151,12 @@
               </b-button>
 
             </b-modal>
+            <div class="mt-1">
+            <!-- <p
+            v-else
+            >
+            </p> -->
+            </div>
           </b-form>
         </validation-observer>
         <!-- </b-col> -->
@@ -148,6 +176,7 @@ import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import store from '@/store/index'
 import { $themeConfig } from '@themeConfig'
+import moment from 'moment'
 
 export default {
   directives: {
@@ -156,7 +185,7 @@ export default {
   components: {
     BRow,
     BCol,
-    BAlert,
+    // BAlert,
     BLink,
     BFormGroup,
     BFormInput,
@@ -175,13 +204,21 @@ export default {
     return {
       error: '',
       status: '',
-      userEmail: '',
-      // sideImg: require('@/assets/images/illustration/auth-illustration.png'),
+      usernameEmail: '',
+      emailverifikasi: '',
+      showResendEmailVerification: true,
+      dismissCountDown: 0,
+      dismissSecs: 60,
       loading: false,
+      custommessages: {
+        required: 'Mohon masukkan email',
+      },
+      password: '',
+      // validation
+      required,
 
       // validation rules
-      required,
-      email,
+      // email,
     }
   },
   setup() {
@@ -198,46 +235,60 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
-    // imgUrl() {
-    //   if (store.state.appConfig.layout.skin === 'dark') {
-    //     // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-    //     this.sideImg = require('@/assets/images/illustration/auth-illustration.png')
-    //     return this.sideImg
-    //   }
-    //   return this.sideImg
+    // time() {
+    //   return this.date.format('ss')
     // },
   },
-  // created: {
-  // this.countdown()
-  // },
   methods: {
     showmodal() {
       this.$refs['my-modal'].toggle('#toggle-btn')
     },
-    countdown() {
-      if (this.countdown > 0) {
-        setTimeout(() => {
-          this.countdown = 1
-          this.countdown()
-        }, 1000)
-      }
+
+    countDownChanged(dismissCountDown) {
+      this.dismissCountDown = dismissCountDown
     },
-    handleRedirectToDataOrder() {
-      this.$router.push('forgot-password')
+    showAlert() {
+      this.dismissCountDown = this.dismissSecs
+    },
+    resendEmailVerification() {
+      this.showResendEmailVerification = true
+      this.error = ''
+
+      this.$http
+        .get(`/resend_verification_email/${this.userId}`)
+        .then(() => {
+          this.userId = ''
+
+          this.$swal({
+            title: 'Terkirim',
+            text: 'Harap periksa email anda untuk verifikasi akun Anda.',
+            icon: 'success',
+            confirmButtonText: 'Mengerti',
+            customClass: {
+              confirmButton: 'btn btn-primary',
+            },
+          })
+        })
+        .catch(() => {})
+    },
+    handleRedirectTodataforgot() {
+      this.$router.push('login')
     },
     submit() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
           this.error = ''
-
-          useJwt.resetPassword({
-            email: this.userEmail,
+          this.emailverifikasi = ''
+          this.showResendEmailVerification = true
+          useJwt.forgotpassword({
+            email: this.usernameEmail,
           })
             .then(response => {
               if (response.data.status === false) {
                 this.error = response.data.message
                 this.loading = false
+                this.emailverifikasi = 'Maaf, username atau password yang Kamu masukan salah.'
               } else {
                 this.$swal({
                   title: 'Tautan Dikirm',

@@ -254,7 +254,7 @@
       </div>
       <b-pagination
         v-model="currentPage"
-        :total-rows="rows"
+        :total-rows="rowss"
         :per-page="perPage"
         first-number
         last-number
@@ -274,6 +274,7 @@ import {
   BForm,
   BFormGroup,
   BCard,
+  BPagination,
   BOverlay,
   VBPopover,
   BDropdown,
@@ -404,6 +405,7 @@ export default {
       totalinforCustomer: 0,
     }
   },
+
   computed: {
     rowss() {
       return this.itemsCustomer.length
@@ -423,7 +425,7 @@ export default {
       console.error(error)
     })
     this.tableProvider()
-    this.rows = this.items.length
+    this.rowss = this.items.length
   },
   methods: {
     halamancustomerfilter(data) {

@@ -69,16 +69,16 @@ export default [
       redirectIfLoggedIn: true,
     },
   },
-  // {
-  //   path: '/ubah-password',
-  //   name: 'auth-ubah-password',
-  //   component: () => import('@/views/pages/authentication/ubahpassword.vue'),
-  //   meta: {
-  //     layout: 'full',
-  //     resource: 'Auth',
-  //     redirectIfLoggedIn: true,
-  //   },
-  // },
+  {
+    path: '/change-password',
+    name: 'auth-change-password',
+    component: () => import('@/views/pages/authentication/CreatePassword.vue'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+      redirectIfLoggedIn: true,
+    },
+  },
   {
     path: '/komship-register',
     name: 'kompship-daftar',
