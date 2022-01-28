@@ -189,7 +189,7 @@
                       <v-select
                         v-model="bankName"
                         label="name"
-                        :reduce="option => option.name"
+                        :reduce="option => option.code"
                         :options="banks"
                         :filterable="true"
                         :state="errors.length > 0 ? false : null"
@@ -331,7 +331,7 @@
                     <v-select
                       v-model="fieldAddBankName"
                       label="name"
-                      :reduce="option => option.name"
+                      :reduce="option => option.code"
                       :options="banks"
                       :filterable="true"
                       :state="errors.length > 0 ? false : null"
@@ -729,7 +729,9 @@ export default {
       const formData = new FormData()
       formData.append('otp', this.dataPin)
       httpKomship.post('/v1/partner/sms/otp/verification', formData).then(response => {
-        if (response.message === 'Successfully Verification OTP.') {
+        console.log(response)
+        if (response.data.code === 200) {
+          console.log('success')
           httpKomship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
@@ -744,8 +746,18 @@ export default {
             this.$refs['modal-verification-submit'].hide()
           })
         } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failed',
+              icon: 'AlertCircleIcon',
+              text: response.data.message,
+              variant: 'danger',
+            },
+          })
           this.loadingSubmit = false
           this.errorConfirmOtp = true
+          console.log('failed')
         }
       })
     },
