@@ -306,6 +306,10 @@ export default {
       items: [],
       fields: [
         {
+          key: 'created_at',
+          label: 'Tanggal',
+        },
+        {
           key: 'detailName',
           label: 'Nama',
         },
