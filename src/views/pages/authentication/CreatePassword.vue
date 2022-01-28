@@ -25,33 +25,45 @@
             @submit.prevent="submit"
           >
 
-            <b-form-group
-              label-for="reset-password-confirm"
-              label=" Password baru"
-            >
+            <b-form-group>
+              <label for="login-password">Password</label>
               <validation-provider
                 #default="{ errors }"
-                name="Confirm Password"
-                rules="required|password"
-                :custom-messages="custommessages5"
+                name="Password"
+                vid="password"
+                rules="required"
+                :custom-messages="custommessages4"
               >
                 <b-input-group
                   class="input-group-merge"
-                  :class="errors.length > 0"
+                  :class="errors.length > 0 ? 'is-invalid' : null"
                 >
+                  <b-alert
+                    variant="danger"
+                    :hidden="!!error"
+                  >
+                    <div class="alert-body">
+                      <b-link
+                        v-if="showResendEmailVerification"
+                        class="ml-50"
+                        @click="resendEmailVerification"
+                      />
+                    </div>
+                  </b-alert>
                   <b-form-input
-                    id="reset-password-confirm"
-                    v-model="cPassword"
-                    :type="password2FieldType"
+                    id="login-password"
+                    v-model="password"
+                    :state="errors.length > 0 ? false : null"
                     class="form-control-merge"
-                    :state="errors.length > 0 ? false:null"
-                    name="reset-password-confirm"
+                    :type="passwordFieldType"
+                    name="login-password"
+                    placeholder="Password"
                   />
                   <b-input-group-append is-text>
                     <feather-icon
                       class="cursor-pointer"
-                      :icon="password2ToggleIcon"
-                      @click="togglePassword2Visibility"
+                      :icon="passwordToggleIcon"
+                      @click="togglePasswordVisibility"
                     />
                   </b-input-group-append>
                 </b-input-group>
@@ -188,8 +200,7 @@ export default {
         password: 'pasword tidak sama',
       },
       // validation rules
-      password1FieldType: 'password',
-      password2FieldType: 'password',
+      passwordFieldType: 'password',
     }
   },
   setup() {
@@ -204,7 +215,7 @@ export default {
   },
   computed: {
     password1ToggleIcon() {
-      return this.password1FieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
+      return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
     password2ToggleIcon() {
       return this.password2FieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
@@ -218,7 +229,7 @@ export default {
       this.password2FieldType = this.password2FieldType === 'password' ? 'text' : 'password'
     },
     togglePassword1Visibility() {
-      this.password1FieldType = this.password1FieldType === 'password' ? 'text' : 'password'
+      this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password'
     },
     submit() {
       this.$refs.changepassword.validate().then(success => {
@@ -234,6 +245,7 @@ export default {
               if (response.data.status === false) {
                 this.error = response.data.message
                 this.loading = false
+                this.password = 'testing'
               } else {
                 this.$swal({
                   title: 'Tautan Dikirm',

@@ -226,7 +226,6 @@ export default {
     const { appName, appLogoImage } = $themeConfig.app
 
     return {
-      // App Name
       appName,
       appLogoImage,
     }
