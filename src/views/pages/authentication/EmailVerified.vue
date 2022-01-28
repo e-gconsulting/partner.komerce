@@ -9,9 +9,9 @@
         class="flat-image"
         style="width: 36px"
       />
-      <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
+      <!-- <h2 class="brand-text text-primary ml-50 mt-auto mb-auto">
         <span class="text-white">{{ appName }}</span>
-      </h2>
+      </h2> -->
     </b-link>
 
     <div class="misc-inner p-2 p-sm-3">

@@ -142,7 +142,7 @@
             cols="6"
             class="font-bold"
           >
-            {{ orderData.detail_address }}
+            {{ orderData.customer_address }}
           </b-col>
         </b-row>
       </div>
@@ -370,8 +370,8 @@ export default {
       }).then(isConfirm => {
         if (isConfirm.value === true) {
           this.$http_komship.delete(`v1/order/${this.profile.partner_id}/delete/${this.$route.params.order_id}`)
-            .then(response => {
-              this.$router.go('/data-order')
+            .then(() => {
+              this.$router.push('/data-order')
             })
         }
       })
@@ -379,7 +379,22 @@ export default {
     async copyResi(resi) {
       try {
         await navigator.clipboard.writeText(resi)
-        console.log('Copied')
+        const Toast = this.$swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          didOpen: toast => {
+            toast.addEventListener('mouseenter', this.$swal.stopTimer)
+            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+          },
+        })
+
+        Toast.fire({
+          icon: 'success',
+          title: '<span class="text-success">Success copy to clipboard</span>',
+          showCloseButton: true,
+        })
       } catch ($e) {
         console.log('Cannot Copy')
       }

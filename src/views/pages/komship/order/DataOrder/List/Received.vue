@@ -230,6 +230,9 @@
             </b-popover>
           </div>
         </template>
+        <template #cell(updated_at)="data">
+          {{ moment(data.item.updated_at) }}
+        </template>
         <template #cell(details)="data">
           <b-button
             variant="none"
@@ -315,7 +318,7 @@ export default {
           key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'received_date', label: 'Tanggal Diterima', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'updated_at', label: 'Tanggal Diterima', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
@@ -376,6 +379,7 @@ export default {
       })
         .then(res => {
           const { data } = res.data
+          console.log(data)
           this.totalItems = data.total
           this.loadTable = false
           return data.data

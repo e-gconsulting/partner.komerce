@@ -513,17 +513,17 @@ export default {
       if (value === 1) {
         formatStatus = 'Diterima'
       }
-      // if (value === 0) {
-      //   formatStatus = 'Diajukan'
-      // } else if (value === 1) {
-      //   formatStatus = 'Dikirim'
-      // } else if (value === 2) {
-      //   formatStatus = 'Diterima'
-      // } else if (value === 3) {
-      //   formatStatus = 'Retur'
-      // } else if (value === 4) {
-      //   formatStatus = 'Batal'
-      // }
+      if (value === 0) {
+        formatStatus = 'Diajukan'
+      } else if (value === 1) {
+        formatStatus = 'Dikirim'
+      } else if (value === 2) {
+        formatStatus = 'Diterima'
+      } else if (value === 3) {
+        formatStatus = 'Retur'
+      } else if (value === 4) {
+        formatStatus = 'Batal'
+      }
       return formatStatus
     },
     currentTime() {

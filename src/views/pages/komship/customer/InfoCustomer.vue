@@ -1,7 +1,7 @@
 <template>
- <b-card>
+  <b-card>
     <h4><strong>Customer</strong></h4>
-        <b-row class="d-flex justify-content-end align-items-center">
+    <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
       >
@@ -19,7 +19,6 @@
       <b-col
         cols="auto"
       >
-
         <b-dropdown
           v-ripple.400="'rgba(255, 255, 255, 0.15)'"
           right
@@ -185,13 +184,10 @@
       blur="0"
       opacity=".5"
       rounded="sm"
-
     >
       <b-table
         id="pagination"
-        :per-page="0"
         :current-page="currentPage"
-
         striped
         hover
         responsive
@@ -221,37 +217,17 @@
         <template #head(last_order)="data">
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
-
-        <!-- Template cell -->
-        <template #cell(customer_name)="data">
-          {{ data.item.customer_name }}
-        </template>
-
-        <template #cell(customer_address)="data">
-          {{ data.item.customer_address.toLowerCase() }}
-        </template>
-
-        <template #cell(total_order)="data">
-          {{ data.item.total_order }}
-        </template>
-
-        <template #cell(total_pcs)="data">
-          {{ data.item.total_pcs }}
-        </template>
-
-        <template #cell(total_spent)="data">
-          Rp. {{ formatPrice(data.value) }}
-        </template>
-
       </b-table>
-       <b-pagination
-      v-model="currentPage"
-      :total-rows="totalinforCustomer"
-      :per-page="perPage"
-      class="mt-4"
-    >
-      <template #first-text><span class="text-dark">Lihat per halaman</span></template>
-       </b-pagination>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="totalinforCustomer"
+        :per-page="perPage"
+        class="mt-4"
+      >
+        <template #first-text>
+          <span class="text-dark">Lihat per halaman</span>
+        </template>
+      </b-pagination>
       <b-pagination
         v-model="currentPage"
         size="md"
@@ -260,6 +236,30 @@
         :per-page="perPage"
       />
     </b-overlay>
+    <b-row class="justify-content-between mt-5 mx-50 mb-2">
+      <div>
+        <span class="text-black mr-1">
+          List per halaman
+        </span>
+        <b-button
+          v-for="(paginationitems, index) in valuePerpage"
+          :key="index+1"
+          :variant="valuePerpageIsActive === paginationitems.value ? 'primary' : 'flat-dark'"
+          class="btn-icon mr-1"
+          size="sm"
+          @click="halamancustomerfilter(paginationitems)"
+        >
+          {{ paginationitems.value }}
+        </b-button>
+      </div>
+      <b-pagination
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        first-number
+        last-number
+      />
+    </b-row>
   </b-card>
 </template>
 <script>
@@ -277,7 +277,6 @@ import {
   BOverlay,
   VBPopover,
   BDropdown,
-  BPagination,
   BDropdownForm,
 } from 'bootstrap-vue'
 
@@ -302,7 +301,6 @@ export default {
     BOverlay,
     vSelect,
     BDropdown,
-    BPagination,
     BDropdownForm,
   },
   directives: {
@@ -314,9 +312,25 @@ export default {
   data() {
     return {
       loading: false,
+      currentPage: 1,
+      perPage: 50,
+      valuePerpageIsActive: 50,
+      rows: 0,
       selected: 1,
       options: [
         { value: 1, text: 'Kabupaten' },
+      ],
+
+      valuePerpage: [
+        {
+          value: 50,
+        },
+        {
+          value: 100,
+        },
+        {
+          value: 200,
+        },
       ],
       fields: [
         {
@@ -387,10 +401,13 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      currentPage: 1,
-      perPage: 10,
       totalinforCustomer: 0,
     }
+  },
+  computed: {
+    rowss() {
+      return this.itemsCustomer.length
+    },
   },
   watch: {
     currentPage: {
@@ -401,18 +418,18 @@ export default {
       },
     },
   },
-  computed: {
-    rows() {
-      return this.itemsCustomer.length
-    },
-  },
   mounted() {
     this.filterCustomer().catch(error => {
       console.error(error)
     })
     this.tableProvider()
+    this.rows = this.items.length
   },
   methods: {
+    halamancustomerfilter(data) {
+      this.valuePerpageIsActive = data.value
+      this.perPage = data.value
+    },
     tableProvider() {
       this.loading = true
       httpKomship.get('/v1/customers', {
@@ -436,6 +453,7 @@ export default {
       if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
+      // if (this.pagination) Object.assign(params, { pagination: this.pagination })
       if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
 
       httpKomship.get('/v1/customers', {
