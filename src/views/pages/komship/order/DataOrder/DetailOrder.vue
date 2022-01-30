@@ -276,7 +276,7 @@
             <b-col
               lg="5"
             >
-              Ongkos Kirim (Cashback {{ orderData.cashback_to }}%)
+              Ongkos Kirim (dipotong Cashback {{ orderData.cashback_to }}%)
             </b-col>
             <b-col
               lg="3"
