@@ -253,6 +253,7 @@ export default {
       // hide modal
       this.$nextTick(() => {
         this.$bvModal.hide('modal-transfer-berhasil')
+        this.$router.go(this.$router.currentRoute)
       })
     },
     handleOkTransGagal() {
