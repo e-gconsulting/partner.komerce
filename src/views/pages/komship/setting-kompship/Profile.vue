@@ -513,11 +513,14 @@ export default {
         console.log('image', data.partner_business_logo)
         if (data.partner_business_logo) this.imageInitialFile = data.partner_business_logo
         this.nameBusiness = data.partner_business_name
-        this.location = data.user_address_default.detail_address
+        if (data.user_address_default !== null) {
+          this.location = data.user_address_default.detail_address
+        }
         this.sektorBusiness = data.partner_category_name
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
-      }).catch(() => {
+      }).catch(err => {
+        console.log('error get profile', err)
         this.loading = false
         this.$toast({
           component: ToastificationContent,
