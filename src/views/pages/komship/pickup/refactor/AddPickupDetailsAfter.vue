@@ -277,7 +277,7 @@
                             size="17"
                           />
                         </span>
-                        <span class="text-black">{{ itemsPrint.customer_phone }}</span>
+                        <span class="text-black">{{ getCustomerPhone(itemsPrint.customer_phone) }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -1489,6 +1489,15 @@ export default {
     getValueDistrict(values) {
       const value = values
       return value.replace(',', ', ')
+    },
+    getCustomerPhone(value) {
+      let result = ''
+      if (result.charAt(0) !== '0') {
+        result = `0${value}`
+      } else if (result.charAt(0) === '6') {
+        result = `+${value}`
+      }
+      return result
     },
   },
 }
