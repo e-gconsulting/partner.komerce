@@ -257,8 +257,12 @@
                 label-cols-md="3"
                 class="ml-2"
               >
-                <b-form-input
-                  v-model="location"
+                <v-select
+                  v-model="cityCode"
+                  :options="provinceItems"
+                  :reduce="option => option.city_code"
+                  label="values"
+                  @search="onSearchProvince"
                 />
               </b-form-group>
             </b-col>
@@ -413,7 +417,11 @@ export default {
       partnerCategoryItems: [],
       businessTypeItems: [],
 
+      provinceItems: [],
+
       fieldLogoBusiness: [],
+
+      cityCode: '',
 
       // Validation
       required,
@@ -424,6 +432,7 @@ export default {
     this.loadProfile()
     this.loadPartnerCategory()
     this.loadBusinessType()
+    this.loadAllProvince()
   },
   methods: {
     removeLogoBusiness() {
@@ -460,6 +469,7 @@ export default {
           formData.append('business_type_id', this.typeBusiness)
           formData.append('business_location', String(this.location))
           formData.append('email', this.emailUser)
+          formData.append('city_code', this.cityCode)
 
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
@@ -516,6 +526,7 @@ export default {
         if (data.user_address_default !== null) {
           this.location = data.user_address_default.detail_address
         }
+        this.cityCode = data.address_partner_business
         this.sektorBusiness = data.partner_category_name
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
@@ -546,6 +557,31 @@ export default {
         this.businessTypeItems = data
         return this.businessTypeItems
       })
+    },
+    onSearchProvince(search, loading) {
+      if (search.length) {
+        this.searchProvince(loading, search, this)
+      }
+    },
+    searchProvince: _.debounce((loading, search, that) => {
+      loading(true)
+      that.loadProvince(search).finally(() => loading(false))
+    }, 500),
+    loadProvince(search) {
+      return this.$http.get(`/v1/partner/province-city?search=${search}`)
+        .then(response => {
+          const { data } = response.data
+          console.log('response province', data)
+          this.provinceItems = data
+        })
+    },
+    loadAllProvince() {
+      this.$http.get('/v1/partner/province-city')
+        .then(response => {
+          const { data } = response.data
+          console.log('response province', data)
+          this.provinceItems = data
+        })
     },
     reset() {
       this.fullname = ''
