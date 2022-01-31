@@ -517,7 +517,8 @@ export default {
         this.sektorBusiness = data.partner_category_name
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
-      }).catch(() => {
+      }).catch(err => {
+        console.log('error get profile', err)
         this.loading = false
         this.$toast({
           component: ToastificationContent,
