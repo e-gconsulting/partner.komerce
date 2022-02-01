@@ -526,7 +526,7 @@ export default {
         if (data.user_address_default !== null) {
           this.location = data.user_address_default.detail_address
         }
-        this.cityCode = data.address_partner_business
+        this.cityCode = data.user_address
         this.sektorBusiness = data.partner_category_name
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
