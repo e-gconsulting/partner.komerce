@@ -449,8 +449,12 @@ export default {
       this.loadingSubmit = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
-          if (this.imageInitialFile.includes('http')) {
-            this.imageInitialFile = ''
+          if (this.imageInitialFile !== '' && this.imageInitialFile !== null) {
+            console.log('tes2')
+            if (this.imageInitialFile.includes('http')) {
+              this.imageInitialFile = ''
+              console.log('tes1')
+            }
           }
           const formData = new FormData()
           formData.append('id', this.id)
@@ -483,7 +487,8 @@ export default {
             })
             this.loadingSubmit = false
             this.loadProfile()
-          }).catch(() => {
+          }).catch(err => {
+            console.log(err)
             this.loadingSubmit = false
             this.$toast({
               component: ToastificationContent,
