@@ -443,7 +443,8 @@ export default {
       this.fieldLogoBusiness.splice(0, 1)
       this.fieldLogoBusiness.push({ logo: '' })
     },
-    updateProfile() {
+    async updateProfile() {
+      await this.loadAllProvince()
       console.log('imageFile', this.imageFile)
       console.log('imageInitialFile', this.imageInitialFile)
       this.loadingSubmit = true
@@ -474,7 +475,6 @@ export default {
           formData.append('business_location', String(this.location))
           formData.append('email', this.emailUser)
           formData.append('city_code', this.cityCode)
-
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
               component: ToastificationContent,
@@ -531,7 +531,10 @@ export default {
         if (data.user_address_default !== null) {
           this.location = data.user_address_default.detail_address
         }
-        this.cityCode = data.user_address
+        if (data.address_partner_business) {
+          this.cityCode = data.address_partner_business
+          this.loadAllProvince()
+        }
         this.sektorBusiness = data.partner_category_name
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
@@ -578,6 +581,9 @@ export default {
           const { data } = response.data
           console.log('response province', data)
           this.provinceItems = data
+          if (data.length === 1) {
+            this.cityCode = data[0].city_code
+          }
         })
     },
     loadAllProvince() {
@@ -585,8 +591,15 @@ export default {
         .then(response => {
           const { data } = response.data
           console.log('response province', data)
+          data.forEach(this.filterProvince)
+          console.log(this.cityCode)
           this.provinceItems = data
         })
+    },
+    filterProvince(data) {
+      if (data.values === this.cityCode) {
+        this.cityCode = data.city_code
+      }
     },
     reset() {
       this.fullname = ''
