@@ -220,16 +220,6 @@
       </b-table>
       <b-pagination
         v-model="currentPage"
-        :total-rows="totalinforCustomer"
-        :per-page="perPage"
-        class="mt-4"
-      >
-        <template #first-text>
-          <span class="text-dark">Lihat per halaman</span>
-        </template>
-      </b-pagination>
-      <b-pagination
-        v-model="currentPage"
         size="md"
         class="float-right mr-2"
         :total-rows="totalinforCustomer"
@@ -455,7 +445,6 @@ export default {
       if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
-      // if (this.pagination) Object.assign(params, { pagination: this.pagination })
       if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
 
       httpKomship.get('/v1/customers', {
