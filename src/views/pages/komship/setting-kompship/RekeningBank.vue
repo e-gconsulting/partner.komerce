@@ -729,7 +729,6 @@ export default {
       const formData = new FormData()
       formData.append('otp', this.dataPin)
       httpKomship.post('/v1/partner/sms/otp/verification', formData).then(response => {
-        console.log('response otp verification', response)
         if (response.data.code === 200) {
           console.log('success')
           httpKomship.post('/v1/bank-account/store',
