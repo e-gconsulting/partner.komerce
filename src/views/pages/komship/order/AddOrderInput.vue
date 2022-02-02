@@ -469,6 +469,63 @@
         </b-col>
       </b-row>
     </section>
+
+    <!-- Modal validate expedition -->
+    <b-modal
+      ref="modal-validate-address"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success text-center pb-2">
+        <b-row class="justify-content-center mb-3 pt-2">
+          <img src="@/@core/assets/image/icon-popup-warning.png">
+        </b-row>
+        <div class="text-wrapper text-center mb-3 px-1">
+          <h4 class="text-black">
+            <strong>
+              Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.
+            </strong>
+          </h4>
+        </div>
+        <b-button
+          class="org-button"
+          tag="router-link"
+          :to="{ name: $route.meta.routeToAddressPickup }"
+        >
+          Tambahkan Alamat Pick Up
+        </b-button>
+      </div>
+    </b-modal>
+
+    <!-- Modal validate product -->
+    <b-modal
+      ref="modal-validate-product"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success text-center pb-2">
+        <b-row class="justify-content-center mb-3 pt-2">
+          <img src="@/@core/assets/image/icon-popup-warning.png">
+        </b-row>
+        <div class="text-wrapper text-center mb-3 px-1">
+          <h4 class="text-black">
+            <strong>
+              Tambahkan produk sebelum melanjutkan tambah order.
+            </strong>
+          </h4>
+        </div>
+        <b-button
+          class="org-button"
+          tag="router-link"
+          :to="{ name: $route.meta.routeToAddProduct }"
+        >
+          Tambah Produk
+        </b-button>
+      </div>
+    </b-modal>
+
   </div>
 </template>
 
@@ -485,6 +542,7 @@ import {
   BRow,
   BCol,
   BAvatar,
+  BModal,
 } from 'bootstrap-vue'
 
 import dateFormat from 'dateformat'
@@ -521,6 +579,7 @@ export default {
     BRow,
     BCol,
     BAvatar,
+    BModal,
   },
   props: {
     screens: {
@@ -539,10 +598,10 @@ export default {
       type: Object,
       default: () => {},
     },
-    listProduct: {
-      type: Array,
-      default: () => [],
-    },
+    // listProduct: {
+    //   type: Array,
+    //   default: () => [],
+    // },
     listSelected: {
       type: Array,
       default: () => [],
@@ -642,17 +701,20 @@ export default {
       buttonVariationSecond: true,
       buttonVariationFirst: true,
       addressList: [],
+
+      listProduct: [],
     }
   },
   mounted() {
+    this.getAddress()
     this.dateValue = dateFormat(new Date(), 'yyyy-mm-dd')
     console.log(this.dateValue)
     this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
     this.date = formatFullDate(this.dateValue)
-    this.getAddress()
-    // this.getProfile()
+    this.getProfile()
     this.listProduct2 = this.listProduct
     this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+    this.getListProductByPartner()
   },
   methods: {
     getProfile() {
@@ -668,13 +730,28 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data
-        const sortData = data.slice().sort((a, b) => b.is_default - a.is_default)
-
-        this.addressList = await sortData.map(val => ({
-          value: val.address_id,
-          text: val.address_name,
-        }))
-        this.choosenAddres = this.addressList[0].value
+        if (data.length === 0) this.$refs['modal-validate-address'].show()
+        if (data.length !== 0) {
+          const sortData = data.slice().sort((a, b) => b.is_default - a.is_default)
+          this.addressList = await sortData.map(val => ({
+            value: val.address_id,
+            text: val.address_name,
+          }))
+          this.choosenAddres = this.addressList[0].value
+          console.log(this.addressList)
+          this.cekListProduct()
+        }
+      })
+    },
+    cekListProduct() {
+      const partnerId = this.profile.partner_id
+      return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
+        const { data } = response.data
+        // console.log('this.product', data)
+        this.listProduct = data
+        if (this.listProduct.length === 0) this.$refs['modal-validate-product'].show()
+      }).catch(() => {
+        console.log('failed to get the product data by partner')
       })
     },
     chooseVariation(data) {
