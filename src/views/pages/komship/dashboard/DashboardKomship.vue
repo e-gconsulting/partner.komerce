@@ -88,10 +88,16 @@
               </div>
               <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima." />
             </div>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
             >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
             {{ formatRupiah(saldoPending) }}
@@ -280,10 +286,16 @@
               </div>
               <popover-info text="Produk Terlaris merupakan produk kamu yang paling banyak di order." />
             </div>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
             >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
           </div>
           <div class="card-body">
             <div class="w-25">
@@ -369,10 +381,16 @@
               </div>
               <popover-info text="Customer Loyal merupakan customer yang sering melakukan order." />
             </div>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
             >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
           </div>
           <div class="card-body">
             <ul class="list-group list-group-flush">
