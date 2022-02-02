@@ -246,6 +246,8 @@ export default {
               login_from: 'website',
             })
             .then(response => {
+              const { data } = response
+              const user = data.data
               if (response.data.status === false) {
                 this.error = response.data.message
                 this.loading = false
