@@ -218,13 +218,13 @@
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
       </b-table>
-      <b-pagination
+      <!-- <b-pagination
         v-model="currentPage"
         size="md"
         class="float-right mr-2"
         :total-rows="totalinforCustomer"
         :per-page="perPage"
-      />
+      /> -->
     </b-overlay>
     <b-row class="justify-content-between mt-5 mx-50 mb-2">
       <div>
