@@ -88,10 +88,16 @@
               </div>
               <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima." />
             </div>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
             >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
             {{ formatRupiah(saldoPending) }}
@@ -280,10 +286,16 @@
               </div>
               <popover-info text="Produk Terlaris merupakan produk kamu yang paling banyak di order." />
             </div>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
             >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
           </div>
           <div class="card-body">
             <div class="w-25">
@@ -369,10 +381,16 @@
               </div>
               <popover-info text="Customer Loyal merupakan customer yang sering melakukan order." />
             </div>
-            <img
-              src="@/assets/images/icons/arrow-square-right.svg"
-              alt="Arrow Right"
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
             >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
           </div>
           <div class="card-body">
             <ul class="list-group list-group-flush">
@@ -637,12 +655,21 @@
               invalid-feedback="Rekening tujuan is required"
               :state="rekTujuanState"
             >
-              <b-form-select
+              <v-select
                 v-model="selectedRekTujuan"
                 class="h-text-sm h-text-dark"
+                label="text"
+                :reduce="items => items.value"
                 :options="rekTujuanOptions"
-                required
-              />
+              >
+                <span
+                  v-if="rekTujuanOptions.length === 0"
+                  slot="no-options"
+                >
+
+                  Anda belum menambahkan rekening bank
+                </span>
+              </v-select>
             </b-form-group>
             <div class="col-12 text-right mt-3">
               <button
@@ -655,6 +682,7 @@
               <button
                 type="submit"
                 class="btn btn-primary ml-2"
+                :disabled="!selectedRekTujuan"
               >
                 Ajukan Penarikan
               </button>
@@ -697,10 +725,13 @@
           v-if="stepNow === 2"
           class="text-center"
         >
-          <img
-            src="@/assets/images/icons/success.svg"
-            alt="success"
-          >
+          <b-row class="justify-content-center">
+            <img
+              src="@/assets/images/icons/success.svg"
+              alt="success"
+              class="text-center"
+            >
+          </b-row>
           <p class="mt-2 h-text-md text-center">
             Penarikan Saldo Berhasil
           </p>
@@ -742,7 +773,7 @@ export default {
     BFormGroup,
     BModal,
     BFormInput,
-    BFormSelect,
+    // BFormSelect,
     ChartPenghasilan,
     // ChartPerforma,
     // DateRangePicker,
@@ -844,6 +875,13 @@ export default {
       nominalState: null,
       rekTujuanState: null,
       obj: null,
+
+      optionRekIsEmpty: [
+        {
+          value: 'Anda belum menambahkan rekening bank',
+          text: 'Anda belum menambahkan rekening bank',
+        },
+      ],
     }
   },
   computed: {

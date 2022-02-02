@@ -39,6 +39,8 @@ export default [
     meta: {
       name: 'add-order',
       resource: 'Order',
+      routeToAddressPickup: 'kompship-pickup',
+      routeToAddProduct: 'add-produk',
       routeDetail: 'detail-add-order',
       action: 'manage',
       breadcrumb: [

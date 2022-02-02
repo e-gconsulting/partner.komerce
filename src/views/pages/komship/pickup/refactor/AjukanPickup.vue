@@ -452,6 +452,30 @@
       </div>
     </b-modal>
 
+    <!-- Modal validate expedition -->
+    <b-modal
+      ref="modal-validate-expedition"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <div class="image-wrapper">
+          <img src="@/@core/assets/image/icon-popup-warning.png">
+        </div>
+        <div class="text-wrapper mb-3 px-1">
+          Aktifkan minimal 1 ekspedisi untuk melanjutkan proses Pick Up
+        </div>
+        <b-button
+          class="org-button"
+          tag="router-link"
+          :to="{ name: $route.meta.routeToActiveExpedition }"
+        >
+          Aktifkan Ekspedisi
+        </b-button>
+      </div>
+    </b-modal>
+
   </b-card>
 </template>
 
@@ -553,6 +577,7 @@ export default {
     }
   },
   mounted() {
+    this.cekExpedition()
     this.$http_komship.post('v1/my-profile', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
@@ -733,6 +758,20 @@ export default {
     },
     closePopupFailedPickup() {
       this.$refs['modal-failed-request-pickup'].hide()
+    },
+    cekExpedition() {
+      httpKomship.get('/v1/partner/shipment/not-active',
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response.data
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < data.length; x++) {
+          if (!data[x].is_active === true) {
+            this.$refs['modal-validate-expedition'].show()
+          }
+        }
+      })
     },
   },
 }
