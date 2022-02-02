@@ -7,6 +7,7 @@ export default [
       name: 'ajukan-pickup',
       routeDetailBefore: 'detail-orderan-pickup-before',
       routeDetailAfter: 'history-pickup',
+      routeToActiveExpedition: 'kompship-ekspedisi',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [

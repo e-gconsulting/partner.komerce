@@ -587,7 +587,7 @@ export default {
         })
     },
     loadAllProvince() {
-      httpKomship.get('https://app.komerce.id/api/v1/partner/province-city')
+      this.$http.get('/v1/partner/province-city')
         .then(response => {
           const { data } = response.data
           console.log('response province', data)
