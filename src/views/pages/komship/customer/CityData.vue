@@ -105,7 +105,7 @@ export default {
       series: [{
         data: [],
       }],
-      heightBar: 300,
+      heightBar: 250,
       chartOptions: {
         colors: '#34A770',
         chart: {
@@ -137,7 +137,7 @@ export default {
           },
         },
         stroke: {
-          width: 2,
+          width: 1,
           colors: ['#fff'],
         },
         tooltip: {
