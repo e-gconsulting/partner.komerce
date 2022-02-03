@@ -235,7 +235,7 @@ export default {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
-          this.showResendEmailVerification = true
+          this.showResendEmailVerification = false
           this.error = ''
           this.userId = ''
 
