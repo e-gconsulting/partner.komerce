@@ -93,7 +93,7 @@ export default {
   data() {
     return {
       loading: false,
-      rangkingCity: 0,
+      rangkingCity: 1,
       rangkingCityOptions: [
         { text: 'Bulan ini', value: 0 },
         { text: 'Life Time', value: 1 },
@@ -105,7 +105,7 @@ export default {
       series: [{
         data: [],
       }],
-      heightBar: 180,
+      heightBar: 250,
       chartOptions: {
         colors: '#34A770',
         chart: {
@@ -156,29 +156,26 @@ export default {
   },
   mounted() {
     this.getData()
+    this.changeData()
   },
   methods: {
     changeData() {
-      this.loading = true
-      const params = {
-        is_liftime: this.rangkingCity,
-      }
-      httpKomship.get('/v1/customers/ranking-customers', params, {
+      this.loading = false
+      httpKomship.get('/v1/customers/ranking-customers', {
+        params: {
+          is_lifetime: this.rangkingCity,
+        },
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
-        this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories.length)
+        this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories)
         const { data } = response.data
         this.city = data.city
-        if (this.city.length === 5) this.heightBar = 290
-        if (this.city.length === 4) this.heightBar = 250
-        if (this.city.length === 3) this.heightBar = 210
-        if (this.city.length === 2) this.heightBar = 150
-        if (this.city.length === 1) this.heightBar = 120
+
         this.loading = false
         data.city.forEach(this.myArray)
         this.series = [
           {
-            data: this.getPercentage(data.city_name),
+            data: this.getPercentage(data.city),
           },
         ]
         return this.city
@@ -194,6 +191,9 @@ export default {
     getData() {
       this.loading = true
       httpKomship.get('/v1/customers/ranking-customers', {
+        params: {
+          is_lifetime: this.rangkingCity,
+        },
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data

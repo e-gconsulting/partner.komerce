@@ -95,7 +95,7 @@ export default {
   data() {
     return {
       loading: false,
-      rangkingProvince: 0,
+      rangkingProvince: 1,
       rangkingProvinceOptions: [
         { text: 'Bulan ini', value: 0 },
         { text: 'Life Time', value: 1 },
@@ -130,7 +130,7 @@ export default {
         },
         dataLabels: {
           enabled: true,
-          offsetX: 40,
+          offsetX: 30,
           style: {
             fontSize: '12px',
             colors: ['black'],
@@ -164,14 +164,15 @@ export default {
   },
   mounted() {
     this.getData()
+    this.changeData()
   },
   methods: {
     changeData() {
       this.loading = true
-      const params = {
-        is_liftime: this.rangkingProvince,
-      }
-      httpKomship.get('/v1/customers/ranking-customers', params, {
+      httpKomship.get('/v1/customers/ranking-customers', {
+        params: {
+          is_lifetime: this.rangkingProvince,
+        },
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories.length)
@@ -196,19 +197,14 @@ export default {
     },
     getData() {
       this.loading = true
-      const params = {
-        is_liftime: this.rangkingProvince,
-      }
-      httpKomship.get('/v1/customers/ranking-customers', params, {
+      httpKomship.get('/v1/customers/ranking-customers', {
+        params: {
+          is_lifetime: this.rangkingProvince,
+        },
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
         this.province = data.province
-        if (this.province.length === 5) this.heightBar = 290
-        if (this.province.length === 4) this.heightBar = 250
-        if (this.province.length === 3) this.heightBar = 210
-        if (this.province.length === 2) this.heightBar = 150
-        if (this.province.length === 1) this.heightBar = 120
         this.loading = false
         data.province.forEach(this.myArray)
         this.series = [
