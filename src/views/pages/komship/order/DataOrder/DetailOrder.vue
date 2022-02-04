@@ -83,7 +83,7 @@
         <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
       </div>
       <h4 class="font-bold mt-2 mb-1">
-        Informasi Pengirim
+        Informasi Pengiriman
       </h4>
       <div class="border px-2 pt-2 pb-1">
         <b-row class="mb-1">
@@ -98,11 +98,20 @@
               </div>
             </div>
           </b-col>
-          <b-col
-            cols="6"
-            class="text-right text-primary font-bold"
-          >
-            Pengiriman Komship
+          <b-col cols="6">
+            <span
+              v-if="profile.is_komship === 1"
+              class="d-flex my-auto justify-end"
+            >
+              Pengiriman via <img
+                src="@/assets/images/logo/Komship.png"
+                style="margin-left:5px;"
+                alt="Komship"
+              >
+            </span>
+            <span v-else>
+              Pengiriman Non Komship
+            </span>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -395,9 +404,13 @@ export default {
     moment(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD MMMM YYYY')
+        const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        const day = moment(date).format('DD')
+        const month = moment(date).format('M')
+        const year = moment(date).format('YYYY')
+        return `${day} ${monthName[month - 1]} ${year}`
       }
-      return date
+      return ''
     },
     postDate(date) {
       const validDate = moment(date)

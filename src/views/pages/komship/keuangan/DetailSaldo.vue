@@ -61,7 +61,7 @@
             Orderan Non COD<br><span class="text-muted">Ongkir</span>
           </span>
           <span v-if="data.item.transaction_type === 'orderku_retur' && data.item.payment_method === 'COD'">
-            Orderan Non COD<br><span class="text-muted">Retur</span>
+            Orderan COD<br><span class="text-muted">Retur</span>
           </span>
           <span v-if="data.item.transaction_type === 'orderku_retur' && data.item.payment_method === 'BANK TRANSFER'">
             Orderan Non COD<br><span class="text-muted">Retur</span>
@@ -215,26 +215,6 @@ export default {
         const last = new Date(today.getTime() - (90 * 24 * 60 * 60 * 1000))
         this.startDate = `${last.getFullYear()}-${last.getMonth() + 1}-${last.getDate()}`
       }
-    },
-    statusTransaction(type, method) {
-      if (type === 'topup') {
-        return 'Top Up Saldo'
-      } if (type === 'shopping') {
-        return 'Belanja (Keperluan Talent)'
-      } if (type === 'withdrawal') {
-        return 'Penarikan Saldo'
-      } if (type === 'orderku_done') {
-        return 'Orderan COD (Diterima)'
-      } if (type === 'orderku_cancel') {
-        return 'Orderan Non COD (Cancel)'
-      } if (type === 'orderku_ongkir') {
-        return 'Orderan Non COD (Ongkir)'
-      } if (type === 'orderku_retur' && method === 'COD') {
-        return 'Orderan COD (Retur)'
-      } if (type === 'orderku_retur' && method === 'BANK TRANSFER') {
-        return 'Orderan Non COD (Retur)'
-      }
-      return null
     },
     async fetchData() {
       this.loadTable = true

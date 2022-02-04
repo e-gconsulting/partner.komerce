@@ -18,7 +18,7 @@
         >
 
           <h4 class="ml-2">
-            <strong>Profile Penangguna Jawab</strong>
+            <strong>Profile Penanggung Jawab</strong>
           </h4>
           <b-row class="mt-1">
 

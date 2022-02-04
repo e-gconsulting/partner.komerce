@@ -60,7 +60,7 @@ export default {
       screens: 'input',
       loading: false,
       disableSubmitButtonStatus: true,
-      listProduct: [],
+      // listProduct: [],
     }
   },
   mounted() {

@@ -12,7 +12,19 @@
       <h3 class="font-bold">
         Tambah Order
       </h3>
-      <span class="text-primary font-bold">Pengiriman Komship</span>
+      <span
+        v-if="profile.is_komship === 1"
+        class="d-flex my-auto"
+      >
+        Pengiriman via <img
+          src="@/assets/images/logo/Komship.png"
+          style="margin-left:5px;"
+          alt="Komship"
+        >
+      </span>
+      <span v-else>
+        Pengiriman Non Komship
+      </span>
     </div>
     <b-row class="mb-1">
       <b-col md="3">
@@ -506,7 +518,11 @@ export default {
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
-      return moment(date).format('DD MMMM YYYY')
+      const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+      const day = moment(date).format('DD')
+      const month = moment(date).format('M')
+      const year = moment(date).format('YYYY')
+      return `${day} ${monthName[month - 1]} ${year}`
     },
     async getProfile() {
       await this.$http_komship.post('v1/my-profile')
@@ -611,7 +627,7 @@ export default {
       return this.listTypeShipping
     },
     async calculate() {
-      if (this.potonganSaldo === false && this.discount === null) {
+      if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
       if (this.typeShipping !== null) {
