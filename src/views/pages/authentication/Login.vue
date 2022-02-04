@@ -2,6 +2,15 @@
   <div class="auth-wrapper auth-v1 px-2">
     <b-row class="auth-inner m-0">
       <b-card class="text-white mt-2">
+        <!-- <b-col
+          lg="12"
+          :style="{
+            backgroundImage: `url('${imgUrl}')`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPositionX: 'center',
+          }"
+        > -->
         <b-link class="brand-logo">
           <b-link class="brand-logo d-none d-lg-flex text-center">
             <b-img
@@ -19,6 +28,21 @@
         <b-card-text class="mb-2 text-center text-black">
           Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
         </b-card-text>
+        <b-alert
+          variant="danger"
+          :show="!!error"
+        >
+          <div class="alert-body">
+            <span>{{ error }}</span>
+            <b-link
+              v-if="showResendEmailVerification"
+              class="ml-50"
+              @click="resendEmailVerification"
+            >
+              <u>Kirim ulang</u>
+            </b-link>
+          </div>
+        </b-alert>
         <!-- form -->
         <validation-observer
           ref="loginForm"
@@ -38,22 +62,8 @@
                 label="Username atau Email"
                 vid="email"
                 rules="required"
-                :custom-messages="custommessages"
+                :custom-messages="custommessages1"
               >
-                <div>
-                  <b-alert
-                    variant="danger"
-                    :hidden="!!error"
-                  >
-                    <div class="alert-body">
-                      <b-link
-                        v-if="showResendEmailVerification"
-                        class="ml-50"
-                        @click="resendEmailVerification"
-                      />
-                    </div>
-                  </b-alert>
-                </div>
                 <b-form-input
                   id="login-email"
                   v-model="usernameEmail"
@@ -61,15 +71,7 @@
                   name="login-email"
                   placeholder="john@mail.com"
                 />
-                <small class="text-danger">{{ errors[0] }} </small>
-                <div>
-                  <small
-                    v-if="emailverifikasi"
-                    class="text-danger"
-                  >
-                    {{ emailverifikasi }}
-                  </small>
-                </div>
+                <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
             </b-form-group>
 
@@ -81,24 +83,12 @@
                 name="Password"
                 vid="password"
                 rules="required"
-                :custom-messages="custommessages4"
+                :custom-messages="custommessages"
               >
                 <b-input-group
                   class="input-group-merge"
                   :class="errors.length > 0 ? 'is-invalid' : null"
                 >
-                  <b-alert
-                    variant="danger"
-                    :hidden="!!error"
-                  >
-                    <div class="alert-body">
-                      <b-link
-                        v-if="showResendEmailVerification"
-                        class="ml-50"
-                        @click="resendEmailVerification"
-                      />
-                    </div>
-                  </b-alert>
                   <b-form-input
                     id="login-password"
                     v-model="password"
@@ -120,9 +110,20 @@
               </validation-provider>
               <div class="d-flex justify-content-left text-left">
                 <b-link :to="{ name: 'auth-forgot-password' }">
-                  <small style="margin-right:50px;">Lupa Password?</small>
+                  <small style="margin-right:10px;">Lupa Password?</small>
                 </b-link>
               </div>
+            </b-form-group>
+
+            <!-- checkbox -->
+            <b-form-group v-if="false">
+              <b-form-checkbox
+                id="remember-me"
+                v-model="status"
+                name="checkbox-1"
+              >
+                Remember Me
+              </b-form-checkbox>
             </b-form-group>
 
             <!-- submit buttons -->
@@ -162,6 +163,7 @@ import {
   BCardText,
   BInputGroup,
   BInputGroupAppend,
+  BFormCheckbox,
   BAlert,
   VBTooltip,
 } from 'bootstrap-vue'
@@ -170,7 +172,6 @@ import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
-
 import { $themeConfig } from '@themeConfig'
 
 export default {
@@ -189,7 +190,7 @@ export default {
     BCardText,
     BInputGroup,
     BInputGroupAppend,
-    // BFormCheckbox,
+    BFormCheckbox,
     ValidationProvider,
     ValidationObserver,
   },
@@ -197,27 +198,20 @@ export default {
   data() {
     return {
       userId: '',
-      emailverifikasi: '',
       error: '',
-      errorcharemail: '',
       status: '',
-      showResendEmailVerification: false,
+      showResendEmailVerification: true,
       usernameEmail: '',
-      custommessages1: {
-        message: 'tes',
-
-      },
       password: '',
       loading: false,
       // validation rules
       required,
-      // email,
+      email,
       custommessages: {
-        required: 'Mohon masukan username atau email.',
-        email: '',
-      },
-      custommessages4: {
         required: 'Mohon masukan password Kamu.',
+      },
+      custommessages1: {
+        required: 'Mohon masukan username atau email.',
       },
     }
   },
@@ -226,6 +220,7 @@ export default {
     const { appName, appLogoImage } = $themeConfig.app
 
     return {
+      // App Name
       appName,
       appLogoImage,
     }
@@ -236,19 +231,12 @@ export default {
     },
   },
   methods: {
-    // validasiemail() {
-    //   if (this.errors === 'masukkan email anda saat ini') {
-    //     this.error = 'Maaf, username atau password yang Kamu masukan salah.'
-    //   } else {
-    //     this.error = 'masukkan email anda'
-    //   }
-    // },
     login() {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.loading = true
-          this.showResendEmailVerification = true
-          this.emailverifikasi = ''
+          this.showResendEmailVerification = false
+          this.error = ''
           this.userId = ''
 
           useJwt
@@ -258,10 +246,11 @@ export default {
               login_from: 'website',
             })
             .then(response => {
+              const { data } = response
+              const user = data.data
               if (response.data.status === false) {
                 this.error = response.data.message
                 this.loading = false
-                this.emailverifikasi = 'Maaf, username atau password yang Kamu masukan salah.'
               } else {
                 useJwt.setToken(response.data.data.token)
                 this.getUser(response.data.data)
@@ -378,6 +367,11 @@ export default {
                 { action: 'manage', subject: 'Setting Ekspedisi' },
                 { action: 'manage', subject: 'Hiring' },
 
+                // Komplace
+                // { action: 'manage', subject: 'Dashboard Komplace' },
+                // { action: 'manage', subject: 'Monitoring' },
+                // { action: 'manage', subject: 'Manajemen Admin' },
+                // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
               ]
               break
             case 'SDM':
@@ -504,12 +498,13 @@ export default {
     },
     resendEmailVerification() {
       this.showResendEmailVerification = true
-      this.error = true
-      this.error = 'Maaf, username atau password yang Kamu masukan salah'
+      this.error = ''
+
       this.$http
         .get(`/resend_verification_email/${this.userId}`)
         .then(() => {
           this.userId = ''
+
           this.$swal({
             title: 'Terkirim',
             text: 'Harap periksa email anda untuk verifikasi akun Anda.',

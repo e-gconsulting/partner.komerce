@@ -274,7 +274,7 @@
         <div class="d-flex justify-content-end mt-2">
           <div>
             <b-button
-            v-if="detailData.notes==null ||detailData.notes=='' || detailData.notes=='-' && detailData.status != 'completed'"
+            v-if="(detailData.notes==null ||detailData.notes=='' || detailData.notes=='-') && detailData.status != 'completed'"
             v-b-modal.modal-review
             variant="outline-primary"
             class="mr-1 btn-custom-bottom"
@@ -294,7 +294,7 @@
           </div>
           <div>
             <b-button
-            v-if="detailData.transfer_proof==null ||detailData.transfer_proof=='' && detailData.status != 'completed'"
+            v-if="(detailData.transfer_proof==null || detailData.transfer_proof=='') && detailData.status != 'completed'"
             :to="{ name: 'cod-penarikan-upload-bukti-transfer', params: { slug: $route.params.slug } }"
             variant="outline-primary"
             class="mr-1 btn-custom-bottom"
