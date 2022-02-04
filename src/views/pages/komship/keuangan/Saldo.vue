@@ -550,7 +550,7 @@
             Penarikan Saldo Berhasil
           </p>
           <p class="h-text-dark font-weight-bold">
-            Saldo sebesar {{ formatRupiah(nominal) }} akan segera dikirim ke
+            Saldo sebesar {{ formatRupiahTopup(nominal) }} akan segera dikirim ke
             rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
             1x24 jam
           </p>
@@ -693,6 +693,9 @@ export default {
     },
     formatRupiah(x) {
       return `Rp ${this.formatRibuan(x)}`
+    },
+    formatRupiahTopup(x) {
+      return `${this.formatRibuan(x)}`
     },
     showTopUpModal() {
       this.$bvModal.show('modalTopUp')
