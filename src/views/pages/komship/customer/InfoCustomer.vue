@@ -299,7 +299,7 @@ export default {
       loading: false,
       currentPage: 1,
       perPage: 50,
-      halamanopsicustomer: [50, 100, 200],
+      halamanopsicustomer: [50, 100, 200, 300],
       rows: 0,
       selected: 1,
       filterCustomer: null,
