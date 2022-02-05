@@ -165,7 +165,7 @@
                     v-ripple.400="'rgba(255, 255, 255, 0.15)'"
                     type="submit"
                     variant="primary"
-                    @click.prevent="filterCustomer"
+                    @click.prevent="datapagination"
                   >
                     Terapkan
                   </b-button>
@@ -225,14 +225,14 @@
           List per halaman
         </span>
         <b-button
-          v-for="(paginationitems, index) in valuePerpage"
-          :key="index+1"
-          :variant="valuePerpageIsActive === paginationitems.value ? 'primary' : 'flat-dark'"
-          class="btn-icon mr-1"
+          v-for="page in halamanopsicustomer"
+          :key="page"
+          :variant="page === perPage ? 'primary' : 'light'"
           size="sm"
-          @click="halamancustomerfilter(paginationitems)"
+          class="btnPage"
+          @click="halamancustomerfilter(page)"
         >
-          {{ paginationitems.value }}
+          {{ page }}
         </b-button>
       </div>
       <b-pagination
@@ -299,23 +299,12 @@ export default {
       loading: false,
       currentPage: 1,
       perPage: 50,
-      valuePerpageIsActive: 50,
+      halamanopsicustomer: [50, 100, 200],
       rows: 0,
       selected: 1,
+      filterCustomer: null,
       options: [
         { value: 1, text: 'Kabupaten' },
-      ],
-
-      valuePerpage: [
-        {
-          value: 50,
-        },
-        {
-          value: 100,
-        },
-        {
-          value: 200,
-        },
       ],
       fields: [
         {
@@ -398,23 +387,23 @@ export default {
   watch: {
     currentPage: {
       handler(value) {
-        this.filterCustomer().catch(error => {
+        this.datapagination().catch(error => {
           console.error(error)
         })
       },
     },
   },
   mounted() {
-    this.filterCustomer().catch(error => {
+    this.datapagination().catch(error => {
       console.error(error)
     })
     this.tableProvider()
     this.rowss = this.items.length
   },
   methods: {
-    halamancustomerfilter(data) {
-      this.valuePerpageIsActive = data.value
-      this.perPage = data.value
+    halamancustomerfilter(totalPage) {
+      this.perPage = totalPage
+      this.datapagination()
     },
     tableProvider() {
       this.loading = true
@@ -427,7 +416,7 @@ export default {
         return this.itemsCustomer
       })
     },
-    filterCustomer() {
+    datapagination() {
       this.loading = true
       const params = {}
 
@@ -440,7 +429,7 @@ export default {
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
       if (this.currentPage) Object.assign(params, { currentPage: this.currentPage })
-
+      if (this.total_per_page) Object.assign(params, { total_per_page: this.total_per_page })
       httpKomship.get('/v1/customers', {
         params,
       }, {
@@ -452,6 +441,7 @@ export default {
         return this.itemsCustomer
       })
     },
+
     onSearchDestination(search, loading) {
       if (search.length) {
         this.searchDestination(loading, search, this)
@@ -472,6 +462,7 @@ export default {
     },
     resetFilter() {
       this.tableProvider()
+      return this.datapagination()
     },
     formatPrice(value) {
       const val = value
