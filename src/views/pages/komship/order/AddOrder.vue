@@ -6,7 +6,6 @@
       v-if="screens === 'input'"
       :date-text="dateText"
       :screens="screens"
-      :list-product="listProduct"
       :list-selected="listSelected"
       :profile="profile"
       :disable-submit-button-status="disableSubmitButtonStatus"
@@ -91,13 +90,14 @@ export default {
     async reload() {
       this.loading = true
       await this.getProfile()
-      await this.getListProductByPartner()
       this.loading = false
     },
     updateDateText(dateVal) {
       if (dateVal) this.dateText = dateVal
     },
     updateSelectedItems(newListSelected) {
+      console.log('newListSelected')
+      console.log(newListSelected)
       if (newListSelected) this.listSelected = newListSelected
     },
     updateScreenView(value) {
@@ -112,7 +112,9 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
+        // console.log('this.profile', data)
         this.profile = data
+        console.log(this.profile)
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -121,6 +123,7 @@ export default {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
+        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
         console.log('failed to get the product data by partner')

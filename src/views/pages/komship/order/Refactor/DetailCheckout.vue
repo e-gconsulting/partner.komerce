@@ -281,31 +281,74 @@
             style="width:70%;"
           >
             <span class="font-bold">{{ data.item.product_name }}</span><br>
-            <span
-              v-if="data.item.is_variant === '1'"
-              class="text-primary"
-            >
-              {{ data.item.itemSelected.variation }}
-            </span>
-            <span v-else>Tidak Ada Variasi</span>
+            <div v-if="data.item.is_variant === '1'">
+              <div
+                v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+                :key="indexVariation+1"
+              >
+                <span
+                  class="text-primary"
+                >
+                  {{ itemsVariation.variation }}
+                </span>
+              </div>
+            </div>
+            <div v-else>
+              <span>Tidak Ada Variasi</span>
+            </div>
           </div>
         </div>
       </template>
       <template #cell(price)="data">
-        <span v-if="data.item.is_variant === '1'">
-          Rp. {{ formatNumber(data.item.itemSelected.price) }}
-        </span>
-        <span v-else>
-          Rp. {{ formatNumber(data.item.price) }}
-        </span>
+        <div v-if="data.item.is_variant === '1'">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <span>
+              Rp. {{ formatNumber(itemsVariation.price) }}
+            </span>
+          </div>
+        </div>
+        <div v-else>
+          <span>
+            Rp. {{ formatNumber(data.item.price) }}
+          </span>
+        </div>
       </template>
+
+      <template #cell(stockToDisplay)="data">
+        <div
+          v-if="data.item.itemsSelected[0] !== undefined"
+        >
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            {{ itemsVariation.stockToDisplay }}
+          </div>
+        </div>
+        <div v-else>
+          {{ data.item.stockToDisplayNoVariant }}
+        </div>
+      </template>
+
       <template #cell(subtotal)="data">
-        <span v-if="data.item.is_variant === '1'">
-          Rp. {{ formatNumber(data.item.stockToDisplay * data.item.itemSelected.price) }}
-        </span>
-        <span v-else>
-          Rp. {{ formatNumber(data.item.stockToDisplay * data.item.price) }}
-        </span>
+        <div v-if="data.item.is_variant === '1'">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <span>
+              Rp. {{ formatNumber(itemsVariation.stockToDisplay * itemsVariation.price) }}
+            </span>
+          </div>
+        </div>
+        <div v-else>
+          <span>
+            Rp. {{ formatNumber(data.item.stockToDisplayNoVariant * data.item.price) }}
+          </span>
+        </div>
       </template>
     </b-table>
     <div
@@ -551,27 +594,61 @@ export default {
     },
     async getCart() {
       this.itemsOrder = this.$route.params.itemsOrder
-      this.arrayCart = this.itemsOrder.map(val => ({
-        product_id: val.product_id,
-        product_name: val.product_name,
-        variant_id: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].options_id : 0,
-        variant_name: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].name : '',
-        product_price: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price,
-        qty: val.stockToDisplay,
-        subtotal: val.stockToDisplay * (typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price),
-      }))
-      await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-        .then(async res => {
-          if (res.data.code === 200) {
-            return this.$http_komship.post('v1/cart/bulk-store', this.arrayCart)
-              .then(async result => {
-                if (result.data.code === 200) {
-                  this.cartId = result.data.data.cart_id
+      console.log('itemsOrder', this.itemsOrder)
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.itemsOrder.length; x++) {
+        if (this.itemsOrder[x].itemsSelected.length > 0) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.itemsOrder[x].itemsSelected.length; y++) {
+            this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+              .then(async res => {
+                if (res.data.code === 200) {
+                  return this.$http_komship.post('v1/cart/bulk-store', {
+                    params: {
+                      product_id: this.itemsOrder[x].product_id,
+                      product_name: this.itemsOrder[x].product_name,
+                      variant_id: this.itemsOrder[x].itemsSelected[y].option_id,
+                      variant_name: this.itemsOrder[x].itemsSelected[y].variation,
+                      product_price: this.itemsOrder[x].itemsSelected[y].price,
+                      qty: this.itemsOrder[x].itemsSelected[y].stockToDisplay,
+                      subtotal: this.itemsOrder[x].itemsSelected[y].stockToDisplay * this.itemsOrder[x].itemsSelected[y].price,
+                    },
+                  })
+                    .then(async result => {
+                      if (result.data.code === 200) {
+                        this.cartId = result.data.data.cart_id
+                      }
+                    })
                 }
+                return this.cartId
               })
           }
-          return this.cartId
-        })
+        }
+        if (this.itemsOrder[x].itemsSelected.length === 0) {
+          this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+            .then(async res => {
+              if (res.data.code === 200) {
+                return this.$http_komship.post('v1/cart/bulk-store', {
+                  params: {
+                    product_id: this.itemsOrder[x].product_id,
+                    product_name: this.itemsOrder[x].product_name,
+                    variant_id: 0,
+                    variant_name: '',
+                    product_price: this.itemsOrder[x].price,
+                    qty: this.itemsOrder[x].stockToDisplayNoVariant,
+                    subtotal: this.itemsOrder[x].stockToDisplayNoVariant * this.itemsOrder[x].price,
+                  },
+                })
+                  .then(async result => {
+                    if (result.data.code === 200) {
+                      this.cartId = result.data.data.cart_id
+                    }
+                  })
+              }
+              return this.cartId
+            })
+        }
+      }
     },
     async getCustomer(e) {
       const event = e.key ? 'input' : 'list'

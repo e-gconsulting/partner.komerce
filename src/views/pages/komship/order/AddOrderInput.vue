@@ -79,6 +79,7 @@
           class="add-order-product-input"
           label="product_name"
           label-cols-md="2"
+          placeholder="Tambahkan Produk"
           :options="listProduct"
           @input="onAddProduct"
         >
@@ -128,40 +129,132 @@
                 {{ data.value }}
               </strong>
             </h4>
-            <div v-if="data.item.itemSelected === undefined && data.item.variant[0] !== undefined">
-              <b-button
-                variant="outline-primary"
-                class="btn-icon"
-                @click="chooseVariation(data)"
-              >
-                Pilih variasi
-              </b-button>
-            </div>
-            <div v-if="data.item.variant[0] === undefined">
-              <h5>
-                <strong>
-                  Tidak ada variasi
-                </strong>
-              </h5>
-            </div>
-            <div v-if="data.item.itemSelected !== undefined">
-              <h4 class="text-primary">
-                <strong>
-                  {{ data.item.itemSelected.variation }}
-                </strong>
-              </h4>
-            </div>
           </b-col>
         </b-row>
       </template>
 
-      <template #cell(price)="data">
-        <div v-if="data.item.itemSelected !== undefined">
+      <template #cell(variation)="data">
+        <div
+          v-if="data.item.itemsSelected !== undefined"
+        >
+          <div
+            v-for="(itemVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+            class="mb-2"
+          >
+            <h4 class="text-primary mb-1">
+              <strong>
+                {{ itemVariation.variation }}
+              </strong>
+            </h4>
+          </div>
+        </div>
+        <div v-if="data.item.variant[0] !== undefined">
+          <b-button
+            variant="outline-primary"
+            class="btn-icon"
+            :disabled="data.item.variant[0] === undefined"
+            @click="chooseVariation(data)"
+          >
+            Pilih variasi
+          </b-button>
+        </div>
+        <div v-if="data.item.variant[0] === undefined">
+          <b-button
+            variant="outline-primary"
+            class="btn-icon"
+            disabled
+          >
+            Pilih variasi
+          </b-button>
+        </div>
+      </template>
+
+      <template #cell(jumlah)="data">
+        <div v-if="data.item.itemsSelected[0] !== undefined">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <b-row class="justify-content-center">
+              <b-button
+                variant="outline-primary"
+                class="minus-button mr-1"
+                @click="reduceTotalToOrder(itemsVariation, data)"
+              >
+                -
+              </b-button>
+              <h4 class="mr-1 mt-50">
+                <strong>
+                  {{ itemsVariation.stockToDisplay }}
+                </strong>
+              </h4>
+              <b-button
+                variant="outline-primary"
+                class="plus-button"
+                :disabled="itemsVariation.stock === 1"
+                @click="addTotalToOrder(itemsVariation, data)"
+              >
+                +
+              </b-button>
+            </b-row>
+            <b-row class="justify-content-center">
+              <h5 class="text-primary">
+                Stock tersedia: {{ getStockToDisplay(itemsVariation.stock) }}
+              </h5>
+            </b-row>
+          </div>
+        </div>
+        <div v-else-if="data.item.variant[0] === undefined">
+          <b-row class="justify-content-center">
+            <b-button
+              variant="outline-primary"
+              class="minus-button mr-1"
+              @click="reduceTotalToOrder(data)"
+            >
+              -
+            </b-button>
+            <h4 class="mr-1 mt-50">
+              <strong>
+                {{ data.item.stockToDisplayNoVariant }}
+              </strong>
+            </h4>
+            <b-button
+              variant="outline-primary"
+              class="plus-button"
+              :disabled="data.item.stock === 1"
+              @click="addTotalToOrder(data)"
+            >
+              +
+            </b-button>
+          </b-row>
+          <b-row class="justify-content-center">
+            <h5 class="text-primary">
+              Stock tersedia: {{ getStockToDisplay(data.item.stock) }}
+            </h5>
+          </b-row>
+        </div>
+        <div v-else>
           <h4>
             <strong>
-              Rp. {{ formatPrice(data.item.itemSelected.price) }}
+              0
             </strong>
           </h4>
+        </div>
+      </template>
+
+      <template #cell(price)="data">
+        <div v-if="data.item.itemsSelected[0] !== undefined">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <h4>
+              <strong>
+                Rp. {{ formatPrice(itemsVariation.price) }}
+              </strong>
+            </h4>
+          </div>
         </div>
         <div v-else-if="data.item.variant[0] === undefined">
           <h4>
@@ -179,96 +272,38 @@
         </div>
       </template>
 
-      <template #cell(jumlah)="data">
-        <div v-if="data.item.itemSelected !== undefined">
-          <b-row class="justify-content-center">
-            <b-button
-              variant="outline-primary"
-              class="minus-button mr-1"
-              @click="reduceTotalToOrder(data)"
-            >
-              -
-            </b-button>
-            <h4 class="mr-1 mt-50">
-              <strong>
-                {{ data.item.stockToDisplay }}
-              </strong>
-            </h4>
-            <b-button
-              variant="outline-primary"
-              class="plus-button"
-              :disabled="data.item.itemSelected.stock === 0"
-              @click="addTotalToOrder(data)"
-            >
-              +
-            </b-button>
-          </b-row>
-          <b-row class="justify-content-center">
-            <h5 class="text-primary">
-              Stock tersedia: {{ data.item.itemSelected.stock }}
-            </h5>
-          </b-row>
-        </div>
-        <div v-else-if="data.item.variant[0] === undefined">
-          <b-row class="justify-content-center">
-            <b-button
-              variant="outline-primary"
-              class="minus-button mr-1"
-              @click="reduceTotalToOrder(data)"
-            >
-              -
-            </b-button>
-            <h4 class="mr-1 mt-50">
-              <strong>
-                {{ data.item.stockToDisplay }}
-              </strong>
-            </h4>
-            <b-button
-              variant="outline-primary"
-              class="plus-button"
-              :disabled="data.item.stock === 0"
-              @click="addTotalToOrder(data)"
-            >
-              +
-            </b-button>
-          </b-row>
-          <b-row class="justify-content-center">
-            <h5 class="text-primary">
-              Stock tersedia: {{ data.item.stock }}
-            </h5>
-          </b-row>
-        </div>
-        <div v-else>
-          <h4>
-            <strong>
-              0
-            </strong>
-          </h4>
-        </div>
-      </template>
-
       <template #cell(subtotal)="data">
         <div v-if="data.item.variant[0] === undefined">
           <h4>
             <strong>
-              Rp. {{ formatPrice(data.item.price * data.item.stockToDisplay) }}
+              Rp. {{ formatPrice(data.item.price * data.item.stockToDisplayNoVariant) }}
             </strong>
           </h4>
         </div>
-        <div v-else-if="data.item.itemSelected !== undefined">
-          <h4>
-            <strong>
-              Rp. {{ formatPrice(data.item.itemSelected.price * data.item.stockToDisplay) }}
-            </strong>
-          </h4>
+        <div v-else-if="data.item.itemsSelected[0] !== undefined">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <h4>
+              <strong>
+                Rp. {{ formatPrice(itemsVariation.price * itemsVariation.stockToDisplay) }}
+              </strong>
+            </h4>
+          </div>
         </div>
-        <div v-else>
-          <h4>
-            <strong>
-              Rp. {{ formatPrice(data.item.price * data.item.stockToDisplay) }}
-            </strong>
-          </h4>
-        </div>
+      </template>
+
+      <template #cell(action)="data">
+        <b-button
+          class="btn-icon delete-product-to-order"
+          variant="flat-primary"
+          @click="handleRemoveProductOnList(data)"
+        >
+          <feather-icon
+            icon="Trash2Icon"
+          />
+        </b-button>
       </template>
     </b-table>
 
@@ -344,7 +379,7 @@
                 :variant="isActiveVariant === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
                 class="btn-icon m-50"
                 :pressed="isActiveVariant === itemsVariant.name"
-                :disabled="itemsVariant.stock === 0 ? true : false"
+                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableParentVariation(itemsVariant, itemsChooseVariation.item)"
                 @click="selectParentVariation(itemsVariant, itemsChooseVariation.item)"
               >
                 {{ itemsVariant.name }}
@@ -459,7 +494,6 @@
             </b-button>
             <b-button
               class="next-button"
-              :disabled="buttonNext"
               tag="router-link"
               :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres, date: dateValue, dateLabel: dateLabel } }"
             >
@@ -615,6 +649,7 @@ export default {
       fields: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
+        { key: 'variation', label: 'Variasi' },
         { key: 'price', label: 'Harga Satuan' },
         { key: 'input', label: 'Jumlah' },
         { key: 'subtotal', label: 'Subtotal' },
@@ -640,20 +675,30 @@ export default {
           label: 'Nama Produk',
         },
         {
-          key: 'price',
-          label: 'Harga Satuan',
-          tdClass: 'text-center',
-          thClass: 'text-center',
+          key: 'variation',
+          label: 'Variasi',
         },
         {
           key: 'jumlah',
           label: 'Jumlah',
         },
         {
+          key: 'price',
+          label: 'Harga Satuan',
+          tdClass: 'text-center',
+          thClass: 'text-center',
+        },
+        {
           key: 'subtotal',
           label: 'Subtotal',
           tdClass: 'text-center',
           thClass: 'text-center',
+        },
+        {
+          key: 'action',
+          label: 'Hapus Produk',
+          class: 'col-action',
+          tdClass: 'text-center',
         },
       ],
       itemsChooseVariation: {
@@ -696,6 +741,7 @@ export default {
       totalToOrder: 1,
 
       choosenProduct: '',
+      choosenAddres: '',
       buttonNext: true,
       buttonParentVariant: true,
       buttonVariationSecond: true,
@@ -705,8 +751,7 @@ export default {
       listProduct: [],
     }
   },
-  mounted() {
-    this.getAddress()
+  created() {
     this.dateValue = dateFormat(new Date(), 'yyyy-mm-dd')
     console.log(this.dateValue)
     this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
@@ -714,13 +759,13 @@ export default {
     this.getProfile()
     this.listProduct2 = this.listProduct
     this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-    this.getListProductByPartner()
   },
   methods: {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
         this.profile = data
+        this.getAddress()
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -774,6 +819,8 @@ export default {
       this.$root.$emit('bv::show::modal', 'modal-choose-variation')
     },
     selectParentVariation(itemsVariant, items) {
+      console.log('itemsVariant', itemsVariant)
+      console.log('items', items)
       this.buttonParentVariant = true
       this.buttonVariationFirst = true
       this.buttonVariationSecond = true
@@ -869,85 +916,142 @@ export default {
       return nameVariant
     },
     addOrderToTable(data) {
+      console.log('data add to order', data)
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.itemsOrder.length; x++) {
         if (this.itemsOrder[x].product_name === data.product_name) {
           if (this.variationProductSecondChild !== null) {
-            Object.assign(this.itemsOrder[x],
+            // Object.assign(this.itemsOrder[x],
+            //   {
+            //     itemSelected: {
+            //       option_id: this.optionId,
+            //       variation: `${this.variationProduct}, ${this.variationProductFirstChild}, ${this.variationProductSecondChild}`,
+            //       price: this.price,
+            //       stock: this.stock,
+            //       total: this.total,
+            //       subtotal: this.subtotal,
+            //     },
+            //   })
+            this.itemsOrder[x].itemsSelected.push(
               {
-                itemSelected: {
-                  option_id: this.optionId,
-                  variation: `${this.variationProduct}, ${this.variationProductFirstChild}, ${this.variationProductSecondChild}`,
-                  price: this.price,
-                  stock: this.stock,
-                  total: this.total,
-                  subtotal: this.subtotal,
-                },
-              })
+                option_id: this.optionId,
+                variation: `${this.variationProduct}, ${this.variationProductFirstChild}, ${this.variationProductSecondChild}`,
+                price: this.price,
+                stock: this.stock,
+                stockToDisplay: 1,
+                total: this.total,
+                subtotal: this.subtotal,
+              },
+            )
           }
           if (this.variationProductSecondChild === null && this.variationProductFirstChild !== null) {
-            Object.assign(this.itemsOrder[x],
+            // Object.assign(this.itemsOrder[x],
+            //   {
+            //     itemSelected: {
+            //       option_id: this.optionId,
+            //       variation: `${this.variationProduct}, ${this.variationProductFirstChild}`,
+            //       price: this.price,
+            //       stock: this.stock,
+            //       total: this.total,
+            //       subtotal: this.subtotal,
+            //     },
+            //   })
+            this.itemsOrder[x].itemsSelected.push(
               {
-                itemSelected: {
-                  option_id: this.optionId,
-                  variation: `${this.variationProduct}, ${this.variationProductFirstChild}`,
-                  price: this.price,
-                  stock: this.stock,
-                  total: this.total,
-                  subtotal: this.subtotal,
-                },
-              })
+                option_id: this.optionId,
+                variation: `${this.variationProduct}, ${this.variationProductFirstChild}`,
+                price: this.price,
+                stock: this.stock,
+                stockToDisplay: 1,
+                total: this.total,
+                subtotal: this.subtotal,
+              },
+            )
           }
           if (this.variationProductSecondChild === null && this.variationProductFirstChild === null) {
-            Object.assign(this.itemsOrder[x],
+            // Object.assign(this.itemsOrder[x],
+            //   {
+            //     itemSelected: {
+            //       option_id: this.optionId,
+            //       variation: `${this.variationProduct}`,
+            //       price: this.price,
+            //       stock: this.stock,
+            //       total: this.total,
+            //       subtotal: this.subtotal,
+            //     },
+            //   })
+            this.itemsOrder[x].itemsSelected.push(
               {
-                itemSelected: {
-                  option_id: this.optionId,
-                  variation: `${this.variationProduct}`,
-                  price: this.price,
-                  stock: this.stock,
-                  total: this.total,
-                  subtotal: this.subtotal,
-                },
-              })
+                option_id: this.optionId,
+                variation: `${this.variationProduct}`,
+                price: this.price,
+                stock: this.stock,
+                stockToDisplay: 1,
+                total: this.total,
+                subtotal: this.subtotal,
+              },
+            )
           }
         }
       }
-      this.stockAvailable = data.itemSelected.stock - 1
+      // this.stockAvailable = data.itemSelected.stock - 1
       this.$refs.tableAddOrderOne.refresh()
       this.nextButtonIsActive()
+      this.choosenProduct = ''
+      console.log('itemsOrder', this.itemsOrder)
       this.$root.$emit('bv::hide::modal', 'modal-choose-variation')
     },
-    addTotalToOrder(data) {
-      // eslint-disable-next-line no-param-reassign
-      data.item.stockToDisplay += 1
-      if (data.item.itemSelected !== undefined) {
+    addTotalToOrder(itemsVariation, data) {
+      console.log('itemsVariation', itemsVariation)
+      console.log('data', data)
+      if (data !== undefined) {
         // eslint-disable-next-line no-param-reassign
-        data.item.itemSelected.stock -= 1
+        itemsVariation.stockToDisplay += 1
+        // eslint-disable-next-line no-param-reassign
+        itemsVariation.stock -= 1
         this.$refs.tableAddOrderOne.refresh()
       } else {
         // eslint-disable-next-line no-param-reassign
-        data.item.stock -= 1
+        itemsVariation.item.stockToDisplayNoVariant += 1
+        // eslint-disable-next-line no-param-reassign
+        itemsVariation.item.stock -= 1
       }
     },
-    reduceTotalToOrder(data) {
-      console.log('reduceTotalToOrder', data)
-      // eslint-disable-next-line no-param-reassign
-      data.item.stockToDisplay -= 1
-      if (data.item.itemSelected !== undefined) {
+    reduceTotalToOrder(itemsVariation, data) {
+      console.log('itemsVariation', itemsVariation)
+      console.log('data', data)
+      if (data !== undefined) {
         // eslint-disable-next-line no-param-reassign
-        data.item.itemSelected.stock += 1
+        itemsVariation.stockToDisplay -= 1
+        // eslint-disable-next-line no-param-reassign
+        itemsVariation.stock += 1
         this.$refs.tableAddOrderOne.refresh()
+        if (itemsVariation.stockToDisplay < 1) {
+          // eslint-disable-next-line no-plusplus
+          for (let x = 0; x < data.item.itemsSelected.length; x++) {
+            if (itemsVariation.option_id === data.item.itemsSelected[x].option_id) {
+              data.item.itemsSelected.splice(x, 1)
+            }
+          }
+          // this.itemsOrder.splice(data.index, 1)
+          this.choosenProduct = ''
+          this.listProduct2.unshift(data.item)
+          this.productCount = this.listProduct.length
+          this.$refs.tableAddOrderOne.refresh()
+        }
       } else {
         // eslint-disable-next-line no-param-reassign
-        data.item.stock += 1
-      }
-      if (data.item.stockToDisplay < 1) {
-        this.itemsOrder.splice(data.index, 1)
-        this.choosenProduct = ''
-        this.listProduct2.unshift(data.item)
-        this.productCount = this.listProduct.length
+        itemsVariation.item.stockToDisplayNoVariant -= 1
+        // eslint-disable-next-line no-param-reassign
+        itemsVariation.item.stock += 1
         this.$refs.tableAddOrderOne.refresh()
+        if (itemsVariation.item.stockToDisplayNoVariant < 1) {
+          this.itemsOrder.splice(itemsVariation.item.index, 1)
+          this.choosenProduct = ''
+          this.listProduct2.unshift(itemsVariation.item)
+          this.productCount = this.listProduct.length
+          this.$refs.tableAddOrderOne.refresh()
+        }
       }
     },
     disableNextButton() {
@@ -1031,22 +1135,31 @@ export default {
           this.listProduct2.splice(x, 1)
         }
       }
-      Object.assign(itemSelected, { stockToDisplay: 1 })
+      Object.assign(itemSelected, { stockToDisplayNoVariant: 1 })
       if (itemSelected.itemSelected !== undefined) {
         // eslint-disable-next-line no-param-reassign
         delete itemSelected.itemSelected
       }
       if (itemSelected) {
+        Object.assign(itemSelected, { itemsSelected: [] })
         this.itemsOrder.push(itemSelected)
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.itemsOrder.length; x++) {
           if (this.itemsOrder[x].variant[0] === undefined) {
             this.stockAvailable = this.itemsOrder[x].stock - 1
           }
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.listProduct.length; y++) {
+            if (this.itemsOrder[x].product_id === this.listProduct[y].product_id) {
+              this.listProduct.splice(y, 1)
+            }
+          }
         }
       } else if (itemSelected === null) {
         this.itemsOrder.splice(1, 1)
       }
+      console.log(this.itemsOrder)
+      this.choosenProduct = ''
       this.nextButtonIsActive()
     },
     updateAllSelectedProduct(newItemToPush, oldListSelected) {
@@ -1211,9 +1324,31 @@ export default {
       }
       return result
     },
+    getStockToDisplay(value) {
+      return value - 1
+    },
+    handleDisableParentVariation(itemsVariant, items) {
+      let result = false
+      if (items.itemsSelected[0] !== undefined) {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < items.itemsSelected.length; x++) {
+          if (items.itemsSelected[x].option_id === itemsVariant.options_id) {
+            result = true
+          }
+        }
+      }
+      return result
+    },
+    handleRemoveProductOnList(data) {
+      console.log(data)
+      this.itemsOrder.splice(data.item.index, 1)
+      this.listProduct.unshift(data.item)
+    },
   },
 }
 </script>
 <style scoped>
-
+  [dir] .delete-product-to-order {
+    border: 0px!important;
+  }
 </style>
