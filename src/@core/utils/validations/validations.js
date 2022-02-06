@@ -1,11 +1,11 @@
 import { extend, localize } from 'vee-validate'
 import {
-  required as rule_required,
+  required as ruleRequired,
   email as rule_email,
   min as rule_min,
   min_value as rule_min_value,
   max_value as rule_max_value,
-  confirmed as rule_confirmed,
+  confirmed as ruleConfirmed,
   regex as rule_regex,
   between as rule_between,
   alpha as rule_alpha,
@@ -18,13 +18,19 @@ import {
 import id from 'vee-validate/dist/locale/id.json'
 
 // eslint-disable-next-line object-curly-newline
-import { validatorPositive, validatorUrlValidator, validatorPassword, validatorCreditCard } from './validators'
+import {
+  validatorPositive,
+  validatorUrlValidator,
+  validatorPassword,
+  validatorCreditCard,
+  validatorResetpasswordRules,
+} from './validators'
 
 // ////////////////////////////////////////////////////////
 // General
 // ////////////////////////////////////////////////////////
 
-export const required = extend('required', rule_required)
+export const required = extend('required', ruleRequired)
 
 export const email = extend('email', rule_email)
 
@@ -34,7 +40,7 @@ export const minValue = extend('min_value', rule_min_value)
 
 export const maxValue = extend('max_value', rule_max_value)
 
-export const confirmed = extend('confirmed', rule_confirmed)
+export const confirmed = extend('confirmed', ruleConfirmed)
 
 export const regex = extend('regex', rule_regex)
 
@@ -70,6 +76,24 @@ export const password = extend('password', {
 export const url = extend('url', {
   validate: validatorUrlValidator,
   message: 'URL is invalid',
+})
+
+// Reset Password
+export const resetpasswordrequired = extend('resetpasswordrequired', {
+  ...ruleRequired,
+  message: 'Masukan password baru Kamu.',
+})
+export const resetconfirmpasswordrequired = extend('resetconfirmpasswordrequired', {
+  ...ruleRequired,
+  message: 'Konfirmasi password baru Kamu.',
+})
+export const resetpasswordconfirm = extend('resetpasswordconfirm', {
+  ...ruleConfirmed,
+  message: 'Maaf, password tidak sesuai.',
+})
+export const resetpasswordrules = extend('resetpasswordrules', {
+  validate: validatorResetpasswordRules,
+  message: 'Terdiri dari 8-16 karakter, mengandung dari huruf dan angka.',
 })
 
 // Install English and Arabic localizations.
