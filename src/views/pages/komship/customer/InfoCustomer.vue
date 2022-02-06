@@ -225,7 +225,7 @@
           List per halaman
         </span>
         <b-button
-          v-for="page in halamanopsicustomer"
+          v-for="page in halamancustomer"
           :key="page"
           :variant="page === perPage ? 'primary' : 'light'"
           size="sm"
@@ -240,6 +240,7 @@
         :total-rows="rowss"
         :per-page="perPage"
         first-number
+        hide-goto-end-buttons
         last-number
       />
     </b-row>
@@ -299,8 +300,8 @@ export default {
       loading: false,
       currentPage: 1,
       perPage: 50,
-      halamanopsicustomer: [50, 100, 200, 300],
-      rows: 0,
+      halamancustomer: [50, 100, 200, 300],
+      rowss: 100,
       selected: 1,
       filterCustomer: null,
       options: [
@@ -375,15 +376,10 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      totalinforCustomer: 0,
+      // infocustomer: 0,
     }
   },
 
-  computed: {
-    rowss() {
-      return this.itemsCustomer.length
-    },
-  },
   watch: {
     currentPage: {
       handler(value) {
@@ -398,7 +394,7 @@ export default {
       console.error(error)
     })
     this.tableProvider()
-    this.rowss = this.items.length
+    this.totalinfoCustomer = this.items.length
   },
   methods: {
     halamancustomerfilter(totalPage) {
