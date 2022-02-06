@@ -376,7 +376,6 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
-      // infocustomer: 0,
     }
   },
 
@@ -394,7 +393,7 @@ export default {
       console.error(error)
     })
     this.tableProvider()
-    this.totalinfoCustomer = this.items.length
+    this.rowss = this.items.length
   },
   methods: {
     halamancustomerfilter(totalPage) {
