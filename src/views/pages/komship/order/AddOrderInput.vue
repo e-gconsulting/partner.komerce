@@ -175,6 +175,7 @@
           <div
             v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
             :key="indexVariation+1"
+            class="mb-1"
           >
             <b-row class="justify-content-center">
               <b-button
@@ -206,7 +207,7 @@
           </div>
         </div>
         <div v-else-if="data.item.variant[0] === undefined">
-          <b-row class="justify-content-center">
+          <b-row class="justify-content-center mb-1">
             <b-button
               variant="outline-primary"
               class="minus-button mr-1"
@@ -248,6 +249,7 @@
           <div
             v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
             :key="indexVariation+1"
+            class="mb-4"
           >
             <h4>
               <strong>
@@ -256,14 +258,20 @@
             </h4>
           </div>
         </div>
-        <div v-else-if="data.item.variant[0] === undefined">
+        <div
+          v-else-if="data.item.variant[0] === undefined"
+          class="mb-4"
+        >
           <h4>
             <strong>
               Rp. {{ formatPrice(data.item.price) }}
             </strong>
           </h4>
         </div>
-        <div v-else>
+        <div
+          v-else
+          class="mb-4"
+        >
           <h4>
             <strong>
               0
@@ -273,17 +281,23 @@
       </template>
 
       <template #cell(subtotal)="data">
-        <div v-if="data.item.variant[0] === undefined">
+        <div
+          v-if="data.item.variant[0] === undefined"
+          class="mb-4"
+        >
           <h4>
             <strong>
               Rp. {{ formatPrice(data.item.price * data.item.stockToDisplayNoVariant) }}
             </strong>
           </h4>
         </div>
-        <div v-else-if="data.item.itemsSelected[0] !== undefined">
+        <div
+          v-else-if="data.item.itemsSelected[0] !== undefined"
+        >
           <div
             v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
             :key="indexVariation+1"
+            class="mb-4"
           >
             <h4>
               <strong>
@@ -495,6 +509,7 @@
             <b-button
               class="next-button"
               tag="router-link"
+              :disabled="buttonNext"
               :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres, date: dateValue, dateLabel: dateLabel } }"
             >
               Lanjutkan
@@ -1290,8 +1305,9 @@ export default {
       this.itemsOrder.every(this.checkButtonNextIsActive)
     },
     checkButtonNextIsActive(data) {
+      console.log('data disable', data)
       if (data.variant[0] !== undefined) {
-        if (data.itemSelected !== undefined) {
+        if (data.itemsSelected[0] !== undefined) {
           this.buttonNext = false
         } else {
           this.buttonNext = true
