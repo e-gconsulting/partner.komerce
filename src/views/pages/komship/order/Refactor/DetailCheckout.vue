@@ -192,7 +192,6 @@
           ref="selectTypeShipping"
           v-model="typeShipping"
           :options="listTypeShipping"
-          label="shipping_type"
           placeholder="Opsi Pengiriman"
           :disabled="!isTypeShipping"
           @input="calculate"
@@ -203,9 +202,6 @@
           >
             Tidak ada data untuk ditampilkan.
           </span>
-          <template #option="{ shipping_type }">
-            {{ nameTypeShipping(shipping_type) }}
-          </template>
         </v-select>
       </b-col>
     </b-row>
@@ -622,7 +618,7 @@ export default {
         })
     },
     async getShippingType() {
-      if (this.potonganSaldo === false && this.discount === null) {
+      if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
       if (this.destination && this.shipping && this.profile && this.paymentMethod !== null) {
@@ -640,7 +636,10 @@ export default {
           .then(res => {
             const { data } = res.data
             this.isTypeShipping = true
-            this.listTypeShipping = data
+            this.listTypeShipping = data.map(items => ({
+              shipping_type: items.shipping_type,
+              label: this.nameTypeShipping(items.shipping_type),
+            }))
           })
           .catch(() => {
             this.$swal({
