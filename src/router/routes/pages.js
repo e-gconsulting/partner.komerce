@@ -80,6 +80,16 @@ export default [
     },
   },
   {
+    path: '/reset-newpassword',
+    name: 'auth-reset-passworddata',
+    component: () => import('@/views/pages/authentication/ResetPassword'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+      action: 'read',
+    },
+  },
+  {
     path: '/komship-register',
     name: 'kompship-daftar',
     component: () => import('@/views/pages/authentication/RegisterKompship'),
