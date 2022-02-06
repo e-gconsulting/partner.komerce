@@ -1,7 +1,7 @@
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
-  BCard, BForm, BFormGroup, BInputGroup, BInputGroupAppend, BFormInput, BButton,
+  BCard, BSpinner, BForm, BFormGroup, BInputGroup, BInputGroupAppend, BFormInput, BButton,
 } from 'bootstrap-vue'
 import {
   resetpasswordrequired,
@@ -21,6 +21,7 @@ export default {
     BFormGroup,
     BInputGroup,
     BFormInput,
+    BSpinner,
     BInputGroupAppend,
     ValidationProvider,
     ValidationObserver,
@@ -29,7 +30,8 @@ export default {
   data() {
     return {
       // error: '',
-      passwordData: '',
+      passwordOld: '',
+      passwordNew: '',
       confirmedPassword: '',
       resetpasswordrequired,
       resetpasswordrules,
@@ -37,6 +39,7 @@ export default {
       resetpasswordconfirm,
       status: '',
       loading: false,
+      successChanged: false,
       // validation rules
       passwordFieldType: 'password',
     }
@@ -60,13 +63,23 @@ export default {
     showmodal() {
       this.$refs['ubah-password'].toggle('#togggle-btn')
     },
-    async submit() {
-      // const datavalidate = await this.$refs.simpleRules.validate()
-      // console.log(datavalidate)
+    submit() {
       this.$refs.simpleRules.validate().then(success => {
         if (success) {
-        // eslint-disable-next-line
-          alert('form submitted!')
+          this.loading = true
+          // eslint-disable-next-line
+          this.$http_komship.post('/v1/change-password', {
+            old_password: this.passwordOld,
+            new_password: this.passwordNew,
+          })
+            .then(response => {
+              console.log('response', response.data)
+              if (response.data.status.code === 200) {
+                this.successChanged = true
+              }
+            }).catch(() => {
+              this.loading = false
+            })
         }
       })
     },
