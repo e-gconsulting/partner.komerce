@@ -376,6 +376,7 @@ export default {
       endpoint: null,
       url: '/v1/customers',
       loadTable: false,
+
     }
   },
 
