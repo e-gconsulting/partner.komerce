@@ -62,7 +62,7 @@ export default [
   {
     path: '/forgot-password',
     name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword.vue'),
+    component: () => import('@/views/pages/authentication/ForgotPassword'),
     meta: {
       layout: 'full',
       resource: 'Auth',
