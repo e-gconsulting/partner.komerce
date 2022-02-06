@@ -301,7 +301,7 @@ export default {
       currentPage: 1,
       perPage: 50,
       halamancustomer: [50, 100, 200, 300],
-      rowss: 100,
+      rowss: 200,
       selected: 1,
       filterCustomer: null,
       options: [
