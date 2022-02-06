@@ -150,6 +150,22 @@
           @input="getShippingType"
         />
       </b-col>
+      <b-col
+        v-if="paymentMethod === 'BANK TRANSFER'"
+        md="4"
+      >
+        <v-select
+          v-model="rekening"
+          :options="listRekening"
+          label="account_name"
+          placeholder="Pilih Rekening"
+        >
+          <template #option="{ account_name, bank_name, account_no }">
+            <span class="font-bold text-lg">{{ account_name }}</span><br>
+            <em>{{ bank_name }} - {{ account_no }}</em>
+          </template>
+        </v-select>
+      </b-col>
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
@@ -176,7 +192,6 @@
           ref="selectTypeShipping"
           v-model="typeShipping"
           :options="listTypeShipping"
-          label="shipping_type"
           placeholder="Opsi Pengiriman"
           :disabled="!isTypeShipping"
           @input="calculate"
@@ -187,9 +202,6 @@
           >
             Tidak ada data untuk ditampilkan.
           </span>
-          <template #option="{ shipping_type }">
-            {{ nameTypeShipping(shipping_type) }}
-          </template>
         </v-select>
       </b-col>
     </b-row>
@@ -394,7 +406,7 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(serviceFee) }}
+            - Rp. {{ formatNumber(Math.round(serviceFee)) }}
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -477,6 +489,11 @@ export default {
       listDestination: [],
       paymentMethod: null,
       listPayment: ['COD', 'BANK TRANSFER'],
+      rekening: null,
+      listRekening: [],
+      bankName: null,
+      bankAccountName: null,
+      bankAccountNo: null,
       shipping: null,
       listShipping: ['JNE'],
       typeShipping: null,
@@ -514,6 +531,7 @@ export default {
   created() {
     this.addressId = this.$route.params.address_id
     this.getProfile()
+    this.getRekening()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -589,8 +607,18 @@ export default {
           console.log(err)
         })
     },
+    async getRekening() {
+      await this.$http_komship.get('v1/bank-account')
+        .then(res => {
+          const { data } = res.data
+          this.listRekening = data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     async getShippingType() {
-      if (this.potonganSaldo === false && this.discount === null) {
+      if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
       if (this.destination && this.shipping && this.profile && this.paymentMethod !== null) {
@@ -608,7 +636,10 @@ export default {
           .then(res => {
             const { data } = res.data
             this.isTypeShipping = true
-            this.listTypeShipping = data
+            this.listTypeShipping = data.map(items => ({
+              shipping_type: items.shipping_type,
+              label: this.nameTypeShipping(items.shipping_type),
+            }))
           })
           .catch(() => {
             this.$swal({
@@ -680,59 +711,67 @@ export default {
       return ''
     },
     async submit() {
-      if (this.customerName && this.customerPhone && this.detailAddress !== null) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, {
-          date: this.orderDate,
-          tariff_code: this.destination.value,
-          subdistrict_name: this.destination.subdistrict_name,
-          zip_code: this.destination.zip_code,
-          district_name: this.destination.district_name,
-          city_name: this.destination.city_name,
-          is_komship: this.profile.is_komship,
-          customer_id: this.customerId,
-          customer_name: this.customerName,
-          customer_phone: this.customerPhone,
-          detail_address: this.detailAddress,
-          shipping: this.shipping,
-          shipping_type: this.typeShipping.shipping_type,
-          payment_method: this.paymentMethod,
-          bank: 0,
-          partner_address_id: this.addressId,
-          bank_account_name: 0,
-          bank_account_no: 0,
-          subtotal: this.subTotal,
-          grandtotal: this.grandTotal,
-          shipping_cost: this.shippingCost,
-          service_fee: this.serviceFee,
-          discount: this.discount,
-          shipping_cashback: this.cashback,
-          net_profit: this.netProfit,
-          cart: this.cartId,
-        }).then(() => {
-          this.$swal({
-            title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening) {
+        this.bankName = this.rekening.bank_name
+        this.bankAccountName = this.rekening.account_name
+        this.bankAccountNo = this.rekening.account_no
+      } else {
+        this.bankName = 0
+        this.bankAccountName = 0
+        this.bankAccountNo = 0
+      }
+      const formData = {
+        date: this.orderDate,
+        tariff_code: this.destination.value,
+        subdistrict_name: this.destination.subdistrict_name,
+        zip_code: this.destination.zip_code,
+        district_name: this.destination.district_name,
+        city_name: this.destination.city_name,
+        is_komship: this.profile.is_komship,
+        customer_id: this.customerId,
+        customer_name: this.customerName,
+        customer_phone: this.customerPhone,
+        detail_address: this.detailAddress,
+        shipping: this.shipping,
+        shipping_type: this.typeShipping.shipping_type,
+        payment_method: this.paymentMethod,
+        bank: this.bankName,
+        partner_address_id: this.addressId,
+        bank_account_name: this.bankAccountName,
+        bank_account_no: this.bankAccountNo,
+        subtotal: this.subTotal,
+        grandtotal: this.grandTotal,
+        shipping_cost: this.shippingCost,
+        service_fee: this.serviceFee,
+        discount: this.discount,
+        shipping_cashback: this.cashback,
+        net_profit: this.netProfit,
+        cart: this.cartId,
+      }
+      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.customerName && this.customerPhone && this.detailAddress) {
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
+          .then(() => {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
             imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-            confirmButtonText: 'Oke',
-            confirmButtonClass: 'btn btn-primary',
-          }).then(() => {
-            this.$router.push('/data-order')
+              confirmButtonText: 'Oke',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(() => {
+              this.$router.push('/data-order')
+            })
           })
-        })
-        // .catch(() => {
-        //   this.$swal({
-        //     title: '<span class="font-weight-bold h4">Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkah cek kembali saldo anda.</span>',
-        //     imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-        //     showCancelButton: true,
-        //     confirmButtonText: 'Cek Saldo',
-        //     confirmButtonClass: 'btn btn-primary',
-        //     cancelButtonClass: 'btn btn-outline-primary text-primary',
-        //     cancelButtonColor: '#FFFFFF',
-        //   }).then(result => {
-        //     if (result.isConfirmed) {
-        //       this.$router.push({ name: 'saldo' })
-        //     }
-        //   })
-        // })
+      } else if (this.paymentMethod === 'COD' && this.customerName && this.customerPhone && this.detailAddress) {
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
+          .then(() => {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+            imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
+              confirmButtonText: 'Oke',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(() => {
+              this.$router.push('/data-order')
+            })
+          })
       } else {
         this.$swal({
           title: '<span class="font-weight-bold h4">Tidak Boleh Ada Field Yang Kosong!</span>',

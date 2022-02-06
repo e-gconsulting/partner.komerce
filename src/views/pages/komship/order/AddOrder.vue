@@ -65,8 +65,29 @@ export default {
   },
   mounted() {
     this.reload()
+    this.checkExpedition()
   },
   methods: {
+    async checkExpedition() {
+      await this.$http_komship.get('v1/partner/shipment', {
+        params: { is_komship: 1 },
+      })
+        .then(res => {
+          const { data } = res.data
+          if (data[0].is_active === 0) {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Aktifkan minimal 1 ekspedisi untuk melanjutkan proses Pick Up.</span>',
+              imageUrl: require('@/assets/images/icons/warning.svg'), // eslint-disable-line
+              confirmButtonText: 'Aktifkan Ekspedisi',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(isConfirm => {
+              if (isConfirm.value === true) {
+                this.$router.push('/setting-kompship/ekspedisi')
+              }
+            })
+          }
+        })
+    },
     async reload() {
       this.loading = true
       await this.getProfile()
@@ -77,8 +98,6 @@ export default {
       if (dateVal) this.dateText = dateVal
     },
     updateSelectedItems(newListSelected) {
-      console.log('newListSelected')
-      console.log(newListSelected)
       if (newListSelected) this.listSelected = newListSelected
     },
     updateScreenView(value) {
@@ -93,9 +112,7 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
-        console.log(this.profile)
       }).catch(() => {
         console.log('failed to get the profile data')
       })
@@ -104,7 +121,6 @@ export default {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
         console.log('failed to get the product data by partner')
