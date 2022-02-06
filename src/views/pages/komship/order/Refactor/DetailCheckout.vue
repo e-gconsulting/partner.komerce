@@ -410,7 +410,7 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(serviceFee) }}
+            - Rp. {{ formatNumber(Math.round(serviceFee)) }}
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
