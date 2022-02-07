@@ -590,6 +590,10 @@
           class="btn btn-primary rounded-lg"
           @click="topUpSaldo()"
         >
+          <b-spinner
+            v-if="loadingSubmitTopUp"
+            small
+          />
           Top Up Sekarang
         </button>
       </template>
@@ -753,6 +757,42 @@
       ref="onboardingElement"
       :current-stage="0"
     /> -->
+
+    <!-- modal after topup -->
+    <b-modal
+      ref="modal-after-topup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <b-row class="justify-content-center mb-1 pt-1">
+          <img src="@/assets/images/icons/warning.svg">
+        </b-row>
+        <b-row class="text-center px-2 mb-1">
+          <p>
+            Silahkan selesaikan pembayaran terlebih dahulu untuk memastikan proses Top Up Saldo Berhasil
+          </p>
+        </b-row>
+        <b-row class="justify-content-center mb-1">
+          <h5 class="text-black">
+            <strong>
+              Sudah menyelesaikan pembayaran?
+            </strong>
+          </h5>
+        </b-row>
+        <b-row class="justify-content-center pb-1">
+          <b-button
+            class="org-button text-center"
+            variant="primary"
+            tag="router-link"
+            :to="{ name: $route.meta.routeToRincianSaldo }"
+          >
+            Cek Rincian Saldo
+          </b-button>
+        </b-row>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -760,7 +800,7 @@
 import { mapState, mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 import {
-  BFormGroup, BModal, BFormInput, BFormSelect,
+  BFormGroup, BModal, BFormInput, BFormSelect, BSpinner,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import PincodeInput from 'vue-pincode-input'
@@ -786,6 +826,7 @@ export default {
     vSelect,
     // Onboarding,
     PopoverInfo,
+    BSpinner,
   },
   data() {
     const today = new Date()
@@ -881,6 +922,8 @@ export default {
       rekTujuanState: null,
       obj: null,
 
+      loadingSubmitTopUp: false,
+
       optionRekIsEmpty: [
         {
           value: 'Anda belum menambahkan rekening bank',
@@ -942,24 +985,14 @@ export default {
       this.$bvModal.show('modalTopUp')
     },
     async topUpSaldo() {
+      this.loadingSubmitTopUp = true
       try {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
-        await this.$swal({
-          title:
-            '<span class="font-weight-bold h4">Top Up Saldo Berhasil</span>',
-          text: `Top Up sebesar ${this.formatRupiah(
-            response.data.data.amount,
-          )} berhasil. Silahkan Melakukan Pembayaran.`,
-          imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-          confirmButtonText: 'Buka Invoice',
-          customClass: {
-            confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-          },
-          buttonsStyling: false,
-        })
         window.open(response.data.data.invoice_xendit_url, '_blank').focus()
+        this.$refs['modal-after-topup'].show()
+        this.loadingSubmitTopUp = false
       } catch (e) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
@@ -973,8 +1006,10 @@ export default {
           },
           buttonsStyling: false,
         })
+        this.loadingSubmitTopUp = false
       } finally {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
+        this.loadingSubmitTopUp = false
       }
       // window.snap.pay(this.snapToken, {
       //   onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line

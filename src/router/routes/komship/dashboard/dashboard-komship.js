@@ -8,6 +8,7 @@ export default [
       routeToOrder: 'data-order',
       routeToTopCustomer: 'info-customer',
       routeToDataProduct: 'data-produk',
+      routeToRincianSaldo: 'saldo-detail',
       resource: 'Dashboard Komship',
       action: 'read',
       breadcrumb: [
