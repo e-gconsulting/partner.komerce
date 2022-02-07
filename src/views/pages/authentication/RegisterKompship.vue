@@ -219,7 +219,7 @@
     <!-- Mobile -->
     <b-col
       cols="12"
-      class="wrapper-register-mobile bg-white"
+      class="wrapper-register-mobile bg-white h-screen"
     >
       <b-navbar-brand class="mt-1">
         <b-img
@@ -229,7 +229,7 @@
       </b-navbar-brand>
       <b-col
         md="12"
-        class="pt-5 mt-3"
+        class="pt-5"
       >
         <b-col class="">
           <h3 class="mb-2 register-title">
