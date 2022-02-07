@@ -10230,6 +10230,13 @@ vue-simple-search-dropdown@^1.0.1:
   resolved "https://registry.npmjs.org/vue-simple-search-dropdown/-/vue-simple-search-dropdown-1.0.1.tgz"
   integrity sha512-r3LuGFB3WqMDRILx+Z/Y2S9UTLqMh3Y0nv1Oly+tt8oEzvg77r0tfYLHVqQlhsmVPy0GmSuxMMbetMkDRLOEqg==
 
+vue-simple-timepicker@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/vue-simple-timepicker/-/vue-simple-timepicker-1.0.2.tgz#379736fb5349489f86c30c3fc26423d9bbfb0d28"
+  integrity sha1-N5c2+1NJSJ+Gwww/wmQj2bv7DSg=
+  dependencies:
+    vue "^2.3.3"
+
 vue-slider-component@3.2.11:
   version "3.2.11"
   resolved "https://registry.npmjs.org/vue-slider-component/-/vue-slider-component-3.2.11.tgz"
@@ -10321,7 +10328,7 @@ vue@2.6.12, vue@^2.2.1, vue@^2.4.4, vue@^2.6.10:
   resolved "https://registry.npmjs.org/vue/-/vue-2.6.12.tgz"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
 
-vue@^2.5.22:
+vue@^2.3.3, vue@^2.5.22:
   version "2.6.14"
   resolved "https://registry.npmjs.org/vue/-/vue-2.6.14.tgz"
   integrity sha512-x2284lgYvjOMj3Za7kqzRcUSxBboHqtgRE2zlos1qWaOye5yUmHn42LB1250NJBLRwEcdrB0JRwyPTEPhfQjiQ==
