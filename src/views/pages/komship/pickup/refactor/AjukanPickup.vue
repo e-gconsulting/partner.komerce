@@ -378,6 +378,7 @@
             <span
               v-if="items.is_default === 1"
               class="text-primary"
+              style="color:red;"
             >
               [ Alamat Utama ]
             </span>
