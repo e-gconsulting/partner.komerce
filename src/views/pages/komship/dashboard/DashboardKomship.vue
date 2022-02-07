@@ -255,10 +255,9 @@
               >
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
-                    <img
-                      src="@/assets/images/icons/profile-placehold.svg"
-                      alt="Photo"
-                    >
+                    <b-avatar
+                      :src="topAdminOrder.photo"
+                    />
                     <p class="list-text-1 h-text-dark ml-2 mb-0">
                       {{ topAdminOrder.name }}
                     </p>
