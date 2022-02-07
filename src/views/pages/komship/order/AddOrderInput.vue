@@ -137,17 +137,17 @@
         <div
           v-if="data.item.itemsSelected !== undefined"
         >
-          <div
+          <b-row
             v-for="(itemVariation, indexVariation) in data.item.itemsSelected"
             :key="indexVariation+1"
-            class="mb-2"
+            class="py-1 my-50 pl-1"
           >
-            <h4 class="text-primary mb-1">
+            <h4 class="text-primary mt-50">
               <strong>
                 {{ itemVariation.variation }}
               </strong>
             </h4>
-          </div>
+          </b-row>
         </div>
         <div v-if="data.item.variant[0] !== undefined">
           <b-button
@@ -156,7 +156,7 @@
             :disabled="data.item.variant[0] === undefined"
             @click="chooseVariation(data)"
           >
-            Pilih variasi
+            Pilih
           </b-button>
         </div>
         <div v-if="data.item.variant[0] === undefined">
@@ -165,7 +165,7 @@
             class="btn-icon"
             disabled
           >
-            Pilih variasi
+            Pilih
           </b-button>
         </div>
       </template>
@@ -207,7 +207,7 @@
           </div>
         </div>
         <div v-else-if="data.item.variant[0] === undefined">
-          <b-row class="justify-content-center mb-1">
+          <b-row class="justify-content-center">
             <b-button
               variant="outline-primary"
               class="minus-button mr-1"
@@ -260,7 +260,6 @@
         </div>
         <div
           v-else-if="data.item.variant[0] === undefined"
-          class="mb-4"
         >
           <h4>
             <strong>
@@ -270,7 +269,6 @@
         </div>
         <div
           v-else
-          class="mb-4"
         >
           <h4>
             <strong>
@@ -283,7 +281,6 @@
       <template #cell(subtotal)="data">
         <div
           v-if="data.item.variant[0] === undefined"
-          class="mb-4"
         >
           <h4>
             <strong>
@@ -310,7 +307,7 @@
 
       <template #cell(action)="data">
         <b-button
-          class="btn-icon delete-product-to-order"
+          class="btn-icon delete-product-to-order text-center"
           variant="flat-primary"
           @click="handleRemoveProductOnList(data)"
         >
@@ -393,7 +390,7 @@
                 :variant="isActiveVariant === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
                 class="btn-icon m-50"
                 :pressed="isActiveVariant === itemsVariant.name"
-                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableParentVariation(itemsVariant, itemsChooseVariation.item)"
+                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableVariation(itemsVariant, itemsChooseVariation.item)"
                 @click="selectParentVariation(itemsVariant, itemsChooseVariation.item)"
               >
                 {{ itemsVariant.name }}
@@ -432,7 +429,7 @@
                 :variant="isActiveVariantFirstChild === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
                 class="btn-icon m-50"
                 :pressed="isActiveVariantFirstChild === itemsVariant.name"
-                :disabled="itemsVariant.stock === 0 ? true : false"
+                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableVariation(itemsVariant, itemsChooseVariation.item)"
                 @click="selectVariationFirstChild(itemsVariant, itemsChooseVariation.item)"
               >
                 {{ itemsVariant.name }}
@@ -460,7 +457,7 @@
               :variant="isActiveVariantSecondChild === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
               class="btn-icon m-50"
               :pressed="isActiveVariantSecondChild === itemsVariant.name"
-              :disabled="itemsVariant.stock === 0 ? true : false"
+              :disabled="itemsVariant.stock === 0 ? true : false || handleDisableVariation(itemsVariant, itemsChooseVariation.item)"
               @click="selectVariationSecondChild(itemsVariant)"
             >
               {{ itemsVariant.name }}
@@ -713,7 +710,6 @@ export default {
           key: 'action',
           label: 'Hapus Produk',
           class: 'col-action',
-          tdClass: 'text-center',
         },
       ],
       itemsChooseVariation: {
@@ -1343,7 +1339,7 @@ export default {
     getStockToDisplay(value) {
       return value - 1
     },
-    handleDisableParentVariation(itemsVariant, items) {
+    handleDisableVariation(itemsVariant, items) {
       let result = false
       if (items.itemsSelected[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
@@ -1357,7 +1353,7 @@ export default {
     },
     handleRemoveProductOnList(data) {
       console.log(data)
-      this.itemsOrder.splice(data.item.index, 1)
+      this.itemsOrder.splice(data.index, 1)
       this.listProduct.unshift(data.item)
     },
   },

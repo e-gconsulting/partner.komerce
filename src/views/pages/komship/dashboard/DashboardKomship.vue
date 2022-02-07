@@ -92,6 +92,8 @@
               variant="flat-dark"
               class="btn-icon"
               size="sm"
+              tag="router-link"
+              :to="{ name: $route.meta.routeToOrder, query: { tab: 'dikirim' } }"
             >
               <img
                 src="@/assets/images/icons/arrow-square-right.svg"
@@ -290,6 +292,8 @@
               variant="flat-dark"
               class="btn-icon"
               size="sm"
+              tag="router-link"
+              :to="{ name: $route.meta.routeToDataProduct}"
             >
               <img
                 src="@/assets/images/icons/arrow-square-right.svg"
@@ -385,6 +389,8 @@
               variant="flat-dark"
               class="btn-icon"
               size="sm"
+              tag="router-link"
+              :to="{ name: $route.meta.routeToTopCustomer}"
             >
               <img
                 src="@/assets/images/icons/arrow-square-right.svg"
