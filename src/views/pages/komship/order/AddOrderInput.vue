@@ -53,21 +53,25 @@
         label="Kirim Dari"
         label-cols-md="2"
       >
-        <b-form-select
+        <v-select
           v-model="choosenAddres"
           class="add-order-product-input"
-          label="product_name"
-          label-cols-md="2"
-          @input="onChangeAddress"
+          :options="addressList"
         >
-          <b-form-select-option
-            v-for="item in addressList"
-            :key="item.value"
-            :value="item.value"
+          <span
+            v-if="addressCount === 0"
+            slot="no-options"
           >
-            {{ item.text }}
-          </b-form-select-option>
-        </b-form-select>
+
+            Anda belum menambahkan Gudang, tambahkan dahulu.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
       </b-form-group>
       <b-form-group
         class="add-order-label"
@@ -510,7 +514,7 @@
               class="next-button"
               tag="router-link"
               :disabled="buttonNext"
-              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres, date: dateValue, dateLabel: dateLabel } }"
+              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres.value, date: dateValue, dateLabel: dateLabel } }"
             >
               Lanjutkan
             </b-button>
@@ -620,8 +624,8 @@ export default {
     BFormGroup,
     BButton,
     vSelect,
-    BFormSelect,
-    BFormSelectOption,
+    // BFormSelect,
+    // BFormSelectOption,
     // AddOrderTable,
     BFormDatepicker,
     BTable,
@@ -677,6 +681,7 @@ export default {
 
       dataTree: [],
       productCount: null,
+      addressCount: null,
 
       // Refactor
       itemsOrder: [],
@@ -795,10 +800,11 @@ export default {
           const sortData = data.slice().sort((a, b) => b.is_default - a.is_default)
           this.addressList = await sortData.map(val => ({
             value: val.address_id,
-            text: val.address_name,
+            label: val.address_name,
           }))
-          this.choosenAddres = this.addressList[0].value
-          console.log(this.addressList)
+          this.addressCount = this.addressList.length
+          // eslint-disable-next-line prefer-destructuring
+          this.choosenAddres = this.addressList[0]
           this.cekListProduct()
         }
       })
