@@ -6,6 +6,8 @@ export default [
     meta: {
       name: 'dashboard-komship',
       routeToOrder: 'data-order',
+      routeToTopCustomer: 'info-customer',
+      routeToDataProduct: 'data-produk',
       resource: 'Dashboard Komship',
       action: 'read',
       breadcrumb: [
