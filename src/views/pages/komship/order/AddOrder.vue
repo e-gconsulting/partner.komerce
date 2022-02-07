@@ -6,7 +6,6 @@
       v-if="screens === 'input'"
       :date-text="dateText"
       :screens="screens"
-      :list-product="listProduct"
       :list-selected="listSelected"
       :profile="profile"
       :disable-submit-button-status="disableSubmitButtonStatus"
@@ -65,12 +64,32 @@ export default {
   },
   mounted() {
     this.reload()
+    this.checkExpedition()
   },
   methods: {
+    async checkExpedition() {
+      await this.$http_komship.get('v1/partner/shipment', {
+        params: { is_komship: 1 },
+      })
+        .then(res => {
+          const { data } = res.data
+          if (data[0].is_active === 0) {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Aktifkan minimal 1 ekspedisi untuk melanjutkan proses Pick Up.</span>',
+              imageUrl: require('@/assets/images/icons/warning.svg'), // eslint-disable-line
+              confirmButtonText: 'Aktifkan Ekspedisi',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(isConfirm => {
+              if (isConfirm.value === true) {
+                this.$router.push('/setting-kompship/ekspedisi')
+              }
+            })
+          }
+        })
+    },
     async reload() {
       this.loading = true
       await this.getProfile()
-      await this.getListProductByPartner()
       this.loading = false
     },
     updateDateText(dateVal) {
