@@ -522,7 +522,7 @@ export default {
       cartId: null,
       isCalculate: false,
       isTypeShipping: false,
-      orderDate: moment().format('YYYY/MM/DD'),
+      orderDate: null,
       customerName: null,
       listCustomer: [],
       customerId: 0,
@@ -573,6 +573,7 @@ export default {
   },
   created() {
     this.addressId = this.$route.params.address_id
+    this.orderDate = this.$route.params.date
     this.getProfile()
     this.getRekening()
   },
