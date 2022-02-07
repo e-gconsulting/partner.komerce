@@ -300,8 +300,8 @@ export default {
       loading: false,
       currentPage: 1,
       perPage: 50,
-      halamancustomer: [50, 100, 200, 300],
-      rowss: 200,
+      halamancustomer: [50, 100, 200],
+      rowss: 100,
       selected: 1,
       filterCustomer: null,
       options: [
