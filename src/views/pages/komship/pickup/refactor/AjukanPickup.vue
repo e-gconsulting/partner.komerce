@@ -85,12 +85,12 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-input-group>
+            <b-input-group is-text>
               <b-form-input
                 id="input-pickup-time"
                 v-model="timeValueText"
                 type="text"
-                class="add-pickup-date-button"
+                class="example-input"
                 locale="id"
               />
               <b-input-group-append>
@@ -98,9 +98,11 @@
                   ref="dt1"
                   v-model="timeValue"
                   button-only
+                  hour-cycle="h24"
                   right
                   style="color:828282; margin-left:10px;"
                   locale="id"
+
                   :hour24="true"
                   @context="onChangeTime"
                 >
@@ -132,7 +134,11 @@
                   class="p-1 rounded mt-1"
                   style="margin-bottom:10px;color:828282;"
                   type="text"
+                  aria-controls="example-input"
                   :hour24="true"
+                  hour-cycle="h24"
+                  button-only
+                  right
                   @context="onChangeTime"
                 />
                 <!-- <b-button
