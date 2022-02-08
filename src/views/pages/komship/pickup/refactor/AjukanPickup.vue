@@ -93,7 +93,7 @@
                 class="add-pickup-date-button"
                 locale="id"
               />
-              <b-input-group-prepend>
+              <b-input-group-append>
                 <b-form-timepicker
                   ref="dt1"
                   v-model="timeValue"
@@ -107,13 +107,12 @@
                   <template
                     v-slot:button-content
                   >
-                    <b-icon-chevron-expand
-                      aria-hidden="true"
-                      style="color:white;"
+                    <feather-icon
+                      icon="InfoIcon"
                     />
                   </template>
                 </b-form-timepicker>
-              </b-input-group-prepend></b-input-group></b-form-group>
+              </b-input-group-append></b-input-group></b-form-group>
         </b-col>
         <b-col cols="11">
           <b-form-group
@@ -509,9 +508,9 @@ import {
   BForm,
   BButton,
   BInputGroup,
-  BInputGroupPrepend,
+  BInputGroupAppend,
   BFormTimepicker,
-  BIconChevronExpand,
+  BIconInfo,
   BBadge,
   BModal,
   BFormRadio,
@@ -541,9 +540,8 @@ export default {
     BForm,
     BButton,
     BInputGroup,
-    BInputGroupPrepend,
+    BInputGroupAppend,
     BFormTimepicker,
-    BIconChevronExpand,
     BBadge,
     BModal,
     BFormRadio,
