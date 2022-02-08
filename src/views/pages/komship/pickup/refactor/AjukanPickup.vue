@@ -126,15 +126,15 @@
               class="add-pickup-input-vehicle-btn-wrapper"
             >
               <div>
-                {{ timepicker.hours }} : {{ timepicker.minutes }}
-                <b-button
+                <!-- {{ timepicker }} : {{ timepicker }} -->
+                <!-- <b-button
                   v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
                   :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
                   @click="() => onChooseVehicle('MOTOR')"
                 >
                   <img src="@/assets/images/icons/motor.png">
                   <span>Motor</span>
-                </b-button>
+                </b-button> -->
                 <b-button
                   v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
                   :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
@@ -143,14 +143,14 @@
                   <img src="@/assets/images/icons/mobil.png">
                   <span>Mobil</span>
                 </b-button>
-                <b-button
+                <!-- <b-button
                   v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
                   :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
                   @click="() => onChooseVehicle('TRUCK')"
                 >
                   <img src="@/assets/images/icons/truk.png">
                   <span>Truk</span>
-                </b-button>
+                </b-button> -->
               </div>
             </div>
           </b-form-group>
@@ -555,8 +555,6 @@ export default {
       timeValueText: '09 : 00',
       timeValue: '09:00',
       timepicker: {
-        hours: 0,
-        minutes: 0,
       },
       pickerSetting: {
         headerShow: false,
