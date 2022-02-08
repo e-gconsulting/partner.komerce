@@ -85,36 +85,32 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-input-group is-text>
+            <b-input-group>
               <b-form-input
                 id="input-pickup-time"
                 v-model="timeValueText"
                 type="text"
-                class="example-input"
-                locale="id"
+                placeholder="09 : 00"
               />
               <b-input-group-append>
                 <b-form-timepicker
                   ref="dt1"
                   v-model="timeValue"
                   button-only
-                  hour-cycle="h24"
                   right
-                  style="color:828282; margin-left:10px;"
-                  locale="id"
-
-                  :hour24="true"
+                  aria-controls="example-input"
+                  locale="en"
+                  :hour12="false"
+                  button-variant="flat-dark"
                   @context="onChangeTime"
                 >
-                  <template
-                    v-slot:button-content
-                  >
-                    <feather-icon
-                      icon="InfoIcon"
-                    />
+                  <template v-slot:button-content>
+                    <b-icon-chevron-expand aria-hidden="true" />
                   </template>
                 </b-form-timepicker>
-              </b-input-group-append></b-input-group></b-form-group>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
         </b-col>
         <b-col cols="11">
           <b-form-group
