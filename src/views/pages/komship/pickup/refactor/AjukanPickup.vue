@@ -90,8 +90,7 @@
                 id="input-pickup-time"
                 v-model="timeValueText"
                 type="text"
-                class="add-pickup-date-button"
-                locale="id"
+                placeholder="09 : 00"
               />
               <b-input-group-append>
                 <b-form-timepicker
@@ -99,20 +98,19 @@
                   v-model="timeValue"
                   button-only
                   right
-                  style="color:828282; margin-left:10px;"
-                  locale="id"
-                  :hour24="true"
+                  aria-controls="example-input"
+                  locale="en"
+                  :hour12="false"
+                  button-variant="flat-dark"
                   @context="onChangeTime"
                 >
-                  <template
-                    v-slot:button-content
-                  >
-                    <feather-icon
-                      icon="InfoIcon"
-                    />
+                  <template v-slot:button-content>
+                    <b-icon-info-circle aria-hidden="true" />
                   </template>
                 </b-form-timepicker>
-              </b-input-group-append></b-input-group></b-form-group>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form-group>
         </b-col>
         <b-col cols="11">
           <b-form-group
@@ -132,7 +130,11 @@
                   class="p-1 rounded mt-1"
                   style="margin-bottom:10px;color:828282;"
                   type="text"
+                  aria-controls="example-input"
                   :hour24="true"
+                  hour-cycle="h24"
+                  button-only
+                  right
                   @context="onChangeTime"
                 />
                 <!-- <b-button
@@ -510,7 +512,7 @@ import {
   BInputGroup,
   BInputGroupAppend,
   BFormTimepicker,
-  BIconInfo,
+  BIconInfoCircle,
   BBadge,
   BModal,
   BFormRadio,
@@ -537,6 +539,7 @@ export default {
     flatPickr,
     BFormInput,
     BTime,
+    BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
