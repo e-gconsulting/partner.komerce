@@ -288,12 +288,12 @@
 
                   <b-col cols="10">
                     <b-form-group
-                      label="Kode Post/Kecamatan"
+                      label="Kota/Kecamatan"
                       label-cols-md="3"
                     >
                       <validation-provider
                         #default="{errors}"
-                        name="Kode Post/Kecamatan"
+                        name="Kota/Kecamatan"
                         rules="required"
                       >
                         <v-select
