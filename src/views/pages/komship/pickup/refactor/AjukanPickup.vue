@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 <template>
   <b-card>
     <h3 class="text-black">
@@ -55,26 +56,27 @@
           <b-form-group
             label="Tanggal"
             label-for="h-email"
-            label-cols-md="2"
+            label-cols-md="1"
             label-class="text-black font-weight-bold"
           >
             <div class="add-pickup-input-date-label">
               {{ dateLabel }}
             </div>
-            <b-form-datepicker
-              id="input-pickup-date"
-              ref="dp1"
-              v-model="dateValue"
-              class="add-pickup-date-button"
-              button-only
-              @context="onChangeDate"
+            <b-col
+              md="4"
+              class="ml-20 mb-4"
             >
-              <template v-slot:button-content>
-                <img src="@/assets/images/icons/date-picker-icon.svg">
-              </template>
-            </b-form-datepicker>
-          </b-form-group>
-        </b-col>
+              <flat-pickr
+                v-model="dateValue"
+                class="add-pickup-date-button"
+                style="mb-2"
+                type="button"
+                :config="config"
+                locale="indonesia"
+              />
+            </b-col>
+
+          </b-form-group></b-col>
         <b-col cols="11">
           <b-form-group
             label="Waktu Jemput"
@@ -89,23 +91,22 @@
                 type="text"
                 placeholder="09 : 00"
               />
-              <b-input-group-append>
-                <b-form-timepicker
-                  ref="dt1"
-                  v-model="timeValue"
-                  button-only
-                  right
-                  aria-controls="example-input"
-                  locale="en"
-                  :hour12="false"
-                  button-variant="flat-dark"
-                  @context="onChangeTime"
-                >
-                  <template v-slot:button-content>
+              <!-- <b-input-group-append> -->
+              <b-form-timepicker
+                ref="dt1"
+                v-model="timeValue"
+                button-only
+                right
+                locale="en"
+                :hour-time="24"
+                button-variant="flat-dark"
+                @context="onChangeTime"
+              >
+                <!-- <template v-slot:button-content>
                     <b-icon-chevron-expand aria-hidden="true" />
-                  </template>
-                </b-form-timepicker>
-              </b-input-group-append>
+                  </template> -->
+              </b-form-timepicker>
+              <!-- </b-input-group-append> -->
             </b-input-group>
           </b-form-group>
         </b-col>
@@ -116,34 +117,41 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
+            <Timepicker
+              v-model="timepicker"
+              :options="pickerSetting"
+            />
             <div
               id="input-pickup-vehicle"
               class="add-pickup-input-vehicle-btn-wrapper"
             >
-              <b-button
-                v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
-                @click="() => onChooseVehicle('MOTOR')"
-              >
-                <img src="@/assets/images/icons/motor.png">
-                <span>Motor</span>
-              </b-button>
-              <b-button
-                v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
-                @click="() => onChooseVehicle('MOBIL')"
-              >
-                <img src="@/assets/images/icons/mobil.png">
-                <span>Mobil</span>
-              </b-button>
-              <b-button
-                v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
-                :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
-                @click="() => onChooseVehicle('TRUCK')"
-              >
-                <img src="@/assets/images/icons/truk.png">
-                <span>Truk</span>
-              </b-button>
+              <div>
+                {{ timepicker.hours }} : {{ timepicker.minutes }}
+                <b-button
+                  v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
+                  :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                  @click="() => onChooseVehicle('MOTOR')"
+                >
+                  <img src="@/assets/images/icons/motor.png">
+                  <span>Motor</span>
+                </b-button>
+                <b-button
+                  v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
+                  :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                  @click="() => onChooseVehicle('MOBIL')"
+                >
+                  <img src="@/assets/images/icons/mobil.png">
+                  <span>Mobil</span>
+                </b-button>
+                <b-button
+                  v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
+                  :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
+                  @click="() => onChooseVehicle('TRUCK')"
+                >
+                  <img src="@/assets/images/icons/truk.png">
+                  <span>Truk</span>
+                </b-button>
+              </div>
             </div>
           </b-form-group>
         </b-col>
@@ -377,7 +385,8 @@
             </h5>
             <span
               v-if="items.is_default === 1"
-              class="text-primary"
+              class="text-red"
+              style="color:red;"
             >
               [ Alamat Utama ]
             </span>
@@ -485,10 +494,10 @@ import {
   BRow,
   BCol,
   BFormGroup,
+  BIconCalendarDate,
   BFormInput,
   BForm,
   BButton,
-  BFormDatepicker,
   BInputGroup,
   BInputGroupAppend,
   BFormTimepicker,
@@ -503,6 +512,9 @@ import {
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import flatPickr from 'vue-flatpickr-component'
+import { Indonesian } from 'flatpickr/dist/l10n/id'
+import Timepicker from 'vue-simple-timepicker'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
@@ -513,14 +525,16 @@ export default {
     BRow,
     BCol,
     BFormGroup,
+    flatPickr,
+    // BIconCalendarDate,
     BFormInput,
     BForm,
+    Timepicker,
     BButton,
-    BFormDatepicker,
     BInputGroup,
-    BInputGroupAppend,
+    // BInputGroupAppend,
     BFormTimepicker,
-    BIconChevronExpand,
+    // BIconChevronExpand,
     BBadge,
     BModal,
     BFormRadio,
@@ -538,10 +552,19 @@ export default {
       addressDetail: '',
       dateValue: new Date(),
       dateLabel: '',
-
       timeValueText: '09 : 00',
       timeValue: '09:00',
-
+      timepicker: {
+        hours: 0,
+        minutes: 0,
+      },
+      pickerSetting: {
+        headerShow: false,
+      },
+      config: {
+        locale: Indonesian,
+        dateFormat: 'd-m-Y',
+      },
       profile: null,
       chosenVehicle: '',
 
@@ -783,4 +806,5 @@ export default {
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
   @import '../add-pickup.scss';
+  @import '@core/scss/vue/libs/vue-flatpicker.scss';
 </style>
