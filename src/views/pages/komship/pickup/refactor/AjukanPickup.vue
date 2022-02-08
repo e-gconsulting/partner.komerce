@@ -105,7 +105,7 @@
                   @context="onChangeTime"
                 >
                   <template v-slot:button-content>
-                    <b-icon-chevron-expand aria-hidden="true" />
+                    <b-icon-info-circle aria-hidden="true" />
                   </template>
                 </b-form-timepicker>
               </b-input-group-append>
@@ -512,7 +512,7 @@ import {
   BInputGroup,
   BInputGroupAppend,
   BFormTimepicker,
-  BIconInfo,
+  BIconInfoCircle,
   BBadge,
   BModal,
   BFormRadio,
@@ -539,6 +539,7 @@ export default {
     flatPickr,
     BFormInput,
     BTime,
+    BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
