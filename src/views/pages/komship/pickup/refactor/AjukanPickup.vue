@@ -670,7 +670,7 @@ export default {
     getTimeFormatted(timeText) {
       if (timeText) {
         const splitTime = timeText.split(':')
-        return `${splitTime[0]} : ${splitTime[1]}`
+        return `${splitTime[0]}`
       }
       return timeText
     },
