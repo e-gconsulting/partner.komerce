@@ -793,6 +793,33 @@
         </b-row>
       </div>
     </b-modal>
+    <b-modal
+      id="modal-notif-rekTujuanBlmAda"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <b-row class="justify-content-center mb-1 pt-1">
+          <img src="@/assets/images/icons/warning.svg">
+        </b-row>
+        <b-row class="text-center px-4 mb-1">
+          <p>
+            Maaf, kamu belum menambahkan rekening untuk penarikan saldo.
+          </p>
+        </b-row>
+        <b-row class="justify-content-center pb-1">
+          <b-button
+            class="org-button text-center"
+            variant="primary"
+            tag="router-link"
+            :to="{ name: 'kompship-rekening-bank' }"
+          >
+            Tambah Rekening
+          </b-button>
+        </b-row>
+      </div>
+    </b-modal>
   </div>
 </template>
 
@@ -1025,7 +1052,11 @@ export default {
     },
     showModal() {
       this.resetModal()
-      this.$bvModal.show('modal-keuangan')
+      if (this.rekTujuanOptions.length === 0) {
+        this.$bvModal.show('modal-notif-rekTujuanBlmAda')
+      } else {
+        this.$bvModal.show('modal-keuangan')
+      }
     },
     closeModal() {
       this.$bvModal.hide('modalTopUp')
