@@ -67,9 +67,10 @@
               class="ml-20 mb-4"
             >
               <flat-pickr
+                id="example-datepicker"
                 v-model="dateValue"
-                class="add-pickup-date-button"
-                style="mb-2"
+                class="form-control"
+                style="color:828282;"
                 type="button"
                 :config="config"
                 locale="indonesia"
@@ -89,26 +90,29 @@
                 id="input-pickup-time"
                 v-model="timeValueText"
                 type="text"
-                placeholder="09 : 00"
+                class="add-pickup-date-button"
+                locale="id"
               />
-              <!-- <b-input-group-append> -->
-              <b-form-timepicker
-                ref="dt1"
-                v-model="timeValue"
-                button-only
-                right
-                locale="en"
-                :hour-time="24"
-                button-variant="flat-dark"
-                @context="onChangeTime"
-              >
-                <!-- <template v-slot:button-content>
-                    <b-icon-chevron-expand aria-hidden="true" />
-                  </template> -->
-              </b-form-timepicker>
-              <!-- </b-input-group-append> -->
-            </b-input-group>
-          </b-form-group>
+              <b-input-group-append>
+                <b-form-timepicker
+                  ref="dt1"
+                  v-model="timeValue"
+                  button-only
+                  right
+                  style="color:828282; margin-left:10px;"
+                  locale="id"
+                  :hour24="true"
+                  @context="onChangeTime"
+                >
+                  <template
+                    v-slot:button-content
+                  >
+                    <feather-icon
+                      icon="InfoIcon"
+                    />
+                  </template>
+                </b-form-timepicker>
+              </b-input-group-append></b-input-group></b-form-group>
         </b-col>
         <b-col cols="11">
           <b-form-group
@@ -117,40 +121,45 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <Timepicker
-              v-model="timepicker"
-              :options="pickerSetting"
-            />
             <div
               id="input-pickup-vehicle"
               class="add-pickup-input-vehicle-btn-wrapper"
             >
               <div>
-                {{ timepicker.hours }} : {{ timepicker.minutes }}
-                <b-button
+                <b-time
+                  v-model="timeValue"
+                  locale="id"
+                  class="p-1 rounded mt-1"
+                  style="margin-bottom:10px;color:828282;"
+                  type="text"
+                  :hour24="true"
+                  @context="onChangeTime"
+                />
+                <!-- <b-button
                   v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
                   :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
                   @click="() => onChooseVehicle('MOTOR')"
                 >
                   <img src="@/assets/images/icons/motor.png">
                   <span>Motor</span>
-                </b-button>
+                </b-button> -->
                 <b-button
                   v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
                   :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                  class="mb-1"
                   @click="() => onChooseVehicle('MOBIL')"
                 >
                   <img src="@/assets/images/icons/mobil.png">
                   <span>Mobil</span>
                 </b-button>
-                <b-button
+                <!-- <b-button
                   v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
                   :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
                   @click="() => onChooseVehicle('TRUCK')"
                 >
                   <img src="@/assets/images/icons/truk.png">
                   <span>Truk</span>
-                </b-button>
+                </b-button> -->
               </div>
             </div>
           </b-form-group>
@@ -501,11 +510,12 @@ import {
   BInputGroup,
   BInputGroupAppend,
   BFormTimepicker,
-  BIconChevronExpand,
+  BIconInfo,
   BBadge,
   BModal,
   BFormRadio,
   BTable,
+  BTime,
   BAvatar,
   BContainer,
 } from 'bootstrap-vue'
@@ -514,7 +524,6 @@ import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import flatPickr from 'vue-flatpickr-component'
 import { Indonesian } from 'flatpickr/dist/l10n/id'
-import Timepicker from 'vue-simple-timepicker'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
@@ -526,15 +535,13 @@ export default {
     BCol,
     BFormGroup,
     flatPickr,
-    // BIconCalendarDate,
     BFormInput,
+    BTime,
     BForm,
-    Timepicker,
     BButton,
     BInputGroup,
-    // BInputGroupAppend,
+    BInputGroupAppend,
     BFormTimepicker,
-    // BIconChevronExpand,
     BBadge,
     BModal,
     BFormRadio,
@@ -555,15 +562,18 @@ export default {
       timeValueText: '09 : 00',
       timeValue: '09:00',
       timepicker: {
-        hours: 0,
-        minutes: 0,
+        hours: '',
+        minutes: '',
       },
       pickerSetting: {
         headerShow: false,
       },
       config: {
         locale: Indonesian,
-        dateFormat: 'd-m-Y',
+        dateFormat: 'd F Y',
+      },
+      context: {
+        hour24: true,
       },
       profile: null,
       chosenVehicle: '',
@@ -660,7 +670,7 @@ export default {
     getTimeFormatted(timeText) {
       if (timeText) {
         const splitTime = timeText.split(':')
-        return `${splitTime[0]} : ${splitTime[1]}`
+        return `${splitTime[0]}`
       }
       return timeText
     },

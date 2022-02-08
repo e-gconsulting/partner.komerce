@@ -397,7 +397,7 @@ export default {
     postDate(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD MMMM YYYY hh:mm')
+        return moment(date).format('DD MMMM YYYY HH:MM')
       }
       return date
     },
