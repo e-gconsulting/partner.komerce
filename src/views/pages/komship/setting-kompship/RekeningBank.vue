@@ -33,13 +33,24 @@
           </small>
         </b-col>
 
-        <b-col class="d-flex justify-content-center mt-2">
+        <b-col class="d-flex justify-content-center mt-2 mb-1">
           <CodeInput
             :loading="false"
             class="input"
+            :type="visibilityPin"
             @change="onChange"
             @complete="onComplete"
           />
+        </b-col>
+
+        <b-col class="d-flex justify-content-center">
+          <b-button
+            variant="flat-primary"
+            class="btn-icon"
+            @click="toggleVisibilityPin"
+          >
+            Tampilkan
+          </b-button>
         </b-col>
 
         <b-col class="text-center mt-1">
@@ -103,13 +114,24 @@
           </small>
         </b-col>
 
-        <b-col class="d-flex justify-content-center mt-2">
+        <b-col class="d-flex justify-content-center mt-2 mb-1">
           <CodeInput
             :loading="false"
             class="input"
+            :type="visibilityPin"
             @change="onChange"
             @complete="onComplete"
           />
+        </b-col>
+
+        <b-col class="d-flex justify-content-center">
+          <b-button
+            variant="flat-primary"
+            class="btn-icon"
+            @click="toggleVisibilityPin"
+          >
+            Tampilkan
+          </b-button>
         </b-col>
 
         <b-col class="d-flex justify-content-center mt-1">
@@ -478,15 +500,26 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <div style="display: flex; flex-direction: row;">
           <CodeInput
             :loading="false"
             class="input"
+            :type="visibilityPin"
             @change="onChange"
             @complete="onComplete"
           />
         </div>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col
@@ -638,6 +671,8 @@ export default {
 
       validateResendOtp: '',
       countCanResendOtp: 0,
+
+      visibilityPin: 'password',
     }
   },
   mounted() {
@@ -645,6 +680,7 @@ export default {
     this.getBank()
     this.loadBanks()
     this.getProfile()
+    this.$refs['modal-pin'].show()
   },
   methods: {
     getBank() {
@@ -755,6 +791,7 @@ export default {
               this.getBank()
               this.fieldActionAddRekening = false
               this.$refs['modal-verification-submit'].hide()
+              this.visibilityPin = 'password'
             }
           }).catch(err => {
             this.$toast({
@@ -883,6 +920,7 @@ export default {
         if (data.is_match === true) {
           this.loadingSubmit = false
           this.hideModal()
+          this.visibilityPin = 'password'
         } else {
           this.errorPin = 'PIN tidak valid'
           this.loadingSubmit = false
@@ -984,6 +1022,13 @@ export default {
       if (this.countCanResendOtp === 0) {
         this.validateResendOtp = ''
         this.countSubmit = 0
+      }
+    },
+    toggleVisibilityPin() {
+      if (this.visibilityPin === 'password') {
+        this.visibilityPin = 'text'
+      } else {
+        this.visibilityPin = 'password'
       }
     },
   },

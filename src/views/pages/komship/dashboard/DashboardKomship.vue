@@ -703,14 +703,35 @@
             ref="form2"
             @submit.stop.prevent="handleSubmit(2)"
           >
-            <p class="text-center h-text-dark font-weight-bold mb-3">
+            <p class="text-center h-text-dark font-weight-bold mb-2">
               Mohon verifikasi identitas kamu dengan memasukan PIN
             </p>
-            <PincodeInput
+            <!-- <PincodeInput
               v-model="pin"
               :length="6"
               class="font-weight-bold h-text-dark"
-            />
+            /> -->
+            <b-row class="justify-content-center mb-1">
+              <CodeInput
+                v-model="pin"
+                :loading="false"
+                class="input"
+                :type="visibilityPin"
+                @change="onChange"
+                @complete="onComplete"
+              />
+            </b-row>
+
+            <b-col class="d-flex justify-content-center">
+              <b-button
+                variant="flat-primary"
+                class="btn-icon"
+                @click="toggleVisibilityPin"
+              >
+                Tampilkan
+              </b-button>
+            </b-col>
+
             <div class="col-12 mt-2">
               <div class="text-center">
                 <button
@@ -797,6 +818,7 @@
 </template>
 
 <script>
+import CodeInput from 'vue-verification-code-input'
 import { mapState, mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 import {
@@ -822,11 +844,12 @@ export default {
     ChartPenghasilan,
     // ChartPerforma,
     // DateRangePicker,
-    PincodeInput,
+    // PincodeInput,
     vSelect,
     // Onboarding,
     PopoverInfo,
     BSpinner,
+    CodeInput,
   },
   data() {
     const today = new Date()
@@ -930,6 +953,7 @@ export default {
           text: 'Anda belum menambahkan rekening bank',
         },
       ],
+      visibilityPin: 'password',
     }
   },
   computed: {
@@ -1087,6 +1111,7 @@ export default {
               this.stepNow = 2
               this.modalTitle = null
             })
+            this.visibilityPin = 'password'
           } catch (e) {
             this.$swal({
               title:
@@ -1265,6 +1290,19 @@ export default {
     },
     handleChangeChart() {
       this.$store.dispatch('dashboard/getPartnerIncomeGraph')
+    },
+    onChange(v) {
+      this.pin = v
+    },
+    onComplete(v) {
+      this.pin = v
+    },
+    toggleVisibilityPin() {
+      if (this.visibilityPin === 'password') {
+        this.visibilityPin = 'text'
+      } else {
+        this.visibilityPin = 'password'
+      }
     },
   },
 }
