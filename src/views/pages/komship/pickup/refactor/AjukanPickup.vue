@@ -88,7 +88,7 @@
           >
             <b-input-group>
               <b-input-group-append>
-                <b-time
+                <b-form-timepicker
                   v-model="timeValue"
                   locale="id"
                   :hour24="true"
@@ -97,7 +97,7 @@
               </b-input-group-append>
               <b-icon-info-circle
                 v-b-tooltip.hover.top
-                title="pengajuan pickup diatas pukul 14:00 akan di jemput pada hari berikutnya"
+                title="Waktu jemput akan menyesuiakan dari waktu operasional ekspedisi terdekat kamu"
                 class="ml-1 mb-1"
                 size="lg"
               />
@@ -127,7 +127,6 @@
                       ? 'vehicle-selected white-button mr-1'
                       : 'vehicle-button mr-1'
                   }`"
-                  disabled
                   @click="() => onChooseVehicle('MOTOR')"
                 >
                   <img src="@/assets/images/icons/motor.png">
@@ -137,18 +136,17 @@
                   v-if="
                     profile &&
                       profile.vehicle &&
-                      profile.vehicle.indexOf('MOBIL') > -1
+                      profile.vehicle.indexOf('MOBIL') > -2
                   "
                   :class="`vehicle-button-content ${
                     chosenVehicle === 'MOBIL'
                       ? 'vehicle-selected white-button mr-1'
                       : 'vehicle-button mr-1'
                   }`"
-                  class="mb-1"
                   @click="() => onChooseVehicle('MOBIL')"
                 >
                   <img src="@/assets/images/icons/mobil.png">
-                  <span>Mobil</span>
+                  <span>Truk</span>
                 </b-button>
                 <b-button
                   v-if="
@@ -565,13 +563,13 @@ export default {
     BFormGroup,
     flatPickr,
     // BFormInput,
-    BTime,
+    // BTime,
     BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
     BInputGroupAppend,
-    // BFormTimepicker,
+    BFormTimepicker,
     BBadge,
     BModal,
     BFormRadio,
