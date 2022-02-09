@@ -88,7 +88,7 @@
           >
             <b-input-group>
               <b-input-group-append>
-                <b-form-timepicker
+                <b-time-picker
                   v-model="timeValue"
                   locale="id"
                   :hour24="true"
@@ -97,7 +97,7 @@
               </b-input-group-append>
               <b-icon-info-circle
                 v-b-tooltip.hover.top
-                title="Waktu jemput akan menyesuiakan dari waktu operasional ekspedisi terdekat kamu"
+                title="pengajuan pickup diatas pukul 14:00 akan di jemput pada hari berikutnya"
                 class="ml-1 mb-1"
                 size="lg"
               />
@@ -120,7 +120,7 @@
                   v-if="
                     profile &&
                       profile.vehicle &&
-                      profile.vehicle.indexOf('MOTOR') > -1
+                      profile.vehicle.indexOf('MOTOR') > -2
                   "
                   :class="`vehicle-button-content ${
                     chosenVehicle === 'MOTOR'
@@ -136,17 +136,18 @@
                   v-if="
                     profile &&
                       profile.vehicle &&
-                      profile.vehicle.indexOf('MOBIL') > -2
+                      profile.vehicle.indexOf('MOBIL') > -1
                   "
                   :class="`vehicle-button-content ${
                     chosenVehicle === 'MOBIL'
                       ? 'vehicle-selected white-button mr-1'
-                      : 'vehicle-button mr-1'
+                      : 'vehicle-button mr-1 mt-1'
                   }`"
+                  class="mb-1"
                   @click="() => onChooseVehicle('MOBIL')"
                 >
                   <img src="@/assets/images/icons/mobil.png">
-                  <span>Truk</span>
+                  <span>Mobil</span>
                 </b-button>
                 <b-button
                   v-if="
@@ -537,7 +538,7 @@ import {
   BButton,
   BInputGroup,
   BInputGroupAppend,
-  BFormTimepicker,
+  BFormTimePicker,
   BIconInfoCircle,
   BBadge,
   BModal,
@@ -563,13 +564,13 @@ export default {
     BFormGroup,
     flatPickr,
     // BFormInput,
-    // BTime,
+    BTime,
     BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
     BInputGroupAppend,
-    BFormTimepicker,
+     BFormTimePicker,
     BBadge,
     BModal,
     BFormRadio,
