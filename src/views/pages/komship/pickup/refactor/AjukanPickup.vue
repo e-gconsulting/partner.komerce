@@ -88,7 +88,7 @@
           >
             <b-input-group>
               <b-input-group-append>
-                <b-time
+                <b-time-picker
                   v-model="timeValue"
                   locale="id"
                   :hour24="true"
@@ -538,7 +538,7 @@ import {
   BButton,
   BInputGroup,
   BInputGroupAppend,
-  BFormTimepicker,
+  BFormTimePicker,
   BIconInfoCircle,
   BBadge,
   BModal,
@@ -570,7 +570,7 @@ export default {
     BButton,
     BInputGroup,
     BInputGroupAppend,
-    // BFormTimepicker,
+     BFormTimePicker,
     BBadge,
     BModal,
     BFormRadio,
