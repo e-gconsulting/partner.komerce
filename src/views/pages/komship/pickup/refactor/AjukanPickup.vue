@@ -89,8 +89,8 @@
             <b-input-group>
               <b-input-group-append>
                 <b-time
-                  locale="id"
                   v-model="timeValue"
+                  locale="id"
                   :hour24="true"
                   hour-cycle="24"
                 />
