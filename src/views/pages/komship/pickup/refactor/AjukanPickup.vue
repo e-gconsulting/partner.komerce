@@ -88,12 +88,13 @@
           >
             <b-input-group>
               <b-input-group-append>
-                <b-time-picker
+                <b-form-timepicker
                   v-model="timeValue"
                   locale="id"
                   :hour24="true"
                   hour-cycle="24"
                 />
+
               </b-input-group-append>
               <b-icon-info-circle
                 v-b-tooltip.hover.top
@@ -538,7 +539,7 @@ import {
   BButton,
   BInputGroup,
   BInputGroupAppend,
-  BFormTimePicker,
+  BFormTimepicker,
   BIconInfoCircle,
   BBadge,
   BModal,
@@ -564,13 +565,14 @@ export default {
     BFormGroup,
     flatPickr,
     // BFormInput,
-    BTime,
+    // BTime,
     BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
     BInputGroupAppend,
-     BFormTimePicker,
+    // eslint-disable-next-line vue/no-unused-components
+    BFormTimepicker,
     BBadge,
     BModal,
     BFormRadio,
