@@ -1,6 +1,6 @@
 <template>
   <div id="background">
-    <div :class="contentWidth === 'boxed' ? 'container p-0' : null">
+    <div :class="contentWidth === 'boxed' ? 'container p-0 ml-0 container-verified' : null">
       <router-view />
     </div>
   </div>
@@ -16,3 +16,9 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  [dir] .container-verified {
+    max-width: 100% !important;
+  }
+</style>

@@ -78,6 +78,7 @@ export default {
           name: order.admin_name,
           totalDana: order.net_profit,
           totalProduk: order.total_order,
+          photo: order.photo_profile_url,
         })),
       ]
     },

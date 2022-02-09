@@ -378,7 +378,7 @@
                       <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                         <b-list-group-item class="border-0 px-0 pt-0 pb-50">
                           <span class="ml-1 text-black">
-                            {{ dataProduct.product_name }},
+                            {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
                           </span>
                         </b-list-group-item>
                       </div>

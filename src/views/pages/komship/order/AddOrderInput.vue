@@ -53,21 +53,25 @@
         label="Kirim Dari"
         label-cols-md="2"
       >
-        <b-form-select
+        <v-select
           v-model="choosenAddres"
           class="add-order-product-input"
-          label="product_name"
-          label-cols-md="2"
-          @input="onChangeAddress"
+          :options="addressList"
         >
-          <b-form-select-option
-            v-for="item in addressList"
-            :key="item.value"
-            :value="item.value"
+          <span
+            v-if="addressCount === 0"
+            slot="no-options"
           >
-            {{ item.text }}
-          </b-form-select-option>
-        </b-form-select>
+
+            Anda belum menambahkan Gudang, tambahkan dahulu.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
       </b-form-group>
       <b-form-group
         class="add-order-label"
@@ -137,17 +141,17 @@
         <div
           v-if="data.item.itemsSelected !== undefined"
         >
-          <div
+          <b-row
             v-for="(itemVariation, indexVariation) in data.item.itemsSelected"
             :key="indexVariation+1"
-            class="mb-2"
+            class="py-1 my-50 pl-1"
           >
-            <h4 class="text-primary mb-1">
+            <h4 class="text-primary mt-50">
               <strong>
                 {{ itemVariation.variation }}
               </strong>
             </h4>
-          </div>
+          </b-row>
         </div>
         <div v-if="data.item.variant[0] !== undefined">
           <b-button
@@ -156,7 +160,7 @@
             :disabled="data.item.variant[0] === undefined"
             @click="chooseVariation(data)"
           >
-            Pilih variasi
+            Pilih
           </b-button>
         </div>
         <div v-if="data.item.variant[0] === undefined">
@@ -165,7 +169,7 @@
             class="btn-icon"
             disabled
           >
-            Pilih variasi
+            Pilih
           </b-button>
         </div>
       </template>
@@ -207,7 +211,7 @@
           </div>
         </div>
         <div v-else-if="data.item.variant[0] === undefined">
-          <b-row class="justify-content-center mb-1">
+          <b-row class="justify-content-center">
             <b-button
               variant="outline-primary"
               class="minus-button mr-1"
@@ -260,7 +264,6 @@
         </div>
         <div
           v-else-if="data.item.variant[0] === undefined"
-          class="mb-4"
         >
           <h4>
             <strong>
@@ -270,7 +273,6 @@
         </div>
         <div
           v-else
-          class="mb-4"
         >
           <h4>
             <strong>
@@ -283,7 +285,6 @@
       <template #cell(subtotal)="data">
         <div
           v-if="data.item.variant[0] === undefined"
-          class="mb-4"
         >
           <h4>
             <strong>
@@ -310,7 +311,7 @@
 
       <template #cell(action)="data">
         <b-button
-          class="btn-icon delete-product-to-order"
+          class="btn-icon delete-product-to-order text-center"
           variant="flat-primary"
           @click="handleRemoveProductOnList(data)"
         >
@@ -393,7 +394,7 @@
                 :variant="isActiveVariant === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
                 class="btn-icon m-50"
                 :pressed="isActiveVariant === itemsVariant.name"
-                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableParentVariation(itemsVariant, itemsChooseVariation.item)"
+                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableVariation(itemsVariant, itemsChooseVariation.item)"
                 @click="selectParentVariation(itemsVariant, itemsChooseVariation.item)"
               >
                 {{ itemsVariant.name }}
@@ -432,7 +433,7 @@
                 :variant="isActiveVariantFirstChild === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
                 class="btn-icon m-50"
                 :pressed="isActiveVariantFirstChild === itemsVariant.name"
-                :disabled="itemsVariant.stock === 0 ? true : false"
+                :disabled="itemsVariant.stock === 0 ? true : false || handleDisableVariation(itemsVariant, itemsChooseVariation.item)"
                 @click="selectVariationFirstChild(itemsVariant, itemsChooseVariation.item)"
               >
                 {{ itemsVariant.name }}
@@ -460,7 +461,7 @@
               :variant="isActiveVariantSecondChild === itemsVariant.name ? 'outline-primary' : 'outline-dark'"
               class="btn-icon m-50"
               :pressed="isActiveVariantSecondChild === itemsVariant.name"
-              :disabled="itemsVariant.stock === 0 ? true : false"
+              :disabled="itemsVariant.stock === 0 ? true : false || handleDisableVariation(itemsVariant, itemsChooseVariation.item)"
               @click="selectVariationSecondChild(itemsVariant)"
             >
               {{ itemsVariant.name }}
@@ -510,7 +511,7 @@
               class="next-button"
               tag="router-link"
               :disabled="buttonNext"
-              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres, date: dateValue, dateLabel: dateLabel } }"
+              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres.value, date: dateValue, dateLabel: dateLabel } }"
             >
               Lanjutkan
             </b-button>
@@ -620,8 +621,8 @@ export default {
     BFormGroup,
     BButton,
     vSelect,
-    BFormSelect,
-    BFormSelectOption,
+    // BFormSelect,
+    // BFormSelectOption,
     // AddOrderTable,
     BFormDatepicker,
     BTable,
@@ -677,6 +678,7 @@ export default {
 
       dataTree: [],
       productCount: null,
+      addressCount: null,
 
       // Refactor
       itemsOrder: [],
@@ -713,7 +715,6 @@ export default {
           key: 'action',
           label: 'Hapus Produk',
           class: 'col-action',
-          tdClass: 'text-center',
         },
       ],
       itemsChooseVariation: {
@@ -795,10 +796,11 @@ export default {
           const sortData = data.slice().sort((a, b) => b.is_default - a.is_default)
           this.addressList = await sortData.map(val => ({
             value: val.address_id,
-            text: val.address_name,
+            label: val.address_name,
           }))
-          this.choosenAddres = this.addressList[0].value
-          console.log(this.addressList)
+          this.addressCount = this.addressList.length
+          // eslint-disable-next-line prefer-destructuring
+          this.choosenAddres = this.addressList[0]
           this.cekListProduct()
         }
       })
@@ -1343,7 +1345,7 @@ export default {
     getStockToDisplay(value) {
       return value - 1
     },
-    handleDisableParentVariation(itemsVariant, items) {
+    handleDisableVariation(itemsVariant, items) {
       let result = false
       if (items.itemsSelected[0] !== undefined) {
         // eslint-disable-next-line no-plusplus
@@ -1357,7 +1359,7 @@ export default {
     },
     handleRemoveProductOnList(data) {
       console.log(data)
-      this.itemsOrder.splice(data.item.index, 1)
+      this.itemsOrder.splice(data.index, 1)
       this.listProduct.unshift(data.item)
     },
   },

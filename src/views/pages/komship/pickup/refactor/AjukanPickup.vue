@@ -1,21 +1,25 @@
+/* eslint-disable no-undef */
 <template>
   <b-card>
     <h3 class="text-black">
-      <strong>
-        Pengajuan Pickup
-      </strong>
+      <strong> Pengajuan Pickup </strong>
     </h3>
 
     <b-row class="mt-3 justify-content-center">
       <b-col cols="11">
         <h4 class="text-black">
-          <strong>
-            Penjemputan
-          </strong>
+          <strong> Penjemputan </strong>
         </h4>
       </b-col>
       <b-col cols="11">
-        <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
+        <hr
+          style="
+            height: 1px;
+            border-width: 0;
+            color: #c2c2c2;
+            background-color: #c2c2c2;
+          "
+        >
       </b-col>
     </b-row>
     <b-form @submit.prevent>
@@ -55,26 +59,26 @@
           <b-form-group
             label="Tanggal"
             label-for="h-email"
-            label-cols-md="2"
+            label-cols-md="1"
             label-class="text-black font-weight-bold"
           >
             <div class="add-pickup-input-date-label">
               {{ dateLabel }}
             </div>
-            <b-form-datepicker
-              id="input-pickup-date"
-              ref="dp1"
-              v-model="dateValue"
-              class="add-pickup-date-button"
-              button-only
-              @context="onChangeDate"
+            <b-col
+              md="4"
+              class="ml-20 mb-4"
             >
-              <template v-slot:button-content>
-                <img src="@/assets/images/icons/date-picker-icon.svg">
-              </template>
-            </b-form-datepicker>
-          </b-form-group>
-        </b-col>
+              <flat-pickr
+                id="example-datepicker"
+                v-model="dateValue"
+                class="form-control"
+                style="color: 828282"
+                type="button"
+                :config="config"
+                locale="indonesia"
+              />
+            </b-col> </b-form-group></b-col>
         <b-col cols="11">
           <b-form-group
             label="Waktu Jemput"
@@ -83,29 +87,20 @@
             label-class="text-black font-weight-bold"
           >
             <b-input-group>
-              <b-form-input
-                id="input-pickup-time"
-                v-model="timeValueText"
-                type="text"
-                placeholder="09 : 00"
-              />
               <b-input-group-append>
                 <b-form-timepicker
-                  ref="dt1"
                   v-model="timeValue"
-                  button-only
-                  right
-                  aria-controls="example-input"
-                  locale="en"
-                  :hour12="false"
-                  button-variant="flat-dark"
-                  @context="onChangeTime"
-                >
-                  <template v-slot:button-content>
-                    <b-icon-chevron-expand aria-hidden="true" />
-                  </template>
-                </b-form-timepicker>
+                  locale="id"
+                  :hour24="true"
+                  hour-cycle="24"
+                />
               </b-input-group-append>
+              <b-icon-info-circle
+                v-b-tooltip.hover.top
+                title="Waktu jemput akan menyesuiakan dari waktu operasional ekspedisi terdekat kamu"
+                class="ml-1 mb-1"
+                size="lg"
+              />
             </b-input-group>
           </b-form-group>
         </b-col>
@@ -120,30 +115,56 @@
               id="input-pickup-vehicle"
               class="add-pickup-input-vehicle-btn-wrapper"
             >
-              <b-button
-                v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
-                @click="() => onChooseVehicle('MOTOR')"
-              >
-                <img src="@/assets/images/icons/motor.png">
-                <span>Motor</span>
-              </b-button>
-              <b-button
-                v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
-                @click="() => onChooseVehicle('MOBIL')"
-              >
-                <img src="@/assets/images/icons/mobil.png">
-                <span>Mobil</span>
-              </b-button>
-              <b-button
-                v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
-                :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
-                @click="() => onChooseVehicle('TRUCK')"
-              >
-                <img src="@/assets/images/icons/truk.png">
-                <span>Truk</span>
-              </b-button>
+              <div>
+                <b-button
+                  v-if="
+                    profile &&
+                      profile.vehicle &&
+                      profile.vehicle.indexOf('MOTOR') > -1
+                  "
+                  :class="`vehicle-button-content ${
+                    chosenVehicle === 'MOTOR'
+                      ? 'vehicle-selected white-button mr-1'
+                      : 'vehicle-button mr-1'
+                  }`"
+                  @click="() => onChooseVehicle('MOTOR')"
+                >
+                  <img src="@/assets/images/icons/motor.png">
+                  <span>Motor</span>
+                </b-button>
+                <b-button
+                  v-if="
+                    profile &&
+                      profile.vehicle &&
+                      profile.vehicle.indexOf('MOBIL') > -2
+                  "
+                  :class="`vehicle-button-content ${
+                    chosenVehicle === 'MOBIL'
+                      ? 'vehicle-selected white-button mr-1'
+                      : 'vehicle-button mr-1'
+                  }`"
+                  @click="() => onChooseVehicle('MOBIL')"
+                >
+                  <img src="@/assets/images/icons/mobil.png">
+                  <span>Truk</span>
+                </b-button>
+                <b-button
+                  v-if="
+                    profile &&
+                      profile.vehicle &&
+                      profile.vehicle.indexOf('TRUCK') > -2
+                  "
+                  :class="`vehicle-button-content ${
+                    chosenVehicle === 'TRUCK'
+                      ? 'vehicle-selected white-button mr-1'
+                      : 'vehicle-button mr-1'
+                  }`"
+                  @click="() => onChooseVehicle('TRUCK')"
+                >
+                  <img src="@/assets/images/icons/truk.png">
+                  <span>Truk</span>
+                </b-button>
+              </div>
             </div>
           </b-form-group>
         </b-col>
@@ -165,21 +186,24 @@
           >
             <div>
               <h5 class="text-black">
-                <strong>
-                  Produk
-                </strong>
+                <strong> Produk </strong>
               </h5>
             </div>
             <div>
               <h5 class="text-black">
-                <strong>
-                  Jumlah
-                </strong>
+                <strong> Jumlah </strong>
               </h5>
             </div>
           </b-col>
           <b-col cols="11">
-            <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
+            <hr
+              style="
+                height: 1px;
+                border-width: 0;
+                color: #c2c2c2;
+                background-color: #c2c2c2;
+              "
+            >
           </b-col>
         </b-row>
       </div>
@@ -208,7 +232,7 @@
               <template #cell(product)="data">
                 <div
                   v-for="(items, index) in data.item.product"
-                  :key="index+1"
+                  :key="index + 1"
                 >
                   <b-row class="mb-2">
                     <b-container
@@ -227,14 +251,19 @@
                         <h5 class="text-black">
                           <strong>{{ items.product_name }}</strong>
                         </h5>
-                        <div v-if="items.variant_name !== '0' && items.variant_name !== ''">
-                          <span class="text-black"><strong>{{ items.variant_name }}</strong></span>
+                        <div
+                          v-if="
+                            items.variant_name !== '0' &&
+                              items.variant_name !== ''
+                          "
+                        >
+                          <span
+                            class="text-black"
+                          ><strong>{{ items.variant_name }}</strong></span>
                         </div>
                         <div v-else>
                           <span class="text-black">
-                            <strong>
-                              Tidak ada variasi
-                            </strong>
+                            <strong> Tidak ada variasi </strong>
                           </span>
                         </div>
                       </div>
@@ -246,14 +275,13 @@
               <template #cell(total)="data">
                 <div
                   v-for="(items, index) in data.item.product"
-                  :key="index+1"
+                  :key="index + 1"
                 >
                   <h5 class="mb-3 text-black">
                     <strong>{{ items.qty }}</strong>
                   </h5>
                 </div>
               </template>
-
             </b-table>
           </b-col>
         </b-row>
@@ -270,7 +298,10 @@
                 class="btn-icon"
                 variant="flat-info"
                 tag="router-link"
-                :to="{ name: $route.meta.routeDetailBefore, params: { selected_order: selectedOrderToStore } }"
+                :to="{
+                  name: $route.meta.routeDetailBefore,
+                  params: { selected_order: selectedOrderToStore },
+                }"
               >
                 Lihat detail...
               </b-button>
@@ -278,13 +309,21 @@
             <div>
               <span class="text-black">
                 <strong>
-                  Total produk: {{ getTotalProductOrder(itemsPreviewProductOrder) }}
+                  Total produk:
+                  {{ getTotalProductOrder(itemsPreviewProductOrder) }}
                 </strong>
               </span>
             </div>
           </b-col>
           <b-col cols="11">
-            <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
+            <hr
+              style="
+                height: 1px;
+                border-width: 0;
+                color: #c2c2c2;
+                background-color: #c2c2c2;
+              "
+            >
           </b-col>
         </b-row>
       </div>
@@ -297,9 +336,7 @@
           >
             <div>
               <h5>
-                <strong>
-                  Pilih orderan yang akan di pickup
-                </strong>
+                <strong> Pilih orderan yang akan di pickup </strong>
               </h5>
             </div>
             <div>
@@ -312,7 +349,14 @@
             </div>
           </b-col>
           <b-col cols="11">
-            <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
+            <hr
+              style="
+                height: 1px;
+                border-width: 0;
+                color: #c2c2c2;
+                background-color: #c2c2c2;
+              "
+            >
           </b-col>
         </b-row>
       </div>
@@ -342,7 +386,9 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined"
+            :disabled="
+              chosenVehicle === '' || selectedOrderToStore[0] === undefined
+            "
             @click="submitPickup"
           >
             Ajukan Pickup
@@ -358,10 +404,9 @@
       modal-class="modal-primary"
       centered
     >
-
       <div
         v-for="(items, index) in itemsAddress"
-        :key="index+1"
+        :key="index + 1"
       >
         <b-form-radio
           v-model="valueAddressIsActive"
@@ -377,7 +422,8 @@
             </h5>
             <span
               v-if="items.is_default === 1"
-              class="text-primary"
+              class="text-red"
+              style="color: red"
             >
               [ Alamat Utama ]
             </span>
@@ -421,7 +467,10 @@
         <b-button
           class="org-button"
           tag="router-link"
-          :to="{ name: $route.meta.routeDetailAfter, params: { selected_order: selectedOrderToStore } }"
+          :to="{
+            name: $route.meta.routeDetailAfter,
+            params: { selected_order: selectedOrderToStore },
+          }"
         >
           Oke
         </b-button>
@@ -440,8 +489,7 @@
           <img src="@/assets/images/icons/fail.svg">
         </div>
         <div class="text-wrapper mb-3 px-2">
-          Mohon maaf , ekpedisi sedang terkendala.
-          Silahkan refresh halaman
+          Mohon maaf , ekpedisi sedang terkendala. Silahkan refresh halaman
         </div>
         <b-button
           class="org-button"
@@ -475,7 +523,6 @@
         </b-button>
       </div>
     </b-modal>
-
   </b-card>
 </template>
 
@@ -488,39 +535,41 @@ import {
   BFormInput,
   BForm,
   BButton,
-  BFormDatepicker,
   BInputGroup,
   BInputGroupAppend,
   BFormTimepicker,
-  BIconChevronExpand,
+  BIconInfoCircle,
   BBadge,
   BModal,
   BFormRadio,
   BTable,
+  BTime,
   BAvatar,
   BContainer,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import flatPickr from 'vue-flatpickr-component'
+import { Indonesian } from 'flatpickr/dist/l10n/id'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
 export default {
-
   components: {
     BCard,
     BRow,
     BCol,
     BFormGroup,
-    BFormInput,
+    flatPickr,
+    // BFormInput,
+    // BTime,
+    BIconInfoCircle,
     BForm,
     BButton,
-    BFormDatepicker,
     BInputGroup,
     BInputGroupAppend,
     BFormTimepicker,
-    BIconChevronExpand,
     BBadge,
     BModal,
     BFormRadio,
@@ -538,10 +587,22 @@ export default {
       addressDetail: '',
       dateValue: new Date(),
       dateLabel: '',
-
       timeValueText: '09 : 00',
       timeValue: '09:00',
-
+      timepicker: {
+        hours: '',
+        minutes: '',
+      },
+      pickerSetting: {
+        headerShow: false,
+      },
+      config: {
+        locale: Indonesian,
+        dateFormat: 'd F Y',
+      },
+      context: {
+        hour24: true,
+      },
       profile: null,
       chosenVehicle: '',
 
@@ -578,23 +639,26 @@ export default {
   },
   mounted() {
     this.cekExpedition()
-    this.$http_komship.post('v1/my-profile', {
-      headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-    }).then(response => {
-      this.userData = response.data.data
-      this.profile = response.data.data
-      console.log('profile', this.profile)
-    }).catch(() => {
-      this.$toast({
-        component: ToastificationContent,
-        props: {
-          title: 'Gagal',
-          icon: 'AlertCircleIcon',
-          text: 'Gagal meload data, silahkan refresh halaman!',
-          variant: 'danger',
-        },
+    this.$http_komship
+      .post('v1/my-profile', {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
-    })
+      .then(response => {
+        this.userData = response.data.data
+        this.profile = response.data.data
+        console.log('profile', this.profile)
+      })
+      .catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
+      })
     if (this.selectedOrderFromDetail) {
       this.selectedOrderToStore = this.selectedOrderFromDetail
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
@@ -615,7 +679,20 @@ export default {
       if (dateString && dateString !== '') {
         let today = new Date(dateString)
         const dd = today.getDate()
-        const monthArr = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        const monthArr = [
+          'Januari',
+          'Februari',
+          'Maret',
+          'April',
+          'Mei',
+          'Juni',
+          'Juli',
+          'Agustus',
+          'September',
+          'Oktober',
+          'November',
+          'Desember',
+        ]
         const mm = today.getMonth()
         const yyyy = today.getFullYear()
         today = `${dd} ${monthArr[mm]} ${yyyy}`
@@ -632,35 +709,37 @@ export default {
       }
     },
     onChangeTime(ctx) {
-      if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
+      if (ctx && ctx.formatted) { this.timeValueText = this.getTimeFormatted(ctx.formatted) }
     },
     getTimeFormatted(timeText) {
       if (timeText) {
         const splitTime = timeText.split(':')
-        return `${splitTime[0]} : ${splitTime[1]}`
+        return `${splitTime[0]}`
       }
       return timeText
     },
     getAddress() {
-      this.$http_komship.get('/v1/address', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        console.log('address', data)
-        this.itemsAddress = data
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.itemsAddress.length; x++) {
-          if (this.itemsAddress[x].is_default === 1) {
-            this.addressName = this.itemsAddress[x].address_name
-            this.addressDetail = this.itemsAddress[x].address_detail
-            this.selectedAddress = this.itemsAddress[x].is_default
-            this.namePic = this.itemsAddress[x].pic
-            this.addressId = this.itemsAddress[x].address_id
-            this.picPhone = this.itemsAddress[x].phone
-            this.valueAddressIsActive = this.itemsAddress[x].address_id
+      this.$http_komship
+        .get('/v1/address', {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        })
+        .then(response => {
+          const { data } = response.data
+          console.log('address', data)
+          this.itemsAddress = data
+          // eslint-disable-next-line no-plusplus
+          for (let x = 0; x < this.itemsAddress.length; x++) {
+            if (this.itemsAddress[x].is_default === 1) {
+              this.addressName = this.itemsAddress[x].address_name
+              this.addressDetail = this.itemsAddress[x].address_detail
+              this.selectedAddress = this.itemsAddress[x].is_default
+              this.namePic = this.itemsAddress[x].pic
+              this.addressId = this.itemsAddress[x].address_id
+              this.picPhone = this.itemsAddress[x].phone
+              this.valueAddressIsActive = this.itemsAddress[x].address_id
+            }
           }
-        }
-      })
+        })
     },
     openPopUpAddress() {
       this.$refs['popup-address'].show()
@@ -686,18 +765,21 @@ export default {
     },
     getListOrderByPartner() {
       const partnerId = this.profile.partner_id
-      return this.$http_komship.get(`v1/order/${partnerId}`, {
-        params: {
-          is_komship: this.profile.is_komship,
-          order_status: 0,
-        },
-      }).then(response => {
-        const { data } = response.data.data
-        // console.log('this list order', data)
-        this.listOrder = data
-      }).catch(() => {
-        console.log('fail to get list order')
-      })
+      return this.$http_komship
+        .get(`v1/order/${partnerId}`, {
+          params: {
+            is_komship: this.profile.is_komship,
+            order_status: 0,
+          },
+        })
+        .then(response => {
+          const { data } = response.data.data
+          // console.log('this list order', data)
+          this.listOrder = data
+        })
+        .catch(() => {
+          console.log('fail to get list order')
+        })
     },
     submitPickup() {
       // eslint-disable-next-line no-plusplus
@@ -717,7 +799,8 @@ export default {
       }
       console.log(params)
 
-      httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
+      httpKomship
+        .post(`/v1/pickup/${this.profile.partner_id}/store`, params)
         .then(response => {
           console.log(response)
           if (response.data.code !== 500) {
@@ -725,7 +808,8 @@ export default {
           } else {
             this.$refs['modal-failed-request-pickup'].show()
           }
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -760,27 +844,28 @@ export default {
       this.$refs['modal-failed-request-pickup'].hide()
     },
     cekExpedition() {
-      httpKomship.get('/v1/partner/shipment/not-active',
-        {
+      httpKomship
+        .get('/v1/partner/shipment/not-active', {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
-        const { data } = response.data
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < data.length; x++) {
-          if (!data[x].is_active === true) {
-            this.$refs['modal-validate-expedition'].show()
+        })
+        .then(response => {
+          const { data } = response.data
+          // eslint-disable-next-line no-plusplus
+          for (let x = 0; x < data.length; x++) {
+            if (!data[x].is_active === true) {
+              this.$refs['modal-validate-expedition'].show()
+            }
           }
-        }
-      })
+        })
     },
   },
 }
 </script>
 
 <style>
-
 </style>
 <style lang="scss">
-  @import '~@core/scss/vue/libs/vue-select.scss';
-  @import '../add-pickup.scss';
+@import '~@core/scss/vue/libs/vue-select.scss';
+@import '../add-pickup.scss';
+@import '@core/scss/vue/libs/vue-flatpicker.scss';
 </style>
