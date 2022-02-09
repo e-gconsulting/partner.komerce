@@ -150,6 +150,22 @@
           @input="getShippingType"
         />
       </b-col>
+      <b-col
+        v-if="paymentMethod === 'BANK TRANSFER'"
+        md="4"
+      >
+        <v-select
+          v-model="rekening"
+          :options="listRekening"
+          label="account_name"
+          placeholder="Pilih Rekening"
+        >
+          <template #option="{ account_name, bank_name, account_no }">
+            <span class="font-bold text-lg">{{ account_name }}</span><br>
+            <em>{{ bank_name }} - {{ account_no }}</em>
+          </template>
+        </v-select>
+      </b-col>
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
@@ -176,7 +192,6 @@
           ref="selectTypeShipping"
           v-model="typeShipping"
           :options="listTypeShipping"
-          label="shipping_type"
           placeholder="Opsi Pengiriman"
           :disabled="!isTypeShipping"
           @input="calculate"
@@ -187,9 +202,6 @@
           >
             Tidak ada data untuk ditampilkan.
           </span>
-          <template #option="{ shipping_type }">
-            {{ nameTypeShipping(shipping_type) }}
-          </template>
         </v-select>
       </b-col>
     </b-row>
@@ -269,31 +281,74 @@
             style="width:70%;"
           >
             <span class="font-bold">{{ data.item.product_name }}</span><br>
-            <span
-              v-if="data.item.is_variant === '1'"
-              class="text-primary"
-            >
-              {{ data.item.itemSelected.variation }}
-            </span>
-            <span v-else>Tidak Ada Variasi</span>
+            <div v-if="data.item.is_variant === '1'">
+              <div
+                v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+                :key="indexVariation+1"
+              >
+                <span
+                  class="text-primary"
+                >
+                  {{ itemsVariation.variation }}
+                </span>
+              </div>
+            </div>
+            <div v-else>
+              <span>Tidak Ada Variasi</span>
+            </div>
           </div>
         </div>
       </template>
       <template #cell(price)="data">
-        <span v-if="data.item.is_variant === '1'">
-          Rp. {{ formatNumber(data.item.itemSelected.price) }}
-        </span>
-        <span v-else>
-          Rp. {{ formatNumber(data.item.price) }}
-        </span>
+        <div v-if="data.item.is_variant === '1'">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <span>
+              Rp. {{ formatNumber(itemsVariation.price) }}
+            </span>
+          </div>
+        </div>
+        <div v-else>
+          <span>
+            Rp. {{ formatNumber(data.item.price) }}
+          </span>
+        </div>
       </template>
+
+      <template #cell(stockToDisplay)="data">
+        <div
+          v-if="data.item.itemsSelected[0] !== undefined"
+        >
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            {{ itemsVariation.stockToDisplay }}
+          </div>
+        </div>
+        <div v-else>
+          {{ data.item.stockToDisplayNoVariant }}
+        </div>
+      </template>
+
       <template #cell(subtotal)="data">
-        <span v-if="data.item.is_variant === '1'">
-          Rp. {{ formatNumber(data.item.stockToDisplay * data.item.itemSelected.price) }}
-        </span>
-        <span v-else>
-          Rp. {{ formatNumber(data.item.stockToDisplay * data.item.price) }}
-        </span>
+        <div v-if="data.item.is_variant === '1'">
+          <div
+            v-for="(itemsVariation, indexVariation) in data.item.itemsSelected"
+            :key="indexVariation+1"
+          >
+            <span>
+              Rp. {{ formatNumber(itemsVariation.stockToDisplay * itemsVariation.price) }}
+            </span>
+          </div>
+        </div>
+        <div v-else>
+          <span>
+            Rp. {{ formatNumber(data.item.stockToDisplayNoVariant * data.item.price) }}
+          </span>
+        </div>
       </template>
     </b-table>
     <div
@@ -394,7 +449,7 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(serviceFee) }}
+            - Rp. {{ formatNumber(Math.round(serviceFee)) }}
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -467,7 +522,7 @@ export default {
       cartId: null,
       isCalculate: false,
       isTypeShipping: false,
-      orderDate: moment().format('YYYY/MM/DD'),
+      orderDate: null,
       customerName: null,
       listCustomer: [],
       customerId: 0,
@@ -477,6 +532,11 @@ export default {
       listDestination: [],
       paymentMethod: null,
       listPayment: ['COD', 'BANK TRANSFER'],
+      rekening: null,
+      listRekening: [],
+      bankName: null,
+      bankAccountName: null,
+      bankAccountNo: null,
       shipping: null,
       listShipping: ['JNE'],
       typeShipping: null,
@@ -513,7 +573,9 @@ export default {
   },
   created() {
     this.addressId = this.$route.params.address_id
+    this.orderDate = this.$route.params.date
     this.getProfile()
+    this.getRekening()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -533,27 +595,61 @@ export default {
     },
     async getCart() {
       this.itemsOrder = this.$route.params.itemsOrder
-      this.arrayCart = this.itemsOrder.map(val => ({
-        product_id: val.product_id,
-        product_name: val.product_name,
-        variant_id: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].options_id : 0,
-        variant_name: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].name : '',
-        product_price: typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price,
-        qty: val.stockToDisplay,
-        subtotal: val.stockToDisplay * (typeof val.product_variant[0] !== 'undefined' ? val.product_variant[0].price : val.price),
-      }))
-      await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-        .then(async res => {
-          if (res.data.code === 200) {
-            return this.$http_komship.post('v1/cart/bulk-store', this.arrayCart)
-              .then(async result => {
-                if (result.data.code === 200) {
-                  this.cartId = result.data.data.cart_id
+      console.log('itemsOrder', this.itemsOrder)
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.itemsOrder.length; x++) {
+        if (this.itemsOrder[x].itemsSelected.length > 0) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.itemsOrder[x].itemsSelected.length; y++) {
+            this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+              .then(async res => {
+                if (res.data.code === 200) {
+                  return this.$http_komship.post('v1/cart/bulk-store', {
+                    params: {
+                      product_id: this.itemsOrder[x].product_id,
+                      product_name: this.itemsOrder[x].product_name,
+                      variant_id: this.itemsOrder[x].itemsSelected[y].option_id,
+                      variant_name: this.itemsOrder[x].itemsSelected[y].variation,
+                      product_price: this.itemsOrder[x].itemsSelected[y].price,
+                      qty: this.itemsOrder[x].itemsSelected[y].stockToDisplay,
+                      subtotal: this.itemsOrder[x].itemsSelected[y].stockToDisplay * this.itemsOrder[x].itemsSelected[y].price,
+                    },
+                  })
+                    .then(async result => {
+                      if (result.data.code === 200) {
+                        this.cartId = result.data.data.cart_id
+                      }
+                    })
                 }
+                return this.cartId
               })
           }
-          return this.cartId
-        })
+        }
+        if (this.itemsOrder[x].itemsSelected.length === 0) {
+          this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+            .then(async res => {
+              if (res.data.code === 200) {
+                return this.$http_komship.post('v1/cart/bulk-store', {
+                  params: {
+                    product_id: this.itemsOrder[x].product_id,
+                    product_name: this.itemsOrder[x].product_name,
+                    variant_id: 0,
+                    variant_name: '',
+                    product_price: this.itemsOrder[x].price,
+                    qty: this.itemsOrder[x].stockToDisplayNoVariant,
+                    subtotal: this.itemsOrder[x].stockToDisplayNoVariant * this.itemsOrder[x].price,
+                  },
+                })
+                  .then(async result => {
+                    if (result.data.code === 200) {
+                      this.cartId = result.data.data.cart_id
+                    }
+                  })
+              }
+              return this.cartId
+            })
+        }
+      }
     },
     async getCustomer(e) {
       const event = e.key ? 'input' : 'list'
@@ -589,8 +685,18 @@ export default {
           console.log(err)
         })
     },
+    async getRekening() {
+      await this.$http_komship.get('v1/bank-account')
+        .then(res => {
+          const { data } = res.data
+          this.listRekening = data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
     async getShippingType() {
-      if (this.potonganSaldo === false && this.discount === null) {
+      if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
       if (this.destination && this.shipping && this.profile && this.paymentMethod !== null) {
@@ -608,7 +714,10 @@ export default {
           .then(res => {
             const { data } = res.data
             this.isTypeShipping = true
-            this.listTypeShipping = data
+            this.listTypeShipping = data.map(items => ({
+              shipping_type: items.shipping_type,
+              label: this.nameTypeShipping(items.shipping_type),
+            }))
           })
           .catch(() => {
             this.$swal({
@@ -680,59 +789,67 @@ export default {
       return ''
     },
     async submit() {
-      if (this.customerName && this.customerPhone && this.detailAddress !== null) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, {
-          date: this.orderDate,
-          tariff_code: this.destination.value,
-          subdistrict_name: this.destination.subdistrict_name,
-          zip_code: this.destination.zip_code,
-          district_name: this.destination.district_name,
-          city_name: this.destination.city_name,
-          is_komship: this.profile.is_komship,
-          customer_id: this.customerId,
-          customer_name: this.customerName,
-          customer_phone: this.customerPhone,
-          detail_address: this.detailAddress,
-          shipping: this.shipping,
-          shipping_type: this.typeShipping.shipping_type,
-          payment_method: this.paymentMethod,
-          bank: 0,
-          partner_address_id: this.addressId,
-          bank_account_name: 0,
-          bank_account_no: 0,
-          subtotal: this.subTotal,
-          grandtotal: this.grandTotal,
-          shipping_cost: this.shippingCost,
-          service_fee: this.serviceFee,
-          discount: this.discount,
-          shipping_cashback: this.cashback,
-          net_profit: this.netProfit,
-          cart: this.cartId,
-        }).then(() => {
-          this.$swal({
-            title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening) {
+        this.bankName = this.rekening.bank_name
+        this.bankAccountName = this.rekening.account_name
+        this.bankAccountNo = this.rekening.account_no
+      } else {
+        this.bankName = 0
+        this.bankAccountName = 0
+        this.bankAccountNo = 0
+      }
+      const formData = {
+        date: this.orderDate,
+        tariff_code: this.destination.value,
+        subdistrict_name: this.destination.subdistrict_name,
+        zip_code: this.destination.zip_code,
+        district_name: this.destination.district_name,
+        city_name: this.destination.city_name,
+        is_komship: this.profile.is_komship,
+        customer_id: this.customerId,
+        customer_name: this.customerName,
+        customer_phone: this.customerPhone,
+        detail_address: this.detailAddress,
+        shipping: this.shipping,
+        shipping_type: this.typeShipping.shipping_type,
+        payment_method: this.paymentMethod,
+        bank: this.bankName,
+        partner_address_id: this.addressId,
+        bank_account_name: this.bankAccountName,
+        bank_account_no: this.bankAccountNo,
+        subtotal: this.subTotal,
+        grandtotal: this.grandTotal,
+        shipping_cost: this.shippingCost,
+        service_fee: this.serviceFee,
+        discount: this.discount,
+        shipping_cashback: this.cashback,
+        net_profit: this.netProfit,
+        cart: this.cartId,
+      }
+      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.customerName && this.customerPhone && this.detailAddress) {
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
+          .then(() => {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
             imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-            confirmButtonText: 'Oke',
-            confirmButtonClass: 'btn btn-primary',
-          }).then(() => {
-            this.$router.push('/data-order')
+              confirmButtonText: 'Oke',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(() => {
+              this.$router.push('/data-order')
+            })
           })
-        })
-        // .catch(() => {
-        //   this.$swal({
-        //     title: '<span class="font-weight-bold h4">Mohon maaf, saldo anda tidak mencukupi untuk membuat order. Silahkah cek kembali saldo anda.</span>',
-        //     imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-        //     showCancelButton: true,
-        //     confirmButtonText: 'Cek Saldo',
-        //     confirmButtonClass: 'btn btn-primary',
-        //     cancelButtonClass: 'btn btn-outline-primary text-primary',
-        //     cancelButtonColor: '#FFFFFF',
-        //   }).then(result => {
-        //     if (result.isConfirmed) {
-        //       this.$router.push({ name: 'saldo' })
-        //     }
-        //   })
-        // })
+      } else if (this.paymentMethod === 'COD' && this.customerName && this.customerPhone && this.detailAddress) {
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
+          .then(() => {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+            imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
+              confirmButtonText: 'Oke',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(() => {
+              this.$router.push('/data-order')
+            })
+          })
       } else {
         this.$swal({
           title: '<span class="font-weight-bold h4">Tidak Boleh Ada Field Yang Kosong!</span>',

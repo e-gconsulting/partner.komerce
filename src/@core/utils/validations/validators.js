@@ -30,3 +30,13 @@ export const validatorUrlValidator = val => {
   /* eslint-enable no-useless-escape */
   return re.test(val)
 }
+
+// RESET PASSWORD
+export const validatorResetpasswordRules = password => {
+  /* eslint-disable no-useless-escape */
+  const regExp = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/
+  /* eslint-enable no-useless-escape */
+  const validPassword = regExp.test(password)
+  const checkLength = Number(password.length) >= 8 && Number(password.length) <= 16
+  return validPassword && checkLength
+}

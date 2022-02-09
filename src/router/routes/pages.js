@@ -62,7 +62,7 @@ export default [
   {
     path: '/forgot-password',
     name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword.vue'),
+    component: () => import('@/views/pages/authentication/ForgotPassword'),
     meta: {
       layout: 'full',
       resource: 'Auth',
@@ -77,6 +77,16 @@ export default [
       layout: 'full',
       resource: 'Auth',
       redirectIfLoggedIn: true,
+    },
+  },
+  {
+    path: '/reset-newpassword',
+    name: 'auth-reset-passworddata',
+    component: () => import('@/views/pages/authentication/ResetPassword'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+      action: 'read',
     },
   },
   {

@@ -133,7 +133,7 @@
                   <img src="@/assets/images/icons/motor.png">
                   <span>Motor</span>
                 </b-button>
-                <b-button
+                               <b-button
                   v-if="
                     profile &&
                       profile.vehicle &&
@@ -142,7 +142,7 @@
                   :class="`vehicle-button-content ${
                     chosenVehicle === 'MOBIL'
                       ? 'vehicle-selected white-button mr-1'
-                      : 'vehicle-button mr-1 mt-1'
+                      : 'vehicle-button mr-1 mb-1'
                   }`"
                   class="mb-1"
                   @click="() => onChooseVehicle('MOBIL')"

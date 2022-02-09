@@ -308,7 +308,7 @@
               lg="3"
               class="text-right"
             >
-              Rp. {{ formatNumber(orderData.shipping_cost) }}
+              Rp. {{ formatNumber(orderData.shipping_retur) }}
             </b-col>
           </b-row>
           <b-row
@@ -331,7 +331,7 @@
           </b-row>
           <b-row
             v-if="orderData.order_status === 'Retur'"
-            class="mt-1"
+            class="mt-1 font-bold"
           >
             <b-col lg="3" />
             <b-col lg="5">
@@ -339,27 +339,9 @@
             </b-col>
             <b-col
               lg="3"
-              class="text-right text-success"
+              class="text-right text-primary"
             >
-              Rp. {{ formatNumber(0) }}
-            </b-col>
-          </b-row>
-          <b-row
-            v-if="orderData.order_status === 'Retur'"
-            class="mt-1 text-xl"
-          >
-            <b-col lg="3" />
-            <b-col
-              lg="5"
-              class="font-bold"
-            >
-              Beban Total Biaya Retur
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right font-bold"
-            >
-              Rp. {{ formatNumber(orderData.shipping_cost + orderData.shipping_cost - orderData.shipping_cashback) }}
+              - Rp. {{ formatNumber(orderData.shipping_cost + orderData.shipping_retur - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
         </b-collapse>
