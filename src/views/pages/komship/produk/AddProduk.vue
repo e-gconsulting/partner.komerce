@@ -215,7 +215,7 @@
                 <validation-provider
                   #default="{errors}"
                   name="Deskripsi"
-                  rule="required"
+                  rules="required"
                 >
                   <b-form-textarea
                     id="description-product"
@@ -1167,43 +1167,67 @@
                   class="d-flex align-items-center"
                 >
                   <b-col class="d-flex align-items-center">
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="lengthProduct"
-                        type="number"
-                        placeholder="P"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <validation-provider
+                      #default="{errors}"
+                      rules="required"
+                      name="Panjang"
+                    >
+                      <b-input-group class="input-group-merge">
+                        <b-form-input
+                          id="hi-first-name"
+                          v-model="lengthProduct"
+                          type="number"
+                          :state="errors.length > 0 ? false:null"
+                          placeholder="P"
+                        />
+                        <b-input-group-append is-text>
+                          cm
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small class="text-primary">{{ errors[0] }}</small>
+                    </validation-provider>
                   </b-col>
                   <b-col class="d-flex align-items-center">
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="widthProduct"
-                        type="number"
-                        placeholder="L"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <validation-provider
+                      #default="{errors}"
+                      rules="required"
+                      name="Lebar"
+                    >
+                      <b-input-group class="input-group-merge">
+                        <b-form-input
+                          id="hi-first-name"
+                          v-model="widthProduct"
+                          type="number"
+                          placeholder="L"
+                          :state="errors.length > 0 ? false:null"
+                        />
+                        <b-input-group-append is-text>
+                          cm
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small class="text-primary">{{ errors[0] }}</small>
+                    </validation-provider>
                   </b-col>
                   <b-col class="d-flex align-items-center">
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="heightProduct"
-                        type="number"
-                        placeholder="T"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <validation-provider
+                      #default="{errors}"
+                      rules="required"
+                      name="Tinggi"
+                    >
+                      <b-input-group class="input-group-merge">
+                        <b-form-input
+                          id="hi-first-name"
+                          v-model="heightProduct"
+                          type="number"
+                          :state="errors.length > 0 ? false:null"
+                          placeholder="T"
+                        />
+                        <b-input-group-append is-text>
+                          cm
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small class="text-primary">{{ errors[0] }}</small>
+                    </validation-provider>
                   </b-col>
                 </b-row>
               </b-col>
