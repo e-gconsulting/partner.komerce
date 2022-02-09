@@ -90,6 +90,7 @@
               <b-input-group-append>
                 <b-time
                   locale="id"
+                  v-model="timeValue"
                   :hour24="true"
                   hour-cycle="24"
                 />
