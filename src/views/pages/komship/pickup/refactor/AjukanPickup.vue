@@ -30,7 +30,7 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-row>
+            <b-row class="mt-50">
               <b-col md="10">
                 <h5 class="text-black">
                   <strong>
@@ -41,7 +41,7 @@
                   {{ addressDetail }}
                 </p>
               </b-col>
-              <b-col md="auto">
+              <div>
                 <b-button
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   class="btn-icon"
@@ -50,7 +50,7 @@
                 >
                   Pilih
                 </b-button>
-              </b-col>
+              </div>
             </b-row>
           </b-form-group>
         </b-col>
@@ -64,14 +64,14 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <div class="add-pickup-input-date-label">
+            <div class="add-pickup-input-date-label mt-50">
               {{ dateLabel }}
             </div>
             <b-form-datepicker
               id="input-pickup-date"
               ref="dp1"
               v-model="dateValue"
-              class="add-pickup-date-button"
+              class="add-pickup-date-button mt-50"
               button-only
               @context="onChangeDate"
             >
@@ -172,6 +172,7 @@
           >
             <b-button
               variant="primary"
+              class="mt-50"
               @click="chooseOrder"
             >
               Pilih orderan
