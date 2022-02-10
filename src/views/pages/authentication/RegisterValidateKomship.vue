@@ -12,44 +12,31 @@
           class="pl-3 pt-2"
         />
       </b-row>
-      <b-row class="justify-content-center mt-5 pt-3">
+      <b-row class="justify-content-center mt-24 pt-24">
         <b-col
           cols="12"
-          class="d-flex justify-content-center mb-2"
-        >
-          <b-img
-            src="@/@core/assets/image/icon-success-verified.svg"
-            alt="logo"
-            width="100"
-          />
-        </b-col>
-        <b-col
-          cols="7 px-5"
           class="text-center text-black"
         >
-          <h4 class="text-black">
+          <h2 class="text-black mb-1">
             <strong>
-              Email Berhasil Terverifikasi
+              Periksa Email Anda
             </strong>
-          </h4>
+          </h2>
           <p>
-            Selamat ! Sekarang kamu dapat memulai menggunakan layanan Komerce
+            Silahkan verifikasi melalui email yang telah kami kirimkan
           </p>
         </b-col>
         <b-col
           cols="8"
           class="text-center px-2"
         >
-          <div class="demo-inline-spacing">
-            <b-button
-              block
-              variant="primary"
-              tag="router-link"
-              :to="{name:'auth-login'}"
-            >
-              Masuk
-            </b-button>
-          </div>
+          <b-button
+            variant="flat-primary"
+            tag="router-link"
+            :to="{name:'auth-login'}"
+          >
+            <strong>Masuk</strong>
+          </b-button>
         </b-col>
       </b-row>
     </b-col>
@@ -74,41 +61,28 @@
       <b-row class="justify-content-center mt-5 pt-3">
         <b-col
           cols="12"
-          class="d-flex justify-content-center mb-2"
-        >
-          <b-img
-            src="@/@core/assets/image/icon-success-verified.svg"
-            alt="logo"
-            width="100"
-          />
-        </b-col>
-        <b-col
-          cols="12"
           class="text-center"
         >
-          <h4 class="text-black">
+          <h2 class="text-black">
             <strong>
-              Email Berhasil Terverifikasi
+              Periksa Email Anda
             </strong>
-          </h4>
+          </h2>
           <p>
-            Selamat ! Sekarang kamu dapat memulai menggunakan layanan Komerce
+            Silahkan verifikasi melalui email yang telah kami kirimkan
           </p>
         </b-col>
         <b-col
           cols="12"
           class="text-center"
         >
-          <div class="demo-inline-spacing ml-1">
-            <b-button
-              block
-              variant="primary"
-              tag="route-link"
-              :to="{name:'auth-login'}"
-            >
-              Masuk
-            </b-button>
-          </div>
+          <b-button
+            variant="flat-primary"
+            tag="route-link"
+            :to="{name:'auth-login'}"
+          >
+            <strong>Masuk</strong>
+          </b-button>
         </b-col>
       </b-row>
     </b-col>

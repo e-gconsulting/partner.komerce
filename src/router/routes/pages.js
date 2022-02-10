@@ -98,4 +98,13 @@ export default [
       resource: 'Auth',
     },
   },
+  {
+    path: '/komship-register-berhasil',
+    name: 'komship-register-validate',
+    component: () => import('@/views/pages/authentication/RegisterValidateKomship'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
 ]
