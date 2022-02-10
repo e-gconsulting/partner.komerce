@@ -30,8 +30,8 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-row class="mt-50">
-              <b-col md="10">
+            <b-row class="">
+              <b-col md="auto">
                 <h5 class="text-black">
                   <strong>
                     {{ addressName }}
@@ -41,7 +41,7 @@
                   {{ addressDetail }}
                 </p>
               </b-col>
-              <div>
+              <b-col cols="2">
                 <b-button
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   class="btn-icon"
@@ -50,7 +50,7 @@
                 >
                   Pilih
                 </b-button>
-              </div>
+              </b-col>
             </b-row>
           </b-form-group>
         </b-col>
