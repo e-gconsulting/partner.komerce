@@ -71,11 +71,11 @@
                   name="login-email"
                   placeholder="john@mail.com"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small class="text-primary">{{ errors[0] }}</small>
                 <b-col>
                   <b-row
                     v-if="!!error"
-                    class="align-items-center justify-content-between"
+                    class="align-items-center justify-content-between mt-50"
                   >
                     <small
                       class="text-primary"
@@ -88,6 +88,7 @@
                       v-if="showResendEmailVerification"
                       class="ml-50 btn-icon"
                       variant="flat-primary"
+                      size="sm"
                       @click="resendEmailVerification"
                     >
                       <b-spinner
@@ -101,7 +102,7 @@
                   </b-row>
                   <b-row
                     v-if="messageResendEmailVerification !== ''"
-                    class="align-items-center"
+                    class="align-items-center mt-50"
                   >
                     <small
                       class="text-primary"
@@ -294,7 +295,7 @@ export default {
               const { data } = response
               const user = data.data
               if (response.data.status === false) {
-                this.error = response.data.message
+                this.error = 'Maaf, username atau password yang Kamu masukan salah'
                 this.loading = false
               } else {
                 useJwt.setToken(response.data.data.token)
