@@ -1,48 +1,22 @@
 <template>
   <div class="auth-wrapper auth-v1 px-2">
     <b-row class="auth-inner m-0">
-      <b-card class="text-white mt-2">
-        <!-- <b-col
-          lg="12"
-          :style="{
-            backgroundImage: `url('${imgUrl}')`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPositionX: 'center',
-          }"
-        > -->
-        <b-link class="brand-logo">
-          <b-link class="brand-logo d-none d-lg-flex text-center">
-            <b-img
-              :src="appLogoImage"
-              alt="logo"
-              class="flat-image-dark text-center"
-              style="width: 216px"
-            />
-          </b-link>
+      <b-col
+        cols="12"
+        class="d-flex justify-content-center"
+      >
+        <b-img
+          src="@/@core/assets/image/logo-komerce-new-tag.png"
+        />
+      </b-col>
 
-        </b-link>
+      <b-card :class="modeLogin === true ? 'text-white mt-2' : 'd-none'">
         <b-card-title class="mb-1 text-center">
           Masuk
         </b-card-title>
         <b-card-text class="mb-2 text-center text-black">
           Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
         </b-card-text>
-        <!-- <b-alert
-          variant="danger"
-          :show="!!error"
-        >
-          <div class="alert-body">
-            <span>{{ error }}</span>
-            <b-link
-              v-if="showResendEmailVerification"
-              class="ml-50"
-              @click="resendEmailVerification"
-            >
-              <u>Kirim ulang</u>
-            </b-link>
-          </div>
-        </b-alert> -->
         <!-- form -->
         <validation-observer
           ref="loginForm"
@@ -185,6 +159,43 @@
 
         <!-- </b-col> -->
       </b-card>
+
+      <b-card :class="modeVerificationEmail === true ? 'mt-2 p-1' : 'd-none'">
+        <b-card-title class="mb-1 text-center">
+          <h3 class="text-black">
+            <strong>
+              Verifikasi Email
+            </strong>
+          </h3>
+        </b-card-title>
+        <b-card-text class="mb-1 text-center text-black">
+          Cek email kamu, verifikasi telah dikirimkan.
+          Belum menerima? {{ countTimerEmail === 0 ? 'Kirim ulang (60 detik)' : '' }}
+        </b-card-text>
+        <b-row class="justify-content-center mb-1">
+          <small>Mohon tunggu {{ countTimerEmail }} detik untuk mengirim ulang.</small>
+        </b-row>
+
+        <b-row class="justify-content-center mb-1">
+          <b-button
+            :variant="countTimerEmail === 0 ? 'flat-primary' : 'flat-dark'"
+            size="sm"
+            :disabled="countTimerEmail !== 0"
+            class="btn-icon"
+            @click="resendEmailVerification"
+          >
+            Kirim Ulang
+          </b-button>
+        </b-row>
+
+        <b-button
+          variant="primary"
+          block
+          @click="handleChangeModePage"
+        >
+          Kembali Masuk
+        </b-button>
+      </b-card>
     </b-row>
   </div>
 
@@ -259,6 +270,12 @@ export default {
 
       messageResendEmailVerification: '',
       loadingResendVerification: false,
+
+      countTimerEmail: 60,
+
+      // Mode Page
+      modeVerificationEmail: false,
+      modeLogin: true,
     }
   },
   setup() {
@@ -549,11 +566,14 @@ export default {
       this.$http
         .get(`/resend_verification_email/${this.userId}`)
         .then(() => {
-          this.userId = ''
-
-          this.messageResendEmailVerification = 'Verifikasi telah dikirim ke email kamu, mohon cek email sekarang'
           this.error = ''
           this.loadingResendVerification = false
+          this.modeLogin = false
+          this.modeVerificationEmail = true
+          if (this.countTimerEmail !== 60) {
+            this.countTimerEmail = 60
+          }
+          this.countDownTimer()
         })
         .catch(() => { this.loadingResendVerification = false })
     },
@@ -585,6 +605,18 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    handleChangeModePage() {
+      this.modeVerificationEmail = false
+      this.modeLogin = true
+    },
+    countDownTimer() {
+      if (this.countTimerEmail > 0) {
+        setTimeout(() => {
+          this.countTimerEmail -= 1
+          this.countDownTimer()
+        }, 1000)
+      }
     },
   },
 }
