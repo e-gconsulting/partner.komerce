@@ -67,17 +67,27 @@
             </div>
             <b-col
               md="4"
-              class="ml-20 mb-4"
+              class="ml-10 mb-"
             >
-              <flat-pickr
-                id="example-datepicker"
-                v-model="dateValue"
-                class="form-control"
-                style="color: 828282"
-                type="button"
-                :config="config"
-                locale="indonesia"
-              />
+              <div class="input-group">
+                <flat-pickr
+                  v-model="dateValue"
+                  class="form-control"
+                  type="button"
+                  :config="config"
+                  locale="indonesia"
+                />
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-default"
+                    type="button"
+                    aria-disabled="background-color:none"
+                    data-toggle
+                  >
+                    <img src="@/assets/images/icons/date-picker-icon.svg">
+                  </button>
+                </div>
+              </div>
             </b-col> </b-form-group></b-col>
         <b-col cols="11">
           <b-form-group
@@ -87,15 +97,18 @@
             label-class="text-black font-weight-bold"
           >
             <b-input-group>
-              <b-input-group-append>
+              <b-col cols="4">
                 <b-form-timepicker
+                  id="timepicker-buttons"
                   v-model="timeValue"
+                  right
+                  aria-controls="example-input"
                   locale="id"
                   :hour24="true"
-                  hour-cycle="24"
+                  hour-cycle="h24"
+                  @context="onChangeTime"
                 />
-
-              </b-input-group-append>
+              </b-col>
               <b-icon-info-circle
                 v-b-tooltip.hover.top
                 title="pengajuan pickup diatas pukul 14:00 akan di jemput pada hari berikutnya"
@@ -133,7 +146,7 @@
                   <img src="@/assets/images/icons/motor.png">
                   <span>Motor</span>
                 </b-button>
-                               <b-button
+                <b-button
                   v-if="
                     profile &&
                       profile.vehicle &&
@@ -142,7 +155,7 @@
                   :class="`vehicle-button-content ${
                     chosenVehicle === 'MOBIL'
                       ? 'vehicle-selected white-button mr-1'
-                      : 'vehicle-button mr-1 mb-1'
+                      : 'vehicle-button mr-1 mt-1'
                   }`"
                   class="mb-1"
                   @click="() => onChooseVehicle('MOBIL')"
@@ -538,7 +551,7 @@ import {
   BForm,
   BButton,
   BInputGroup,
-  BInputGroupAppend,
+  BInput,
   BFormTimepicker,
   BIconInfoCircle,
   BBadge,
@@ -570,7 +583,6 @@ export default {
     BForm,
     BButton,
     BInputGroup,
-    BInputGroupAppend,
     // eslint-disable-next-line vue/no-unused-components
     BFormTimepicker,
     BBadge,
@@ -601,6 +613,7 @@ export default {
       },
       config: {
         locale: Indonesian,
+        wrap: true,
         dateFormat: 'd F Y',
       },
       context: {
@@ -713,6 +726,7 @@ export default {
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) { this.timeValueText = this.getTimeFormatted(ctx.formatted) }
+      this.context = ctx
     },
     getTimeFormatted(timeText) {
       if (timeText) {
@@ -871,4 +885,8 @@ export default {
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '../add-pickup.scss';
 @import '@core/scss/vue/libs/vue-flatpicker.scss';
+.input-group-prepend {
+    background-color: transparent;
+    border: none !important;
+}
 </style>
