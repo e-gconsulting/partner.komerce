@@ -66,7 +66,9 @@
                 </div>
                 <div class="ml-1">
                   <p><strong>{{ itemsProduct.product_name }}</strong></p>
-                  <p class="text-primary"><strong>{{ itemsProduct.variant_name }}</strong></p>
+                  <p class="text-primary">
+                    <strong>{{ itemsProduct.variant_name }}</strong>
+                  </p>
                 </div>
               </b-container>
             </b-row>

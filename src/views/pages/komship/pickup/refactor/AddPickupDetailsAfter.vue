@@ -1217,6 +1217,168 @@
         </b-button>
       </div>
     </b-modal>
+    <b-modal
+      id="printThermal"
+      hide-footer
+      scrollable
+      style="font-size: 12px;"
+    >
+      <template #modal-title>
+        <b-button
+          variant="primary"
+          @click="printThermal"
+        >
+          Print
+        </b-button>
+      </template>
+      <div id="elementPrintThermal">
+        <div
+          v-for="(itemsPrint, index) in fieldItemsPrint"
+          :key="index+1"
+          class="border-black mx-auto"
+          style="width:10cm;padding:5px;overflow-x: hidden;margin-top:2px;"
+          :style="valuesOption === 100 ? 'height:10cm' : 'height:15cm'"
+        >
+          <b-row
+            class="mx-auto"
+            style="margin-top:3px;"
+          >
+            <div
+              style="width:34%;"
+              class="text-center"
+            >
+              <span class="font-bold">Order Id</span><br>
+              <span>{{ itemsPrint.order_no }}</span>
+            </div>
+            <div style="width:33%;">
+              <img
+                src="@/assets/images/logo/jne-bw.png"
+                alt="ekspedisi"
+                style="margin:auto;width:90px"
+              >
+            </div>
+            <div class="width:33%;">
+              <img
+                src="@/assets/images/logo/komship-bw.png"
+                alt="komship"
+                style="margin:auto;width:120px"
+              >
+            </div>
+          </b-row>
+          <b-row
+            class="mx-auto"
+            style="margin-top:8px;"
+          >
+            <div
+              style="width:49%;padding:5px;"
+              class="border-black"
+            >
+              <span class="d-flex justify-center">PENGIRIM</span>
+              <ul
+                class="p-0 text-sm"
+                style="list-style: none;margin-top:5px;"
+              >
+                <li class="d-flex"><feather-icon
+                  icon="UserIcon"
+                  size="15"
+                  style="margin-right: 2px;"
+                />{{ profile.partner_business_name }}</li>
+                <li class="d-flex"><feather-icon
+                  icon="PhoneIcon"
+                  size="16"
+                  style="margin-right: 2px;"
+                />{{ profile.user_phone }}</li>
+                <li class="d-flex"><feather-icon
+                  icon="MapPinIcon"
+                  size="15"
+                  style="margin-right: 2px;"
+                />{{ idOrderFromHistory.district }}</li>
+              </ul>
+            </div>
+            <div
+              style="width:49%;padding:5px;margin-left:6px;"
+              class="border-black"
+            >
+              <span class="d-flex justify-center">PENERIMA</span>
+              <ul
+                class="p-0"
+                style="list-style: none;margin-top:5px;"
+              >
+                <li class="d-flex"><feather-icon
+                  icon="UserIcon"
+                  size="15"
+                  style="margin-right: 2px;"
+                />{{ itemsPrint.customer_name }}</li>
+                <li class="d-flex"><feather-icon
+                  icon="PhoneIcon"
+                  size="16"
+                  style="margin-right: 2px;"
+                />{{ getCustomerPhone(itemsPrint.customer_phone) }}</li>
+                <li class="d-flex"><feather-icon
+                  icon="MapPinIcon"
+                  size="15"
+                  style="margin-right: 2px;"
+                />{{ itemsPrint.district }}</li>
+              </ul>
+            </div>
+          </b-row>
+          <b-row
+            class="mx-auto"
+            style="margin-top:8px;"
+          >
+            <div
+              style="width:34%;padding:5px;"
+              class="border-black text-center"
+            >
+              <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
+              <span class="text-sm">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
+            </div>
+            <div
+              style="width:64%;padding:5px;margin-left:6px;"
+              class="justify-center border-black"
+            >
+              <span>Nomor Resi</span>
+              <div>
+                <barcode
+                  :value="itemsPrint.airway_bill"
+                  height="25"
+                  width="1"
+                >
+                  Show this if the rendering fails.
+                </barcode>
+              </div>
+            </div>
+          </b-row>
+          <b-row
+            class="mx-auto"
+            style="margin-top:8px;"
+          >
+            <div
+              style="width:34%;padding:5px;"
+              class="border-black"
+            >
+              Kuantitas: <span
+                v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                :key="indexProduct+1"
+              >
+                {{ dataProduct.qty }}
+              </span>
+            </div>
+            <div
+              style="width:64%;padding:5px;margin-left:6px;"
+              class="border-black"
+            >
+              ISI PAKET: <span
+                v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                :key="indexProduct+1"
+              >
+                {{ dataProduct.qty }} {{ dataProduct.product_name }} <span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">{{ dataProduct.variant_name }}</span>
+              </span>
+            </div>
+          </b-row>
+        </div>
+      </div>
+    </b-modal>
 
   </b-card>
 </template>
@@ -1235,12 +1397,14 @@ import {
   BOverlay,
   BCol,
   BFormCheckbox,
+  VBModal,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
+import printJS from 'print-js'
 import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
 import PickupLabelPrint from '../PickupLabelPrint.vue'
 
@@ -1263,6 +1427,7 @@ export default {
     // BCol,
     BFormCheckbox,
   },
+  directives: { VBModal },
   mixins: [dateFormat],
   data() {
     return {
@@ -1394,7 +1559,19 @@ export default {
     onSubmitOptionPrint(values) {
       console.log('opttion print view', values)
       this.valuesOption = values
-      this.$refs.html2Pdf.generatePdf()
+      if (values === 100 || values === 150) {
+        this.$bvModal.show('printThermal')
+      } else {
+        this.$refs.html2Pdf.generatePdf()
+      }
+    },
+    printThermal() {
+      printJS({
+        printable: 'elementPrintThermal',
+        type: 'html',
+        targetStyles: ['*'],
+        font_size: '12px',
+      })
     },
     onSubmitPrint(values) {
       // if (values) this.$refs.printLabelContent.printContent()
