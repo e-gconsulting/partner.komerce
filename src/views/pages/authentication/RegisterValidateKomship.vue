@@ -6,7 +6,7 @@
     >
       <b-row class="mb-5 pb-5">
         <b-img
-          src="@/@core/assets/image/logo-komerce-new-tag.png"
+          src="@/@core/assets/image/logo-komerce-no-tag.png"
           alt="logo"
           width="200"
           class="pl-3 pt-2"
