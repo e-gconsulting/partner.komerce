@@ -28,7 +28,7 @@
         <b-card-text class="mb-2 text-center text-black">
           Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
         </b-card-text>
-        <b-alert
+        <!-- <b-alert
           variant="danger"
           :show="!!error"
         >
@@ -42,7 +42,7 @@
               <u>Kirim ulang</u>
             </b-link>
           </div>
-        </b-alert>
+        </b-alert> -->
         <!-- form -->
         <validation-observer
           ref="loginForm"
@@ -72,6 +72,46 @@
                   placeholder="john@mail.com"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
+                <b-col>
+                  <b-row
+                    v-if="!!error"
+                    class="align-items-center justify-content-between"
+                  >
+                    <small
+                      class="text-primary"
+                    >
+                      <strong>
+                        {{ error }}
+                      </strong>
+                    </small>
+                    <b-button
+                      v-if="showResendEmailVerification"
+                      class="ml-50 btn-icon"
+                      variant="flat-primary"
+                      @click="resendEmailVerification"
+                    >
+                      <b-spinner
+                        v-if="loadingResendVerification"
+                        small
+                      />
+                      <strong>
+                        Kirim Ulang
+                      </strong>
+                    </b-button>
+                  </b-row>
+                  <b-row
+                    v-if="messageResendEmailVerification !== ''"
+                    class="align-items-center"
+                  >
+                    <small
+                      class="text-primary"
+                    >
+                      <strong>
+                        {{ messageResendEmailVerification }}
+                      </strong>
+                    </small>
+                  </b-row>
+                </b-col>
               </validation-provider>
             </b-form-group>
 
@@ -166,6 +206,7 @@ import {
   BFormCheckbox,
   BAlert,
   VBTooltip,
+  BSpinner,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
@@ -181,7 +222,7 @@ export default {
   components: {
     BButton,
     BForm,
-    BAlert,
+    // BAlert,
     BFormInput,
     BFormGroup,
     BCard,
@@ -193,6 +234,7 @@ export default {
     BFormCheckbox,
     ValidationProvider,
     ValidationObserver,
+    BSpinner,
   },
   mixins: [togglePasswordVisibility],
   data() {
@@ -213,6 +255,9 @@ export default {
       custommessages1: {
         required: 'Mohon masukan username atau email.',
       },
+
+      messageResendEmailVerification: '',
+      loadingResendVerification: false,
     }
   },
   setup() {
@@ -286,7 +331,7 @@ export default {
             if (!userData.email_verified_at) {
               // eslint-disable-next-line operator-linebreak
               this.error =
-                'Email belum terverifikasi, harap periksa email Anda.'
+                'Email Kamu belum terverifikasi'
               this.showResendEmailVerification = true
               this.logout()
               return
@@ -497,25 +542,19 @@ export default {
         })
     },
     resendEmailVerification() {
+      this.loadingResendVerification = true
       this.showResendEmailVerification = true
-      this.error = ''
 
       this.$http
         .get(`/resend_verification_email/${this.userId}`)
         .then(() => {
           this.userId = ''
 
-          this.$swal({
-            title: 'Terkirim',
-            text: 'Harap periksa email anda untuk verifikasi akun Anda.',
-            icon: 'success',
-            confirmButtonText: 'Mengerti',
-            customClass: {
-              confirmButton: 'btn btn-primary',
-            },
-          })
+          this.messageResendEmailVerification = 'Verifikasi telah dikirim ke email kamu, mohon cek email sekarang'
+          this.error = ''
+          this.loadingResendVerification = false
         })
-        .catch(() => {})
+        .catch(() => { this.loadingResendVerification = false })
     },
     getPartnerProfile(userId) {
       return this.$http

@@ -500,11 +500,11 @@ export default {
   },
   methods: {
     register() {
+      this.loading = true
       this.usernameTaken = ''
       this.emailTaken = ''
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          this.loading = true
           this.error = ''
 
           httpKomship.post('/v1/register', {
@@ -525,17 +525,8 @@ export default {
             }
 
             if (data[0].content.message !== 'Failed to register new partner') {
-              this.$router.push({ name: 'auth-login' })
-
-              this.$swal({
-                title: 'Pendaftaran berhasil',
-                text: 'Harap periksa email anda untuk verifikasi akun Anda.',
-                icon: 'success',
-                confirmButtonText: 'Mengerti',
-                customClass: {
-                  confirmButton: 'btn btn-primary',
-                },
-              })
+              this.loading = false
+              this.$router.push({ name: 'komship-register-validate' })
             }
             this.loading = false
           }).catch(() => {
@@ -550,6 +541,8 @@ export default {
             })
             this.loading = false
           })
+        } else {
+          this.loading = false
         }
       })
     },
