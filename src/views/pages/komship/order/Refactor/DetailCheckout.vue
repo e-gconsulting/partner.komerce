@@ -159,6 +159,7 @@
           :options="listRekening"
           label="account_name"
           placeholder="Pilih Rekening"
+          @input="validateRekening"
         >
           <template #option="{ account_name, bank_name, account_no }">
             <span class="font-bold text-lg">{{ account_name }}</span><br>
@@ -534,6 +535,7 @@ export default {
       listPayment: ['COD', 'BANK TRANSFER'],
       rekening: null,
       listRekening: [],
+      totalRekening: 0,
       bankName: null,
       bankAccountName: null,
       bankAccountNo: null,
@@ -690,10 +692,25 @@ export default {
         .then(res => {
           const { data } = res.data
           this.listRekening = data
+          this.totalRekening = data.length
         })
         .catch(err => {
           console.log(err)
         })
+    },
+    async validateRekening() {
+      if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
+        this.$swal({
+          title: '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
+          imageUrl: require('@/@core/assets/image/icon-popup-warning.png'), // eslint-disable-line
+          confirmButtonText: 'Tambah Rekening',
+          confirmButtonClass: 'btn btn-primary',
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.$router.push('/setting-kompship/rekening-bank')
+          }
+        })
+      }
     },
     async getShippingType() {
       if (this.potonganSaldo === false || this.discount === null) {
