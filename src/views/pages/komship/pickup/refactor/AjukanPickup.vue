@@ -76,6 +76,7 @@
                   type="button"
                   :config="config"
                   locale="indonesia"
+                  @context="onChangeDate"
                 />
                 <div class="input-group-append">
                   <button
@@ -558,7 +559,7 @@ import {
   BModal,
   BFormRadio,
   BTable,
-  BTime,
+
   BAvatar,
   BContainer,
 } from 'bootstrap-vue'
@@ -577,13 +578,11 @@ export default {
     BCol,
     BFormGroup,
     flatPickr,
-    // BFormInput,
-    // BTime,
+
     BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
-    // eslint-disable-next-line vue/no-unused-components
     BFormTimepicker,
     BBadge,
     BModal,
@@ -604,13 +603,6 @@ export default {
       dateLabel: '',
       timeValueText: '09 : 00',
       timeValue: '09:00',
-      timepicker: {
-        hours: '',
-        minutes: '',
-      },
-      pickerSetting: {
-        headerShow: false,
-      },
       config: {
         locale: Indonesian,
         wrap: true,
@@ -680,10 +672,9 @@ export default {
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
     this.getAddress()
-    // this.$refs['popup-order'].show()
   },
   methods: {
-    getDataOrderToStore(data, dataItems) {
+    getDataOrderToStore(data) {
       this.selectedOrderToStore = data
       this.itemsPreviewProductOrder = data
       console.log('dataOrder', data)
@@ -791,7 +782,6 @@ export default {
         })
         .then(response => {
           const { data } = response.data.data
-          // console.log('this list order', data)
           this.listOrder = data
         })
         .catch(() => {
