@@ -145,7 +145,7 @@
                   <img src="@/assets/images/icons/motor.png">
                   <span>Motor</span>
                 </b-button>
-                               <b-button
+                <b-button
                   v-if="
                     profile &&
                       profile.vehicle &&
@@ -548,17 +548,17 @@ export default {
     BRow,
     BCol,
     BFormGroup,
-    flatPickr,
+    // flatPickr,
     // BFormInput,
     // BTime,
-    BIconInfoCircle,
+    // BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
     BInputGroupAppend,
     // eslint-disable-next-line vue/no-unused-components
     BFormTimepicker,
-    BIconChevronExpand,
+    // BIconChevronExpand,
     BModal,
     BFormRadio,
     dataOrder,
