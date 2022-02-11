@@ -71,6 +71,33 @@
             <div class="add-pickup-input-date-label mt-50">
               {{ dateLabel }}
             </div>
+            <b-col
+              md="4"
+              class="ml-10 mb-"
+            >
+              <div class="input-group">
+                <flat-pickr
+                  v-model="dateValue"
+                  class="form-control"
+                  type="button"
+                  :config="config"
+                  locale="indonesia"
+                  @context="onChangeDate"
+                />
+                <div class="input-group-append">
+                  <button
+                    class="btn btn-default"
+                    type="button"
+                    aria-disabled="background-color:none"
+                    data-toggle
+                  >
+                    <img src="@/assets/images/icons/date-picker-icon.svg">
+                  </button>
+                </div>
+              </div>
+            </b-col> </b-form-group></b-col>
+        <b-col cols="11">
+
             <b-form-datepicker
               id="input-pickup-date"
               ref="dp1"
@@ -96,15 +123,18 @@
             label-class="text-black font-weight-bold"
           >
             <b-input-group>
-              <b-input-group-append>
+              <b-col cols="4">
                 <b-form-timepicker
+                  id="timepicker-buttons"
                   v-model="timeValue"
+                  right
+                  aria-controls="example-input"
                   locale="id"
                   :hour24="true"
-                  hour-cycle="24"
+                  hour-cycle="h24"
+                  @context="onChangeTime"
                 />
-
-              </b-input-group-append>
+              </b-col>
               <b-icon-info-circle
                 v-b-tooltip.hover.top
                 title="pengajuan pickup diatas pukul 14:00 akan di jemput pada hari berikutnya"
@@ -145,7 +175,7 @@
                   <img src="@/assets/images/icons/motor.png">
                   <span>Motor</span>
                 </b-button>
-                               <b-button
+                <b-button
                   v-if="
                     profile &&
                       profile.vehicle &&
@@ -154,7 +184,7 @@
                   :class="`vehicle-button-content ${
                     chosenVehicle === 'MOBIL'
                       ? 'vehicle-selected white-button mr-1'
-                      : 'vehicle-button mr-1 mb-1'
+                      : 'vehicle-button mr-1 mt-1'
                   }`"
                   class="mb-1"
                   @click="() => onChooseVehicle('MOBIL')"
@@ -524,13 +554,13 @@ import {
   BForm,
   BButton,
   BInputGroup,
-  BInputGroupAppend,
+  BInput,
   BFormTimepicker,
   BIconChevronExpand,
   BModal,
   BFormRadio,
   BTable,
-  BTime,
+
   BAvatar,
   BContainer,
 } from 'bootstrap-vue'
@@ -549,14 +579,11 @@ export default {
     BCol,
     BFormGroup,
     flatPickr,
-    // BFormInput,
-    // BTime,
+
     BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
-    BInputGroupAppend,
-    // eslint-disable-next-line vue/no-unused-components
     BFormTimepicker,
     BIconChevronExpand,
     BModal,
@@ -577,15 +604,9 @@ export default {
       dateLabel: '',
       timeValueText: '09 : 00',
       timeValue: '09:00',
-      timepicker: {
-        hours: '',
-        minutes: '',
-      },
-      pickerSetting: {
-        headerShow: false,
-      },
       config: {
         locale: Indonesian,
+        wrap: true,
         dateFormat: 'd F Y',
       },
       context: {
@@ -652,10 +673,9 @@ export default {
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
     this.getAddress()
-    // this.$refs['popup-order'].show()
   },
   methods: {
-    getDataOrderToStore(data, dataItems) {
+    getDataOrderToStore(data) {
       this.selectedOrderToStore = data
       this.itemsPreviewProductOrder = data
       console.log('dataOrder', data)
@@ -698,6 +718,7 @@ export default {
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) { this.timeValueText = this.getTimeFormatted(ctx.formatted) }
+      this.context = ctx
     },
     getTimeFormatted(timeText) {
       if (timeText) {
@@ -762,7 +783,6 @@ export default {
         })
         .then(response => {
           const { data } = response.data.data
-          // console.log('this list order', data)
           this.listOrder = data
         })
         .catch(() => {
@@ -856,4 +876,8 @@ export default {
 @import '~@core/scss/vue/libs/vue-select.scss';
 @import '../add-pickup.scss';
 @import '@core/scss/vue/libs/vue-flatpicker.scss';
+.input-group-prepend {
+    background-color: transparent;
+    border: none !important;
+}
 </style>
