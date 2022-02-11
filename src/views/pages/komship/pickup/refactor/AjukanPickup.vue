@@ -97,7 +97,7 @@
               </div>
             </b-col> </b-form-group></b-col>
         <b-col cols="11">
-
+          <b-form-group>
             <b-form-datepicker
               id="input-pickup-date"
               ref="dp1"
@@ -567,7 +567,6 @@ import {
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import flatPickr from 'vue-flatpickr-component'
 import { Indonesian } from 'flatpickr/dist/l10n/id'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
@@ -578,14 +577,10 @@ export default {
     BRow,
     BCol,
     BFormGroup,
-    flatPickr,
-
-    BIconInfoCircle,
     BForm,
     BButton,
     BInputGroup,
     BFormTimepicker,
-    BIconChevronExpand,
     BModal,
     BFormRadio,
     dataOrder,
