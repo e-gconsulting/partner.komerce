@@ -36,9 +36,18 @@
         <all />
       </b-tab>
       <b-tab
-        title="Perlu Dikirim"
         lazy
       >
+        <template slot="title">
+          <b-badge
+            class="mr-1"
+            variant="primary"
+            pill
+          >
+            {{ totalSent }}
+          </b-badge>
+          Perlu Dikirim
+        </template>
         <sent />
       </b-tab>
       <b-tab
@@ -64,7 +73,7 @@
 </template>
 <script>
 import {
-  BCard, BTabs, BTab, BDropdown, BDropdownItem, BButton,
+  BCard, BTabs, BTab, BDropdown, BDropdownItem, BButton, BBadge,
 } from 'bootstrap-vue'
 import All from './List/All.vue'
 import Sent from './List/Sent.vue'
@@ -74,19 +83,38 @@ import Retur from './List/Retur.vue'
 
 export default {
   components: {
-    BCard, BTabs, BTab, BDropdown, BDropdownItem, All, Sent, Send, Received, Retur, BButton,
+    BCard, BTabs, BTab, BDropdown, BDropdownItem, All, Sent, Send, Received, Retur, BButton, BBadge,
   },
   data() {
     const tabs = ['semua', 'perlu-dikirim', 'dikirim', 'diterima', 'retur']
     return {
       tabIndex: tabs.indexOf(this.$route.query.tab),
       tabs,
+      profile: null,
+      totalSent: null,
     }
   },
   watch: {
     tabIndex(newValue) {
       const tab = this.tabs[newValue]
       this.$router.replace({ query: { tab } }).catch(() => {})
+    },
+  },
+  mounted() {
+    this.fetchData()
+  },
+  methods: {
+    async fetchData() {
+      const profile = await this.$http_komship.post('v1/my-profile')
+      const dataProfile = await profile.data.data
+      this.profile = await dataProfile
+      await this.$http_komship.get(`v1/order/${this.profile.partner_id}`)
+        .then(res => {
+          const { data } = res.data
+          this.totalSent = data.total
+          return this.totalSent
+        })
+        .catch(err => console.log(err))
     },
   },
 }
