@@ -122,7 +122,7 @@
             cols="6"
             class="font-bold"
           >
-            {{ orderData.shipping }}
+            {{ `${orderData.shipping} (${nameTypeShipping(orderData.shipping_type)})` }}
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -466,6 +466,22 @@ export default {
       } catch ($e) {
         console.log('Cannot Copy')
       }
+    },
+    nameTypeShipping(data) {
+      if (data === 'OKE19') {
+        return 'OKE'
+      } if (data === 'REG19') {
+        return 'REG'
+      } if (data === 'YES19') {
+        return 'YES'
+      } if (data === 'CTCOKE19') {
+        return 'OKE'
+      } if (data === 'CTCYES19') {
+        return 'YES'
+      } if (data === 'CTC19') {
+        return 'REG'
+      }
+      return ''
     },
   },
 }
