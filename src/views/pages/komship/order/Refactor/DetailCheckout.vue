@@ -412,14 +412,14 @@
             - Rp. {{ formatNumber(shippingCost - cashback) }}
           </b-col>
         </b-row>
-        <b-row class="mb-1 text-lg text-primary">
+        <b-row class="mb-1 text-lg">
           <b-col lg="5" />
           <b-col lg="5">
             Penghasilan bersih yang kamu dapatkan
           </b-col>
           <b-col
             lg="2"
-            class="d-flex justify-end"
+            class="d-flex justify-end text-success"
           >
             Rp. {{ formatNumber(netProfit) }}
           </b-col>
