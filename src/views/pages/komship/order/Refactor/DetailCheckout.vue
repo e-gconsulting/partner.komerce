@@ -96,14 +96,14 @@
         <label
           class="text-lg"
           style="color:#828282;"
-        >Masukan Kota/Kabupaten</label>
+        >Masukan Kelurahan/Kecamatan</label>
       </b-col>
       <b-col md="5">
         <v-select
           ref="selectDestination"
           v-model="destination"
           :options="listDestination"
-          placeholder="Masukan Kota/Kabupaten"
+          placeholder="Masukan Kelurahan/Kecamatan"
           @search="getDestination"
           @input="getShippingType"
         >
