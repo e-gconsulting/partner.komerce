@@ -24,15 +24,18 @@
     </b-row>
     <b-form @submit.prevent>
       <b-row class="justify-content-center mb-1">
-        <b-col cols="11">
+        <b-col
+          cols="11"
+          class="mb-50"
+        >
           <b-form-group
             label="Alamat"
             label-for="h-first-name"
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-row>
-              <b-col md="10">
+            <b-row class="">
+              <b-col md="auto">
                 <h5 class="text-black">
                   <strong>
                     {{ addressName }}
@@ -42,7 +45,7 @@
                   {{ addressDetail }}
                 </p>
               </b-col>
-              <b-col md="auto">
+              <b-col cols="2">
                 <b-button
                   v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                   class="btn-icon"
@@ -55,31 +58,37 @@
             </b-row>
           </b-form-group>
         </b-col>
-        <b-col cols="11">
+        <b-col
+          cols="11"
+          class="mb-50"
+        >
           <b-form-group
             label="Tanggal"
             label-for="h-email"
             label-cols-md="1"
             label-class="text-black font-weight-bold"
           >
-            <div class="add-pickup-input-date-label">
+            <div class="add-pickup-input-date-label mt-50">
               {{ dateLabel }}
             </div>
-            <b-col
-              md="4"
-              class="ml-20 mb-4"
+            <b-form-datepicker
+              id="input-pickup-date"
+              ref="dp1"
+              v-model="dateValue"
+              class="add-pickup-date-button mt-50"
+              button-only
+              @context="onChangeDate"
             >
-              <flat-pickr
-                id="example-datepicker"
-                v-model="dateValue"
-                class="form-control"
-                style="color: 828282"
-                type="button"
-                :config="config"
-                locale="indonesia"
-              />
-            </b-col> </b-form-group></b-col>
-        <b-col cols="11">
+              <template v-slot:button-content>
+                <img src="@/assets/images/icons/date-picker-icon.svg">
+              </template>
+            </b-form-datepicker>
+          </b-form-group>
+        </b-col>
+        <b-col
+          cols="11"
+          class="mb-50"
+        >
           <b-form-group
             label="Waktu Jemput"
             label-for="h-number"
@@ -105,7 +114,10 @@
             </b-input-group>
           </b-form-group>
         </b-col>
-        <b-col cols="11">
+        <b-col
+          cols="11"
+          class="mb-50"
+        >
           <b-form-group
             label="Kendaraan"
             label-for="h-password"
@@ -170,13 +182,33 @@
             </div>
           </b-form-group>
         </b-col>
-        <b-col cols="11">
+        <b-col
+          cols="11"
+          class="mb-50"
+        >
           <b-form-group
             label="Orderan"
             label-for="h-password"
             label-cols-md="2"
             label-class="text-black font-weight-bold"
-          />
+            class="mb-0"
+          >
+            <b-button
+              variant="primary"
+              class="mt-50"
+              @click="chooseOrder"
+            >
+              Pilih orderan
+            </b-button>
+          </b-form-group>
+          <b-col
+            class="pl-0 pr-2"
+            cols="2"
+          >
+            <small>
+              Pilih orderan yang akan di pickup
+            </small>
+          </b-col>
         </b-col>
       </b-row>
 
@@ -211,23 +243,13 @@
       </div>
 
       <div v-if="selectedOrderToStore[0] !== undefined">
-        <b-row>
-          <b-col class="d-flex justify-content-end">
-            <b-button
-              variant="primary"
-              class="mr-3"
-              @click="chooseOrder"
-            >
-              Pilih orderan
-            </b-button>
-          </b-col>
-        </b-row>
-      </div>
-
-      <div v-if="selectedOrderToStore[0] !== undefined">
         <b-row class="justify-content-center">
           <b-col cols="11">
             <b-table
+              hover
+              responsive
+              class="position-relative"
+
               :fields="fieldsPreviewProductOrder"
               :items="itemsPreviewProductOrder"
             >
@@ -329,46 +351,10 @@
           </b-col>
         </b-row>
       </div>
-
-      <div v-if="selectedOrderToStore[0] === undefined">
-        <b-row class="justify-content-center mt-3 mb-1">
-          <b-col
-            cols="11"
-            class="d-flex justify-content-between"
-          >
-            <div>
-              <h5>
-                <strong> Pilih orderan yang akan di pickup </strong>
-              </h5>
-            </div>
-            <div>
-              <b-button
-                variant="primary"
-                @click="chooseOrder"
-              >
-                Pilih orderan
-              </b-button>
-            </div>
-          </b-col>
-          <b-col cols="11">
-            <hr
-              style="
-                height: 1px;
-                border-width: 0;
-                color: #c2c2c2;
-                background-color: #c2c2c2;
-              "
-            >
-          </b-col>
-        </b-row>
-      </div>
-
-      <b-row class="justify-content-center mb-1">
-        <b-col cols="11">
-          <b-badge variant="light-primary">
-            *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
-          </b-badge>
-        </b-col>
+      <b-row class="mb-1 ml-3 pl-50">
+        <p class="text-primary p-50 border-2 border-red-400 rounded-lg bg-red-50">
+          *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
+        </p>
       </b-row>
 
       <b-row class="justify-content-center">
@@ -540,8 +526,7 @@ import {
   BInputGroup,
   BInputGroupAppend,
   BFormTimepicker,
-  BIconInfoCircle,
-  BBadge,
+  BIconChevronExpand,
   BModal,
   BFormRadio,
   BTable,
@@ -573,7 +558,7 @@ export default {
     BInputGroupAppend,
     // eslint-disable-next-line vue/no-unused-components
     BFormTimepicker,
-    BBadge,
+    BIconChevronExpand,
     BModal,
     BFormRadio,
     dataOrder,
