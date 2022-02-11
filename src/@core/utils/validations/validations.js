@@ -1,7 +1,7 @@
 import { extend, localize } from 'vee-validate'
 import {
   required as ruleRequired,
-  email as rule_email,
+  email as ruleEmail,
   min as rule_min,
   min_value as rule_min_value,
   max_value as rule_max_value,
@@ -32,7 +32,7 @@ import {
 
 export const required = extend('required', ruleRequired)
 
-export const email = extend('email', rule_email)
+export const email = extend('email', ruleEmail)
 
 export const min = extend('min', rule_min)
 
@@ -96,6 +96,11 @@ export const resetpasswordrules = extend('resetpasswordrules', {
   message: 'Terdiri dari 8-16 karakter, mengandung dari huruf dan angka.',
 })
 
+// Forgot Password
+export const forgotpasswordEmail = extend('forgotpasswordEmail', {
+  ...ruleEmail,
+  message: 'Format email yang Kamu masukan salah.',
+})
 // Install English and Arabic localizations.
 localize('id', {
   messages: id.messages,

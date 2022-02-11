@@ -3,7 +3,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   BRow, BCol, BModal, BLink, BFormGroup, BFormInput, BCardText, BCardTitle, BImg, BForm, BSpinner, BButton, VBTooltip,
 } from 'bootstrap-vue'
-import { required } from '@validations'
+import { required, forgotpasswordEmail } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { $themeConfig } from '@themeConfig'
 
@@ -44,6 +44,7 @@ export default {
       password: '',
       // validation
       required,
+      forgotpasswordEmail,
 
       // validation rules
       // email,
