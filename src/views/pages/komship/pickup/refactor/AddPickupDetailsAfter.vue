@@ -383,7 +383,7 @@
                         </b-list-group-item>
                       </div>
                       <div v-else>
-                        {{ dataProduct.product_name }} <span class="ml-1 text-black">{{ dataProduct.qty+'X' }}</span>
+                        {{ dataProduct.qty }} {{ dataProduct.product_name }}
                       </div>
                     </b-list-group>
                   </b-col>
@@ -613,7 +613,7 @@
                       </b-list-group-item>
                     </div>
                     <div v-else>
-                      {{ dataProduct.product_name }} <span class="ml-1 text-black">{{ dataProduct.qty+'X' }}</span>
+                      {{ dataProduct.qty }} {{ dataProduct.product_name }}
                     </div>
                   </b-list-group>
                 </b-col>
@@ -1175,7 +1175,7 @@
                         </b-list-group-item>
                       </div>
                       <div v-else>
-                        {{ dataProduct.product_name }} <span class="ml-1 text-black">{{ dataProduct.qty+'X' }}</span>
+                        {{ dataProduct.qty }} {{ dataProduct.product_name }}
                       </div>
                     </b-list-group>
                   </b-col>
