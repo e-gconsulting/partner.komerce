@@ -326,7 +326,6 @@ export default {
       })
     },
     getUser(userData) {
-      console.log('userData', userData)
       this.userId = userData.id
 
       this.$http
@@ -549,12 +548,12 @@ export default {
           localStorage.setItem('userData', JSON.stringify(data))
           this.$store.commit('auth/UPDATE_USER_DATA', data)
 
-          // this.$router
-          //   .go(getHomeRouteForLoggedInUser(role))
-          //   .then(() => {})
-          //   .catch(error => {
-          //     this.$refs.loginForm.setErrors(error.response.data.error)
-          //   })
+          this.$router
+            .go(getHomeRouteForLoggedInUser(role))
+            .then(() => {})
+            .catch(error => {
+              this.$refs.loginForm.setErrors(error.response.data.error)
+            })
         })
         .finally(() => {
           this.loading = false
