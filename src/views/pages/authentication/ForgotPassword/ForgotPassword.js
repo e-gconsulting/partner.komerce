@@ -82,10 +82,12 @@ export default {
   },
   methods: {
     handleClickResend() {
-      this.dismissSecs = 60
-      this.dismissCountDown += 1
-      this.resendEmailVerification()
-      this.$nextTick(() => this.countDownChanged())
+      if (this.dismissSecs === 0) {
+        this.dismissSecs = 60
+        this.dismissCountDown += 1
+        this.resendEmailVerification()
+        this.$nextTick(() => this.countDownChanged())
+      }
     },
     countDownChanged() {
       if (this.dismissSecs > 0) {

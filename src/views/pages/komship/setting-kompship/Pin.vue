@@ -24,13 +24,25 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
+          id="first-create-new-pin"
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -67,13 +79,24 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChangeConfirm"
           @complete="onCompleteConfirm"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
@@ -206,13 +229,24 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
@@ -258,13 +292,24 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -306,13 +351,24 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-2">
@@ -399,11 +455,12 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <div style="display: flex; flex-direction: row;">
           <vue-otp-input
             ref="otpInput"
             input-classes="otp-input"
+            :input-type="visibilityOTP"
             separator="-"
             :num-inputs="4"
             :should-auto-focus="true"
@@ -412,6 +469,16 @@
             @on-complete="handleOnComplete"
           />
         </div>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityOTP"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
@@ -456,13 +523,24 @@
         </h4>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -492,13 +570,24 @@
         </h4>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -537,11 +626,12 @@
         </small>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <div style="display: flex; flex-direction: row;">
           <vue-otp-input
             ref="otpInput"
             input-classes="otp-input"
+            :input-type="visibilityOTP"
             separator="-"
             :num-inputs="4"
             :should-auto-focus="true"
@@ -550,6 +640,16 @@
             @on-complete="handleOnComplete"
           />
         </div>
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityOTP"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1">
@@ -597,13 +697,24 @@
         </h4>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -634,13 +745,24 @@
         </h4>
       </b-col>
 
-      <b-col class="d-flex justify-content-center mt-2">
+      <b-col class="d-flex justify-content-center mt-2 mb-1">
         <CodeInput
           :loading="false"
           class="input"
+          :type="visibilityPin"
           @change="onChange"
           @complete="onComplete"
         />
+      </b-col>
+
+      <b-col class="d-flex justify-content-center">
+        <b-button
+          variant="flat-primary"
+          class="btn-icon"
+          @click="toggleVisibilityPin"
+        >
+          Tampilkan
+        </b-button>
       </b-col>
 
       <b-col class="d-flex justify-content-center mt-1 pb-2">
@@ -707,6 +829,9 @@ export default {
 
       countOtp: 60,
       sendOtpEmail: false,
+
+      visibilityPin: 'password',
+      visibilityOTP: 'password',
 
       emailUser: '',
     }
@@ -800,6 +925,8 @@ export default {
           this.loadingSubmit = false
           this.$refs['modal-success-create-pin'].show()
           this.$refs['modal-confirm-create-new-pin'].hide()
+          this.visibilityPin = 'password'
+          this.visibilityOTP = 'password'
         }).catch(() => {
           this.loadingSubmit = false
           this.$toast({
@@ -864,6 +991,8 @@ export default {
           this.$refs['modal-confirm-new-pin'].show()
           this.$refs['modal-new-pin'].hide()
           this.matchesPin = this.dataPin
+          this.visibilityPin = 'password'
+          this.visibilityOTP = 'password'
         } else {
           this.loadingSubmit = false
         }
@@ -887,6 +1016,8 @@ export default {
           this.loadingSubmit = false
           this.$refs['modal-confirm-new-pin'].hide()
           this.tes()
+          this.visibilityPin = 'password'
+          this.visibilityOTP = 'password'
         } else {
           this.loadingSubmit = false
           this.errorMatchesPin = 'PIN tidak valid'
@@ -982,6 +1113,22 @@ export default {
     },
     showPopupForgotPin() {
       this.$refs['modal-forgot-pin'].show()
+    },
+    toggleVisibilityPin() {
+      console.log('tes')
+      if (this.visibilityPin === 'password') {
+        this.visibilityPin = 'text'
+      } else {
+        this.visibilityPin = 'password'
+      }
+    },
+    toggleVisibilityOTP() {
+      console.log('tes')
+      if (this.visibilityOTP === 'password') {
+        this.visibilityOTP = 'number'
+      } else {
+        this.visibilityOTP = 'password'
+      }
     },
   },
 }
