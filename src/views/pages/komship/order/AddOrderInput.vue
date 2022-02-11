@@ -509,9 +509,8 @@
             </b-button>
             <b-button
               class="next-button"
-              tag="router-link"
               :disabled="buttonNext"
-              :to="{ name: $route.meta.routeDetail, params: { itemsOrder, address_id: choosenAddres.value, date: dateValue, dateLabel: dateLabel } }"
+              @click="bulkStore"
             >
               Lanjutkan
             </b-button>
@@ -777,6 +776,62 @@ export default {
     this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
   },
   methods: {
+    async bulkStore() {
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.itemsOrder.length; x++) {
+        if (this.itemsOrder[x].itemsSelected.length > 0) {
+          // eslint-disable-next-line no-plusplus
+          for (let y = 0; y < this.itemsOrder[x].itemsSelected.length; y++) {
+            this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+              .then(async res => {
+                if (res.data.code === 200) {
+                  return this.$http_komship.post('v1/cart/bulk-store', {
+                    params: {
+                      product_id: this.itemsOrder[x].product_id,
+                      product_name: this.itemsOrder[x].product_name,
+                      variant_id: this.itemsOrder[x].itemsSelected[y].option_id,
+                      variant_name: this.itemsOrder[x].itemsSelected[y].variation,
+                      product_price: this.itemsOrder[x].itemsSelected[y].price,
+                      qty: this.itemsOrder[x].itemsSelected[y].stockToDisplay,
+                      subtotal: this.itemsOrder[x].itemsSelected[y].stockToDisplay * this.itemsOrder[x].itemsSelected[y].price,
+                    },
+                  })
+                    .then(async result => {
+                      if (result.data.code === 200) {
+                        this.$router.push({ path: '/add-order/detail-checkout', query: { address_id: this.choosenAddres.value, date: this.dateValue } })
+                      }
+                    })
+                }
+                return this.cartId
+              })
+          }
+        }
+        if (this.itemsOrder[x].itemsSelected.length === 0) {
+          this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+            .then(async res => {
+              if (res.data.code === 200) {
+                return this.$http_komship.post('v1/cart/bulk-store', {
+                  params: {
+                    product_id: this.itemsOrder[x].product_id,
+                    product_name: this.itemsOrder[x].product_name,
+                    variant_id: 0,
+                    variant_name: '',
+                    product_price: this.itemsOrder[x].price,
+                    qty: this.itemsOrder[x].stockToDisplayNoVariant,
+                    subtotal: this.itemsOrder[x].stockToDisplayNoVariant * this.itemsOrder[x].price,
+                  },
+                })
+                  .then(async result => {
+                    if (result.data.code === 200) {
+                      this.$router.push({ path: '/add-order/detail-checkout', query: { address_id: this.choosenAddres.value, date: this.dateValue } })
+                    }
+                  })
+              }
+              return this.cartId
+            })
+        }
+      }
+    },
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
