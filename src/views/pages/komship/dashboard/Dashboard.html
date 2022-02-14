@@ -838,9 +838,14 @@
       </div>
     </b-modal>
   </div>
+  <div
+    v-else
+    class="d-flex justify-content-center"
+  >
+    <b-spinner variant="primary" label="Loading..." />
+  </div>
   <!-- MODAL ONBOARDING -->
   <b-modal
-    v-else
     id="modal-onboarding"
     ref="modal-onboarding"
     no-close-on-esc
@@ -863,8 +868,7 @@
         <p class="modalOnboarding__step1--subtitle my-0">Sebelum memulai, pastikan kamu mengikuti arahan kami ya...</p>
       </div>
       <div class="modalOnboarding__step1--wrapLangkah">
-        <div class="modalOnboarding__step1--box">
-        </div>
+        <div class="modalOnboarding__step1--box"></div>
         <feather-icon
           icon="ChevronRightIcon"
           size="2x"
@@ -1020,6 +1024,7 @@
           variant="contained-primary"
           @click="handleStepOnboard('endsteponboarding')"
           class="modalOnboarding__step5--navBtn"
+          :disabled="disabledOnboardingMulai"
         >
           <h5 class="my-0 modalOnboarding__step5--navBtnText">
             MULAI

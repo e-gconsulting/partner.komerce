@@ -135,6 +135,7 @@ export default {
       ],
       visibilityPin: 'password',
       loadingOnboarding: true,
+      disabledOnboardingMulai: false,
       stepped: 1,
       maxStepOnboard: 5,
     }
@@ -167,12 +168,13 @@ export default {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       const { data } = response.data
-      console.log('onboarding', data)
-      console.log('state profile', this.$store.state.auth.userData)
+      // console.log('onboarding', data)
+      // console.log('state profile', this.$store.state.auth.userData)
       if (data) {
-        if (data.is_onboarding) {
-          console.log('is_onboarding: ', data.is_onboarding)
+        if (!data.is_onboarding) {
           this.$bvModal.show('modal-onboarding')
+        } else {
+          this.loadingOnboarding = false
         }
       }
     })
@@ -183,7 +185,6 @@ export default {
   },
   methods: {
     handleStepOnboard(params) {
-      console.log('stepp: ', params)
       switch (params) {
         case 'endsteponboarding':
           this.updateProfileOnBoarding()
@@ -194,8 +195,17 @@ export default {
       }
     },
     updateProfileOnBoarding() {
-      this.loadingOnboarding = false
-      this.$bvModal.hide('modal-onboarding')
+      this.disabledOnboardingMulai = true
+      this.$http_komship.put('/v1/partner/onboarding/update', {})
+        .then(resp => {
+          if ((resp.data.code === 200) && (resp.data.status === 'success')) {
+            this.loadingOnboarding = false
+            this.$bvModal.hide('modal-onboarding')
+          }
+        })
+        .catch(err => {
+          this.disabledOnboardingMulai = false
+        })
     },
     formatRibuan(x) {
       if (x) {
