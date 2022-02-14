@@ -1963,13 +1963,38 @@ export default {
           httpKomship.put(`/v1/product/update/${this.productId}`, params, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
-            // Update Image
-            const formData = new FormData()
-            formData.append('product_id', this.productId)
-            formData.append('image_path', this.imageFile)
-            httpKomship.post('/v1/product/update-upload-img-product', formData, {
-              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-            }).then(() => {
+            if (this.imageFile !== null) {
+              // Update Image
+              const formData = new FormData()
+              formData.append('product_id', this.productId)
+              formData.append('image_path', this.imageFile)
+              httpKomship.post('/v1/product/update-upload-img-product', formData, {
+                headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+              }).then(() => {
+                this.loadingSubmitDraft = false
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success update produk',
+                    variant: 'success',
+                  },
+                })
+                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'draft' } })
+              }).catch(() => {
+                this.loadingSubmitDraft = false
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal update gambar produk, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
+                })
+              })
+            } else {
               this.loadingSubmitDraft = false
               this.$toast({
                 component: ToastificationContent,
@@ -1980,19 +2005,8 @@ export default {
                   variant: 'success',
                 },
               })
-              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
-            }).catch(() => {
-              this.loadingSubmitDraft = false
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failed',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal update gambar produk, silahkan coba lagi!',
-                  variant: 'danger',
-                },
-              })
-            })
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'draft' } })
+            }
           }).catch(() => {
             this.loadingSubmitDraft = false
             this.$toast({

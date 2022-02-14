@@ -91,7 +91,7 @@
         </b-input-group>
       </b-col>
     </b-row>
-    <b-row class="mb-1">
+    <b-row class="mb-1 align-items-center">
       <b-col md="3">
         <label
           class="text-lg"
@@ -115,6 +115,11 @@
           </span>
         </v-select>
       </b-col>
+      <b-spinner
+        v-if="loadingSearch"
+        small
+        variant="primary"
+      />
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
@@ -564,6 +569,7 @@ export default {
   },
   data() {
     return {
+      loadingSearch: false,
       profile: null,
       addressId: null,
       arrayCart: [],
@@ -630,6 +636,7 @@ export default {
     this.orderDate = this.$route.query.date
     this.getProfile()
     this.getRekening()
+    this.getDestination()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -681,16 +688,21 @@ export default {
       return this.listCustomer
     },
     async getDestination(search) {
-      await this.$http_komship.get('v1/destination', {
-        params: { search },
-      })
-        .then(res => {
-          const { data } = res.data.data
-          this.listDestination = data
+      this.loadingSearch = true
+      setTimeout(() => {
+        this.$http_komship.get('v1/destination', {
+          params: { search },
         })
-        .catch(err => {
-          console.log(err)
-        })
+          .then(res => {
+            const { data } = res.data.data
+            this.listDestination = data
+            this.loadingSearch = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.loadingSearch = false
+          })
+      }, 2000)
     },
     async getRekening() {
       await this.$http_komship.get('v1/bank-account')

@@ -215,6 +215,215 @@
         src="@core/assets/image/prev-dash.png"
       />
     </b-col>
+
+    <!-- Mobile -->
+    <b-col
+      cols="12"
+      class="wrapper-register-mobile bg-white h-screen"
+    >
+      <b-navbar-brand class="mt-1">
+        <b-img
+          src="@core/assets/image/logo-komerce-no-tag.png"
+          width="150"
+        />
+      </b-navbar-brand>
+      <b-col
+        md="12"
+        class="pt-5"
+      >
+        <b-col class="">
+          <h3 class="mb-2 register-title">
+            Daftar
+          </h3>
+
+          <validation-observer
+            ref="loginForm"
+            #default="{invalid}"
+          >
+            <b-form
+              class=""
+              @submit.prevent="register"
+            >
+              <b-row>
+
+                <!-- full name -->
+                <b-col
+                  cols="12"
+                  class="mb-1"
+                >
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Nama Lengkap"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="fullname"
+                      v-model="fullname"
+                      class="bg-light"
+                      :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                      name="fullname"
+                      required
+                      @input="resetValidationUsername"
+                    />
+                    <label for="fullname">
+                      Nama Lengkap
+                    </label>
+                    <small class="text-primary"> {{ errors[0] }} </small>
+                    <small
+                      v-if="usernameTaken"
+                      class="text-primary"
+                    >
+                      {{ usernameTaken }}
+                    </small>
+                  </validation-provider>
+                </b-col>
+
+                <!-- email -->
+                <b-col
+                  cols="12"
+                  class="mb-1"
+                >
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Email"
+                    rules="required|email"
+                  >
+                    <b-form-input
+                      id="emailUser"
+                      v-model="userEmail"
+                      class="bg-light"
+                      :state="errors.length > 0 || submitErrors.email ? false:null"
+                      required
+                      @input="resetValidationEmail"
+                    />
+                    <label for="emailUser">
+                      Email
+                    </label>
+                    <small class="text-primary"> {{ errors[0] }} </small>
+                    <small
+                      v-if="emailTaken"
+                      class="text-primary"
+                    >
+                      {{ emailTaken }}
+                    </small>
+                  </validation-provider>
+                </b-col>
+
+                <!-- password -->
+                <b-col
+                  cols="12"
+                  class="mb-1"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="Password"
+                    vid="password"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="password"
+                      v-model="userPassword"
+                      class="bg-light"
+                      :type="passwordFieldTypePassword"
+                      :state="errors.length > 0 ? false:null"
+                      required
+                      @input="validPassword"
+                    />
+                    <label for="password">Password</label>
+                    <feather-icon
+                      :icon="passwordToggleIconPassword"
+                      class="icon-password"
+                      @click="togglePasswordVisibilityPassword"
+                    />
+                    <small
+                      class="text-primary"
+                    >{{ errors[0] }}
+                    </small>
+                    <small
+                      class="text-primary"
+                    >{{ errorCharPassword }}
+                    </small>
+                  </validation-provider>
+                </b-col>
+                <b-col
+                  cols="12"
+                  class="mb-1"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="Konfirmasi Password"
+                    vid="password"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="confirm-password"
+                      v-model="confirmPassword"
+                      :class="confirmPassword !== confirmPassword ? 'is-invalid' : 'bg-light'"
+                      :type="passwordFieldTypeConfirmPassword"
+                      :state="errors.length > 0 || submitErrors.password ? false:null"
+                      required
+                    />
+                    <label for="confirm-password">Confirm Password</label>
+                    <feather-icon
+                      :icon="passwordToggleIconConfirmPassword"
+                      class="icon-password"
+                      @click="togglePasswordVisibilityConfirmPassword(togglePasswordVisibility)"
+                    />
+                    <small class="text-primary">{{ errors[0] }}</small>
+                  </validation-provider>
+
+                  <b-form-group v-if="confirmPassword !== userPassword">
+                    <small class="text-primary">*Pastikan konfirmasi password sama dengan password sebelumnya</small>
+                  </b-form-group>
+                </b-col>
+
+                <!-- checkbox -->
+                <b-col cols="12">
+                  <b-form-group>
+                    <validation-provider
+                      #default="{errors}"
+                      rules="required"
+                    >
+                      <b-form-checkbox
+                        v-model="agree"
+                        :state="errors.length > 0 || submitErrors.agree ? false:null"
+                        required
+                      >
+                        Saya setuju dengan syarat dan ketentuan Komship
+                      </b-form-checkbox>
+                    </validation-provider>
+                  </b-form-group>
+                </b-col>
+
+                <!-- submit -->
+                <b-col
+                  cols="12"
+                  class="px-0"
+                >
+                  <b-col md="7">
+                    <div class="demo-inline-spacing">
+                      <b-button
+                        type="submit"
+                        variant="primary"
+                        block
+                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8"
+                      >
+                        <b-spinner
+                          v-if="loading"
+                          small
+                        />
+                        Daftar
+                      </b-button>
+                    </div>
+                  </b-col>
+                </b-col>
+              </b-row>
+            </b-form>
+          </validation-observer>
+
+        </b-col>
+      </b-col>
+    </b-col>
   </b-row>
 </template>
 <script>
@@ -291,11 +500,11 @@ export default {
   },
   methods: {
     register() {
+      this.loading = true
       this.usernameTaken = ''
       this.emailTaken = ''
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          this.loading = true
           this.error = ''
 
           httpKomship.post('/v1/register', {
@@ -316,17 +525,8 @@ export default {
             }
 
             if (data[0].content.message !== 'Failed to register new partner') {
-              this.$router.push({ name: 'auth-login' })
-
-              this.$swal({
-                title: 'Pendaftaran berhasil',
-                text: 'Harap periksa email anda untuk verifikasi akun Anda.',
-                icon: 'success',
-                confirmButtonText: 'Mengerti',
-                customClass: {
-                  confirmButton: 'btn btn-primary',
-                },
-              })
+              this.loading = false
+              this.$router.push({ name: 'komship-register-validate' })
             }
             this.loading = false
           }).catch(() => {
@@ -341,6 +541,8 @@ export default {
             })
             this.loading = false
           })
+        } else {
+          this.loading = false
         }
       })
     },
@@ -433,4 +635,19 @@ export default {
 [dir] .form-control:focus ~ .input-group-text{
   background-color: #FFFFFF!important;
 }
+
+  /* Responsive */
+  @media only screen and (max-width: 991px) {
+    [dir] .wrapper-preview-dashboard-kompship {
+      display: none !important;
+    }
+    [dir] .wrapper-kompship-register {
+      display: none !important;
+    }
+  }
+  @media only screen and (min-width: 992px) {
+    [dir] .wrapper-register-mobile {
+      display: none !important;
+    }
+  }
 </style>

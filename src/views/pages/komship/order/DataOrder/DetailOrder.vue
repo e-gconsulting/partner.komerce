@@ -167,6 +167,19 @@
           <template #cell(no)="data">
             {{ data.index + 1 }}
           </template>
+
+          <template #cell(product_name)="data">
+            <h5 class="text-black">
+              <strong>
+                {{ data.item.product_name }}
+              </strong>
+            </h5>
+            <h4 class="text-primary">
+              <strong>
+                {{ data.item.variant_name }}
+              </strong>
+            </h4>
+          </template>
           <template #cell(price)="data">
             Rp. {{ formatNumber(data.item.price) }}
           </template>
@@ -397,7 +410,7 @@ export default {
     postDate(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD MMMM YYYY hh:mm')
+        return moment(date).format('DD MMMM YYYY HH:MM')
       }
       return date
     },
