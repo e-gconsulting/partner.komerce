@@ -91,31 +91,26 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-input-group>
-              <b-form-input
-                id="input-pickup-time"
-                v-model="timeValueText"
-                type="text"
-                placeholder="09 : 00"
-              />
-              <b-input-group-append>
-                <b-form-timepicker
-                  ref="dt1"
-                  v-model="timeValue"
-                  button-only
-                  right
-                  aria-controls="example-input"
-                  locale="en"
-                  :hour12="false"
-                  button-variant="flat-dark"
-                  @context="onChangeTime"
-                >
-                  <template v-slot:button-content>
-                    <b-icon-chevron-expand aria-hidden="true" />
-                  </template>
-                </b-form-timepicker>
-              </b-input-group-append>
-            </b-input-group>
+            <b-form-timepicker
+              ref="dt1"
+              v-model="timeValue"
+              button-only
+              no-close-button
+              right
+              hide-header
+              locale="en"
+              :hour12="false"
+              button-variant="flat-dark"
+              @context="onChangeTime"
+            >
+              <template v-slot:button-content>
+                <b-form-input
+                  id="input-pickup-time"
+                  v-model="timeValueText"
+                  type="text"
+                />
+              </template>
+            </b-form-timepicker>
           </b-form-group>
         </b-col>
         <b-col
@@ -508,10 +503,10 @@ export default {
     BForm,
     BButton,
     BFormDatepicker,
-    BInputGroup,
-    BInputGroupAppend,
+    // BInputGroup,
+    // BInputGroupAppend,
     BFormTimepicker,
-    BIconChevronExpand,
+    // BIconChevronExpand,
     BModal,
     BFormRadio,
     dataOrder,

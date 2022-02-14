@@ -8,6 +8,7 @@ export default [
     meta: {
       name: pageName.singular,
       routePin: 'kompship-pin',
+      routeToProfile: 'kompship-profile',
       resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
