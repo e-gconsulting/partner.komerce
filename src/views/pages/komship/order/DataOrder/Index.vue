@@ -10,6 +10,7 @@
           variant="primary"
           size="sm"
           class="mr-1"
+          to="ajukan-pickup"
         >
           Ajukan Pickup
         </b-button>
