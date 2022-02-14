@@ -181,10 +181,10 @@
             </h4>
           </template>
           <template #cell(price)="data">
-            Rp. {{ formatNumber(data.item.price) }}
+            Rp {{ formatNumber(data.item.price) }}
           </template>
           <template #cell(subtotal)="data">
-            Rp. {{ formatNumber(data.item.price * data.item.qty) }}
+            Rp {{ formatNumber(data.item.price * data.item.qty) }}
           </template>
         </b-table>
         <hr>
@@ -199,7 +199,7 @@
             lg="3"
             class="text-right"
           >
-            Rp. {{ formatNumber(orderData.subtotal) }}
+            Rp {{ formatNumber(orderData.subtotal) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -213,7 +213,7 @@
             lg="3"
             class="text-right"
           >
-            Rp. {{ formatNumber(orderData.shipping_cost) }}
+            Rp {{ formatNumber(orderData.shipping_cost) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -227,7 +227,7 @@
             lg="3"
             class="text-right"
           >
-            - Rp. {{ formatNumber(orderData.discount) }}
+            - Rp {{ formatNumber(orderData.discount) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -251,7 +251,7 @@
             lg="3"
             class="text-right font-bold text-primary text-xl"
           >
-            Rp. {{ formatNumber(orderData.grandtotal) }}
+            Rp {{ formatNumber(orderData.grandtotal) }}
           </b-col>
         </b-row>
         <b-row class="mt-1">
@@ -289,8 +289,8 @@
               lg="3"
               class="text-right"
             >
-              <span v-if="orderData.order_status !== 'Retur'">Rp. {{ formatNumber(orderData.service_fee) }}</span>
-              <span v-else>Rp. {{ formatNumber(0) }}</span>
+              <span v-if="orderData.order_status !== 'Retur'">Rp {{ formatNumber(orderData.service_fee) }}</span>
+              <span v-else>Rp {{ formatNumber(0) }}</span>
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -304,7 +304,7 @@
               lg="3"
               class="text-right"
             >
-              Rp. {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
+              Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
           <b-row
@@ -321,7 +321,7 @@
               lg="3"
               class="text-right"
             >
-              Rp. {{ formatNumber(orderData.shipping_retur) }}
+              Rp {{ formatNumber(orderData.shipping_retur) }}
             </b-col>
           </b-row>
           <b-row
@@ -339,7 +339,7 @@
               lg="3"
               class="text-right text-primary font-bold"
             >
-              Rp. {{ formatNumber(orderData.net_profit) }}
+              Rp {{ formatNumber(orderData.net_profit) }}
             </b-col>
           </b-row>
           <b-row
@@ -354,7 +354,7 @@
               lg="3"
               class="text-right text-primary"
             >
-              - Rp. {{ formatNumber(orderData.shipping_cost + orderData.shipping_retur - orderData.shipping_cashback) }}
+              - Rp {{ formatNumber(orderData.shipping_cost + orderData.shipping_retur - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
         </b-collapse>

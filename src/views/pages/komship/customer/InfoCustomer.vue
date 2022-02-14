@@ -64,7 +64,7 @@
                       <b-form-input
                         v-model="spentFrom"
                         class=""
-                        placeholder="Rp.10.000.000"
+                        placeholder="Rp 10.000.000"
                       />
                       <b-button
                         class="btn-icon"
@@ -78,7 +78,7 @@
                       <b-form-input
                         v-model="spentTo"
                         class="mr-1"
-                        placeholder="Rp.10.000.000"
+                        placeholder="Rp 10.000.000"
                       />
                     </div>
                   </b-form-group>

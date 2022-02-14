@@ -891,16 +891,16 @@
                                     v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
                                     :key="indexVariantPrice+1"
                                   >
-                                    Rp. {{ formatPrice(itemsVariant.variant3.price) }}
+                                    Rp {{ formatPrice(itemsVariant.variant3.price) }}
                                   </div>
                                 </div>
                                 <div v-else>
-                                  Rp. {{ formatPrice(item.variant2.price) }}
+                                  Rp {{ formatPrice(item.variant2.price) }}
                                 </div>
                               </b-col>
                             </div>
                             <div v-else>
-                              Rp. {{ formatPrice(data.item.variant1.price) }}
+                              Rp {{ formatPrice(data.item.variant1.price) }}
                             </div>
                           </div>
                         </template>

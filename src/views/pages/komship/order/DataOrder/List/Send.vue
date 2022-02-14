@@ -199,7 +199,7 @@
           </div>
         </template>
         <template #cell(grand_total)="data">
-          Rp. {{ formatNumber(data.item.grand_total) }}<br>
+          Rp {{ formatNumber(data.item.grand_total) }}<br>
           <span
             v-if="data.item.payment_method === 'COD'"
             class="text-primary"
