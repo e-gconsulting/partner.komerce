@@ -211,48 +211,132 @@
         </v-select>
       </b-col>
     </b-row>
-    <b-row class="mb-1">
-      <b-col md="3">
-        <label
-          class="text-lg"
-          style="color:#828282;"
-        >Gunakan Potongan Saldo</label>
-      </b-col>
-      <b-col
-        md="4"
-        class="font-bold"
-      >
-        <b-form-checkbox
-          v-model="potonganSaldo"
-          :value="true"
-          :unchecked-value="false"
-          @input="calculate"
-        />
-      </b-col>
-    </b-row>
-    <b-collapse
-      v-model="potonganSaldo"
-      class="mt-2"
+    <div
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
-      <b-row class="mb-1">
+      <b-row
+        class="mb-1"
+      >
         <b-col md="3">
           <label
             class="text-lg"
             style="color:#828282;"
-          >Nominal Potongan</label>
+          >Gunakan Potongan Saldo</label><br>
+          <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
         </b-col>
         <b-col
           md="4"
           class="font-bold"
         >
-          <b-form-input
-            v-model="discount"
-            type="number"
+          <b-form-checkbox
+            v-model="potonganSaldo"
+            :value="true"
+            :unchecked-value="false"
             @input="calculate"
           />
         </b-col>
       </b-row>
-    </b-collapse>
+      <b-collapse
+        v-model="potonganSaldo"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Nominal Potongan</label>
+          </b-col>
+          <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-input
+              v-model="discount"
+              type="number"
+              @input="calculate"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
+    <div
+      v-if="isCalculate && paymentMethod === 'COD'"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row
+        class="mb-1"
+      >
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Biaya Tambahan Lain</label><br>
+          <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
+        </b-col>
+        <b-col
+          md="4"
+          class="font-bold"
+        >
+          <b-form-checkbox
+            v-model="biayaLain"
+            :value="true"
+            :unchecked-value="false"
+            @change="calculate"
+          />
+        </b-col>
+      </b-row>
+      <b-collapse
+        v-model="biayaLain"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Jenis Biaya Lain</label>
+          </b-col>
+          <b-col md="8">
+            <div class="d-flex">
+              <b-form-radio
+                v-model="jenisBiayaLain"
+                value="Bebankan biaya COD ke customer"
+                @change="calculate"
+              >
+                Bebankan biaya COD ke customer
+              </b-form-radio>
+              <b-form-input
+                v-if="jenisBiayaLain === 'Bebankan biaya COD ke customer'"
+                v-model="bebankanCustomer"
+                type="number"
+                class="ml-1"
+                style="width:80px;height:20px;"
+                disabled
+              />
+            </div>
+            <b-form-radio
+              v-model="jenisBiayaLain"
+              class="mt-1"
+              value="Sesuai Nominal"
+              @change="calculate"
+            >
+              Sesuai Nominal
+            </b-form-radio>
+            <b-form-input
+              v-if="jenisBiayaLain === 'Sesuai Nominal'"
+              v-model="sesuaikanNominal"
+              type="number"
+              class="mt-1"
+              style="width:250px;"
+              @input="calculate"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
     <hr>
     <h3 class="font-bold mt-3 mb-1">
       Data Pembelian
@@ -348,6 +432,22 @@
           Rp. {{ formatNumber(discount) }}
         </b-col>
       </b-row>
+      <b-row
+        v-if="biayaLain"
+        class="mb-1 text-lg"
+      >
+        <b-col lg="5" />
+        <b-col lg="5">
+          Biaya Lain
+        </b-col>
+        <b-col
+          lg="2"
+          class="d-flex justify-end"
+        >
+          <span v-if="jenisBiayaLain === 'Sesuai Nominal'">Rp. {{ formatNumber(sesuaikanNominal) }}</span>
+          <span v-else>Rp. {{ formatNumber(bebankanCustomer) }}</span>
+        </b-col>
+      </b-row>
       <b-row>
         <b-col lg="5" />
         <b-col lg="7">
@@ -402,7 +502,7 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(Math.round(serviceFee)) }}
+            - Rp. {{ formatNumber(serviceFee) }}
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -454,7 +554,7 @@
 </template>
 <script>
 import {
-  BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, BFormSelect, BFormTextarea, BCollapse, BTable, VBToggle, BSpinner,
+  BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, BFormSelect, BFormTextarea, BCollapse, BTable, VBToggle, BFormRadio,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import '@core/scss/vue/libs/vue-select.scss'
@@ -462,7 +562,7 @@ import moment from 'moment'
 
 export default {
   components: {
-    BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, vSelect, BFormSelect, BFormTextarea, BCollapse, BTable, BSpinner,
+    BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, vSelect, BFormSelect, BFormTextarea, BCollapse, BTable, BFormRadio,
   },
   directives: {
     'b-toggle': VBToggle,
@@ -503,6 +603,11 @@ export default {
       cashbackPercentage: null,
       potonganSaldo: false,
       discount: 0,
+      biayaLain: false,
+      jenisBiayaLain: 'Bebankan biaya COD ke customer',
+      sesuaikanNominal: 0,
+      bebankanCustomer: 0,
+      additionalCost: 0,
       subTotal: null,
       netProfit: null,
       grandTotal: null,
@@ -647,6 +752,8 @@ export default {
               shipping_type: items.shipping_type,
               label: this.nameTypeShipping(items.shipping_type),
             }))
+            this.sesuaikanNominal = Math.round(data[0].service_fee)
+            this.bebankanCustomer = Math.round(data[0].service_fee)
           })
           .catch(() => {
             this.$swal({
@@ -668,12 +775,18 @@ export default {
       if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
+      if (this.biayaLain && this.jenisBiayaLain === 'Sesuai Nominal') {
+        this.additionalCost = this.sesuaikanNominal - this.serviceFee
+      } else {
+        this.additionalCost = 0
+      }
       if (this.typeShipping !== null) {
         await this.$http_komship.get('v1/calculate', {
           params: {
             partner_id: this.profile.partner_id,
             tariff_code: this.destination.value,
             payment_method: this.paymentMethod,
+            additional_cost: this.additionalCost,
             shipping: this.shipping,
             discount: this.discount,
             partner_address_id: this.addressId,
@@ -686,7 +799,7 @@ export default {
             this.subTotal = result.subtotal
             this.shippingCost = result.shipping_cost
             this.netProfit = result.net_profit
-            this.serviceFee = result.service_fee
+            this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
@@ -751,6 +864,7 @@ export default {
         shipping_cost: this.shippingCost,
         service_fee: this.serviceFee,
         discount: this.discount,
+        additional_cost: this.additionalCost,
         shipping_cashback: this.cashback,
         net_profit: this.netProfit,
         cart: this.cartId,
