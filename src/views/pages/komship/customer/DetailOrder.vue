@@ -206,11 +206,11 @@
             </template>
 
             <template #cell(product_price)="data">
-              Rp. {{ data.value }}
+              Rp {{ data.value }}
             </template>
 
             <template #cell(product)="data">
-              Rp. {{ data.item.product_price * data.item.qty }}
+              Rp {{ data.item.product_price * data.item.qty }}
             </template>
 
           </b-table>
@@ -246,17 +246,17 @@
                   <b-list-group>
                     <b-list-group-item class="border-0">
                       <h5>
-                        <strong>Rp. {{ totalPriceProduct }}</strong>
+                        <strong>Rp {{ totalPriceProduct }}</strong>
                       </h5>
                     </b-list-group-item>
                     <b-list-group-item class="border-0">
                       <h5>
-                        <strong>Rp. {{ serviceFee }}</strong>
+                        <strong>Rp {{ serviceFee }}</strong>
                       </h5>
                     </b-list-group-item>
                     <b-list-group-item class="border-0">
                       <h5>
-                        <strong>Rp. {{ cashback }}</strong>
+                        <strong>Rp {{ cashback }}</strong>
                       </h5>
                     </b-list-group-item>
                   </b-list-group>
@@ -304,28 +304,28 @@
                     <b-list-group-item class="border-0">
                       <h4 class="text-danger">
                         <strong>
-                          Rp. {{ penghasilanBersih }}
+                          Rp {{ penghasilanBersih }}
                         </strong>
                       </h4>
                     </b-list-group-item>
                     <b-list-group-item class="border-0">
                       <h5>
                         <strong>
-                          Rp.  {{ shippingCost }}
+                          Rp  {{ shippingCost }}
                         </strong>
                       </h5>
                     </b-list-group-item>
                     <b-list-group-item class="border-0">
                       <h5>
                         <strong>
-                          Rp. {{ shippingCashback }}
+                          Rp {{ shippingCashback }}
                         </strong>
                       </h5>
                     </b-list-group-item>
                     <b-list-group-item class="border-0">
                       <h5 class="text-danger">
                         <strong>
-                          Rp. {{ penghasilanBersih }}
+                          Rp {{ penghasilanBersih }}
                         </strong>
                       </h5>
                     </b-list-group-item>

@@ -250,7 +250,7 @@
                       :key="indexVariant+1"
                     >
                       <p class="ml-2">
-                        Rp. {{ formatPrice(itemsVariant.price) }}
+                        Rp {{ formatPrice(itemsVariant.price) }}
                       </p>
                     </div>
                   </b-col>
@@ -260,7 +260,7 @@
                     class=""
                   >
                     <p class="ml-2">
-                      Rp. {{ formatPrice(itemsData.price) }}
+                      Rp {{ formatPrice(itemsData.price) }}
                     </p>
                   </b-col>
                   <b-col
@@ -366,7 +366,7 @@
                           :key="indexVariant+1"
                         >
                           <p class="ml-2">
-                            Rp. {{ formatPrice(itemsVariant.price) }}
+                            Rp {{ formatPrice(itemsVariant.price) }}
                           </p>
                         </div>
                       </b-col>
@@ -521,7 +521,7 @@
                   :key="indexVariant+1"
                   class="mb-50"
                 >
-                  Rp. {{ formatPrice(itemsVariant.price) }}
+                  Rp {{ formatPrice(itemsVariant.price) }}
                 </div>
                 <b-collapse
                   :id="`collapse-${String(data.index)}`"
@@ -532,12 +532,12 @@
                     :key="indexVariant+1"
                     class="mb-50"
                   >
-                    Rp. {{ formatPrice(itemsVariant.price) }}
+                    Rp {{ formatPrice(itemsVariant.price) }}
                   </div>
                 </b-collapse>
               </div>
               <div v-else>
-                Rp. {{ formatPrice(data.item.price) }}
+                Rp {{ formatPrice(data.item.price) }}
               </div>
             </template>
 

@@ -174,17 +174,17 @@
                     class="
                     text-primary"
                   >
-                    -Rp.{{ formatNumber(data.item.amount) }}
+                    -Rp {{ formatNumber(data.item.amount) }}
                   </span>
                   <span
                     v-else
                     class="text-success"
                   >
-                    +Rp.{{ formatNumber(data.item.amount) }}
+                    +Rp {{ formatNumber(data.item.amount) }}
                   </span>
                 </template>
                 <template #cell(saldo)="data">
-                  Rp. {{ formatNumber(data.item.saldo) }}
+                  Rp {{ formatNumber(data.item.saldo) }}
                 </template>
                 <template #cell(action)="data">
                   <p
