@@ -257,7 +257,7 @@
           >
             <h4>
               <strong>
-                Rp. {{ formatPrice(itemsVariation.price) }}
+                Rp {{ formatPrice(itemsVariation.price) }}
               </strong>
             </h4>
           </div>
@@ -267,7 +267,7 @@
         >
           <h4>
             <strong>
-              Rp. {{ formatPrice(data.item.price) }}
+              Rp {{ formatPrice(data.item.price) }}
             </strong>
           </h4>
         </div>
@@ -288,7 +288,7 @@
         >
           <h4>
             <strong>
-              Rp. {{ formatPrice(data.item.price * data.item.stockToDisplayNoVariant) }}
+              Rp {{ formatPrice(data.item.price * data.item.stockToDisplayNoVariant) }}
             </strong>
           </h4>
         </div>
@@ -302,7 +302,7 @@
           >
             <h4>
               <strong>
-                Rp. {{ formatPrice(itemsVariation.price * itemsVariation.stockToDisplay) }}
+                Rp {{ formatPrice(itemsVariation.price * itemsVariation.stockToDisplay) }}
               </strong>
             </h4>
           </div>

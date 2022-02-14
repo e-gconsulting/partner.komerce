@@ -378,13 +378,13 @@
       </template>
       <template #cell(product_price)="data">
         <span>
-          Rp. {{ formatNumber(data.item.product_price) }}
+          Rp {{ formatNumber(data.item.product_price) }}
         </span>
       </template>
 
       <template #cell(subtotal)="data">
         <span>
-          Rp. {{ formatNumber(data.item.subtotal) }}
+          Rp {{ formatNumber(data.item.subtotal) }}
         </span>
       </template>
     </b-table>
@@ -402,7 +402,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ formatNumber(subTotal) }}
+          Rp {{ formatNumber(subTotal) }}
         </b-col>
       </b-row>
       <b-row class="mb-1 text-lg">
@@ -414,7 +414,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ formatNumber(shippingCost) }}
+          Rp {{ formatNumber(shippingCost) }}
         </b-col>
       </b-row>
       <b-row
@@ -429,7 +429,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ formatNumber(discount) }}
+          Rp {{ formatNumber(discount) }}
         </b-col>
       </b-row>
       <b-row
@@ -444,8 +444,8 @@
           lg="2"
           class="d-flex justify-end"
         >
-          <span v-if="jenisBiayaLain === 'Sesuai Nominal'">Rp. {{ formatNumber(sesuaikanNominal) }}</span>
-          <span v-else>Rp. {{ formatNumber(bebankanCustomer) }}</span>
+          <span v-if="jenisBiayaLain === 'Sesuai Nominal'">Rp {{ formatNumber(sesuaikanNominal) }}</span>
+          <span v-else>Rp {{ formatNumber(bebankanCustomer) }}</span>
         </b-col>
       </b-row>
       <b-row>
@@ -463,7 +463,7 @@
           lg="2"
           class="text-primary d-flex justify-end"
         >
-          Rp. {{ formatNumber(grandTotal) }}
+          Rp {{ formatNumber(grandTotal) }}
         </b-col>
       </b-row>
       <b-row>
@@ -508,7 +508,7 @@
               small
               variant="primary"
             />
-            <span v-else>- Rp. {{ formatNumber(serviceFee) }}</span>
+            <span v-else>- Rp {{ formatNumber(serviceFee) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -526,7 +526,7 @@
               small
               variant="primary"
             />
-            <span v-else>- Rp. {{ formatNumber(shippingCost - cashback) }}</span>
+            <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -538,7 +538,7 @@
             lg="2"
             class="d-flex justify-end text-success"
           >
-            Rp. {{ formatNumber(netProfit) }}
+            Rp {{ formatNumber(netProfit) }}
           </b-col>
         </b-row>
       </b-collapse>
@@ -550,7 +550,7 @@
         lg="6"
         class="font-bold text-2xl"
       >
-        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp. {{ formatNumber(grandTotal) }}</span></span>
+        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp {{ formatNumber(grandTotal) }}</span></span>
       </b-col>
       <b-col lg="3">
         <b-button
