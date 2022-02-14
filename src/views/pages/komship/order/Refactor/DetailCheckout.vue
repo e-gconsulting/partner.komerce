@@ -502,7 +502,13 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(serviceFee) }}
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span v-else>- Rp. {{ formatNumber(serviceFee) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -514,7 +520,13 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(shippingCost - cashback) }}
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span v-else>- Rp. {{ formatNumber(shippingCost - cashback) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -570,6 +582,7 @@ export default {
   data() {
     return {
       loadingSearch: false,
+      loadingCalculate: false,
       profile: null,
       addressId: null,
       arrayCart: [],
@@ -781,6 +794,7 @@ export default {
         this.additionalCost = 0
       }
       if (this.typeShipping !== null) {
+        this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
           params: {
             partner_id: this.profile.partner_id,
@@ -805,6 +819,7 @@ export default {
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
             this.isCalculate = true
+            this.loadingCalculate = false
           })
           .catch(err => {
             console.log(err)
