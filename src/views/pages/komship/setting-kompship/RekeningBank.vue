@@ -576,6 +576,39 @@
       </b-col>
 
     </b-modal>
+
+    <!-- Modal Validate Profile -->
+    <!-- Modal Success Pickup -->
+    <b-modal
+      ref="modal-validate-profile"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <b-row class="justify-content-center pt-2 mb-2">
+          <img src="@/assets/images/icons/warning.svg">
+        </b-row>
+        <b-row class="text-center mb-2 px-5">
+          <h4 class="text-black">
+            <strong>
+              Untuk melanjutkan, silahkan lengkapi Profil
+              Anda terlebih dahulu
+            </strong>
+          </h4>
+        </b-row>
+        <b-row class="justify-content-center pb-2">
+          <b-button
+            variant="primary"
+            class="btn-icon"
+            tag="router-link"
+            :to="{ name: $route.meta.routeToProfile }"
+          >
+            Lengkapi Profile
+          </b-button>
+        </b-row>
+      </div>
+    </b-modal>
   </b-overlay>
 </template>
 
@@ -673,6 +706,8 @@ export default {
       countCanResendOtp: 0,
 
       visibilityPin: 'password',
+
+      validateProfile: [],
     }
   },
   mounted() {
@@ -953,9 +988,18 @@ export default {
         })
     },
     addRekening() {
-      this.fieldActionAddRekening = true
-      if (this.editMode === true) {
-        this.editMode = false
+      console.log('validate profile', this.validateProfile)
+      if (this.validateProfile.user_name === '' || this.validateProfile.fullname === '' || this.validateProfile.user_gender === ''
+      || this.validateProfile.user_email === '' || this.validateProfile.user_phone === '' || this.validateProfile.user_address === ''
+      || this.validateProfile.address_partner_business === '' || this.validateProfile.partner_business_name === ''
+      || this.validateProfile.partner_category_name === '' || this.validateProfile.partner_business_type_id === ''
+      || this.validateProfile.partner_business_logo === '') {
+        this.$refs['modal-validate-profile'].show()
+      } else {
+        this.fieldActionAddRekening = true
+        if (this.editMode === true) {
+          this.editMode = false
+        }
       }
     },
     cancelAddRekening() {
@@ -993,6 +1037,7 @@ export default {
         // this.phoneUser = data.user_phone.replace(`${data.user_phone.substr(3, 7)}`, '****')
         this.phoneUser = data.user_phone
         this.phoneNumber = data.user_phone
+        this.validateProfile = data
         console.log(data)
       }).catch(() => {
         this.$toast({

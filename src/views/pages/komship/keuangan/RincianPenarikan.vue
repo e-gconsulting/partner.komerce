@@ -370,9 +370,11 @@ export default {
       })
         .then(res => {
           const { data } = res.data
+          console.log('data', data)
           this.totalItems = data.total
           this.loadTable = false
           this.list = data.data
+          console.log('list table', this.list)
         })
         .catch(error => {
           this.loadTable = false

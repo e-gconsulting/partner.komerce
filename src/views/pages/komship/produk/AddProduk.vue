@@ -1083,7 +1083,7 @@
                 <label for="weight-product">
                   <h4 class="text-black">
                     <strong>
-                      Pengirim
+                      Pengiriman
                     </strong>
                   </h4>
                 </label>
