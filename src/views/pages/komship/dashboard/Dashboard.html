@@ -1,0 +1,1031 @@
+<div>
+  <div
+    v-if="!loadingOnboarding"
+    class="container p-0">
+    <h1 class="mb-2 h-text-xl">
+      Dashboard
+    </h1>
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <div class="card-header mb-8 pb-0">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Saldo
+              </div>
+              <popover-info text="Saldo kamu saat ini." />
+            </div>
+          </div>
+          <div class="card-body h-text-xl pb-0 mb-0">
+            {{ formatRupiah(saldo) }}
+          </div>
+          <div
+            class="
+              card-footer
+              d-flex
+              justify-content-around
+              bg-orange
+              text-white
+              rounded-16
+              py-9
+            "
+          >
+            <a
+              class="
+                d-flex
+                flex-column
+                justify-content-center
+                align-items-center
+              "
+              @click="showTopUpModal()"
+            >
+              <img
+                src="@/assets/images/icons/send-square.svg"
+                alt="Top Up"
+              >
+              <p class="saldo-texts mb-0">
+                Top Up
+              </p>
+            </a>
+            <a
+              class="
+                d-flex
+                flex-column
+                justify-content-center
+                align-items-center
+              "
+              @click="showModal()"
+            >
+              <img
+                src="@/assets/images/icons/receive-square.svg"
+                alt="Tarik Saldo"
+              >
+              <p class="h-text-xs mb-0">Tarik Saldo</p>
+            </a>
+            <a
+              href="/keuangan/saldo/detail"
+              class="
+                d-flex
+                text-reset
+                flex-column
+                justify-content-center
+                align-items-center
+              "
+            >
+              <img
+                src="@/assets/images/icons/document-text.svg"
+                alt="Detail"
+              >
+              <p class="h-text-xs mb-0">Detail</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <div class="card-header mb-8 pb-0">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Saldo Pending
+              </div>
+              <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima." />
+            </div>
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
+              tag="router-link"
+              :to="{ name: $route.meta.routeToOrder, query: { tab: 'dikirim' } }"
+            >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
+          </div>
+          <div class="card-body h-text-xl pb-0 mb-0">
+            {{ formatRupiah(saldoPending) }}
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card h-100">
+          <div class="card-header mb-8 pb-0">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Cashback
+              </div>
+            </div>
+          </div>
+          <div class="card-body pb-0 mb-0">
+            <div class="h-text-xl pb-0 mb-0">
+              {{ formatRupiah(cashback) }}
+            </div>
+            <p class="mb-0">
+              Total cashback yang kamu dapatkan semenjak menggunakan Komship
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-6 mt-2">
+        <div class="card h-100">
+          <div class="card-header flex-nowrap">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Penghasilan
+              </div>
+              <popover-info text="Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir." />
+            </div>
+            <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
+              <v-select
+                v-model="selectedPenghasilan"
+                label="Square"
+                dir="ltr"
+                :options="optionsPenghasilan"
+                :clearable="false"
+              />
+            </b-form-group>
+          </div>
+          <div class="position-relative card-body">
+            <v-select
+              v-model="selectedChart"
+              label="Square"
+              dir="ltr"
+              class="select-chart position-absolute"
+              :options="optionsChart"
+              :clearable="false"
+              @input="handleChangeChart"
+            />
+            <ChartPenghasilan
+              :datasets="partnerIncomeGraph.datasets"
+              :labels="partnerIncomeGraph.labels"
+              class="mt-1"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 mt-2">
+        <div class="card">
+          <div class="row gap-1 my-24 mx-16">
+            <div class="col-6">
+              <div
+                class="
+                  border-gray
+                  d-flex
+                  flex-column
+                  justify-content-between
+                  rounded-16
+                  p-12
+                  h-100
+                "
+              >
+                <p class="mb-0 order-head-text">
+                  Orderan Perlu Dikirim
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <p class="mb-0 order-body-text">
+                    {{ formatRibuan(orderanPerluDikirim) }}
+                  </p>
+                  <b-button
+                    class="btn-icon"
+                    variant="flat-dark"
+                    size="sm"
+                    tag="router-link"
+                    :to="{ name: $route.meta.routeToOrder, query: { tab: 'perlu-dikirim' } }"
+                  >
+                    <img
+                      src="@/assets/images/icons/arrow-right-2.svg"
+                      alt="Arrow Right"
+                    >
+                  </b-button>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div
+                class="
+                  border-gray
+                  d-flex
+                  flex-column
+                  justify-content-between
+                  rounded-16
+                  p-12
+                  h-100
+                "
+              >
+                <p class="mb-0 order-head-text">
+                  Orderan Retur
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <p class="mb-0 order-body-text">
+                    {{ formatRibuan(orderanRetur) }}
+                  </p>
+                  <b-button
+                    variant="flat-dark"
+                    class="btn-icon"
+                    size="sm"
+                    tag="router-link"
+                    :to="{ name: $route.meta.routeToOrder, query: { tab: 'retur' } }"
+                  >
+                    <img
+                      src="@/assets/images/icons/arrow-right-2.svg"
+                      alt="Arrow Right"
+                    >
+                  </b-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card h-70 mb-0">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Top Admin Order
+              </div>
+              <popover-info text="Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan" />
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li
+                v-for="topAdminOrder in topAdminOrders"
+                :key="topAdminOrders.indexOf(topAdminOrder)"
+                class="list-group-item px-0"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <b-avatar
+                      :src="topAdminOrder.photo"
+                    />
+                    <p class="list-text-1 h-text-dark ml-2 mb-0">
+                      {{ topAdminOrder.name }}
+                    </p>
+                  </div>
+                  <div class="right">
+                    <p class="list-text-2 text-green mb-0">
+                      {{ formatRupiah(topAdminOrder.totalDana) }}
+                    </p>
+                    <p class="list-text-3 mb-0">
+                      {{ topAdminOrder.totalProduk }}pcs
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 col-md-6 mt-2">
+        <div class="card h-100 mb-0">
+          <div class="card-header pb-0">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Produk Terlaris
+              </div>
+              <popover-info text="Produk Terlaris merupakan produk kamu yang paling banyak di order." />
+            </div>
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
+              tag="router-link"
+              :to="{ name: $route.meta.routeToDataProduct}"
+            >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
+          </div>
+          <div class="card-body">
+            <div class="w-25">
+              <b-form-group class="mb-0">
+                <v-select
+                  id="select_produk_terlaris"
+                  v-model="selectedProdukTerlaris"
+                  label="Bulan Ini"
+                  dir="ltr"
+                  :options="optionsProdukTerlaris"
+                  :clearable="false"
+                  @input="handleChangeProdukTerlaris"
+                />
+              </b-form-group>
+            </div>
+            <ul class="list-group list-group-flush">
+              <template v-if="produkTerlarises.length > 0">
+                <li
+                  v-for="produkTerlaris in produkTerlarises"
+                  :key="produkTerlarises.indexOf(produkTerlaris)"
+                  class="list-group-item px-0"
+                >
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                      <img
+                        width="35"
+                        class="img-fluid"
+                        :src="produkTerlaris.photo"
+                        alt="Photo"
+                      >
+                      <div>
+                        <p class="list-text-1 h-text-dark ml-2 mb-0">
+                          {{ produkTerlaris.name }}
+                        </p>
+                        <p class="saldo-texts ml-2 mb-0">
+                          SKU: {{ produkTerlaris.kodeBrg }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="right">
+                      <p class="list-text-2 h-text-dark mb-0">
+                        {{ produkTerlaris.penjualan }}
+                      </p>
+                      <div
+                        :class="
+                          `badge h-badge-${
+                            produkTerlaris.persentase >= 0 ? 'success' : 'danger'
+                          } rounded-pill font-weight-normal`
+                        "
+                      >
+                        {{ produkTerlaris.persentase >= 0 ? '+' : ''
+                        }}{{ produkTerlaris.persentase }}%
+                      </div>
+                      <img
+                        v-if="produkTerlaris.persentase >= 0"
+                        src="@/assets/images/icons/arrow-going-up-alt.svg"
+                        alt="arrow-going-up-alt"
+                      >
+                      <img
+                        v-else
+                        src="@/assets/images/icons/arrow-going-down-alt.svg"
+                        alt="arrow-going-down-alt"
+                      >
+                    </div>
+                  </div>
+                </li>
+              </template>
+              <template v-else>
+                <div class="text-center py-4">
+                  Tidak Ada Data
+                </div>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-6 mt-2">
+        <div class="card h-100 mb-0">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Customer Loyal
+              </div>
+              <popover-info text="Customer Loyal merupakan customer yang sering melakukan order." />
+            </div>
+            <b-button
+              variant="flat-dark"
+              class="btn-icon"
+              size="sm"
+              tag="router-link"
+              :to="{ name: $route.meta.routeToTopCustomer}"
+            >
+              <img
+                src="@/assets/images/icons/arrow-square-right.svg"
+                alt="Arrow Right"
+              >
+            </b-button>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li
+                v-for="customerLoyal in customerLoyals"
+                :key="customerLoyals.indexOf(customerLoyal)"
+                class="list-group-item px-0"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <p class="list-text-1 h-text-dark mb-0">
+                      {{ customerLoyal.name }}
+                    </p>
+                    <p class="saldo-texts mb-0">
+                      {{ customerLoyal.location }}
+                    </p>
+                  </div>
+                  <div class="right">
+                    <p class="list-text-2 h-text-dark mb-0">
+                      {{ customerLoyal.totalProduk }}
+                    </p>
+                    <p class="list-text-3 mb-0">
+                      {{ formatRupiah(customerLoyal.totalDana) }},-
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <div :class="'row' + (blurred ? ' position-relative' : '')">
+      <div :class="'col-12 col-md-7 mt-2 pt-1' + (blurred ? ' blurry' : '')">
+        <div class="card h-100 mb-0">
+          <div class="card-header flex-nowrap">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Performa Customer Service
+              </div>
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
+            </div>
+            <date-range-picker
+              ref="picker"
+              v-model="dateRange"
+              :locale-data="locale"
+              :ranges="ranges"
+              class="w-25"
+            >
+              <template
+                v-slot:input="pickers"
+                style="min-width: 350px;"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <span>{{ getRange(pickers.startDate, pickers.endDate) }}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-chevron-down"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
+                    />
+                  </svg>
+                </div>
+              </template>
+            </date-range-picker>
+          </div>
+          <div class="card-body">
+            <ChartPerforma
+              :series-prop="series"
+              :categories-prop="categories"
+            />
+          </div>
+        </div>
+      </div>
+      <div :class="'col-12 col-md-5 mt-2 pt-1' + (blurred ? ' blurry' : '')">
+        <div class="card h-100 mb-0">
+          <div class="card-header">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Top Customer Service
+              </div>
+              <img
+                src="@/assets/images/icons/info-circle.svg"
+                alt="Info"
+              >
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li
+                v-for="topCustomerService in topCustomerServices"
+                :key="topCustomerServices.indexOf(topCustomerService)"
+                class="list-group-item px-0"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center">
+                    <img
+                      src="@/assets/images/icons/profile-placehold.svg"
+                      alt="Photo"
+                    >
+                    <p class="list-text-1 h-text-dark ml-2 mb-0">
+                      {{ topCustomerService.name }}
+                    </p>
+                  </div>
+                  <div class="right">
+                    <p class="list-text-2 text-green mb-0">
+                      {{ formatRupiah(topCustomerService.totalDana) }}
+                    </p>
+                    <p class="list-text-3 mb-0">
+                      {{ topCustomerService.totalProduk }}pcs
+                    </p>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div
+        v-if="blurred"
+        class="position-absolute pos-center text-center"
+      >
+        <p class="h3 font-weight-bolder mb-2">
+          Yuk, Hiring Talent Komerce agar kamu<br>dapat menggunakan fitur ini!
+        </p>
+        <button class="btn btn-outline-primary">Tutup</button>
+      </div>
+    </div> -->
+    <b-modal
+      id="modalTopUp"
+      centered
+      hide-header
+    >
+      <a
+        href="#"
+        @click="closeModal()"
+      >
+        <img
+          src="@/assets/images/icons/close-circle.svg"
+          height="18"
+          width="18"
+          alt="close"
+          class="float-right"
+        >
+      </a>
+      <div class="p-1">
+        <p class="text-center h-text-lg mb-2">
+          Top Up Saldo
+        </p>
+      </div>
+      <form id="formTopUp">
+        <div class="row align-items-center my-2">
+          <div class="col-4">
+            <p class="font-weight-bold h-text-sm h-text-dark mb-0">
+              Nominal
+            </p>
+          </div>
+          <b-form-group
+            class="col-8 mb-0"
+            invalid-feedback="Nominal is required"
+          >
+            <b-form-input
+              id="nominal-topup"
+              v-model="nominalTopUp"
+              type="tel"
+              data-type="currency"
+              required
+              class="h-text-sm h-text-dark"
+              @keyup="formatCurrency(false, 'nominal-topup')"
+              @blur="formatCurrency(true, 'nominal-topup')"
+            />
+          </b-form-group>
+        </div>
+      </form>
+      <template #modal-footer>
+        <button
+          class="btn btn-outline-primary rounded-lg"
+          @click="$bvModal.hide('modalTopUp')"
+        >
+          Batal
+        </button>
+        <button
+          class="btn btn-primary rounded-lg"
+          @click="topUpSaldo()"
+        >
+          <b-spinner
+            v-if="loadingSubmitTopUp"
+            small
+          />
+          Top Up Sekarang
+        </button>
+      </template>
+    </b-modal>
+    <b-modal
+      id="modal-keuangan"
+      body-class="p-1"
+      hide-header
+      hide-footer
+      centered
+      no-close-on-backdrop
+      no-close-on-esc
+    >
+      <a
+        href="#"
+        @click="closeModal()"
+      >
+        <img
+          src="@/assets/images/icons/close-circle.svg"
+          height="18"
+          width="18"
+          alt="close"
+          class="float-right"
+        >
+      </a>
+      <div class="p-1">
+        <p
+          id="modal-title"
+          class="text-center h-text-lg mb-2"
+        >
+          {{ modalTitle }}
+        </p>
+        <div v-if="stepNow === 0">
+          <form
+            ref="form1"
+            class="row align-items-center"
+            @submit.stop.prevent="handleSubmit(1)"
+          >
+            <div class="col-5 mb-1">
+              <p class="h-text-sm h-text-dark mb-0">
+                Nominal
+              </p>
+            </div>
+            <b-form-group
+              class="col-7 mb-1"
+              invalid-feedback="Nominal is required"
+              :state="nominalState"
+            >
+              <b-form-input
+                id="nominal-input"
+                v-model="nominal"
+                type="tel"
+                data-type="currency"
+                required
+                class="h-text-sm h-text-dark"
+                :state="nominalState"
+                @keyup="formatCurrency(false, 'nominal-input')"
+                @blur="formatCurrency(true, 'nominal-input')"
+              />
+            </b-form-group>
+            <div class="col-5 mb-1">
+              <p class="h-text-sm h-text-dark mb-0">
+                Rekening Tujuan
+              </p>
+            </div>
+            <b-form-group
+              class="col-7 mb-1"
+              invalid-feedback="Rekening tujuan is required"
+              :state="rekTujuanState"
+            >
+              <v-select
+                v-model="selectedRekTujuan"
+                class="h-text-sm h-text-dark"
+                label="text"
+                :reduce="items => items.value"
+                :options="rekTujuanOptions"
+              >
+                <span
+                  v-if="rekTujuanOptions.length === 0"
+                  slot="no-options"
+                >
+  
+                  Anda belum menambahkan rekening bank
+                </span>
+              </v-select>
+            </b-form-group>
+            <div class="col-12 text-right mt-3">
+              <button
+                type="button"
+                class="btn btn-outline-primary"
+                @click="closeModal()"
+              >
+                Batal
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary ml-2"
+                :disabled="!selectedRekTujuan"
+              >
+                Ajukan Penarikan
+              </button>
+            </div>
+          </form>
+        </div>
+        <div v-if="stepNow === 1">
+          <form
+            ref="form2"
+            @submit.stop.prevent="handleSubmit(2)"
+          >
+            <p class="text-center h-text-dark font-weight-bold mb-2">
+              Mohon verifikasi identitas kamu dengan memasukan PIN
+            </p>
+            <!-- <PincodeInput
+              v-model="pin"
+              :length="6"
+              class="font-weight-bold h-text-dark"
+            /> -->
+            <b-row class="justify-content-center mb-1">
+              <CodeInput
+                v-model="pin"
+                :loading="false"
+                class="input"
+                :type="visibilityPin"
+                @change="onChange"
+                @complete="onComplete"
+              />
+            </b-row>
+  
+            <b-col class="d-flex justify-content-center">
+              <b-button
+                variant="flat-primary"
+                class="btn-icon"
+                @click="toggleVisibilityPin"
+              >
+                Tampilkan
+              </b-button>
+            </b-col>
+  
+            <div class="col-12 mt-2">
+              <div class="text-center">
+                <button
+                  type="submit"
+                  class="btn btn-primary d-block m-auto"
+                >
+                  Konfirmasi
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-link mt-1"
+                  @click="modalBack()"
+                >
+                  Kembali
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div
+          v-if="stepNow === 2"
+          class="text-center"
+        >
+          <b-row class="justify-content-center">
+            <img
+              src="@/assets/images/icons/success.svg"
+              alt="success"
+              class="text-center"
+            >
+          </b-row>
+          <p class="mt-2 h-text-md text-center">
+            Penarikan Saldo Berhasil
+          </p>
+          <p class="h-text-dark font-weight-bold">
+            Saldo sebesar {{ formatRupiah(nominal) }} akan segera dikirim ke
+            rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
+            1x24 jam
+          </p>
+        </div>
+      </div>
+    </b-modal>
+    <!-- modal after topup -->
+    <b-modal
+      ref="modal-after-topup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <b-row class="justify-content-center mb-1 pt-1">
+          <img src="@/assets/images/icons/warning.svg">
+        </b-row>
+        <b-row class="text-center px-2 mb-1">
+          <p>
+            Silahkan selesaikan pembayaran terlebih dahulu untuk memastikan proses Top Up Saldo Berhasil
+          </p>
+        </b-row>
+        <b-row class="justify-content-center mb-1">
+          <h5 class="text-black">
+            <strong>
+              Sudah menyelesaikan pembayaran?
+            </strong>
+          </h5>
+        </b-row>
+        <b-row class="justify-content-center pb-1">
+          <b-button
+            class="org-button text-center"
+            variant="primary"
+            tag="router-link"
+            :to="{ name: $route.meta.routeToRincianSaldo }"
+          >
+            Cek Rincian Saldo
+          </b-button>
+        </b-row>
+      </div>
+    </b-modal>
+    <b-modal
+      id="modal-notif-rekTujuanBlmAda"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <b-row class="justify-content-center mb-1 pt-1">
+          <img src="@/assets/images/icons/warning.svg">
+        </b-row>
+        <b-row class="text-center px-4 mb-1">
+          <p>
+            Maaf, kamu belum menambahkan rekening untuk penarikan saldo.
+          </p>
+        </b-row>
+        <b-row class="justify-content-center pb-1">
+          <b-button
+            class="org-button text-center"
+            variant="primary"
+            tag="router-link"
+            :to="{ name: 'kompship-rekening-bank' }"
+          >
+            Tambah Rekening
+          </b-button>
+        </b-row>
+      </div>
+    </b-modal>
+  </div>
+  <!-- MODAL ONBOARDING -->
+  <b-modal
+    v-else
+    id="modal-onboarding"
+    ref="modal-onboarding"
+    no-close-on-esc
+    no-close-on-backdrop
+    hide-header-close
+    hide-footer
+    hide-header
+    centered
+    size="lg"
+  >
+    <!-- STEP 1 -->
+    <div
+      v-if="stepped === 1"
+      class="modalOnboarding"
+    >
+      <div class="modalOnboarding__step1--greeting">
+        <h5 class="modalOnboarding__step1--title my-0">Halo, Selamat datang di Komship!</h5>
+        <p class="modalOnboarding__step1--subtitle mt-1 mb-1">Yuk coba lakukan transaksi pertamamu di Komship dengan 
+          3 langkah dan dapatkan berbagai benefitnya</p>
+        <p class="modalOnboarding__step1--subtitle my-0">Sebelum memulai, pastikan kamu mengikuti arahan kami ya...</p>
+      </div>
+      <div class="modalOnboarding__step1--wrapLangkah">
+        <div class="modalOnboarding__step1--box">
+        </div>
+        <feather-icon
+          icon="ChevronRightIcon"
+          size="2x"
+        />
+        <div class="modalOnboarding__step1--box">
+        </div>
+        <feather-icon
+          icon="ChevronRightIcon"
+          size="2x"
+        />
+        <div class="modalOnboarding__step1--box">
+        </div>
+      </div>
+      <div class="modalOnboarding__step1--wrapperNavStep">
+        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <b-button
+          variant="contained-primary"
+          @click="handleStepOnboard(2)"
+          class="modalOnboarding__step1--navBtn"
+        >
+          <h5 class="my-0 mr-1 modalOnboarding__step1--navBtnText">
+            Lanjut
+          </h5>
+          <feather-icon
+            icon="ChevronRightIcon"
+            size="2x"
+            class="modalOnboarding__step1--navBtnIcon"
+          />
+        </b-button>
+      </div>
+    </div>
+    <!-- STEP 2 -->
+    <div
+      v-if="stepped === 2"
+      class="modalOnboarding"
+    >
+      <div class="modalOnboarding__step2--box"></div>
+      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title">Tambahkan Produk</h3>
+      <div class="modalOnboarding__step2--body">
+        <h5 class="modalOnboarding__step2--bodyText1">Ikuti langkah di bawah ini :</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">1. Pergi ke menu Produk.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">2. Lengkapi from untuk menambah Produk kamu.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">3. Jangan lupa untuk memeriksa ulang data yang telah dimasukan.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">4. Jika sudah, lalu klik simpan.</h5>
+        <h5 class="modalOnboarding__step2--bodyText3">Selamat, kamu berhasil menambahkan produk pertama kamu.
+          Di menu produk kamu dapat memantau penjualan setiap produk dan melihat produk paling laris.</h5>
+      </div>
+      <div class="modalOnboarding__step1--wrapperNavStep">
+        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <b-button
+          variant="contained-primary"
+          @click="handleStepOnboard(3)"
+          class="modalOnboarding__step1--navBtn"
+        >
+          <h5 class="my-0 mr-1 modalOnboarding__step1--navBtnText">
+            Lanjut
+          </h5>
+          <feather-icon
+            icon="ChevronRightIcon"
+            size="2x"
+            class="modalOnboarding__step1--navBtnIcon"
+          />
+        </b-button>
+      </div>
+    </div>
+    <!-- STEP 3 -->
+    <div
+      v-if="stepped === 3"
+      class="modalOnboarding"
+    >
+      <div class="modalOnboarding__step2--box"></div>
+      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title">Membuat Orderan</h3>
+      <div class="modalOnboarding__step2--body">
+        <h5 class="modalOnboarding__step2--bodyText1">Ikuti langkah di bawah ini :</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">1. Pergi ke menu Orderku.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">2. Pilih tanggal orderan kamu, tanggal ini digunakan untuk menandai orderan kamu. </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">3. Pilih produk yang ingin kamu buat ordernya.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">4. Klik lanjutkan.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">5. Lengkapi form pengiriman orderan.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">6. Cek kembali form pengirimannya.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">7. klik Submit, Untuk membuat orderan.</h5>
+        <h5 class="modalOnboarding__step2--bodyText3">Orderan kamu berhasil dibuat!
+          Langkah selanjutnya adalah ajukan pickup agar paket orderanmu dijemput kurir.</h5>
+      </div>
+      <div class="modalOnboarding__step1--wrapperNavStep">
+        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <b-button
+          variant="contained-primary"
+          @click="handleStepOnboard(4)"
+          class="modalOnboarding__step1--navBtn"
+        >
+          <h5 class="my-0 mr-1 modalOnboarding__step1--navBtnText">
+            Lanjut
+          </h5>
+          <feather-icon
+            icon="ChevronRightIcon"
+            size="2x"
+            class="modalOnboarding__step1--navBtnIcon"
+          />
+        </b-button>
+      </div>
+    </div>
+    <!-- STEP 4 -->
+    <div
+      v-if="stepped === 4"
+      class="modalOnboarding"
+    >
+      <div class="modalOnboarding__step2--box"></div>
+      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title">Tambahkan Produk</h3>
+      <div class="modalOnboarding__step2--body">
+        <h5 class="modalOnboarding__step2--bodyText1">Ikuti langkah di bawah ini :</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">1. Pergi ke menu Pickup dan klik Ajukan Pickup</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">2. Pilih gudang yang sudah kamu tentukan untuk pengiriman orderan.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">3. Tentukan waktu pickup.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">4. Pilih jenis kendaraan pickup.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">5. Pilih Orderan  mana yang ingin kamu pickup.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">6. Lalu klik Ajukan Pickup</h5>
+        <h5 class="modalOnboarding__step2--bodyText3">Ajukan Pickup berhasil dan kamu melakukan label di menu Riwayat Pickup.
+          Pastikan semua orderan sudah siap untuk dikirim yaa!</h5>
+      </div>
+      <div class="modalOnboarding__step1--wrapperNavStep">
+        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <b-button
+          variant="contained-primary"
+          @click="handleStepOnboard(5)"
+          class="modalOnboarding__step1--navBtn"
+        >
+          <h5 class="my-0 mr-1 modalOnboarding__step1--navBtnText">
+            Lanjut
+          </h5>
+          <feather-icon
+            icon="ChevronRightIcon"
+            size="2x"
+            class="modalOnboarding__step1--navBtnIcon"
+          />
+        </b-button>
+      </div>
+    </div>
+    <!-- STEP 5 -->
+    <div
+      v-if="stepped === 5"
+      class="modalOnboarding"
+    >
+      <div class="modalOnboarding__step5--body">
+        <h3 class="modalOnboarding__step5--title">Ayo Mulai Pakai Komship !</h3>
+        <div class="modalOnboarding__step5--box"></div>
+        <h5 class="modalOnboarding__step5--bodyText2">Selanjutnya kamu dapat langsung menggunakan layanan Komship dan dapatkan segudang benefitnya.
+          Jika mengalami kesulitan. Jangan ragu untuk bertanya ke Customer Support kami melalui Live Chat ya...</h5>
+      </div>
+      <div class="modalOnboarding__step5--wrapperNavStep">
+        <p class="my-0 modalOnboarding__step5--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <b-button
+          variant="contained-primary"
+          @click="handleStepOnboard('endsteponboarding')"
+          class="modalOnboarding__step5--navBtn"
+        >
+          <h5 class="my-0 modalOnboarding__step5--navBtnText">
+            MULAI
+          </h5>
+        </b-button>
+      </div>
+    </div>
+  </b-modal>
+</div>
