@@ -608,7 +608,7 @@ export default {
             text: 'Gagal me-load data, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     addAccount() {
@@ -953,7 +953,7 @@ export default {
                   text: 'Username or Email has already taken!',
                   variant: 'danger',
                 },
-              })
+              }, 2000)
             } else {
               this.$toast({
                 component: ToastificationContent,
@@ -963,7 +963,7 @@ export default {
                   text: 'Success menambahkan akun',
                   variant: 'success',
                 },
-              })
+              }, 2000)
               this.loadingSubmit = false
               this.$refs['modal-add-account'].hide()
               this.refreshTable()
@@ -978,7 +978,7 @@ export default {
                 text: 'Gagal menambahkan akses orang, silahkan coba lagi',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -1465,7 +1465,7 @@ export default {
                   text: 'Username or Email has already taken!',
                   variant: 'danger',
                 },
-              })
+              }, 2000)
             } else {
               this.$toast({
                 component: ToastificationContent,
@@ -1490,7 +1490,7 @@ export default {
                 text: 'Gagal update akses orang, silahkan coba lagi',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -1525,7 +1525,7 @@ export default {
             text: 'Success delete access',
             variant: 'success',
           },
-        })
+        }, 2000)
         this.refreshTable()
       })
     },
