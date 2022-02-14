@@ -429,7 +429,13 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp {{ formatNumber(discount) }}
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span v-else>Rp {{ formatNumber(discount) }}</span>
         </b-col>
       </b-row>
       <b-row
