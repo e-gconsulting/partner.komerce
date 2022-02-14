@@ -108,7 +108,9 @@ export default {
       const profile = await this.$http_komship.post('v1/my-profile')
       const dataProfile = await profile.data.data
       this.profile = await dataProfile
-      await this.$http_komship.get(`v1/order/${this.profile.partner_id}`)
+      await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: { order_status: 0 },
+      })
         .then(res => {
           const { data } = res.data
           this.totalSent = data.total
