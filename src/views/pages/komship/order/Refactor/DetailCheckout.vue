@@ -212,6 +212,7 @@
       </b-col>
     </b-row>
     <div
+      v-if="isCalculate"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -284,7 +285,7 @@
             v-model="biayaLain"
             :value="true"
             :unchecked-value="false"
-            @change="calculate"
+            @change="getAdditionalCost"
           />
         </b-col>
       </b-row>
@@ -303,13 +304,13 @@
             <div class="d-flex">
               <b-form-radio
                 v-model="jenisBiayaLain"
-                value="Bebankan biaya COD ke customer"
-                @change="calculate"
+                value="0"
+                @change="getAdditionalCost"
               >
                 Bebankan biaya COD ke customer
               </b-form-radio>
               <b-form-input
-                v-if="jenisBiayaLain === 'Bebankan biaya COD ke customer'"
+                v-if="jenisBiayaLain === '0'"
                 v-model="bebankanCustomer"
                 type="number"
                 class="ml-1"
@@ -320,18 +321,18 @@
             <b-form-radio
               v-model="jenisBiayaLain"
               class="mt-1"
-              value="Sesuai Nominal"
-              @change="calculate"
+              value="1"
+              @change="getAdditionalCost"
             >
               Sesuai Nominal
             </b-form-radio>
             <b-form-input
-              v-if="jenisBiayaLain === 'Sesuai Nominal'"
-              v-model="sesuaikanNominal"
+              v-if="jenisBiayaLain === '1'"
+              v-model.number="sesuaiNominal"
               type="number"
               class="mt-1"
               style="width:250px;"
-              @input="calculate"
+              @input="getAdditionalCost"
             />
           </b-col>
         </b-row>
@@ -429,7 +430,13 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp {{ formatNumber(discount) }}
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span v-else>- Rp {{ formatNumber(discount) }}</span>
         </b-col>
       </b-row>
       <b-row
@@ -444,8 +451,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          <span v-if="jenisBiayaLain === 'Sesuai Nominal'">Rp {{ formatNumber(sesuaikanNominal) }}</span>
-          <span v-else>Rp {{ formatNumber(bebankanCustomer) }}</span>
+          Rp {{ formatNumber(additionalCost) }}
         </b-col>
       </b-row>
       <b-row>
@@ -463,7 +469,7 @@
           lg="2"
           class="text-primary d-flex justify-end"
         >
-          Rp {{ formatNumber(grandTotal) }}
+          Rp {{ formatNumber(grandTotal +additionalCost) }}
         </b-col>
       </b-row>
       <b-row>
@@ -550,7 +556,7 @@
         lg="6"
         class="font-bold text-2xl"
       >
-        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp {{ formatNumber(grandTotal) }}</span></span>
+        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp {{ formatNumber(grandTotal +additionalCost) }}</span></span>
       </b-col>
       <b-col lg="3">
         <b-button
@@ -617,8 +623,8 @@ export default {
       potonganSaldo: false,
       discount: 0,
       biayaLain: false,
-      jenisBiayaLain: 'Bebankan biaya COD ke customer',
-      sesuaikanNominal: 0,
+      jenisBiayaLain: '0',
+      sesuaiNominal: 0,
       bebankanCustomer: 0,
       additionalCost: 0,
       subTotal: null,
@@ -765,8 +771,6 @@ export default {
               shipping_type: items.shipping_type,
               label: this.nameTypeShipping(items.shipping_type),
             }))
-            this.sesuaikanNominal = Math.round(data[0].service_fee)
-            this.bebankanCustomer = Math.round(data[0].service_fee)
           })
           .catch(() => {
             this.$swal({
@@ -784,14 +788,18 @@ export default {
       }
       return this.listTypeShipping
     },
+    async getAdditionalCost() {
+      if (this.biayaLain && this.jenisBiayaLain === '1') {
+        this.additionalCost = this.sesuaiNominal
+      } else if (this.biayaLain && this.jenisBiayaLain === '0') {
+        this.additionalCost = this.bebankanCustomer
+      } else {
+        this.additionalCost = 0
+      }
+    },
     async calculate() {
       if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
-      }
-      if (this.biayaLain && this.jenisBiayaLain === 'Sesuai Nominal') {
-        this.additionalCost = this.sesuaikanNominal - this.serviceFee
-      } else {
-        this.additionalCost = 0
       }
       if (this.typeShipping !== null) {
         this.loadingCalculate = true
@@ -800,7 +808,6 @@ export default {
             partner_id: this.profile.partner_id,
             tariff_code: this.destination.value,
             payment_method: this.paymentMethod,
-            additional_cost: this.additionalCost,
             shipping: this.shipping,
             discount: this.discount,
             partner_address_id: this.addressId,
@@ -818,6 +825,8 @@ export default {
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
+            this.sesuaiNominal = this.serviceFee
+            this.bebankanCustomer = this.serviceFee
             this.isCalculate = true
             this.loadingCalculate = false
           })
@@ -854,6 +863,9 @@ export default {
         this.bankName = 0
         this.bankAccountName = 0
         this.bankAccountNo = 0
+      }
+      if (this.biayaLain) {
+        this.grandTotal += this.additionalCost
       }
       const formData = {
         date: this.orderDate,
