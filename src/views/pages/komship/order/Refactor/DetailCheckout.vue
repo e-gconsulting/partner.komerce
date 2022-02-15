@@ -234,7 +234,7 @@
             v-model="potonganSaldo"
             :value="true"
             :unchecked-value="false"
-            @input="calculate"
+            @input="getAdditionalCost"
           />
         </b-col>
       </b-row>
@@ -256,7 +256,7 @@
             <b-form-input
               v-model="discount"
               type="number"
-              @input="calculate"
+              @input="getAdditionalCost"
             />
           </b-col>
         </b-row>
@@ -475,7 +475,7 @@
             small
             variant="primary"
           />
-          <span v-else>Rp {{ formatNumber(grandTotal +additionalCost) }}</span>
+          <span v-else>Rp {{ formatNumber(grandTotal) }}</span>
         </b-col>
       </b-row>
       <b-row>
@@ -580,7 +580,7 @@
           <span
             v-else
             class="text-primary"
-          > Rp {{ formatNumber(grandTotal +additionalCost) }}</span>
+          > Rp {{ formatNumber(grandTotal) }}</span>
         </span>
       </b-col>
       <b-col lg="3">
@@ -815,6 +815,7 @@ export default {
       return this.listTypeShipping
     },
     async getAdditionalCost() {
+      this.loadingCalculate = true
       if (this.biayaLain && this.jenisBiayaLain === '1') {
         this.additionalCost = this.sesuaiNominal
       } else if (this.biayaLain && this.jenisBiayaLain === '0') {
@@ -822,6 +823,37 @@ export default {
       } else {
         this.additionalCost = 0
       }
+      await this.$http_komship.get('v1/calculate', {
+        params: {
+          partner_id: this.profile.partner_id,
+          tariff_code: this.destination.value,
+          payment_method: this.paymentMethod,
+          shipping: this.shipping,
+          discount: this.discount,
+          additional_cost: this.additionalCost,
+          partner_address_id: this.addressId,
+          cart: this.cartId.toString(),
+        },
+      })
+        .then(res => {
+          const { data } = res.data
+          const result = data.find(element => element.shipping_type === this.typeShipping.shipping_type)
+          this.subTotal = result.subtotal
+          this.shippingCost = result.shipping_cost
+          this.netProfit = result.net_profit
+          this.serviceFee = Math.round(result.service_fee)
+          this.serviceFeePercentage = result.service_fee_percentage
+          this.weight = result.weight
+          this.grandTotal = result.grandtotal
+          this.cashback = result.cashback
+          this.cashbackPercentage = result.cashback_percentage
+          this.additionalCost = result.additional_cost
+          this.isCalculate = true
+          this.loadingCalculate = false
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
     async calculate() {
       if (this.potonganSaldo === false || this.discount === null) {
@@ -836,6 +868,7 @@ export default {
             payment_method: this.paymentMethod,
             shipping: this.shipping,
             discount: this.discount,
+            additional_cost: this.additionalCost,
             partner_address_id: this.addressId,
             cart: this.cartId.toString(),
           },
@@ -852,8 +885,9 @@ export default {
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
-            this.sesuaiNominal = this.serviceFee
-            this.bebankanCustomer = this.serviceFee
+            this.sesuaiNominal = Math.round(result.service_fee)
+            this.bebankanCustomer = Math.round(result.service_fee)
+            this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
           })
@@ -890,9 +924,6 @@ export default {
         this.bankName = 0
         this.bankAccountName = 0
         this.bankAccountNo = 0
-      }
-      if (this.biayaLain) {
-        this.grandTotal += this.additionalCost
       }
       const formData = {
         date: this.orderDate,
