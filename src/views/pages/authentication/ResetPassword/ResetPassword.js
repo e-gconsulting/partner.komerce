@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       // error: '',
-      passwordOld: '',
       passwordNew: '',
       confirmedPassword: '',
       resetpasswordrequired,
