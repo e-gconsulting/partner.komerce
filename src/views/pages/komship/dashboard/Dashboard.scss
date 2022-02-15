@@ -316,13 +316,30 @@ input.vue-pincode-input {
       justify-content: space-evenly;
       align-items: center;
     }
+    &--wrapperbox{
+      display: grid;
+      justify-content: center;
+      text-align: center;
+    }
     &--box {
       width: 100px;
       height: 100px;
+      margin: 0px auto;
       background: #C4C4C4;
       border-radius: 8px;
     }
-
+    &--boxdesc {
+      margin: 12px 0px 0px;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 150%;
+      letter-spacing: 0.5px;
+      color: #222222;
+    }
+    &--icon {
+      transform: translateY(-16px);      
+    }
     &--wrapperNavStep {
       display: flex;
       justify-content: space-between;
