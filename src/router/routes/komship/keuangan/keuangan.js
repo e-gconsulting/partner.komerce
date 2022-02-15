@@ -22,6 +22,7 @@ export default [
     meta: {
       name: 'saldo',
       resource: 'Keuangan',
+      routeToRincianSaldo: 'saldo-detail',
       action: 'manage',
       breadcrumb: [
         {
