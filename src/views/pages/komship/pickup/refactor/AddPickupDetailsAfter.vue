@@ -1221,7 +1221,8 @@
       id="printThermal"
       hide-footer
       scrollable
-      style="font-size: 12px;"
+      size="lg"
+      style="font-size: 13px;"
     >
       <template #modal-title>
         <b-button
@@ -1236,8 +1237,7 @@
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
           class="border-black mx-auto"
-          style="width:10cm;padding:5px;overflow-x: hidden;margin-top:2px;"
-          :style="valuesOption === 100 ? 'height:10cm' : 'height:15cm'"
+          style="width:100%;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;"
         >
           <b-row
             class="mx-auto"
@@ -1342,7 +1342,7 @@
                 <barcode
                   :value="itemsPrint.airway_bill"
                   height="25"
-                  width="1"
+                  width="2"
                 >
                   Show this if the rendering fails.
                 </barcode>
