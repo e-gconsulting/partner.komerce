@@ -71,7 +71,7 @@
                 responsive
                 show-empty
                 empty-text="Tidak ada data untuk ditampilkan."
-                :items="list"
+                :items="list_item_rincian_penarikan"
                 :fields="fields"
               >
                 <template #head(shipping_cost)="data">
@@ -218,11 +218,11 @@
                   </b-button>
                 </div>
                 <b-pagination
-                  v-model="currentPage"
+                  v-model="table.currentPage"
                   size="md"
                   class="float-right mr-2"
-                  :total-rows="totalItems"
-                  :per-page="perPage"
+                  :total-rows="table.totalRows"
+                  :per-page="table.perPage"
                   first-number
                   last-number
                 />
@@ -295,11 +295,9 @@ export default {
     }
   },
   watch: {
-    currentPage: {
-      handler(value) {
-        this.fetchData().catch(error => {
-          console.error(error)
-        })
+    'table.currentPage': {
+      handler() {
+        this.$store.dispatch('saldo_penarikan/getRincianSaldo')
       },
     },
   },
@@ -356,34 +354,9 @@ export default {
     fetchKmPoint() {
 
     },
-    async fetchData() {
-      const user = JSON.parse(localStorage.getItem('userData'))
-      this.loadTable = true
-      await this.$http_komship.get('v1/partner/order-transaction-balance', {
-        params: {
-          user_id: user.id,
-          start_date: this.startDate,
-          end_date: this.endDate,
-          page: this.currentPage,
-          total_per_page: this.perPage,
-        },
-      })
-        .then(res => {
-          const { data } = res.data
-          console.log('data', data)
-          this.totalItems = data.total
-          this.loadTable = false
-          this.list = data.data
-          console.log('list table', this.list)
-        })
-        .catch(error => {
-          this.loadTable = false
-          console.log(error)
-        })
-    },
     setPage(totalPage) {
       this.perPage = totalPage
-      this.fetchData()
+      this.$store.dispatch('saldoPenarikan/getRincianSaldo', totalPage)
     },
   },
   computed: {
@@ -398,14 +371,19 @@ export default {
       'notes',
       'previous_request_withdrawal_date',
       'previous_request_withdrawal_time',
+      'list_item_rincian_penarikan',
+      'table',
     ]),
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },
   beforeMount() {
+    this.loadTable = true
     this.$store.commit('saldoPenarikan/UPDATE_ID', this.$route.params.id)
     this.$store.dispatch('saldoPenarikan/init')
     this.$store.dispatch('saldoPenarikan/UPDATE_DETAIL_SALDO', this.$route.params.id)
-    this.fetchData()
+    setTimeout(() => {
+      this.loadTable = false
+    }, 1500)
   },
 
 }
