@@ -218,7 +218,7 @@
                   </b-button>
                 </div>
                 <b-pagination
-                  v-model="currentPage"
+                  v-model="table.currentPage"
                   size="md"
                   class="float-right mr-2"
                   :total-rows="table.totalRows"
@@ -377,9 +377,13 @@ export default {
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },
   beforeMount() {
+    this.loadTable = true
     this.$store.commit('saldoPenarikan/UPDATE_ID', this.$route.params.id)
     this.$store.dispatch('saldoPenarikan/init')
     this.$store.dispatch('saldoPenarikan/UPDATE_DETAIL_SALDO', this.$route.params.id)
+    setTimeout(() => {
+      this.loadTable = false
+    }, 1500)
   },
 
 }
