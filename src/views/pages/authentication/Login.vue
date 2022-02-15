@@ -566,6 +566,9 @@ export default {
     resendEmailVerification() {
       this.loadingResendVerification = true
       this.showResendEmailVerification = true
+      if (this.countTimerEmail !== 60) {
+        this.countTimerEmail = 60
+      }
 
       this.$http
         .get(`/resend_verification_email/${this.userId}`)
@@ -574,9 +577,6 @@ export default {
           this.loadingResendVerification = false
           this.modeLogin = false
           this.modeVerificationEmail = true
-          if (this.countTimerEmail !== 60) {
-            this.countTimerEmail = 60
-          }
           this.countDownTimer()
         })
         .catch(() => { this.loadingResendVerification = false })
