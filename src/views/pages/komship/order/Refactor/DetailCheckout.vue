@@ -409,7 +409,7 @@
       <b-row class="mb-1 text-lg">
         <b-col lg="5" />
         <b-col lg="5">
-          Ongkos Kirim
+          Ongkos Kirim ({{ weight }} kg)
         </b-col>
         <b-col
           lg="2"
@@ -618,6 +618,7 @@ export default {
       shippingCost: null,
       serviceFee: null,
       serviceFeePercentage: null,
+      weight: null,
       cashback: null,
       cashbackPercentage: null,
       potonganSaldo: false,
@@ -822,6 +823,7 @@ export default {
             this.netProfit = result.net_profit
             this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
