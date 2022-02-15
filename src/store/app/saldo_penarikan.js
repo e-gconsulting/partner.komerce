@@ -74,6 +74,7 @@ export default {
         const response = await axiosIns.get(
           `kmpoin/kmPoinWithdrawalRequest/${state.id}`,
         )
+        console.log('update detail saldo', response.data.data)
         commit('UPDATE_DETAIL_SALDO', response.data.data)
       } catch (e) {
         console.error(e)

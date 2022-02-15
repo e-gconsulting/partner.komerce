@@ -378,12 +378,14 @@
                       <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                         <b-list-group-item class="border-0 px-0 pt-0 pb-50">
                           <span class="ml-1 text-black">
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }}
+                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
                           </span>
                         </b-list-group-item>
                       </div>
                       <div v-else>
-                        {{ dataProduct.qty }} {{ dataProduct.product_name }}
+                        <span class="ml-1 text-black">
+                          {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                        </span>
                       </div>
                     </b-list-group>
                   </b-col>
@@ -608,12 +610,14 @@
                     <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                       <b-list-group-item class="border-0 px-0 pt-0 pb-50">
                         <span class="ml-1 text-black">
-                          {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }}
+                          {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
                         </span>
                       </b-list-group-item>
                     </div>
                     <div v-else>
-                      {{ dataProduct.qty }} {{ dataProduct.product_name }}
+                      <span class="ml-1 text-black">
+                        {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                      </span>
                     </div>
                   </b-list-group>
                 </b-col>
@@ -923,7 +927,7 @@
                         <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
                           <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                             <span class="ml-1 text-black">
-                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }}
+                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
                             </span>
                           </div>
                           <div v-else>
@@ -1170,12 +1174,14 @@
                       <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                         <b-list-group-item class="border-0 px-0 pt-0 pb-50">
                           <span class="ml-1 text-black">
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }}
+                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
                           </span>
                         </b-list-group-item>
                       </div>
                       <div v-else>
-                        {{ dataProduct.qty }} {{ dataProduct.product_name }}
+                        <span class="ml-1 text-black">
+                          {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                        </span>
                       </div>
                     </b-list-group>
                   </b-col>
@@ -1372,7 +1378,7 @@
                 v-for="(dataProduct, indexProduct) in itemsPrint.product"
                 :key="indexProduct+1"
               >
-                {{ dataProduct.qty }} {{ dataProduct.product_name }} <span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">{{ dataProduct.variant_name }}</span>
+                {{ dataProduct.qty }} {{ dataProduct.product_name }} <span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">{{ dataProduct.variant_name }},</span>
               </span>
             </div>
           </b-row>

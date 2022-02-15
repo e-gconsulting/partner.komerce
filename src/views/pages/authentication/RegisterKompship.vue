@@ -252,7 +252,11 @@
                       <b-row class="mt-50">
                         <b-col>
                           <small>
-                            Akun Kamu telah terdaftar di layanan Komerce Hiring Talent
+                            Akun Kamu telah terdaftar di layanan Komerce <strong>Hiring Talent</strong>.
+                          </small>
+                          <br>
+                          <small>
+                            Cukup gunakan email yang sama dengan layanan yang pernah kamu pakai untuk melanjutkan pendaftaran
                           </small>
                         </b-col>
                       </b-row>
@@ -568,7 +572,11 @@
                       <b-row class="mt-50">
                         <b-col>
                           <small>
-                            Akun Kamu telah terdaftar di layanan Komerce Hiring Talent
+                            Akun Kamu telah terdaftar di layanan Komerce <strong>Hiring Talent</strong>.
+                          </small>
+                          <br>
+                          <small>
+                            Cukup gunakan email yang sama dengan layanan yang pernah kamu pakai untuk melanjutkan pendaftaran
                           </small>
                         </b-col>
                       </b-row>

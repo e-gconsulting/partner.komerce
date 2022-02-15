@@ -2,7 +2,7 @@ export default [
   {
     path: '/dashboard-komship',
     name: 'dashboard-komship',
-    component: () => import('@/views/pages/komship/dashboard/DashboardKomship.vue'),
+    component: () => import('@/views/pages/komship/dashboard'),
     meta: {
       name: 'dashboard-komship',
       routeToOrder: 'data-order',

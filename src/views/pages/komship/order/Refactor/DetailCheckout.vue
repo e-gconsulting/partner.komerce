@@ -211,48 +211,133 @@
         </v-select>
       </b-col>
     </b-row>
-    <b-row class="mb-1">
-      <b-col md="3">
-        <label
-          class="text-lg"
-          style="color:#828282;"
-        >Gunakan Potongan Saldo</label>
-      </b-col>
-      <b-col
-        md="4"
-        class="font-bold"
-      >
-        <b-form-checkbox
-          v-model="potonganSaldo"
-          :value="true"
-          :unchecked-value="false"
-          @input="calculate"
-        />
-      </b-col>
-    </b-row>
-    <b-collapse
-      v-model="potonganSaldo"
-      class="mt-2"
+    <div
+      v-if="isCalculate"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
-      <b-row class="mb-1">
+      <b-row
+        class="mb-1"
+      >
         <b-col md="3">
           <label
             class="text-lg"
             style="color:#828282;"
-          >Nominal Potongan</label>
+          >Gunakan Potongan Saldo</label><br>
+          <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
         </b-col>
         <b-col
           md="4"
           class="font-bold"
         >
-          <b-form-input
-            v-model="discount"
-            type="number"
+          <b-form-checkbox
+            v-model="potonganSaldo"
+            :value="true"
+            :unchecked-value="false"
             @input="calculate"
           />
         </b-col>
       </b-row>
-    </b-collapse>
+      <b-collapse
+        v-model="potonganSaldo"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Nominal Potongan</label>
+          </b-col>
+          <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-input
+              v-model="discount"
+              type="number"
+              @input="calculate"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
+    <div
+      v-if="isCalculate && paymentMethod === 'COD'"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row
+        class="mb-1"
+      >
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Biaya Tambahan Lain</label><br>
+          <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
+        </b-col>
+        <b-col
+          md="4"
+          class="font-bold"
+        >
+          <b-form-checkbox
+            v-model="biayaLain"
+            :value="true"
+            :unchecked-value="false"
+            @change="getAdditionalCost"
+          />
+        </b-col>
+      </b-row>
+      <b-collapse
+        v-model="biayaLain"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Jenis Biaya Lain</label>
+          </b-col>
+          <b-col md="8">
+            <div class="d-flex">
+              <b-form-radio
+                v-model="jenisBiayaLain"
+                value="0"
+                @change="getAdditionalCost"
+              >
+                Bebankan biaya COD ke customer
+              </b-form-radio>
+              <b-form-input
+                v-if="jenisBiayaLain === '0'"
+                v-model="bebankanCustomer"
+                type="number"
+                class="ml-1"
+                style="width:80px;height:20px;"
+                disabled
+              />
+            </div>
+            <b-form-radio
+              v-model="jenisBiayaLain"
+              class="mt-1"
+              value="1"
+              @change="getAdditionalCost"
+            >
+              Sesuai Nominal
+            </b-form-radio>
+            <b-form-input
+              v-if="jenisBiayaLain === '1'"
+              v-model.number="sesuaiNominal"
+              type="number"
+              class="mt-1"
+              style="width:250px;"
+              @input="getAdditionalCost"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
     <hr>
     <h3 class="font-bold mt-3 mb-1">
       Data Pembelian
@@ -294,13 +379,13 @@
       </template>
       <template #cell(product_price)="data">
         <span>
-          Rp. {{ formatNumber(data.item.product_price) }}
+          Rp {{ formatNumber(data.item.product_price) }}
         </span>
       </template>
 
       <template #cell(subtotal)="data">
         <span>
-          Rp. {{ formatNumber(data.item.subtotal) }}
+          Rp {{ formatNumber(data.item.subtotal) }}
         </span>
       </template>
     </b-table>
@@ -318,7 +403,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ formatNumber(subTotal) }}
+          Rp {{ formatNumber(subTotal) }}
         </b-col>
       </b-row>
       <b-row class="mb-1 text-lg">
@@ -330,7 +415,7 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ formatNumber(shippingCost) }}
+          Rp {{ formatNumber(shippingCost) }}
         </b-col>
       </b-row>
       <b-row
@@ -345,7 +430,28 @@
           lg="2"
           class="d-flex justify-end"
         >
-          Rp. {{ formatNumber(discount) }}
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span v-else>- Rp {{ formatNumber(discount) }}</span>
+        </b-col>
+      </b-row>
+      <b-row
+        v-if="biayaLain"
+        class="mb-1 text-lg"
+      >
+        <b-col lg="5" />
+        <b-col lg="5">
+          Biaya Lain
+        </b-col>
+        <b-col
+          lg="2"
+          class="d-flex justify-end"
+        >
+          Rp {{ formatNumber(additionalCost) }}
         </b-col>
       </b-row>
       <b-row>
@@ -363,7 +469,7 @@
           lg="2"
           class="text-primary d-flex justify-end"
         >
-          Rp. {{ formatNumber(grandTotal) }}
+          Rp {{ formatNumber(grandTotal +additionalCost) }}
         </b-col>
       </b-row>
       <b-row>
@@ -402,7 +508,13 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(Math.round(serviceFee)) }}
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span v-else>- Rp {{ formatNumber(serviceFee) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -414,7 +526,13 @@
             lg="2"
             class="d-flex justify-end"
           >
-            - Rp. {{ formatNumber(shippingCost - cashback) }}
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
@@ -426,7 +544,7 @@
             lg="2"
             class="d-flex justify-end text-success"
           >
-            Rp. {{ formatNumber(netProfit) }}
+            Rp {{ formatNumber(netProfit) }}
           </b-col>
         </b-row>
       </b-collapse>
@@ -438,7 +556,7 @@
         lg="6"
         class="font-bold text-2xl"
       >
-        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp. {{ formatNumber(grandTotal) }}</span></span>
+        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp {{ formatNumber(grandTotal +additionalCost) }}</span></span>
       </b-col>
       <b-col lg="3">
         <b-button
@@ -454,7 +572,7 @@
 </template>
 <script>
 import {
-  BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, BFormSelect, BFormTextarea, BCollapse, BTable, VBToggle, BSpinner,
+  BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, BFormSelect, BFormTextarea, BCollapse, BTable, VBToggle, BFormRadio,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import '@core/scss/vue/libs/vue-select.scss'
@@ -462,7 +580,7 @@ import moment from 'moment'
 
 export default {
   components: {
-    BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, vSelect, BFormSelect, BFormTextarea, BCollapse, BTable, BSpinner,
+    BCard, BButton, BIconChevronLeft, BRow, BCol, BFormInput, BInputGroup, vSelect, BFormSelect, BFormTextarea, BCollapse, BTable, BFormRadio,
   },
   directives: {
     'b-toggle': VBToggle,
@@ -470,6 +588,7 @@ export default {
   data() {
     return {
       loadingSearch: false,
+      loadingCalculate: false,
       profile: null,
       addressId: null,
       arrayCart: [],
@@ -503,6 +622,11 @@ export default {
       cashbackPercentage: null,
       potonganSaldo: false,
       discount: 0,
+      biayaLain: false,
+      jenisBiayaLain: '0',
+      sesuaiNominal: 0,
+      bebankanCustomer: 0,
+      additionalCost: 0,
       subTotal: null,
       netProfit: null,
       grandTotal: null,
@@ -664,11 +788,21 @@ export default {
       }
       return this.listTypeShipping
     },
+    async getAdditionalCost() {
+      if (this.biayaLain && this.jenisBiayaLain === '1') {
+        this.additionalCost = this.sesuaiNominal
+      } else if (this.biayaLain && this.jenisBiayaLain === '0') {
+        this.additionalCost = this.bebankanCustomer
+      } else {
+        this.additionalCost = 0
+      }
+    },
     async calculate() {
       if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
       if (this.typeShipping !== null) {
+        this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
           params: {
             partner_id: this.profile.partner_id,
@@ -686,12 +820,15 @@ export default {
             this.subTotal = result.subtotal
             this.shippingCost = result.shipping_cost
             this.netProfit = result.net_profit
-            this.serviceFee = result.service_fee
+            this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
+            this.sesuaiNominal = this.serviceFee
+            this.bebankanCustomer = this.serviceFee
             this.isCalculate = true
+            this.loadingCalculate = false
           })
           .catch(err => {
             console.log(err)
@@ -727,6 +864,9 @@ export default {
         this.bankAccountName = 0
         this.bankAccountNo = 0
       }
+      if (this.biayaLain) {
+        this.grandTotal += this.additionalCost
+      }
       const formData = {
         date: this.orderDate,
         tariff_code: this.destination.value,
@@ -751,6 +891,7 @@ export default {
         shipping_cost: this.shippingCost,
         service_fee: this.serviceFee,
         discount: this.discount,
+        additional_cost: this.additionalCost,
         shipping_cashback: this.cashback,
         net_profit: this.netProfit,
         cart: this.cartId,

@@ -117,10 +117,10 @@
                 {{ productFavorit }}
               </div>
               <div class="mt-1">
-                Rp. {{ formatPrice(totalSpent) }}
+                Rp {{ formatPrice(totalSpent) }}
               </div>
               <div class="mt-1">
-                Rp. {{ formatPrice(averageSpent) }}
+                Rp {{ formatPrice(averageSpent) }}
               </div>
             </b-col>
           </b-row>
@@ -281,7 +281,7 @@
               class="p-0"
             >
               <span class="ml-1">
-                Rp. {{ formatPrice(items.grand_total) }}
+                Rp {{ formatPrice(items.grand_total) }}
               </span>
               <p class="text-primary ml-1 mt-50">
                 <strong>

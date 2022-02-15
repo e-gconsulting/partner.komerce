@@ -9,7 +9,7 @@
           style="border: 1px solid #E2E2E2; border-radius: 8px;"
           class="w-80 text-xl px-1 py-2"
         >
-          Saldo: <span class="text-primary font-bold">Rp. {{ formatNumber(totalSaldo) }}</span>
+          Saldo: <span class="text-primary font-bold">Rp {{ formatNumber(totalSaldo) }}</span>
         </div>
       </b-col>
       <b-col cols="6">
@@ -72,17 +72,17 @@
             v-if="data.item.amount.charAt(0) === '+'"
             class="text-success"
           >
-            +Rp. {{ formatNumber(data.item.amount) }}
+            +Rp {{ formatNumber(data.item.amount) }}
           </span>
           <span
             v-if="data.item.amount.charAt(0) === '-'"
             class="text-primary"
           >
-            -Rp. {{ formatNumber(data.item.amount) }}
+            -Rp {{ formatNumber(data.item.amount) }}
           </span>
         </template>
         <template #cell(saldo)="data">
-          Rp. {{ formatNumber(data.item.saldo) }}
+          Rp {{ formatNumber(data.item.saldo) }}
         </template>
         <template #cell(action)="data">
           <b-button

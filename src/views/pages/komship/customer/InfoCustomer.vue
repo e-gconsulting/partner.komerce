@@ -64,7 +64,7 @@
                       <b-form-input
                         v-model="spentFrom"
                         class=""
-                        placeholder="Rp.10.000.000"
+                        placeholder="Rp 10.000.000"
                       />
                       <b-button
                         class="btn-icon"
@@ -78,7 +78,7 @@
                       <b-form-input
                         v-model="spentTo"
                         class="mr-1"
-                        placeholder="Rp.10.000.000"
+                        placeholder="Rp 10.000.000"
                       />
                     </div>
                   </b-form-group>
@@ -211,8 +211,8 @@
         <template #head(total_pcs)="data">
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
-        <template #head(total_spent)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
+        <template #cell(total_spent)="data">
+          <span class="capitalizeText">Rp {{ formatPrice(data.item.total_spent) }}</span>
         </template>
         <template #head(last_order)="data">
           <span class="capitalizeText">{{ data.label }}</span>
@@ -222,7 +222,7 @@
     <b-row class="justify-content-between mt-5 mx-50 mb-2">
       <div>
         <span class="text-black mr-1">
-          List per halaman
+          List Per halaman
         </span>
         <b-button
           v-for="page in halamancustomer"

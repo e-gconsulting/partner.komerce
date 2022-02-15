@@ -328,6 +328,10 @@ export default {
     getUser(userData) {
       this.userId = userData.id
 
+      console.log('userData', userData)
+      // eslint-disable-next-line no-param-reassign
+      // if (userData.email_verified_at !== null) userData.email_verified_at = null
+
       this.$http
         .post('/user/get-profile', {
           user_id: this.userId,

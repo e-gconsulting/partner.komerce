@@ -42,6 +42,7 @@ export default [
     meta: {
       name: 'history-pickup-detail',
       routeDetailOrderan: 'detail-orderan-pickup-after',
+      routeToHistory: 'history-pickup',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [
