@@ -469,7 +469,13 @@
           lg="2"
           class="text-primary d-flex justify-end"
         >
-          Rp {{ formatNumber(grandTotal +additionalCost) }}
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span v-else>Rp {{ formatNumber(grandTotal +additionalCost) }}</span>
         </b-col>
       </b-row>
       <b-row>
@@ -544,7 +550,16 @@
             lg="2"
             class="d-flex justify-end text-success"
           >
-            Rp {{ formatNumber(netProfit) }}
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span
+              v-else
+              class="text-primary"
+            >Rp {{ formatNumber(netProfit) }}</span>
           </b-col>
         </b-row>
       </b-collapse>
@@ -556,7 +571,17 @@
         lg="6"
         class="font-bold text-2xl"
       >
-        <span v-if="isCalculate">Total Pembayaran:<span class="text-primary"> Rp {{ formatNumber(grandTotal +additionalCost) }}</span></span>
+        <span v-if="isCalculate">Total Pembayaran:
+          <b-spinner
+            v-if="loadingCalculate"
+            class="ml-1"
+            variant="primary"
+          />
+          <span
+            v-else
+            class="text-primary"
+          > Rp {{ formatNumber(grandTotal +additionalCost) }}</span>
+        </span>
       </b-col>
       <b-col lg="3">
         <b-button
