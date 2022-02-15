@@ -232,6 +232,20 @@
         </b-row>
         <b-row class="mt-1">
           <b-col lg="3" />
+          <b-col
+            lg="5"
+          >
+            Biaya Lain
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right"
+          >
+            Rp {{ formatNumber(orderData.additional_cost) }}
+          </b-col>
+        </b-row>
+        <b-row class="mt-1">
+          <b-col lg="3" />
           <b-col lg="8">
             <hr><span />
           </b-col>
