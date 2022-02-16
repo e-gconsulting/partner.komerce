@@ -1237,7 +1237,7 @@
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
           class="border-black mx-auto"
-          style="width:100%;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;"
+          style="width:12cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;"
         >
           <b-row
             class="mx-auto"
@@ -1337,7 +1337,7 @@
               style="width:64%;padding:5px;margin-left:6px;"
               class="justify-center border-black"
             >
-              <span>Nomor Resi</span>
+              <span class="d-flex justify-center">Nomor Resi</span>
               <div>
                 <barcode
                   :value="itemsPrint.airway_bill"
@@ -1372,7 +1372,7 @@
                 v-for="(dataProduct, indexProduct) in itemsPrint.product"
                 :key="indexProduct+1"
               >
-                {{ dataProduct.qty }} {{ dataProduct.product_name }} <span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">{{ dataProduct.variant_name }}</span>
+                {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
               </span>
             </div>
           </b-row>
