@@ -353,7 +353,7 @@ export default {
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
-          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER'].includes(role)) {
+          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
             return
@@ -462,6 +462,11 @@ export default {
                 { action: 'manage', subject: 'Dashboard Komship' },
               ]
               break
+            case 'TALENT GLOBAL':
+              ability = [
+                { action: 'manage', subject: 'Dashboard Komship' },
+              ]
+              break
             default:
               break
           }
@@ -475,7 +480,7 @@ export default {
             }
           }
 
-          if (role === 'KOMSHIP MEMBER') {
+          if (role === 'TALENT GLOBAL') {
             const itemMember = await this.getAccessKomship(data.id)
             // eslint-disable-next-line no-plusplus
             for (let x = 0; x < itemMember.length; x++) {
