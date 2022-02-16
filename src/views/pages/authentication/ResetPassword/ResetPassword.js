@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       // error: '',
-      passwordOld: '',
       passwordNew: '',
       confirmedPassword: '',
       resetpasswordrequired,
@@ -68,16 +67,16 @@ export default {
         if (success) {
           this.loading = true
           // eslint-disable-next-line
-          this.$http_komship.post('/v1/change-password', {
-            old_password: this.passwordOld,
-            new_password: this.passwordNew,
+          this.$http.post('/v1/partner/reset-password', {
+            code: this.$route.query.code,
+            password: this.passwordNew,
           })
             .then(response => {
-              console.log('response', response.data)
               if (response.data.status.code === 200) {
                 this.successChanged = true
               }
-            }).catch(() => {
+            }).catch(err => {
+              console.log(err)
               this.loading = false
             })
         }

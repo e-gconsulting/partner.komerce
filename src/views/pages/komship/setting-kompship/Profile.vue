@@ -472,9 +472,12 @@ export default {
           formData.append('brand_name', this.nameBusiness)
           formData.append('partner_category_name', this.sektorBusiness)
           formData.append('business_type_id', this.typeBusiness)
-          formData.append('business_location', String(this.location))
+          formData.append('business_location', String(this.address))
           formData.append('email', this.emailUser)
-          formData.append('city_code', this.cityCode)
+          if (this.cityCode !== null && this.cityCode.length < 6) {
+            formData.append('city_code', this.cityCode)
+            console.log('cityCode', this.cityCode.length)
+          }
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
               component: ToastificationContent,

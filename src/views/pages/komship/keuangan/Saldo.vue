@@ -514,11 +514,26 @@
             <p class="text-center h-text-dark font-weight-bold mb-3">
               Mohon verifikasi identitas kamu dengan memasukan PIN
             </p>
-            <PincodeInput
-              v-model="pin"
-              :length="6"
-              class="font-weight-bold h-text-dark"
-            />
+            <b-row class="justify-content-center mb-1">
+              <CodeInput
+                v-model="pin"
+                :loading="false"
+                class="input"
+                :type="visibilityPin"
+                @change="onChange"
+                @complete="onComplete"
+              />
+            </b-row>
+
+            <b-col class="d-flex justify-content-center">
+              <b-button
+                variant="flat-primary"
+                class="btn-icon"
+                @click="toggleVisibilityPin"
+              >
+                Tampilkan
+              </b-button>
+            </b-col>
             <div class="col-12 mt-2">
               <div class="text-center">
                 <button
@@ -542,19 +557,61 @@
           v-if="stepNow === 2"
           class="text-center"
         >
-          <img
-            src="@/assets/images/icons/success.svg"
-            alt="success"
-          >
-          <p class="mt-2 h-text-md text-center">
-            Penarikan Saldo Berhasil
-          </p>
-          <p class="h-text-dark font-weight-bold">
-            Saldo sebesar {{ formatRupiahTopup(nominal) }} akan segera dikirim ke
-            rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
-            1x24 jam
-          </p>
+          <b-row class="justify-content-center">
+            <img
+              src="@/assets/images/icons/success.svg"
+              alt="success"
+            >
+          </b-row>
+          <b-row class="text-center justify-content-center">
+            <p class="mt-2 h-text-md text-center">
+              Penarikan Saldo Berhasil
+            </p>
+          </b-row>
+          <b-row class="text-center">
+            <p class="h-text-dark font-weight-bold">
+              Saldo sebesar {{ formatRupiahTopup(nominal) }} akan segera dikirim ke
+              rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
+              1x24 jam
+            </p>
+          </b-row>
         </div>
+      </div>
+    </b-modal>
+
+    <!-- Modal After TopUp -->
+    <b-modal
+      ref="modal-after-topup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <b-row class="justify-content-center mb-1 pt-1">
+          <img src="@/assets/images/icons/warning.svg">
+        </b-row>
+        <b-row class="text-center px-2 mb-1">
+          <p>
+            Silahkan selesaikan pembayaran terlebih dahulu untuk memastikan proses Top Up Saldo Berhasil
+          </p>
+        </b-row>
+        <b-row class="justify-content-center mb-1">
+          <h5 class="text-black">
+            <strong>
+              Sudah menyelesaikan pembayaran?
+            </strong>
+          </h5>
+        </b-row>
+        <b-row class="justify-content-center pb-1">
+          <b-button
+            class="org-button text-center"
+            variant="primary"
+            tag="router-link"
+            :to="{ name: $route.meta.routeToRincianSaldo }"
+          >
+            Cek Rincian Saldo
+          </b-button>
+        </b-row>
       </div>
     </b-modal>
   </div>
@@ -569,10 +626,12 @@ import {
   BFormInput,
   BFormSelect,
   BPagination,
+  BRow,
 } from 'bootstrap-vue'
 import { mapState, mapGetters } from 'vuex'
 import DateRangePicker from 'vue2-daterange-picker'
 import PincodeInput from 'vue-pincode-input'
+import CodeInput from 'vue-verification-code-input'
 
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
@@ -585,8 +644,10 @@ export default {
     BFormSelect,
     BPagination,
     DateRangePicker,
-    PincodeInput,
+    // PincodeInput,
     PopoverInfo,
+    BRow,
+    CodeInput,
   },
   data() {
     const today = new Date()
@@ -640,6 +701,7 @@ export default {
       nominalState: null,
       rekTujuanState: null,
       obj: null,
+      visibilityPin: 'password',
     }
   },
   mounted() {
@@ -719,6 +781,7 @@ export default {
           buttonsStyling: false,
         })
         window.open(response.data.data.invoice_xendit_url, '_blank').focus()
+        this.$refs['modal-after-topup'].show()
       } catch (e) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
@@ -903,6 +966,19 @@ export default {
         },
         buttonsStyling: false,
       })
+    },
+    toggleVisibilityPin() {
+      if (this.visibilityPin === 'password') {
+        this.visibilityPin = 'text'
+      } else {
+        this.visibilityPin = 'password'
+      }
+    },
+    onChange(v) {
+      this.pin = v
+    },
+    onComplete(v) {
+      this.pin = v
     },
   },
 }

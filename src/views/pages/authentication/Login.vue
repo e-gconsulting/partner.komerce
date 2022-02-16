@@ -223,6 +223,7 @@ import {
 import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
@@ -320,6 +321,15 @@ export default {
               }
             })
             .catch(() => {
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Gagal',
+                  text: 'Gagal untuk login, silahkan coba lagi!',
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
+              })
               this.loading = false
             })
         }
@@ -327,6 +337,10 @@ export default {
     },
     getUser(userData) {
       this.userId = userData.id
+
+      console.log('userData', userData)
+      // eslint-disable-next-line no-param-reassign
+      // if (userData.email_verified_at !== null) userData.email_verified_at = null
 
       this.$http
         .post('/user/get-profile', {
@@ -553,6 +567,15 @@ export default {
             .then(() => {})
             .catch(error => {
               this.$refs.loginForm.setErrors(error.response.data.error)
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.error,
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
+              })
             })
         })
         .finally(() => {
@@ -562,6 +585,9 @@ export default {
     resendEmailVerification() {
       this.loadingResendVerification = true
       this.showResendEmailVerification = true
+      if (this.countTimerEmail !== 60) {
+        this.countTimerEmail = 60
+      }
 
       this.$http
         .get(`/resend_verification_email/${this.userId}`)
@@ -570,12 +596,20 @@ export default {
           this.loadingResendVerification = false
           this.modeLogin = false
           this.modeVerificationEmail = true
-          if (this.countTimerEmail !== 60) {
-            this.countTimerEmail = 60
-          }
           this.countDownTimer()
         })
-        .catch(() => { this.loadingResendVerification = false })
+        .catch(() => {
+          this.loadingResendVerification = false
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Gagal',
+              text: 'Gagal untuk login, silahkan coba lagi!',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
     },
     getPartnerProfile(userId) {
       return this.$http

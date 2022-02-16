@@ -16,6 +16,12 @@ export default {
     previous_request_withdrawal_date: '',
     previous_request_withdrawal_time: '',
     notes: '',
+    list_item_rincian_penarikan: [],
+    table: {
+      perPage: 20,
+      currentPage: 1,
+      totalRows: 0,
+    },
   },
   getters: {
     sisaSaldo(state) {
@@ -36,12 +42,16 @@ export default {
       state.notes = detailSaldo.notes
       state.previous_request_withdrawal_date = moment(detailSaldo.previous_request_withdrawal_date).format('DD MMMM YYYY')
       state.dateEnd = moment(detailSaldo.created_at).format('DD MMMM YYYY')
-      state.timeEnd = moment(detailSaldo.created_at).format('HH:MM')
-      state.previous_request_withdrawal_time = moment(detailSaldo.created_at).format('HH:MM')
+      state.timeEnd = moment(detailSaldo.created_at).format('HH:mm')
+      state.previous_request_withdrawal_time = moment(detailSaldo.previous_request_withdrawal_date).format('HH:mm')
       state.nominalPenarikan = detailSaldo.nominal
       state.statusPenerimaan = detailSaldo.status
     },
     UPDATE_RINCIAN_SALDO(state, rincianSaldos) {
+      console.log('state', state)
+      console.log('rincianSaldo', rincianSaldos)
+      state.list_item_rincian_penarikan = rincianSaldos.data
+      state.table.totalRows = rincianSaldos.total
       state.rincianSaldos = rincianSaldos.map(item => ({
         tanggal: moment(new Date(item.order_date)).format('DD-MM-YYYY'),
         jenisOrder: item.order_type || '-',
@@ -53,6 +63,9 @@ export default {
         saldo: item.amount.substring(1),
         negative: item.amount < 0,
       }))
+    },
+    UPDATE_CURRENT_PAGE(state, currentPage) {
+      state.table.currentPage = currentPage
     },
   },
   actions: {
@@ -74,12 +87,15 @@ export default {
         const response = await axiosIns.get(
           `kmpoin/kmPoinWithdrawalRequest/${state.id}`,
         )
+        console.log('update detail saldo', response.data.data)
         commit('UPDATE_DETAIL_SALDO', response.data.data)
       } catch (e) {
         console.error(e)
       }
     },
-    async getRincianSaldo({ commit, state, rootState }) {
+    async getRincianSaldo({ commit, state, rootState }, params) {
+      console.log('params', params)
+      state.table.perPage = params
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
@@ -88,9 +104,12 @@ export default {
             params: {
               start_date: formatYmd(state.dateStart),
               end_date: formatYmd(state.dateEnd),
+              page: state.table.currentPage,
+              total_per_page: state.table.perPage,
             },
           },
         )
+        console.log('update rincian saldo', response.data.data)
         commit('UPDATE_RINCIAN_SALDO', response.data.data)
       } catch (e) {
         console.error(e)

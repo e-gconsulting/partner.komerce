@@ -48,7 +48,7 @@
                   <b-form-input
                     id="name-product"
                     v-model="productName"
-                    placeholder="Masukan nama produk kamu"
+                    placeholder="Contoh: Jilbab Pashmina"
                     :state="errors.length > 0 ? false:null"
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
@@ -88,7 +88,7 @@
                   <b-form-input
                     id="sku-product"
                     v-model="skuName"
-                    placeholder="Masukan SKU produk kamu"
+                    placeholder="Contoh: Pashmina-001"
                     :state="errors.length > 0 ? false:null"
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
@@ -220,7 +220,9 @@
                   <b-form-textarea
                     id="description-product"
                     v-model="descriptionProduct"
-                    placeholder="Masukan deskripsi produk kamu"
+                    placeholder="Contoh :  Jilbab Pashmina
+                    Bahan: Cotton Premium
+                    Ukuran: 180 x 75cm"
                     rows="3"
                     :state="errors.length > 0 ? false:null"
                   />
@@ -1083,7 +1085,7 @@
                 <label for="weight-product">
                   <h4 class="text-black">
                     <strong>
-                      Pengirim
+                      Pengiriman
                     </strong>
                   </h4>
                 </label>

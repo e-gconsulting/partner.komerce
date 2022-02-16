@@ -1,19 +1,29 @@
 <template>
-  <b-card>
-    <b-row class="d-flex align-items-center">
+  <b-card
+    no-body
+  >
+    <b-row class="d-flex align-items-center mb-1 mt-2 px-2">
       <b-col>
-        <h4>
+        <h4 class="text-black">
           <strong>Akses Akun</strong>
         </h4>
       </b-col>
       <b-col class="d-flex justify-content-end">
         <small>
-          <strong class="text-danger">Download Aplikasi Orderku</strong>
+          <strong class="text-primary">Download Aplikasi Orderku</strong>
         </small>
       </b-col>
     </b-row>
 
-    <b-row class="mt-1">
+    <b-row>
+      <b-col>
+        <p class="text-black ml-2">
+          Tambahkan orang untuk membantu mengelola usaha dan beri akses sesuai keinginan kamu
+        </p>
+      </b-col>
+    </b-row>
+
+    <b-row>
       <b-col>
         <b-overlay
           variant="light"
@@ -25,10 +35,9 @@
         >
           <b-table
             ref="table"
-            striped
             hover
             responsive
-            class="position-relative border"
+            class="position-relative"
             empty-text="Tidak ada data untuk ditampilkan."
             :show-empty="!loading"
             :fields="fields"
@@ -37,7 +46,7 @@
           >
 
             <template #cell(full_name)="data">
-              <h5>
+              <h5 class="text-black">
                 <strong>{{ data.item.full_name }}</strong>
               </h5>
               <p>
@@ -87,10 +96,10 @@
       </b-col>
     </b-row>
 
-    <b-row class="mt-2">
+    <b-row class="mt-2 pb-2">
       <b-button
         variant="outline-primary"
-        class="ml-1"
+        class="ml-3"
         @click="showModalAddAccount"
       >
         Tambah Orang
@@ -125,7 +134,7 @@
                     v-model="fullname"
                     :state="errors.length > 0 ? false:null"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -146,7 +155,7 @@
                     v-model="emailUser"
                     :state="errors.length > 0 ? false:null"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -167,7 +176,7 @@
                     v-model="password"
                     :state="errors.length > 0 ? false:null"
                   />
-                  <small class="text-danger">{{ errors[0] }}</small>
+                  <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -538,13 +547,22 @@ export default {
 
       fields: [
         {
-          key: 'full_name', label: 'Nama',
+          key: 'full_name',
+          label: 'Nama',
+          thClass: 'bg-white border-top-0 font-bold',
+          class: 'text-black',
         },
         {
-          key: 'access_menu', label: 'Akses',
+          key: 'access_menu',
+          label: 'Akses',
+          thClass: 'bg-white border-top-0 font-bold',
+          class: 'text-black',
         },
         {
-          key: 'action', label: '',
+          key: 'action',
+          label: '',
+          thClass: 'bg-white border-top-0 font-bold',
+          class: 'text-black',
         },
       ],
 
@@ -588,9 +606,9 @@ export default {
             title: 'Gagal',
             icon: 'AlertCircleIcon',
             text: 'Gagal me-load data, silahkan coba lagi',
-            variant: 'Danger',
+            variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     addAccount() {
@@ -933,9 +951,9 @@ export default {
                   title: 'Failed',
                   icon: 'AlertCircleIcon',
                   text: 'Username or Email has already taken!',
-                  variant: 'Danger',
+                  variant: 'danger',
                 },
-              })
+              }, 2000)
             } else {
               this.$toast({
                 component: ToastificationContent,
@@ -945,7 +963,7 @@ export default {
                   text: 'Success menambahkan akun',
                   variant: 'success',
                 },
-              })
+              }, 2000)
               this.loadingSubmit = false
               this.$refs['modal-add-account'].hide()
               this.refreshTable()
@@ -958,9 +976,9 @@ export default {
                 title: 'Gagal',
                 icon: 'AlertCircleIcon',
                 text: 'Gagal menambahkan akses orang, silahkan coba lagi',
-                variant: 'Danger',
+                variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -1432,6 +1450,8 @@ export default {
 
           this.loadingSubmit = true
 
+          console.log('menu', this.menu)
+
           this.$http.put('/user/partner/update-account', {
             user_id: this.idEdit,
             menu: this.menu,
@@ -1447,7 +1467,7 @@ export default {
                   text: 'Username or Email has already taken!',
                   variant: 'danger',
                 },
-              })
+              }, 2000)
             } else {
               this.$toast({
                 component: ToastificationContent,
@@ -1470,9 +1490,9 @@ export default {
                 title: 'Gagal',
                 icon: 'AlertCircleIcon',
                 text: 'Gagal update akses orang, silahkan coba lagi',
-                variant: 'Danger',
+                variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -1507,7 +1527,7 @@ export default {
             text: 'Success delete access',
             variant: 'success',
           },
-        })
+        }, 2000)
         this.refreshTable()
       })
     },

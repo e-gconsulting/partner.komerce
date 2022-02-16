@@ -1,18 +1,46 @@
 <template>
   <b-card>
-    <h3 class="text-black">
-      <strong>
-        Riwayat Pengajuan Pickup
-      </strong>
-    </h3>
+    <b-row class="justify-content-between mx-2">
+      <b-button
+        variant="primary"
+        tag="router-link"
+        :to="{ name: $route.meta.routeToHistory }"
+      >
+        <feather-icon
+          icon="ChevronLeftIcon"
+        />
+      </b-button>
+      <h3 class="text-black">
+        <strong>
+          Riwayat Pengajuan Pickup
+        </strong>
+      </h3>
+    </b-row>
 
     <b-row class="mt-3 justify-content-center">
-      <b-col cols="11">
+      <b-col
+        cols="11"
+        class="d-flex justify-content-between"
+      >
         <h4 class="text-black">
           <strong>
             Penjemputan
           </strong>
         </h4>
+        <b-button
+          variant="primary"
+          tag="router-link"
+          :to="{ name: $route.meta.routeDetailOrderan, params: { selected_order_from_history: itemsDataOrder } }"
+        >
+          <b-row>
+            <span class="align-middle">
+              Label Pengiriman
+            </span>
+            <feather-icon
+              icon="ChevronRightIcon"
+            />
+          </b-row>
+        </b-button>
       </b-col>
       <b-col cols="11">
         <hr style="height:1px;border-width:0;color:#C2C2C2;background-color:#C2C2C2">
@@ -214,18 +242,8 @@
           </b-col>
           <b-col
             cols="11"
-            class="d-flex justify-content-between pl-0"
+            class="d-flex justify-content-end pl-0"
           >
-            <div>
-              <b-button
-                class="btn-icon"
-                variant="flat-info"
-                tag="router-link"
-                :to="{ name: $route.meta.routeDetailOrderan, params: { selected_order_from_history: itemsDataOrder } }"
-              >
-                Lihat detail...
-              </b-button>
-            </div>
             <div>
               <span class="text-black">
                 <strong>

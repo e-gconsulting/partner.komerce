@@ -3,6 +3,7 @@ import {
   ToastPlugin, ModalPlugin, PopoverPlugin, BootstrapVue, IconsPlugin,
 } from 'bootstrap-vue'
 import VueCompositionAPI from '@vue/composition-api'
+import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue' // import lottie-vuejs
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 import money from 'v-money'
@@ -43,6 +44,8 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueLodash, { lodash })
 Vue.use(money, { precision: 0 })
+// Lottie Animation
+Vue.use(LottieAnimation) // add lottie-animation to your global scope
 
 // Feather font icon - For form-wizard
 // * Shall remove it if not using font-icons of feather-icons - For form-wizard
