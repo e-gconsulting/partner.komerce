@@ -141,14 +141,14 @@
         />
       </b-col>
 
-      <b-col class="text-center mt-1">
+      <b-col class="text-center mt-2">
         <h4 class="text-black">
           <strong>
-            PIN Berhasil Dibuat
+            PIN Kamu Berhasil Dibuat
           </strong>
         </h4>
         <p class="text-black">
-          Selamat kamu telah berhasil mengamankan saldo yang kamu miliki
+          PIN digunakan untuk meningkatkan keamanan transaksi kamu
         </p>
       </b-col>
 
@@ -923,8 +923,9 @@ export default {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {
           this.loadingSubmit = false
-          this.$refs['modal-success-create-pin'].show()
+          this.$refs['create-pin'].hide()
           this.$refs['modal-confirm-create-new-pin'].hide()
+          this.$refs['modal-success-create-pin'].show()
           this.visibilityPin = 'password'
           this.visibilityOTP = 'password'
         }).catch(() => {
