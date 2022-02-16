@@ -764,7 +764,7 @@ export default {
                 icon: 'AlertCircleIcon',
                 variant: 'danger',
               },
-            })
+            }, 2000)
             this.loading = false
           })
         } else {
