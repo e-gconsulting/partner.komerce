@@ -124,7 +124,7 @@ export default {
           this.loading = true
           this.error = ''
           this.emailverifikasi = ''
-          this.$http_komship.post('/v1/forgot-password', {
+          this.$http_komship.post('/v1/partner/send-link-forgot-password', {
             email: this.usernameEmail,
           })
             .then(response => {
