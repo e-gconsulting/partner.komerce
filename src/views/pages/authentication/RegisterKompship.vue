@@ -16,7 +16,7 @@
       >
         <b-col class="ml-3">
           <h3 class="ml-5 mb-2 register-title text-black">
-            Daftar
+            {{ serviceIsKomship === true ? 'Daftar Komship' : 'Daftar' }}
           </h3>
 
           <b-row :class="modeNewUser === true ? '' : 'd-none'">
@@ -251,20 +251,31 @@
                       <small class="text-primary"> {{ errors[0] }} </small>
                       <b-row class="mt-50">
                         <b-col>
-                          <small>
-                            Akun Kamu telah terdaftar di layanan Komerce <strong>Hiring Talent</strong>.
-                          </small>
-                          <br>
-                          <small>
-                            Cukup gunakan email yang sama dengan layanan yang pernah kamu pakai untuk melanjutkan pendaftaran
-                          </small>
+                          <div v-if="serviceIsKomship === false">
+                            <small>
+                              Akun Kamu telah terdaftar di layanan Komerce <strong>{{ serviceTitle }}</strong>.
+                            </small>
+                            <br>
+                            <small>
+                              Cukup gunakan email yang sama dengan layanan yang pernah kamu pakai untuk melanjutkan pendaftaran
+                            </small>
+                          </div>
+                          <div v-else>
+                            <small>
+                              Akun Kamu telah terdaftar di layanan Komerce Komship.
+                              Silahkan "Masuk" untuk melanjutkan.
+                            </small>
+                          </div>
                         </b-col>
                       </b-row>
                     </validation-provider>
                   </b-col>
 
                   <!-- checkbox -->
-                  <b-col cols="12">
+                  <b-col
+                    cols="12"
+                    :class="serviceIsKomship === true ? 'd-none' : ''"
+                  >
                     <b-form-group>
                       <validation-provider
                         #default="{errors}"
@@ -296,7 +307,10 @@
                     class="px-0"
                   >
                     <b-col md="7">
-                      <div class="demo-inline-spacing">
+                      <div
+                        v-if="serviceIsKomship === false"
+                        class="demo-inline-spacing"
+                      >
                         <b-button
                           type="submit"
                           variant="primary"
@@ -308,6 +322,20 @@
                             small
                           />
                           Daftar
+                        </b-button>
+                      </div>
+                      <div v-else>
+                        <b-button
+                          variant="primary"
+                          block
+                          tag="router-link"
+                          :to="{name:'auth-login'}"
+                        >
+                          <b-spinner
+                            v-if="loading"
+                            small
+                          />
+                          Masuk
                         </b-button>
                       </div>
                     </b-col>
@@ -571,20 +599,31 @@
                       <small class="text-primary"> {{ errors[0] }} </small>
                       <b-row class="mt-50">
                         <b-col>
-                          <small>
-                            Akun Kamu telah terdaftar di layanan Komerce <strong>Hiring Talent</strong>.
-                          </small>
-                          <br>
-                          <small>
-                            Cukup gunakan email yang sama dengan layanan yang pernah kamu pakai untuk melanjutkan pendaftaran
-                          </small>
+                          <div v-if="serviceIsKomship === false">
+                            <small>
+                              Akun Kamu telah terdaftar di layanan Komerce <strong>{{ serviceTitle }}</strong>.
+                            </small>
+                            <br>
+                            <small>
+                              Cukup gunakan email yang sama dengan layanan yang pernah kamu pakai untuk melanjutkan pendaftaran
+                            </small>
+                          </div>
+                          <div v-else>
+                            <small>
+                              Akun Kamu telah terdaftar di layanan Komerce Komship.
+                              Silahkan "Masuk" untuk melanjutkan.
+                            </small>
+                          </div>
                         </b-col>
                       </b-row>
                     </validation-provider>
                   </b-col>
 
                   <!-- checkbox -->
-                  <b-col cols="12">
+                  <b-col
+                    cols="12"
+                    :class="serviceIsKomship === true ? 'd-none' : ''"
+                  >
                     <b-form-group>
                       <validation-provider
                         #default="{errors}"
@@ -616,7 +655,10 @@
                     class="px-0"
                   >
                     <b-col md="7">
-                      <div class="demo-inline-spacing">
+                      <div
+                        v-if="serviceIsKomship === false"
+                        class="demo-inline-spacing"
+                      >
                         <b-button
                           type="submit"
                           variant="primary"
@@ -628,6 +670,20 @@
                             small
                           />
                           Daftar
+                        </b-button>
+                      </div>
+                      <div v-esle>
+                        <b-button
+                          variant="primary"
+                          block
+                          tag="router-link"
+                          :to="{name:'auth-login'}"
+                        >
+                          <b-spinner
+                            v-if="loading"
+                            small
+                          />
+                          Masuk
                         </b-button>
                       </div>
                     </b-col>
@@ -709,6 +765,8 @@ export default {
       userEmailExisting: '',
       modeNewUser: true,
       modeExistingUser: false,
+      serviceTitle: '',
+      serviceIsKomship: false,
     }
   },
   computed: {
@@ -724,6 +782,7 @@ export default {
       this.loading = true
       this.usernameTaken = ''
       this.emailTaken = ''
+      this.serviceTitle = ''
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.error = ''
@@ -736,21 +795,29 @@ export default {
           }).then(response => {
             const { data } = response
             console.log('data', data)
-            if (data[0].content.data.username !== undefined) {
-              this.usernameTaken = 'The username has already been taken.'
-              this.loading = false
-            }
 
-            if (data[0].content.data.email !== undefined) {
+            if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
               this.emailTaken = 'The email has already been taken.'
               this.loading = false
               this.modeNewUser = false
               this.modeExistingUser = true
               this.userEmailExisting = this.userEmail
+              this.serviceTitle = 'Hiring Talent'
               this.agree = false
+              console.log('hiring')
+            } else if (data.message === 'Akun Kamu telah terdaftar Komship') {
+              this.emailTaken = 'The email has already been taken.'
+              this.loading = false
+              this.modeNewUser = false
+              this.modeExistingUser = true
+              this.userEmailExisting = this.userEmail
+              this.serviceTitle = 'Komship'
+              this.agree = false
+              this.serviceIsKomship = true
+              console.log('komship')
             }
 
-            if (data[0].content.message !== 'Failed to register new partner') {
+            if (data.code !== 400) {
               this.loading = false
               this.$router.push({ name: 'komship-register-validate' })
             }
