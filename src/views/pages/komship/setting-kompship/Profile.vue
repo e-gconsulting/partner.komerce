@@ -144,7 +144,7 @@
                   rules="required"
                 >
                   <b-form-textarea
-                    v-model="address"
+                    v-model="location"
                     placeholder="Alamat"
                     rows="3"
                     :state="errors.length > 0 ? false:null"
