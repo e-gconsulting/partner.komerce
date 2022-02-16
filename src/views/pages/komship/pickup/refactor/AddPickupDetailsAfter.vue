@@ -1324,7 +1324,7 @@
                   icon="MapPinIcon"
                   size="15"
                   style="margin-right: 2px;"
-                />{{ itemsPrint.district }}</li>
+                />{{ itemsPrint.detail_address }}</li>
               </ul>
             </div>
           </b-row>
