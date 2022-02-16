@@ -1243,7 +1243,7 @@
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
           class="border-black mx-auto"
-          style="width:12cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;"
+          style="width:11.6cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;"
         >
           <b-row
             class="mx-auto"
@@ -1324,7 +1324,7 @@
                   icon="MapPinIcon"
                   size="15"
                   style="margin-right: 2px;"
-                />{{ itemsPrint.district }}</li>
+                />{{ itemsPrint.detail_address }}</li>
               </ul>
             </div>
           </b-row>
