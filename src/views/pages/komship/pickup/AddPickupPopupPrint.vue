@@ -44,7 +44,7 @@
           :is-selected="selectedOptions === 100"
           :panel-amount="100"
           :title="'10 cm x 10cm'"
-          :sub-title="'Printher Thermal'"
+          :sub-title="'Printer Thermal'"
           @onChose="() => handleChosePrintOption(100)"
         />
 
@@ -52,7 +52,7 @@
           :is-selected="selectedOptions === 150"
           :panel-amount="150"
           :title="'10 cm x 15cm'"
-          :sub-title="'Printher Thermal'"
+          :sub-title="'Printer Thermal'"
           @onChose="() => handleChosePrintOption(150)"
         />
       </section>
