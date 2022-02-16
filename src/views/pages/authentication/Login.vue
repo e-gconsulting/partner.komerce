@@ -223,6 +223,7 @@ import {
 import useJwt from '@/auth/jwt/useJwt'
 import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
@@ -320,6 +321,15 @@ export default {
               }
             })
             .catch(() => {
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Gagal',
+                  text: 'Gagal untuk login, silahkan coba lagi!',
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
+              })
               this.loading = false
             })
         }
@@ -557,6 +567,15 @@ export default {
             .then(() => {})
             .catch(error => {
               this.$refs.loginForm.setErrors(error.response.data.error)
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Failed',
+                  text: error.response.data.error,
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
+              })
             })
         })
         .finally(() => {
@@ -579,7 +598,18 @@ export default {
           this.modeVerificationEmail = true
           this.countDownTimer()
         })
-        .catch(() => { this.loadingResendVerification = false })
+        .catch(() => {
+          this.loadingResendVerification = false
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Gagal',
+              text: 'Gagal untuk login, silahkan coba lagi!',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
     },
     getPartnerProfile(userId) {
       return this.$http
