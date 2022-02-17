@@ -1243,7 +1243,7 @@
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
           class="border-black mx-auto"
-          style="width:11.6cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;"
+          style="width:12cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;margin-left:-0.3cm;margin-right:-0.3cm"
         >
           <b-row
             class="mx-auto"
@@ -1253,7 +1253,7 @@
               style="width:34%;"
               class="text-center"
             >
-              <span class="font-bold">Order Id</span><br>
+              <span class="font-bold">Order ID</span><br>
               <span>{{ itemsPrint.order_no }}</span>
             </div>
             <div style="width:33%;">
@@ -1279,53 +1279,73 @@
               style="width:49%;padding:5px;"
               class="border-black"
             >
-              <span class="d-flex justify-center">PENGIRIM</span>
-              <ul
-                class="p-0 text-sm"
-                style="list-style: none;margin-top:5px;"
-              >
-                <li class="d-flex"><feather-icon
-                  icon="UserIcon"
-                  size="15"
-                  style="margin-right: 2px;"
-                />{{ profile.partner_business_name }}</li>
-                <li class="d-flex"><feather-icon
-                  icon="PhoneIcon"
-                  size="16"
-                  style="margin-right: 2px;"
-                />{{ profile.user_phone }}</li>
-                <li class="d-flex"><feather-icon
-                  icon="MapPinIcon"
-                  size="15"
-                  style="margin-right: 2px;"
-                />{{ idOrderFromHistory.district }}</li>
-              </ul>
+              <span
+                class="d-flex justify-center"
+                style="margin-bottom:5px;"
+              >PENGIRIM</span>
+              <tr>
+                <td style="width:20px;">
+                  <feather-icon
+                    icon="UserIcon"
+                    size="15"
+                  />
+                </td>
+                <td>{{ profile.partner_business_name }}</td>
+              </tr>
+              <tr>
+                <td style="width:20px;">
+                  <feather-icon
+                    icon="PhoneIcon"
+                    size="16"
+                  />
+                </td>
+                <td>{{ profile.user_phone }}</td>
+              </tr>
+              <tr>
+                <td style="width:20px;">
+                  <feather-icon
+                    icon="MapPinIcon"
+                    size="15"
+                  />
+                </td>
+                <td>{{ idOrderFromHistory.district }}</td>
+              </tr>
             </div>
             <div
               style="width:49%;padding:5px;margin-left:6px;"
               class="border-black"
             >
-              <span class="d-flex justify-center">PENERIMA</span>
-              <ul
-                class="p-0"
-                style="list-style: none;margin-top:5px;"
-              >
-                <li class="d-flex"><feather-icon
-                  icon="UserIcon"
-                  size="15"
-                  style="margin-right: 2px;"
-                />{{ itemsPrint.customer_name }}</li>
-                <li class="d-flex"><feather-icon
-                  icon="PhoneIcon"
-                  size="16"
-                  style="margin-right: 2px;"
-                />{{ getCustomerPhone(itemsPrint.customer_phone) }}</li>
-                <li class="d-flex"><feather-icon
-                  icon="MapPinIcon"
-                  size="15"
-                  style="margin-right: 2px;"
-                />{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</li>
-              </ul>
+              <span
+                class="d-flex justify-center"
+                style="margin-bottom:5px;"
+              >PENERIMA</span>
+              <tr>
+                <td style="width:20px;">
+                  <feather-icon
+                    icon="UserIcon"
+                    size="15"
+                  />
+                </td>
+                <td>{{ itemsPrint.customer_name }}</td>
+              </tr>
+              <tr>
+                <td style="width:20px;">
+                  <feather-icon
+                    icon="PhoneIcon"
+                    size="16"
+                  />
+                </td>
+                <td>{{ getCustomerPhone(itemsPrint.customer_phone) }}</td>
+              </tr>
+              <tr>
+                <td style="width:20px;">
+                  <feather-icon
+                    icon="MapPinIcon"
+                    size="15"
+                  />
+                </td>
+                <td>{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</td>
+              </tr>
             </div>
           </b-row>
           <b-row
@@ -1337,7 +1357,7 @@
               class="border-black text-center"
             >
               <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
-              <span class="text-sm">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
+              <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
             </div>
             <div
               style="width:64%;padding:5px;margin-left:6px;"
@@ -1363,12 +1383,7 @@
               style="width:34%;padding:5px;"
               class="border-black"
             >
-              Kuantitas: <span
-                v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                :key="indexProduct+1"
-              >
-                {{ dataProduct.qty }}
-              </span>
+              Kuantitas: {{ sumAll(itemsPrint.product) }}
             </div>
             <div
               style="width:64%;padding:5px;margin-left:6px;"
@@ -1681,6 +1696,13 @@ export default {
         result = `+${value}`
       }
       return result
+    },
+    sumAll(product) {
+      let total = 0
+      product.forEach(item => {
+        total += item.qty
+      })
+      return total
     },
   },
 }
