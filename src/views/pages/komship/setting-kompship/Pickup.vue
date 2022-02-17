@@ -67,12 +67,12 @@
             ref="formRulesEdit"
             #default="{invalid}"
           >
-            <b-form class="ml-16 pl-50">
+            <b-form>
               <b-row>
 
                 <b-col
                   cols="10"
-                  class="mb-1"
+                  class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
@@ -112,7 +112,7 @@
 
                 <b-col
                   cols="10"
-                  class="mb-1"
+                  class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
@@ -160,7 +160,7 @@
 
                 <b-col
                   cols="10"
-                  class="mb-1"
+                  class="mb-3 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
@@ -198,8 +198,19 @@
                 </b-col>
 
                 <b-col
+                  cols="12"
+                  class="mb-2"
+                >
+                  <h4 class="text-black">
+                    <strong>
+                      Penanggung Jawab
+                    </strong>
+                  </h4>
+                </b-col>
+
+                <b-col
                   cols="10"
-                  class="mb-1"
+                  class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
@@ -231,7 +242,7 @@
 
                 <b-col
                   cols="10"
-                  class="mb-1"
+                  class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
@@ -275,6 +286,7 @@
                 <b-col
                   v-if="editMode === true && editIdAddress === data.address_id"
                   md="10"
+                  class="ml-16 pl-50"
                 >
                   <b-form-group
                     label-cols-md="3"
@@ -350,12 +362,12 @@
               ref="formRulesAdd"
               #default="{invalid}"
             >
-              <b-form class="ml-16 pl-50">
+              <b-form class="">
                 <b-row>
 
                   <b-col
                     cols="10"
-                    class="mb-1"
+                    class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
@@ -388,7 +400,7 @@
 
                   <b-col
                     cols="10"
-                    class="mb-1"
+                    class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
@@ -424,7 +436,7 @@
 
                   <b-col
                     cols="10"
-                    class="mb-1"
+                    class="mb-3 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
@@ -460,8 +472,19 @@
                   </b-col>
 
                   <b-col
+                    cols="12"
+                    class="mb-2"
+                  >
+                    <h4 class="text-black">
+                      <strong>
+                        Penanggung Jawab
+                      </strong>
+                    </h4>
+                  </b-col>
+
+                  <b-col
                     cols="10"
-                    class="mb-1"
+                    class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
@@ -486,6 +509,7 @@
 
                   <b-col
                     cols="10"
+                    class="ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
@@ -521,6 +545,7 @@
 
                   <b-col
                     md="10"
+                    class="ml-16 pl-50"
                   >
                     <b-form-group
                       label-cols-md="3"
