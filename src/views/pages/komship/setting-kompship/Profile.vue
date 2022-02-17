@@ -213,7 +213,7 @@
                   />
                 </label>
                 <label
-                  v-if="imageFile !== null"
+                  v-if="imageFile !== null || imageInitialFile !== null"
                   class="btn btn-flat-primary btn-icon"
                   @click="removeLogoBusiness"
                 >
@@ -437,6 +437,7 @@ export default {
   methods: {
     removeLogoBusiness() {
       this.imageFile = null
+      this.imageInitialFile = null
       this.fieldLogoBusiness.splice(0, 1)
     },
     tesChange() {
@@ -466,8 +467,12 @@ export default {
           formData.append('gender', this.jenisKelamin)
           if (this.imageInitialFile !== null && this.imageFile === null) {
             formData.append('business_logo', this.imageInitialFile)
+            console.log('atas')
           } else if (this.imageFile !== null) {
             formData.append('business_logo', this.imageFile)
+            console.log('bawah')
+          } else {
+            formData.append('business_logo', '')
           }
           formData.append('brand_name', this.nameBusiness)
           formData.append('partner_category_name', this.sektorBusiness)
