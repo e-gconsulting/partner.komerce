@@ -125,7 +125,7 @@ export default {
           formData.append('username', this.username)
           formData.append('full_name', this.fullname)
           formData.append('no_hp', this.noHP)
-          formData.append('no_hp_bisnis', this.phoneBusiness)
+          formData.append('no_hp_business', this.phoneBusiness)
           formData.append('address', this.address)
           formData.append('gender', this.jenisKelamin)
           if (this.imageInitialFile !== null && this.imageFile === null) {
