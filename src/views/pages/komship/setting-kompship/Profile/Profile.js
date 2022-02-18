@@ -194,7 +194,7 @@ export default {
           this.jenisKelamin = 2
         }
         this.noHP = data.user_phone
-        this.phoneBusiness = data.no_hp_business
+        this.phoneBusiness = data.partner_no_hp_business
         this.emailUser = data.user_email
         this.address = data.user_address
         console.log('image', data.partner_business_logo)
