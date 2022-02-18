@@ -1,0 +1,426 @@
+<b-overlay
+  variant="light"
+  :show="loading"
+  spinner-variant="primary"
+  blur="0"
+  opacity=".5"
+  rounded="sm"
+>
+  <b-card>
+
+    <validation-observer ref="formRules">
+      <b-form>
+        <h3 class="ml-2 mb-2 text-black">
+          <strong>Edit Profile</strong>
+        </h3>
+        <h4 class="ml-2 text-black">
+          <strong>Profile Penanggung Jawab</strong>
+        </h4>
+        <b-row class="mt-1">
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Nama Lengkap<span class="text-primary">*</span>
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Nama Lengkap"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="fullname"
+                  placeholder="Nama Lengkap"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Username<span class="text-primary">*</span>
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Username"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="username"
+                  placeholder="Username"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Jenis Kelamin
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Jenis Kelamin"
+                rules="required"
+              >
+                <b-form-radio-group
+                  v-model="jenisKelamin"
+                  :options="options"
+                  class="demo-inline-spacing mb-1"
+                  value-field="value"
+                  text-field="text"
+                  disabled-field="disabled"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  No. HP<span class="text-primary">*</span>
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name=" No. HP"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="noHP"
+                  type="number"
+                  placeholder="Nomer HP"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Email<span class="text-primary">*</span>
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Email"
+                rules="required|email"
+              >
+                <b-form-input
+                  v-model="emailUser"
+                  placeholder="Email"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Alamat
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Alamat"
+                rules="required"
+              >
+                <b-form-textarea
+                  v-model="address"
+                  placeholder="Alamat"
+                  rows="3"
+                  :state="errors.length > 0 ? false:null"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col
+            cols="12"
+            class="mt-2"
+          >
+            <h4 class="ml-2 text-black">
+              <strong>Profile Bisnis</strong>
+            </h4>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Upload Logo
+                </span>
+              </template>
+              <transition name="fade">
+                <b-avatar
+                  v-if="fieldLogoBusiness.length > 0 && imageFile !== null"
+                  v-model="imageFile"
+                  variant="light-primary"
+                  size="50"
+                  :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
+                  class="mr-50"
+                />
+                <b-avatar
+                  v-else
+                  v-model="imageFile"
+                  variant="light-primary"
+                  size="50"
+                  :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
+                  class="mr-50"
+                />
+              </transition>
+              <label
+                v-if="fieldLogoBusiness.length === 0"
+                for="uploadLogo"
+              >
+                <b-avatar
+                  variant="light-dark"
+                  size="50"
+                  class="btn btn-flat-primary btn-icon"
+                >
+                  <feather-icon
+                    icon="PlusIcon"
+                    size="35"
+                  />
+                </b-avatar>
+              </label>
+              <label
+                v-else
+                for="uploadLogo"
+                class="btn btn-flat-dark btn-icon"
+              >
+                <feather-icon
+                  icon="EditIcon"
+                  size="20"
+                />
+              </label>
+              <label
+                v-if="imageFile !== null || imageInitialFile !== null"
+                class="btn btn-flat-primary btn-icon"
+                @click="removeLogoBusiness"
+              >
+                <feather-icon
+                  icon="Trash2Icon"
+                  size="20"
+                />
+              </label>
+              <b-form-file
+                id="uploadLogo"
+                v-model="imageFile"
+                :placeholder="
+                  imageInitialFile
+                    ? imageInitialFile.split('/').pop()
+                    : `Pilih atau drop file disini...`
+                "
+                drop-placeholder="Drop file disini..."
+                accept="image/*"
+                class="d-none"
+                @change="tesChange"
+              />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <div style="display:grid;">
+                  <span class="text-black">
+                    Nama Bisnis<span class="text-primary">*</span>
+                  </span>
+                  <span>
+                    Akan ditampilkan di Label
+                  </span>
+                </div>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Nama Bisnis"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="nameBusiness"
+                  :state="errors.length > 0 ? false:null"
+                  placeholder="Nama Bisnis"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <div style="display:grid;">
+                  <span class="text-black">
+                    No HP Bisnis<span class="text-primary">*</span>
+                  </span>
+                  <span>
+                    Akan ditampilkan di Label
+                  </span>
+                </div>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="No HP Bisnis"
+                rules="required"
+              >
+                <b-form-input
+                  v-model="phoneBusiness"
+                  :state="errors.length > 0 ? false:null"
+                  placeholder="No HP Bisnis"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label="Lokasi"
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Lokasi<span class="text-primary">*</span>
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Lokasi"
+                rules="required"
+              >
+                <v-select
+                  v-model="cityCode"
+                  :options="provinceItems"
+                  :reduce="option => option.city_code"
+                  label="values"
+                  :state="errors.length > 0 ? false:null"
+                  @search="onSearchProvince"
+                />
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Sektor Bisnis
+                </span>
+              </template>
+              <v-select
+                v-model="sektorBusiness"
+                label="partner_category_name"
+                :options="partnerCategoryItems"
+                :reduce="option => option.partner_category_name"
+              />
+            </b-form-group>
+          </b-col>
+
+          <b-col cols="8">
+            <b-form-group
+              label-cols-md="3"
+              class="ml-2"
+            >
+              <template #label>
+                <span class="text-black">
+                  Tipe Bisnis
+                </span>
+              </template>
+              <v-select
+                v-model="typeBusiness"
+                label="name"
+                :options="businessTypeItems"
+                :reduce="option => option.id"
+              />
+            </b-form-group>
+          </b-col>
+
+          <!-- submit and reset -->
+          <b-col
+            class="d-flex justify-content-end mt-3"
+            md="12"
+          >
+            <b-button
+              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+              type="submit"
+              variant="primary"
+              class="mr-1"
+              @click.prevent="updateProfile"
+            >
+              <b-spinner
+                v-if="loadingSubmit"
+                variant="light"
+                small
+              />
+              Submit
+            </b-button>
+            <b-button
+              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+              type="reset"
+              variant="outline-secondary"
+              class="mr-5"
+              @click.prevent="reset"
+            >
+              Reset
+            </b-button>
+          </b-col>
+        </b-row>
+
+      </b-form>
+    </validation-observer>
+
+  </b-card>
+</b-overlay>

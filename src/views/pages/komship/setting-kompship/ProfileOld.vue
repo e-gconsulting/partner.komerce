@@ -8,26 +8,27 @@
     rounded="sm"
   >
     <b-card>
-      <h3>
-        <strong>Edit Profile</strong>
-      </h3>
 
       <validation-observer ref="formRules">
-        <b-form
-          class="mt-4"
-        >
-
-          <h4 class="ml-2">
+        <b-form>
+          <h3 class="ml-2 mb-2 text-black">
+            <strong>Edit Profile</strong>
+          </h3>
+          <h4 class="ml-2 text-black">
             <strong>Profile Penanggung Jawab</strong>
           </h4>
           <b-row class="mt-1">
 
             <b-col cols="8">
               <b-form-group
-                label="Nama Lengkap"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Nama Lengkap<span class="text-primary">*</span>
+                  </span>
+                </template>
                 <validation-provider
                   #default="{errors}"
                   name="Nama Lengkap"
@@ -45,10 +46,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Username"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Username<span class="text-primary">*</span>
+                  </span>
+                </template>
                 <validation-provider
                   #default="{errors}"
                   name="Username"
@@ -66,10 +71,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Jenis Kelamin"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Jenis Kelamin
+                  </span>
+                </template>
                 <validation-provider
                   #default="{errors}"
                   name="Jenis Kelamin"
@@ -91,10 +100,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="No. HP"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    No. HP<span class="text-primary">*</span>
+                  </span>
+                </template>
                 <validation-provider
                   #default="{errors}"
                   name=" No. HP"
@@ -113,10 +126,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Email"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Email<span class="text-primary">*</span>
+                  </span>
+                </template>
                 <validation-provider
                   #default="{errors}"
                   name="Email"
@@ -134,10 +151,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Alamat"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Alamat
+                  </span>
+                </template>
                 <validation-provider
                   #default="{errors}"
                   name="Alamat"
@@ -158,17 +179,21 @@
               cols="12"
               class="mt-2"
             >
-              <h4 class="ml-2">
-                <strong>Profile Pebisnis</strong>
+              <h4 class="ml-2 text-black">
+                <strong>Profile Bisnis</strong>
               </h4>
             </b-col>
 
             <b-col cols="8">
               <b-form-group
-                label="Upload Logo"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Upload Logo
+                  </span>
+                </template>
                 <transition name="fade">
                   <b-avatar
                     v-if="fieldLogoBusiness.length > 0 && imageFile !== null"
@@ -240,13 +265,43 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Nama Bisnis"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <div style="display:grid;">
+                    <span class="text-black">
+                      Nama Bisnis<span class="text-primary">*</span>
+                    </span>
+                    <span style="">
+                      Akan ditampilkan di Label
+                    </span>
+                  </div>
+                </template>
                 <b-form-input
                   v-model="nameBusiness"
                   placeholder="Nama Bisnis"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col cols="8">
+              <b-form-group
+                label-cols-md="3"
+                class="ml-2"
+              >
+                <template #label>
+                  <div style="display:grid;">
+                    <span class="text-black">
+                      No HP Bisnis<span class="text-primary">*</span>
+                    </span>
+                    <span>
+                      Akan ditampilkan di Label
+                    </span>
+                  </div>
+                </template>
+                <b-form-input
+                  v-model="phoneBusiness"
+                  placeholder="No HP Bisnis"
                 />
               </b-form-group>
             </b-col>
@@ -257,6 +312,11 @@
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Lokasi<span class="text-primary">*</span>
+                  </span>
+                </template>
                 <v-select
                   v-model="cityCode"
                   :options="provinceItems"
@@ -269,10 +329,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Sektor Bisnis"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Sektor Bisnis
+                  </span>
+                </template>
                 <v-select
                   v-model="sektorBusiness"
                   label="partner_category_name"
@@ -284,10 +348,14 @@
 
             <b-col cols="8">
               <b-form-group
-                label="Tipe Bisnis"
                 label-cols-md="3"
                 class="ml-2"
               >
+                <template #label>
+                  <span class="text-black">
+                    Tipe Bisnis
+                  </span>
+                </template>
                 <v-select
                   v-model="typeBusiness"
                   label="name"
@@ -401,6 +469,7 @@ export default {
       imageInitialFile: null,
 
       nameBusiness: '',
+      phoneBusiness: '',
       location: '',
       sektorBusiness: '',
       typeBusiness: '',

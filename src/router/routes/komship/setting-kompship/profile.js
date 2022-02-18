@@ -4,7 +4,7 @@ export default [
   {
     path: '/setting-kompship/profile',
     name: 'kompship-profile',
-    component: () => import('@/views/pages/komship/setting-kompship/Profile.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/Profile'),
     meta: {
       name: pageName.singular,
       resource: 'Setting Komship',
