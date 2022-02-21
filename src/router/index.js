@@ -73,9 +73,9 @@ const router = new VueRouter({
     ...assignment,
 
     ...dashboardKompship,
-    ...produk,
     ...order,
     ...pickup,
+    ...produk,
     ...customer,
     ...settingKompship,
     ...keuangan,

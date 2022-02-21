@@ -7,7 +7,7 @@
         <flat-pickr
           v-model="rangeDate"
           class="form-control"
-          :config="{ mode: 'range'}"
+          :config="configRangeDate"
         />
       </div>
       <v-select
@@ -23,10 +23,10 @@
         striped
         hover
         responsive
-        :per-page="perPage"
+        :per-page="0"
         :current-page="currentPage"
         :items="items"
-        :busy="isLoadTable"
+        :busy.sync="isLoadTable"
         :fields="fields"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
@@ -50,10 +50,38 @@
             <b-spinner
               class="align-middle"
             />
-            <strong>Loading...</strong>
+            <strong> Loading...</strong>
           </div>
         </template>
       </b-table>
+      <div class="d-flex justify-between ">
+        <div>
+          <span class="mr-1">List per halaman</span>
+          <b-button
+            v-for="page in pageOptions"
+            :key="page"
+            :variant="page === perPage ? 'primary' : 'light'"
+            size="sm"
+            class="btnPage"
+            @click="setperPage(page)"
+          >
+            {{ page }}
+          </b-button>
+        </div>
+        <b-col
+          cols=""
+        >
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
+            align="right"
+            size="sm"
+            class="my-0"
+            aria-controls="my-table"
+          />
+        </b-col>
+      </div>
     </div>
   </div>
 </template>
@@ -61,27 +89,40 @@
 <script>
 import {
   BTable,
+  BCol,
+  BButton,
+  BPagination,
   BSpinner,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
-import axioskomsipdev from '@/libs/axioskomsipdev'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { dateHelper } from '@/libs/helpers'
 
 export default {
   components: {
     BTable,
+    BCol,
+    BButton,
+    BPagination,
     BSpinner,
     vSelect,
     flatPickr,
   },
+  props: {
+    shipmentData: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
-      rangeDate: '2021-09-01 to ',
+      rangeDate: '',
       payment_method: 'COD',
-      selected: { title: 'JNE' },
-      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'POS' }, { title: 'SiCepat' }],
-      isLoadTable: false,
-      perPage: 5,
+      selected: { title: '' },
+      option: this.shipmentData,
+      isLoadTable: true,
+      perPage: 10,
       pageOptions: [3, 5, 10],
       totalRows: 1,
       currentPage: 1,
@@ -137,6 +178,18 @@ export default {
           formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
       ],
+      configRangeDate: {
+        mode: 'range',
+        maxDate: 'today',
+        defaultDate: [dateHelper('30d'), dateHelper()],
+      },
+      paramsCallAPI: {
+        start_date: null,
+        end_date: null,
+        payment_method: 'COD',
+        shipping: null,
+        page: null,
+      },
     }
   },
   computed: {
@@ -153,65 +206,70 @@ export default {
         // calling api
         if (val.indexOf('to') !== -1) {
           const [startDate, endDate] = val.split(' to ')
-          this.fetchData({ start_date: startDate, end_date: endDate })
+          this.paramsCallAPI.start_date = startDate
+          this.paramsCallAPI.end_date = endDate
+          this.paramsCallAPI.page = null
         } else {
-          this.fetchData({ start_date: val, end_date: val })
+          this.paramsCallAPI.start_date = val
+          this.paramsCallAPI.end_date = val
+          this.paramsCallAPI.page = null
         }
       },
     },
     selected: {
       handler(val) {
-        this.fetchData({ shipping: val.title })
+        this.paramsCallAPI.shipping = val.title
+        this.paramsCallAPI.page = null
       },
+    },
+    currentPage: {
+      handler(val) {
+        this.paramsCallAPI.page = val
+      },
+    },
+    paramsCallAPI: {
+      handler() {
+        this.fetchData()
+      },
+      deep: true,
     },
   },
   mounted() {
-    // Set the initial number of items
-    // items set after calling api
-    this.totalRows = this.items.length
     this.fetchData()
   },
   methods: {
-    fetchData(params) {
-      // console.log('params fetch data: ', params)
+    fetchData() {
+      this.isLoadTable = true
       const endpoint = '/v1/admin/finance/income'
-      let getData = null
-      if (params) {
-        getData = axioskomsipdev.get(endpoint, { params: { ...params, payment_method: this.payment_method } })
-      } else {
-        getData = axioskomsipdev.get(endpoint, { params: { payment_method: this.payment_method } })
-      }
-
-      getData.then(({ data }) => {
-        /*
-          "data": {
-            "profit": {
-              "total_shipping_profit": 42000,
-              "profit_cod": 3500
-            },
-            "income": [
-              {
-                "partner_name": "Tatausahaku",
-                "district": "Idano Gawo",
-                "shipping_cost": 42000,
-                "grand_total": 82000,
-                "shipping_profit": 42000,
-                "net_profit": 113750
-              }
-            ]
-          }
-        */
-        const parseData = JSON.parse(JSON.stringify(data.data))
-        this.items = parseData.income
-        this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
-        this.$emit('totalOngkirFunc', parseData.profit.profit_cod)
-        this.totalRows = parseData.length
+      this.$http_komship.get(endpoint, {
+        params: {
+          ...this.paramsCallAPI,
+        },
       })
-        .catch(e => {
-          console.log('error', e)
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
+          this.$emit('totalOngkirFunc', parseData.profit.profit_cod)
+          if (Array.isArray(parseData.income) && parseData.income.length === 0) {
+            this.items = []
+            this.totalRows = 0
+          } else {
+            this.items = parseData.income.data
+            this.totalRows = parseData.income.total
+          }
+          this.isLoadTable = false
         })
-        .finally(() => {
-          this.loadDataAwal = false
+        .catch(e => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'Unable to load the table data. Please try again later or contact support.',
+              variant: 'danger',
+            },
+          })
+          this.isLoadTable = false
         })
     },
     onFiltered(filteredItems) {
@@ -219,12 +277,9 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
+    setperPage(pagedt) {
+      this.perPage = pagedt
+    },
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.wrappertab__content{
-  display: grid;
-}
-</style>
