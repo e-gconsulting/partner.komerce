@@ -12,18 +12,21 @@
             </h3>
             <div class="wrapper__total">
               <div
+                v-if="[0,2].indexOf(tabActiveIndex) !== -1"
                 class="container__total mr-1"
               >
                 <span
                   class="text__total-label"
                   style="color: #828282;font-size: 20px;font-weight: 500;"
                 >
-                  Total Profit Ongkir
+                  {{
+                    tabActiveIndex === 0 ? 'Total Profit Ongkir' : ( tabActiveIndex === 2 ? 'Total Profit Ongkir COD' : '')
+                  }}
                 </span>
                 <span
-                  class="text__total"
+                  class="text__total text-black"
                 >
-                  Rp {{ new Intl.NumberFormat('id-ID').format(totalOngkir) }}
+                  {{ totalOngkir | rupiah }}
                 </span>
               </div>
               <div
@@ -33,12 +36,14 @@
                   class="text__total-label"
                   style="color: #828282;font-size: 20px;font-weight: 500;"
                 >
-                  Total Profit COD
+                  {{
+                    tabActiveIndex === 0 ? 'Total Profit COD' : ( tabActiveIndex === 1 ? 'Total Profit Non-COD' : 'Total Profit Ongkir Non-COD')
+                  }}
                 </span>
                 <span
-                  class="text__total"
+                  class="text__total text-black"
                 >
-                  Rp {{ new Intl.NumberFormat('id-ID').format(totalCod) }}
+                  {{ totalCod | rupiah }}
                 </span>
               </div>
             </div>
@@ -178,7 +183,7 @@ export default {
   display: flex;
 }
 .container__total{
-  width: 320px;
+  min-width: 320px;
   height: 133px;
   display: grid;
   padding: 24px;
