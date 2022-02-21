@@ -342,24 +342,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row v-if="itemsPrint.product.length === 1">
-                      <h4 class="text-black">
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </h4>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }}
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -574,24 +562,12 @@
                   cols="4"
                   class="border-4 border-slate-900"
                 >
-                  <b-row v-if="itemsPrint.product.length === 1">
-                    <h4 class="text-black">
-                      <strong>
-                        Kuantitas:
-                      </strong>
-                    </h4>
-                    <div
-                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                      :key="indexProduct+1"
-                    >
-                      <span class="ml-1 text-black">
-                        {{ dataProduct.qty }}
-                      </span>
-                    </div>
-                  </b-row>
-                  <b-row v-else>
-                    Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                  </b-row>
+                  <h4 class="text-black">
+                    <strong>
+                      Kuantitas:
+                    </strong>
+                    {{ sumAll(itemsPrint.product) }}
+                  </h4>
                 </b-col>
                 <b-col
                   cols="8"
@@ -864,47 +840,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row
-                      v-if="itemsPrint.product.length === 1"
-                      class="align-items-center"
-                    >
-                      <span
-                        class="text-black"
-                        style="font-size: 12px;"
-                      >
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </span>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span
-                          class="ml-1 text-black"
-                          style="font-size: 10px;"
-                        >
-                          {{ dataProduct.qty }}
-                          tes
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      <span
-                        class="text-black"
-                        style="font-size: 12px;"
-                      >
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </span>
-                      <span
-                        class="text-black ml-50"
-                        style="font-size: 10px;"
-                      >
-                        {{ itemsPrint.qtyTotal }}
-                      </span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -1138,24 +1079,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row v-if="itemsPrint.product.length === 1">
-                      <h4 class="text-black">
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </h4>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }}
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -1223,183 +1152,187 @@
         </b-button>
       </div>
     </b-modal>
-    <b-modal
-      id="printThermal"
-      hide-footer
-      scrollable
-      size="lg"
-      style="font-size: 13px;"
+    <vue-html2pdf
+      ref="html2PdfThermal"
+      :show-layout="false"
+      :float-layout="true"
+      :enable-download="false"
+      :preview-modal="true"
+      filename="hehehe"
+      :paginate-elements-by-height="1100"
+      :pdf-quality="2"
+      pdf-orientation="portrait"
+      pdf-content-width="12.6cm"
+      :manual-pagination="false"
+      @hasStartedGeneration="hasStartedGeneration()"
+      @hasGenerated="hasGenerated($event)"
     >
-      <template #modal-title>
-        <b-button
-          variant="primary"
-          @click="printThermal"
-        >
-          Print
-        </b-button>
-      </template>
-      <div id="elementPrintThermal">
+      <section slot="pdf-content">
         <div
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
-          class="border-black mx-auto"
-          style="width:12cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;margin-left:-0.3cm;margin-right:-0.3cm"
         >
-          <b-row
-            class="mx-auto"
-            style="margin-top:3px;"
+          <section
+            class="pdf-item border-black mx-auto"
+            style="width:11.6cm;height:auto;padding:5px;margin-top:8px;"
           >
-            <div
-              style="width:34%;"
-              class="text-center"
+            <b-row
+              class="mx-auto"
+              style="margin-top:3px;"
             >
-              <span class="font-bold">Order ID</span><br>
-              <span>{{ itemsPrint.order_no }}</span>
-            </div>
-            <div style="width:33%;">
-              <img
-                src="@/assets/images/logo/jne-bw.png"
-                alt="ekspedisi"
-                style="margin:auto;width:90px"
+              <div
+                style="width:34%;"
+                class="text-center"
               >
-            </div>
-            <div class="width:33%;">
-              <img
-                src="@/assets/images/logo/komship-bw.png"
-                alt="komship"
-                style="margin:auto;width:120px"
-              >
-            </div>
-          </b-row>
-          <b-row
-            class="mx-auto"
-            style="margin-top:8px;"
-          >
-            <div
-              style="width:49%;padding:5px;"
-              class="border-black"
-            >
-              <span
-                class="d-flex justify-center"
-                style="margin-bottom:5px;"
-              >PENGIRIM</span>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="UserIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ profile.partner_business_name }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="PhoneIcon"
-                    size="16"
-                  />
-                </td>
-                <td>{{ profile.user_phone }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="MapPinIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ idOrderFromHistory.district }}</td>
-              </tr>
-            </div>
-            <div
-              style="width:49%;padding:5px;margin-left:6px;"
-              class="border-black"
-            >
-              <span
-                class="d-flex justify-center"
-                style="margin-bottom:5px;"
-              >PENERIMA</span>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="UserIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ itemsPrint.customer_name }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="PhoneIcon"
-                    size="16"
-                  />
-                </td>
-                <td>{{ getCustomerPhone(itemsPrint.customer_phone) }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="MapPinIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</td>
-              </tr>
-            </div>
-          </b-row>
-          <b-row
-            class="mx-auto"
-            style="margin-top:8px;"
-          >
-            <div
-              style="width:34%;padding:5px;"
-              class="border-black text-center"
-            >
-              <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
-              <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
-            </div>
-            <div
-              style="width:64%;padding:5px;margin-left:6px;"
-              class="justify-center border-black"
-            >
-              <span class="d-flex justify-center">Nomor Resi</span>
-              <div>
-                <barcode
-                  :value="itemsPrint.airway_bill"
-                  height="25"
-                  width="2"
-                >
-                  Show this if the rendering fails.
-                </barcode>
+                <span class="font-bold">Order ID</span><br>
+                <span>{{ itemsPrint.order_no }}</span>
               </div>
-            </div>
-          </b-row>
-          <b-row
-            class="mx-auto"
-            style="margin-top:8px;"
-          >
-            <div
-              style="width:34%;padding:5px;"
-              class="border-black"
+              <div style="width:33%;">
+                <img
+                  src="@/assets/images/logo/jne-bw.png"
+                  alt="ekspedisi"
+                  style="margin:auto;width:90px"
+                >
+              </div>
+              <div class="width:33%;">
+                <img
+                  src="@/assets/images/logo/komship-bw.png"
+                  alt="komship"
+                  style="margin:auto;width:120px"
+                >
+              </div>
+            </b-row>
+            <b-row
+              class="mx-auto"
+              style="margin-top:8px;"
             >
-              Kuantitas: {{ sumAll(itemsPrint.product) }}
-            </div>
-            <div
-              style="width:64%;padding:5px;margin-left:6px;"
-              class="border-black"
-            >
-              ISI PAKET: <span
-                v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                :key="indexProduct+1"
+              <div
+                style="width:49%;padding:5px;"
+                class="border-black"
               >
-                {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
-              </span>
-            </div>
-          </b-row>
+                <span
+                  class="d-flex justify-center"
+                  style="margin-bottom:5px;"
+                >PENGIRIM</span>
+                <tr>
+                  <td style="width:20px;">
+                    <feather-icon
+                      icon="UserIcon"
+                      size="15"
+                    />
+                  </td>
+                  <td>{{ profile.partner_business_name }}</td>
+                </tr>
+                <tr>
+                  <td style="width:20px;">
+                    <feather-icon
+                      icon="PhoneIcon"
+                      size="16"
+                    />
+                  </td>
+                  <td>{{ profile.user_phone }}</td>
+                </tr>
+                <tr>
+                  <td style="width:20px;">
+                    <feather-icon
+                      icon="MapPinIcon"
+                      size="15"
+                    />
+                  </td>
+                  <td>{{ idOrderFromHistory.district }}</td>
+                </tr>
+              </div>
+              <div
+                style="width:49%;padding:5px;margin-left:6px;"
+                class="border-black"
+              >
+                <span
+                  class="d-flex justify-center"
+                  style="margin-bottom:5px;"
+                >PENERIMA</span>
+                <tr>
+                  <td style="width:20px;">
+                    <feather-icon
+                      icon="UserIcon"
+                      size="15"
+                    />
+                  </td>
+                  <td>{{ itemsPrint.customer_name }}</td>
+                </tr>
+                <tr>
+                  <td style="width:20px;">
+                    <feather-icon
+                      icon="PhoneIcon"
+                      size="16"
+                    />
+                  </td>
+                  <td>{{ getCustomerPhone(itemsPrint.customer_phone) }}</td>
+                </tr>
+                <tr>
+                  <td style="width:20px;">
+                    <feather-icon
+                      icon="MapPinIcon"
+                      size="15"
+                    />
+                  </td>
+                  <td>{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</td>
+                </tr>
+              </div>
+            </b-row>
+            <b-row
+              class="mx-auto"
+              style="margin-top:8px;"
+            >
+              <div
+                style="width:34%;padding:5px;"
+                class="border-black text-center"
+              >
+                <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
+                <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
+              </div>
+              <div
+                style="width:64%;padding:5px;margin-left:6px;"
+                class="justify-center border-black"
+              >
+                <span class="d-flex justify-center">Nomor Resi</span>
+                <div>
+                  <barcode
+                    :value="itemsPrint.airway_bill"
+                    height="25"
+                    width="2"
+                  >
+                    Show this if the rendering fails.
+                  </barcode>
+                </div>
+              </div>
+            </b-row>
+            <b-row
+              class="mx-auto"
+              style="margin-top:8px;"
+            >
+              <div
+                style="width:34%;padding:5px;"
+                class="border-black"
+              >
+                Kuantitas: {{ sumAll(itemsPrint.product) }}
+              </div>
+              <div
+                style="width:64%;padding:5px;margin-left:6px;"
+                class="border-black"
+              >
+                ISI PAKET: <span
+                  v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                  :key="indexProduct+1"
+                >
+                  {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
+                </span>
+              </div>
+            </b-row>
+          </section>
+          <div class="html2pdf__page-break" />
         </div>
-      </div>
-    </b-modal>
+      </section>
+    </vue-html2pdf>
 
   </b-card>
 </template>
@@ -1581,18 +1514,10 @@ export default {
       console.log('opttion print view', values)
       this.valuesOption = values
       if (values === 100 || values === 150) {
-        this.$bvModal.show('printThermal')
+        this.$refs.html2PdfThermal.generatePdf()
       } else {
         this.$refs.html2Pdf.generatePdf()
       }
-    },
-    printThermal() {
-      printJS({
-        printable: 'elementPrintThermal',
-        type: 'html',
-        targetStyles: ['*'],
-        font_size: '12px',
-      })
     },
     onSubmitPrint(values) {
       // if (values) this.$refs.printLabelContent.printContent()
