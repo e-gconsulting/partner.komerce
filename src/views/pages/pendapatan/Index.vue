@@ -63,6 +63,7 @@
               <tab-cod
                 ref="dataTabCOD"
                 lazy
+                :shipment-data="shipment"
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -74,6 +75,7 @@
               lazy
             >
               <tab-non-cod
+                :shipment-data="shipment"
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -84,6 +86,7 @@
               lazy
             >
               <tab-keduanya
+                :shipment-data="shipment"
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -115,6 +118,7 @@ import {
   BCardBody,
 } from 'bootstrap-vue'
 
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import TabCod from './TabCod.vue'
 import TabNonCod from './TabNonCod.vue'
 import TabKeduanya from './TabKeduanya.vue'
@@ -136,6 +140,7 @@ export default {
       totalOngkir: 0,
       loadDataAwal: true,
       tabActiveIndex: 0,
+      shipment: [],
     }
   },
   computed: {
@@ -151,7 +156,7 @@ export default {
     },
   },
   mounted() {
-    //
+    this.getShipmentData()
   },
   created() {
     setTimeout(() => {
@@ -164,6 +169,26 @@ export default {
     },
     totalOngkirFunc(val) {
       this.totalOngkir = val
+    },
+    getShipmentData() {
+      const endpoint = '/v1/admin/shipment'
+      this.$http_komship.get(endpoint)
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          const ubahDataShipment = parseData.map(x => ({ title: x.shipping_name }))
+          this.shipment = ubahDataShipment
+        })
+        .catch(e => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'Unable to load the table data. Please try again later or contact support.',
+              variant: 'danger',
+            },
+          })
+        })
     },
   },
 }
@@ -208,6 +233,9 @@ export default {
     letter-spacing: 0.5px;
     color: #828282;
   }
+}
+.wrappertab__content{
+  display: grid;
 }
 @media screen and (max-width: 1000px) {
   .wrapper__performa{

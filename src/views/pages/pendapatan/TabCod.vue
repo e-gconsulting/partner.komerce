@@ -23,10 +23,10 @@
         striped
         hover
         responsive
-        :per-page="perPage"
+        :per-page="0"
         :current-page="currentPage"
         :items="items"
-        :busy="isLoadTable"
+        :busy.sync="isLoadTable"
         :fields="fields"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
@@ -50,7 +50,7 @@
             <b-spinner
               class="align-middle"
             />
-            <strong>Loading...</strong>
+            <strong> Loading...</strong>
           </div>
         </template>
       </b-table>
@@ -109,14 +109,20 @@ export default {
     vSelect,
     flatPickr,
   },
+  props: {
+    shipmentData: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       rangeDate: '',
       payment_method: 'COD',
-      selected: { title: 'JNE' },
-      option: [{ title: 'JNE' }, { title: 'JNT' }, { title: 'POS' }, { title: 'SiCepat' }],
-      isLoadTable: false,
-      perPage: 5,
+      selected: { title: '' },
+      option: this.shipmentData,
+      isLoadTable: true,
+      perPage: 10,
       pageOptions: [3, 5, 10],
       totalRows: 1,
       currentPage: 1,
@@ -182,7 +188,7 @@ export default {
         end_date: null,
         payment_method: 'COD',
         shipping: null,
-        page: 1,
+        page: null,
       },
     }
   },
@@ -202,15 +208,18 @@ export default {
           const [startDate, endDate] = val.split(' to ')
           this.paramsCallAPI.start_date = startDate
           this.paramsCallAPI.end_date = endDate
+          this.paramsCallAPI.page = null
         } else {
           this.paramsCallAPI.start_date = val
           this.paramsCallAPI.end_date = val
+          this.paramsCallAPI.page = null
         }
       },
     },
     selected: {
       handler(val) {
         this.paramsCallAPI.shipping = val.title
+        this.paramsCallAPI.page = null
       },
     },
     currentPage: {
@@ -230,21 +239,26 @@ export default {
   },
   methods: {
     fetchData() {
+      this.isLoadTable = true
       const endpoint = '/v1/admin/finance/income'
-      const getData = this.$http_komship.get(endpoint, { params: { ...this.paramsCallAPI } })
-
-      getData.then(({ data }) => {
-        const parseData = JSON.parse(JSON.stringify(data.data))
-        this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
-        this.$emit('totalOngkirFunc', parseData.profit.profit_cod)
-        if (Array.isArray(parseData.income) && parseData.income.length === 0) {
-          this.items = []
-          this.totalRows = 0
-        } else {
-          this.items = parseData.income.data
-          this.totalRows = parseData.income.data.length
-        }
+      this.$http_komship.get(endpoint, {
+        params: {
+          ...this.paramsCallAPI,
+        },
       })
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          this.$emit('totalCodFunc', parseData.profit.total_shipping_profit)
+          this.$emit('totalOngkirFunc', parseData.profit.profit_cod)
+          if (Array.isArray(parseData.income) && parseData.income.length === 0) {
+            this.items = []
+            this.totalRows = 0
+          } else {
+            this.items = parseData.income.data
+            this.totalRows = parseData.income.total
+          }
+          this.isLoadTable = false
+        })
         .catch(e => {
           this.$toast({
             component: ToastificationContent,
@@ -255,9 +269,7 @@ export default {
               variant: 'danger',
             },
           })
-        })
-        .finally(() => {
-          this.loadDataAwal = false
+          this.isLoadTable = false
         })
     },
     onFiltered(filteredItems) {
@@ -271,9 +283,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.wrappertab__content{
-  display: grid;
-}
-</style>
