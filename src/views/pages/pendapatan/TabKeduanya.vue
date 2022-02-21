@@ -149,13 +149,13 @@ export default {
         // },
         {
           key: 'shipping_profit',
-          label: 'Profit Ongkir',
+          label: 'Profit Ongkir COD',
           sortable: true,
           formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
         {
           key: 'net_profit',
-          label: 'Profit COD',
+          label: 'Profit Ongkir Non COD',
           sortable: true,
           formatter: val => (`Rp${new Intl.NumberFormat('id-ID').format(val)}`),
         },
