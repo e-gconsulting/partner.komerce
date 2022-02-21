@@ -342,24 +342,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row v-if="itemsPrint.product.length === 1">
-                      <h4 class="text-black">
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </h4>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }}
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -574,24 +562,12 @@
                   cols="4"
                   class="border-4 border-slate-900"
                 >
-                  <b-row v-if="itemsPrint.product.length === 1">
-                    <h4 class="text-black">
-                      <strong>
-                        Kuantitas:
-                      </strong>
-                    </h4>
-                    <div
-                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                      :key="indexProduct+1"
-                    >
-                      <span class="ml-1 text-black">
-                        {{ dataProduct.qty }}
-                      </span>
-                    </div>
-                  </b-row>
-                  <b-row v-else>
-                    Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                  </b-row>
+                  <h4 class="text-black">
+                    <strong>
+                      Kuantitas:
+                    </strong>
+                    {{ sumAll(itemsPrint.product) }}
+                  </h4>
                 </b-col>
                 <b-col
                   cols="8"
@@ -864,47 +840,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row
-                      v-if="itemsPrint.product.length === 1"
-                      class="align-items-center"
-                    >
-                      <span
-                        class="text-black"
-                        style="font-size: 12px;"
-                      >
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </span>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span
-                          class="ml-1 text-black"
-                          style="font-size: 10px;"
-                        >
-                          {{ dataProduct.qty }}
-                          tes
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      <span
-                        class="text-black"
-                        style="font-size: 12px;"
-                      >
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </span>
-                      <span
-                        class="text-black ml-50"
-                        style="font-size: 10px;"
-                      >
-                        {{ itemsPrint.qtyTotal }}
-                      </span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -1138,24 +1079,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row v-if="itemsPrint.product.length === 1">
-                      <h4 class="text-black">
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </h4>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }}
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
