@@ -71,10 +71,8 @@ export default {
             code: this.$route.query.code,
             password: this.passwordNew,
           })
-            .then(response => {
-              if (response.data.status.code === 200) {
-                this.successChanged = true
-              }
+            .then(() => {
+              this.successChanged = true
             }).catch(err => {
               console.log(err)
               this.loading = false
