@@ -2,7 +2,7 @@ export default [
   {
     path: '/keuangan/penghasilan',
     name: 'penghasilan',
-    component: () => import('@/views/pages/komship/keuangan/Penghasilan.vue'),
+    component: () => import('@/views/pages/komship/keuangan/Penghasilan'),
     meta: {
       name: 'penghasilan',
       resource: 'Keuangan',

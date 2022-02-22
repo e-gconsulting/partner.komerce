@@ -1,8 +1,8 @@
 import { getField, updateField } from 'vuex-map-fields'
 import moment from 'moment'
 import {
-  axiosKomship, penghasilanValue, today, formatYmd, getDates,
-} from '../helpers'
+  axiosKomship, penghasilanValue, today, formatYmd, getDates, last30,
+} from '@/store/helpers'
 
 export default {
   namespaced: true,
@@ -11,10 +11,10 @@ export default {
     penghasilan7Hari: 0,
     penghasilan30Hari: 0,
     penghasilanTotal: 0,
-    selectedPenghasilan: 'Kompship',
-    optionsPenghasilan: ['Kompship'],
+    selectedPenghasilan: 'Komship',
+    optionsPenghasilan: ['Komship'],
     dateRange: {
-      startDate: today,
+      startDate: last30,
       endDate: today,
     },
     dataCod: {

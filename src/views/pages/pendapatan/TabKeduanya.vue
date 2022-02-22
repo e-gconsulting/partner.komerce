@@ -97,7 +97,10 @@ import {
 import vSelect from 'vue-select'
 import flatPickr from 'vue-flatpickr-component'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { dateHelper } from '@/libs/helpers'
+import {
+  today,
+  last30,
+} from '@/store/helpers'
 
 export default {
   components: {
@@ -169,7 +172,7 @@ export default {
       configRangeDate: {
         mode: 'range',
         maxDate: 'today',
-        defaultDate: [dateHelper('30d'), dateHelper()],
+        defaultDate: [last30, today],
       },
       paramsCallAPI: {
         start_date: null,
