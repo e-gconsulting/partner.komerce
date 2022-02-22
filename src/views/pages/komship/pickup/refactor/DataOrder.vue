@@ -514,14 +514,12 @@ export default {
   },
   async mounted() {
     this.reload()
-    console.log('addressId', this.passAddressId)
   },
   methods: {
     getSelectOrder(data) {
-      console.log(data)
+      // handle error
     },
     getDataOrderFromChild(data) {
-      console.log('getDataOrderFromChild', data)
       this.$emit('passDataOrderToParent', data)
     },
     updateCurrentView(val) {
@@ -671,20 +669,18 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getListProductByPartner() {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
-        console.log('failed to get the product data by partner')
+        // handle error
       })
     },
     getOrder() {
@@ -698,7 +694,6 @@ export default {
         },
       }).then(response => {
         const { data } = response.data.data
-        console.log('listAllOrder', response)
         this.tableItemsAllData = data
         this.tableData.items = data
         this.excelData.items = data
@@ -713,7 +708,6 @@ export default {
     getOrderDetail(orderId) {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${orderId}`).then(response => {
         const { data } = response.data
-        // console.log('listOrderDetail', data)
         this.detailOrderData = data
         this.isDetail = true
       }).catch(() => {
@@ -725,9 +719,6 @@ export default {
         params: { ...values },
       }).then(response => {
         const { data } = response.data.data
-        // console.log('listAllOrderFromFilter', data)
-        // this.tableData.items = data
-        // this.excelData.items = data
         this.tableItemsAllData = data
         this.filterDataTableByHeaderType(this.currentView)
       }).catch(() => {
@@ -847,7 +838,6 @@ export default {
         if (findItem > -1) {
           this.tableData.items[findItem].isChecked = true
           this.refreshTable()
-          console.log('tes3')
         }
         this.selectedOrder.push(newSingleItem)
         if (this.selectedOrder.length === this.tableData.length) this.isCheckedAll = true
@@ -868,14 +858,11 @@ export default {
     },
     getSelectedOrder() {
       this.$emit('passDataToParent', this.selectedOrder)
-      console.log(this.selectedOrder)
       this.$bvModal.hide('popupOrder')
     },
     changePerpage(data) {
       this.valuePerpageIsActive = data.value
       this.perPage = data.value
-      console.log(this.currentPage)
-      console.log(this.rows)
       this.getOrder()
     },
   },

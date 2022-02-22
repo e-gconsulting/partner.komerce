@@ -523,9 +523,6 @@ export default {
     }
   },
   mounted() {
-    console.log('res')
-    console.log('res', this.profile)
-    console.log('res', this.profile.shipping)
     if (this.profile) {
       this.expedisiCount = 0
     }
@@ -770,7 +767,6 @@ export default {
       this.storeOrder(formData)
     },
     async storeOrder(formData) {
-      // console.log('formData', formData)
       await this.onPostOrder(formData)
     },
     searchCustomerCity(cityName) {
@@ -778,7 +774,7 @@ export default {
         const { data } = response.data.data
         this.destinationCity = data
       }).catch(() => {
-        console.log('fail to search destination')
+        // handle error
       })
     },
     searchCustomerDetail(customerName) {
@@ -786,7 +782,7 @@ export default {
         const { data } = response.data
         this.detailCustomerList = data
       }).catch(() => {
-        console.log('fail to search customer')
+        // handle error
       })
     },
     calculate() {
@@ -801,7 +797,6 @@ export default {
         },
       }).then(response => {
         const { data } = response.data
-        // console.log('dataCost', data)
         this.totalCostNumber = this.findCorrectData(data)
         this.calculateOnView()
       }).catch(() => {
@@ -823,10 +818,8 @@ export default {
         // eslint-disable-next-line no-param-reassign
         formData.bank_account_no = 0
       }
-      console.log(formData)
       return this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response.data
-        // console.log('detail post order', data)
         if (data) {
           this.isSubmitting = false
           if (this.profile.is_onboarding) {
@@ -843,7 +836,6 @@ export default {
     onPostCart(cartItem) {
       return this.$http_komship.post('v1/cart/bulk-store', cartItem).then(response => {
         const { data } = response.data
-        // console.log('detail post cart', data)
         this.cartOrder = data.cart_id
       }).catch(() => {
         this.alertFail('Unable to Update Your Cart. Please and try again later or contact support.')

@@ -132,8 +132,6 @@ export default {
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 46) { // 46 is dot
         $event.preventDefault()
       }
-
-      // console.log($event.keyCode); //keyCodes value
     },
     getTimeFormatted(timeText) {
       if (timeText) {
@@ -157,17 +155,6 @@ export default {
       this.loadDataAwal = true
       const endpoint = '/v1/admin/shipment/store'
       let getData = null
-      // console.log('datasubmit :', {
-      //   shipping_name: this.shipping_name,
-      //   service_name: this.service_name,
-      //   cashback_from: this.cashback_from,
-      //   service_fee_from: this.service_fee_from,
-      //   service_fee_to: this.service_fee_to,
-      //   cashback_to: this.cashback_to,
-      //   max_pickup_time: this.max_pickup_time,
-      //   vehicles: [this.vehicles],
-      //   criterias: this.changeCriteriasData,
-      // })
       getData = axioskomsipdev.post(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
@@ -180,18 +167,10 @@ export default {
         criterias: this.changeCriteriasData,
       })
       getData.then(data => {
-        console.log(data)
         this.$router.push('/biaya-ekspedisi')
-        // {
-        // status: "success",
-        // code: 200,
-        // message: "Success Create data Shipment"}
-        // const parseData = JSON.parse(JSON.stringify(data.data))
-        // this.items = parseData
-        // this.totalRows = parseData.length
       })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false
@@ -233,7 +212,7 @@ export default {
           this.optionsKota = parseData
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false

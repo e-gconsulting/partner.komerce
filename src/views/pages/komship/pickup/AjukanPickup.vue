@@ -82,10 +82,9 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
-        console.log('fail to get profile')
+        // handle error
       })
     },
     getListOrderByPartner() {
@@ -97,10 +96,9 @@ export default {
         },
       }).then(response => {
         const { data } = response.data.data
-        // console.log('this list order', data)
         this.listOrder = data
       }).catch(() => {
-        console.log('fail to get list order')
+        // handle error
       })
     },
     getListOrderDetailsByPartner() {
@@ -113,10 +111,9 @@ export default {
         },
       }).then(response => {
         const { data } = response.data.data
-        // console.log('this list order details', data)
         this.listSelectedDetails = data
       }).catch(() => {
-        console.log('fail to get list order details')
+        // handle error
       })
     },
   },

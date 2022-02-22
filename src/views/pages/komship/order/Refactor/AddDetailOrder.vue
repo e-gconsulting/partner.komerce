@@ -739,7 +739,7 @@ export default {
         const { data } = response.data
         this.detail_address = data
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getCustomer() {
@@ -747,7 +747,7 @@ export default {
         const { data } = response.data
         this.customersList = data
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getProfile() {
@@ -766,10 +766,8 @@ export default {
 
         this.$http_komship.delete(`v1/cart/clear/${data.user_id}`).then(async res => {
           const { code } = res.data
-          console.log('delete', res.data)
           if (code === 200) {
             return this.$http_komship.post('v1/cart/bulk-store', arrayCart).then(async result => {
-              console.log(result)
               const codeRes = result.data.code
               if (codeRes === 200) {
                 this.cartId = result.data.data.cart_id
@@ -778,10 +776,10 @@ export default {
           }
           return false
         }).catch(err => {
-          console.log(err)
+          // handle error
         })
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     onChangeDate(ctx) {
@@ -1069,7 +1067,7 @@ export default {
         const { data } = response.data.data
         this.destinationCity = data
       }).catch(() => {
-        console.log('fail to search destination')
+        // handle error
       })
     },
     searchCustomerDetail(customerName) {
@@ -1077,7 +1075,7 @@ export default {
         const { data } = response.data
         this.detailCustomerList = data
       }).catch(() => {
-        console.log('fail to search customer')
+        // handle error
       })
     },
     calculate() {

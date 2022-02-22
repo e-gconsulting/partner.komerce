@@ -379,7 +379,6 @@ export default {
       })
         .then(res => {
           const { data } = res.data
-          console.log(data)
           this.totalItems = data.total
           this.loadTable = false
           return data.data

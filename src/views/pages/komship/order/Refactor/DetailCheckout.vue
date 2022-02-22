@@ -707,7 +707,7 @@ export default {
           this.cartId = data.map(items => items.cart_id)
         })
         .catch(err => {
-          console.log(err)
+          // handle error
         })
     },
     async getCustomer(e) {
@@ -728,7 +728,7 @@ export default {
           const { data } = response.data
           this.listCustomer = data
         }).catch(err => {
-          console.log(err)
+          // handle error
         })
       return this.listCustomer
     },
@@ -744,7 +744,6 @@ export default {
             this.loadingSearch = false
           })
           .catch(err => {
-            console.log(err)
             this.loadingSearch = false
           })
       }, 2000)
@@ -757,7 +756,7 @@ export default {
           this.totalRekening = data.length
         })
         .catch(err => {
-          console.log(err)
+          // handle erro
         })
     },
     async validateRekening() {
@@ -852,7 +851,7 @@ export default {
           this.loadingCalculate = false
         })
         .catch(err => {
-          console.log(err)
+          // handle error
         })
     },
     async calculate() {
@@ -892,7 +891,7 @@ export default {
             this.loadingCalculate = false
           })
           .catch(err => {
-            console.log(err)
+            // handle error// handle error
           })
       } else {
         this.isCalculate = false

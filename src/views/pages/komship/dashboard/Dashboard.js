@@ -167,8 +167,6 @@ export default {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       const { data } = response.data
-      // console.log('onboarding', data)
-      // console.log('state profile', this.$store.state.auth.userData)
       if (data) {
         if (!data.is_onboarding) {
           this.$bvModal.show('modal-onboarding')
@@ -245,11 +243,6 @@ export default {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
         this.loadingSubmitTopUp = false
       }
-      // window.snap.pay(this.snapToken, {
-      //   onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      //   onPending: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      //   onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      // })
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
