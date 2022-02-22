@@ -105,7 +105,10 @@
               </div>
             </div>
           </div>
-          <div v-if="JSON.stringify(this.rekening) !== JSON.stringify({})" class="card-body pb-0 mb-0">
+          <div
+            v-if="JSON.stringify(this.rekening) !== JSON.stringify({})"
+            class="card-body pb-0 mb-0"
+          >
             <p class="h-text-md mt-1 mb-0">
               {{ rekening.nama }}
               <img
@@ -118,7 +121,10 @@
               {{ `${rekening.bank} - ${rekening.noRek}` }}
             </p>
           </div>
-          <div v-else class="card-body pb-0 mb-0">
+          <div
+            v-else
+            class="card-body pb-0 mb-0"
+          >
             <p class="h-text-md mt-1 mb-0">
               Rekening belum ada
             </p>
@@ -554,27 +560,42 @@
           </form>
         </div>
         <div
-          v-if="stepNow === 2"
+          v-if="stepNow === 2 && status===true"
           class="text-center"
         >
           <b-row class="justify-content-center">
             <img
               src="@/assets/images/icons/success.svg"
               alt="success"
+              class="text-center"
             >
           </b-row>
-          <b-row class="text-center justify-content-center">
-            <p class="mt-2 h-text-md text-center">
-              Penarikan Saldo Berhasil
-            </p>
+          <p class="mt-2 h-text-md text-center">
+            Penarikan Saldo Berhasil
+          </p>
+          <p class="h-text-dark font-weight-bold">
+            Saldo sebesar {{ nominal }} akan segera dikirim ke
+            rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
+            1x24 jam
+          </p>
+        </div>
+        <div
+          v-if="stepNow === 2 && status===false"
+          class="text-center"
+        >
+          <b-row class="justify-content-center">
+            <img
+              src="@/assets/images/icons/fail.svg"
+              alt="fail"
+              class="text-center"
+            >
           </b-row>
-          <b-row class="text-center">
-            <p class="h-text-dark font-weight-bold">
-              Saldo sebesar {{ formatRupiahTopup(nominal) }} akan segera dikirim ke
-              rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
-              1x24 jam
-            </p>
-          </b-row>
+          <p class="mt-2 h-text-md text-center">
+            Penarikan Saldo Gagal
+          </p>
+          <p class="h-text-dark font-weight-bold">
+            Maaf, kamu tidak dapat melakukan penarikan saldo dikarenakan nominal penarikan melebihi saldo utama anda.
+          </p>
         </div>
       </div>
     </b-modal>
@@ -701,6 +722,7 @@ export default {
       nominalState: null,
       rekTujuanState: null,
       obj: null,
+      status: true,
       visibilityPin: 'password',
     }
   },
@@ -866,14 +888,21 @@ export default {
         case 2:
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
+            const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
             if (!response.data.data.is_match) {
               throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
             }
-            await this.$store.dispatch('saldo/withdrawalRequest')
-            this.$nextTick(() => {
-              this.stepNow = 2
-              this.modalTitle = null
+            responseReq.then(val => {
+              const { data } = val
+
+              this.$nextTick(() => {
+                this.stepNow = 2
+                this.modalTitle = null
+                this.status = data.status
+              })
             })
+
+            this.visibilityPin = 'password'
           } catch (e) {
             this.$swal({
               title:
