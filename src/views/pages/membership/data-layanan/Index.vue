@@ -139,9 +139,8 @@ export default {
         // calling api for table and update data table
         if (val.indexOf('to') !== -1) {
           const [startDate, endDate] = val.split(' to ')
-          console.log({ startDate, endDate })
         } else {
-          console.log(val)
+          // handle error
         }
       },
     },
@@ -157,7 +156,7 @@ export default {
   },
   methods: {
     submitData() {
-      console.log(this.name)
+
     },
     checkAksesLayanan() {
       //

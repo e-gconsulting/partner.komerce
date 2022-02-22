@@ -232,7 +232,9 @@ export default {
           this.loadTable = false
           return data.data
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          // handle error
+        })
     },
     setPage(totalPage) {
       this.perPage = totalPage

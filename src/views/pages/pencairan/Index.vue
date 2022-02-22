@@ -397,7 +397,8 @@ export default {
         this.totalRows = data.length
       })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
+          // handle error
         })
         .finally(() => {
           this.loadDataAwal = false

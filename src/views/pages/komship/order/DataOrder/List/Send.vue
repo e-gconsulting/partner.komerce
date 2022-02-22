@@ -428,7 +428,7 @@ export default {
           showCloseButton: true,
         })
       } catch ($e) {
-        console.log('Cannot Copy')
+        // handle error
       }
     },
     async setPage(totalPage) {

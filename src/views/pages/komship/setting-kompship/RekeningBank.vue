@@ -740,7 +740,6 @@ export default {
             httpKomship.post('/v1/partner/sms/otp', formData, {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(response => {
-              console.log(response)
               this.loadingSubmit = false
               this.$refs['modal-verification-submit'].show()
               this.countDownTimerOtp()
@@ -766,7 +765,6 @@ export default {
     },
     sendOtpAgain() {
       this.countSubmit += 1
-      console.log(this.countSubmit)
       if (this.countOtp < 2) {
         this.countOtp = 60
         const formData = new FormData()
@@ -801,7 +799,6 @@ export default {
       formData.append('otp', this.dataPin)
       httpKomship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
-          console.log('success')
           httpKomship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
@@ -810,7 +807,6 @@ export default {
             }, {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(responseStore => {
-            console.log(responseStore)
             if (responseStore.data.code === 400) {
               this.$toast({
                 component: ToastificationContent,
@@ -851,7 +847,6 @@ export default {
           })
           this.loadingSubmit = false
           this.errorConfirmOtp = true
-          console.log('failed')
         }
       })
     },
@@ -988,7 +983,6 @@ export default {
         })
     },
     addRekening() {
-      console.log('validate profile', this.validateProfile)
       if (this.validateProfile.user_name === '' || this.validateProfile.fullname === '' || this.validateProfile.user_gender === ''
       || this.validateProfile.user_email === '' || this.validateProfile.user_phone === '' || this.validateProfile.user_address === ''
       || this.validateProfile.address_partner_business === '' || this.validateProfile.partner_business_name === ''
@@ -1038,7 +1032,6 @@ export default {
         this.phoneUser = data.user_phone
         this.phoneNumber = data.user_phone
         this.validateProfile = data
-        console.log(data)
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,

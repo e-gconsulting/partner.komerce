@@ -2132,8 +2132,6 @@ export default {
           class: 'col-action',
         },
       )
-
-      console.log(this.variantItems)
       return this.variantItems
     },
     addVariation() {
@@ -2168,7 +2166,6 @@ export default {
     },
     removeChoices3(index) {
       this.formChoices3.splice(index, 1)
-      console.log('variant3', this.formChoices3)
     },
     editTable(data) {
       this.indexRow = data.index

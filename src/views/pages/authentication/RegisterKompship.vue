@@ -794,8 +794,6 @@ export default {
             password_confirmation: this.confirmPassword,
           }).then(response => {
             const { data } = response
-            console.log('data', data)
-
             if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
               this.emailTaken = 'The email has already been taken.'
               this.loading = false
@@ -804,7 +802,6 @@ export default {
               this.userEmailExisting = this.userEmail
               this.serviceTitle = 'Hiring Talent'
               this.agree = false
-              console.log('hiring')
             } else if (data.message === 'Akun Kamu telah terdaftar Komship') {
               this.emailTaken = 'The email has already been taken.'
               this.loading = false
@@ -814,7 +811,6 @@ export default {
               this.serviceTitle = 'Komship'
               this.agree = false
               this.serviceIsKomship = true
-              console.log('komship')
             }
 
             if (data.code !== 400) {
@@ -873,7 +869,6 @@ export default {
           this.$http.put('/register/partner-existing', {
             email: this.userEmailExisting,
           }).then(response => {
-            console.log('response', response)
             this.loading = false
             this.$router.push({ name: 'komship-register-validate' })
           }).catch(() => {

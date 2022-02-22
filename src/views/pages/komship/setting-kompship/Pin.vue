@@ -1116,7 +1116,6 @@ export default {
       this.$refs['modal-forgot-pin'].show()
     },
     toggleVisibilityPin() {
-      console.log('tes')
       if (this.visibilityPin === 'password') {
         this.visibilityPin = 'text'
       } else {
@@ -1124,7 +1123,6 @@ export default {
       }
     },
     toggleVisibilityOTP() {
-      console.log('tes')
       if (this.visibilityOTP === 'password') {
         this.visibilityOTP = 'number'
       } else {

@@ -96,8 +96,6 @@ export default {
       if (dateVal) this.dateText = dateVal
     },
     updateSelectedItems(newListSelected) {
-      console.log('newListSelected')
-      console.log(newListSelected)
       if (newListSelected) this.listSelected = newListSelected
     },
     updateScreenView(value) {
@@ -112,21 +110,18 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
-        console.log(this.profile)
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getListProductByPartner() {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
-        console.log('failed to get the product data by partner')
+        // handle error
       })
     },
   },
