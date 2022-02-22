@@ -7,6 +7,13 @@ import DateRangePicker from 'vue2-daterange-picker'
 import ChartPenghasilan from '@/views/components/chart/ChartPenghasilan.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
+import {
+  today,
+  last7,
+  last30,
+  firstDateOfMonth,
+  lastDateOfMonth,
+} from '@/store/helpers'
 
 export default {
   components: {
@@ -17,24 +24,6 @@ export default {
     PopoverInfo,
   },
   data() {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const last7 = new Date()
-    last7.setDate(today.getDate() - 6)
-    last7.setHours(0, 0, 0, 0)
-
-    const last30 = new Date()
-    last30.setDate(today.getDate() - 29)
-    last30.setHours(0, 0, 0, 0)
-
-    const firstDateOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    const lastDateOfMonth = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      0,
-    )
-
     return {
       picker: {
         startDate: firstDateOfMonth,
