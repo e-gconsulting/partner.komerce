@@ -82,7 +82,7 @@
           </span>
         </template>
         <template #cell(saldo)="data">
-          Rp {{ formatNumber(data.item.saldo) }}
+          {{ data.item.saldo > 0 ? '' : '-' }}Rp {{ formatNumber(data.item.saldo) }}
         </template>
         <template #cell(action)="data">
           <b-button
