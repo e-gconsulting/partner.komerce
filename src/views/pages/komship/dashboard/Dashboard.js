@@ -22,7 +22,7 @@ export default {
     BFormGroup,
     BModal,
     BFormInput,
-    // BFormSelect,
+    BFormSelect,
     ChartPenghasilan,
     // ChartPerforma,
     // DateRangePicker,
@@ -123,6 +123,7 @@ export default {
       categories: ['abc', 'def', 'ghi', 'jkl'],
       modalTitle: null,
       stepNow: 0,
+      status: true,
       nominalState: null,
       rekTujuanState: null,
       obj: null,
@@ -315,19 +316,26 @@ export default {
           this.$nextTick(() => {
             this.stepNow = 1
             this.modalTitle = 'Verifikasi PIN'
+            this.status = true
           })
           break
         case 2:
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
+            const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
             if (!response.data.data.is_match) {
               throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
             }
-            await this.$store.dispatch('saldo/withdrawalRequest')
-            this.$nextTick(() => {
-              this.stepNow = 2
-              this.modalTitle = null
+            responseReq.then(val => {
+              const { data } = val
+
+              this.$nextTick(() => {
+                this.stepNow = 2
+                this.modalTitle = null
+                this.status = data.status
+              })
             })
+
             this.visibilityPin = 'password'
           } catch (e) {
             this.$swal({

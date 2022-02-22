@@ -666,7 +666,7 @@
               invalid-feedback="Rekening tujuan is required"
               :state="rekTujuanState"
             >
-              <v-select
+              <b-form-select
                 v-model="selectedRekTujuan"
                 class="h-text-sm h-text-dark"
                 label="text"
@@ -680,7 +680,7 @@
   
                   Anda belum menambahkan rekening bank
                 </span>
-              </v-select>
+              </b-form-select>
             </b-form-group>
             <div class="col-12 text-right mt-3">
               <button
@@ -754,7 +754,7 @@
           </form>
         </div>
         <div
-          v-if="stepNow === 2"
+          v-if="stepNow === 2 && status===true"
           class="text-center"
         >
           <b-row class="justify-content-center">
@@ -768,11 +768,29 @@
             Penarikan Saldo Berhasil
           </p>
           <p class="h-text-dark font-weight-bold">
-            Saldo sebesar {{ formatRupiah(nominal) }} akan segera dikirim ke
+            Saldo sebesar {{ nominal }} akan segera dikirim ke
             rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
             1x24 jam
           </p>
         </div>
+        <div
+        v-if="stepNow === 2 && status===false"
+        class="text-center"
+      >
+        <b-row class="justify-content-center">
+          <img
+            src="@/assets/images/icons/fail.svg"
+            alt="fail"
+            class="text-center"
+          >
+        </b-row>
+        <p class="mt-2 h-text-md text-center">
+          Penarikan Saldo Gagal
+        </p>
+        <p class="h-text-dark font-weight-bold">
+          Maaf, kamu tidak dapat melakukan penarikan saldo dikarenakan nominal penarikan melebihi saldo utama anda.
+        </p>
+      </div>
       </div>
     </b-modal>
     <!-- modal after topup -->
