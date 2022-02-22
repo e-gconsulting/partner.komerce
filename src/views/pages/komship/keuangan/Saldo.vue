@@ -895,6 +895,22 @@ export default {
                 this.modalTitle = null
                 this.status = data.status
               })
+            }).catch(e => {
+              if (e.response.status === 400) {
+                this.$swal({
+                  title:
+                    '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+                  text: 'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memilikiantrian penarikanyang belum disetujui.',
+                  imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+                  showCloseButton: false,
+                  focusConfirm: true,
+                  confirmButtonText: 'Oke',
+                  customClass: {
+                    confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                  },
+                  buttonsStyling: false,
+                })
+              }
             })
 
             this.visibilityPin = 'password'
