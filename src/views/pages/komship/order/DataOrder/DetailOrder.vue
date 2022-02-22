@@ -323,6 +323,22 @@
           </b-row>
           <b-row
             v-if="orderData.order_status === 'Retur'"
+            class="mt-1">
+            <b-col lg="3" />
+            <b-col
+              lg="5"
+            >
+              Ongkos Kirim Pengembalian (diskon {{ orderData.percentage_cost_retur | 0 }}%)
+            </b-col>
+            <b-col
+              lg="3"
+              class="text-right"
+            >
+              Rp {{ formatNumber(orderData.shipping_retur | 0) }}
+            </b-col>
+          </b-row>
+          <b-row
+            v-if="orderData.order_status === 'Retur'"
             class="mt-1"
           >
             <b-col lg="3" />
