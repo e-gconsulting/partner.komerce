@@ -506,8 +506,8 @@ export default {
           title: '<span class="text-success">Success copy to clipboard</span>',
           showCloseButton: true,
         })
+      // eslint-disable-next-line no-empty
       } catch ($e) {
-        console.log('Cannot Copy')
       }
     },
     nameTypeShipping(data) {
