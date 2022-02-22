@@ -74,7 +74,6 @@ export default {
             .then(() => {
               this.successChanged = true
             }).catch(err => {
-              console.log(err)
               this.loading = false
             })
         }

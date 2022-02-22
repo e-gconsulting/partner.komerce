@@ -255,7 +255,6 @@ export default {
       this.okTitleButton = 'Please wait'
       return this.$http_komship.get(`v1/check-awb/${this.inputtedResi}/${this.detailOrder.order_id}`).then(response => {
         const { data } = response
-        // console.log('checkAirwayBill', data)
         if (data && data.status === 'success') {
           this.warnTextModal = ''
           this.handleOkModalShowReceipt(bvModalEvt)
@@ -266,7 +265,6 @@ export default {
         this.isOnProccess = false
       }).catch(response => {
         const { data } = response
-        console.log('failed to checkAirwayBill', data)
         this.warnTextModal = data && data.status === 'failed' && data.message && data.message !== '' ? data.message : 'failed to check no resi'
         this.isOnProccess = false
         this.okTitleButton = 'Cek Resi'
@@ -280,7 +278,6 @@ export default {
       }
       return this.$http_komship.put(`v1/order/${this.profile.partner_id}/update/${this.detailOrder.order_id}`, newAirwayBill).then(response => {
         const { data } = response.data
-        // console.log('updateAirwayBill', data)
         if (data) {
           this.handleSuccessUpdateAirwayBill(airwayBillText)
           this.handleShowSuccesModal()
@@ -288,7 +285,6 @@ export default {
           this.okTitleButton = 'Simpan'
         }
       }).catch(() => {
-        console.log('failed to updateAirwayBill')
         this.isOnProccess = false
         this.okTitleButton = 'Simpan'
       })

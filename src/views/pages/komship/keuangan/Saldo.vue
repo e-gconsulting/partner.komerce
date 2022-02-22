@@ -820,11 +820,6 @@ export default {
       } finally {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
       }
-      // window.snap.pay(this.snapToken, {
-      //   onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      //   onPending: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      //   onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      // })
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')

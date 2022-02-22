@@ -542,10 +542,6 @@ export default {
     },
   },
   mounted() {
-    // this.$http.get('/docResign').then(response => {
-    //   const { data } = response.data.data
-    //   console.log(data)
-    // })
     this.loadFilterPositions()
   },
   methods: {

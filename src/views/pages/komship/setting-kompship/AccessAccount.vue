@@ -1449,9 +1449,6 @@ export default {
           }
 
           this.loadingSubmit = true
-
-          console.log('menu', this.menu)
-
           this.$http.put('/user/partner/update-account', {
             user_id: this.idEdit,
             menu: this.menu,

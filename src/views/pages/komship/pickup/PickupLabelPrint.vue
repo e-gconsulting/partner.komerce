@@ -160,8 +160,9 @@ export default {
         style: this.getStyle(),
         scanStyles: false,
         honorMarginPadding: false,
-        // onPrintDialogClose: () => this.handleAfterPrint(),
-        onError: e => console.log(e),
+        onError: e => {
+          // handle error
+        },
       })
       this.handleAfterPrint()
     },

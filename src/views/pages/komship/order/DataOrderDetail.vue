@@ -469,14 +469,12 @@ export default {
       // this.alertPopUp('Success To Delete Order', 'success', () => this.reloadPage())
       return this.$http_komship.delete(`v1/order/${this.profile.partner_id}/delete/${this.detailOrder.order_id}`).then(response => {
         const { data } = response
-        // console.log('success to delete order', data)
         if (data && data.code && data.code === 200) {
           this.alertPopUp('Success To Delete Order', 'success', () => this.reloadPage())
         } else {
           this.alertPopUp((data.message && data.message !== '' ? data.message : 'Failed To Delete Order'), 'fail')
         }
       }).catch(() => {
-        // console.log('failed to delete order')
         this.alertPopUp('Failed To Delete Order', 'fail')
       })
     },

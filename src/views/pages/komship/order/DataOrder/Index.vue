@@ -117,7 +117,9 @@ export default {
           this.totalSent = data.total
           return this.totalSent
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          // handle error
+        })
     },
   },
 }

@@ -48,8 +48,6 @@ export default {
       state.statusPenerimaan = detailSaldo.status
     },
     UPDATE_RINCIAN_SALDO(state, rincianSaldos) {
-      console.log('state', state)
-      console.log('rincianSaldo', rincianSaldos)
       state.list_item_rincian_penarikan = rincianSaldos.data
       state.table.totalRows = rincianSaldos.total
       state.rincianSaldos = rincianSaldos.map(item => ({
@@ -87,14 +85,12 @@ export default {
         const response = await axiosIns.get(
           `kmpoin/kmPoinWithdrawalRequest/${state.id}`,
         )
-        console.log('update detail saldo', response.data.data)
         commit('UPDATE_DETAIL_SALDO', response.data.data)
       } catch (e) {
         console.error(e)
       }
     },
     async getRincianSaldo({ commit, state, rootState }, params) {
-      console.log('params', params)
       state.table.perPage = params
       try {
         const partnerId = rootState.auth.userData.partner_detail.id

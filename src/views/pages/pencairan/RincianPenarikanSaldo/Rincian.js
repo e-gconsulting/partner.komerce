@@ -209,13 +209,12 @@ export default {
         },
       })
         .then(({ data }) => {
-          // console.log(data)
           if (data) {
             this.fetchData()
           }
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
       // then hide modal
       this.$nextTick(() => {
@@ -239,13 +238,9 @@ export default {
         },
       })
         .then(({ data }) => {
-          // if success display modal transfer berhasil
-          // console.log(data)
           this.$bvModal.show('modal-transfer-berhasil')
         })
         .catch(e => {
-          // if fail display modal transfer fail
-          console.log('error', e)
           this.$bvModal.show('modal-transfer-gagal')
         })
     },
@@ -288,7 +283,7 @@ export default {
           this.totalRows = data.data.order.length
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.isLoadTable = false

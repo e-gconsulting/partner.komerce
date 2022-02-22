@@ -1446,9 +1446,6 @@ export default {
   },
   mounted() {
     this.items = this.selectedOrder
-    console.log('selectedOrder', this.selectedOrder)
-    console.log('idOrderFromHistory', this.idOrderFromHistory)
-    console.log(this.items)
     this.getProfile()
   },
   methods: {
@@ -1475,7 +1472,6 @@ export default {
             }
           }
         }
-        console.log('itemsOrder', this.items)
         this.loading = false
         return this.items
       }).catch(() => {
@@ -1495,11 +1491,8 @@ export default {
       if (this.profile.user_phone === '' || this.profile.user_fullname === '') {
         this.$refs['modal-validate-print-label'].show()
       } else {
-        console.log('fieldItemsPrint', this.fieldItemsPrint)
         this.$bvModal.show('modal-8')
       }
-      // this.$refs.addPickupPopUpPrint.showModal()
-      // this.$refs.html2Pdf.generatePdf()
     },
     onUpdateScreenViewParent() {
       this.$emit('onBackButtonClicked')
@@ -1511,7 +1504,6 @@ export default {
       }
     },
     onSubmitOptionPrint(values) {
-      console.log('opttion print view', values)
       this.valuesOption = values
       if (values === 100 || values === 150) {
         this.$refs.html2PdfThermal.generatePdf()
@@ -1537,7 +1529,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.profile = response.data.data
-        console.log('profile', this.profile.partner_id)
         this.getOrder()
       }).catch(() => {
         this.$toast({
@@ -1552,7 +1543,6 @@ export default {
       })
     },
     getItemPrint(data) {
-      console.log('qtyLabel', this.qtyLabel)
       if (data.item.printIsActive === true) {
         this.disableButtonPrint = false
         // eslint-disable-next-line no-plusplus
@@ -1568,8 +1558,6 @@ export default {
       }
       if (data.item.printIsActive === false) this.fieldItemsPrint.splice(data.index, 1)
       if (this.fieldItemsPrint[0] === undefined) this.disableButtonPrint = true
-      console.log('fieldItemsPrint', this.fieldItemsPrint)
-      console.log('items', this.items)
     },
     getAllItemPrint() {
       if (this.allSelectItemPrint === true) {
@@ -1589,7 +1577,6 @@ export default {
         this.disableButtonPrint = true
       }
       this.$refs.tableOrder.refresh()
-      console.log('fieldItemsPrint', this.fieldItemsPrint)
     },
     formatPrice(value) {
       const val = value

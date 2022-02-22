@@ -144,17 +144,6 @@ export default {
       this.loadDataAwal = true
       const endpoint = `/v1/admin/shipment/update/${this.$route.params.id}`
       let getData = null
-      console.log('datasubmit :', {
-        shipping_name: this.shipping_name,
-        service_name: this.service_name,
-        cashback_from: this.cashback_from,
-        service_fee_from: this.service_fee_from,
-        service_fee_to: this.service_fee_to,
-        cashback_to: this.cashback_to,
-        max_pickup_time: this.max_pickup_time,
-        vehicles: [this.vehicles],
-        criterias: this.criteriasDataStoreUpdate,
-      })
       getData = axioskomsipdev.put(endpoint, {
         shipping_name: this.shipping_name,
         service_name: this.service_name,
@@ -166,23 +155,6 @@ export default {
         vehicles: this.vehicles,
         criterias: this.changeCriteriasData,
       })
-      // getData.then(data => {
-      //   console.log(data)
-      //   this.$router.push('/biaya-ekspedisi')
-      //   // {
-      //   // status: "success",
-      //   // code: 200,
-      //   // message: "Success Create data Shipment"}
-      //   // const parseData = JSON.parse(JSON.stringify(data.data))
-      //   // this.items = parseData
-      //   // this.totalRows = parseData.length
-      // })
-      //   .catch(e => {
-      //     console.log('error', e)
-      //   })
-      //   .finally(() => {
-      //     this.loadDataAwal = false
-      //   })
     },
     checkAksesLayanan() {
       //
@@ -218,10 +190,9 @@ export default {
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
           this.optionsKota = parseData
-          console.log('optionsKota', this.optionsKota)
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false
@@ -241,7 +212,6 @@ export default {
       axioskomsipdev.get(enpoint)
         .then(({ data }) => {
           const res = data.data
-          console.log(res)
           this.shipping_name = res.shipping_name
           this.service_fee_from = res.service_fee_from
           this.cashback_to = res.cashback_to
@@ -285,9 +255,8 @@ export default {
               }
             }
           }
-          console.log(this.criteriasDataStoreUpdate)
         }).catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false

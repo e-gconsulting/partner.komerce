@@ -261,7 +261,7 @@ export default {
           this.$router.push(nextUrl)
         }
       }).catch(() => {
-        console.log('failed to update onboarding status on profile')
+        // handle error
       })
     },
   },

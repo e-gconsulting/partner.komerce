@@ -1371,7 +1371,6 @@ export default {
             this.heightProduct = 0
           }
           if (this.formChoices3[0] !== undefined) {
-            console.log('Variant 3')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1420,7 +1419,6 @@ export default {
               }
             }
           } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
-            console.log('variant 2')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1453,7 +1451,6 @@ export default {
               }
             }
           } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
-            console.log('varian 1')
             this.variantStore.push(
               {
                 val: this.variationName1,
@@ -1471,9 +1468,6 @@ export default {
               )
             }
           }
-          console.log('variantItems')
-          console.log(this.variantItems)
-
           if (this.cod === true) {
             this.flavours.push('COD')
           } else {
@@ -1505,12 +1499,6 @@ export default {
               this.variantStore.splice(i, 1)
             }
           }
-
-          console.log('variantStore')
-          console.log(this.variantStore)
-          console.log('optionStore')
-          console.log(this.optionStore)
-
           httpKomship.post('/v1/ob/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
@@ -1528,7 +1516,6 @@ export default {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(response => {
             this.productId = response.data.data.product_id
-            console.log(response.data.data)
             if (this.imageFile !== null) {
               // Store image
               const formData = new FormData()
@@ -1612,7 +1599,6 @@ export default {
         }
       }
       if (this.formChoices3[0] !== undefined) {
-        console.log('variant 3')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1650,7 +1636,6 @@ export default {
         }
       }
       if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
-        console.log('variant 2')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1676,7 +1661,6 @@ export default {
         }
       }
       if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
-        console.log('variant 1')
         // eslint-disable-next-line no-plusplus
         for (let i = 0; i < this.formChoices1.length; i++) {
           this.variantItems.push({
@@ -1727,7 +1711,6 @@ export default {
           class: 'col-action',
         },
       )
-      console.log(this.variantItems)
       return this.variantItems
     },
     addVariation() {

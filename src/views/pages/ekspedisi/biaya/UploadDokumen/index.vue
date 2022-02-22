@@ -86,16 +86,6 @@ export default {
     // Set the initial number of items
   },
   created() {
-    //
-    // const eventNames = ['dragenter', 'dragover', 'dragleave', 'drop']
-    // const dropArea = this.$refs['drop-upload-area']
-    // eventNames.forEach(eventName => {
-    //   console.log(eventName)
-    //   dropArea.addEventListener(eventName, this.preventDefaults, false)
-    //   if (eventName === 'drop') {
-    //     dropArea.addEventListener('drop', this.handleDrop, false)
-    //   }
-    // })
   },
   methods: {
     /*
@@ -136,14 +126,11 @@ export default {
     },
     handleDrop(e) {
       const { files } = e.dataTransfer
-      console.log('dt :', e, e.dataTransfer)
-      console.log('files :', files)
       this.handleFiles(files)
     },
     handleFiles(files) {
       const endpointUpload = '/v1/admin/no-cod/import';
       [...files].forEach(file => {
-        console.log(file)
         const formData = new FormData()
         formData.append('file', file)
         axioskomsipdev.post(
@@ -165,7 +152,9 @@ export default {
           .then(({ data }) => {
             this.filesUploaded.push(data)
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            // handle error
+          })
       })
     },
     batalkanUpload() {
@@ -175,19 +164,21 @@ export default {
       const endpointDeleteUpload = '/v1/admin/no-cod/temp/delete'
       axioskomsipdev.delete(endpointDeleteUpload)
         .then(({ data }) => {
-          console.log(data)
           this.$router.go(-1)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          // handle error
+        })
     },
     handleKonfirmasi() {
       const endpointSaveUpload = '/v1/admin/no-cod/save'
       axioskomsipdev.post(endpointSaveUpload)
         .then(({ data }) => {
-          console.log(data)
           this.$router.go(-1)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          // handle error
+        })
     },
     calculateSizeFile(size) {
       const sizesUnit = ['Bytes', 'KB', 'MB', 'GB', 'TB']
