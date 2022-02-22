@@ -109,7 +109,6 @@ export default {
             },
           },
         )
-        console.log('update rincian saldo', response.data.data)
         commit('UPDATE_RINCIAN_SALDO', response.data.data)
       } catch (e) {
         console.error(e)
