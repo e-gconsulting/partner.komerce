@@ -47,9 +47,15 @@
           >
             {{ totalSent }}
           </b-badge>
-          Perlu Dikirim
+          Order Dibuat
         </template>
-        <sent />
+        <created />
+      </b-tab>
+      <b-tab
+        title="Dipacking"
+        lazy
+      >
+        <packing />
       </b-tab>
       <b-tab
         title="Dikirim"
@@ -77,17 +83,18 @@ import {
   BCard, BTabs, BTab, BDropdown, BDropdownItem, BButton, BBadge,
 } from 'bootstrap-vue'
 import All from './List/All.vue'
-import Sent from './List/Sent.vue'
+import Created from './List/Created.vue'
+import Packing from './List/Packing.vue'
 import Send from './List/Send.vue'
 import Received from './List/Received.vue'
 import Retur from './List/Retur.vue'
 
 export default {
   components: {
-    BCard, BTabs, BTab, BDropdown, BDropdownItem, All, Sent, Send, Received, Retur, BButton, BBadge,
+    BCard, BTabs, BTab, BDropdown, BDropdownItem, All, Created, Packing, Send, Received, Retur, BButton, BBadge,
   },
   data() {
-    const tabs = ['semua', 'perlu-dikirim', 'dikirim', 'diterima', 'retur']
+    const tabs = ['semua', 'order-dibuat', 'dipacking', 'dikirim', 'diterima', 'retur']
     return {
       tabIndex: tabs.indexOf(this.$route.query.tab),
       tabs,
@@ -110,7 +117,7 @@ export default {
       const dataProfile = await profile.data.data
       this.profile = await dataProfile
       await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
-        params: { order_status: 0 },
+        params: { order_status: 'Diajukan' },
       })
         .then(res => {
           const { data } = res.data
@@ -118,7 +125,7 @@ export default {
           return this.totalSent
         })
         .catch(err => {
-          // handle error
+          console.log(err)
         })
     },
   },
