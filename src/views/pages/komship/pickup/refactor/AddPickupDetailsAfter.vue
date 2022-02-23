@@ -1621,6 +1621,5 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../order/data-order.scss';
   @import '../add-pickup-detail.scss';
 </style>

@@ -599,7 +599,7 @@ import {
   formatFullDate,
 } from 'node-format-date'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from '../setting-kompship/http_komship'
+import httpKomship from '../../setting-kompship/http_komship'
 // import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {

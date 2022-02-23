@@ -35,7 +35,7 @@ export default [
   {
     path: '/add-order',
     name: 'add-order',
-    component: () => import('@/views/pages/komship/order/AddOrder.vue'),
+    component: () => import('@/views/pages/komship/order/AddOrder/Index.vue'),
     meta: {
       name: 'add-order',
       resource: 'Order',
@@ -54,7 +54,7 @@ export default [
   {
     path: '/add-order/detail-checkout',
     name: 'detail-add-order',
-    component: () => import('@/views/pages/komship/order/Refactor/DetailCheckout.vue'),
+    component: () => import('@/views/pages/komship/order/AddOrder/DetailCheckout.vue'),
     meta: {
       resource: 'Order',
       routeDataOrder: 'data-order',
