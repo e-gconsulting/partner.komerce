@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+.container {
+  font-family: 'Poppins', sans-serif;
+}
+.bg-orange {
+  background-color: #ff6a3a !important;
+}
+.bg-orange2 {
+  background-color: #f95031 !important;
+}
+.card,
+.rounded-16 {
+  border-radius: 16px !important;
+}
+.first-card-header-text {
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30px;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+.h-text-xl {
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: 0.5px;
+  text-align: left;
+  color: #222222;
+}
+.h-text-lg {
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: 0.5px;
+  text-align: left;
+  color: #222222;
+}
+.h-text-md {
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 27px;
+  letter-spacing: 0.5px;
+  text-align: left;
+  color: #222222;
+}
+.h-text-sm {
+  font-size: 16px !important;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+.h-text-xs {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 21px;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+.py-9 {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.me-8 {
+  margin-right: 8px;
+}
+.mb-8 {
+  margin-bottom: 8px;
+}
+.h-text-dark {
+  color: #222222 !important;
+}
+.transform-none {
+  text-transform: none !important;
+}
+.h-border-bottom {
+  border-bottom: 2px solid #c2c2c2 !important;
+}
+.w-20e {
+  width: 20em;
+}
+#input2 {
+  padding-left: 15px;
+  letter-spacing: 42px;
+  border: none !important;
+  outline: none !important;
+  background-image: linear-gradient(
+    to left,
+    black 70%,
+    rgba(255, 255, 255, 0) 0%
+  );
+  background-position: bottom;
+  background-size: 50px 2px;
+  background-repeat: repeat-x;
+  background-position-x: 35px;
+  width: 300px;
+  min-width: 300px;
+}
+#divInner {
+  left: 0;
+  position: sticky;
+}
+#divOuter {
+  width: 288px;
+  overflow: hidden;
+}
+.btn-primary {
+  background-color: #f95031 !important;
+}
+.btn-outline-primary {
+  border-color: #f95031 !important;
+}
+.vue-pincode-input-wrapper {
+  width: 100%;
+  justify-content: center;
+}
+input.vue-pincode-input {
+  border-radius: 0;
+  box-shadow: none !important;
+  border-bottom: 3px solid #222222;
+  margin-left: 5px;
+  margin-right: 5px;
+  max-width: 67px;
+}
+.reportrange-text {
+  background-color: #f1f2f6 !important;
+  display: flex;
+}
+.btnpenghasilansuccess {
+  box-shadow: none;
+  border: none;
+  padding: 16px 24px;
+  max-width: 280px;
+  height: 56px;
+  background: #F95031;
+  border-radius: 12px;
+  
+  &__text {
+    font-weight: 600 !important;
+    font-size: 16px !important;
+    line-height: 150% !important;
+    text-align: center;
+    letter-spacing: 0.5px !important;
+  }
+}
