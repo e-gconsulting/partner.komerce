@@ -931,11 +931,8 @@ export default {
             }
           }
 
-          this.username = this.fullname.toLowerCase().replace(/\s/g, '')
-
           this.loadingSubmit = true
           this.$http.post('/user/partner/create-account', {
-            username: this.username,
             password: this.password,
             full_name: this.fullname,
             email: this.emailUser,
