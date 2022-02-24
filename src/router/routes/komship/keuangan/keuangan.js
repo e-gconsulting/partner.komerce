@@ -23,6 +23,7 @@ export default [
       name: 'saldo',
       resource: 'Keuangan',
       routeToRincianSaldo: 'saldo-detail',
+      routeToOrder: 'data-order',
       action: 'manage',
       breadcrumb: [
         {
