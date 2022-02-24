@@ -18,7 +18,7 @@ export default [
   {
     path: '/keuangan/saldo',
     name: 'saldo',
-    component: () => import('@/views/pages/komship/keuangan/Saldo.vue'),
+    component: () => import('@/views/pages/komship/keuangan/Saldo'),
     meta: {
       name: 'saldo',
       resource: 'Keuangan',
