@@ -1508,29 +1508,29 @@ export default {
     },
     delete(data) {
       this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`)
-      .then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Success',
-            icon: 'CheckIcon',
-            text: 'Success delete access',
-            variant: 'success',
-          },
-        }, 2000)
-        this.refreshTable()
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failed',
-            icon: 'AlertCircleIcon',
-            text: 'Failed delete access',
-            variant: 'danger',
-          },
-        }, 2000)
-        this.refreshTable()
-      })
+        .then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success delete access',
+              variant: 'success',
+            },
+          }, 2000)
+          this.refreshTable()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failed',
+              icon: 'AlertCircleIcon',
+              text: 'Failed delete access',
+              variant: 'danger',
+            },
+          }, 2000)
+          this.refreshTable()
+        })
     },
     cekAllApps() {
       if (this.allAccessApps === true) {
