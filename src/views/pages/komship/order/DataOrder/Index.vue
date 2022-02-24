@@ -115,7 +115,6 @@ export default {
         .then(res => {
           const { data } = res.data
           this.totalSent = data.total
-          console.log('tes', this.$route.query.tab)
           return this.totalSent
         })
         .catch(err => {
