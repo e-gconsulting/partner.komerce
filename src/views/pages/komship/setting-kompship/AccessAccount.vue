@@ -8,11 +8,6 @@
           <strong>Akses Akun</strong>
         </h4>
       </b-col>
-      <b-col class="d-flex justify-content-end">
-        <small>
-          <strong class="text-primary">Download Aplikasi Orderku</strong>
-        </small>
-      </b-col>
     </b-row>
 
     <b-row>
@@ -1512,7 +1507,8 @@ export default {
       })
     },
     delete(data) {
-      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`).then(() => {
+      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`)
+      .then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -1520,6 +1516,17 @@ export default {
             icon: 'CheckIcon',
             text: 'Success delete access',
             variant: 'success',
+          },
+        }, 2000)
+        this.refreshTable()
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failed',
+            icon: 'AlertCircleIcon',
+            text: 'Failed delete access',
+            variant: 'danger',
           },
         }, 2000)
         this.refreshTable()
