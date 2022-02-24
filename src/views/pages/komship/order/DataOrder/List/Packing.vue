@@ -57,10 +57,10 @@
           </b-row>
           <label class="mt-1">Produk</label>
           <v-select
-            v-model="productFilter"
+            v-model="customerName"
             :options="productList"
+            :reduce="(option) => option.product_name"
             label="product_name"
-            @input="getProduct()"
           >
             <span
               slot="no-options"
@@ -230,8 +230,16 @@
             </b-popover>
           </div>
         </template>
-        <template #cell(updated_at)="data">
-          {{ moment(data.item.updated_at) }}
+        <template #cell(airway_bill)="data">
+          <div class="inline-flex">
+            {{ data.item.airway_bill }}
+            <img
+              v-if="data.item.airway_bill"
+              src="@/assets/images/icons/copy.png"
+              class="copy-resi"
+              @click.prevent="copyResi(data.item.airway_bill)"
+            >
+          </div>
         </template>
         <template #cell(details)="data">
           <b-button
@@ -318,7 +326,7 @@ export default {
           key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'updated_at', label: 'Tanggal Diterima', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'airway_bill', label: 'No Resi', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
@@ -328,8 +336,7 @@ export default {
       formSearch: null,
       paymentMethod: [],
       productList: [],
-      productFilter: null,
-      customerName: null,
+      customerName: [],
       startDate: '',
       endDate: '',
       currentPage: 1,
@@ -351,6 +358,7 @@ export default {
     this.fetchData().catch(error => {
       console.error(error)
     })
+    this.getProduct()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -368,7 +376,7 @@ export default {
       this.profile = await dataProfile
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
-          order_status: 'Diterima',
+          order_status: 'Dipacking',
           customer_name: search || this.customerName,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
@@ -392,10 +400,36 @@ export default {
       this.paymentMethod = null
       return this.fetchData()
     },
-    getProduct() {
-      const product = this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
-      const { data } = product.data
+    async getProduct() {
+      const profile = await this.$http_komship.post('v1/my-profile')
+      const dataProfile = await profile.data.data
+      this.profile = await dataProfile
+      const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
+      const { data } = await product.data
       this.productList = data
+    },
+    async copyResi(resi) {
+      try {
+        await navigator.clipboard.writeText(resi)
+        const Toast = this.$swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 3000,
+          didOpen: toast => {
+            toast.addEventListener('mouseenter', this.$swal.stopTimer)
+            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+          },
+        })
+
+        Toast.fire({
+          icon: 'success',
+          title: '<span class="text-success">Success copy to clipboard</span>',
+          showCloseButton: true,
+        })
+      } catch ($e) {
+        // handle error
+      }
     },
     async setPage(totalPage) {
       this.perPage = totalPage
@@ -437,6 +471,12 @@ export default {
 .buttonCollapse {
   margin-left: -50px;
   width:130px;
+}
+.copy-resi{
+  margin-left: 2px;
+  height: 20px;
+  width: 20px;
+  cursor: pointer;
 }
 .btnPage {
   padding: 4px 7px;

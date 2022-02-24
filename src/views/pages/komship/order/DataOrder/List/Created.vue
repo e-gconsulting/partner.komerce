@@ -365,7 +365,7 @@ export default {
       this.profile = await dataProfile
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
-          order_status: 0,
+          order_status: 'Diajukan',
           customer_name: search,
           product_name: this.productName,
           payment_method: this.paymentMethod,

@@ -41,7 +41,7 @@ import {
 // import axios2 from '../setting-kompship/baseUrl'
 import AddOrderInput from './AddOrderInput.vue'
 import AddOrderDetail from './AddOrderDetail.vue'
-import Onboarding from '../onboarding/Onboarding.vue'
+import Onboarding from '../../onboarding/Onboarding.vue'
 
 export default {
   components: {
