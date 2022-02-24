@@ -323,7 +323,8 @@
           </b-row>
           <b-row
             v-if="orderData.order_status === 'Retur'"
-            class="mt-1">
+            class="mt-1"
+          >
             <b-col lg="3" />
             <b-col
               lg="5"

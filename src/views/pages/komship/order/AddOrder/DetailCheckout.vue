@@ -263,7 +263,7 @@
       </b-collapse>
     </div>
     <div
-      v-if="isCalculate && paymentMethod === 'COD'"
+      v-if="isCalculate"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -301,7 +301,10 @@
             >Jenis Biaya Lain</label>
           </b-col>
           <b-col md="8">
-            <div class="d-flex">
+            <div
+              v-if="paymentMethod === 'COD'"
+              class="d-flex"
+            >
               <b-form-radio
                 v-model="jenisBiayaLain"
                 value="0"
