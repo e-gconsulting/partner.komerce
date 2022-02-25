@@ -50,12 +50,15 @@
             </template>
 
             <template #cell(access_menu)="data">
-              <div
-                v-for="(item, index) in data.item.access_menu"
-                :key="index+1"
-              >
-                {{ item.menu_name }}
-              </div>
+              <b-row>
+                <div
+                  v-for="(item, index) in data.item.access_menu"
+                  :key="index+1"
+                  class="mr-50"
+                >
+                  {{ item.menu_name }},
+                </div>
+              </b-row>
             </template>
 
             <template #cell(action)="data">
