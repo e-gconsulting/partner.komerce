@@ -12,18 +12,21 @@
             </h3>
             <div class="wrapper__total">
               <div
+                v-if="[0,2].indexOf(tabActiveIndex) !== -1"
                 class="container__total mr-1"
               >
                 <span
                   class="text__total-label"
                   style="color: #828282;font-size: 20px;font-weight: 500;"
                 >
-                  Total Profit Ongkir
+                  {{
+                    tabActiveIndex === 0 ? 'Total Profit Ongkir' : ( tabActiveIndex === 2 ? 'Total Profit Ongkir COD' : '')
+                  }}
                 </span>
                 <span
-                  class="text__total"
+                  class="text__total text-black"
                 >
-                  Rp {{ new Intl.NumberFormat('id-ID').format(totalOngkir) }}
+                  {{ totalOngkir | rupiah }}
                 </span>
               </div>
               <div
@@ -33,12 +36,14 @@
                   class="text__total-label"
                   style="color: #828282;font-size: 20px;font-weight: 500;"
                 >
-                  Total Profit COD
+                  {{
+                    tabActiveIndex === 0 ? 'Total Profit COD' : ( tabActiveIndex === 1 ? 'Total Profit Non-COD' : 'Total Profit Ongkir Non-COD')
+                  }}
                 </span>
                 <span
-                  class="text__total"
+                  class="text__total text-black"
                 >
-                  Rp {{ new Intl.NumberFormat('id-ID').format(totalCod) }}
+                  {{ totalCod | rupiah }}
                 </span>
               </div>
             </div>
@@ -58,6 +63,7 @@
               <tab-cod
                 ref="dataTabCOD"
                 lazy
+                :shipment-data="shipment"
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -69,6 +75,7 @@
               lazy
             >
               <tab-non-cod
+                :shipment-data="shipment"
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -79,6 +86,7 @@
               lazy
             >
               <tab-keduanya
+                :shipment-data="shipment"
                 @totalCodFunc="totalCodFunc"
                 @totalOngkirFunc="totalOngkirFunc"
               />
@@ -110,6 +118,7 @@ import {
   BCardBody,
 } from 'bootstrap-vue'
 
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import TabCod from './TabCod.vue'
 import TabNonCod from './TabNonCod.vue'
 import TabKeduanya from './TabKeduanya.vue'
@@ -131,6 +140,7 @@ export default {
       totalOngkir: 0,
       loadDataAwal: true,
       tabActiveIndex: 0,
+      shipment: [],
     }
   },
   computed: {
@@ -146,7 +156,7 @@ export default {
     },
   },
   mounted() {
-    //
+    this.getShipmentData()
   },
   created() {
     setTimeout(() => {
@@ -159,6 +169,26 @@ export default {
     },
     totalOngkirFunc(val) {
       this.totalOngkir = val
+    },
+    getShipmentData() {
+      const endpoint = '/v1/admin/shipment'
+      this.$http_komship.get(endpoint)
+        .then(({ data }) => {
+          const parseData = JSON.parse(JSON.stringify(data.data))
+          const ubahDataShipment = parseData.map(x => ({ title: x.shipping_name }))
+          this.shipment = ubahDataShipment
+        })
+        .catch(e => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'Unable to load the table data. Please try again later or contact support.',
+              variant: 'danger',
+            },
+          })
+        })
     },
   },
 }
@@ -178,7 +208,7 @@ export default {
   display: flex;
 }
 .container__total{
-  width: 320px;
+  min-width: 320px;
   height: 133px;
   display: grid;
   padding: 24px;
@@ -203,6 +233,9 @@ export default {
     letter-spacing: 0.5px;
     color: #828282;
   }
+}
+.wrappertab__content{
+  display: grid;
 }
 @media screen and (max-width: 1000px) {
   .wrapper__performa{

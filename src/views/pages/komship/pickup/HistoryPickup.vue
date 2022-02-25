@@ -120,17 +120,15 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
         this.loading = false
-        console.log('gagal fetch profile')
+        // handle error
       })
     },
     getPickup() {
       return this.$http_komship.get('v1/pickup/history').then(response => {
-        const { data } = response.data
-        console.log('listAllPickup', data)
+        const { data } = response.data.data
         this.items = data
         this.loading = false
       }).catch(() => {
@@ -141,7 +139,6 @@ export default {
     getPickupDetail(pickupId) {
       return this.$http_komship.get(`v1/pickup/history/detail/${pickupId}`).then(response => {
         const { data } = response.data
-        // console.log('pickupDetail', data)
         this.detailsItem = data
         if (data && data.data_order && data.data_order.length && data.data_order.length > 0) this.genItemsProdArr(data)
       }).catch(() => {

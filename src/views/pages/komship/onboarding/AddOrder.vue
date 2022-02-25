@@ -93,7 +93,7 @@ export default {
         const { data } = response.data
         this.profile = data
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getListProductByPartner() {
@@ -102,7 +102,7 @@ export default {
         const { data } = response.data
         this.listProduct = data
       }).catch(() => {
-        console.log('failed to get the product data by partner')
+        // handle error
       })
     },
   },

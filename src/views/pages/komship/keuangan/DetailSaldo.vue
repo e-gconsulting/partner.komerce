@@ -9,7 +9,7 @@
           style="border: 1px solid #E2E2E2; border-radius: 8px;"
           class="w-80 text-xl px-1 py-2"
         >
-          Saldo: <span class="text-primary font-bold">Rp {{ formatNumber(totalSaldo) }}</span>
+          Saldo: <span class="text-primary font-bold">{{ totalSaldo>=0?'':'-' }} Rp {{ formatNumber(totalSaldo) }}</span>
         </div>
       </b-col>
       <b-col cols="6">
@@ -82,7 +82,7 @@
           </span>
         </template>
         <template #cell(saldo)="data">
-          Rp {{ formatNumber(data.item.saldo) }}
+          {{ data.item.saldo >= 0 ? '' : '-' }}Rp {{ formatNumber(data.item.saldo) }}
         </template>
         <template #cell(action)="data">
           <b-button
@@ -232,7 +232,9 @@ export default {
           this.loadTable = false
           return data.data
         })
-        .catch(error => console.log(error))
+        .catch(error => {
+          // handle error
+        })
     },
     setPage(totalPage) {
       this.perPage = totalPage

@@ -599,7 +599,7 @@ import {
   formatFullDate,
 } from 'node-format-date'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from '../setting-kompship/http_komship'
+import httpKomship from '../../setting-kompship/http_komship'
 // import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {
@@ -768,7 +768,6 @@ export default {
   },
   created() {
     this.dateValue = dateFormat(new Date(), 'yyyy-mm-dd')
-    console.log(this.dateValue)
     this.customerDate = dateFormat(this.dateValue, 'yyyy-mm-dd')
     this.date = formatFullDate(this.dateValue)
     this.getProfile()
@@ -838,7 +837,7 @@ export default {
         this.profile = data
         this.getAddress()
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getAddress() {
@@ -864,11 +863,10 @@ export default {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        // console.log('this.product', data)
         this.listProduct = data
         if (this.listProduct.length === 0) this.$refs['modal-validate-product'].show()
       }).catch(() => {
-        console.log('failed to get the product data by partner')
+        // handle error
       })
     },
     chooseVariation(data) {
@@ -891,8 +889,6 @@ export default {
       this.$root.$emit('bv::show::modal', 'modal-choose-variation')
     },
     selectParentVariation(itemsVariant, items) {
-      console.log('itemsVariant', itemsVariant)
-      console.log('items', items)
       this.buttonParentVariant = true
       this.buttonVariationFirst = true
       this.buttonVariationSecond = true
@@ -988,22 +984,10 @@ export default {
       return nameVariant
     },
     addOrderToTable(data) {
-      console.log('data add to order', data)
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.itemsOrder.length; x++) {
         if (this.itemsOrder[x].product_name === data.product_name) {
           if (this.variationProductSecondChild !== null) {
-            // Object.assign(this.itemsOrder[x],
-            //   {
-            //     itemSelected: {
-            //       option_id: this.optionId,
-            //       variation: `${this.variationProduct}, ${this.variationProductFirstChild}, ${this.variationProductSecondChild}`,
-            //       price: this.price,
-            //       stock: this.stock,
-            //       total: this.total,
-            //       subtotal: this.subtotal,
-            //     },
-            //   })
             this.itemsOrder[x].itemsSelected.push(
               {
                 option_id: this.optionId,
@@ -1017,17 +1001,6 @@ export default {
             )
           }
           if (this.variationProductSecondChild === null && this.variationProductFirstChild !== null) {
-            // Object.assign(this.itemsOrder[x],
-            //   {
-            //     itemSelected: {
-            //       option_id: this.optionId,
-            //       variation: `${this.variationProduct}, ${this.variationProductFirstChild}`,
-            //       price: this.price,
-            //       stock: this.stock,
-            //       total: this.total,
-            //       subtotal: this.subtotal,
-            //     },
-            //   })
             this.itemsOrder[x].itemsSelected.push(
               {
                 option_id: this.optionId,
@@ -1041,17 +1014,6 @@ export default {
             )
           }
           if (this.variationProductSecondChild === null && this.variationProductFirstChild === null) {
-            // Object.assign(this.itemsOrder[x],
-            //   {
-            //     itemSelected: {
-            //       option_id: this.optionId,
-            //       variation: `${this.variationProduct}`,
-            //       price: this.price,
-            //       stock: this.stock,
-            //       total: this.total,
-            //       subtotal: this.subtotal,
-            //     },
-            //   })
             this.itemsOrder[x].itemsSelected.push(
               {
                 option_id: this.optionId,
@@ -1070,12 +1032,9 @@ export default {
       this.$refs.tableAddOrderOne.refresh()
       this.nextButtonIsActive()
       this.choosenProduct = ''
-      console.log('itemsOrder', this.itemsOrder)
       this.$root.$emit('bv::hide::modal', 'modal-choose-variation')
     },
     addTotalToOrder(itemsVariation, data) {
-      console.log('itemsVariation', itemsVariation)
-      console.log('data', data)
       if (data !== undefined) {
         // eslint-disable-next-line no-param-reassign
         itemsVariation.stockToDisplay += 1
@@ -1090,8 +1049,6 @@ export default {
       }
     },
     reduceTotalToOrder(itemsVariation, data) {
-      console.log('itemsVariation', itemsVariation)
-      console.log('data', data)
       if (data !== undefined) {
         // eslint-disable-next-line no-param-reassign
         itemsVariation.stockToDisplay -= 1
@@ -1197,7 +1154,6 @@ export default {
       this.$refs.tableAddOrderOne.refreshTable()
     },
     onChangeAddress(item) {
-      console.log(item)
       this.choosenAddres = item
     },
     onAddProduct(itemSelected) {
@@ -1230,7 +1186,6 @@ export default {
       } else if (itemSelected === null) {
         this.itemsOrder.splice(1, 1)
       }
-      console.log(this.itemsOrder)
       this.choosenProduct = ''
       this.nextButtonIsActive()
     },
@@ -1362,7 +1317,6 @@ export default {
       this.itemsOrder.every(this.checkButtonNextIsActive)
     },
     checkButtonNextIsActive(data) {
-      console.log('data disable', data)
       if (data.variant[0] !== undefined) {
         if (data.itemsSelected[0] !== undefined) {
           this.buttonNext = false
@@ -1413,7 +1367,6 @@ export default {
       return result
     },
     handleRemoveProductOnList(data) {
-      console.log(data)
       this.itemsOrder.splice(data.index, 1)
       this.listProduct.unshift(data.item)
     },

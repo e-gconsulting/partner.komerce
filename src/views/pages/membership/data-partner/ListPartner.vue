@@ -240,7 +240,7 @@ export default {
     search: {
       handler(val) {
         // calling api
-        console.log(val)
+
       },
     },
   },
@@ -276,16 +276,9 @@ export default {
       this.modalData = val
     },
     arsipkanPartner() {
-      console.log(this.modalData)
-      // open modal konfirmasi
-      // if klik ok
-      // calling api archiveing data
-      // hide modal konfirmasi
       this.$nextTick(() => {
         this.$bvModal.hide('modal-konfirmasi-arsip')
       })
-      // refresh tabel
-      // fetchData
     },
     resetModalKonfimasi() {
       this.$nextTick(() => {

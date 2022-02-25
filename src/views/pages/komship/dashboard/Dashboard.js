@@ -22,13 +22,9 @@ export default {
     BFormGroup,
     BModal,
     BFormInput,
-    // BFormSelect,
+    BFormSelect,
     ChartPenghasilan,
-    // ChartPerforma,
-    // DateRangePicker,
-    // PincodeInput,
     vSelect,
-    // Onboarding,
     PopoverInfo,
     BSpinner,
     CodeInput,
@@ -123,6 +119,7 @@ export default {
       categories: ['abc', 'def', 'ghi', 'jkl'],
       modalTitle: null,
       stepNow: 0,
+      status: true,
       nominalState: null,
       rekTujuanState: null,
       obj: null,
@@ -170,8 +167,6 @@ export default {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
       const { data } = response.data
-      // console.log('onboarding', data)
-      // console.log('state profile', this.$store.state.auth.userData)
       if (data) {
         if (!data.is_onboarding) {
           this.$bvModal.show('modal-onboarding')
@@ -248,11 +243,6 @@ export default {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
         this.loadingSubmitTopUp = false
       }
-      // window.snap.pay(this.snapToken, {
-      //   onSuccess: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      //   onPending: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      //   onError: function(res){ console.log('Snap result:', res) }, // eslint-disable-line
-      // })
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
@@ -315,19 +305,42 @@ export default {
           this.$nextTick(() => {
             this.stepNow = 1
             this.modalTitle = 'Verifikasi PIN'
+            this.status = true
           })
           break
         case 2:
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
+            const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
             if (!response.data.data.is_match) {
               throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
             }
-            await this.$store.dispatch('saldo/withdrawalRequest')
-            this.$nextTick(() => {
-              this.stepNow = 2
-              this.modalTitle = null
+            responseReq.then(val => {
+              const { data } = val
+
+              this.$nextTick(() => {
+                this.stepNow = 2
+                this.modalTitle = null
+                this.status = data.status
+              })
+            }).catch(e => {
+              if (e.response.status === 400) {
+                this.$swal({
+                  title:
+                    '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+                  text: 'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memilikiantrian penarikanyang belum disetujui.',
+                  imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+                  showCloseButton: false,
+                  focusConfirm: true,
+                  confirmButtonText: 'Oke',
+                  customClass: {
+                    confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                  },
+                  buttonsStyling: false,
+                })
+              }
             })
+
             this.visibilityPin = 'password'
           } catch (e) {
             this.$swal({

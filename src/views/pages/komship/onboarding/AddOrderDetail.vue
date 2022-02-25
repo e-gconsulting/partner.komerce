@@ -764,7 +764,7 @@ export default {
         const { data } = response.data.data
         this.destinationCity = data
       }).catch(() => {
-        console.log('fail to search destination')
+        // handle error
       })
     },
     searchCustomerDetail(customerName) {
@@ -772,7 +772,7 @@ export default {
         const { data } = response.data
         this.detailCustomerList = data
       }).catch(() => {
-        console.log('fail to search customer')
+        // handle error
       })
     },
     calculate() {

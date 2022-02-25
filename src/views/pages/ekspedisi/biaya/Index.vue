@@ -280,8 +280,7 @@ export default {
   watch: {
     search: {
       handler(val) {
-        // calling api
-        console.log(val)
+
       },
     },
   },
@@ -303,23 +302,13 @@ export default {
       let getData = null
       getData = axioskomsipdev.get(endpoint)
       getData.then(({ data }) => {
-        /*
-          data: [{
-            // "shipping_id": 1,
-            // "shipping_name": "JNE",
-            // "cashback_from": 2.8,
-            // "service_fee_from": 2.5,
-            // "cashback_to": 25,
-            // "service_fee_to": 25
-          }]
-        */
         const parseData = JSON.parse(JSON.stringify(data.data))
         this.items = parseData
         this.totalRows = parseData.length
         this.loadDataAwal = false
       })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false
@@ -337,16 +326,9 @@ export default {
       this.modalData = val
     },
     arsipkanPartner() {
-      console.log(this.modalData)
-      // open modal konfirmasi
-      // if klik ok
-      // calling api archiveing data
-      // hide modal konfirmasi
       this.$nextTick(() => {
         this.$bvModal.hide('modal-konfirmasi-arsip')
       })
-      // refresh tabel
-      // fetchData
     },
     resetModalKonfimasi() {
       this.$nextTick(() => {

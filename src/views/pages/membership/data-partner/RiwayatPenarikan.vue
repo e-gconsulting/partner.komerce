@@ -202,9 +202,8 @@ export default {
         // calling api for table and update data table
         if (val.indexOf('to') !== -1) {
           const [startDate, endDate] = val.split(' to ')
-          console.log({ startDate, endDate })
+        // eslint-disable-next-line no-empty
         } else {
-          console.log(val)
         }
       },
     },
@@ -220,7 +219,7 @@ export default {
   },
   methods: {
     submitData() {
-      console.log(this.name)
+
     },
     checkAksesLayanan() {
       //

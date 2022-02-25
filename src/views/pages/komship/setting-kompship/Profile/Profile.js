@@ -108,16 +108,12 @@ export default {
     },
     async updateProfile() {
       await this.loadAllProvince()
-      // console.log('imageFile', this.imageFile)
-      // console.log('imageInitialFile', this.imageInitialFile)
       this.loadingSubmit = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
           if (this.imageInitialFile !== '' && this.imageInitialFile !== null) {
-            console.log('tes2')
             if (this.imageInitialFile.includes('http')) {
               this.imageInitialFile = ''
-              console.log('tes1')
             }
           }
           const formData = new FormData()
@@ -130,10 +126,8 @@ export default {
           formData.append('gender', this.jenisKelamin)
           if (this.imageInitialFile !== null && this.imageFile === null) {
             formData.append('business_logo', this.imageInitialFile)
-            console.log('atas')
           } else if (this.imageFile !== null) {
             formData.append('business_logo', this.imageFile)
-            console.log('bawah')
           } else {
             formData.append('business_logo', '')
           }
@@ -144,7 +138,6 @@ export default {
           formData.append('email', this.emailUser)
           if (this.cityCode !== null && this.cityCode.length < 6) {
             formData.append('city_code', this.cityCode)
-            console.log('cityCode', this.cityCode.length)
           }
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
@@ -159,7 +152,6 @@ export default {
             this.loadingSubmit = false
             this.loadProfile()
           }).catch(err => {
-            console.log(err)
             this.loadingSubmit = false
             this.$toast({
               component: ToastificationContent,
@@ -183,7 +175,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log(data)
         this.id = data.user_id
         this.fullname = data.user_fullname
         this.username = data.user_name
@@ -197,7 +188,6 @@ export default {
         this.phoneBusiness = data.partner_no_hp_business
         this.emailUser = data.user_email
         this.address = data.user_address
-        console.log('image', data.partner_business_logo)
         if (data.partner_business_logo) this.imageInitialFile = data.partner_business_logo
         this.nameBusiness = data.partner_business_name
         if (data.user_address_default !== null) {
@@ -211,7 +201,6 @@ export default {
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
       }).catch(err => {
-        console.log('error get profile', err)
         this.loading = false
         this.$toast({
           component: ToastificationContent,
@@ -251,7 +240,6 @@ export default {
       return this.$http.get(`/v1/partner/province-city?search=${search}`)
         .then(response => {
           const { data } = response.data
-          console.log('response province', data)
           this.provinceItems = data
           if (data.length === 1) {
             this.cityCode = data[0].city_code
@@ -262,9 +250,7 @@ export default {
       this.$http.get('/v1/partner/province-city')
         .then(response => {
           const { data } = response.data
-          console.log('response province', data)
           data.forEach(this.filterProvince)
-          console.log(this.cityCode)
           this.provinceItems = data
         })
     },

@@ -75,9 +75,9 @@ export default [
   ...settingAndPrivacy,
 
   ...dashboardKompship,
-  ...produk,
   ...order,
   ...pickup,
+  ...produk,
   ...customer,
   ...keuangan,
   ...settingKompship,
