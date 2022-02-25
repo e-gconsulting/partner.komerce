@@ -178,10 +178,6 @@ export default {
     },
     showModal() {
       this.resetModal()
-      // delete
-      this.stepNow = 2
-      this.status = true
-      // end delete
       this.$bvModal.show('modal-keuangan')
     },
     closeModal() {
