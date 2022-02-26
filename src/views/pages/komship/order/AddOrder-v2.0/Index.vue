@@ -48,7 +48,20 @@
           v-model="address"
           label="address_name"
           :options="addressList"
-        />
+        >
+          <span
+            v-if="addressLength === 0"
+            slot="no-options"
+          >
+            Belum ada alamat pickup, tambahkan dahulu.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
       </b-col>
     </b-row>
     <b-row class="mb-1">
@@ -432,7 +445,8 @@
             </template>
           </v-select>
         </b-col>
-      </b-row><b-row class="mb-1">
+      </b-row>
+      <b-row class="mb-1">
         <b-col md="3">
           <label class="text-lg">Ekspedisi</label>
         </b-col>
@@ -825,6 +839,7 @@ export default {
       dateOrder: moment().format('YYYY-MM-DD'),
       address: [],
       addressList: [],
+      addressLength: null,
       customerId: null,
       customerName: null,
       customerPhone: null,
@@ -950,7 +965,8 @@ export default {
       this.$http_komship.get('/v1/address').then(async response => {
         const { data } = response.data
         this.addressList = data
-        if (data.length !== 0) {
+        this.addressLength = data.length
+        if (this.addressLength !== 0) {
           const result = data.find(item => item.is_default === 1)
           if (result) {
             this.address = result
@@ -1356,7 +1372,6 @@ export default {
       }
       if (this.typeShipping !== null) {
         this.loadingCalculate = true
-        console.log(this.cartId)
         await this.$http_komship.get('v1/calculate', {
           params: {
             partner_id: this.profile.partner_id,
