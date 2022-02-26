@@ -120,7 +120,7 @@
                     >
                       <label>
                         <h4 class="text-black">
-                          Kota/Kecamatan<span class="text-primary">*</span>
+                          Kota/Kabupaten<span class="text-primary">*</span>
                         </h4>
                       </label>
                     </b-col>
@@ -408,7 +408,7 @@
                       >
                         <label>
                           <h4 class="text-black">
-                            Kota/Kecamatan<span class="text-primary">*</span>
+                            Kota/Kabupaten<span class="text-primary">*</span>
                           </h4>
                         </label>
                       </b-col>
@@ -417,7 +417,7 @@
                       >
                         <validation-provider
                           #default="{errors}"
-                          name="Kota/Kecamatan"
+                          name="Kota/Kabupaten"
                           rules="required"
                         >
                           <v-select
@@ -810,6 +810,17 @@ export default {
         this.dataAddress = data
         this.loading = false
         return this.dataAddress
+      }).catch(() => {
+        this.loading = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
     },
     myLoop(data) {
