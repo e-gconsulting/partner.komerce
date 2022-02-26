@@ -303,8 +303,7 @@
               lg="3"
               class="text-right"
             >
-              <span v-if="orderData.order_status !== 'Retur'">Rp {{ formatNumber(orderData.service_fee) }}</span>
-              <span v-else>Rp {{ formatNumber(0) }}</span>
+              <span>Rp {{ formatNumber(orderData.service_fee) }}</span>
             </b-col>
           </b-row>
           <b-row class="mt-1">
