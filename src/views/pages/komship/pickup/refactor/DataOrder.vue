@@ -690,7 +690,6 @@ export default {
         this.tableItemsAllData = data
         this.tableData.items = data
         this.excelData.items = data
-        console.log(this.tableData.items)
         this.totalItems = response.data.data.total
         this.handleCountNeedToSendOrder()
         this.loading = false
