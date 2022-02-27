@@ -78,16 +78,9 @@
               {{ nameCustomer.value }}
             </div>
             <div
-              v-if="nameCustomer.item.is_komship === 1"
               class="tag-wrapper grey-text"
             >
               Komship
-            </div>
-            <div
-              v-else
-              class="tag-wrapper grey-text"
-            >
-              Non-Komship
             </div>
           </template>
 
@@ -628,7 +621,7 @@ export default {
     handleCountNeedToSendOrder() {
       let needToSendCounterTmp = 0
       for (let i = 0; i < this.tableItemsAllData.length; i += 1) {
-        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'Perlu dikirim') {
+        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'Diajukan') {
           needToSendCounterTmp += 1
         }
       }
@@ -688,7 +681,7 @@ export default {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
           page: this.currentPage,
-          order_status: 0,
+          order_status: 'Diajukan',
           partner_address_id: this.passAddressId,
           total_per_page: this.perPage,
         },

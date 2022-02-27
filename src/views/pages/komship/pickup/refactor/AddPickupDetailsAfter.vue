@@ -236,7 +236,7 @@
                             size="17"
                           />
                         </span>
-                        <span class="text-black">{{ profile.user_phone }}</span>
+                        <span class="text-black">{{ profile.partner_no_hp_business }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -456,7 +456,7 @@
                           size="17"
                         />
                       </span>
-                      <span class="text-black">{{ profile.user_phone }}</span>
+                      <span class="text-black">{{ profile.partner_no_hp_business }}</span>
                     </b-list-group-item>
 
                     <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -697,7 +697,7 @@
                           class="text-black"
                           style="font-size: 10px;"
                         >
-                          {{ profile.user_phone }}
+                          {{ profile.partner_no_hp_business }}
                         </span>
                       </b-list-group-item>
 
@@ -973,7 +973,7 @@
                             size="17"
                           />
                         </span>
-                        <span class="text-black">{{ profile.user_phone }}</span>
+                        <span class="text-black">{{ profile.partner_no_hp_business }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -1239,7 +1239,7 @@
                       />
                     </div>
                     <div class="ml-1 d-flex">
-                      {{ profile.user_phone }}
+                      {{ profile.partner_no_hp_business }}
                     </div>
                   </div>
                   <div class="d-inline-flex mb-1 h-auto align-items-start justify-content-start items flex-row">
@@ -1442,7 +1442,7 @@
                       />
                     </div>
                     <div class="ml-1 d-flex">
-                      {{ profile.user_phone }}
+                      {{ profile.partner_no_hp_business }}
                     </div>
                   </div>
                   <div class="d-inline-flex mb-1 h-auto align-items-start justify-content-start items flex-row">
