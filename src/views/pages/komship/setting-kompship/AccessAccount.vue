@@ -8,11 +8,6 @@
           <strong>Akses Akun</strong>
         </h4>
       </b-col>
-      <b-col class="d-flex justify-content-end">
-        <small>
-          <strong class="text-primary">Download Aplikasi Orderku</strong>
-        </small>
-      </b-col>
     </b-row>
 
     <b-row>
@@ -55,12 +50,15 @@
             </template>
 
             <template #cell(access_menu)="data">
-              <div
-                v-for="(item, index) in data.item.access_menu"
-                :key="index+1"
-              >
-                {{ item.menu_name }}
-              </div>
+              <b-row>
+                <div
+                  v-for="(item, index) in data.item.access_menu"
+                  :key="index+1"
+                  class="mr-50"
+                >
+                  {{ item.menu_name }},
+                </div>
+              </b-row>
             </template>
 
             <template #cell(action)="data">
@@ -931,11 +929,8 @@ export default {
             }
           }
 
-          this.username = this.fullname.toLowerCase().replace(/\s/g, '')
-
           this.loadingSubmit = true
           this.$http.post('/user/partner/create-account', {
-            username: this.username,
             password: this.password,
             full_name: this.fullname,
             email: this.emailUser,
@@ -1449,9 +1444,6 @@ export default {
           }
 
           this.loadingSubmit = true
-
-          console.log('menu', this.menu)
-
           this.$http.put('/user/partner/update-account', {
             user_id: this.idEdit,
             menu: this.menu,
@@ -1518,18 +1510,30 @@ export default {
       })
     },
     delete(data) {
-      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`).then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Success',
-            icon: 'CheckIcon',
-            text: 'Success delete access',
-            variant: 'success',
-          },
-        }, 2000)
-        this.refreshTable()
-      })
+      this.$http.delete(`/user/partner/delete-komship-member/${data.item.user_id}`)
+        .then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success delete access',
+              variant: 'success',
+            },
+          }, 2000)
+          this.refreshTable()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failed',
+              icon: 'AlertCircleIcon',
+              text: 'Failed delete access',
+              variant: 'danger',
+            },
+          }, 2000)
+          this.refreshTable()
+        })
     },
     cekAllApps() {
       if (this.allAccessApps === true) {

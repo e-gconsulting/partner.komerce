@@ -388,8 +388,6 @@ export default {
         address_detail: this.addressDetailText,
         orders: this.selectedOrderId,
       }
-      console.log(formData)
-      // console.log('formData', formData)
       if (this.$route.name === 'ajukan-pickup') {
         await this.storePickupReq(formData)
       } else {
@@ -401,7 +399,6 @@ export default {
       return this.$http_komship.post(`v1/ob/pickup/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response
         if (data) {
-          // console.log('post pickup order', data)
           this.isSubmitting = false
           this.$root.$emit('bv::show::modal', 'modal-7')
         }
@@ -415,7 +412,6 @@ export default {
       return this.$http_komship.post(`v1/pickup/${this.profile.partner_id}/store`, formData).then(response => {
         const { data } = response
         if (data) {
-          // console.log('post pickup order', data)
           this.isSubmitting = false
           this.$root.$emit('bv::show::modal', 'modal-7')
         }

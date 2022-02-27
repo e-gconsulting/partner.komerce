@@ -38,6 +38,49 @@
         :items-arr="itemsArr"
         @onBackButtonClicked="() => handleDetailsButtonClicked('all', {})"
       />
+      <b-row class="justify-content-between">
+        <b-col
+          cols="auto"
+        >
+          <div class="p-50 bg-light rounded">
+            <b-button
+              v-for="(itemsPage, index) in pageOptions"
+              :key="index+1"
+              class="btn-icon mr-50"
+              size="sm"
+              :variant="itemsPage === totalPerPage ? 'primary' : 'flat-dark'"
+              @click="setPage(itemsPage)"
+            >
+              {{ itemsPage }}
+            </b-button>
+          </div>
+        </b-col>
+        <b-col
+          cols="auto"
+        >
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="totalRows"
+            :per-page="totalPerPage"
+            first-number
+            last-number
+            class="pagination-primary"
+          >
+            <template #prev-text>
+              <feather-icon
+                size="18"
+                icon="ChevronLeftIcon"
+              />
+            </template>
+            <template #next-text>
+              <feather-icon
+                size="18"
+                icon="ChevronRightIcon"
+              />
+            </template>
+          </b-pagination>
+        </b-col>
+      </b-row>
     </b-overlay>
 
   </b-card>
@@ -47,6 +90,10 @@
 import {
   BCard,
   BOverlay,
+  BRow,
+  BPagination,
+  BCol,
+  BButton,
 } from 'bootstrap-vue'
 import HistoryPickupTable from './HistoryPickupTable.vue'
 import HistoryPickupDetails from './HistoryPickupDetails.vue'
@@ -57,6 +104,10 @@ export default {
     HistoryPickupTable,
     HistoryPickupDetails,
     BOverlay,
+    BRow,
+    BPagination,
+    BCol,
+    BButton,
   },
   data() {
     return {
@@ -74,7 +125,22 @@ export default {
       ],
       items: [],
       itemsArr: [],
+
+      pageOptions: [50, 100, 200],
+
+      currentPage: 1,
+      totalRows: 0,
+      totalPerPage: 50,
     }
+  },
+  watch: {
+    currentPage: {
+      handler(value) {
+        this.getPickup().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
   async mounted() {
     this.reload()
@@ -120,18 +186,24 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
         this.loading = false
-        console.log('gagal fetch profile')
+        // handle error
       })
     },
     getPickup() {
-      return this.$http_komship.get('v1/pickup/history').then(response => {
-        const { data } = response.data
-        console.log('listAllPickup', data)
+      this.loading = true
+      return this.$http_komship.get('v1/pickup/history', {
+        params: {
+          page: this.currentPage,
+          limits: this.totalPerPage,
+        },
+      }).then(response => {
+        console.log('response', response)
+        const { data } = response.data.data
         this.items = data
+        this.totalRows = response.data.data.total
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -141,12 +213,15 @@ export default {
     getPickupDetail(pickupId) {
       return this.$http_komship.get(`v1/pickup/history/detail/${pickupId}`).then(response => {
         const { data } = response.data
-        // console.log('pickupDetail', data)
         this.detailsItem = data
         if (data && data.data_order && data.data_order.length && data.data_order.length > 0) this.genItemsProdArr(data)
       }).catch(() => {
         this.alertFail('Unable to get the pickup detail. Please try again later or contact support.')
       })
+    },
+    async setPage(totalPage) {
+      this.totalPerPage = await totalPage
+      this.getPickup()
     },
   },
 }

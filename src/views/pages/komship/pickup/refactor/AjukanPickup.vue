@@ -383,7 +383,7 @@
       hide-footer
       modal-class="modal-primary"
       centered
-      size="lg"
+      size="xl"
     >
       <data-order
         :pass-address-id="addressId"
@@ -568,7 +568,6 @@ export default {
     }).then(response => {
       this.userData = response.data.data
       this.profile = response.data.data
-      console.log('profile', this.profile)
     }).catch(() => {
       this.$toast({
         component: ToastificationContent,
@@ -591,9 +590,6 @@ export default {
     getDataOrderToStore(data, dataItems) {
       this.selectedOrderToStore = data
       this.itemsPreviewProductOrder = data
-      console.log('dataOrder', data)
-      console.log('selectedOrderToStore', this.selectedOrderToStore)
-      console.log('itemsPreviewProductOrder', this.itemsPreviewProductOrder)
       this.$refs['popup-order'].hide()
     },
     changeDate(dateString, type) {
@@ -631,7 +627,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        console.log('address', data)
         this.itemsAddress = data
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.itemsAddress.length; x++) {
@@ -649,7 +644,6 @@ export default {
     },
     openPopUpAddress() {
       this.$refs['popup-address'].show()
-      console.log(this.itemsAddress)
     },
     getDefaultAddress(data) {
       return data.is_default === 1
@@ -661,7 +655,6 @@ export default {
       this.addressId = data.address_id
       this.picPhone = data.phone
       this.valueAddressIsActive = data.address_id
-      console.log('PIC', this.namePic)
     },
     onChooseVehicle(vehicle) {
       if (vehicle) this.chosenVehicle = vehicle
@@ -678,10 +671,9 @@ export default {
         },
       }).then(response => {
         const { data } = response.data.data
-        // console.log('this list order', data)
         this.listOrder = data
       }).catch(() => {
-        console.log('fail to get list order')
+        // handle error
       })
     },
     submitPickup() {
@@ -700,11 +692,9 @@ export default {
         address_detail: this.addressDetail,
         orders: this.selectedOrdersId,
       }
-      console.log(params)
 
       httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
         .then(response => {
-          console.log(response)
           if (response.data.code !== 500) {
             this.$refs['modal-success-request-pickup'].show()
           } else {
@@ -726,7 +716,7 @@ export default {
       this.$refs['modal-success-request-pickup'].hide()
     },
     detailOrder(data) {
-      console.log('detailOrder', data)
+      // handle error
     },
     getTotalProductOrder(data) {
       let value = null

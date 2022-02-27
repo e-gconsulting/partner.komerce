@@ -376,7 +376,7 @@ export default {
       this.profile = await dataProfile
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
-          order_status: 1,
+          order_status: 'Dikirim',
           customer_name: search || this.customerName,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
@@ -428,7 +428,7 @@ export default {
           showCloseButton: true,
         })
       } catch ($e) {
-        console.log('Cannot Copy')
+        // handle error
       }
     },
     async setPage(totalPage) {

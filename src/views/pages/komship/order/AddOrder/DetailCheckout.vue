@@ -263,7 +263,7 @@
       </b-collapse>
     </div>
     <div
-      v-if="isCalculate && paymentMethod === 'COD'"
+      v-if="isCalculate"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -301,7 +301,10 @@
             >Jenis Biaya Lain</label>
           </b-col>
           <b-col md="8">
-            <div class="d-flex">
+            <div
+              v-if="paymentMethod === 'COD'"
+              class="d-flex"
+            >
               <b-form-radio
                 v-model="jenisBiayaLain"
                 value="0"
@@ -707,7 +710,7 @@ export default {
           this.cartId = data.map(items => items.cart_id)
         })
         .catch(err => {
-          console.log(err)
+          // handle error
         })
     },
     async getCustomer(e) {
@@ -728,7 +731,7 @@ export default {
           const { data } = response.data
           this.listCustomer = data
         }).catch(err => {
-          console.log(err)
+          // handle error
         })
       return this.listCustomer
     },
@@ -744,7 +747,6 @@ export default {
             this.loadingSearch = false
           })
           .catch(err => {
-            console.log(err)
             this.loadingSearch = false
           })
       }, 2000)
@@ -757,7 +759,7 @@ export default {
           this.totalRekening = data.length
         })
         .catch(err => {
-          console.log(err)
+          // handle erro
         })
     },
     async validateRekening() {
@@ -852,7 +854,7 @@ export default {
           this.loadingCalculate = false
         })
         .catch(err => {
-          console.log(err)
+          // handle error
         })
     },
     async calculate() {
@@ -892,7 +894,7 @@ export default {
             this.loadingCalculate = false
           })
           .catch(err => {
-            console.log(err)
+            // handle error// handle error
           })
       } else {
         this.isCalculate = false

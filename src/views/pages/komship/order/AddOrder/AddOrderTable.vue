@@ -11,7 +11,9 @@
         v-if="!isEditable"
         #head(input)="totalData"
       >
-        <div class="div-mid-text">{{ totalData.label }}</div>
+        <div class="div-mid-text">
+          {{ totalData.label }}
+        </div>
       </template>
       <template #cell(product_name)="nameData">
         <div class="add-product-name-wrapper">
@@ -19,7 +21,9 @@
             <img :src="nameData.item.product_image">
           </div>
           <div class="product-name-desc">
-            <div class="product-name-text">{{ nameData.value }}</div>
+            <div class="product-name-text">
+              {{ nameData.value }}
+            </div>
             <b-button
               v-if="isEditable && nameData.item.is_variant && nameData.item.selectedVariationData.length < 1"
               class="product-name-button"
@@ -62,7 +66,9 @@
             >
               -
             </b-button>
-            <div class="input-text">{{ inputData.value }}</div>
+            <div class="input-text">
+              {{ inputData.value }}
+            </div>
             <b-button
               v-if="!inputData.item.is_variant || (inputData.item.is_variant && inputData.item.selectedVariationData.length > 0)"
               class="plus-button"
@@ -82,7 +88,9 @@
             v-if="!isEditable"
             class="product-total-input-wrapper no-mg"
           >
-            <div class="input-text div-mid-text">{{ inputData.value }}</div>
+            <div class="input-text div-mid-text">
+              {{ inputData.value }}
+            </div>
           </div>
         </div>
       </template>

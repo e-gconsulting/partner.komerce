@@ -259,7 +259,7 @@ export default {
           }
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false
@@ -272,7 +272,7 @@ export default {
           this[`top${type.charAt(0).toUpperCase()}${type.substring(1)}`] = data.data.cod
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.loadDataAwal = false

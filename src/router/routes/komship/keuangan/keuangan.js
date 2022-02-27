@@ -2,7 +2,7 @@ export default [
   {
     path: '/keuangan/penghasilan',
     name: 'penghasilan',
-    component: () => import('@/views/pages/komship/keuangan/Penghasilan.vue'),
+    component: () => import('@/views/pages/komship/keuangan/Penghasilan'),
     meta: {
       name: 'penghasilan',
       resource: 'Keuangan',
@@ -18,11 +18,12 @@ export default [
   {
     path: '/keuangan/saldo',
     name: 'saldo',
-    component: () => import('@/views/pages/komship/keuangan/Saldo.vue'),
+    component: () => import('@/views/pages/komship/keuangan/Saldo'),
     meta: {
       name: 'saldo',
       resource: 'Keuangan',
       routeToRincianSaldo: 'saldo-detail',
+      routeToOrder: 'data-order',
       action: 'manage',
       breadcrumb: [
         {

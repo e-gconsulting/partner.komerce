@@ -86,7 +86,21 @@
                 No Rekening
               </td>
               <td class="text-18-bold">
-                {{ detailData.bank_account_no }}
+                <span
+                  ref="rekeningPenarikanSaldo"
+                >
+                  {{ detailData.bank_account_no }}
+                </span>
+                <b-button
+                  variant="link"
+                  size="sm"
+                  @click="handleCopy('rekeningPenarikanSaldo')"
+                  class="p-0"
+                >
+                  <span class="text-black">
+                    <feather-icon icon="CopyIcon" />
+                  </span>
+                </b-button>
               </td>
             </tr>
           </table>
@@ -125,7 +139,7 @@
               <span class="text-16-normal">
                 Total Saldo:
                 <span class="text-16-normal font-weight-bolder text-danger">
-                  Rp{{ detailData.total_balance | formatRupiah }}
+                  {{ detailData.total_balance | rupiah }}
                 </span>
               </span>
               <b-button
@@ -140,7 +154,7 @@
               <span class="text-16-normal">
                 Saldo Awal:
                 <span class="text-16-normal font-weight-bolder">
-                  Rp{{ detailData.beginning_balance | formatRupiah }}
+                  {{ detailData.beginning_balance | rupiah }}
                 </span>
               </span>
               <b-button
@@ -160,13 +174,13 @@
                 <span
                   ref="nominalPenarikanSaldo"
                   class="text-16-normal font-weight-bolder text-success"
-                >Rp{{ detailData.withdrawal_nominal | formatRupiah }}</span>
+                >{{ detailData.withdrawal_nominal | rupiah }}</span>
               </span>
               <b-button
                 variant="outline-success"
                 size="sm"
                 class="btn-icon btn-custom-details"
-                @click="handleCopyNominalPenarikanSaldo()"
+                @click="handleCopy('nominalPenarikanSaldo')"
               >
                 <feather-icon icon="CopyIcon" />
               </b-button>
@@ -174,7 +188,7 @@
             <span class="text-16-normal">
               Sisa Saldo:
               <span class="text-16-normal font-weight-bolder">
-                Rp{{ detailData.current_balance | formatRupiah }}
+                {{ detailData.current_balance | rupiah }}
               </span>
             </span>
           </div>
@@ -208,10 +222,10 @@
               </template>
               <template #cell(order_grandtotal)="data">
                 <b>
-                  Rp. {{ formatNumber(data.item.order_grandtotal) }}
+                  {{ data.item.order_grandtotal | rupiah }}
                 </b>
               </template>
-              <template #cell(shipping_cost)="data">
+              <!-- <template #cell(shipping_cost)="data">
                 <b>
                   Rp. {{ formatNumber(data.item.shipping_cost) }}
                 </b>
@@ -220,18 +234,23 @@
                 <b>
                   Rp. {{ formatNumber(data.item.service_fee) }}
                 </b>
-              </template>
+              </template> -->
               <template #cell(net_profit)="data">
                 <b>
-                  Rp. {{ formatNumber(data.item.net_profit) }}
+                  {{ data.item.net_profit | rupiah }}
                 </b>
+              </template>
+              <template #cell(lihat_detail)="data">
+                <b-button variant="link">
+                  <h5 class="my-0 text-info font-weight-bold">Lihat Detail</h5>
+                </b-button>
               </template>
               <template #table-busy>
                 <div class="text-center text-danger my-2">
                   <b-spinner
                     class="align-middle"
                   />
-                  <strong>Loading...</strong>
+                  <strong> Loading...</strong>
                 </div>
               </template>
             </b-table>
@@ -268,11 +287,11 @@
           >
             <div class="catatan-review p-1 mt-1">
               <h4
-                class="mb-2"
+                class="mb-2 text-black"
               >
                 Catatan :
               </h4>
-              <p>
+              <p class="text-black">
                 {{ detailData.notes }}
               </p>
             </div>

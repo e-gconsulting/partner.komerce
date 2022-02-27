@@ -78,16 +78,9 @@
               {{ nameCustomer.value }}
             </div>
             <div
-              v-if="nameCustomer.item.is_komship === 1"
               class="tag-wrapper grey-text"
             >
               Komship
-            </div>
-            <div
-              v-else
-              class="tag-wrapper grey-text"
-            >
-              Non-Komship
             </div>
           </template>
 
@@ -200,14 +193,14 @@
               @click="() => handleSetCollapseContent(productData.value.isClose, productData.index)"
             >
               <div v-if="!productData.value.isClose">
-                Tutup
-                <b-icon-chevron-up
+                {{ `${(productData.value.length - 1)} Produk lainnya` }}
+                <b-icon-chevron-down
                   aria-hidden="true"
                 />
               </div>
               <div v-else>
-                {{ `${(productData.value.length - 1)} Produk lainnya` }}
-                <b-icon-chevron-down
+                Tutup
+                <b-icon-chevron-up
                   aria-hidden="true"
                 />
               </div>
@@ -514,14 +507,12 @@ export default {
   },
   async mounted() {
     this.reload()
-    console.log('addressId', this.passAddressId)
   },
   methods: {
     getSelectOrder(data) {
-      console.log(data)
+      // handle error
     },
     getDataOrderFromChild(data) {
-      console.log('getDataOrderFromChild', data)
       this.$emit('passDataOrderToParent', data)
     },
     updateCurrentView(val) {
@@ -630,7 +621,7 @@ export default {
     handleCountNeedToSendOrder() {
       let needToSendCounterTmp = 0
       for (let i = 0; i < this.tableItemsAllData.length; i += 1) {
-        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'Perlu dikirim') {
+        if (this.tableItemsAllData[i] && this.tableItemsAllData[i].order_status.toLowerCase() === 'Diajukan') {
           needToSendCounterTmp += 1
         }
       }
@@ -671,20 +662,18 @@ export default {
     getProfile() {
       return this.$http_komship.post('v1/my-profile').then(response => {
         const { data } = response.data
-        // console.log('this.profile', data)
         this.profile = data
       }).catch(() => {
-        console.log('failed to get the profile data')
+        // handle error
       })
     },
     getListProductByPartner() {
       const partnerId = this.profile.partner_id
       return this.$http_komship.get(`v1/partner-product/${partnerId}`).then(response => {
         const { data } = response.data
-        // console.log('this.product', data)
         this.listProduct = data
       }).catch(() => {
-        console.log('failed to get the product data by partner')
+        // handle error
       })
     },
     getOrder() {
@@ -692,13 +681,12 @@ export default {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
           page: this.currentPage,
-          order_status: 0,
+          order_status: 'Diajukan',
           partner_address_id: this.passAddressId,
           total_per_page: this.perPage,
         },
       }).then(response => {
         const { data } = response.data.data
-        console.log('listAllOrder', response)
         this.tableItemsAllData = data
         this.tableData.items = data
         this.excelData.items = data
@@ -713,7 +701,6 @@ export default {
     getOrderDetail(orderId) {
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${orderId}`).then(response => {
         const { data } = response.data
-        // console.log('listOrderDetail', data)
         this.detailOrderData = data
         this.isDetail = true
       }).catch(() => {
@@ -725,9 +712,6 @@ export default {
         params: { ...values },
       }).then(response => {
         const { data } = response.data.data
-        // console.log('listAllOrderFromFilter', data)
-        // this.tableData.items = data
-        // this.excelData.items = data
         this.tableItemsAllData = data
         this.filterDataTableByHeaderType(this.currentView)
       }).catch(() => {
@@ -847,7 +831,6 @@ export default {
         if (findItem > -1) {
           this.tableData.items[findItem].isChecked = true
           this.refreshTable()
-          console.log('tes3')
         }
         this.selectedOrder.push(newSingleItem)
         if (this.selectedOrder.length === this.tableData.length) this.isCheckedAll = true
@@ -868,14 +851,11 @@ export default {
     },
     getSelectedOrder() {
       this.$emit('passDataToParent', this.selectedOrder)
-      console.log(this.selectedOrder)
       this.$bvModal.hide('popupOrder')
     },
     changePerpage(data) {
       this.valuePerpageIsActive = data.value
       this.perPage = data.value
-      console.log(this.currentPage)
-      console.log(this.rows)
       this.getOrder()
     },
   },

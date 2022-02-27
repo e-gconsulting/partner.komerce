@@ -96,11 +96,6 @@ export default {
     //
   },
   watch: {
-    // filterDropdown: {
-    //   handler(val) {
-    //     console.log(val)
-    //   },
-    // },
   },
   mounted() {
     this.getItemsData(this, x => { this.items = x })
@@ -120,14 +115,13 @@ export default {
       axioskomsipdev.get(endpoint, { params: { ...paramsData } })
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
-          // console.log(parseData)
           vm.perPage = parseData.per_page
           vm.totalRows = parseData.total
           vm.currentPage = parseData.current_page
           callback(parseData.data)
         })
         .catch(e => {
-          console.log('error', e)
+          vm.loadDataAwal = false
         })
         .finally(() => {
           vm.loadDataAwal = false
@@ -140,16 +134,7 @@ export default {
       this.currentPage = 1
     },
     deleteDaerahTanpaAksesCOD(val) {
-      console.log(val)
       this.$bvModal.show('modal-delete-daerah')
-      // const endpoint = `/v1/admin/no-cod/delete/${val.zip_code}`
-      // axioskomsipdev.get(endpoint)
-      //   .then(({ data }) => {
-      //     console.log(data)
-      //   })
-      //   .catch(e => {
-      //     console.log('error', e)
-      //   })
     },
     handleImportExcelDaerahCOD() {
       this.$router.push('/biaya-ekspedisi/daerah-tanpa-akses/upload')

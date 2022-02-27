@@ -18,7 +18,6 @@ import {
 } from 'bootstrap-vue'
 
 // eslint-disable-next-line import/extensions
-import axioskomsipdev from '@/libs/axioskomsipdev'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -103,23 +102,27 @@ export default {
         // A virtual column made up from two fields
         {
           key: 'payment_method',
-          label: 'Transaksi',
+          label: 'Jenis Transaksi',
         },
         {
           key: 'order_grandtotal',
           label: 'Nilai Transaksi',
         },
-        {
-          key: 'shipping_cost',
-          label: 'Ongkos Kirim',
-        },
-        {
-          key: 'service_fee',
-          label: 'Biaya COD',
-        },
+        // {
+        //   key: 'shipping_cost',
+        //   label: 'Ongkos Kirim',
+        // },
+        // {
+        //   key: 'service_fee',
+        //   label: 'Biaya COD',
+        // },
         {
           key: 'net_profit',
           label: 'Saldo',
+        },
+        {
+          key: 'lihat_detail',
+          label: '',
         },
       ],
       items: [],
@@ -140,7 +143,6 @@ export default {
     this.loadDataAwal = false
     // Set the initial number of items
     this.totalRows = this.items.length
-    //
   },
   created() {
     this.$store.commit('pencairan/UPDATE_PENCAIRAN_ID', this.$route.params.slug)
@@ -162,8 +164,8 @@ export default {
         window.getSelection().addRange(range)
       }
     },
-    handleCopyNominalPenarikanSaldo() {
-      this.selectText(this.$refs.nominalPenarikanSaldo)
+    handleCopy(refElement) {
+      this.selectText(this.$refs[refElement])
       document.execCommand('copy')
       this.$toast({
         component: ToastificationContent,
@@ -203,19 +205,18 @@ export default {
       formData.append('_method', 'PUT')
       formData.append('status', 'on_review')
       formData.append('notes', this.catatanReview)
-      axioskomsipdev.post(endpoint, formData, {
+      this.$http_komship.post(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
         .then(({ data }) => {
-          // console.log(data)
           if (data) {
             this.fetchData()
           }
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
       // then hide modal
       this.$nextTick(() => {
@@ -233,19 +234,15 @@ export default {
       const formData = new FormData()
       formData.append('withdrawal_id', this.$route.params.slug)
       formData.append('_method', 'PUT')
-      axioskomsipdev.put(endpoint, formData, {
+      this.$http_komship.put(endpoint, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
         .then(({ data }) => {
-          // if success display modal transfer berhasil
-          // console.log(data)
           this.$bvModal.show('modal-transfer-berhasil')
         })
         .catch(e => {
-          // if fail display modal transfer fail
-          console.log('error', e)
           this.$bvModal.show('modal-transfer-gagal')
         })
     },
@@ -279,7 +276,7 @@ export default {
     async fetchData() {
       this.isLoadTable = true
       const endpoint = `/v1/admin/withdrawal/detail/${this.$route.params.slug}`
-      axioskomsipdev.get(endpoint)
+      this.$http_komship.get(endpoint)
         .then(({ data }) => {
           const parseData = JSON.parse(JSON.stringify(data.data))
           this.$store.commit('pencairan/UPDATE_PENCAIRAN_STATUS', parseData.status)
@@ -288,7 +285,7 @@ export default {
           this.totalRows = data.data.order.length
         })
         .catch(e => {
-          console.log('error', e)
+          this.loadDataAwal = false
         })
         .finally(() => {
           this.isLoadTable = false

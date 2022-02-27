@@ -340,7 +340,7 @@ export default {
   },
   methods: {
     submitData() {
-      console.log(this.name)
+
     },
     checkAksesLayanan() {
       //

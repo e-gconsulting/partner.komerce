@@ -368,7 +368,7 @@ export default {
       this.profile = await dataProfile
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
-          order_status: 2,
+          order_status: 'Diterima',
           customer_name: search || this.customerName,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
@@ -379,7 +379,6 @@ export default {
       })
         .then(res => {
           const { data } = res.data
-          console.log(data)
           this.totalItems = data.total
           this.loadTable = false
           return data.data

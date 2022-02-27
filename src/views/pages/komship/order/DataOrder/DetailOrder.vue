@@ -154,6 +154,53 @@
             {{ orderData.customer_address }}
           </b-col>
         </b-row>
+        <b-row class="mt-3">
+          <b-col class="d-flex justify-content-end">
+            <button
+              class="btn btn-outline-primary"
+              @click="$bvModal.show('bv-modal-cek-resi')"
+            >
+              Lacak resi
+            </button>
+            <b-modal
+              id="bv-modal-cek-resi"
+              hide-footer
+            >
+              <template #modal-title>
+                <div class="d-flex flex-row justify-content-between">
+                  <div class="font-weight-bold bold">
+                    Riwayat Perjalanan
+                  </div>
+                </div>
+              </template>
+              <b-row class="my-8 overflow-auto h-50">
+                <b-col>
+                  <div
+                    class="d-block"
+                  >
+                    <div
+                      v-for="item in itemAwb"
+                      :key="item.code"
+                      class="steps step-actives"
+                    >
+                      <div>
+                        <div class="circles" />
+                      </div>
+                      <div>
+                        <div class="titles font-weight-bold bold">
+                          {{ item.desc }}
+                        </div>
+                        <div class="captions">
+                          {{ item.date }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+            </b-modal>
+          </b-col>
+        </b-row>
       </div>
       <h4 class="font-bold mt-2 mb-1">
         Informasi Penjualan
@@ -303,8 +350,7 @@
               lg="3"
               class="text-right"
             >
-              <span v-if="orderData.order_status !== 'Retur'">Rp {{ formatNumber(orderData.service_fee) }}</span>
-              <span v-else>Rp {{ formatNumber(0) }}</span>
+              <span>Rp {{ formatNumber(orderData.service_fee) }}</span>
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -329,7 +375,7 @@
             <b-col
               lg="5"
             >
-              Ongkos Kirim Pengembalian
+              Ongkos Kirim Pengembalian (diskon {{ orderData.percentage_cost_retur }}%)
             </b-col>
             <b-col
               lg="3"
@@ -338,10 +384,7 @@
               Rp {{ formatNumber(orderData.shipping_retur) }}
             </b-col>
           </b-row>
-          <b-row
-            v-if="orderData.order_status !== 'Retur'"
-            class="mt-1"
-          >
+          <b-row class="mt-1">
             <b-col lg="3" />
             <b-col
               lg="5"
@@ -354,21 +397,6 @@
               class="text-right text-primary font-bold"
             >
               Rp {{ formatNumber(orderData.net_profit) }}
-            </b-col>
-          </b-row>
-          <b-row
-            v-if="orderData.order_status === 'Retur'"
-            class="mt-1 font-bold"
-          >
-            <b-col lg="3" />
-            <b-col lg="5">
-              Penghasilan bersih yang kamu dapatkan
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right text-primary"
-            >
-              - Rp {{ formatNumber(orderData.shipping_cost + orderData.shipping_retur - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
         </b-collapse>
@@ -400,6 +428,7 @@ export default {
         { key: 'subtotal', label: 'Sub Total' },
       ],
       itemOrder: [],
+      itemAwb: [],
     }
   },
   async created() {
@@ -434,6 +463,15 @@ export default {
       this.orderData = await data
       this.itemOrder = await data.product
       this.statusOrder = await this.setAlert(data.order_status)
+      this.getHistoryPackage(data.airway_bill)
+    },
+    getHistoryPackage(awb) {
+      const body = {
+        data: awb,
+      }
+      this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
+        this.itemAwb = res.data.data[0].history
+      })
     },
     setAlert(status) {
       if (status === 'Diajukan') {
@@ -490,8 +528,8 @@ export default {
           title: '<span class="text-success">Success copy to clipboard</span>',
           showCloseButton: true,
         })
+      // eslint-disable-next-line no-empty
       } catch ($e) {
-        console.log('Cannot Copy')
       }
     },
     nameTypeShipping(data) {
@@ -513,7 +551,7 @@ export default {
   },
 }
 </script>
-<style>
+<style lang="css">
 .copy-resi{
   margin-left: 3px;
   height: 20px;
@@ -524,4 +562,72 @@ export default {
 .not-collapsed > .when-closed {
   display: none;
 }
+/* Steps */
+.steps {
+  position: relative;
+  min-height: 1em;
+  color: gray;
+}
+.steps + .steps {
+  margin-top: 1.5em
+}
+.steps > div:first-child {
+  position: static;
+  height: 0;
+}
+.steps > div:not(:first-child) {
+  margin-left: 1.5em;
+  padding-left: 1em;
+}
+.steps.step-actives {
+  color: #333333,
+}
+.steps.step-actives .circles {
+  background-color: #f95031;
+}
+
+/* Circle */
+.circles {
+  background: gray;
+  position: relative;
+  width: 1.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+  border-radius: 100%;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 0 0 3px #fff;
+}
+
+/* Vertical Line */
+.circles:after {
+  content: ' ';
+  position: absolute;
+  display: block;
+  top: 1px;
+  right: 50%;
+  bottom: 1px;
+  left: 50%;
+  height: 100%;
+  width: 1px;
+  transform: scale(1, 2);
+  transform-origin: 50% -100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  z-index: -1;
+}
+.steps:last-child .circles:after {
+  display: none
+}
+
+/* Stepper Titles */
+.titles {
+  line-height: 1.5em;
+  font-weight: 900 !important;
+  color: #333333 !important;
+}
+.captions {
+  font-size: 0.8em;
+  color: #929292;
+}
+
 </style>

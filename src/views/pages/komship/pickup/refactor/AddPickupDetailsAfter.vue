@@ -177,7 +177,6 @@
 
                 <b-row>
                   <b-col
-                    cols="4"
                     class="align-self-center text-center"
                   >
                     <h4 class="text-black mt-50">
@@ -192,7 +191,6 @@
                     </p>
                   </b-col>
                   <b-col
-                    cols="4"
                     class="d-flex align-items-center justify-content-center"
                   >
                     <b-img
@@ -202,7 +200,6 @@
                     />
                   </b-col>
                   <b-col
-                    cols="4"
                     class="d-flex justify-content-center align-items-center"
                   >
                     <b-img
@@ -239,7 +236,7 @@
                             size="17"
                           />
                         </span>
-                        <span class="text-black">{{ profile.user_phone }}</span>
+                        <span class="text-black">{{ profile.partner_no_hp_business }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -326,10 +323,10 @@
                         </strong>
                       </h4>
                     </b-row>
-                    <b-row class="d-flex justify-content-center">
+                    <b-row class="d-flex mt-3 justify-content-center">
                       <barcode
                         :value="itemsPrint.airway_bill"
-                        height="33"
+                        width="1"
                       >
                         Show this if the rendering fails.
                       </barcode>
@@ -342,24 +339,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row v-if="itemsPrint.product.length === 1">
-                      <h4 class="text-black">
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </h4>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }}
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -471,7 +456,7 @@
                           size="17"
                         />
                       </span>
-                      <span class="text-black">{{ profile.user_phone }}</span>
+                      <span class="text-black">{{ profile.partner_no_hp_business }}</span>
                     </b-list-group-item>
 
                     <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -574,24 +559,12 @@
                   cols="4"
                   class="border-4 border-slate-900"
                 >
-                  <b-row v-if="itemsPrint.product.length === 1">
-                    <h4 class="text-black">
-                      <strong>
-                        Kuantitas:
-                      </strong>
-                    </h4>
-                    <div
-                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                      :key="indexProduct+1"
-                    >
-                      <span class="ml-1 text-black">
-                        {{ dataProduct.qty }}
-                      </span>
-                    </div>
-                  </b-row>
-                  <b-row v-else>
-                    Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                  </b-row>
+                  <h4 class="text-black">
+                    <strong>
+                      Kuantitas:
+                    </strong>
+                    {{ sumAll(itemsPrint.product) }}
+                  </h4>
                 </b-col>
                 <b-col
                   cols="8"
@@ -724,7 +697,7 @@
                           class="text-black"
                           style="font-size: 10px;"
                         >
-                          {{ profile.user_phone }}
+                          {{ profile.partner_no_hp_business }}
                         </span>
                       </b-list-group-item>
 
@@ -864,47 +837,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row
-                      v-if="itemsPrint.product.length === 1"
-                      class="align-items-center"
-                    >
-                      <span
-                        class="text-black"
-                        style="font-size: 12px;"
-                      >
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </span>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span
-                          class="ml-1 text-black"
-                          style="font-size: 10px;"
-                        >
-                          {{ dataProduct.qty }}
-                          tes
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      <span
-                        class="text-black"
-                        style="font-size: 12px;"
-                      >
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </span>
-                      <span
-                        class="text-black ml-50"
-                        style="font-size: 10px;"
-                      >
-                        {{ itemsPrint.qtyTotal }}
-                      </span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -959,7 +897,7 @@
           </div>
         </div>
 
-        <div v-if="valuesOption === 100 || valuesOption === 150">
+        <!-- <div v-if="valuesOption === 100 || valuesOption === 150">
           <div
             v-for="(itemsPrint, index) in fieldItemsPrint"
             :key="index+1"
@@ -1035,7 +973,7 @@
                             size="17"
                           />
                         </span>
-                        <span class="text-black">{{ profile.user_phone }}</span>
+                        <span class="text-black">{{ profile.partner_no_hp_business }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -1138,24 +1076,12 @@
                     cols="4"
                     class="border-4 border-slate-900"
                   >
-                    <b-row v-if="itemsPrint.product.length === 1">
-                      <h4 class="text-black">
-                        <strong>
-                          Kuantitas:
-                        </strong>
-                      </h4>
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                      >
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }}
-                        </span>
-                      </div>
-                    </b-row>
-                    <b-row v-else>
-                      Kuantitas: <span class="text-black ml-50">{{ itemsPrint.qtyTotal }}</span>
-                    </b-row>
+                    <h4 class="text-black">
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      {{ sumAll(itemsPrint.product) }}
+                    </h4>
                   </b-col>
                   <b-col
                     cols="8"
@@ -1190,7 +1116,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
       </section>
     </vue-html2pdf>
@@ -1223,184 +1149,412 @@
         </b-button>
       </div>
     </b-modal>
-    <b-modal
-      id="printThermal"
-      hide-footer
-      scrollable
-      size="lg"
-      style="font-size: 13px;"
+    <vue-html2pdf
+      ref="html2PdfThermalSquare"
+      :show-layout="false"
+      :float-layout="true"
+      :enable-download="false"
+      :preview-modal="true"
+      filename="hehehe"
+      :pdf-quality="2"
+      pdf-format="a6"
+      pdf-content-width="100%"
+      pdf-orientation="portrait"
+      :manual-pagination="false"
+      @hasStartedGeneration="hasStartedGeneration()"
+      @hasGenerated="hasGenerated($event)"
     >
-      <template #modal-title>
-        <b-button
-          variant="primary"
-          @click="printThermal"
-        >
-          Print
-        </b-button>
-      </template>
-      <div id="elementPrintThermal">
-        <div
+      <section
+        slot="pdf-content"
+      >
+        <section
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
-          class="border-black mx-auto"
-          style="width:12cm;height:auto;padding:5px;overflow-x: hidden;margin-top:2px;margin-left:-0.3cm;margin-right:-0.3cm"
+          class="pdf-item"
         >
-          <b-row
-            class="mx-auto"
-            style="margin-top:3px;"
-          >
+          <b-container fluid>
             <div
-              style="width:34%;"
-              class="text-center"
+              class="border-black mx-auto text-xs"
+              style="height:auto;padding:5px;margin:8px;"
             >
-              <span class="font-bold">Order ID</span><br>
-              <span>{{ itemsPrint.order_no }}</span>
-            </div>
-            <div style="width:33%;">
-              <img
-                src="@/assets/images/logo/jne-bw.png"
-                alt="ekspedisi"
-                style="margin:auto;width:90px"
+              <b-row
+                class="mx-auto"
+                style="margin-top:3px;"
               >
-            </div>
-            <div class="width:33%;">
-              <img
-                src="@/assets/images/logo/komship-bw.png"
-                alt="komship"
-                style="margin:auto;width:120px"
-              >
-            </div>
-          </b-row>
-          <b-row
-            class="mx-auto"
-            style="margin-top:8px;"
-          >
-            <div
-              style="width:49%;padding:5px;"
-              class="border-black"
-            >
-              <span
-                class="d-flex justify-center"
-                style="margin-bottom:5px;"
-              >PENGIRIM</span>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="UserIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ profile.partner_business_name }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="PhoneIcon"
-                    size="16"
-                  />
-                </td>
-                <td>{{ profile.user_phone }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="MapPinIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ idOrderFromHistory.district }}</td>
-              </tr>
-            </div>
-            <div
-              style="width:49%;padding:5px;margin-left:6px;"
-              class="border-black"
-            >
-              <span
-                class="d-flex justify-center"
-                style="margin-bottom:5px;"
-              >PENERIMA</span>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="UserIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ itemsPrint.customer_name }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="PhoneIcon"
-                    size="16"
-                  />
-                </td>
-                <td>{{ getCustomerPhone(itemsPrint.customer_phone) }}</td>
-              </tr>
-              <tr>
-                <td style="width:20px;">
-                  <feather-icon
-                    icon="MapPinIcon"
-                    size="15"
-                  />
-                </td>
-                <td>{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</td>
-              </tr>
-            </div>
-          </b-row>
-          <b-row
-            class="mx-auto"
-            style="margin-top:8px;"
-          >
-            <div
-              style="width:34%;padding:5px;"
-              class="border-black text-center"
-            >
-              <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
-              <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
-            </div>
-            <div
-              style="width:64%;padding:5px;margin-left:6px;"
-              class="justify-center border-black"
-            >
-              <span class="d-flex justify-center">Nomor Resi</span>
-              <div>
-                <barcode
-                  :value="itemsPrint.airway_bill"
-                  height="25"
-                  width="2"
+                <b-col
+                  cols="4"
+                  class="text-center p-1 text-xs"
                 >
-                  Show this if the rendering fails.
-                </barcode>
-              </div>
-            </div>
-          </b-row>
-          <b-row
-            class="mx-auto"
-            style="margin-top:8px;"
-          >
-            <div
-              style="width:34%;padding:5px;"
-              class="border-black"
-            >
-              Kuantitas: {{ sumAll(itemsPrint.product) }}
-            </div>
-            <div
-              style="width:64%;padding:5px;margin-left:6px;"
-              class="border-black"
-            >
-              ISI PAKET: <span
-                v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                :key="indexProduct+1"
+                  <span class="font-bold">Order ID</span><br>
+                  <span>{{ itemsPrint.order_no }}</span>
+                </b-col>
+                <b-col
+                  cols="4"
+                  class="p-1 d-flex align-items-start justify-content-center"
+                >
+                  <img
+                    src="@/assets/images/logo/jne-bw.png"
+                    alt="ekspedisi"
+                    style="margin:auto;"
+                  >
+                </b-col>
+                <b-col
+                  cols="4"
+                  class="p-1 d-flex align-items-start justify-content-center"
+                >
+                  <img
+                    src="@/assets/images/logo/komship-bw.png"
+                    alt="komship"
+                    style="margin:auto;"
+                  >
+                </b-col>
+              </b-row>
+              <b-row
+                class="mx-auto"
+                style="margin-top:8px;"
               >
-                {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
-              </span>
+                <b-col
+                  class="border-black"
+                  style="padding:5px;"
+                >
+                  <div
+                    class="d-flex justify-center"
+                  >PENGIRIM</div>
+                  <div class="d-inline-flex h-auto align-items-start flex flex-row mt-1">
+                    <span class="w-auto d-flex ">
+                      <feather-icon
+                        icon="UserIcon"
+                        size="15"
+                      />
+                    </span>
+                    <span class="ml-1">
+                      {{ profile.partner_business_name }}
+                    </span>
+                  </div>
+                  <div class="d-inline-flex h-auto align-items-start justify-content-start items flex-row">
+                    <div class="d-inline-flex ">
+                      <feather-icon
+                        icon="PhoneIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1 d-flex">
+                      {{ profile.partner_no_hp_business }}
+                    </div>
+                  </div>
+                  <div class="d-inline-flex mb-1 h-auto align-items-start justify-content-start items flex-row">
+                    <div class="w-auto d-flex">
+                      <feather-icon
+                        icon="MapPinIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ idOrderFromHistory.district }}
+                    </div>
+                  </div>
+                </b-col>
+                <b-col
+                  style="padding:5px;margin-left:6px;"
+                  class="border-black"
+                >
+                  <div
+                    class="d-flex justify-center"
+                  >PENERIMA</div>
+                  <div class="d-inline-flex h-auto align-items-start justify-content-start items flex-row mt-1">
+                    <div class="w-auto d-flex ">
+                      <feather-icon
+                        icon="UserIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ itemsPrint.customer_name }}
+                    </div>
+                  </div>
+                  <div class="d-inline-flex h-auto align-items-center items flex-row">
+                    <div class="w-auto d-flex ">
+                      <feather-icon
+                        icon="PhoneIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ getCustomerPhone(itemsPrint.customer_phone) }}
+                    </div>
+                  </div>
+                  <div class="d-inline-flex h-auto align-items-center items flex-row ">
+                    <div class="w-auto d-flex ">
+                      <feather-icon
+                        icon="MapPinIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row
+                class="mx-auto"
+                style="margin-top:8px;"
+              >
+                <div
+                  style="width:34%;padding:5px;"
+                  class="border-black text-center"
+                >
+                  <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
+                  <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
+                </div>
+                <div
+                  style="width:64%;padding:5px;margin-left:6px;"
+                  class="justify-content-center d-flex flex-column align-items-center border-black"
+                >
+                  <span class="d-flex justify-center">Nomor Resi</span>
+                  <div class="mt-1">
+                    <barcode
+                      :value="itemsPrint.airway_bill"
+                      height="20"
+                      font-size="12"
+                      width="1"
+                    >
+                      Show this if the rendering fails.
+                    </barcode>
+                  </div>
+                </div>
+              </b-row>
+              <b-row
+                class="mx-auto"
+                style="margin-top:8px;"
+              >
+                <div
+                  style="width:34%;padding:5px;"
+                  class="border-black "
+                >
+                  Kuantitas: {{ sumAll(itemsPrint.product) }}
+                </div>
+                <div
+                  style="width:64%;padding:8px;margin-left:6px;"
+                  class="border-black"
+                >
+                  ISI PAKET: <span
+                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                    :key="indexProduct+1"
+                  >
+                    {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
+                  </span>
+                </div>
+              </b-row>
             </div>
-          </b-row>
-        </div>
-      </div>
-    </b-modal>
-
+          </b-container>
+        </section>
+      </section>
+    </vue-html2pdf>
+    <vue-html2pdf
+      ref="html2PdfThermal"
+      :show-layout="false"
+      :float-layout="true"
+      :enable-download="false"
+      :preview-modal="true"
+      filename="hehehe"
+      :paginate-elements-by-height="500"
+      :pdf-quality="2"
+      pdf-format="a6"
+      pdf-content-width="370px"
+      pdf-orientation="portrait"
+      :manual-pagination="false"
+      @hasStartedGeneration="hasStartedGeneration()"
+      @hasGenerated="hasGenerated($event)"
+    >
+      <section
+        slot="pdf-content"
+      >
+        <b-container
+          v-for="(itemsPrint, index) in fieldItemsPrint"
+          :key="index+1"
+          class="flex align-items-center justify-content-center"
+        >
+          <section class="pdf-item">
+            <div
+              class="border-black mx-auto text-md"
+              style="height:auto;padding:5px;margin:8px;"
+            >
+              <b-row
+                class="mx-auto"
+                style="margin-top:3px;"
+              >
+                <b-col
+                  cols="4"
+                  class="text-center p-1 text-xs"
+                >
+                  <span class="font-bold">Order ID</span><br>
+                  <span>{{ itemsPrint.order_no }}</span>
+                </b-col>
+                <b-col
+                  cols="4"
+                  class="p-1 d-flex align-items-start justify-content-center"
+                >
+                  <img
+                    src="@/assets/images/logo/jne-bw.png"
+                    alt="ekspedisi"
+                    style="margin:auto;"
+                  >
+                </b-col>
+                <b-col
+                  cols="4"
+                  class="p-1 d-flex align-items-start justify-content-center"
+                >
+                  <img
+                    src="@/assets/images/logo/komship-bw.png"
+                    alt="komship"
+                    style="margin:auto;"
+                  >
+                </b-col>
+              </b-row>
+              <b-row
+                class="mx-auto"
+                style="margin-top:8px;"
+              >
+                <b-col
+                  class="border-black"
+                  style="padding:5px;"
+                >
+                  <div
+                    class="d-flex justify-center"
+                  >PENGIRIM</div>
+                  <div class="d-inline-flex h-auto align-items-start flex flex-row mt-1">
+                    <span class="w-auto d-flex ">
+                      <feather-icon
+                        icon="UserIcon"
+                        size="15"
+                      />
+                    </span>
+                    <span class="ml-1">
+                      {{ profile.partner_business_name }}
+                    </span>
+                  </div>
+                  <div class="d-inline-flex h-auto align-items-start justify-content-start items flex-row">
+                    <div class="d-inline-flex ">
+                      <feather-icon
+                        icon="PhoneIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1 d-flex">
+                      {{ profile.partner_no_hp_business }}
+                    </div>
+                  </div>
+                  <div class="d-inline-flex mb-1 h-auto align-items-start justify-content-start items flex-row">
+                    <div class="w-auto d-flex">
+                      <feather-icon
+                        icon="MapPinIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ idOrderFromHistory.district }}
+                    </div>
+                  </div>
+                </b-col>
+                <b-col
+                  style="padding:5px;margin-left:6px;"
+                  class="border-black"
+                >
+                  <div
+                    class="d-flex justify-center"
+                  >PENERIMA</div>
+                  <div class="d-inline-flex h-auto align-items-start justify-content-start items flex-row mt-1">
+                    <div class="w-auto d-flex ">
+                      <feather-icon
+                        icon="UserIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ itemsPrint.customer_name }}
+                    </div>
+                  </div>
+                  <div class="d-inline-flex h-auto align-items-center items flex-row">
+                    <div class="w-auto d-flex ">
+                      <feather-icon
+                        icon="PhoneIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ getCustomerPhone(itemsPrint.customer_phone) }}
+                    </div>
+                  </div>
+                  <div class="d-inline-flex h-auto align-items-center items flex-row ">
+                    <div class="w-auto d-flex ">
+                      <feather-icon
+                        icon="MapPinIcon"
+                        size="15"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      {{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row
+                class="mx-auto"
+                style="margin-top:8px;"
+              >
+                <div
+                  style="width:34%;padding:5px;"
+                  class="border-black text-center"
+                >
+                  <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
+                  <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
+                </div>
+                <div
+                  style="width:64%;padding:5px;margin-left:6px;"
+                  class="justify-content-center d-flex flex-column align-items-center border-black"
+                >
+                  <span class="d-flex justify-center">Nomor Resi</span>
+                  <div class="mt-1">
+                    <barcode
+                      :value="itemsPrint.airway_bill"
+                      height="20"
+                      font-size="12"
+                      width="1"
+                    >
+                      Show this if the rendering fails.
+                    </barcode>
+                  </div>
+                </div>
+              </b-row>
+              <b-row
+                class="mx-auto"
+                style="margin-top:8px;"
+              >
+                <div
+                  style="width:34%;padding:5px;"
+                  class="border-black "
+                >
+                  Kuantitas: {{ sumAll(itemsPrint.product) }}
+                </div>
+                <div
+                  style="width:64%;padding:8px;margin-left:6px;"
+                  class="border-black"
+                >
+                  ISI PAKET: <span
+                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                    :key="indexProduct+1"
+                  >
+                    {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
+                  </span>
+                </div>
+              </b-row>
+            </div>
+          </section>
+          <br>
+        </b-container>
+      </section>
+    </vue-html2pdf>
   </b-card>
 </template>
 
@@ -1513,9 +1667,6 @@ export default {
   },
   mounted() {
     this.items = this.selectedOrder
-    console.log('selectedOrder', this.selectedOrder)
-    console.log('idOrderFromHistory', this.idOrderFromHistory)
-    console.log(this.items)
     this.getProfile()
   },
   methods: {
@@ -1542,7 +1693,6 @@ export default {
             }
           }
         }
-        console.log('itemsOrder', this.items)
         this.loading = false
         return this.items
       }).catch(() => {
@@ -1562,11 +1712,8 @@ export default {
       if (this.profile.user_phone === '' || this.profile.user_fullname === '') {
         this.$refs['modal-validate-print-label'].show()
       } else {
-        console.log('fieldItemsPrint', this.fieldItemsPrint)
         this.$bvModal.show('modal-8')
       }
-      // this.$refs.addPickupPopUpPrint.showModal()
-      // this.$refs.html2Pdf.generatePdf()
     },
     onUpdateScreenViewParent() {
       this.$emit('onBackButtonClicked')
@@ -1578,21 +1725,14 @@ export default {
       }
     },
     onSubmitOptionPrint(values) {
-      console.log('opttion print view', values)
       this.valuesOption = values
-      if (values === 100 || values === 150) {
-        this.$bvModal.show('printThermal')
+      if (values === 150) {
+        this.$refs.html2PdfThermal.generatePdf()
+      } else if (values === 100) {
+        this.$refs.html2PdfThermalSquare.generatePdf()
       } else {
         this.$refs.html2Pdf.generatePdf()
       }
-    },
-    printThermal() {
-      printJS({
-        printable: 'elementPrintThermal',
-        type: 'html',
-        targetStyles: ['*'],
-        font_size: '12px',
-      })
     },
     onSubmitPrint(values) {
       // if (values) this.$refs.printLabelContent.printContent()
@@ -1612,7 +1752,6 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.profile = response.data.data
-        console.log('profile', this.profile.partner_id)
         this.getOrder()
       }).catch(() => {
         this.$toast({
@@ -1627,7 +1766,6 @@ export default {
       })
     },
     getItemPrint(data) {
-      console.log('qtyLabel', this.qtyLabel)
       if (data.item.printIsActive === true) {
         this.disableButtonPrint = false
         // eslint-disable-next-line no-plusplus
@@ -1643,8 +1781,6 @@ export default {
       }
       if (data.item.printIsActive === false) this.fieldItemsPrint.splice(data.index, 1)
       if (this.fieldItemsPrint[0] === undefined) this.disableButtonPrint = true
-      console.log('fieldItemsPrint', this.fieldItemsPrint)
-      console.log('items', this.items)
     },
     getAllItemPrint() {
       if (this.allSelectItemPrint === true) {
@@ -1664,7 +1800,6 @@ export default {
         this.disableButtonPrint = true
       }
       this.$refs.tableOrder.refresh()
-      console.log('fieldItemsPrint', this.fieldItemsPrint)
     },
     formatPrice(value) {
       const val = value
@@ -1709,6 +1844,5 @@ export default {
 </script>
 
 <style lang="scss">
-  @import '../../order/data-order.scss';
   @import '../add-pickup-detail.scss';
 </style>

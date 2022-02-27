@@ -942,34 +942,6 @@ export default {
             url_other: this.urlOther,
           }
 
-          // console.log(formData.username)
-          // console.log(formData.name)
-          // console.log(formData.gender)
-          // console.log(formData.birth_date)
-          // console.log(formData.martial_status)
-          // console.log(formData.province_id)
-          // console.log(formData.regency_id)
-          // console.log(formData.district_id)
-          // console.log(formData.address)
-          // console.log(formData.education)
-          // console.log(formData.has_work_experience)
-          // console.log(formData.year_experience)
-          // console.log(formData.position_id)
-          // console.log(formData.join_date)
-          // console.log(formData.status)
-          // console.log(formData.office_id)
-          // console.log(formData.user_management_id)
-          // console.log(formData.no_hp)
-          // console.log(formData.email)
-          // console.log(formData.bank_name)
-          // console.log(formData.bank_owner_name)
-          // console.log(formData.bank_no)
-          // console.log(formData.password)
-          // console.log(formData.password_confirmation)
-          // console.log(formData.photo_profile_url)
-          // console.log(formData.url_document)
-          // console.log(formData.url_other)
-
           this.$http.post(`/talent/${this.getId}`, formData)
             .then(async response => {
               if (response.data.success !== undefined && !response.data.success) {

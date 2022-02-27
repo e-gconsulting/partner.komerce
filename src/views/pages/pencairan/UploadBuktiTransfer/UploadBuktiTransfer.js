@@ -140,32 +140,11 @@ export default {
           },
         })
           .then(({ data }) => {
-            // console.log(this.file)
             this.filesUploaded.push(data)
           })
           .catch(e => {
-            console.log('error', e)
+            // handle error
           })
-        // this.$http.post(
-        //   'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-        //   formData,
-        //   {
-        //     headers: {
-        //       'Content-Type': 'multipart/form-data',
-        //     },
-        //     onUploadProgress: progressEvent => {
-        //       const progressPercent = parseInt(Math.round((progressEvent.loaded / progressEvent.total) * 100), 10)
-        //       this.valueProgressUpload = progressPercent
-        //       if (progressPercent === 100) {
-        //         this.fileUploadCount += 1
-        //       }
-        //     },
-        //   },
-        // )
-        //   .then(({ data }) => {
-        //     this.filesUploaded.push(data)
-        //   })
-        //   .catch(err => console.log(err))
       })
     },
     handleBatalDataUpload(file) {
@@ -175,9 +154,6 @@ export default {
       this.filesSettled = filteredFiles
       this.fileUploadCount = filteredFiles.length
       this.filesUploaded = filteredFiles
-      // this.$nextTick(() => {
-      //   console.log(this.filesSettled)
-      // })
     },
     handleKonfirmasi() {
       // back to rincian routes
