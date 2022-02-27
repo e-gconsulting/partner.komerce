@@ -78,16 +78,9 @@
               {{ nameCustomer.value }}
             </div>
             <div
-              v-if="nameCustomer.item.is_komship === 1"
               class="tag-wrapper grey-text"
             >
               Komship
-            </div>
-            <div
-              v-else
-              class="tag-wrapper grey-text"
-            >
-              Non-Komship
             </div>
           </template>
 
@@ -697,6 +690,7 @@ export default {
         this.tableItemsAllData = data
         this.tableData.items = data
         this.excelData.items = data
+        console.log(this.tableData.items)
         this.totalItems = response.data.data.total
         this.handleCountNeedToSendOrder()
         this.loading = false
