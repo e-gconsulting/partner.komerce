@@ -350,8 +350,7 @@
               lg="3"
               class="text-right"
             >
-              <span v-if="orderData.order_status !== 'Retur'">Rp {{ formatNumber(orderData.service_fee) }}</span>
-              <span v-else>Rp {{ formatNumber(0) }}</span>
+              <span>Rp {{ formatNumber(orderData.service_fee) }}</span>
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -385,27 +384,7 @@
               Rp {{ formatNumber(orderData.shipping_retur | 0) }}
             </b-col>
           </b-row>
-          <b-row
-            v-if="orderData.order_status === 'Retur'"
-            class="mt-1"
-          >
-            <b-col lg="3" />
-            <b-col
-              lg="5"
-            >
-              Ongkos Kirim Pengembalian
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right"
-            >
-              Rp {{ formatNumber(orderData.shipping_retur) }}
-            </b-col>
-          </b-row>
-          <b-row
-            v-if="orderData.order_status !== 'Retur'"
-            class="mt-1"
-          >
+          <b-row class="mt-1">
             <b-col lg="3" />
             <b-col
               lg="5"
@@ -418,21 +397,6 @@
               class="text-right text-primary font-bold"
             >
               Rp {{ formatNumber(orderData.net_profit) }}
-            </b-col>
-          </b-row>
-          <b-row
-            v-if="orderData.order_status === 'Retur'"
-            class="mt-1 font-bold"
-          >
-            <b-col lg="3" />
-            <b-col lg="5">
-              Penghasilan bersih yang kamu dapatkan
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right text-primary"
-            >
-              - Rp {{ formatNumber(orderData.shipping_cost + orderData.shipping_retur - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
         </b-collapse>
