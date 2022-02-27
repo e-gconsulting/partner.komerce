@@ -238,7 +238,7 @@
       </div>
       <b-pagination
         v-model="currentPage"
-        :total-rows="rowss"
+        :total-rows="totalRows"
         :per-page="perPage"
         first-number
         hide-goto-end-buttons
@@ -302,7 +302,7 @@ export default {
       currentPage: 1,
       perPage: 50,
       halamancustomer: [50, 100, 200],
-      rowss: 0,
+      totalRows: 0,
       selected: 1,
       filterCustomer: null,
       options: [
@@ -395,8 +395,8 @@ export default {
   },
   methods: {
     halamanpagination(halamantotal) {
-      this.perPage = halamantotal
-      this.datapagination()
+      this.totalPerPage = halamantotal
+      this.tableProvider()
     },
     tableProvider() {
       this.loading = true
@@ -404,7 +404,7 @@ export default {
       }).then(response => {
         const { data } = response.data.data
         this.itemsCustomer = data
-        this.rowss = response.data.data
+        this.totalRows = response.data.data.total
         this.loading = false
       })
     },
@@ -421,7 +421,7 @@ export default {
       if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
       if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
       if (this.currentPage) Object.assign(params, { page: this.currentPage })
-      if (this.halamantotal) Object.assign(params, { halamantotal: this.halamantotal })
+      if (this.totalPerPage) Object.assign(params, { limits: this.totalPerPage })
       httpKomship.get('/v1/customers', {
         params,
       }, {
