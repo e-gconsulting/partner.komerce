@@ -1074,7 +1074,6 @@ export default {
           })
           this.productHistory = false
           this.addToCart()
-          this.calculate()
         }
         this.product = []
       }
@@ -1262,7 +1261,11 @@ export default {
             await this.$http_komship.post('v1/cart/bulk-store', cart)
               .then(res => {
                 this.cartId = res.data.data.cart_id
-                this.calculate()
+                if (this.biayaLain) {
+                  this.getAdditionalCost()
+                } else {
+                  this.calculate()
+                }
               })
           })
       }
@@ -1329,7 +1332,9 @@ export default {
       return this.listTypeShipping
     },
     async getAdditionalCost() {
-      this.loadingCalculate = true
+      if (this.potonganSaldo === false || this.discount === null) {
+        this.discount = 0
+      }
       if (this.biayaLain && this.jenisBiayaLain === '1') {
         this.additionalCost = this.sesuaiNominal
       } else if (this.biayaLain && this.jenisBiayaLain === '0') {
@@ -1337,34 +1342,37 @@ export default {
       } else {
         this.additionalCost = 0
       }
-      await this.$http_komship.get('v1/calculate', {
-        params: {
-          partner_id: this.profile.partner_id,
-          tariff_code: this.destination.value,
-          payment_method: this.paymentMethod,
-          shipping: this.shipping,
-          discount: this.discount,
-          additional_cost: this.additionalCost,
-          partner_address_id: this.address.address_id,
-          cart: this.cartId.toString(),
-        },
-      })
-        .then(res => {
-          const { data } = res.data
-          const result = data.find(element => element.shipping_type === this.typeShipping.shipping_type)
-          this.subTotal = result.subtotal
-          this.shippingCost = result.shipping_cost
-          this.netProfit = result.net_profit
-          this.serviceFee = Math.round(result.service_fee)
-          this.serviceFeePercentage = result.service_fee_percentage
-          this.weight = result.weight
-          this.grandTotal = result.grandtotal
-          this.cashback = result.cashback
-          this.cashbackPercentage = result.cashback_percentage
-          this.additionalCost = result.additional_cost
-          this.isCalculate = true
-          this.loadingCalculate = false
+      if (this.typeShipping !== null) {
+        this.loadingCalculate = true
+        await this.$http_komship.get('v1/calculate', {
+          params: {
+            partner_id: this.profile.partner_id,
+            tariff_code: this.destination.value,
+            payment_method: this.paymentMethod,
+            shipping: this.shipping,
+            discount: this.discount,
+            additional_cost: this.additionalCost,
+            partner_address_id: this.address.address_id,
+            cart: this.cartId.toString(),
+          },
         })
+          .then(res => {
+            const { data } = res.data
+            const result = data.find(element => element.shipping_type === this.typeShipping.shipping_type)
+            this.subTotal = result.subtotal
+            this.shippingCost = result.shipping_cost
+            this.netProfit = result.net_profit
+            this.serviceFee = Math.round(result.service_fee)
+            this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight
+            this.grandTotal = result.grandtotal
+            this.cashback = result.cashback
+            this.cashbackPercentage = result.cashback_percentage
+            this.additionalCost = result.additional_cost
+            this.isCalculate = true
+            this.loadingCalculate = false
+          })
+      }
     },
     async calculate() {
       if (this.potonganSaldo === false || this.discount === null) {
@@ -1402,10 +1410,7 @@ export default {
             this.isCalculate = true
             this.loadingCalculate = false
           })
-      } else {
-        this.isCalculate = false
       }
-      return this.isCalculate
     },
     nameTypeShipping(data) {
       if (data === 'OKE19') {
