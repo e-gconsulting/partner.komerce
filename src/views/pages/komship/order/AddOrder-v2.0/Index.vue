@@ -1138,21 +1138,22 @@ export default {
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name}`
         this.productVariantOption = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[2]) {
-          const variantOption = this.productSelected[indexProduct].variant[1].variant_option.filter(
+          const dataVariant = this.productSelected[indexProduct].variant[2].variant_option.filter(
             items => items.option_parent === this.productVariantId,
           )
+          const variantOption = dataVariant.map(item => ({
+            option_id: item.option_id,
+            option_name: item.option_name,
+            option_parent: item.option_parent,
+            variant_id: item.variant_id,
+            is_active: false,
+            is_disabled: false,
+          }))
           const data = {
             id: this.productSelected[indexProduct].variant[2].id,
             variant_id: this.productSelected[indexProduct].variant[2].variant_id,
             variant_name: this.productSelected[indexProduct].variant[2].variant_name,
-            variant_option: variantOption.map(item => ({
-              option_id: item.option_id,
-              option_name: item.option_name,
-              option_parent: item.option_parent,
-              variant_id: item.variant_id,
-              is_active: false,
-              is_disabled: false,
-            })),
+            variant_option: variantOption,
           }
           if (this.productSelected[indexProduct].variantSelected[2]) {
             this.productSelected[indexProduct].variantSelected[2] = data
@@ -1172,10 +1173,12 @@ export default {
         const indexVariant = this.productSelected[indexProduct].variantSelected[2].variant_option.findIndex(
           (item => item.option_id === optionId),
         )
+        console.log(this.productVariantId)
+        console.log(this.productSelected[indexProduct].variantSelected[2].variant_option)
         this.productVariantId = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_id
         this.productVariantParent = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_parent
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name}`
-        this.productVariantName = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name
+        this.productVariantOption = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name
         this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].is_active = true
         this.productSelected[indexProduct].variantButton = true
       }
