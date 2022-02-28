@@ -1089,6 +1089,11 @@ export default {
         )
         if (this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive]) {
           this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive].is_active = false
+          if (this.productSelected[indexProduct].variantSelected[2]) {
+            this.productSelected[indexProduct].variantSelected.splice(1, 2)
+          } else if (this.productSelected[indexProduct].variantSelected[1]) {
+            this.productSelected[indexProduct].variantSelected.splice(1, 1)
+          }
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
           (item => item.option_id === optionId),
@@ -1128,6 +1133,9 @@ export default {
         )
         if (this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariantActive]) {
           this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariantActive].is_active = false
+          if (this.productSelected[indexProduct].variantSelected[2]) {
+            this.productSelected[indexProduct].variantSelected.splice(2, 1)
+          }
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[1].variant_option.findIndex(
           (item => item.option_id === optionId),
@@ -1173,8 +1181,6 @@ export default {
         const indexVariant = this.productSelected[indexProduct].variantSelected[2].variant_option.findIndex(
           (item => item.option_id === optionId),
         )
-        console.log(this.productVariantId)
-        console.log(this.productSelected[indexProduct].variantSelected[2].variant_option)
         this.productVariantId = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_id
         this.productVariantParent = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_parent
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name}`
@@ -1190,6 +1196,34 @@ export default {
       if (checkVariant > -1) {
         this.productSelected.splice(index, 1)
       } else {
+        if (this.productSelected[index].variantSelected[2]) {
+          const indexVariantOne = this.productSelected[index].variantSelected[0].variant_option.findIndex(
+            (item => item.is_active === true),
+          )
+          this.productVariantName = this.productSelected[index].variantSelected[0].variant_option[indexVariantOne].option_name
+          const indexVariantTwo = this.productSelected[index].variantSelected[1].variant_option.findIndex(
+            (item => item.is_active === true),
+          )
+          this.productVariantName += `, ${this.productSelected[index].variantSelected[1].variant_option[indexVariantTwo].option_name}`
+          const indexVariantThree = this.productSelected[index].variantSelected[2].variant_option.findIndex(
+            (item => item.is_active === true),
+          )
+          this.productVariantName += `, ${this.productSelected[index].variantSelected[2].variant_option[indexVariantThree].option_name}`
+        } else if (this.productSelected[index].variantSelected[1]) {
+          const indexVariantOne = this.productSelected[index].variantSelected[0].variant_option.findIndex(
+            (item => item.is_active === true),
+          )
+          this.productVariantName = this.productSelected[index].variantSelected[0].variant_option[indexVariantOne].option_name
+          const indexVariantTwo = this.productSelected[index].variantSelected[1].variant_option.findIndex(
+            (item => item.is_active === true),
+          )
+          this.productVariantName += `, ${this.productSelected[index].variantSelected[1].variant_option[indexVariantTwo].option_name}`
+        } else {
+          const indexVariantOne = this.productSelected[index].variantSelected[0].variant_option.findIndex(
+            (item => item.is_active === true),
+          )
+          this.productVariantName = this.productSelected[index].variantSelected[0].variant_option[indexVariantOne].option_name
+        }
         const data = this.productSelected[index].variantProduct.filter(item => item.parent === this.productVariantParent)
         const dataVariant = data.find(item => item.name === this.productVariantOption)
         this.productSelected[index].variant_id = this.productVariantId
