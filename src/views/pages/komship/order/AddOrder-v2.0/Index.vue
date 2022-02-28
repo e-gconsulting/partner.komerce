@@ -278,7 +278,7 @@
                 :key="item.id"
                 style="font-weight:500;margin-right:5px;padding:8px"
                 :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 0, item.variant_id)"
+                @click="selectVariant(data.index, 0, item.option_id)"
               >{{ item.option_name }}</b-button>
             </section>
             <section
@@ -293,7 +293,7 @@
                 :key="item.id"
                 style="font-weight:500;margin-right:5px;padding:8px"
                 :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 1, item.variant_id)"
+                @click="selectVariant(data.index, 1, item.option_id)"
               >{{ item.option_name }}</b-button>
             </section>
             <section
@@ -308,7 +308,7 @@
                 :key="item.id"
                 style="font-weight:500;margin-right:5px;padding:8px"
                 :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 2, item.variant_id)"
+                @click="selectVariant(data.index, 2, item.option_id)"
               >{{ item.option_name }}</b-button>
             </section>
             <section class="mt-2 d-flex justify-end">
@@ -877,6 +877,7 @@ export default {
       productVariantId: null,
       productVariantParent: null,
       productVariantName: null,
+      productVariantOption: null,
       productHistory: false,
       loadingSearch: false,
       loadingCalculate: false,
@@ -1090,12 +1091,13 @@ export default {
           this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive].is_active = false
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
-          (item => item.variant_id === optionId),
+          (item => item.option_id === optionId),
         )
         this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].is_active = true
         this.productVariantId = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_id
         this.productVariantParent = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_parent
         this.productVariantName = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_name
+        this.productVariantOption = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[1]) {
           const dataVariant = this.productSelected[indexProduct].variant[1].variant_option.filter(
             (value, index, self) => index === self.findIndex(t => (
@@ -1130,12 +1132,13 @@ export default {
           this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariantActive].is_active = false
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[1].variant_option.findIndex(
-          (item => item.variant_id === optionId),
+          (item => item.option_id === optionId),
         )
         this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].is_active = true
         this.productVariantId = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_id
         this.productVariantParent = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_parent
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name}`
+        this.productVariantOption = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[2]) {
           const variantOption = this.productSelected[indexProduct].variant[2].variant_option.filter(
             (value, index, self) => index === self.findIndex(t => (
@@ -1171,11 +1174,12 @@ export default {
           this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariantActive].is_active = false
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[2].variant_option.findIndex(
-          (item => item.variant_id === optionId),
+          (item => item.option_id === optionId),
         )
         this.productVariantId = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_id
         this.productVariantParent = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_parent
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name}`
+        this.productVariantName = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name
         this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].is_active = true
         this.productSelected[indexProduct].variantButton = true
       }
@@ -1187,12 +1191,13 @@ export default {
       if (checkVariant > -1) {
         this.productSelected.splice(index, 1)
       } else {
-        const data = this.productSelected[index].variantProduct.find(item => item.parent === this.productVariantParent)
+        const data = this.productSelected[index].variantProduct.filter(item => item.parent === this.productVariantParent)
+        const dataVariant = data.find(item => item.name === this.productVariantOption)
         this.productSelected[index].variant_id = this.productVariantId
         this.productSelected[index].variant_name = this.productVariantName
-        this.productSelected[index].stock = data.stock
-        this.productSelected[index].price = data.price
-        this.productSelected[index].subtotal = data.price
+        this.productSelected[index].stock = dataVariant.stock
+        this.productSelected[index].price = dataVariant.price
+        this.productSelected[index].subtotal = dataVariant.price
         this.productSelected[index].variantSubmit = true
         this.productHistory = false
         this.addToCart()
