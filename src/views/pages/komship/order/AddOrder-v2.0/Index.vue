@@ -1100,9 +1100,7 @@ export default {
         this.productVariantOption = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[1]) {
           const dataVariant = this.productSelected[indexProduct].variant[1].variant_option.filter(
-            (value, index, self) => index === self.findIndex(t => (
-              t.option_name === value.option_name
-            )),
+            items => items.option_parent === this.productVariantId,
           )
           const variantOption = dataVariant.map(item => ({
             option_id: item.option_id,
@@ -1140,10 +1138,8 @@ export default {
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name}`
         this.productVariantOption = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[2]) {
-          const variantOption = this.productSelected[indexProduct].variant[2].variant_option.filter(
-            (value, index, self) => index === self.findIndex(t => (
-              t.option_name === value.option_name
-            )),
+          const variantOption = this.productSelected[indexProduct].variant[1].variant_option.filter(
+            items => items.option_parent === this.productVariantId,
           )
           const data = {
             id: this.productSelected[indexProduct].variant[2].id,
@@ -1287,7 +1283,7 @@ export default {
       if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
-          imageUrl: require('@/@core/assets/image/icon-popup-warning.png'), // eslint-disable-line
+          imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
           confirmButtonText: 'Tambah Rekening',
           confirmButtonClass: 'btn btn-primary',
         }).then(result => {
@@ -1323,7 +1319,7 @@ export default {
           .catch(() => {
             this.$swal({
               title: '<span class="font-weight-bold h4">Mohon maaf, perhitungan biaya terjadi kesalahan Silahkan pilih ulang ekspedisi anda atau refresh halaman.</span>',
-              imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+              imageUrl: require('@/assets/images/icons/fail.svg'),
               confirmButtonText: 'Oke',
               confirmButtonClass: 'btn btn-primary',
             })
