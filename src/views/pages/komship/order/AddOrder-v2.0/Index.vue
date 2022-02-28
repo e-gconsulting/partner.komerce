@@ -278,7 +278,7 @@
                 :key="item.id"
                 style="font-weight:500;margin-right:5px;padding:8px"
                 :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 0, item.option_id)"
+                @click="selectVariant(data.index, 0, item.option_name)"
               >{{ item.option_name }}</b-button>
             </section>
             <section
@@ -293,7 +293,7 @@
                 :key="item.id"
                 style="font-weight:500;margin-right:5px;padding:8px"
                 :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 1, item.option_id)"
+                @click="selectVariant(data.index, 1, item.option_name)"
               >{{ item.option_name }}</b-button>
             </section>
             <section
@@ -308,7 +308,7 @@
                 :key="item.id"
                 style="font-weight:500;margin-right:5px;padding:8px"
                 :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 2, item.option_id)"
+                @click="selectVariant(data.index, 2, item.option_name)"
               >{{ item.option_name }}</b-button>
             </section>
             <section class="mt-2 d-flex justify-end">
@@ -1090,7 +1090,7 @@ export default {
           this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive].is_active = false
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
-          (item => item.option_id === optionId),
+          (item => item.option_name === optionId),
         )
         this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].is_active = true
         this.productVariantId = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_id
@@ -1130,7 +1130,7 @@ export default {
           this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariantActive].is_active = false
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[1].variant_option.findIndex(
-          (item => item.option_id === optionId),
+          (item => item.option_name === optionId),
         )
         this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].is_active = true
         this.productVariantId = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_id
@@ -1171,7 +1171,7 @@ export default {
           this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariantActive].is_active = false
         }
         const indexVariant = this.productSelected[indexProduct].variantSelected[2].variant_option.findIndex(
-          (item => item.option_id === optionId),
+          (item => item.option_name === optionId),
         )
         this.productVariantId = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_id
         this.productVariantParent = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_parent
