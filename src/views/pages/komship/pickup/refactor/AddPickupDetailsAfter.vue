@@ -14,7 +14,7 @@
         :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
         @click="onShowModalPrint"
       >
-        Print Label
+        {{ totalLabel === 0 ? 'Print Label' : `Print Label (${totalLabel})` }}
       </b-button>
     </b-row>
 
@@ -1555,6 +1555,52 @@
         </b-container>
       </section>
     </vue-html2pdf>
+
+    <b-row>
+      <b-col
+        cols="12"
+        class="d-flex justify-content-between"
+      >
+        <div
+          class="bg-light d-flex justify-content-center align-items-center p-50 rounded"
+        >
+          <span class="text-black mr-50">
+            List per halaman:
+          </span>
+          <b-button
+            v-for="page in optionsPage"
+            :key="page"
+            class="btn-icon"
+            size="sm"
+            :variant="totalPerPage === page ? 'primary' : 'flat-dark'"
+            @click="setPerPage(page)"
+          >
+            {{ page }}
+          </b-button>
+        </div>
+
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          first-number
+          last-number
+          class="pagination-primary"
+        >
+          <template #prev-text>
+            <feather-icon
+              size="18"
+              icon="ChevronLeftIcon"
+            />
+          </template>
+          <template #next-text>
+            <feather-icon
+              size="18"
+              icon="ChevronRightIcon"
+            />
+          </template>
+        </b-pagination>
+      </b-col>
+    </b-row>
   </b-card>
 </template>
 
@@ -1573,6 +1619,7 @@ import {
   BCol,
   BFormCheckbox,
   VBModal,
+  BPagination,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -1601,6 +1648,7 @@ export default {
     BOverlay,
     // BCol,
     BFormCheckbox,
+    BPagination,
   },
   directives: { VBModal },
   mixins: [dateFormat],
@@ -1663,7 +1711,22 @@ export default {
       qtyLabel: [],
       countQty: 0,
       valuesOption: 1,
+      totalLabel: 0,
+
+      currentPage: 1,
+      totalRows: 0,
+      totalPerPage: 50,
+      optionsPage: [50, 100, 200],
     }
+  },
+  watch: {
+    currentPage: {
+      handler() {
+        this.getOrder().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
   mounted() {
     this.items = this.selectedOrder
@@ -1671,12 +1734,17 @@ export default {
   },
   methods: {
     getOrder() {
+      this.loading = true
       this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
         params: {
           order_id: this.idOrder.toString(),
+          page: this.currentPage,
+          total_per_page: this.totalPerPage,
         },
       }).then(response => {
+        console.log('response', response)
+        this.totalRows = response.data.data.total
         const { data } = response.data.data
         this.items = data
         // eslint-disable-next-line no-plusplus
@@ -1781,6 +1849,7 @@ export default {
       }
       if (data.item.printIsActive === false) this.fieldItemsPrint.splice(data.index, 1)
       if (this.fieldItemsPrint[0] === undefined) this.disableButtonPrint = true
+      this.totalLabel = this.fieldItemsPrint.length
     },
     getAllItemPrint() {
       if (this.allSelectItemPrint === true) {
@@ -1799,6 +1868,7 @@ export default {
         }
         this.disableButtonPrint = true
       }
+      this.totalLabel = this.fieldItemsPrint.length
       this.$refs.tableOrder.refresh()
     },
     formatPrice(value) {
@@ -1838,6 +1908,10 @@ export default {
         total += item.qty
       })
       return total
+    },
+    setPerPage(page) {
+      this.totalPerPage = page
+      this.getOrder()
     },
   },
 }
