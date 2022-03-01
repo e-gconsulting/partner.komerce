@@ -78,7 +78,7 @@
         </template>
         <template #cell(product)="data">
           <div
-            v-for="(itemsProduct, index) in data.item.product"
+            v-for="(itemsProduct, index) in data.item.product.slice(0, 1)"
             :key="index+1"
           >
             <b-row>
@@ -116,6 +116,50 @@
               </b-container>
             </b-row>
           </div>
+          <div
+            v-for="(itemsProduct, index) in data.item.product.slice(1, data.item.product.length)"
+            :key="index+2"
+          >
+            <b-collapse
+              :id="`collapse${index}`"
+              class="mt-2"
+            >
+              <b-row>
+                <b-container
+                  fluid
+                  class="d-flex"
+                >
+                  <div>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="itemsProduct.product_image"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <p class="text-black">
+                      <strong>
+                        {{ itemsProduct.product_name }}
+                      </strong>
+                    </p>
+                    <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
+                      <p class="text-primary">
+                        <strong>
+                          {{ itemsProduct.variant_name }}
+                        </strong>
+                      </p>
+                    </div>
+                    <div v-else>
+                      <p class="text-primary">
+                        Tidak ada variasi
+                      </p>
+                    </div>
+                  </div>
+                </b-container>
+              </b-row>
+            </b-collapse>
+          </div>
         </template>
         <template #cell(address)="data">
           <h5 class="text-black">
@@ -133,6 +177,19 @@
               {{ data.item.airway_bill }}
             </span>
           </b-row>
+          <b-button
+            class="expand-button-variation btn-icon"
+            variant="flat-dark"
+            @click="handleExpand(data)"
+          >
+            <b-col class="d-flex">
+              {{ data.item.isExpand === true ? 'Tutup' : `${data.item.product.length - 1} Produk Lainnya` }}
+              <feather-icon
+                :icon="data.item.isExpand === true ? 'ChevronUpIcon' : 'ChevronDownIcon'"
+                class="ml-50"
+              />
+            </b-col>
+          </b-button>
         </template>
       </b-table>
     </b-overlay>
@@ -1620,6 +1677,7 @@ import {
   BFormCheckbox,
   VBModal,
   BPagination,
+  BCollapse,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -1649,6 +1707,7 @@ export default {
     // BCol,
     BFormCheckbox,
     BPagination,
+    BCollapse,
   },
   directives: { VBModal },
   mixins: [dateFormat],
@@ -1749,7 +1808,10 @@ export default {
         this.items = data
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.items.length; x++) {
-          Object.assign(this.items[x], { printIsActive: false })
+          Object.assign(this.items[x], {
+            printIsActive: false,
+            isExpand: false,
+          })
         }
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.idOrderFromHistory.data_order.length; x++) {
@@ -1913,10 +1975,30 @@ export default {
       this.totalPerPage = page
       this.getOrder()
     },
+    handleExpand(data) {
+      // eslint-disable-next-line no-param-reassign
+      if (data.item.isExpand === false) {
+        // eslint-disable-next-line no-param-reassign
+        data.item.isExpand = true
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        data.item.isExpand = false
+      }
+      console.log(data.item)
+      this.$root.$emit('bv::toggle::collapse', `collapse${data.index}`)
+      this.$refs.tableOrder.refresh()
+    },
   },
 }
 </script>
 
 <style lang="scss">
   @import '../add-pickup-detail.scss';
+
+  [dir] .expand-button-variation {
+    text-align: right;
+    position: absolute;
+    right: 2rem;
+    bottom: 0.72rem;
+  }
 </style>
