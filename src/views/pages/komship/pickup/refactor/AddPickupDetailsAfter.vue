@@ -2039,7 +2039,6 @@ export default {
         // eslint-disable-next-line no-param-reassign
         data.item.isExpand = false
       }
-      console.log(data.item)
       this.$root.$emit('bv::toggle::collapse', `collapse${data.index}`)
       this.$refs.tableOrder.refresh()
     },
