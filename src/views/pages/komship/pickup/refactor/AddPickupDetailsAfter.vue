@@ -77,52 +77,10 @@
           </h5>
         </template>
         <template #cell(product)="data">
-          <div
-            v-for="(itemsProduct, index) in data.item.product.slice(0, 1)"
-            :key="index+1"
-          >
-            <b-row>
-              <b-container
-                fluid
-                class="d-flex"
-              >
-                <div>
-                  <b-avatar
-                    variant="light-primary"
-                    square
-                    size="50px"
-                    :src="itemsProduct.product_image"
-                  />
-                </div>
-                <div class="ml-1">
-                  <p class="text-black">
-                    <strong>
-                      {{ itemsProduct.product_name }}
-                    </strong>
-                  </p>
-                  <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
-                    <p class="text-primary">
-                      <strong>
-                        {{ itemsProduct.variant_name }}
-                      </strong>
-                    </p>
-                  </div>
-                  <div v-else>
-                    <p class="text-primary">
-                      Tidak ada variasi
-                    </p>
-                  </div>
-                </div>
-              </b-container>
-            </b-row>
-          </div>
-          <div
-            v-for="(itemsProduct, index) in data.item.product.slice(1, data.item.product.length)"
-            :key="index+2"
-          >
-            <b-collapse
-              :id="`collapse${index}`"
-              class="mt-2"
+          <div v-if="data.item.product.length > 1">
+            <div
+              v-for="(itemsProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
             >
               <b-row>
                 <b-container
@@ -158,8 +116,106 @@
                   </div>
                 </b-container>
               </b-row>
-            </b-collapse>
+            </div>
+            <div
+              v-for="(itemsProduct, index) in data.item.product.slice(1, data.item.product.length)"
+              :key="index+2"
+            >
+              <b-collapse
+                :id="`collapse${data.index}`"
+                class="mt-2"
+              >
+                <b-row>
+                  <b-container
+                    fluid
+                    class="d-flex"
+                  >
+                    <div>
+                      <b-avatar
+                        variant="light-primary"
+                        square
+                        size="50px"
+                        :src="itemsProduct.product_image"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      <p class="text-black">
+                        <strong>
+                          {{ itemsProduct.product_name }}
+                        </strong>
+                      </p>
+                      <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
+                        <p class="text-primary">
+                          <strong>
+                            {{ itemsProduct.variant_name }}
+                          </strong>
+                        </p>
+                      </div>
+                      <div v-else>
+                        <p class="text-primary">
+                          Tidak ada variasi
+                        </p>
+                      </div>
+                    </div>
+                  </b-container>
+                </b-row>
+              </b-collapse>
+            </div>
           </div>
+          <div v-else>
+            <div
+              v-for="(itemsProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
+            >
+              <b-row>
+                <b-container
+                  fluid
+                  class="d-flex"
+                >
+                  <div>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="itemsProduct.product_image"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <p class="text-black">
+                      <strong>
+                        {{ itemsProduct.product_name }}
+                      </strong>
+                    </p>
+                    <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
+                      <p class="text-primary">
+                        <strong>
+                          {{ itemsProduct.variant_name }}
+                        </strong>
+                      </p>
+                    </div>
+                    <div v-else>
+                      <p class="text-primary">
+                        Tidak ada variasi
+                      </p>
+                    </div>
+                  </div>
+                </b-container>
+              </b-row>
+            </div>
+          </div>
+          <b-button
+            v-if="data.item.product.length > 1"
+            class="expand-button-variation btn-icon"
+            variant="flat-dark"
+            @click="handleExpand(data)"
+          >
+            <b-col class="d-flex">
+              {{ data.item.isExpand === true ? 'Tutup' : `${data.item.product.length - 1} Produk Lainnya` }}
+              <feather-icon
+                :icon="data.item.isExpand === true ? 'ChevronUpIcon' : 'ChevronDownIcon'"
+              />
+            </b-col>
+          </b-button>
         </template>
         <template #cell(address)="data">
           <h5 class="text-black">
@@ -172,13 +228,14 @@
           </p>
         </template>
         <template #cell(resi)="data">
-          <b-row class="align-items-center">
+          <b-row class="align-items-center justify-content-start">
             <span class="text-black">
               {{ data.item.airway_bill }}
             </span>
           </b-row>
           <b-button
-            class="expand-button-variation btn-icon"
+            v-if="data.item.product.length > 1"
+            class="expand-button-variation-mobile btn-icon"
             variant="flat-dark"
             @click="handleExpand(data)"
           >
@@ -186,7 +243,6 @@
               {{ data.item.isExpand === true ? 'Tutup' : `${data.item.product.length - 1} Produk Lainnya` }}
               <feather-icon
                 :icon="data.item.isExpand === true ? 'ChevronUpIcon' : 'ChevronDownIcon'"
-                class="ml-50"
               />
             </b-col>
           </b-button>
@@ -1802,7 +1858,6 @@ export default {
           total_per_page: this.totalPerPage,
         },
       }).then(response => {
-        console.log('response', response)
         this.totalRows = response.data.data.total
         const { data } = response.data.data
         this.items = data
@@ -1999,6 +2054,21 @@ export default {
     text-align: right;
     position: absolute;
     right: 2rem;
-    bottom: 0.72rem;
+    margin-top: -1.72rem;
   }
+
+  [dir] .expand-button-variation-mobile {
+      display: none!important;
+  }
+
+  @media only screen and (max-width: 922px) {
+
+    /* History Pickup */
+    [dir] .expand-button-variation {
+        display: none!important;
+    }
+    [dir] .expand-button-variation-mobile {
+        display: inline-block!important;
+    }
+}
 </style>
