@@ -11,6 +11,7 @@
     <b-link
       class="d-flex align-items-center"
       @click="() => updateGroupOpen(!isOpen)"
+      :class="{ 'childtitlestyle': Boolean(item.hasParent) }"
     >
       <feather-icon :icon="item.icon || 'CircleIcon'" />
       <span class="menu-title text-truncate text-black font-weight-bold">{{ t(item.title) }}</span>

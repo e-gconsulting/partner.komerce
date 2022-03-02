@@ -10,9 +10,13 @@
     <b-link
       v-bind="linkProps"
       class="d-flex align-items-center"
+      :class="{ 'childtitlestyle': Boolean(item.hasParent) }"
     >
-      <feather-icon :icon="item.icon || 'CircleIcon'" />
-      <span class="menu-title text-truncate font-weight-bold">{{ t(item.title) }}</span>
+      <feather-icon :icon="item.icon || (!Boolean(item.hasParent) ? 'CircleIcon' : '')" />
+      <span
+        class="menu-title text-truncate font-weight-bold"
+        :class="{ 'text-black': !Boolean(item.hasParent) }"
+      >{{ t(item.title) }}</span>
       <b-badge
         v-if="item.tag"
         pill
