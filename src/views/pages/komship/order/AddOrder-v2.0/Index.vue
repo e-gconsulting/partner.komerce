@@ -429,7 +429,7 @@
           <b-form-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType(), validateRekening()"
+            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1'"
           />
         </b-col>
         <b-col
@@ -919,7 +919,7 @@ export default {
       potonganSaldo: false,
       discount: 0,
       biayaLain: false,
-      jenisBiayaLain: '0',
+      jenisBiayaLain: null,
       sesuaiNominal: 0,
       bebankanCustomer: 0,
       additionalCost: 0,
