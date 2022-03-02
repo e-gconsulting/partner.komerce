@@ -200,7 +200,6 @@ export default {
           limits: this.totalPerPage,
         },
       }).then(response => {
-        console.log('response', response)
         const { data } = response.data.data
         this.items = data
         this.totalRows = response.data.data.total
