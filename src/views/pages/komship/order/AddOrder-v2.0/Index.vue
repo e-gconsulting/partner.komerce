@@ -425,7 +425,7 @@
           <b-form-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType"
+            @input="getShippingType(), validateRekening()"
           />
         </b-col>
         <b-col
@@ -437,7 +437,6 @@
             :options="listRekening"
             label="account_name"
             placeholder="Pilih Rekening"
-            @input="validateRekening"
           >
             <template #option="{ account_name, bank_name, account_no }">
               <span class="font-bold text-lg">{{ account_name }}</span><br>
@@ -1316,7 +1315,7 @@ export default {
           this.totalRekening = data.length
         })
     },
-    async validateRekening() {
+    validateRekening() {
       if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
