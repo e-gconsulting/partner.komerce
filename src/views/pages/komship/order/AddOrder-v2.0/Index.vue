@@ -329,7 +329,7 @@
           >Rp {{ formatNumber(data.item.price) }}</span>
         </template>
         <template #cell(amount)="data">
-          <div v-if="data.item.is_variant < 1 || data.item.variantSubmit">
+          <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
             <div class="d-flex justify-center">
               <b-button
                 variant="outline-primary"
@@ -358,6 +358,10 @@
             </div>
             <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
           </div>
+          <div
+            v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
+            class="d-flex justify-center text-primary text-lg"
+          >Stok Habis</div>
         </template>
         <template #cell(subtotal)="data">
           <span
@@ -1084,6 +1088,7 @@ export default {
             price: itemSelected.price,
             subtotal: itemSelected.price,
             stock: itemSelected.stock - 1,
+            stockAvailable: itemSelected.stock,
           })
           this.productHistory = false
           this.addToCart()
@@ -1241,6 +1246,7 @@ export default {
         this.productSelected[index].variant_id = this.productVariantId
         this.productSelected[index].variant_name = this.productVariantName
         this.productSelected[index].stock = dataVariant.stock
+        this.productSelected[index].stockAvailable = dataVariant.stock
         this.productSelected[index].price = dataVariant.price
         this.productSelected[index].subtotal = dataVariant.price
         this.productSelected[index].variantSubmit = true
