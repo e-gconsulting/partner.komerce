@@ -710,6 +710,48 @@
       </template>
 
     </b-modal>
+
+    <!-- Modal can't delete address still in use -->
+    <b-modal
+      ref="modal-validate-address-stilluse"
+      hide-header-close
+      hide-header
+      modal-class="modal-primary"
+      centered
+      title="Primary Modal"
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3 mb-2"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center">
+        <h4 class="text-black">
+          Kamu tidak dapat menghapus alamat penjemputan karena sudah terhubung dengan orderku.
+        </h4>
+      </b-col>
+
+      <template #modal-footer>
+        <b-col
+          md="12"
+          class="d-flex justify-content-center pb-2"
+        >
+          <b-button
+            variant="primary"
+            @click="handleCloseModal"
+          >
+            Oke
+          </b-button>
+        </b-col>
+      </template>
+
+    </b-modal>
   </b-overlay>
 </template>
 
@@ -947,9 +989,12 @@ export default {
         httpKomship.delete(`/v1/address/delete/${this.dataDelete.address_id}`, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         })
-          .then(() => {
+          .then(response => {
             this.$refs['modal-confirm-delete-address'].hide()
             this.getAddress()
+            if (response.data.code === 400) {
+              this.$refs['modal-validate-address-stilluse'].show()
+            }
           })
       } else {
         this.$refs['modal-confirm-delete-address'].hide()
@@ -987,6 +1032,9 @@ export default {
     },
     closeAlertCannotDelete() {
       this.$refs['modal-validate-address'].hide()
+    },
+    handleCloseModal() {
+      this.$refs['modal-validate-address-stilluse'].hide()
     },
   },
 

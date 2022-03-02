@@ -342,9 +342,25 @@
     <b-modal
       ref="popup-address"
       hide-footer
+      hide-header
       modal-class="modal-primary"
       centered
     >
+
+      <b-row class="justify-content-end mt-50 mr-50">
+        <a
+          href="#"
+          @click="closeModal()"
+        >
+          <b-img
+            src="@/assets/images/icons/close-circle.svg"
+            height="18"
+            width="24"
+            alt="close"
+            class="float-right"
+          />
+        </a>
+      </b-row>
 
       <div
         v-for="(items, index) in itemsAddress"
@@ -353,6 +369,10 @@
         <b-form-radio
           v-model="valueAddressIsActive"
           name="some-radios"
+          plain
+          style="
+            accent-color: #F95031;
+          "
           :value="items.address_id"
           @change="handleSelectedAddress(items)"
         >
