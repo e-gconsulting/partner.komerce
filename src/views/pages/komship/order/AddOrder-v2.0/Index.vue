@@ -111,14 +111,14 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <span class="text-lg">Masukan Kelurahan/ Kecamatan</span>
+        <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
       </b-col>
       <b-col md="5">
         <v-select
           ref="selectDestination"
           v-model="destination"
           :options="destinationList"
-          placeholder="Masukan Kelurahan/Kecamatan"
+          placeholder="Masukkan Kelurahan/Kecamatan"
           @search="getDestination"
           @input="getShippingType"
         >
