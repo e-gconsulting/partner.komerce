@@ -990,7 +990,6 @@ export default {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         })
           .then(response => {
-            console.log(response)
             this.$refs['modal-confirm-delete-address'].hide()
             this.getAddress()
             if (response.data.code === 400) {
