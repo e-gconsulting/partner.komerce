@@ -247,7 +247,7 @@
             <div>
               <span class="text-black">
                 <strong>
-                  Total: {{ itemsPreviewProductOrder.length }}
+                  Total: {{ itemsPreviewProductOrder ? `Total: ${itemsPreviewProductOrder}` : 'Total: 0' }}
                 </strong>
               </span>
             </div>
@@ -369,13 +369,15 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
-        this.itemsDataOrder = data
-        this.addressName = data.address_name
-        this.addressDetail = data.address_detail
-        this.timeValueText = data.pickup_time
-        this.dateLabel = data.pickup_date
-        this.chosenVehicle = data.vehicle
-        this.itemsPreviewProductOrder = data.data_order
+        if (data) {
+          this.itemsDataOrder = data
+          this.addressName = data.address_name
+          this.addressDetail = data.address_detail
+          this.timeValueText = data.pickup_time
+          this.dateLabel = data.pickup_date
+          this.chosenVehicle = data.vehicle
+          this.itemsPreviewProductOrder = data.data_order
+        }
         this.loading = false
       }).catch(() => {
         this.$toast({
