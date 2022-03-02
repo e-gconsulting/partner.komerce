@@ -442,6 +442,19 @@
               <span class="font-bold text-lg">{{ account_name }}</span><br>
               <em>{{ bank_name }} - {{ account_no }}</em>
             </template>
+            <span
+              v-if="totalRekening === 0"
+              slot="no-options"
+            >
+
+              Kamu belum menambahkan Rekening.
+            </span>
+            <span
+              v-else
+              slot="no-options"
+            >
+              Sedang Memuat ...
+            </span>
           </v-select>
         </b-col>
       </b-row>
