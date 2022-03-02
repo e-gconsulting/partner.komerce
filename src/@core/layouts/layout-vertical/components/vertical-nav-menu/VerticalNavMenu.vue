@@ -167,7 +167,7 @@ export default {
 <style lang="scss">
 @import '~@core/scss/base/core/menu/menu-types/vertical-menu.scss';
 .childtitlestyle {
-  margin-left: 27px;
+  margin-left: 2.4em;
   padding: 10px 15px !important;
 }
 .main-menu.menu-light .navigation > li.active > a > span {
