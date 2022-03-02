@@ -111,14 +111,14 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <span class="text-lg">Masukan Kelurahan/ Kecamatan</span>
+        <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
       </b-col>
       <b-col md="5">
         <v-select
           ref="selectDestination"
           v-model="destination"
           :options="destinationList"
-          placeholder="Masukan Kelurahan/Kecamatan"
+          placeholder="Masukkan Kelurahan/Kecamatan"
           @search="getDestination"
           @input="getShippingType"
         >
@@ -329,7 +329,7 @@
           >Rp {{ formatNumber(data.item.price) }}</span>
         </template>
         <template #cell(amount)="data">
-          <div v-if="data.item.is_variant < 1 || data.item.variantSubmit">
+          <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
             <div class="d-flex justify-center">
               <b-button
                 variant="outline-primary"
@@ -358,6 +358,10 @@
             </div>
             <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
           </div>
+          <div
+            v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
+            class="d-flex justify-center text-primary text-lg"
+          >Stok Habis</div>
         </template>
         <template #cell(subtotal)="data">
           <span
@@ -425,7 +429,7 @@
           <b-form-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType"
+            @input="getShippingType(), validateRekening()"
           />
         </b-col>
         <b-col
@@ -437,12 +441,24 @@
             :options="listRekening"
             label="account_name"
             placeholder="Pilih Rekening"
-            @input="validateRekening"
           >
             <template #option="{ account_name, bank_name, account_no }">
               <span class="font-bold text-lg">{{ account_name }}</span><br>
               <em>{{ bank_name }} - {{ account_no }}</em>
             </template>
+            <span
+              v-if="totalRekening === 0"
+              slot="no-options"
+            >
+
+              Kamu belum menambahkan Rekening.
+            </span>
+            <span
+              v-else
+              slot="no-options"
+            >
+              Sedang Memuat ...
+            </span>
           </v-select>
         </b-col>
       </b-row>
@@ -718,10 +734,7 @@
           </b-button>
         </b-col>
       </b-row>
-      <b-collapse
-        id="collapse-1"
-        visible
-      >
+      <b-collapse id="collapse-1">
         <b-row
           v-if="paymentMethod === 'COD'"
           class="mb-1 text-lg"
@@ -761,28 +774,28 @@
             <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
           </b-col>
         </b-row>
-        <b-row class="mb-1 text-lg font-bold">
-          <b-col lg="5" />
-          <b-col lg="5">
-            Penghasilan bersih yang kamu dapatkan
-          </b-col>
-          <b-col
-            lg="2"
-            class="d-flex justify-end text-success"
-          >
-            <b-spinner
-              v-if="loadingCalculate"
-              class="mr-1 my-auto"
-              small
-              variant="primary"
-            />
-            <span
-              v-else
-              class="text-success"
-            >Rp {{ formatNumber(netProfit) }}</span>
-          </b-col>
-        </b-row>
       </b-collapse>
+      <b-row class="mb-1 text-lg font-bold">
+        <b-col lg="5" />
+        <b-col lg="5">
+          Penghasilan bersih yang kamu dapatkan
+        </b-col>
+        <b-col
+          lg="2"
+          class="d-flex justify-end text-success"
+        >
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span
+            v-else
+            class="text-success"
+          >Rp {{ formatNumber(netProfit) }}</span>
+        </b-col>
+      </b-row>
     </div>
     <hr>
     <b-row>
@@ -1072,6 +1085,7 @@ export default {
             price: itemSelected.price,
             subtotal: itemSelected.price,
             stock: itemSelected.stock - 1,
+            stockAvailable: itemSelected.stock,
           })
           this.productHistory = false
           this.addToCart()
@@ -1229,6 +1243,7 @@ export default {
         this.productSelected[index].variant_id = this.productVariantId
         this.productSelected[index].variant_name = this.productVariantName
         this.productSelected[index].stock = dataVariant.stock
+        this.productSelected[index].stockAvailable = dataVariant.stock
         this.productSelected[index].price = dataVariant.price
         this.productSelected[index].subtotal = dataVariant.price
         this.productSelected[index].variantSubmit = true
@@ -1316,7 +1331,7 @@ export default {
           this.totalRekening = data.length
         })
     },
-    async validateRekening() {
+    validateRekening() {
       if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',

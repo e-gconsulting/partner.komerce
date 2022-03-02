@@ -335,10 +335,7 @@
             </b-button>
           </b-col>
         </b-row>
-        <b-collapse
-          id="collapse-1"
-          visible
-        >
+        <b-collapse id="collapse-1">
           <b-row class="mt-1">
             <b-col lg="3" />
             <b-col
@@ -384,22 +381,22 @@
               Rp {{ formatNumber(orderData.shipping_retur) }}
             </b-col>
           </b-row>
-          <b-row class="mt-1">
-            <b-col lg="3" />
-            <b-col
-              lg="5"
-              class="text-primary font-bold"
-            >
-              Penghasilan bersih yang kamu dapatkan
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right text-primary font-bold"
-            >
-              Rp {{ formatNumber(orderData.net_profit) }}
-            </b-col>
-          </b-row>
         </b-collapse>
+        <b-row class="mt-1">
+          <b-col lg="3" />
+          <b-col
+            lg="5"
+            class="font-bold"
+          >
+            Penghasilan bersih yang kamu dapatkan
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right text-success font-bold"
+          >
+            Rp {{ formatNumber(orderData.net_profit) }}
+          </b-col>
+        </b-row>
       </div>
     </b-container>
   </b-card>
