@@ -734,10 +734,7 @@
           </b-button>
         </b-col>
       </b-row>
-      <b-collapse
-        id="collapse-1"
-        visible
-      >
+      <b-collapse id="collapse-1">
         <b-row
           v-if="paymentMethod === 'COD'"
           class="mb-1 text-lg"
@@ -777,28 +774,28 @@
             <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
           </b-col>
         </b-row>
-        <b-row class="mb-1 text-lg font-bold">
-          <b-col lg="5" />
-          <b-col lg="5">
-            Penghasilan bersih yang kamu dapatkan
-          </b-col>
-          <b-col
-            lg="2"
-            class="d-flex justify-end text-success"
-          >
-            <b-spinner
-              v-if="loadingCalculate"
-              class="mr-1 my-auto"
-              small
-              variant="primary"
-            />
-            <span
-              v-else
-              class="text-success"
-            >Rp {{ formatNumber(netProfit) }}</span>
-          </b-col>
-        </b-row>
       </b-collapse>
+      <b-row class="mb-1 text-lg font-bold">
+        <b-col lg="5" />
+        <b-col lg="5">
+          Penghasilan bersih yang kamu dapatkan
+        </b-col>
+        <b-col
+          lg="2"
+          class="d-flex justify-end text-success"
+        >
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span
+            v-else
+            class="text-success"
+          >Rp {{ formatNumber(netProfit) }}</span>
+        </b-col>
+      </b-row>
     </div>
     <hr>
     <b-row>
