@@ -13,7 +13,14 @@
       :class="{ 'childtitlestyle': Boolean(item.hasParent) }"
       @click="() => updateGroupOpen(!isOpen)"
     >
-      <feather-icon :icon="item.icon || 'CircleIcon'" />
+      <div
+        v-if="item.customicon"
+        v-html="item.customicon"
+      />
+      <feather-icon
+        v-else
+        :icon="item.icon || 'CircleIcon'"
+      />
       <span class="menu-title text-truncate text-black font-weight-bold">{{ t(item.title) }}</span>
       <b-badge
         v-if="item.tag"

@@ -12,7 +12,14 @@
       class="d-flex align-items-center"
       :class="{ 'childtitlestyle': Boolean(item.hasParent) }"
     >
-      <feather-icon :icon="item.icon || (!Boolean(item.hasParent) ? 'CircleIcon' : '')" />
+      <div
+        v-if="item.customicon"
+        v-html="item.customicon"
+      />
+      <feather-icon
+        v-else
+        :icon="item.icon || (!Boolean(item.hasParent) ? 'CircleIcon' : '')"
+      />
       <span
         class="menu-title text-truncate font-weight-bold"
         :class="{ 'text-black': !Boolean(item.hasParent) }"

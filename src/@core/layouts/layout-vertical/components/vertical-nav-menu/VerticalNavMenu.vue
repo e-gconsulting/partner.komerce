@@ -170,4 +170,10 @@ export default {
   margin-left: 27px;
   padding: 10px 15px !important;
 }
+.main-menu.menu-light .navigation > li.active > a > span {
+  color: #ffffff !important;
+}
+.main-menu.menu-light .navigation > li.active > a > div > svg path {
+  stroke: #ffffff !important;
+}
 </style>
