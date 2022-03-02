@@ -247,7 +247,7 @@
             <div>
               <span class="text-black">
                 <strong>
-                  Total: {{ itemsPreviewProductOrder ? `Total: ${itemsPreviewProductOrder}` : 'Total: 0' }}
+                  Total: {{ itemsPreviewProductOrder ? `Total: ${itemsPreviewProductOrder.length}` : 'Total: 0' }}
                 </strong>
               </span>
             </div>
