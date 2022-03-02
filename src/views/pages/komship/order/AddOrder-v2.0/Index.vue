@@ -429,7 +429,7 @@
           <b-form-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType(), validateRekening()"
+            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1'"
           />
         </b-col>
         <b-col
@@ -919,7 +919,7 @@ export default {
       potonganSaldo: false,
       discount: 0,
       biayaLain: false,
-      jenisBiayaLain: '0',
+      jenisBiayaLain: null,
       sesuaiNominal: 0,
       bebankanCustomer: 0,
       additionalCost: 0,
@@ -1535,6 +1535,24 @@ export default {
                 this.$router.push('/data-order')
               }
             })
+          })
+          .catch(err => {
+            const res = err.response.data.message
+            if (res === 'Please Topup to continue your store Order.') {
+              this.$swal({
+                title: '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>',
+                imageUrl: require('@/assets/images/icons/fail.svg'),
+                showCancelButton: true,
+                confirmButtonText: 'Cek Saldo',
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonText: 'Oke',
+                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  this.$router.push('/dashboard-komship')
+                }
+              })
+            }
           })
       } else if (this.paymentMethod === 'COD' && this.customerName && this.customerPhone && this.customerAddress) {
         await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
