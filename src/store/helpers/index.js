@@ -41,7 +41,7 @@ const penghasilanValue = {
 }
 
 const paymentMethods = {
-  'COD (Bayar di tempat)': 'COD',
+  COD: 'COD',
   'Transfer Bank': 'BANK TRANSFER',
 }
 
