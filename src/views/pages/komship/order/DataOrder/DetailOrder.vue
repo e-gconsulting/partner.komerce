@@ -158,12 +158,13 @@
           <b-col class="d-flex justify-content-end">
             <button
               class="btn btn-outline-primary"
-              @click="$bvModal.show('bv-modal-cek-resi')"
+              @click="lacakresi()"
             >
               Lacak resi
             </button>
             <b-modal
               id="bv-modal-cek-resi"
+              ref="bv-modal-cek-resi"
               hide-footer
             >
               <template #modal-title>
@@ -174,7 +175,7 @@
                 </div>
               </template>
               <b-row class="my-8 overflow-auto h-50">
-                <b-col>
+                <b-col v-if="itemAwb.length > 0">
                   <div
                     class="d-block"
                   >
@@ -194,6 +195,25 @@
                           {{ item.date }}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col v-else>
+                  <div
+                    v-if="isLoading===false"
+                    class="d-block mt-5 mb-5 align-content-center text-center"
+                  >
+                    Data riwayat perjalan tidak ditemukan
+                  </div>
+                  <div
+                    v-else
+                    class="d-block mt-5 mb-5 align-content-center text-center"
+                  >
+                    <div
+                      class="spinner-border text-primary"
+                      role="status"
+                    >
+                      <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                 </b-col>
@@ -426,6 +446,7 @@ export default {
       ],
       itemOrder: [],
       itemAwb: [],
+      isLoading: false,
     }
   },
   async created() {
@@ -435,6 +456,16 @@ export default {
     this.fetchData()
   },
   methods: {
+    lacakresi() {
+      const modal = new Promise((resolve, reject) => {
+        this.$refs['bv-modal-cek-resi'].show()
+        resolve(true)
+      })
+
+      modal.then(() => {
+        this.getHistoryPackage()
+      })
+    },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
       const validDate = moment(date)
@@ -460,14 +491,17 @@ export default {
       this.orderData = await data
       this.itemOrder = await data.product
       this.statusOrder = await this.setAlert(data.order_status)
-      this.getHistoryPackage(data.airway_bill)
     },
-    getHistoryPackage(awb) {
+    async getHistoryPackage() {
+      this.isloading = true
       const body = {
-        data: awb,
+        data: this.orderData.airway_bill,
       }
-      this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
+      await this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
         this.itemAwb = res.data.data[0].history
+        this.isloading = false
+      }).catch(err => {
+        this.isloading = false
       })
     },
     setAlert(status) {
