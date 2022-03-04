@@ -153,6 +153,34 @@
       </b-col>
 
     </b-modal>
+    <b-modal
+      ref="modal-success-changed-pin"
+      hide-footer
+      hide-header-close
+      hide-header
+      modal-class="modal-dark"
+      centered
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-success.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-2 mb-3">
+        <h4 class="text-black">
+          <strong>
+            PIN Berhasil Diganti
+          </strong>
+        </h4>
+      </b-col>
+
+    </b-modal>
     <!-- End Create PIN -->
     <!-- =========================================================================================== -->
 
@@ -902,17 +930,18 @@ export default {
     },
     tes() {
       this.$refs['forgot-confirm-new-pin-email'].hide()
-      this.$swal({
-        text: 'PIN Berhasil Diganti',
-        icon: 'success',
-        showCancelButton: false,
-        showConfirmButton: false,
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-outline-primary ml-1',
-        },
-        buttonsStyling: false,
-      })
+      this.$refs['modal-success-changed-pin'].show()
+      // this.$swal({
+      //   text: 'PIN Berhasil Diganti',
+      //   icon: 'success',
+      //   showCancelButton: false,
+      //   showConfirmButton: false,
+      //   customClass: {
+      //     confirmButton: 'btn btn-primary',
+      //     cancelButton: 'btn btn-outline-primary ml-1',
+      //   },
+      //   buttonsStyling: false,
+      // })
     },
     confirmCreatePin() {
       this.loadingSubmit = true
