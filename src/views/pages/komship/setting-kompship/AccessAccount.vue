@@ -429,6 +429,7 @@
             <b-button
               v-if="!editMode"
               variant="primary"
+              :disabled="checkButtonIsActive()"
               @click="addAccount"
             >
               <b-spinner
@@ -441,6 +442,7 @@
             <b-button
               v-else
               variant="primary"
+              :disabled="checkButtonIsActive()"
               @click="submitEditAccess"
             >
               <b-spinner
@@ -1658,6 +1660,29 @@ export default {
           })
         }
       })
+    },
+    checkButtonIsActive() {
+      let result = true
+      if (this.addProdukWeb === true
+              || this.dataProdukWeb === true
+              || this.addOrderWeb === true
+              || this.dataOrderWeb === true
+              || this.ajukanPickup === true
+              || this.historyPickup === true
+              || this.penghasilan === true
+              || this.saldo === true
+              || this.settingProfile === true
+              || this.accessAccount === true
+              || this.addressPickup === true
+              || this.settingRekening === true
+              || this.settingPin === true
+              || this.settingEkspedisi === true) {
+        result = false
+      }
+      if (this.addOrderApps === true || this.dataOrderApps === true) {
+        result = false
+      }
+      return result
     },
   },
 

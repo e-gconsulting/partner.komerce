@@ -215,17 +215,17 @@
           <b-row class="mb-2">
             <b-col
               cols="2"
-              class="p-0"
+              class="pt-0 pb-0 pr-0"
             >
-              <span class="ml-2">
+              <span class="">
                 {{ items.order_date }}
               </span>
             </b-col>
             <b-col
               cols="2"
-              class="p-0"
+              class="pt-0 pb-0 pr-0"
             >
-              <span class="ml-1">
+              <span>
                 {{ infoCustomer.customer_name }}
               </span>
             </b-col>
@@ -429,12 +429,12 @@ export default {
       customerAddress: '',
 
       // Report
-      lastOrder: '',
-      totalOrder: null,
-      totalPcs: '',
-      productFavorit: '',
-      totalSpent: '',
-      averageSpent: '',
+      lastOrder: '-',
+      totalOrder: '-',
+      totalPcs: '-',
+      productFavorit: '-',
+      totalSpent: '-',
+      averageSpent: '-',
 
       fields: [
         {
@@ -489,7 +489,7 @@ export default {
         this.lastOrder = data.customer_report.last_order
         this.totalOrder = data.customer_report.total_order
         this.totalPcs = data.customer_report.total_pcs
-        this.productFavorit = data.customer_report.customer_product_favorit
+        if (data.customer_report.customer_product_favorit) this.productFavorit = data.customer_report.customer_product_favorit
         this.totalSpent = data.customer_report.total_spent
         this.averageSpent = data.customer_report.average_spent
 

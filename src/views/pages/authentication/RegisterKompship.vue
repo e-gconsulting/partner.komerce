@@ -80,11 +80,17 @@
                         name="nomorhp"
                         type="number"
                         required
+                        @input="validateNoHp"
                       />
                       <label for="fullname">
                         Nomor Handphone
                       </label>
-                      <small class="text-primary"> {{ errors[0] }} </small>
+                      <b-row>
+                        <b-col>
+                          <small class="text-primary"> {{ errors[0] }} </small>
+                        </b-col>
+                      </b-row>
+                      <small class="text-primary"> {{ messageValidateNo !== '' ? messageValidateNo : '' }} </small>
                     </validation-provider>
                   </b-col>
 
@@ -225,7 +231,7 @@
                           type="submit"
                           variant="primary"
                           block
-                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8"
+                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8"
                         >
                           <b-spinner
                             v-if="loading"
@@ -464,11 +470,17 @@
                         name="nomorhp"
                         type="number"
                         required
+                        @input="validateNoHp"
                       />
                       <label for="fullname">
                         Nomor Handphone
                       </label>
-                      <small class="text-primary"> {{ errors[0] }} </small>
+                      <b-row>
+                        <b-col>
+                          <small class="text-primary"> {{ errors[0] }} </small>
+                        </b-col>
+                      </b-row>
+                      <small class="text-primary"> {{ messageValidateNo !== '' ? messageValidateNo : '' }} </small>
                     </validation-provider>
                   </b-col>
 
@@ -600,7 +612,7 @@
                           type="submit"
                           variant="primary"
                           block
-                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8"
+                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8"
                         >
                           <b-spinner
                             v-if="loading"
@@ -820,6 +832,8 @@ export default {
       modeExistingUser: false,
       serviceTitle: '',
       serviceIsKomship: false,
+
+      messageValidateNo: '',
     }
   },
   computed: {
@@ -941,6 +955,13 @@ export default {
           this.loading = false
         }
       })
+    },
+    validateNoHp() {
+      if (this.nomorHandphone.length < 8) {
+        this.messageValidateNo = 'Nomor handphone minimal 8 digit'
+      } else {
+        this.messageValidateNo = ''
+      }
     },
   },
 }

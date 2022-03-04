@@ -64,21 +64,34 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <div class="add-pickup-input-date-label mt-50">
-              {{ dateLabel }}
-            </div>
-            <b-form-datepicker
-              id="input-pickup-date"
-              ref="dp1"
-              v-model="dateValue"
-              class="add-pickup-date-button mt-50"
-              button-only
-              @context="onChangeDate"
-            >
-              <template v-slot:button-content>
-                <img src="@/assets/images/icons/date-picker-icon.svg">
-              </template>
-            </b-form-datepicker>
+            <b-row>
+              <b-col
+                md="2"
+                class="pr-0"
+              >
+                <flat-pickr
+                  ref="pickDate"
+                  v-model="dateValue"
+                  :config="config"
+                  @context="onChangeDate"
+                  @on-change="onChangeDate"
+                  @on-close="onChangeDate"
+                />
+              </b-col>
+              <b-col
+                md="10"
+                class="pl-0"
+              >
+                <b-button
+                  variant="flat-primary"
+                  class="btn-icon"
+                  size="sm"
+                  @click="openFlatPicker"
+                >
+                  <img src="@/assets/images/icons/date-picker-icon.svg">
+                </b-button>
+              </b-col>
+            </b-row>
           </b-form-group>
         </b-col>
         <b-col
@@ -508,6 +521,9 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
+import flatPickr from 'vue-flatpickr-component'
+import 'flatpickr/dist/flatpickr.css'
+import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
@@ -522,7 +538,7 @@ export default {
     BFormInput,
     BForm,
     BButton,
-    BFormDatepicker,
+    // BFormDatepicker,
     // BInputGroup,
     // BInputGroupAppend,
     BFormTimepicker,
@@ -533,6 +549,7 @@ export default {
     BTable,
     BAvatar,
     BContainer,
+    flatPickr,
   },
   directives: {
     Ripple,
@@ -579,6 +596,15 @@ export default {
       valueAddressIsActive: 0,
 
       selectedOrderFromDetail: this.$route.params.selected_order_from_detail,
+
+      date: '2020-10-16',
+      config: {
+        wrap: true,
+        altFormat: 'M j, Y',
+        altInput: true,
+        dateFormat: 'Y-MMMM-d',
+        mode: 'single',
+      },
     }
   },
   mounted() {
@@ -627,10 +653,11 @@ export default {
       }
       return dateString
     },
-    onChangeDate(ctx) {
-      if (ctx && ctx.activeYMD) {
-        this.dateLabel = this.changeDate(ctx.activeYMD)
-      }
+    onChangeDate() {
+      this.dateLabel = this.changeDate(this.dateValue)
+      this.changeDate(this.dateValue)
+      console.log('dateLabel', this.dateLabel)
+      console.log('dateValue', this.dateValue)
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
@@ -770,6 +797,9 @@ export default {
     },
     closeModal() {
       this.$refs['popup-address'].hide()
+    },
+    openFlatPicker() {
+      this.$refs.pickDate.fp.toggle()
     },
   },
 }
