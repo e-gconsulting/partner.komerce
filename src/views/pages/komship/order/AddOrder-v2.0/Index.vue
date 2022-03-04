@@ -1421,7 +1421,7 @@ export default {
             this.netProfit = result.net_profit
             this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight
+            this.weight = result.weight.toFixed(2)
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
