@@ -768,6 +768,9 @@ export default {
         }
       })
     },
+    closeModal() {
+      this.$refs['popup-address'].hide()
+    },
   },
 }
 </script>
