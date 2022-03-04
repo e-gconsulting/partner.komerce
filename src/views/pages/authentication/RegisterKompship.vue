@@ -62,6 +62,32 @@
                     </validation-provider>
                   </b-col>
 
+                  <!-- Nomer -->
+                  <b-col
+                    cols="9"
+                    class="mb-1"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Nomor Handphone"
+                      rules="required"
+                    >
+                      <b-form-input
+                        id="nomorhp"
+                        v-model="nomorHandphone"
+                        class="bg-light"
+                        :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                        name="nomorhp"
+                        type="number"
+                        required
+                      />
+                      <label for="fullname">
+                        Nomor Handphone
+                      </label>
+                      <small class="text-primary"> {{ errors[0] }} </small>
+                    </validation-provider>
+                  </b-col>
+
                   <!-- email -->
                   <b-col
                     cols="9"
@@ -420,6 +446,32 @@
                     </validation-provider>
                   </b-col>
 
+                  <!-- Nomer -->
+                  <b-col
+                    cols="12"
+                    class="mb-1"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Nomor Handphone"
+                      rules="required"
+                    >
+                      <b-form-input
+                        id="nomorhp"
+                        v-model="nomorHandphone"
+                        class="bg-light"
+                        :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                        name="nomorhp"
+                        type="number"
+                        required
+                      />
+                      <label for="fullname">
+                        Nomor Handphone
+                      </label>
+                      <small class="text-primary"> {{ errors[0] }} </small>
+                    </validation-provider>
+                  </b-col>
+
                   <!-- email -->
                   <b-col
                     cols="12"
@@ -741,6 +793,7 @@ export default {
     return {
       agree: false,
       fullname: '',
+      nomorHandphone: '',
       userEmail: '',
       userPassword: '',
       confirmPassword: '',
@@ -789,6 +842,7 @@ export default {
 
           httpKomship.post('/v1/register', {
             full_name: this.fullname,
+            no_hp: this.nomorHandphone,
             email: this.userEmail,
             password: this.userPassword,
             password_confirmation: this.confirmPassword,
