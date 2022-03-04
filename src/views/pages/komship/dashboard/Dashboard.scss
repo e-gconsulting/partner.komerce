@@ -1,5 +1,4 @@
 @import 'https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap';
-
 .bg-orange {
   background-color: #ff6a3a !important;
 }
@@ -486,9 +485,10 @@ input.vue-pincode-input {
     }
   }
 }
-@import '@core/scss/vue/libs/vue-select.scss';
-
 .dashboardpartner__popoverinfo {
   padding: 0px;
   margin: 0px !important;
+}
+.topAdminOrder {
+  height: 66%;
 }
