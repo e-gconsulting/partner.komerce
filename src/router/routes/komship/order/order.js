@@ -35,7 +35,7 @@ export default [
   {
     path: '/add-order',
     name: 'add-order',
-    component: () => import('@/views/pages/komship/order/AddOrder-v2.0/Index.vue'),
+    component: () => import('@/views/pages/komship/order/AddOrder-v2.0'),
     meta: {
       name: 'add-order',
       resource: 'Order',

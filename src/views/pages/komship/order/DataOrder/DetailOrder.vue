@@ -76,7 +76,8 @@
               class="px-1 w-36 text-center"
               style="padding: 5px 0;"
             >
-              {{ orderData.order_status }}
+              <span v-if="orderData.order_status === 'Diajukan'">Order Dibuat</span>
+              <span v-else>{{ orderData.order_status }}</span>
             </b-alert>
           </b-col>
         </b-row>
@@ -472,15 +473,15 @@ export default {
     },
     setAlert(status) {
       if (status === 'Diajukan') {
-        this.statusOrder = 'warning'
-      } else if (status === 'Dikirim') {
         this.statusOrder = 'primary'
+      } else if (status === 'Dipacking') {
+        this.statusOrder = 'info'
+      } else if (status === 'Dikirim') {
+        this.statusOrder = 'warning'
       } else if (status === 'Diterima') {
         this.statusOrder = 'success'
       } else if (status === 'Retur') {
         this.statusOrder = 'danger'
-      } else if (status === 'Batal') {
-        this.statusOrder = 'secondary'
       }
       return this.statusOrder
     },
