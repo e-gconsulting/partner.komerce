@@ -231,6 +231,10 @@
             </b-popover>
           </div>
         </template>
+        <template #cell(order_status)="data">
+          <span v-if="data.item.order_status === 'Diajukan'">Order Dibuat</span>
+          <span v-else>{{ data.item.order_status }}</span>
+        </template>
         <template #cell(details)="data">
           <b-button
             variant="none"
