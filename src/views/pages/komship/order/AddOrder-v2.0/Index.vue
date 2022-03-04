@@ -1271,6 +1271,7 @@ export default {
     removeProduct(index) {
       this.productSelected.splice(index, 1)
       this.productHistory = false
+      this.addToCart()
     },
     saveProductHistory() {
       const parsed = JSON.stringify(this.productSelected)
@@ -1299,7 +1300,7 @@ export default {
       this.paymentHistory = false
     },
     async addToCart() {
-      if (this.productSelected) {
+      if (this.productSelected.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
           .then(async () => {
@@ -1322,6 +1323,8 @@ export default {
                 }
               })
           })
+      } else {
+        this.isCalculate = false
       }
     },
     async getRekening() {
@@ -1368,6 +1371,7 @@ export default {
               shipping_type: items.shipping_type,
               label: this.nameTypeShipping(items.shipping_type),
             }))
+            this.calculate()
           })
           .catch(() => {
             this.$swal({
@@ -1383,7 +1387,6 @@ export default {
         this.isCalculate = false
         this.listTypeShipping = []
       }
-      return this.listTypeShipping
     },
     async getAdditionalCost() {
       if (this.potonganSaldo === false || this.discount === null) {
@@ -1396,7 +1399,7 @@ export default {
       } else {
         this.additionalCost = 0
       }
-      if (this.typeShipping !== null) {
+      if (this.typeShipping !== null && this.cartId.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
           params: {
@@ -1432,7 +1435,7 @@ export default {
       if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
-      if (this.typeShipping !== null) {
+      if (this.typeShipping !== null && this.cartId.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
           params: {
@@ -1463,7 +1466,10 @@ export default {
             this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
+            this.getAdditionalCost()
           })
+      } else {
+        this.isCalculate = false
       }
     },
     nameTypeShipping(data) {
