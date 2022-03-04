@@ -429,7 +429,7 @@
           <b-form-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1'"
+            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1', paymentHistory = false"
           />
         </b-col>
         <b-col
@@ -441,6 +441,7 @@
             :options="listRekening"
             label="account_name"
             placeholder="Pilih Rekening"
+            @input="paymentHistory = false"
           >
             <template #option="{ account_name, bank_name, account_no }">
               <span class="font-bold text-lg">{{ account_name }}</span><br>
@@ -473,7 +474,7 @@
           <b-form-select
             v-model="shipping"
             :options="listShipping"
-            @input="getShippingType"
+            @input="getShippingType(), paymentHistory = false"
           />
         </b-col>
         <b-col md="4">
@@ -1270,6 +1271,7 @@ export default {
     removeProduct(index) {
       this.productSelected.splice(index, 1)
       this.productHistory = false
+      this.addToCart()
     },
     saveProductHistory() {
       const parsed = JSON.stringify(this.productSelected)
@@ -1298,7 +1300,7 @@ export default {
       this.paymentHistory = false
     },
     async addToCart() {
-      if (this.productSelected) {
+      if (this.productSelected.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
           .then(async () => {
@@ -1321,6 +1323,8 @@ export default {
                 }
               })
           })
+      } else {
+        this.isCalculate = false
       }
     },
     async getRekening() {
@@ -1367,6 +1371,7 @@ export default {
               shipping_type: items.shipping_type,
               label: this.nameTypeShipping(items.shipping_type),
             }))
+            this.calculate()
           })
           .catch(() => {
             this.$swal({
@@ -1382,7 +1387,6 @@ export default {
         this.isCalculate = false
         this.listTypeShipping = []
       }
-      return this.listTypeShipping
     },
     async getAdditionalCost() {
       if (this.potonganSaldo === false || this.discount === null) {
@@ -1395,7 +1399,7 @@ export default {
       } else {
         this.additionalCost = 0
       }
-      if (this.typeShipping !== null) {
+      if (this.typeShipping !== null && this.cartId.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
           params: {
@@ -1417,7 +1421,7 @@ export default {
             this.netProfit = result.net_profit
             this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight
+            this.weight = result.weight.toFixed(2)
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
@@ -1431,7 +1435,7 @@ export default {
       if (this.potonganSaldo === false || this.discount === null) {
         this.discount = 0
       }
-      if (this.typeShipping !== null) {
+      if (this.typeShipping !== null && this.cartId.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
           params: {
@@ -1462,7 +1466,10 @@ export default {
             this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
+            this.getAdditionalCost()
           })
+      } else {
+        this.isCalculate = false
       }
     },
     nameTypeShipping(data) {
