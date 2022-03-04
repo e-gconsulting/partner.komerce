@@ -429,7 +429,7 @@
           <b-form-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1'"
+            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1', paymentHistory = false"
           />
         </b-col>
         <b-col
@@ -441,6 +441,7 @@
             :options="listRekening"
             label="account_name"
             placeholder="Pilih Rekening"
+            @input="paymentHistory = false"
           >
             <template #option="{ account_name, bank_name, account_no }">
               <span class="font-bold text-lg">{{ account_name }}</span><br>
@@ -473,7 +474,7 @@
           <b-form-select
             v-model="shipping"
             :options="listShipping"
-            @input="getShippingType"
+            @input="getShippingType(), paymentHistory = false"
           />
         </b-col>
         <b-col md="4">
