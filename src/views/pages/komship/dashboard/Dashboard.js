@@ -9,12 +9,9 @@ import PincodeInput from 'vue-pincode-input'
 import vSelect from 'vue-select'
 import moment from 'moment'
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
-// import DateRangePicker from 'vue2-daterange-picker'
-import ChartPenghasilan from '../../../components/chart/ChartPenghasilan.vue'
-// import ChartPerforma from '../../../components/chart/ChartPerforma.vue'
+import ChartPenghasilan from '@/views/components/chart/ChartPenghasilan.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-// import Onboarding from '../onboarding/Onboarding.vue'
-import PopoverInfo from '../../../components/popover/PopoverInfo.vue'
+import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 
 export default {
   components: {
