@@ -656,7 +656,7 @@
       class="mb-3"
     >
       <hr>
-      <b-row class="mb-1 text-lg">
+      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
         <b-col lg="5" />
         <b-col lg="5">
           Total Harga Produk
@@ -668,7 +668,7 @@
           Rp {{ formatNumber(subTotal) }}
         </b-col>
       </b-row>
-      <b-row class="mb-1 text-lg">
+      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
         <b-col lg="5" />
         <b-col lg="5">
           Ongkos Kirim ({{ weight }} kg)
