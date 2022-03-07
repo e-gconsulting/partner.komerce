@@ -78,10 +78,16 @@ export default {
       weight: null,
       cashback: null,
       cashbackPercentage: null,
+      potonganSaldo: false,
+      discount: 0,
+      biayaLain: false,
+      jenisBiayaLain: null,
+      sesuaiNominal: 0,
+      bebankanCustomer: 0,
+      additionalCost: 0,
       subTotal: null,
       netProfit: null,
       grandTotal: null,
-      newGrandTotal: null,
     }
   },
   created() {
@@ -471,7 +477,11 @@ export default {
             await this.$http_komship.post('v1/cart/bulk-store', cart)
               .then(res => {
                 this.cartId = res.data.data.cart_id
-                this.calculate()
+                if (this.biayaLain) {
+                  this.getAdditionalCost()
+                } else {
+                  this.calculate()
+                }
               })
           })
       } else {
@@ -501,6 +511,9 @@ export default {
       }
     },
     async getShippingType() {
+      if (this.potonganSaldo === false || this.discount === null) {
+        this.discount = 0
+      }
       if (this.destination && this.shipping && this.profile && this.paymentMethod !== null) {
         await this.$http_komship.get('v1/calculate', {
           params: {
@@ -508,6 +521,7 @@ export default {
             tariff_code: this.destination.value,
             payment_method: this.paymentMethod,
             shipping: this.shipping,
+            discount: this.discount,
             partner_address_id: this.address.address_id,
           },
         })
@@ -535,7 +549,17 @@ export default {
         this.listTypeShipping = []
       }
     },
-    async calculate() {
+    async getAdditionalCost() {
+      if (this.potonganSaldo === false || this.discount === null) {
+        this.discount = 0
+      }
+      if (this.biayaLain && this.jenisBiayaLain === '1') {
+        this.additionalCost = this.sesuaiNominal
+      } else if (this.biayaLain && this.jenisBiayaLain === '0') {
+        this.additionalCost = this.bebankanCustomer
+      } else {
+        this.additionalCost = 0
+      }
       if (this.typeShipping !== null && this.cartId.length > 0) {
         this.loadingCalculate = true
         await this.$http_komship.get('v1/calculate', {
@@ -544,6 +568,44 @@ export default {
             tariff_code: this.destination.value,
             payment_method: this.paymentMethod,
             shipping: this.shipping,
+            discount: this.discount,
+            additional_cost: this.additionalCost,
+            partner_address_id: this.address.address_id,
+            cart: this.cartId.toString(),
+          },
+        })
+          .then(res => {
+            const { data } = res.data
+            const result = data.find(element => element.shipping_type === this.typeShipping.shipping_type)
+            this.subTotal = result.subtotal
+            this.shippingCost = result.shipping_cost
+            this.netProfit = result.net_profit
+            this.serviceFee = Math.round(result.service_fee)
+            this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight.toFixed(2)
+            this.grandTotal = result.grandtotal
+            this.cashback = result.cashback
+            this.cashbackPercentage = result.cashback_percentage
+            this.additionalCost = result.additional_cost
+            this.isCalculate = true
+            this.loadingCalculate = false
+          })
+      }
+    },
+    async calculate() {
+      if (this.potonganSaldo === false || this.discount === null) {
+        this.discount = 0
+      }
+      if (this.typeShipping !== null && this.cartId.length > 0) {
+        this.loadingCalculate = true
+        await this.$http_komship.get('v1/calculate', {
+          params: {
+            partner_id: this.profile.partner_id,
+            tariff_code: this.destination.value,
+            payment_method: this.paymentMethod,
+            shipping: this.shipping,
+            discount: this.discount,
+            additional_cost: this.additionalCost,
             partner_address_id: this.address.address_id,
             cart: this.cartId.toString(),
           },
@@ -558,15 +620,15 @@ export default {
             this.serviceFeePercentage = result.service_fee_percentage
             this.weight = result.weight
             this.grandTotal = result.grandtotal
-            this.newGrandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
+            this.sesuaiNominal = Math.round(result.service_fee)
+            this.bebankanCustomer = Math.round(result.service_fee)
+            this.newGrandTotal = result.grandtotal
+            this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
-          })
-          .catch(() => {
-            this.isCalculate = false
-            this.loadingCalculate = false
+            this.getAdditionalCost()
           })
       } else {
         this.isCalculate = false
@@ -662,6 +724,8 @@ export default {
         grandtotal: this.grandTotal,
         shipping_cost: this.shippingCost,
         service_fee: this.serviceFee,
+        discount: this.discount,
+        additional_cost: this.additionalCost,
         shipping_cashback: this.cashback,
         net_profit: this.netProfit,
         cart: this.cartId,

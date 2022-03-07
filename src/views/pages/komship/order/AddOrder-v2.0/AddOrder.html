@@ -496,7 +496,137 @@
       </b-row>
     </section>
     <div
-      v-if="isCalculate"
+      v-if="isCalculate && !profile.partner_is_allowed_edit"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row
+        class="mb-1"
+      >
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Gunakan Potongan Saldo</label><br>
+          <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
+        </b-col>
+        <b-col
+          md="4"
+          class="font-bold"
+        >
+          <b-form-checkbox
+            v-model="potonganSaldo"
+            :value="true"
+            :unchecked-value="false"
+            @input="getAdditionalCost"
+          />
+        </b-col>
+      </b-row>
+      <b-collapse
+        v-model="potonganSaldo"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Nominal Potongan</label>
+          </b-col>
+          <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-input
+              v-model="discount"
+              type="number"
+              @input="getAdditionalCost"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
+    <div
+      v-if="isCalculate && !profile.partner_is_allowed_edit"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row
+        class="mb-1"
+      >
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Biaya Tambahan Lain</label><br>
+          <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
+        </b-col>
+        <b-col
+          md="4"
+          class="font-bold"
+        >
+          <b-form-checkbox
+            v-model="biayaLain"
+            :value="true"
+            :unchecked-value="false"
+            @change="getAdditionalCost"
+          />
+        </b-col>
+      </b-row>
+      <b-collapse
+        v-model="biayaLain"
+        class="mt-2"
+      >
+        <b-row class="mb-1">
+          <b-col md="3">
+            <label
+              class="text-lg"
+              style="color:#828282;"
+            >Jenis Biaya Lain</label>
+          </b-col>
+          <b-col md="8">
+            <div
+              v-if="paymentMethod === 'COD'"
+              class="d-flex"
+            >
+              <b-form-radio
+                v-model="jenisBiayaLain"
+                value="0"
+                @change="getAdditionalCost"
+              >
+                Bebankan biaya COD ke customer
+              </b-form-radio>
+              <b-form-input
+                v-if="jenisBiayaLain === '0'"
+                v-model="bebankanCustomer"
+                type="number"
+                class="ml-1"
+                style="width:80px;height:20px;"
+                disabled
+              />
+            </div>
+            <b-form-radio
+              v-model="jenisBiayaLain"
+              class="mt-1"
+              value="1"
+              @change="getAdditionalCost"
+            >
+              Sesuai Nominal
+            </b-form-radio>
+            <b-form-input
+              v-if="jenisBiayaLain === '1'"
+              v-model.number="sesuaiNominal"
+              type="number"
+              class="mt-1"
+              style="width:250px;"
+              @input="getAdditionalCost"
+            />
+          </b-col>
+        </b-row>
+      </b-collapse>
+    </div>
+    <div
+      v-if="isCalculate && profile.partner_is_allowed_edit"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -548,6 +678,42 @@
           class="d-flex justify-end"
         >
           Rp {{ formatNumber(shippingCost) }}
+        </b-col>
+      </b-row>
+      <b-row
+        v-if="potonganSaldo"
+        class="mb-1 text-lg"
+      >
+        <b-col lg="5" />
+        <b-col lg="5">
+          Potongan Harga
+        </b-col>
+        <b-col
+          lg="2"
+          class="d-flex justify-end"
+        >
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span v-else>- Rp {{ formatNumber(discount) }}</span>
+        </b-col>
+      </b-row>
+      <b-row
+        v-if="biayaLain"
+        class="mb-1 text-lg"
+      >
+        <b-col lg="5" />
+        <b-col lg="5">
+          Biaya Lain
+        </b-col>
+        <b-col
+          lg="2"
+          class="d-flex justify-end"
+        >
+          Rp {{ formatNumber(additionalCost) }}
         </b-col>
       </b-row>
       <b-row>
