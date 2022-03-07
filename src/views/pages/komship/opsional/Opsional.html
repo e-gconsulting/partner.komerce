@@ -1,0 +1,36 @@
+<b-card>
+    <h3 class="font-bold mb-2">Fitur Pendukung</h3>
+    <div class="p-1" style="border:1px solid #E2E2E2;border-radius:16px">
+        <h3 class="m-1 mb-1 font-bold">Order</h3>
+        <b-row>
+            <b-col md="4">
+                <b-card img-src="@/assets/images/banner/input-cepat.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Input Cepat" img-top>
+                    <b-card-title class="d-flex justify-between">
+                        <span class="font-bold text-primary">Input Cepat</span>
+                        <b-form-checkbox
+                            v-model="quickTypeValue"
+                            switch
+                            @input="quickType()"
+                        />
+                    </b-card-title>
+                    <b-card-text>
+                        Memungkinkan kamu untuk melakukan custom Nilai Pembayaran.
+                    </b-card-text>
+                </b-card>
+            </b-col>
+            <b-col md="4">
+                <b-card img-src="@/assets/images/banner/mutasi-rekening.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
+                    <b-card-title class="d-flex justify-between">
+                        <span class="font-bold text-primary">Mutasi Rekening</span>
+                        <b-form-checkbox
+                            switch
+                        />
+                    </b-card-title>
+                    <b-card-text>
+                        Memungkinkan kamu untuk menampilkan rekening tujuan untuk setiap orderan Non-COD.
+                    </b-card-text>
+                </b-card>
+            </b-col>
+        </b-row>
+    </div>
+</b-card>

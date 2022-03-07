@@ -496,7 +496,7 @@
       </b-row>
     </section>
     <div
-      v-if="isCalculate"
+      v-if="isCalculate && !profile.partner_is_allowed_edit"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -547,7 +547,7 @@
       </b-collapse>
     </div>
     <div
-      v-if="isCalculate"
+      v-if="isCalculate && !profile.partner_is_allowed_edit"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -626,11 +626,37 @@
       </b-collapse>
     </div>
     <div
+      v-if="isCalculate && profile.partner_is_allowed_edit"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row class="mb-1">
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Nilai Pembayaran</label><br>
+          <span class="text-muted text-sm">Total Pembayaran yang akan dibayarkan oleh Customer kamu.</span>
+        </b-col>
+        <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-input
+              v-model="newGrandTotal"
+              type="number"
+              @input="calculateTotal()"
+              @change="checkNewTotal()"
+            />
+          </b-col>
+      </b-row>
+    </div>
+    <div
       v-if="isCalculate"
       class="mb-3"
     >
       <hr>
-      <b-row class="mb-1 text-lg">
+      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
         <b-col lg="5" />
         <b-col lg="5">
           Total Harga Produk
@@ -642,7 +668,7 @@
           Rp {{ formatNumber(subTotal) }}
         </b-col>
       </b-row>
-      <b-row class="mb-1 text-lg">
+      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
         <b-col lg="5" />
         <b-col lg="5">
           Ongkos Kirim ({{ weight }} kg)
