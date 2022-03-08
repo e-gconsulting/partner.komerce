@@ -207,7 +207,7 @@
                     Data riwayat perjalan tidak ditemukan
                   </div>
                   <div
-                    v-else
+                    v-if="isLoading===true"
                     class="d-block mt-5 mb-5 align-content-center text-center"
                   >
                     <div
@@ -458,6 +458,7 @@ export default {
   },
   methods: {
     lacakresi() {
+      this.isLoading = true
       const modal = new Promise((resolve, reject) => {
         this.$refs['bv-modal-cek-resi'].show()
         resolve(true)
@@ -494,15 +495,14 @@ export default {
       this.statusOrder = await this.setAlert(data.order_status)
     },
     async getHistoryPackage() {
-      this.isloading = true
       const body = {
         data: this.orderData.airway_bill,
       }
       await this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
         this.itemAwb = res.data.data[0].history
-        this.isloading = false
+        this.isLoading = false
       }).catch(err => {
-        this.isloading = false
+        this.isLoading = false
       })
     },
     setAlert(status) {
