@@ -225,12 +225,14 @@
             <b-img
               v-if="data.item.product_image === ''"
               :src="require('@/assets/images/avatars/image-null.png')"
-              class="w-14 h-14 my-auto"
+              class="my-auto"
+              style="width:50px!important;height:50px!important;"
             />
             <b-img
               v-else
               :src="data.item.product_image"
-              class="w-14 h-14 my-auto"
+              class="my-auto"
+              style="width:50px!important;height:50px!important;"
             />
             <span
               class="my-auto text-lg font-bold w-44"
