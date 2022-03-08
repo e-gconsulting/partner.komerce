@@ -589,7 +589,7 @@ export default {
             this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
-          })
+          }).catch(() => { this.isCalculate = false })
       }
     },
     async calculate() {
@@ -629,7 +629,7 @@ export default {
             this.isCalculate = true
             this.loadingCalculate = false
             this.getAdditionalCost()
-          })
+          }).catch(() => { this.isCalculate = false })
       } else {
         this.isCalculate = false
       }
