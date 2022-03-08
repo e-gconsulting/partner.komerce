@@ -477,15 +477,19 @@ export default {
             await this.$http_komship.post('v1/cart/bulk-store', cart)
               .then(res => {
                 this.cartId = res.data.data.cart_id
+                this.loadingCalculate = false
                 if (this.biayaLain) {
                   this.getAdditionalCost()
                 } else {
                   this.calculate()
                 }
+              }).catch(() => {
+                this.loadingCalculate = false
               })
           })
       } else {
         this.isCalculate = false
+        this.loadingCalculate = false
       }
     },
     async getRekening() {
@@ -515,6 +519,8 @@ export default {
         this.discount = 0
       }
       if (this.destination && this.shipping && this.profile && this.paymentMethod !== null) {
+        this.typeShipping = null
+        this.isCalculate = false
         await this.$http_komship.get('v1/calculate', {
           params: {
             partner_id: this.profile.partner_id,
@@ -542,11 +548,6 @@ export default {
               confirmButtonClass: 'btn btn-primary',
             })
           })
-      } else {
-        this.typeShipping = null
-        this.isTypeShipping = false
-        this.isCalculate = false
-        this.listTypeShipping = []
       }
     },
     async getAdditionalCost() {
@@ -589,6 +590,9 @@ export default {
             this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
+          }).catch(() => {
+            this.isCalculate = false
+            this.loadingCalculate = false
           })
       }
     },
@@ -629,9 +633,13 @@ export default {
             this.isCalculate = true
             this.loadingCalculate = false
             this.getAdditionalCost()
+          }).catch(() => {
+            this.isCalculate = false
+            this.loadingCalculate = false
           })
       } else {
         this.isCalculate = false
+        this.loadingCalculate = false
       }
     },
     async calculateTotal() {
