@@ -92,7 +92,7 @@ export default [
   {
     path: '/komship-register',
     name: 'kompship-daftar',
-    component: () => import('@/views/pages/authentication/RegisterKompship'),
+    component: () => import('@/views/pages/authentication/RegisterKomship'),
     meta: {
       layout: 'full',
       resource: 'Auth',
