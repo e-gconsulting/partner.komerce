@@ -14,7 +14,7 @@
         :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
         @click="onShowModalPrint"
       >
-        Print Label
+        {{ totalLabel === 0 ? 'Print Label' : `Print Label (${totalLabel})` }}
       </b-button>
     </b-row>
 
@@ -77,45 +77,145 @@
           </h5>
         </template>
         <template #cell(product)="data">
-          <div
-            v-for="(itemsProduct, index) in data.item.product"
-            :key="index+1"
-          >
-            <b-row>
-              <b-container
-                fluid
-                class="d-flex"
-              >
-                <div>
-                  <b-avatar
-                    variant="light-primary"
-                    square
-                    size="50px"
-                    :src="itemsProduct.product_image"
-                  />
-                </div>
-                <div class="ml-1">
-                  <p class="text-black">
-                    <strong>
-                      {{ itemsProduct.product_name }}
-                    </strong>
-                  </p>
-                  <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
-                    <p class="text-primary">
+          <div v-if="data.item.product.length > 1">
+            <div
+              v-for="(itemsProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
+            >
+              <b-row>
+                <b-container
+                  fluid
+                  class="d-flex"
+                >
+                  <div>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="itemsProduct.product_image"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <p class="text-black">
                       <strong>
-                        {{ itemsProduct.variant_name }}
+                        {{ itemsProduct.product_name }}
                       </strong>
                     </p>
+                    <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
+                      <p class="text-primary">
+                        <strong>
+                          {{ itemsProduct.variant_name }}
+                        </strong>
+                      </p>
+                    </div>
+                    <div v-else>
+                      <p class="text-primary">
+                        Tidak ada variasi
+                      </p>
+                    </div>
                   </div>
-                  <div v-else>
-                    <p class="text-primary">
-                      Tidak ada variasi
-                    </p>
-                  </div>
-                </div>
-              </b-container>
-            </b-row>
+                </b-container>
+              </b-row>
+            </div>
+            <div
+              v-for="(itemsProduct, index) in data.item.product.slice(1, data.item.product.length)"
+              :key="index+2"
+            >
+              <b-collapse
+                :id="`collapse${data.index}`"
+                class="mt-2"
+              >
+                <b-row>
+                  <b-container
+                    fluid
+                    class="d-flex"
+                  >
+                    <div>
+                      <b-avatar
+                        variant="light-primary"
+                        square
+                        size="50px"
+                        :src="itemsProduct.product_image"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      <p class="text-black">
+                        <strong>
+                          {{ itemsProduct.product_name }}
+                        </strong>
+                      </p>
+                      <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
+                        <p class="text-primary">
+                          <strong>
+                            {{ itemsProduct.variant_name }}
+                          </strong>
+                        </p>
+                      </div>
+                      <div v-else>
+                        <p class="text-primary">
+                          Tidak ada variasi
+                        </p>
+                      </div>
+                    </div>
+                  </b-container>
+                </b-row>
+              </b-collapse>
+            </div>
           </div>
+          <div v-else>
+            <div
+              v-for="(itemsProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
+            >
+              <b-row>
+                <b-container
+                  fluid
+                  class="d-flex"
+                >
+                  <div>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="itemsProduct.product_image"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <p class="text-black">
+                      <strong>
+                        {{ itemsProduct.product_name }}
+                      </strong>
+                    </p>
+                    <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
+                      <p class="text-primary">
+                        <strong>
+                          {{ itemsProduct.variant_name }}
+                        </strong>
+                      </p>
+                    </div>
+                    <div v-else>
+                      <p class="text-primary">
+                        Tidak ada variasi
+                      </p>
+                    </div>
+                  </div>
+                </b-container>
+              </b-row>
+            </div>
+          </div>
+          <b-button
+            v-if="data.item.product.length > 1"
+            class="expand-button-variation btn-icon"
+            variant="flat-dark"
+            @click="handleExpand(data)"
+          >
+            <b-col class="d-flex">
+              {{ data.item.isExpand === true ? 'Tutup' : `${data.item.product.length - 1} Produk Lainnya` }}
+              <feather-icon
+                :icon="data.item.isExpand === true ? 'ChevronUpIcon' : 'ChevronDownIcon'"
+              />
+            </b-col>
+          </b-button>
         </template>
         <template #cell(address)="data">
           <h5 class="text-black">
@@ -128,11 +228,24 @@
           </p>
         </template>
         <template #cell(resi)="data">
-          <b-row class="align-items-center">
+          <b-row class="align-items-center justify-content-start">
             <span class="text-black">
               {{ data.item.airway_bill }}
             </span>
           </b-row>
+          <b-button
+            v-if="data.item.product.length > 1"
+            class="expand-button-variation-mobile btn-icon"
+            variant="flat-dark"
+            @click="handleExpand(data)"
+          >
+            <b-col class="d-flex">
+              {{ data.item.isExpand === true ? 'Tutup' : `${data.item.product.length - 1} Produk Lainnya` }}
+              <feather-icon
+                :icon="data.item.isExpand === true ? 'ChevronUpIcon' : 'ChevronDownIcon'"
+              />
+            </b-col>
+          </b-button>
         </template>
       </b-table>
     </b-overlay>
@@ -1555,6 +1668,52 @@
         </b-container>
       </section>
     </vue-html2pdf>
+
+    <b-row>
+      <b-col
+        cols="12"
+        class="d-flex justify-content-between"
+      >
+        <div
+          class="bg-light d-flex justify-content-center align-items-center p-50 rounded"
+        >
+          <span class="text-black mr-50">
+            List per halaman:
+          </span>
+          <b-button
+            v-for="page in optionsPage"
+            :key="page"
+            class="btn-icon"
+            size="sm"
+            :variant="totalPerPage === page ? 'primary' : 'flat-dark'"
+            @click="setPerPage(page)"
+          >
+            {{ page }}
+          </b-button>
+        </div>
+
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          first-number
+          last-number
+          class="pagination-primary"
+        >
+          <template #prev-text>
+            <feather-icon
+              size="18"
+              icon="ChevronLeftIcon"
+            />
+          </template>
+          <template #next-text>
+            <feather-icon
+              size="18"
+              icon="ChevronRightIcon"
+            />
+          </template>
+        </b-pagination>
+      </b-col>
+    </b-row>
   </b-card>
 </template>
 
@@ -1573,6 +1732,8 @@ import {
   BCol,
   BFormCheckbox,
   VBModal,
+  BPagination,
+  BCollapse,
 } from 'bootstrap-vue'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
@@ -1601,6 +1762,8 @@ export default {
     BOverlay,
     // BCol,
     BFormCheckbox,
+    BPagination,
+    BCollapse,
   },
   directives: { VBModal },
   mixins: [dateFormat],
@@ -1663,7 +1826,22 @@ export default {
       qtyLabel: [],
       countQty: 0,
       valuesOption: 1,
+      totalLabel: 0,
+
+      currentPage: 1,
+      totalRows: 0,
+      totalPerPage: 50,
+      optionsPage: [50, 100, 200],
     }
+  },
+  watch: {
+    currentPage: {
+      handler() {
+        this.getOrder().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
   mounted() {
     this.items = this.selectedOrder
@@ -1671,17 +1849,24 @@ export default {
   },
   methods: {
     getOrder() {
+      this.loading = true
       this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
         params: {
           order_id: this.idOrder.toString(),
+          page: this.currentPage,
+          total_per_page: this.totalPerPage,
         },
       }).then(response => {
+        this.totalRows = response.data.data.total
         const { data } = response.data.data
         this.items = data
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.items.length; x++) {
-          Object.assign(this.items[x], { printIsActive: false })
+          Object.assign(this.items[x], {
+            printIsActive: false,
+            isExpand: false,
+          })
         }
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.idOrderFromHistory.data_order.length; x++) {
@@ -1781,6 +1966,7 @@ export default {
       }
       if (data.item.printIsActive === false) this.fieldItemsPrint.splice(data.index, 1)
       if (this.fieldItemsPrint[0] === undefined) this.disableButtonPrint = true
+      this.totalLabel = this.fieldItemsPrint.length
     },
     getAllItemPrint() {
       if (this.allSelectItemPrint === true) {
@@ -1799,6 +1985,7 @@ export default {
         }
         this.disableButtonPrint = true
       }
+      this.totalLabel = this.fieldItemsPrint.length
       this.$refs.tableOrder.refresh()
     },
     formatPrice(value) {
@@ -1839,10 +2026,48 @@ export default {
       })
       return total
     },
+    setPerPage(page) {
+      this.totalPerPage = page
+      this.getOrder()
+    },
+    handleExpand(data) {
+      // eslint-disable-next-line no-param-reassign
+      if (data.item.isExpand === false) {
+        // eslint-disable-next-line no-param-reassign
+        data.item.isExpand = true
+      } else {
+        // eslint-disable-next-line no-param-reassign
+        data.item.isExpand = false
+      }
+      this.$root.$emit('bv::toggle::collapse', `collapse${data.index}`)
+      this.$refs.tableOrder.refresh()
+    },
   },
 }
 </script>
 
 <style lang="scss">
   @import '../add-pickup-detail.scss';
+
+  [dir] .expand-button-variation {
+    text-align: right;
+    position: absolute;
+    right: 2rem;
+    margin-top: -1.72rem;
+  }
+
+  [dir] .expand-button-variation-mobile {
+      display: none!important;
+  }
+
+  @media only screen and (max-width: 922px) {
+
+    /* History Pickup */
+    [dir] .expand-button-variation {
+        display: none!important;
+    }
+    [dir] .expand-button-variation-mobile {
+        display: inline-block!important;
+    }
+}
 </style>

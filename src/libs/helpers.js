@@ -9,3 +9,7 @@ export const generateRandomStr = (length = 10) => {
 }
 
 export const clientKeyMidtrans = process.env.VUE_APP_CLIENT_KEY_MIDTRANS_PAYMENT
+export const kirimEmailConfig = {
+  token: process.env.VUE_APP_KIRIMEMAIL_TOKEN,
+  username: process.env.VUE_APP_KIRIMEMAIL_USERNAME,
+}

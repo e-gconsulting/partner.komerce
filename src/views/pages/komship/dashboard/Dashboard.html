@@ -2,6 +2,10 @@
   <div
     v-if="!loadingOnboarding"
     class="container p-0">
+    <div v-if="saldo < 0" class="alert alert-primary p-1">Kamu memiliki orderan retur yang belum lunas,
+      <b-button variant="none" class="text-primary m-0 p-0 font-bold underline" to="/data-order?tab=retur"> Cek Orderan.</b-button>
+      Untuk melakukan tambah order kembali silahkan  <b-button variant="none" class="text-primary m-0 p-0 font-bold underline" @click="showTopUpModal()">Top Up</b-button> saldo.
+    </div>
     <h1 class="mb-2 h-text-xl">
       Dashboard
     </h1>
@@ -13,7 +17,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo
               </div>
-              <popover-info text="Saldo kamu saat ini." />
+              <popover-info
+                classprops="dashboardpartner__popoverinfo"
+                text="Saldo kamu saat ini."
+              />
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -88,7 +95,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo Pending
               </div>
-              <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima." />
+              <popover-info
+                classprops="dashboardpartner__popoverinfo"
+                text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima."
+              />
             </div>
             <b-button
               variant="flat-dark"
@@ -136,7 +146,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Penghasilan
               </div>
-              <popover-info text="Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir." />
+              <popover-info
+                classprops="dashboardpartner__popoverinfo"
+                text="Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir."
+              />
             </div>
             <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
               <v-select
@@ -168,7 +181,7 @@
       </div>
       <div class="col-12 col-md-6 mt-2">
         <div class="card">
-          <div class="row gap-1 my-24 mx-16">
+          <div class="row my-24 mx-16">
             <div class="col-6">
               <div
                 class="
@@ -215,9 +228,15 @@
                   h-100
                 "
               >
-                <p class="mb-0 order-head-text">
-                  Orderan Retur
-                </p>
+                <div class="d-flex justify-content-start">
+                  <p class="mb-0 order-head-text">
+                    Orderan Retur
+                  </p>
+                  <popover-info
+                    classprops="dashboardpartner__popoverinfo"
+                    text="Orderan retur selama 7 hari terkahir."
+                  />
+                </div>
                 <div class="d-flex justify-content-between align-items-center">
                   <p class="mb-0 order-body-text">
                     {{ formatRibuan(orderanRetur) }}
@@ -239,13 +258,16 @@
             </div>
           </div>
         </div>
-        <div class="card h-70 mb-0">
+        <div class="card mb-0 topAdminOrder">
           <div class="card-header">
             <div class="d-flex align-items-center">
               <div class="first-card-header-text me-8 mb-0">
                 Top Admin Order
               </div>
-              <popover-info text="Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan" />
+              <popover-info
+                classprops="dashboardpartner__popoverinfo"
+                text="Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan"
+              />
             </div>
           </div>
           <div class="card-body">
@@ -287,7 +309,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Produk Terlaris
               </div>
-              <popover-info text="Produk Terlaris merupakan produk kamu yang paling banyak di order." />
+              <popover-info
+                classprops="dashboardpartner__popoverinfo"
+                text="Produk Terlaris merupakan produk kamu yang paling banyak di order."
+              />
             </div>
             <b-button
               variant="flat-dark"
@@ -384,7 +409,10 @@
               <div class="first-card-header-text me-8 mb-0">
                 Customer Loyal
               </div>
-              <popover-info text="Customer Loyal merupakan customer yang sering melakukan order." />
+              <popover-info
+                classprops="dashboardpartner__popoverinfo"
+                text="Customer Loyal merupakan customer yang sering melakukan order."
+              />
             </div>
             <b-button
               variant="flat-dark"

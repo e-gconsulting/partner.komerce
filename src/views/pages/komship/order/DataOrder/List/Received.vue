@@ -32,6 +32,7 @@
           >
         </b-button>
         <b-popover
+          id="popoverFilter"
           target="buttonFilter"
           triggers="click"
           placement="bottomleft"
@@ -350,6 +351,13 @@ export default {
   mounted() {
     this.fetchData().catch(error => {
       console.error(error)
+    })
+  },
+  created() {
+    document.getElementsByTagName('body')[0].addEventListener('click', e => {
+      if (!document.getElementById('popoverFilter').contains(e.target)) {
+        this.$root.$emit('bv::hide::popover')
+      }
     })
   },
   methods: {

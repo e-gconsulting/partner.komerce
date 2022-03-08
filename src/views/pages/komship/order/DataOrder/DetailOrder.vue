@@ -76,7 +76,8 @@
               class="px-1 w-36 text-center"
               style="padding: 5px 0;"
             >
-              {{ orderData.order_status }}
+              <span v-if="orderData.order_status === 'Diajukan'">Order Dibuat</span>
+              <span v-else>{{ orderData.order_status }}</span>
             </b-alert>
           </b-col>
         </b-row>
@@ -158,12 +159,13 @@
           <b-col class="d-flex justify-content-end">
             <button
               class="btn btn-outline-primary"
-              @click="$bvModal.show('bv-modal-cek-resi')"
+              @click="lacakresi()"
             >
               Lacak resi
             </button>
             <b-modal
               id="bv-modal-cek-resi"
+              ref="bv-modal-cek-resi"
               hide-footer
             >
               <template #modal-title>
@@ -174,7 +176,7 @@
                 </div>
               </template>
               <b-row class="my-8 overflow-auto h-50">
-                <b-col>
+                <b-col v-if="itemAwb.length > 0">
                   <div
                     class="d-block"
                   >
@@ -194,6 +196,25 @@
                           {{ item.date }}
                         </div>
                       </div>
+                    </div>
+                  </div>
+                </b-col>
+                <b-col v-else>
+                  <div
+                    v-if="isLoading===false"
+                    class="d-block mt-5 mb-5 align-content-center text-center"
+                  >
+                    Data riwayat perjalan tidak ditemukan
+                  </div>
+                  <div
+                    v-if="isLoading===true"
+                    class="d-block mt-5 mb-5 align-content-center text-center"
+                  >
+                    <div
+                      class="spinner-border text-primary"
+                      role="status"
+                    >
+                      <span class="sr-only">Loading...</span>
                     </div>
                   </div>
                 </b-col>
@@ -335,10 +356,7 @@
             </b-button>
           </b-col>
         </b-row>
-        <b-collapse
-          id="collapse-1"
-          visible
-        >
+        <b-collapse id="collapse-1">
           <b-row class="mt-1">
             <b-col lg="3" />
             <b-col
@@ -384,22 +402,22 @@
               Rp {{ formatNumber(orderData.shipping_retur) }}
             </b-col>
           </b-row>
-          <b-row class="mt-1">
-            <b-col lg="3" />
-            <b-col
-              lg="5"
-              class="text-primary font-bold"
-            >
-              Penghasilan bersih yang kamu dapatkan
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right text-primary font-bold"
-            >
-              Rp {{ formatNumber(orderData.net_profit) }}
-            </b-col>
-          </b-row>
         </b-collapse>
+        <b-row class="mt-1">
+          <b-col lg="3" />
+          <b-col
+            lg="5"
+            class="font-bold"
+          >
+            Penghasilan bersih yang kamu dapatkan
+          </b-col>
+          <b-col
+            lg="3"
+            class="text-right text-success font-bold"
+          >
+            Rp {{ formatNumber(orderData.net_profit) }}
+          </b-col>
+        </b-row>
       </div>
     </b-container>
   </b-card>
@@ -429,6 +447,7 @@ export default {
       ],
       itemOrder: [],
       itemAwb: [],
+      isLoading: false,
     }
   },
   async created() {
@@ -438,6 +457,17 @@ export default {
     this.fetchData()
   },
   methods: {
+    lacakresi() {
+      this.isLoading = true
+      const modal = new Promise((resolve, reject) => {
+        this.$refs['bv-modal-cek-resi'].show()
+        resolve(true)
+      })
+
+      modal.then(() => {
+        this.getHistoryPackage()
+      })
+    },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
       const validDate = moment(date)
@@ -463,27 +493,29 @@ export default {
       this.orderData = await data
       this.itemOrder = await data.product
       this.statusOrder = await this.setAlert(data.order_status)
-      this.getHistoryPackage(data.airway_bill)
     },
-    getHistoryPackage(awb) {
+    async getHistoryPackage() {
       const body = {
-        data: awb,
+        data: this.orderData.airway_bill,
       }
-      this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
+      await this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
         this.itemAwb = res.data.data[0].history
+        this.isLoading = false
+      }).catch(err => {
+        this.isLoading = false
       })
     },
     setAlert(status) {
       if (status === 'Diajukan') {
-        this.statusOrder = 'warning'
-      } else if (status === 'Dikirim') {
         this.statusOrder = 'primary'
+      } else if (status === 'Dipacking') {
+        this.statusOrder = 'info'
+      } else if (status === 'Dikirim') {
+        this.statusOrder = 'warning'
       } else if (status === 'Diterima') {
         this.statusOrder = 'success'
       } else if (status === 'Retur') {
         this.statusOrder = 'danger'
-      } else if (status === 'Batal') {
-        this.statusOrder = 'secondary'
       }
       return this.statusOrder
     },

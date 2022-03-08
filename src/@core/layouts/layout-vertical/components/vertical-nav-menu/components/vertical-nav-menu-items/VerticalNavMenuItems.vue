@@ -94,13 +94,16 @@ export default {
         children: item.children?.map(child => ({
           ...child,
           visible: true,
+          hasParent: true,
           // level 3
           children: child.children?.map(child2 => ({
             ...child2,
             visible: true,
+            hasParent: true,
           })),
         })),
         visible: true,
+        hasParent: false,
       }))
     },
   },

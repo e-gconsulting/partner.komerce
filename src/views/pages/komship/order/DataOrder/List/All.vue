@@ -32,6 +32,7 @@
           >
         </b-button>
         <b-popover
+          id="popoverFilter"
           target="buttonFilter"
           triggers="click"
           placement="bottomleft"
@@ -230,6 +231,10 @@
             </b-popover>
           </div>
         </template>
+        <template #cell(order_status)="data">
+          <span v-if="data.item.order_status === 'Diajukan'">Order Dibuat</span>
+          <span v-else>{{ data.item.order_status }}</span>
+        </template>
         <template #cell(details)="data">
           <b-button
             variant="none"
@@ -348,6 +353,13 @@ export default {
       console.error(error)
     })
     this.getProduct()
+  },
+  created() {
+    document.getElementsByTagName('body')[0].addEventListener('click', e => {
+      if (!document.getElementById('popoverFilter').contains(e.target)) {
+        this.$root.$emit('bv::hide::popover')
+      }
+    })
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),

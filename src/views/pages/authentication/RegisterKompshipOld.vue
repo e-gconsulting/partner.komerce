@@ -62,6 +62,38 @@
                     </validation-provider>
                   </b-col>
 
+                  <!-- Nomer -->
+                  <b-col
+                    cols="9"
+                    class="mb-1"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Nomor Handphone"
+                      rules="required"
+                    >
+                      <b-form-input
+                        id="nomorhp"
+                        v-model="nomorHandphone"
+                        class="bg-light"
+                        :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                        name="nomorhp"
+                        type="number"
+                        required
+                        @input="validateNoHp"
+                      />
+                      <label for="fullname">
+                        Nomor Handphone
+                      </label>
+                      <b-row>
+                        <b-col>
+                          <small class="text-primary"> {{ errors[0] }} </small>
+                        </b-col>
+                      </b-row>
+                      <small class="text-primary"> {{ messageValidateNo !== '' ? messageValidateNo : '' }} </small>
+                    </validation-provider>
+                  </b-col>
+
                   <!-- email -->
                   <b-col
                     cols="9"
@@ -199,7 +231,7 @@
                           type="submit"
                           variant="primary"
                           block
-                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8"
+                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8"
                         >
                           <b-spinner
                             v-if="loading"
@@ -420,6 +452,38 @@
                     </validation-provider>
                   </b-col>
 
+                  <!-- Nomer -->
+                  <b-col
+                    cols="12"
+                    class="mb-1"
+                  >
+                    <validation-provider
+                      #default="{ errors }"
+                      name="Nomor Handphone"
+                      rules="required"
+                    >
+                      <b-form-input
+                        id="nomorhp"
+                        v-model="nomorHandphone"
+                        class="bg-light"
+                        :state="errors.length > 0 || submitErrors.fullname ? false:null"
+                        name="nomorhp"
+                        type="number"
+                        required
+                        @input="validateNoHp"
+                      />
+                      <label for="fullname">
+                        Nomor Handphone
+                      </label>
+                      <b-row>
+                        <b-col>
+                          <small class="text-primary"> {{ errors[0] }} </small>
+                        </b-col>
+                      </b-row>
+                      <small class="text-primary"> {{ messageValidateNo !== '' ? messageValidateNo : '' }} </small>
+                    </validation-provider>
+                  </b-col>
+
                   <!-- email -->
                   <b-col
                     cols="12"
@@ -548,7 +612,7 @@
                           type="submit"
                           variant="primary"
                           block
-                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8"
+                          :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8"
                         >
                           <b-spinner
                             v-if="loading"
@@ -741,6 +805,7 @@ export default {
     return {
       agree: false,
       fullname: '',
+      nomorHandphone: '',
       userEmail: '',
       userPassword: '',
       confirmPassword: '',
@@ -767,6 +832,8 @@ export default {
       modeExistingUser: false,
       serviceTitle: '',
       serviceIsKomship: false,
+
+      messageValidateNo: '',
     }
   },
   computed: {
@@ -789,6 +856,7 @@ export default {
 
           httpKomship.post('/v1/register', {
             full_name: this.fullname,
+            no_hp: this.nomorHandphone,
             email: this.userEmail,
             password: this.userPassword,
             password_confirmation: this.confirmPassword,
@@ -887,6 +955,13 @@ export default {
           this.loading = false
         }
       })
+    },
+    validateNoHp() {
+      if (this.nomorHandphone.length < 8) {
+        this.messageValidateNo = 'Nomor handphone minimal 8 digit'
+      } else {
+        this.messageValidateNo = ''
+      }
     },
   },
 }

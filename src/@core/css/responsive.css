@@ -14,6 +14,14 @@
     [dir] .item-student-responsive {
         display: inline-block;
     }
+
+    /* History Pickup */
+    [dir] .expand-button-variation {
+        display: none;
+    }
+    [dir] .expand-button-variation-mobile {
+        display: inline-block;
+    }
 }
 @media only screen and (max-width: 767px) {
     [dir] .sortir-talent-mobile {
