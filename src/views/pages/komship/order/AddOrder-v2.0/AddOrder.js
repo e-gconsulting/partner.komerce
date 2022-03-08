@@ -624,6 +624,7 @@ export default {
             this.cashbackPercentage = result.cashback_percentage
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)
+            this.newGrandTotal = result.grandtotal
             this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
@@ -631,6 +632,47 @@ export default {
           })
       } else {
         this.isCalculate = false
+      }
+    },
+    async calculateTotal() {
+      if (this.isCalculate) {
+        this.loadingCalculate = true
+        await this.$http_komship.get('v1/calculate', {
+          params: {
+            partner_id: this.profile.partner_id,
+            tariff_code: this.destination.value,
+            payment_method: this.paymentMethod,
+            shipping: this.shipping,
+            grandtotal: this.newGrandTotal,
+            partner_address_id: this.address.address_id,
+            cart: this.cartId.toString(),
+          },
+        })
+          .then(res => {
+            const { data } = res.data
+            const result = data.find(element => element.shipping_type === this.typeShipping.shipping_type)
+            this.subTotal = result.subtotal
+            this.shippingCost = result.shipping_cost
+            this.netProfit = result.net_profit
+            this.serviceFee = Math.round(result.service_fee)
+            this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight
+            this.grandTotal = result.grandtotal
+            this.cashback = result.cashback
+            this.cashbackPercentage = result.cashback_percentage
+            this.isCalculate = true
+            this.loadingCalculate = false
+          })
+          .catch(() => {
+            this.isCalculate = false
+            this.loadingCalculate = false
+          })
+      }
+    },
+    checkNewTotal() {
+      if (this.newGrandTotal < this.shippingCost) {
+        this.newGrandTotal = this.shippingCost
+        this.calculateTotal()
       }
     },
     nameTypeShipping(data) {
