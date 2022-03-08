@@ -4,6 +4,8 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
 import { kirimEmailConfig } from '@/libs/helpers'
 import CryptoJS from 'crypto-js'
+import axios from 'axios'
+import qs from 'qs'
 import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
 import {
   BCol,
@@ -82,56 +84,34 @@ export default {
     },
   },
   methods: {
-    generateToken() {
-      const timestamp = Math.floor(Date.now() / 1000)
-      const unixtimestamp = timestamp
-      const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
-      console.log('toHash :', toHash)
-      const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
-      const generatedtoken = hash.toString(CryptoJS.enc.Hex)
-      console.log('generatedtoken :', generatedtoken)
-      this.generateTokenKirimEmail = generatedtoken
-      return generatedtoken
-    },
     subscribeKirimEmail() {
-      // this.generateToken()
       const timestamp = Math.floor(Date.now() / 1000)
       const unixtimestamp = timestamp
       const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
       // console.log('toHash :', toHash)
       const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
       const generatedtoken = hash.toString(CryptoJS.enc.Hex)
-      // console.log('generatedtoken :', generatedtoken)
 
-      // set header
-      const myHeaders = new Headers()
-      myHeaders.append('Access-Control-Allow-Origin', '*')
-      // myHeaders.append('Access-Control-Allow-Headers', 'Content-Type')
-      myHeaders.append('Auth-Id', kirimEmailConfig.username)
-      myHeaders.append('Auth-Token', generatedtoken)
-      myHeaders.append('Timestamp', unixtimestamp)
-      // myHeaders.append('Content-Type', 'application/x-www-form-urlencoded')
-      // myHeaders.append('Cookie', 'PHPSESSID=fc5880d9ac9d8ed65f6b2feedd61eeac')
-
-      // set body request
-      const urlencoded = new URLSearchParams()
-      urlencoded.append('lists', '19')
-      urlencoded.append('full_name', this.fullname)
-      urlencoded.append('email', this.userEmail)
-      // urlencoded.append('full_name', 'asdasmdkamsd akmsdkmasd')
-      // urlencoded.append('email', 'masdkas@mail.com')
-
-      const requestOptions = {
-        method: 'POST',
-        headers: myHeaders,
-        body: urlencoded,
-        redirect: 'follow',
-      }
-      // calling api
-      fetch('https://api.kirim.email/v3/subscriber', requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error))
+      const data = qs.stringify({
+        lists: 231572,
+        full_name: this.fullname,
+        email: this.userEmail,
+      })
+      console.log('data', data)
+      axios({
+        method: 'post',
+        url: 'https://api.kirim.email/v3/subscriber',
+        data,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Auth-Id': kirimEmailConfig.username,
+          'Auth-Token': generatedtoken,
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Timestamp: unixtimestamp,
+        },
+      })
+        .then(res => console.log('response data', res))
+        .catch(e => console.log(e))
     },
     register() {
       this.loading = true
