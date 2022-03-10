@@ -889,7 +889,7 @@ export default {
         }, 2000)
       })
     },
-    submitAddress() {
+    async submitAddress() {
       this.loadingSubmit = true
       this.$refs.formRulesAdd.validate().then(success => {
         if (success) {
@@ -905,6 +905,15 @@ export default {
           httpKomship.post('/v1/address/store', formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success menambahkan alamat pickup',
+                variant: 'success',
+              },
+            }, 2000)
             this.loadingSubmit = false
             this.formAddAddress = false
             this.getAddress()
@@ -924,6 +933,13 @@ export default {
           this.loadingSubmit = false
         }
       })
+    },
+    checkAddressIsDefault(data) {
+      let result = false
+      if (data.is_default > 0) {
+        result = true
+      }
+      return result
     },
     addAddress() {
       this.fieldAddAddressName = ''
