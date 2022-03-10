@@ -42,7 +42,7 @@ export default {
       filterOn: [],
       items: [
         {
-          partner_id: 1,
+          partner_id: 201,
           nama_layanan: 'Tatausahaku',
           email: 'asdkmaksmdkasmdk@mail.com',
           no_hp: '12739741293879141',
@@ -54,6 +54,8 @@ export default {
           first_pickup: '2021-09-01 21:24:38',
           total_order: 188,
           total_transaksi: 13494799,
+          total_ongkir: 20020002020,
+          total_revenue: 1020,
         },
         {
           id: 2,
