@@ -1005,7 +1005,6 @@ export default {
               },
             })
             this.editMode = false
-            console.log('tes', this.tes)
             this.getAddress()
           }).catch(() => {
             this.loadingSubmit = false
@@ -1121,7 +1120,6 @@ export default {
       this.$refs['modal-validate-address-stilluse'].hide()
     },
     handleSelectOrigin(data) {
-      console.log('dataOrigin', data)
       this.originValue = data
     },
   },
