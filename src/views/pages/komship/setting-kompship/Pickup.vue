@@ -264,7 +264,7 @@
                         <validation-provider
                           #default="{errors}"
                           name="No. HP"
-                          rules="requried"
+                          rules="required"
                         >
                           <b-form-input
                             v-model="phoneUser"
@@ -900,7 +900,7 @@ export default {
           formData.append('address_detail', this.fieldAddAddressDetail)
           formData.append('pic', this.fieldAddPicName)
           formData.append('phone', this.fieldAddPhoneUser)
-          formData.append('is_default', this.isDefault)
+          formData.append('is_default', this.dataIsDefault)
 
           httpKomship.post('/v1/address/store', formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -926,6 +926,12 @@ export default {
       })
     },
     addAddress() {
+      this.fieldAddAddressName = ''
+      this.fieldAddOrigin = ''
+      this.fieldAddAddressDetail = ''
+      this.fieldAddPicName = ''
+      this.fieldAddPhoneUser = ''
+      this.isDefault = false
       this.formAddAddress = true
       this.editMode = false
     },
@@ -973,6 +979,8 @@ export default {
               },
             }, 2000)
           })
+        } else {
+          this.loadingSubmit = false
         }
       })
     },
