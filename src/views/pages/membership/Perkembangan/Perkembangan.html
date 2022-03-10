@@ -1,86 +1,101 @@
 <section id="cod-data-partner-detail" class="growth">
-    <div v-if="!loadDataAwal">
-      <b-card no-body>
-        <div class="growth__container">
-          <div class="d-flex align-items-center">
-            <h4
-              class="growth__title"
-            >
-              Perkembangan Partner
-            </h4>
+  <div v-if="!loadDataAwal">
+    <b-card no-body>
+      <div class="growth__container">
+        <div class="d-flex align-items-center">
+          <h4 class="growth__title">Perkembangan Partner</h4>
+        </div>
+        <div class="d-flex justify-content-end align-items-center mb-1">
+          <div class="d-flex justify-content-end mr-1">
+            <flat-pickr
+              v-model="rangeDate"
+              class="form-control my-1 growth__flatpickr"
+              style="width: 200px;"
+              :config="configFilterDate"
+            />
           </div>
-          <div
-              class="d-flex justify-content-end align-items-center"
+          <div class="d-flex justify-content-end">
+            <!-- filter -->
+            <b-form-group class="mb-0">
+              <b-input-group class="input-group-merge">
+                <b-input-group-prepend is-text>
+                  <feather-icon icon="SearchIcon" />
+                </b-input-group-prepend>
+                <b-form-input
+                  id="filterSearch"
+                  class="growth__inputsearch"
+                  v-model="search"
+                  type="search"
+                  placeholder="Search"
+                  debounce="500"
+                  @input="onChangeSearch"
+                />
+              </b-input-group>
+            </b-form-group>
+          </div>
+        </div>
+        <b-table
+          striped
+          hover
+          responsive
+          :per-page="0"
+          style="max-width: 1260px;"
+          :current-page="currentPage"
+          :items="filteredItems"
+          :busy="isLoadTable"
+          :fields="fields"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          :filter="filter"
+          :filter-included-fields="filterOn"
+          @filtered="onFiltered"
+        >
+          <template #cell(is_onboarding)="data">
+            <span :class="{ 'text-success': data.item.is_onboarding === 1, 'text-danger': data.item.is_onboarding === 0 }">
+              {{ checkDataStatusOnboarding(data.item.is_onboarding) }}
+            </span>
+          </template>
+          <template #table-busy>
+            <div class="text-center text-danger my-2">
+              <b-spinner class="align-middle" />
+              <strong> Loading...</strong>
+            </div>
+          </template>
+        </b-table>
+        <div class="d-flex justify-between mt-2">
+          <div>
+            <span class="text-black mr-1">List per halaman</span>
+            <b-button
+              v-for="page in pageOptions"
+              :key="page"
+              :variant="page === perPage ? 'primary' : 'light'"
+              size="sm"
+              class="btnPage text-black"
+              @click="setperPage(page)"
             >
-            <div class="d-flex justify-content-end mr-1">
-                <flat-pickr
-                    v-model="rangeDate"
-                    class="form-control my-1 growth__flatpickr"
-                    style="width: 200px;"
-                    :config="configFilterDate"
-                />
-            </div>
-            <div
-                class="d-flex justify-content-end"
-                >
-                <!-- filter -->
-                <b-form-group class="mb-0">
-                    <b-input-group
-                    class="input-group-merge"
-                    >
-                    <b-input-group-prepend is-text>
-                        <feather-icon icon="SearchIcon" />
-                    </b-input-group-prepend>
-                    <b-form-input
-                        id="filterSearch"
-                        class="growth__inputsearch"
-                        v-model="search"
-                        type="search"
-                        placeholder="Search"
-                        debounce="500"
-                        @input="onChangeSearch"
-                    />
-                    </b-input-group>
-                </b-form-group>
-            </div>
-        </div>
-          <b-table
-            striped
-            hover
-            responsive
-            :per-page="perPage"
-            :current-page="currentPage"
-            :items="items"
-            :busy="isLoadTable"
-            :fields="fields"
-            :sort-by.sync="sortBy"
-            :sort-desc.sync="sortDesc"
-            :sort-direction="sortDirection"
-            :filter="filter"
-            :filter-included-fields="filterOn"
-            @filtered="onFiltered"
+              {{ page }}
+            </b-button>
+          </div>
+          <b-col
+            cols=""
           >
-            <template #table-busy>
-              <div class="text-center text-danger my-2">
-                <b-spinner
-                  class="align-middle"
-                />
-                <strong>Loading...</strong>
-              </div>
-            </template>
-          </b-table>
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="right"
+              size="sm"
+              class="my-0"
+              aria-controls="my-table"
+            />
+          </b-col>
         </div>
-      </b-card>
+      </div>
+    </b-card>
+  </div>
 
-    </div>
-
-    <div
-      v-else
-      class="text-center"
-    >
-      <b-spinner
-        variant="primary"
-        label="Text Centered"
-      />
-    </div>
+  <div v-else class="text-center">
+    <b-spinner variant="primary" label="Text Centered" />
+  </div>
 </section>
