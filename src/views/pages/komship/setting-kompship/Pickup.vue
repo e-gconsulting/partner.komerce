@@ -132,15 +132,22 @@
                           v-for="(dataOrigin, indexOrigin) in tes"
                           :key="indexOrigin+1"
                         >
-                          <v-select
-                            v-if="dataOrigin.value === data.origin_code"
-                            v-model="dataOrigin.label"
-                            :options="itemsOriginEdit"
-                            :reduce="options => options.value"
-                            label="label"
-                            @input="handleSelectOrigin(dataOrigin)"
-                            @search="onSearchOrigin"
-                          />
+                          <validation-provider
+                            #default="{errors}"
+                            name="Kota/Kabupaten"
+                            rules="required"
+                          >
+                            <v-select
+                              v-if="dataOrigin.value === data.origin_code"
+                              v-model="originValue"
+                              :options="itemsOriginEdit"
+                              :reduce="options => options.value"
+                              label="label"
+                              :state="errors.length > 0 ? false:null"
+                              @search="onSearchOrigin"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                          </validation-provider>
                         </div>
                       </div>
                       <div v-else>
@@ -181,11 +188,19 @@
                       cols="9"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <b-form-textarea
-                          v-model="addressDetail"
-                          placeholder="Alamat Detail"
-                          rows="3"
-                        />
+                        <validation-provider
+                          #default="{errors}"
+                          name="Alamat Detail"
+                          rules="required"
+                        >
+                          <b-form-textarea
+                            v-model="addressDetail"
+                            placeholder="Alamat Detail"
+                            rows="3"
+                            :state="errors.length > 0 ? false:null"
+                          />
+                          <small class="text-primary"> {{ errors[0] }}</small>
+                        </validation-provider>
                       </div>
                       <div v-else>
                         <b-form-textarea
@@ -273,6 +288,7 @@
                             :state="errors.length > 0 ? false:null"
                             type="number"
                           />
+                          <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                       </div>
                       <div v-else>
@@ -540,6 +556,7 @@
                             type="number"
                             :state="errors.length > 0 ? false:null"
                           />
+                          <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                       </b-col>
                     </b-row>
@@ -966,7 +983,9 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('address_name', this.addressName)
-          formData.append('origin_code', this.originValue)
+          if (this.originValue !== null) {
+            formData.append('origin_code', this.originValue.value !== undefined ? this.originValue.value : this.originValue)
+          }
           formData.append('address_detail', this.addressDetail)
           formData.append('pic', this.picName)
           formData.append('phone', this.phoneUser)
@@ -986,6 +1005,7 @@ export default {
               },
             })
             this.editMode = false
+            console.log('tes', this.tes)
             this.getAddress()
           }).catch(() => {
             this.loadingSubmit = false
@@ -1010,6 +1030,12 @@ export default {
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
       this.originValue = data.origin_code
+      // eslint-disable-next-line array-callback-return
+      this.tes.map(items => {
+        if (items.value === data.origin_code) {
+          this.originValue = items
+        }
+      })
       this.picName = data.pic
       this.phoneUser = data.phone
       if (data.is_default === 0) {
@@ -1095,7 +1121,8 @@ export default {
       this.$refs['modal-validate-address-stilluse'].hide()
     },
     handleSelectOrigin(data) {
-      this.originValue = data.label
+      console.log('dataOrigin', data)
+      this.originValue = data
     },
   },
 
