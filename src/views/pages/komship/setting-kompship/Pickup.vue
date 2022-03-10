@@ -136,7 +136,9 @@
                             v-if="dataOrigin.value === data.origin_code"
                             v-model="dataOrigin.label"
                             :options="itemsOriginEdit"
+                            :reduce="options => options.value"
                             label="label"
+                            @input="handleSelectOrigin(dataOrigin)"
                             @search="onSearchOrigin"
                           />
                         </div>
@@ -836,6 +838,8 @@ export default {
 
       // Validation
       required,
+
+      dataIsDefault: 0,
     }
   },
   mounted() {
@@ -889,7 +893,7 @@ export default {
         }, 2000)
       })
     },
-    async submitAddress() {
+    submitAddress() {
       this.loadingSubmit = true
       this.$refs.formRulesAdd.validate().then(success => {
         if (success) {
@@ -1089,6 +1093,9 @@ export default {
     },
     handleCloseModal() {
       this.$refs['modal-validate-address-stilluse'].hide()
+    },
+    handleSelectOrigin(data) {
+      this.originValue = data.label
     },
   },
 
