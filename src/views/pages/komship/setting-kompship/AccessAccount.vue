@@ -1115,6 +1115,16 @@ export default {
             this.allAccessApps = true
           }
         }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal edit alamat, silahkan coba lagi',
+            variant: 'danger',
+          },
+        })
       })
     },
     arrayMenuKomship(data) {
@@ -1528,9 +1538,9 @@ export default {
           this.$toast({
             component: ToastificationContent,
             props: {
-              title: 'Failed',
+              title: 'Gagal',
               icon: 'AlertCircleIcon',
-              text: 'Failed delete access',
+              text: 'Gagal hapus akses, silahkan coba lagi!',
               variant: 'danger',
             },
           }, 2000)
@@ -1659,6 +1669,16 @@ export default {
             menu_position: response.data.data[i].menu_position,
           })
         }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     checkButtonIsActive() {
