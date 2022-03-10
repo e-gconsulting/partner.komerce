@@ -65,15 +65,6 @@
         </b-col>
       </b-row>
 
-      <!-- <b-row class="mt-3">
-        <b-col>
-          <b-table
-            :fields="fieldsSendKompship"
-            :items="itemsSendKompship"
-            class="border"
-          />
-        </b-col>
-      </b-row> -->
     </b-card>
   </b-overlay>
 
@@ -175,6 +166,16 @@ export default {
         }
         this.loading = false
         return this.listEkspedisi
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failed',
+            icon: 'AlertCircleIcon',
+            text: 'Failed load data, refresh page!',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     switchSettingEkspedisi() {
@@ -195,6 +196,17 @@ export default {
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {
+          if (x === this.listEkspedisi.length - 1) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success update setting ekspedisi',
+                variant: 'success',
+              },
+            }, 2000)
+          }
           this.loadEkspedisi()
         }).catch(() => {
           this.$toast({
@@ -205,7 +217,7 @@ export default {
               text: 'Gagal update setting ekspedisi, silahkan coba lagi',
               variant: 'danger',
             },
-          })
+          }, 2000)
         })
       }
     },
@@ -225,7 +237,7 @@ export default {
               text: 'Success update setting ekspedisi',
               variant: 'success',
             },
-          })
+          }, 2000)
           this.loadEkspedisi()
         }).catch(() => {
           this.$toast({
@@ -236,7 +248,7 @@ export default {
               text: 'Gagal update setting ekspedisi, silahkan coba lagi',
               variant: 'danger',
             },
-          })
+          }, 2000)
         })
       }
       if (data.item.is_active === true) {
@@ -254,7 +266,7 @@ export default {
               text: 'Success update setting ekspedisi',
               variant: 'success',
             },
-          })
+          }, 2000)
           this.loadEkspedisi()
         }).catch(() => {
           this.$toast({
@@ -265,7 +277,7 @@ export default {
               text: 'Gagal update setting ekspedisi, silahkan coba lagi',
               variant: 'danger',
             },
-          })
+          }, 2000)
         })
       }
     },

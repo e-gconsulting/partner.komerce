@@ -862,7 +862,7 @@ export default {
             text: 'Gagal load data, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     myLoop(data) {
@@ -877,6 +877,16 @@ export default {
           return unique
         }, [])
         this.tes = result
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     submitAddress() {
@@ -908,7 +918,7 @@ export default {
                 text: 'Gagal menambahkan alamat, silahkan coba lagi',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -958,10 +968,10 @@ export default {
               props: {
                 title: 'Failed',
                 icon: 'AlertCircleIcon',
-                text: 'Gagal update alamat pickup',
+                text: 'Gagal update alamat pickup, silahkan coba lagi!',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         }
       })
@@ -995,6 +1005,16 @@ export default {
             if (response.data.code === 400) {
               this.$refs['modal-validate-address-stilluse'].show()
             }
+          }).catch(() => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal hapus alamat, silahkan coba lagi',
+                variant: 'danger',
+              },
+            })
           })
       } else {
         this.$refs['modal-confirm-delete-address'].hide()
@@ -1015,6 +1035,16 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.itemsOriginEdit = response.data.data
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        })
       })
     },
     changeDefaultAddress() {
