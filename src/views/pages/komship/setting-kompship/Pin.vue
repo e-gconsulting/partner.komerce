@@ -891,7 +891,7 @@ export default {
             text: 'Gagal buat pin, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     onChange(v) {
@@ -925,23 +925,12 @@ export default {
             text: 'Gagal cek pin, silahkan refresh page',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     tes() {
       this.$refs['forgot-confirm-new-pin-email'].hide()
       this.$refs['modal-success-changed-pin'].show()
-      // this.$swal({
-      //   text: 'PIN Berhasil Diganti',
-      //   icon: 'success',
-      //   showCancelButton: false,
-      //   showConfirmButton: false,
-      //   customClass: {
-      //     confirmButton: 'btn btn-primary',
-      //     cancelButton: 'btn btn-outline-primary ml-1',
-      //   },
-      //   buttonsStyling: false,
-      // })
     },
     confirmCreatePin() {
       this.loadingSubmit = true
@@ -967,7 +956,7 @@ export default {
               text: 'Gagal konfirmasi buat pin',
               variant: 'danger',
             },
-          })
+          }, 2000)
         })
       } else {
         this.loadingSubmit = false
@@ -1003,7 +992,7 @@ export default {
             text: 'Gagal buat ganti pin, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     isMatchChangePin() {
@@ -1036,7 +1025,7 @@ export default {
             text: 'Gagal ganti pin, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     submitChangePin() {
@@ -1083,7 +1072,7 @@ export default {
             text: 'Gagal kirim email, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     sendOtpAgain() {
@@ -1101,7 +1090,7 @@ export default {
             text: 'Gagal kirim OTP, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
       this.countDownTimerOtp()
     },
@@ -1123,10 +1112,10 @@ export default {
           props: {
             title: 'Gagal',
             icon: 'AlertCircleIcon',
-            text: 'Gagal meload data, silahkan refresh halaman!',
+            text: 'Gagal load data, silahkan refresh halaman!',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     handleForgotCreateNewPin() {

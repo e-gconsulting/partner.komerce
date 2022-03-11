@@ -4,9 +4,9 @@ import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
 import { kirimEmailConfig } from '@/libs/helpers'
 import CryptoJS from 'crypto-js'
-import axios from 'axios'
-import qs from 'qs'
 import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
+import qs from 'qs'
+import axios from 'axios'
 import {
   BCol,
   BNavbarBrand,
@@ -84,34 +84,56 @@ export default {
     },
   },
   methods: {
+    generateToken() {
+      const timestamp = Math.floor(Date.now() / 1000)
+      const unixtimestamp = timestamp
+      const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
+      console.log('toHash :', toHash)
+      const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
+      const generatedtoken = hash.toString(CryptoJS.enc.Hex)
+      console.log('generatedtoken :', generatedtoken)
+      this.generateTokenKirimEmail = generatedtoken
+      return generatedtoken
+    },
     subscribeKirimEmail() {
+      // this.generateToken()
       const timestamp = Math.floor(Date.now() / 1000)
       const unixtimestamp = timestamp
       const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
       // console.log('toHash :', toHash)
       const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
       const generatedtoken = hash.toString(CryptoJS.enc.Hex)
-
+      // console.log('generatedtoken :', generatedtoken)
       const data = qs.stringify({
-        lists: 231572,
+        lists: '19',
         full_name: this.fullname,
         email: this.userEmail,
+        'fields[no_hp]': this.nomorHandphone,
+        'fields[alamat]': 'Indonesia',
+        tags: 'new tag, test tag',
       })
-      console.log('data', data)
-      axios({
+
+      const config = {
         method: 'post',
-        url: 'https://api.kirim.email/v3/subscriber',
-        data,
+        url: 'https://api.kirim.email/v3/subscriber/',
         headers: {
           'Access-Control-Allow-Origin': '*',
+          Accept: 'application/json, text/plain, */*',
+          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
+          'Access-Control-Allow-Credentials': true,
+
+          'Content-Type': 'application/x-www-form-urlencoded',
           'Auth-Id': kirimEmailConfig.username,
           'Auth-Token': generatedtoken,
-          'Content-Type': 'application/x-www-form-urlencoded',
           Timestamp: unixtimestamp,
         },
-      })
-        .then(res => console.log('response data', res))
-        .catch(e => console.log(e))
+        data,
+      }
+      // calling api
+      axios(config)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error))
     },
     register() {
       this.loading = true

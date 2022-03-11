@@ -726,6 +726,17 @@ export default {
         const { data } = response.data
         this.formRekening = data
         this.loading = false
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        }, 2000)
+        this.loading = false
       })
     },
     submitVerification() {
@@ -753,7 +764,7 @@ export default {
                   text: 'Gagal kirim otp, silahkan coba lagi!',
                   variant: 'danger',
                 },
-              })
+              }, 2000)
             })
           } else {
             this.loadingSubmit = false
@@ -781,7 +792,7 @@ export default {
               text: 'Gagal kirim OTP, silahkan coba lagi',
               variant: 'danger',
             },
-          })
+          }, 2000)
         })
         this.countDownTimerOtp()
       }
@@ -816,7 +827,7 @@ export default {
                   text: responseStore.data.message,
                   variant: 'danger',
                 },
-              })
+              }, 2000)
             } else {
               this.loadingSubmit = false
               this.getBank()
@@ -824,16 +835,16 @@ export default {
               this.$refs['modal-verification-submit'].hide()
               this.visibilityPin = 'password'
             }
-          }).catch(err => {
+          }).catch(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
-                title: 'Failed',
+                title: 'Gagal',
                 icon: 'AlertCircleIcon',
-                text: err,
+                text: 'Gagal menambahkan rekening, silahkan coba lagi!',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.$toast({
@@ -844,7 +855,7 @@ export default {
               text: response.data.message,
               variant: 'danger',
             },
-          })
+          }, 2000)
           this.loadingSubmit = false
           this.errorConfirmOtp = true
         }
@@ -880,7 +891,7 @@ export default {
                 text: 'Berhasil update rekening',
                 variant: 'success',
               },
-            })
+            }, 2000)
             this.loadingSubmit = false
             this.editMode = false
             this.getBank()
@@ -894,7 +905,7 @@ export default {
                 text: 'Gagal edit rekening bank, silahkan coba lagi',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -925,6 +936,16 @@ export default {
       })
         .then(() => {
           this.getBank()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal delete rekening bank, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
     onChange(v) {
@@ -955,6 +976,16 @@ export default {
           this.errorPin = 'PIN tidak valid'
           this.loadingSubmit = false
         }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal konfirmasi PIN, silahkan coba lagi',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     loadBanks() {
@@ -1038,10 +1069,10 @@ export default {
           props: {
             title: 'Gagal',
             icon: 'AlertCircleIcon',
-            text: 'Gagal meload data, silahkan refresh halaman!',
+            text: 'Gagal load data, silahkan refresh halaman!',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     handleClosePopupOtp() {
