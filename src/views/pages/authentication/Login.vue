@@ -390,6 +390,7 @@ export default {
                 { action: 'manage', subject: 'Pencairan' },
                 { action: 'manage', subject: 'Pendapatan' },
                 { action: 'manage', subject: 'Membership Komship' },
+                { action: 'manage', subject: 'Perkembangan Partner' },
                 { action: 'manage', subject: 'Data Partner' },
                 { action: 'manage', subject: 'Arsip Partner' },
                 { action: 'manage', subject: 'Data Layanan' },

@@ -1,0 +1,238 @@
+<section id="cod-data-partner-detail" class="growth">
+  <div v-if="!loadDataAwal">
+    <b-card no-body>
+      <div class="growth__container">
+        <div class="d-flex align-items-center">
+          <h4 class="growth__title">Perkembangan Partner</h4>
+        </div>
+        <div class="d-flex justify-content-end align-items-center mb-1">
+          <div class="d-flex justify-content-end mr-1">
+            <date-range-picker
+              ref="picker"
+              v-model="rangeDate"
+              :locale-data="locale"
+              :ranges="ranges"
+              :opens="'left'"
+              class="w-100 growth__datepicker"
+            >
+              <template
+                v-slot:input="picker"
+                style="min-width: 350px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center"
+                >
+                  <span
+                    class="mr-2"
+                  >{{ formatDate(picker.startDate) }} -
+                    {{ formatDate(picker.endDate) }}</span>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8 2V5"
+                      stroke="#222222"
+                      stroke-width="1.5"
+                      stroke-miterlimit="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M16 2V5"
+                      stroke="#222222"
+                      stroke-width="1.5"
+                      stroke-miterlimit="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M3.5 9.08984H20.5"
+                      stroke="#222222"
+                      stroke-width="1.5"
+                      stroke-miterlimit="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M21 8.5V17C21 20 19.5 22 16 22H8C4.5 22 3 20 3 17V8.5C3 5.5 4.5 3.5 8 3.5H16C19.5 3.5 21 5.5 21 8.5Z"
+                      stroke="#222222"
+                      stroke-width="1.5"
+                      stroke-miterlimit="10"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M15.6947 13.7002H15.7037"
+                      stroke="#222222"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M15.6947 16.7002H15.7037"
+                      stroke="#222222"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M11.9955 13.7002H12.0045"
+                      stroke="#222222"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M11.9955 16.7002H12.0045"
+                      stroke="#222222"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M8.29431 13.7002H8.30329"
+                      stroke="#222222"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M8.29431 16.7002H8.30329"
+                      stroke="#222222"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+              </template>
+            </date-range-picker>
+            <!-- <flat-pickr
+              v-model="rangeDate"
+              class="form-control my-1 growth__flatpickr"
+              style="width: 200px;"
+              :config="configFilterDate"
+            /> -->
+          </div>
+          <div class="d-flex justify-content-end">
+            <!-- filter -->
+            <b-form-group class="mb-0">
+              <b-input-group class="input-group-merge">
+                <b-input-group-prepend is-text>
+                  <feather-icon icon="SearchIcon" />
+                </b-input-group-prepend>
+                <b-form-input
+                  id="filterSearch"
+                  class="growth__inputsearch"
+                  v-model="search"
+                  type="search"
+                  placeholder="Search"
+                  debounce="500"
+                  @input="onChangeSearch"
+                />
+              </b-input-group>
+            </b-form-group>
+          </div>
+        </div>
+        <b-table
+          striped
+          hover
+          responsive
+          :per-page="0"
+          style="max-width: 1260px;"
+          :current-page="currentPage"
+          :items="filteredItems"
+          :busy="isLoadTable"
+          :fields="fields"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          :filter="filter"
+          :filter-included-fields="filterOn"
+          @filtered="onFiltered"
+        >
+          <template #cell(full_name)="data">
+            <div class="tbl__fullname">
+              <div class="tbl__fullnamecontent">
+                <h5 class="text-black">{{ data.item.full_name }}</h5>
+                <p class="text-black my-0">{{ data.item.email }}</p>
+              </div>
+              <div class="d-flex justify-content-center align-items-center tbl__fullnamephone">
+                <h5 class="text-black mb-0 mr-1">{{ data.item.no_hp ? data.item.no_hp : '-' }}</h5>
+                <b-button
+                  v-show="data.item.no_hp"
+                  variant="link"
+                  size="sm"
+                  @click="handlePhone(data.item.no_hp, 'copy')"
+                  class="p-0 mr-1"
+                >
+                  <span class="text-black">
+                    <feather-icon icon="CopyIcon" />
+                  </span>
+                </b-button>
+                <b-button
+                  v-show="data.item.no_hp"
+                  variant="link"
+                  size="sm"
+                  @click="handlePhone(data.item.no_hp, 'wa')"
+                  class="p-0"
+                >
+                  <span class="text-black">
+                    WA
+                  </span>
+                </b-button>
+              </div>
+            </div>
+          </template>
+          <template #cell(is_onboarding)="data">
+            <span :class="{ 'text-success': data.item.is_onboarding === 1, 'text-danger': data.item.is_onboarding === 0 }">
+              {{ checkDataStatusOnboarding(data.item.is_onboarding) }}
+            </span>
+          </template>
+          <template #table-busy>
+            <div class="text-center text-danger my-2">
+              <b-spinner class="align-middle" />
+              <strong> Loading...</strong>
+            </div>
+          </template>
+        </b-table>
+        <div class="d-flex justify-between mt-2">
+          <div>
+            <span class="text-black mr-1">List per halaman</span>
+            <b-button
+              v-for="page in pageOptions"
+              :key="page"
+              :variant="page === perPage ? 'primary' : 'light'"
+              size="sm"
+              class="btnPage text-black"
+              @click="setperPage(page)"
+            >
+              {{ page }}
+            </b-button>
+          </div>
+          <b-col
+            cols=""
+          >
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="perPage"
+              align="right"
+              size="sm"
+              class="my-0"
+              aria-controls="my-table"
+            />
+          </b-col>
+        </div>
+      </div>
+    </b-card>
+  </div>
+
+  <div v-else class="text-center">
+    <b-spinner variant="primary" label="Text Centered" />
+  </div>
+</section>

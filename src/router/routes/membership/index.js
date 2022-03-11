@@ -9,6 +9,15 @@ export default [
     },
   },
   {
+    path: '/membership-perkembangan',
+    name: 'membership-perkembangan',
+    component: () => import('@/views/pages/membership/Perkembangan'),
+    meta: {
+      resource: 'Dashboard',
+      action: 'read',
+    },
+  },
+  {
     path: '/data-partner/:id/detail',
     name: 'cod-data-partner-detail',
     component: () => import('@/views/pages/membership/data-partner/Detail'),

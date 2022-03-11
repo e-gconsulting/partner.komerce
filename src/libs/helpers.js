@@ -1,3 +1,8 @@
+import Vue from 'vue'
+import moment from 'moment'
+
+moment.locale('id')
+
 export const generateRandomStr = (length = 10) => {
   let result = ''
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -13,3 +18,4 @@ export const kirimEmailConfig = {
   token: process.env.VUE_APP_KIRIMEMAIL_TOKEN,
   username: process.env.VUE_APP_KIRIMEMAIL_USERNAME,
 }
+Vue.prototype.$moment = moment
