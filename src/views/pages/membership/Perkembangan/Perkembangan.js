@@ -83,6 +83,17 @@ export default {
           },
         },
         {
+          key: 'no_hp',
+          label: 'No. HP',
+          stickyColumn: true,
+          thClass: 'text-black',
+          thStyle: {
+            color: 'black',
+            textTransform: 'capitalize',
+            verticalAlign: 'middle',
+          },
+        },
+        {
           key: 'registered',
           label: 'Registrasi',
           sortable: true,
