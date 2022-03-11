@@ -4,33 +4,42 @@ import {
   BSpinner,
   BCardBody,
 } from 'bootstrap-vue'
-import flatPickr from 'vue-flatpickr-component'
 import {
   today,
   last30,
+  last7,
+  firstDateOfMonth,
   formatYmd,
 } from '@/store/helpers'
 import filterLib from '@/libs/filters'
+import DateRangePicker from 'vue2-daterange-picker'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
-    flatPickr,
     BTable,
     BCard,
     BSpinner,
     BCardBody,
+    DateRangePicker,
   },
   data() {
     return {
       loadDataAwal: true,
       search: '',
-      configFilterDate: {
-        mode: 'range',
-        maxDate: 'today',
-        defaultDate: [last30, today],
+      locale: {
+        format: 'dd/mm/yyyy',
       },
-      rangeDate: '',
+      ranges: {
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan Ini': [firstDateOfMonth, today],
+      },
+      rangeDate: {
+        startDate: last30,
+        endDate: today,
+      },
       isLoadTable: false,
       perPage: 50,
       pageOptions: [50, 100, 200, 500],
@@ -225,15 +234,16 @@ export default {
     rangeDate: {
       handler(val) {
         // calling api for table and update data table
-        if (val.indexOf('to') !== -1) {
-          const [startDate, endDate] = val.split(' to ')
+        if (val) {
+          const { startDate, endDate } = val
           this.paramsCallAPI.start_date = startDate
           this.paramsCallAPI.end_date = endDate
         } else {
-          this.paramsCallAPI.start_date = val
-          this.paramsCallAPI.end_date = val
+          this.paramsCallAPI.start_date = val.startDate
+          this.paramsCallAPI.end_date = val.endDate
         }
       },
+      deep: true,
     },
     perPage: {
       handler(val) {
@@ -297,6 +307,9 @@ export default {
           this.loadDataAwal = false
           this.isLoadTable = false
         })
+    },
+    formatDate(d) {
+      return this.$moment(d).format('D MMM YYYY')
     },
     checkDataStatusOnboarding(dt) {
       let strWord = ''

@@ -1,4 +1,4 @@
-@import '@core/scss/vue/libs/vue-flatpicker.scss';
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 .growth{
   &__container {
     padding: 30px 30px 40px 30px;
@@ -11,7 +11,7 @@
     color: #222222;
     margin: 0px;
   }
-  &__flatpickr {
+  &__datepicker {
     background-color: #F1F2F6 !important;
     border-radius: 8px;
     border: none;
