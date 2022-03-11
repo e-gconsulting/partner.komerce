@@ -24,6 +24,26 @@
     max-width: 340px;
   }
 }
+.cell__custom {
+  min-width: 150px !important; 
+  text-transform: capitalize;
+}
+.tbl__fullname{
+  display: flex;
+  align-items: center;
+
+  &content {
+    max-width: 200px;
+    width: 200px;
+    word-wrap: anywhere;
+    display: grid;
+  }
+  &phone {
+    width: 200px;
+    height: 100%;
+    padding: 0px 1rem;
+  }
+}
 
 .btn-custom{
   border-radius: 16px;

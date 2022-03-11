@@ -51,6 +51,39 @@
           :filter-included-fields="filterOn"
           @filtered="onFiltered"
         >
+          <template #cell(full_name)="data">
+            <div class="tbl__fullname">
+              <div class="tbl__fullnamecontent">
+                <h5 class="text-black">{{ data.item.full_name }}</h5>
+                <p class="text-black my-0">{{ data.item.email }}</p>
+              </div>
+              <div class="d-flex justify-content-center align-items-center tbl__fullnamephone">
+                <h5 class="text-black mb-0 mr-1">{{ data.item.no_hp ? data.item.no_hp : '-' }}</h5>
+                <b-button
+                  v-show="data.item.no_hp"
+                  variant="link"
+                  size="sm"
+                  @click="handlePhone(data.item.no_hp, 'copy')"
+                  class="p-0 mr-1"
+                >
+                  <span class="text-black">
+                    <feather-icon icon="CopyIcon" />
+                  </span>
+                </b-button>
+                <b-button
+                  v-show="data.item.no_hp"
+                  variant="link"
+                  size="sm"
+                  @click="handlePhone(data.item.no_hp, 'wa')"
+                  class="p-0"
+                >
+                  <span class="text-black">
+                    WA
+                  </span>
+                </b-button>
+              </div>
+            </div>
+          </template>
           <template #cell(is_onboarding)="data">
             <span :class="{ 'text-success': data.item.is_onboarding === 1, 'text-danger': data.item.is_onboarding === 0 }">
               {{ checkDataStatusOnboarding(data.item.is_onboarding) }}

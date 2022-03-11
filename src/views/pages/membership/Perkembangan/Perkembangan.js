@@ -10,6 +10,7 @@ import {
   last30,
   formatYmd,
 } from '@/store/helpers'
+import filterLib from '@/libs/filters'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -58,40 +59,6 @@ export default {
           total_ongkir: 20020002020,
           total_revenue: 1020,
         },
-        {
-          partner_id: 202,
-          full_name: 'Tatausahaku2',
-          email: 'asdkmaksmdkasmdk@mail.com',
-          no_hp: '12739741293879141',
-          registered: '2020-05-29 20:24:38',
-          email_verified_at: '2020-05-29 21:24:38',
-          is_onboarding: 0,
-          first_product: '2021-05-01 21:24:38',
-          first_order: '2021-07-01 21:24:38',
-          first_pickup: '2021-09-01 21:24:38',
-          last_pickup: '2021-09-02 21:24:38',
-          total_order: 188,
-          total_transaksi: 13494799,
-          total_ongkir: 20020002020,
-          total_revenue: 1020,
-        },
-        {
-          partner_id: 203,
-          full_name: 'Tatausahaku3',
-          email: 'asdkmaksmdkasmdk@mail.com',
-          no_hp: '12739741293879141',
-          registered: '2020-05-29 20:24:38',
-          email_verified_at: '2020-05-29 21:24:38',
-          is_onboarding: 1,
-          first_product: '2021-05-01 21:24:38',
-          first_order: '2021-07-01 21:24:38',
-          first_pickup: '2021-09-01 21:24:38',
-          last_pickup: '2021-09-02 21:24:38',
-          total_order: 188,
-          total_transaksi: 13494799,
-          total_ongkir: 20020002020,
-          total_revenue: 1020,
-        },
       ],
       fields: [
         {
@@ -99,79 +66,129 @@ export default {
           label: 'Nama',
           sortable: true,
           stickyColumn: true,
-          class: 'text-black',
+          thClass: 'text-black',
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'registered',
           label: 'Registrasi',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => this.$moment(val).format('DD MMMM YYYY'),
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'email_verified_at',
           label: 'Verifikasi Email',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => this.$moment(val).format('DD MMMM YYYY'),
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'is_onboarding',
           label: 'On Boarding',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'first_product',
-          label: 'Produk Awal',
+          label: '1st Produk',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => (this.$moment.isDate(val) ? this.$moment(val).format('DD MMMM YYYY') : val),
+          thStyle: {
+            verticalAlign: 'middle',
+          },
+        },
+        {
+          key: 'first_order',
+          label: '1st Order',
+          sortable: true,
+          class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => this.$moment(val).format('DD MMMM YYYY'),
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'first_pickup',
-          label: 'Pickup Awal',
+          label: '1st Pickup',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => this.$moment(val).format('DD MMMM YYYY'),
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'last_pickup',
           label: 'Pickup Akhir',
           sortable: true,
           class: 'text-black',
-        },
-        {
-          key: 'no_hp',
-          label: 'Pickup Akhir1',
-          sortable: true,
-          class: 'text-black',
-        },
-        {
-          key: 'first_order',
-          label: 'Pickup Akhir2',
-          sortable: true,
-          class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => this.$moment(val).format('DD MMMM YYYY'),
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'total_order',
-          label: 'Pickup Akhir3',
+          label: 'Total Order',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
+          tdClass: 'cell__custom',
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'total_transaksi',
-          label: 'Pickup Akhir4',
+          label: 'Total Transaksi',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => `${filterLib.rupiah(val)},-`,
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'total_ongkir',
-          label: 'Pickup Akhir6',
+          label: 'Total Ongkir',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => `${filterLib.rupiah(val)},-`,
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
         {
           key: 'total_revenue',
-          label: 'Pickup Akhir7',
+          label: 'Total Revenue',
           sortable: true,
           class: 'text-black',
+          tdClass: 'cell__custom',
+          formatter: val => `${filterLib.rupiah(val)},-`,
+          thStyle: {
+            verticalAlign: 'middle',
+          },
         },
       ],
       paramsCallAPI: {
@@ -277,9 +294,40 @@ export default {
       }
       return strWord
     },
+    handlePhone(phonetext, type) {
+      switch (type) {
+        case 'wa':
+          window.open(`https://wa.me/${phonetext.substring(1)}`, '_blank')
+          break
+        case 'copy':
+          navigator.clipboard.writeText(phonetext)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success copy to clipboard',
+              icon: 'BellIcon',
+              variant: 'success',
+            },
+          })
+          break
+        default:
+          break
+      }
+    },
     onChangeSearch(dtsearch) {
       if (dtsearch) {
-        const filteredData = [...this.items].filter(x => x.full_name.indexOf(dtsearch) !== -1)
+        const filteredData = [...this.items].filter(x => {
+          if (x.full_name.indexOf(dtsearch) !== -1) {
+            return true
+          }
+          if (x.email.indexOf(dtsearch) !== -1) {
+            return true
+          }
+          if (x.no_hp.indexOf(dtsearch) !== -1) {
+            return true
+          }
+          return false
+        })
         this.filteredItems = filteredData
       } else {
         this.filteredItems = this.items
