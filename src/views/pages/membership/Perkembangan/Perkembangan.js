@@ -90,6 +90,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             verticalAlign: 'middle',
             textTransform: 'capitalize',
           },
@@ -102,6 +103,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -113,6 +115,7 @@ export default {
           class: 'text-black',
           tdClass: 'cell__custom',
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -125,6 +128,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -137,6 +141,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -149,6 +154,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -161,6 +167,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -172,6 +179,7 @@ export default {
           class: 'text-black text-right',
           tdClass: 'cell__custom',
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -184,6 +192,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -196,6 +205,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -208,6 +218,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },

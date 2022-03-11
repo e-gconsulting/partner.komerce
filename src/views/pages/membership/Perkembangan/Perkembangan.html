@@ -142,8 +142,9 @@
           striped
           hover
           responsive
+          :sticky-header="true"
           :per-page="0"
-          style="max-width: 1260px;"
+          style="max-width: 1260px; max-height: 55vh;"
           :current-page="currentPage"
           :items="filteredItems"
           :busy="isLoadTable"
@@ -155,6 +156,11 @@
           :filter-included-fields="filterOn"
           @filtered="onFiltered"
         >
+          <template #head()="scope">
+            <div class="text-nowrap">
+              {{ scope.label }}
+            </div>
+          </template>
           <template #cell(full_name)="data">
             <div class="tbl__fullname">
               <div class="tbl__fullnamecontent">
