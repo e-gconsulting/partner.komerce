@@ -297,7 +297,7 @@ export default {
             this.filteredItems = []
             this.totalRows = 0
           } else {
-            const dtitems = parseData.data.map(x => ({ ...x, last_pickup: '2020-02-02 20:20:20' }))
+            const dtitems = parseData.data.map(x => ({ ...x, last_pickup: '' })).sort((a, b) => b.partner_id - a.partner_id)
             this.items = dtitems
             this.filteredItems = dtitems
             this.totalRows = dtitems.total
