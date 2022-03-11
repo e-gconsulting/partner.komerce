@@ -83,6 +83,17 @@ export default {
           },
         },
         {
+          key: 'no_hp',
+          label: 'No. HP',
+          stickyColumn: true,
+          thClass: 'text-black',
+          thStyle: {
+            color: 'black',
+            textTransform: 'capitalize',
+            verticalAlign: 'middle',
+          },
+        },
+        {
           key: 'registered',
           label: 'Registrasi',
           sortable: true,
@@ -90,6 +101,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             verticalAlign: 'middle',
             textTransform: 'capitalize',
           },
@@ -102,6 +114,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -113,6 +126,7 @@ export default {
           class: 'text-black',
           tdClass: 'cell__custom',
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -125,6 +139,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -137,6 +152,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -149,6 +165,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -161,6 +178,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -172,6 +190,7 @@ export default {
           class: 'text-black text-right',
           tdClass: 'cell__custom',
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -184,6 +203,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -196,6 +216,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -208,6 +229,7 @@ export default {
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
+            color: 'black',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -286,7 +308,7 @@ export default {
             this.filteredItems = []
             this.totalRows = 0
           } else {
-            const dtitems = parseData.data.map(x => ({ ...x, last_pickup: '2020-02-02 20:20:20' }))
+            const dtitems = parseData.data.map(x => ({ ...x, last_pickup: '' })).sort((a, b) => b.partner_id - a.partner_id)
             this.items = dtitems
             this.filteredItems = dtitems
             this.totalRows = dtitems.total

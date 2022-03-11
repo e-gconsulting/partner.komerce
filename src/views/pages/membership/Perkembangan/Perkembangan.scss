@@ -29,14 +29,13 @@
   text-transform: capitalize;
 }
 .tbl__fullname{
-  display: flex;
-  align-items: center;
 
   &content {
     max-width: 200px;
     width: 200px;
     word-wrap: anywhere;
     display: grid;
+    align-items: center;
   }
   &phone {
     width: 200px;

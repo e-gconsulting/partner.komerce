@@ -111,12 +111,6 @@
                 </div>
               </template>
             </date-range-picker>
-            <!-- <flat-pickr
-              v-model="rangeDate"
-              class="form-control my-1 growth__flatpickr"
-              style="width: 200px;"
-              :config="configFilterDate"
-            /> -->
           </div>
           <div class="d-flex justify-content-end">
             <!-- filter -->
@@ -142,8 +136,9 @@
           striped
           hover
           responsive
+          :sticky-header="true"
           :per-page="0"
-          style="max-width: 1260px;"
+          style="max-width: 1260px; max-height: 55vh;"
           :current-page="currentPage"
           :items="filteredItems"
           :busy="isLoadTable"
@@ -155,37 +150,42 @@
           :filter-included-fields="filterOn"
           @filtered="onFiltered"
         >
+          <template #head()="scope">
+            <div class="text-nowrap">
+              {{ scope.label }}
+            </div>
+          </template>
           <template #cell(full_name)="data">
-            <div class="tbl__fullname">
-              <div class="tbl__fullnamecontent">
-                <h5 class="text-black">{{ data.item.full_name }}</h5>
-                <p class="text-black my-0">{{ data.item.email }}</p>
-              </div>
-              <div class="d-flex justify-content-center align-items-center tbl__fullnamephone">
-                <h5 class="text-black mb-0 mr-1">{{ data.item.no_hp ? data.item.no_hp : '-' }}</h5>
-                <b-button
-                  v-show="data.item.no_hp"
-                  variant="link"
-                  size="sm"
-                  @click="handlePhone(data.item.no_hp, 'copy')"
-                  class="p-0 mr-1"
-                >
-                  <span class="text-black">
-                    <feather-icon icon="CopyIcon" />
-                  </span>
-                </b-button>
-                <b-button
-                  v-show="data.item.no_hp"
-                  variant="link"
-                  size="sm"
-                  @click="handlePhone(data.item.no_hp, 'wa')"
-                  class="p-0"
-                >
-                  <span class="text-black">
-                    WA
-                  </span>
-                </b-button>
-              </div>
+            <div class="tbl__fullnamecontent">
+              <h5 class="text-black">{{ data.item.full_name }}</h5>
+              <p class="text-black my-0">{{ data.item.email }}</p>
+            </div>
+          </template>
+          <template #cell(no_hp)="data">
+            <div class="d-flex justify-content-center align-items-center tbl__fullnamephone">
+              <h5 class="text-black mb-0 mr-1">{{ data.item.no_hp ? data.item.no_hp : '-' }}</h5>
+              <b-button
+                v-show="data.item.no_hp"
+                variant="link"
+                size="sm"
+                @click="handlePhone(data.item.no_hp, 'copy')"
+                class="p-0 mr-1"
+              >
+                <span class="text-black">
+                  <feather-icon icon="CopyIcon" />
+                </span>
+              </b-button>
+              <b-button
+                v-show="data.item.no_hp"
+                variant="link"
+                size="sm"
+                @click="handlePhone(data.item.no_hp, 'wa')"
+                class="p-0"
+              >
+                <span class="text-black">
+                  WA
+                </span>
+              </b-button>
             </div>
           </template>
           <template #cell(is_onboarding)="data">
