@@ -161,7 +161,7 @@ export default {
                 text: 'Gagal update profile, silahkan coba lagi',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
@@ -210,7 +210,7 @@ export default {
             text: 'Gagal load profile, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     loadPartnerCategory() {
@@ -218,6 +218,16 @@ export default {
         const { data } = response.data
         this.partnerCategoryItems = data
         return this.partnerCategoryItems
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     loadBusinessType() {
@@ -225,6 +235,16 @@ export default {
         const { data } = response.data.data
         this.businessTypeItems = data
         return this.businessTypeItems
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     onSearchProvince(search, loading) {
@@ -244,6 +264,16 @@ export default {
           if (data.length === 1) {
             this.cityCode = data[0].city_code
           }
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal load data, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
     loadAllProvince() {
@@ -252,6 +282,16 @@ export default {
           const { data } = response.data
           data.forEach(this.filterProvince)
           this.provinceItems = data
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal load data, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
     filterProvince(data) {

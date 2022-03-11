@@ -132,13 +132,22 @@
                           v-for="(dataOrigin, indexOrigin) in tes"
                           :key="indexOrigin+1"
                         >
-                          <v-select
-                            v-if="dataOrigin.value === data.origin_code"
-                            v-model="dataOrigin.label"
-                            :options="itemsOriginEdit"
-                            label="label"
-                            @search="onSearchOrigin"
-                          />
+                          <validation-provider
+                            #default="{errors}"
+                            name="Kota/Kabupaten"
+                            rules="required"
+                          >
+                            <v-select
+                              v-if="dataOrigin.value === data.origin_code"
+                              v-model="originValue"
+                              :options="itemsOriginEdit"
+                              :reduce="options => options.value"
+                              label="label"
+                              :state="errors.length > 0 ? false:null"
+                              @search="onSearchOrigin"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                          </validation-provider>
                         </div>
                       </div>
                       <div v-else>
@@ -179,11 +188,19 @@
                       cols="9"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <b-form-textarea
-                          v-model="addressDetail"
-                          placeholder="Alamat Detail"
-                          rows="3"
-                        />
+                        <validation-provider
+                          #default="{errors}"
+                          name="Alamat Detail"
+                          rules="required"
+                        >
+                          <b-form-textarea
+                            v-model="addressDetail"
+                            placeholder="Alamat Detail"
+                            rows="3"
+                            :state="errors.length > 0 ? false:null"
+                          />
+                          <small class="text-primary"> {{ errors[0] }}</small>
+                        </validation-provider>
                       </div>
                       <div v-else>
                         <b-form-textarea
@@ -264,13 +281,14 @@
                         <validation-provider
                           #default="{errors}"
                           name="No. HP"
-                          rules="requried"
+                          rules="required"
                         >
                           <b-form-input
                             v-model="phoneUser"
                             :state="errors.length > 0 ? false:null"
                             type="number"
                           />
+                          <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                       </div>
                       <div v-else>
@@ -538,6 +556,7 @@
                             type="number"
                             :state="errors.length > 0 ? false:null"
                           />
+                          <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                       </b-col>
                     </b-row>
@@ -836,6 +855,8 @@ export default {
 
       // Validation
       required,
+
+      dataIsDefault: 0,
     }
   },
   mounted() {
@@ -862,7 +883,7 @@ export default {
             text: 'Gagal load data, silahkan coba lagi',
             variant: 'danger',
           },
-        })
+        }, 2000)
       })
     },
     myLoop(data) {
@@ -877,6 +898,16 @@ export default {
           return unique
         }, [])
         this.tes = result
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     submitAddress() {
@@ -890,11 +921,20 @@ export default {
           formData.append('address_detail', this.fieldAddAddressDetail)
           formData.append('pic', this.fieldAddPicName)
           formData.append('phone', this.fieldAddPhoneUser)
-          formData.append('is_default', this.isDefault)
+          formData.append('is_default', this.dataIsDefault)
 
           httpKomship.post('/v1/address/store', formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success menambahkan alamat pickup',
+                variant: 'success',
+              },
+            }, 2000)
             this.loadingSubmit = false
             this.formAddAddress = false
             this.getAddress()
@@ -908,14 +948,27 @@ export default {
                 text: 'Gagal menambahkan alamat, silahkan coba lagi',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
         } else {
           this.loadingSubmit = false
         }
       })
     },
+    checkAddressIsDefault(data) {
+      let result = false
+      if (data.is_default > 0) {
+        result = true
+      }
+      return result
+    },
     addAddress() {
+      this.fieldAddAddressName = ''
+      this.fieldAddOrigin = ''
+      this.fieldAddAddressDetail = ''
+      this.fieldAddPicName = ''
+      this.fieldAddPhoneUser = ''
+      this.isDefault = false
       this.formAddAddress = true
       this.editMode = false
     },
@@ -930,7 +983,9 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('address_name', this.addressName)
-          formData.append('origin_code', this.originValue)
+          if (this.originValue !== null) {
+            formData.append('origin_code', this.originValue.value !== undefined ? this.originValue.value : this.originValue)
+          }
           formData.append('address_detail', this.addressDetail)
           formData.append('pic', this.picName)
           formData.append('phone', this.phoneUser)
@@ -958,11 +1013,13 @@ export default {
               props: {
                 title: 'Failed',
                 icon: 'AlertCircleIcon',
-                text: 'Gagal update alamat pickup',
+                text: 'Gagal update alamat pickup, silahkan coba lagi!',
                 variant: 'danger',
               },
-            })
+            }, 2000)
           })
+        } else {
+          this.loadingSubmit = false
         }
       })
     },
@@ -972,6 +1029,12 @@ export default {
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
       this.originValue = data.origin_code
+      // eslint-disable-next-line array-callback-return
+      this.tes.map(items => {
+        if (items.value === data.origin_code) {
+          this.originValue = items
+        }
+      })
       this.picName = data.pic
       this.phoneUser = data.phone
       if (data.is_default === 0) {
@@ -995,6 +1058,16 @@ export default {
             if (response.data.code === 400) {
               this.$refs['modal-validate-address-stilluse'].show()
             }
+          }).catch(() => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal hapus alamat, silahkan coba lagi',
+                variant: 'danger',
+              },
+            })
           })
       } else {
         this.$refs['modal-confirm-delete-address'].hide()
@@ -1015,6 +1088,16 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.itemsOriginEdit = response.data.data
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        })
       })
     },
     changeDefaultAddress() {
@@ -1035,6 +1118,9 @@ export default {
     },
     handleCloseModal() {
       this.$refs['modal-validate-address-stilluse'].hide()
+    },
+    handleSelectOrigin(data) {
+      this.originValue = data
     },
   },
 
