@@ -6,6 +6,7 @@ import {
 } from 'bootstrap-vue'
 import {
   last30,
+  last60,
   last7,
   firstDateOfMonth,
   formatYmd,
@@ -38,6 +39,7 @@ export default {
       ranges: {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
+        '2 Bulan Terakhir': [last60, today],
         'Bulan Ini': [firstDateOfMonth, today],
       },
       rangeDate: {
