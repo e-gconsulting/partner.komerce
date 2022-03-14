@@ -436,10 +436,11 @@
                         </strong>
                       </h4>
                     </b-row>
-                    <b-row class="d-flex mt-3 justify-content-center">
+                    <b-row class="d-flex mt-1 justify-content-center">
                       <barcode
                         :value="itemsPrint.airway_bill"
-                        width="1"
+                        height="60"
+                        width="3"
                       >
                         Show this if the rendering fails.
                       </barcode>
@@ -659,7 +660,8 @@
                   <b-row class="d-flex justify-content-center">
                     <barcode
                       :value="itemsPrint.airway_bill"
-                      height="33"
+                      height="50"
+                      width="3"
                     >
                       Show this if the rendering fails.
                     </barcode>
@@ -1009,228 +1011,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <div v-if="valuesOption === 100 || valuesOption === 150">
-          <div
-            v-for="(itemsPrint, index) in fieldItemsPrint"
-            :key="index+1"
-          >
-            <div
-              class="container"
-            >
-              <div
-                class="border-4 border-slate-900 px-50 mb-50"
-              >
-
-                <b-row>
-                  <b-col
-                    cols="4"
-                    class="align-self-center text-center"
-                  >
-                    <h4 class="text-black mt-50">
-                      <strong>
-                        ORDER ID
-                      </strong>
-                    </h4>
-                    <p class="text-black">
-                      <strong>
-                        {{ itemsPrint.order_no }}
-                      </strong>
-                    </p>
-                  </b-col>
-                  <b-col
-                    cols="4"
-                    class="d-flex align-items-center justify-content-center"
-                  >
-                    <b-img
-                      src="@/assets/images/expedisi/logo-jne.png"
-                      alt="ekspedisi"
-                      style="max-width: 50%;"
-                    />
-                  </b-col>
-                  <b-col
-                    cols="4"
-                    class="d-flex justify-content-center align-items-center"
-                  >
-                    <b-img
-                      src="@/assets/images/logo.png"
-                      alt=""
-                      class="mt-2"
-                      style="max-width: 60%;"
-                    />
-                  </b-col>
-                </b-row>
-
-                <b-row>
-                  <b-col class="border-4 border-slate-900 ml-1 mr-50">
-                    <h4 class="text-center text-black">
-                      <strong>
-                        PENGIRIM
-                      </strong>
-                    </h4>
-                    <b-list-group>
-                      <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                        <span class="mr-1 text-black">
-                          <feather-icon
-                            icon="UserIcon"
-                            size="16"
-                          />
-                        </span>
-                        <span class="text-black">{{ profile.partner_business_name }}</span>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                        <span class="mr-1 text-black">
-                          <feather-icon
-                            icon="PhoneIcon"
-                            size="17"
-                          />
-                        </span>
-                        <span class="text-black">{{ profile.partner_no_hp_business }}</span>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                        <span class="mr-1 text-black">
-                          <feather-icon
-                            icon="MapPinIcon"
-                            size="16"
-                          />
-                        </span>
-                        <span class="text-black">{{ idOrderFromHistory.district }}</span>
-                      </b-list-group-item>
-                    </b-list-group>
-                  </b-col>
-                  <b-col class="border-4 border-slate-900 mr-1">
-                    <h4 class="text-center text-black">
-                      <strong>
-                        PENERIMA
-                      </strong>
-                    </h4>
-                    <b-list-group>
-                      <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                        <span class="mr-1 text-black">
-                          <feather-icon
-                            icon="UserIcon"
-                            size="16"
-                          />
-                        </span>
-                        <span class="text-black">{{ itemsPrint.customer_name }}</span>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                        <span class="mr-1 text-black">
-                          <feather-icon
-                            icon="PhoneIcon"
-                            size="17"
-                          />
-                        </span>
-                        <span class="text-black">{{ itemsPrint.customer_phone }}</span>
-                      </b-list-group-item>
-
-                      <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                        <span class="mr-1 text-black">
-                          <feather-icon
-                            icon="MapPinIcon"
-                            size="16"
-                          />
-                        </span>
-                        <span class="text-black">{{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}</span>
-                      </b-list-group-item>
-                    </b-list-group>
-                  </b-col>
-                </b-row>
-
-                <b-row class="mt-50 mx-50">
-                  <b-col
-                    cols="4"
-                    class="d-flex justify-content-center align-items-center border-4 border-slate-900"
-                  >
-                    <div>
-                      <b-row>
-                        <h4 class="text-black">
-                          <strong>
-                            {{ itemsPrint.payment_method }}
-                          </strong>
-                        </h4>
-                      </b-row>
-                      <b-row v-if="itemsPrint.payment_method === 'COD'">
-                        <h5 class="text-black">
-                          <strong>
-                            Rp. {{ formatPrice(itemsPrint.grand_total) }}
-                          </strong>
-                        </h5>
-                      </b-row>
-                    </div>
-                  </b-col>
-                  <b-col
-                    cols="8"
-                    class="border-4 border-slate-900"
-                  >
-                    <b-row class="d-flex justify-content-center">
-                      <h4 class="text-black">
-                        <strong>
-                          Nomor Resi
-                        </strong>
-                      </h4>
-                    </b-row>
-                    <b-row class="d-flex justify-content-center">
-                      <barcode
-                        :value="itemsPrint.airway_bill"
-                        height="33"
-                      >
-                        Show this if the rendering fails.
-                      </barcode>
-                    </b-row>
-                  </b-col>
-                </b-row>
-
-                <b-row class="mt-50 mx-50">
-                  <b-col
-                    cols="4"
-                    class="border-4 border-slate-900"
-                  >
-                    <h4 class="text-black">
-                      <strong>
-                        Kuantitas:
-                      </strong>
-                      {{ sumAll(itemsPrint.product) }}
-                    </h4>
-                  </b-col>
-                  <b-col
-                    cols="8"
-                    class="border-4 border-slate-900 d-flex"
-                  >
-                    <h4 class="text-black">
-                      <strong>
-                        ISI PAKET:
-                      </strong>
-                    </h4>
-                    <b-list-group
-                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                      :key="indexProduct+1"
-                      class="ml-1"
-                    >
-                      <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
-                        <b-list-group-item class="border-0 px-0 pt-0 pb-50">
-                          <span class="ml-1 text-black">
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                          </span>
-                        </b-list-group-item>
-                      </div>
-                      <div v-else>
-                        <span class="ml-1 text-black">
-                          {{ dataProduct.qty }} {{ dataProduct.product_name }},
-                        </span>
-                      </div>
-                    </b-list-group>
-                  </b-col>
-                </b-row>
-
-              </div>
-            </div>
-          </div>
-        </div> -->
-
       </section>
     </vue-html2pdf>
     <AddPickupPopupPrint
@@ -1238,8 +1018,6 @@
       @onSubmitOption="onSubmitOptionPrint"
       @onChangeOption="handleChangeOption"
     />
-
-    <!-- Modal validate print label -->
     <b-modal
       ref="modal-validate-print-label"
       hide-footer
@@ -1414,23 +1192,23 @@
                 style="margin-top:8px;"
               >
                 <div
-                  style="width:34%;padding:5px;"
+                  style="width:23%;padding:5px;"
                   class="border-black text-center"
                 >
                   <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
                   <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
                 </div>
                 <div
-                  style="width:64%;padding:5px;margin-left:6px;"
+                  style="width:75%;padding:5px;margin-left:6px;"
                   class="justify-content-center d-flex flex-column align-items-center border-black"
                 >
                   <span class="d-flex justify-center">Nomor Resi</span>
-                  <div class="mt-1">
+                  <div style="margin-top:5px">
                     <barcode
                       :value="itemsPrint.airway_bill"
-                      height="20"
-                      font-size="12"
-                      width="1"
+                      height="33"
+                      font-size="14"
+                      width="2"
                     >
                       Show this if the rendering fails.
                     </barcode>
@@ -1442,13 +1220,13 @@
                 style="margin-top:8px;"
               >
                 <div
-                  style="width:34%;padding:5px;"
+                  style="width:23%;padding:5px;"
                   class="border-black "
                 >
                   Kuantitas: {{ sumAll(itemsPrint.product) }}
                 </div>
                 <div
-                  style="width:64%;padding:8px;margin-left:6px;"
+                  style="width:75%;padding:8px;margin-left:6px;"
                   class="border-black"
                 >
                   ISI PAKET: <span
@@ -1474,7 +1252,7 @@
       :paginate-elements-by-height="500"
       :pdf-quality="2"
       pdf-format="a6"
-      pdf-content-width="370px"
+      pdf-content-width="100%"
       pdf-orientation="portrait"
       :manual-pagination="false"
       @hasStartedGeneration="hasStartedGeneration()"
@@ -1486,7 +1264,7 @@
         <b-container
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
-          class="flex align-items-center justify-content-center"
+          class="flex align-items-center justify-content-center text-xs"
         >
           <section class="pdf-item">
             <div
@@ -1617,23 +1395,23 @@
                 style="margin-top:8px;"
               >
                 <div
-                  style="width:34%;padding:5px;"
+                  style="width:23%;padding:5px;"
                   class="border-black text-center"
                 >
                   <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
                   <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
                 </div>
                 <div
-                  style="width:64%;padding:5px;margin-left:6px;"
+                  style="width:75%;padding:5px;margin-left:6px;"
                   class="justify-content-center d-flex flex-column align-items-center border-black"
                 >
                   <span class="d-flex justify-center">Nomor Resi</span>
-                  <div class="mt-1">
+                  <div style="margin-top:5px">
                     <barcode
                       :value="itemsPrint.airway_bill"
-                      height="20"
-                      font-size="12"
-                      width="1"
+                      height="33"
+                      font-size="14"
+                      width="2"
                     >
                       Show this if the rendering fails.
                     </barcode>
@@ -1645,13 +1423,13 @@
                 style="margin-top:8px;"
               >
                 <div
-                  style="width:34%;padding:5px;"
+                  style="width:23%;padding:5px;"
                   class="border-black "
                 >
                   Kuantitas: {{ sumAll(itemsPrint.product) }}
                 </div>
                 <div
-                  style="width:64%;padding:8px;margin-left:6px;"
+                  style="width:75%;padding:8px;margin-left:6px;"
                   class="border-black"
                 >
                   ISI PAKET: <span
