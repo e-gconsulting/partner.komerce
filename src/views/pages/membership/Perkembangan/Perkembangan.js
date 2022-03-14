@@ -91,7 +91,7 @@ export default {
         {
           key: 'no_hp',
           label: 'No. HP',
-          stickyColumn: true,
+          // stickyColumn: true,
           thClass: 'text-black',
           thStyle: {
             color: 'black',
@@ -320,7 +320,8 @@ export default {
             this.filteredItems = []
             this.totalRows = 0
           } else {
-            const dtitems = parseData.data.map(x => ({ ...x, last_pickup: '' })).sort((a, b) => b.partner_id - a.partner_id)
+            // last
+            const dtitems = parseData.data.sort((a, b) => b.partner_id - a.partner_id)
             this.items = dtitems
             this.filteredItems = dtitems
             this.totalRows = dtitems.total
@@ -346,9 +347,10 @@ export default {
       return this.$moment(d).format('D MMM YYYY')
     },
     disabledDate(classes, date) {
+      // date format Wed Apr 06 2022 12:00:00 GMT+0700 (Western Indonesia Time)
       const dataclass = classes
       if (!dataclass.disabled) {
-        dataclass.disabled = this.$moment(date.getTime()).isAfter(this.$moment())
+        dataclass.disabled = this.$moment(date.getTime()).startOf('day').isAfter(this.$moment())
       }
       return dataclass
     },
