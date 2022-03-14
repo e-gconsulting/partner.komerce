@@ -516,6 +516,8 @@ export default {
         this.statusOrder = 'success'
       } else if (status === 'Retur') {
         this.statusOrder = 'danger'
+      } else if (status === 'Batal') {
+        this.statusOrder = 'dark'
       }
       return this.statusOrder
     },
