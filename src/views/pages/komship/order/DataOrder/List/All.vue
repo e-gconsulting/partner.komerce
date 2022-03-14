@@ -355,9 +355,13 @@ export default {
     this.getProduct()
   },
   created() {
-    document.getElementsByTagName('body')[0].addEventListener('click', e => {
-      if (!document.getElementById('popoverFilter').contains(e.target)) {
-        this.$root.$emit('bv::hide::popover')
+    window.addEventListener('click', async e => {
+      if (document.getElementById('popoverFilter') !== null) {
+        if (!document.getElementById('popoverFilter').contains(e.target)) {
+          this.$root.$emit('bv::hide::popover')
+        } else {
+          e.stopPropagation()
+        }
       }
     })
   },
