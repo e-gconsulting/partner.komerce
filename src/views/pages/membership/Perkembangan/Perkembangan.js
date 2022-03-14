@@ -5,8 +5,8 @@ import {
   BCardBody,
 } from 'bootstrap-vue'
 import {
-  today,
   last30,
+  last60,
   last7,
   firstDateOfMonth,
   formatYmd,
@@ -15,6 +15,8 @@ import filterLib from '@/libs/filters'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+
+const formatDate = 'YYYY-MM-DDTHH:mm:ss'
 
 export default {
   components: {
@@ -25,6 +27,9 @@ export default {
     DateRangePicker,
   },
   data() {
+    const today = new Date()
+    today.setHours(23, 59, 59, 0)
+
     return {
       loadDataAwal: true,
       search: '',
@@ -34,6 +39,7 @@ export default {
       ranges: {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
+        '2 Bulan Terakhir': [last60, today],
         'Bulan Ini': [firstDateOfMonth, today],
       },
       rangeDate: {
@@ -97,11 +103,12 @@ export default {
           key: 'registered',
           label: 'Registrasi',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
+            minWidth: '190px',
             verticalAlign: 'middle',
             textTransform: 'capitalize',
           },
@@ -110,11 +117,12 @@ export default {
           key: 'email_verified_at',
           label: 'Verifikasi Email',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
+            minWidth: '190px',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -123,7 +131,7 @@ export default {
           key: 'is_onboarding',
           label: 'On Boarding',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           thStyle: {
             color: 'black',
@@ -135,11 +143,12 @@ export default {
           key: 'first_product',
           label: '1st Produk',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
+            minWidth: '190px',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -148,11 +157,12 @@ export default {
           key: 'first_order',
           label: '1st Order',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
+            minWidth: '190px',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -161,11 +171,12 @@ export default {
           key: 'first_pickup',
           label: '1st Pickup',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
+            minWidth: '190px',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -174,11 +185,12 @@ export default {
           key: 'last_pickup',
           label: 'Pickup Akhir',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
+            minWidth: '190px',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -199,7 +211,7 @@ export default {
           key: 'total_transaksi',
           label: 'Total Transaksi',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
@@ -212,7 +224,7 @@ export default {
           key: 'total_ongkir',
           label: 'Total Ongkir',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
@@ -225,7 +237,7 @@ export default {
           key: 'total_revenue',
           label: 'Total Revenue',
           sortable: true,
-          class: 'text-black',
+          class: 'text-black text-right',
           tdClass: 'cell__custom',
           formatter: val => `${filterLib.rupiah(val)},-`,
           thStyle: {
@@ -236,8 +248,8 @@ export default {
         },
       ],
       paramsCallAPI: {
-        start_date: formatYmd(last30),
-        end_date: formatYmd(today),
+        start_date: this.$moment(last30).startOf('day').format(formatDate),
+        end_date: this.$moment(today).endOf('day').format(formatDate),
         page: null,
         limits: 50,
       },
@@ -258,11 +270,11 @@ export default {
         // calling api for table and update data table
         if (val) {
           const { startDate, endDate } = val
-          this.paramsCallAPI.start_date = startDate
-          this.paramsCallAPI.end_date = endDate
+          this.paramsCallAPI.start_date = this.$moment(startDate).startOf('day').format(formatDate)
+          this.paramsCallAPI.end_date = this.$moment(endDate).endOf('day').format(formatDate)
         } else {
-          this.paramsCallAPI.start_date = val.startDate
-          this.paramsCallAPI.end_date = val.endDate
+          this.paramsCallAPI.start_date = this.$moment(val.startDate).startOf('day').format(formatDate)
+          this.paramsCallAPI.end_date = this.$moment(val.endDate).endOf('day').format(formatDate)
         }
       },
       deep: true,
@@ -333,6 +345,13 @@ export default {
     formatDate(d) {
       return this.$moment(d).format('D MMM YYYY')
     },
+    disabledDate(classes, date) {
+      const dataclass = classes
+      if (!dataclass.disabled) {
+        dataclass.disabled = this.$moment(date.getTime()).isAfter(this.$moment())
+      }
+      return dataclass
+    },
     checkDataStatusOnboarding(dt) {
       let strWord = ''
       if (dt === 1) {
@@ -345,7 +364,7 @@ export default {
     handlePhone(phonetext, type) {
       switch (type) {
         case 'wa':
-          window.open(`https://wa.me/${phonetext.substring(1)}`, '_blank')
+          window.open(`https://wa.me/62${phonetext.substring(1)}`, '_blank')
           break
         case 'copy':
           navigator.clipboard.writeText(phonetext)
@@ -365,10 +384,10 @@ export default {
     onChangeSearch(dtsearch) {
       if (dtsearch) {
         const filteredData = [...this.items].filter(x => {
-          if (x.full_name.indexOf(dtsearch) !== -1) {
+          if (x.full_name.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
             return true
           }
-          if (x.email.indexOf(dtsearch) !== -1) {
+          if (x.email.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
             return true
           }
           if (x.no_hp.indexOf(dtsearch) !== -1) {
