@@ -38,6 +38,14 @@ export default [
         action: 'manage',
         children: [
           {
+            title: 'Perkembangan',
+            icon: 'none',
+            tagVariant: 'light-warning',
+            route: 'membership-perkembangan',
+            resource: 'Perkembangan Partner',
+            action: 'manage',
+          },
+          {
             title: 'Data Partner',
             icon: 'none',
             tagVariant: 'light-warning',

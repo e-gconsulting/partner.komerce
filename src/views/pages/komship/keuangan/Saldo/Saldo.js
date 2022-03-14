@@ -73,6 +73,7 @@ export default {
       obj: null,
       status: true,
       visibilityPin: 'password',
+      resTarikSaldo: {},
     }
   },
   mounted() {
@@ -238,7 +239,7 @@ export default {
             }
             responseReq.then(val => {
               const { data } = val
-
+              this.resTarikSaldo = data.data
               this.$nextTick(() => {
                 this.stepNow = 2
                 this.modalTitle = null

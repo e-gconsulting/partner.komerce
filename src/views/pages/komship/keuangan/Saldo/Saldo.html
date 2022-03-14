@@ -10,7 +10,7 @@
             <div class="first-card-header-text me-8 mb-0">
               Saldo
             </div>
-            <popover-info text="Saldo kamu saat ini." />
+            <popover-info classprops="px-0" text="Saldo kamu saat ini." />
           </div>
         </div>
         <div class="card-body h-text-xl pb-0 mb-0">
@@ -83,7 +83,10 @@
             <div class="first-card-header-text me-8 mb-0">
               Saldo Pending
             </div>
-            <popover-info text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima." />
+            <popover-info
+              classprops="px-0"
+              text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima."
+            />
           </div>
           <b-button
               variant="flat-dark"
@@ -435,8 +438,8 @@
     hide-header
     hide-footer
     centered
-    :no-close-on-backdrop="stepNow !== 2"
-    :no-close-on-esc="stepNow !== 2"
+    :no-close-on-esc="stepNow === 2"
+    :no-close-on-backdrop="stepNow === 2"
   >
     <a
       v-if="stepNow !== 2"
@@ -582,12 +585,12 @@
           Penarikan Saldo Berhasil
         </p>
         <p class="h-text-dark font-weight-bold">
-          Saldo sebesar {{ nominal.substring(3) }} akan segera dikirim ke
+          Saldo sebesar Rp {{ nominal.substring(3) }} akan segera dikirim ke
           rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
           1x24 jam
         </p>
         <b-button
-          @click="$router.push({ name: 'rincian-penarikan', params: { id: riwayatPenarikans[0].id }})"
+          @click="$router.push({ name: 'rincian-penarikan', params: { id: resTarikSaldo.id }})"
           class="mt-1 btn btn-primary btnpenghasilansuccess"
         >
           <h5 class="text-white my-0 px-0 btnpenghasilansuccess__text">Lihat Riwayat Penarikan</h5>

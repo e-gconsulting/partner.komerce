@@ -18,6 +18,10 @@ const last30 = new Date()
 last30.setDate(today.getDate() - 29)
 last30.setHours(0, 0, 0, 0)
 
+const last60 = new Date()
+last30.setDate(today.getDate() - 59)
+last30.setHours(0, 0, 0, 0)
+
 const last90 = new Date()
 last90.setDate(today.getDate() - 89)
 last90.setHours(0, 0, 0, 0)
@@ -30,6 +34,7 @@ const ranges = {
   '7 Hari Terakhir': [last7, today],
   '30 Hari Terakhir': [last30, today],
   '1 Bulan Terakhir': [last30, today],
+  '2 Bulan Terakhir': [last60, today],
   '3 Bulan Terakhir': [last90, today],
   'Bulan Ini': [firstDateOfMonth, today],
   'Custom Tanggal': [null, null],
@@ -70,6 +75,7 @@ export {
   today,
   last7,
   last30,
+  last60,
   firstDateOfMonth,
   lastDateOfMonth,
   ranges,

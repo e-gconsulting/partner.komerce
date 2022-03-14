@@ -11,13 +11,13 @@ import Dropdown from 'vue-simple-search-dropdown'
 import router from './router'
 import store from './store'
 import App from './App.vue'
-
 import './index.css'
 // Global Components
 import './global-components'
 
 // 3rd party plugins
 import '@axios'
+import '@helpers'
 import '@/libs/acl'
 import '@/libs/portal-vue'
 import '@/libs/clipboard'

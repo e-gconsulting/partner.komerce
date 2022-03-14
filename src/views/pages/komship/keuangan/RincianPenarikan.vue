@@ -294,6 +294,23 @@ export default {
       list: [],
     }
   },
+  computed: {
+    ...mapState('saldoPenarikan', [
+      'dateStart',
+      'dateEnd',
+      'timeEnd',
+      'totalSaldo',
+      'nominalPenarikan',
+      'statusPenerimaan',
+      'rincianSaldos',
+      'notes',
+      'previous_request_withdrawal_date',
+      'previous_request_withdrawal_time',
+      'list_item_rincian_penarikan',
+      'table',
+    ]),
+    ...mapGetters('saldoPenarikan', ['sisaSaldo']),
+  },
   watch: {
     'table.currentPage': {
       handler() {
@@ -301,10 +318,14 @@ export default {
       },
     },
   },
-  mounted() {
-    this.fetchData().catch(error => {
-      console.error(error)
-    })
+  beforeMount() {
+    this.loadTable = true
+    this.$store.commit('saldoPenarikan/UPDATE_ID', this.$route.params.id)
+    this.$store.dispatch('saldoPenarikan/init')
+    this.$store.dispatch('saldoPenarikan/UPDATE_DETAIL_SALDO', this.$route.params.id)
+    setTimeout(() => {
+      this.loadTable = false
+    }, 1500)
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -359,33 +380,6 @@ export default {
       this.$store.dispatch('saldoPenarikan/getRincianSaldo', totalPage)
     },
   },
-  computed: {
-    ...mapState('saldoPenarikan', [
-      'dateStart',
-      'dateEnd',
-      'timeEnd',
-      'totalSaldo',
-      'nominalPenarikan',
-      'statusPenerimaan',
-      'rincianSaldos',
-      'notes',
-      'previous_request_withdrawal_date',
-      'previous_request_withdrawal_time',
-      'list_item_rincian_penarikan',
-      'table',
-    ]),
-    ...mapGetters('saldoPenarikan', ['sisaSaldo']),
-  },
-  beforeMount() {
-    this.loadTable = true
-    this.$store.commit('saldoPenarikan/UPDATE_ID', this.$route.params.id)
-    this.$store.dispatch('saldoPenarikan/init')
-    this.$store.dispatch('saldoPenarikan/UPDATE_DETAIL_SALDO', this.$route.params.id)
-    setTimeout(() => {
-      this.loadTable = false
-    }, 1500)
-  },
-
 }
 </script>
 

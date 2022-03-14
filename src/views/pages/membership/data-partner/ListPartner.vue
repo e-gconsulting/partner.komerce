@@ -91,7 +91,7 @@
             <b-spinner
               class="align-middle"
             />
-            <strong>Loading...</strong>
+            <strong> Loading...</strong>
           </div>
         </template>
       </b-table>
