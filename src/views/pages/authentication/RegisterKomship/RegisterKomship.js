@@ -21,29 +21,6 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
-// !function(f, b, e, v, n, t, s) {
-//   if (f.fbq) {
-//     return;
-//   }
-//   n = f.fbq = function() {
-//     n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-//   };
-//   if (!f._fbq) {
-//     f._fbq = n;
-//   }
-//   n.push = n;
-//   n.loaded = !0;
-//   n.version = '2.0';
-//   n.queue = [];
-//   t = b.createElement(e);
-//   t.async = !0;
-//   t.src = v;
-//   s = b.getElementsByTagName(e)[0];
-//   s.parentNode.insertBefore(t, s)
-// }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-// fbq('init', ' 1298728883821301');
-// fbq('track', 'PageView');
-
 export default {
   components: {
     BCol,
@@ -82,7 +59,6 @@ export default {
       passwordFieldTypeConfirmPassword: 'password',
 
       errorCharPassword: '',
-      generateTokenKirimEmail: '',
 
       usernameTaken: '',
       emailTaken: '',
@@ -107,19 +83,7 @@ export default {
     },
   },
   methods: {
-    generateToken() {
-      const timestamp = Math.floor(Date.now() / 1000)
-      const unixtimestamp = timestamp
-      const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
-      console.log('toHash :', toHash)
-      const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
-      const generatedtoken = hash.toString(CryptoJS.enc.Hex)
-      console.log('generatedtoken :', generatedtoken)
-      this.generateTokenKirimEmail = generatedtoken
-      return generatedtoken
-    },
     subscribeKirimEmail() {
-      // this.generateToken()
       const timestamp = Math.floor(Date.now() / 1000)
       const unixtimestamp = timestamp
       const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
@@ -153,21 +117,6 @@ export default {
         data,
       }
       // calling api
-      axios(config)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error))
-    },
-    sendemailForm() {
-      // https://aplikasi.kirim.email/form/form-komship-lrb64No4
-      const config = {
-        method: 'post',
-        url: 'https://aplikasi.kirim.email/form/form-komship-lrb64No4',
-        data: {
-          full_name: 'maskdmas masdkma',
-          email: 'maskdma@mail.com',
-        },
-      }
       axios(config)
         .then(response => response.text())
         .then(result => console.log(result))
@@ -212,9 +161,10 @@ export default {
 
             if (data.code !== 400) {
               this.loading = false
-              this.$router.push({ name: 'komship-register-validate' })
+              const routeData = this.$router.resolve({ name: 'komship-register-validate' })
+              window.open(routeData.href, '_blank')
+              this.$refs.submitformkirimemail.click()
             }
-            console.log(this.$refs.submitformkirimemail.click())
             this.loading = false
           }).catch(() => {
             this.$toast({
