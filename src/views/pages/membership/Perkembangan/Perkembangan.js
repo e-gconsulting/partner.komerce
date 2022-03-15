@@ -35,6 +35,8 @@ export default {
       search: '',
       locale: {
         format: 'dd/mm/yyyy',
+        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
       },
       ranges: {
         '7 Hari Terakhir': [last7, today],
