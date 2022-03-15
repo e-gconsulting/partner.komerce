@@ -21,6 +21,29 @@ import {
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
+// !function(f, b, e, v, n, t, s) {
+//   if (f.fbq) {
+//     return;
+//   }
+//   n = f.fbq = function() {
+//     n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+//   };
+//   if (!f._fbq) {
+//     f._fbq = n;
+//   }
+//   n.push = n;
+//   n.loaded = !0;
+//   n.version = '2.0';
+//   n.queue = [];
+//   t = b.createElement(e);
+//   t.async = !0;
+//   t.src = v;
+//   s = b.getElementsByTagName(e)[0];
+//   s.parentNode.insertBefore(t, s)
+// }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+// fbq('init', ' 1298728883821301');
+// fbq('track', 'PageView');
+
 export default {
   components: {
     BCol,
@@ -135,6 +158,21 @@ export default {
         .then(result => console.log(result))
         .catch(error => console.log('error', error))
     },
+    sendemailForm() {
+      // https://aplikasi.kirim.email/form/form-komship-lrb64No4
+      const config = {
+        method: 'post',
+        url: 'https://aplikasi.kirim.email/form/form-komship-lrb64No4',
+        data: {
+          full_name: 'maskdmas masdkma',
+          email: 'maskdma@mail.com',
+        },
+      }
+      axios(config)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error))
+    },
     register() {
       this.loading = true
       this.usernameTaken = ''
@@ -143,7 +181,8 @@ export default {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.error = ''
-          this.subscribeKirimEmail()
+          this.$refs.inputkirimemail_email.value = this.userEmail
+          this.$refs.inputkirimemail_full_name.value = this.fullname
           httpKomship.post('/v1/register', {
             full_name: this.fullname,
             no_hp: this.nomorHandphone,
@@ -175,6 +214,7 @@ export default {
               this.loading = false
               this.$router.push({ name: 'komship-register-validate' })
             }
+            console.log(this.$refs.submitformkirimemail.click())
             this.loading = false
           }).catch(() => {
             this.$toast({
