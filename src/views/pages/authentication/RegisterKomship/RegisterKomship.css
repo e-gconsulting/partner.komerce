@@ -1,3 +1,15 @@
+#hosted-form,
+.kirimemail-content {
+  background-color: #0c2556 !important;
+  color: #ffffff !important;
+}
+
+#hosted-form .kirimemail-btn-submit,
+.kirimemail-content .kirimemail-btn-submit {
+  background-color: #0084ff !important;
+  box-shadow: 0 0 0 1px#0084ff !important;
+  color: #ffffff !important;
+}
 [dir] .wrapper-kompship-register {
   background-color: #FFFFFF;
 }

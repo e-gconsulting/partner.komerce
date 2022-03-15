@@ -103,10 +103,10 @@ export default {
   },
   computed: {
     isAdmin() {
-      return this.$store.state.auth.userData.role_name.toUpperCase() === 'ADMIN'
+      return this.$store.state.auth?.userData?.role_name?.toUpperCase() === 'ADMIN'
     },
     partnerProfileIncomplete() {
-      return this.$store.state.auth.userData.role_name.toUpperCase() === 'PARTNER' && !this.$store.state.auth.userData.nik
+      return this.$store.state.auth?.userData?.role_name?.toUpperCase() === 'PARTNER' && !this.$store.state.auth.userData.nik
     },
   },
 }

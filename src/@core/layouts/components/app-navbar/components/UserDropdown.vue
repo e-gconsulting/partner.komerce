@@ -97,12 +97,12 @@ export default {
   },
   computed: {
     isAdmin() {
-      return isUserLoggedIn() && this.$store.state.auth.userData.role_name.toUpperCase() === 'ADMIN'
+      return isUserLoggedIn() && this.$store.state.auth?.userData?.role_name?.toUpperCase() === 'ADMIN'
     },
     profileRoute() {
       if (!isUserLoggedIn()) return ''
-      if (this.$store.state.auth.userData.role_name.toUpperCase() === 'SDM') return 'talent-profile'
-      if (this.$store.state.auth.userData.role_name.toUpperCase() === 'PARTNER') return 'partner-profile'
+      if (this.$store.state.auth?.userData?.role_name?.toUpperCase() === 'SDM') return 'talent-profile'
+      if (this.$store.state.auth?.userData?.role_name?.toUpperCase() === 'PARTNER') return 'partner-profile'
       return ''
     },
     greetingsTime() {
