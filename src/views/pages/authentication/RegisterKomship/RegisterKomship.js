@@ -3,9 +3,7 @@ import ToastificationContentVue from '@/@core/components/toastification/Toastifi
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
 import { kirimEmailConfig } from '@/libs/helpers'
-import CryptoJS from 'crypto-js'
 import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
-import qs from 'qs'
 import axios from 'axios'
 import {
   BCol,
@@ -59,7 +57,6 @@ export default {
       passwordFieldTypeConfirmPassword: 'password',
 
       errorCharPassword: '',
-      generateTokenKirimEmail: '',
 
       usernameTaken: '',
       emailTaken: '',
@@ -84,57 +81,6 @@ export default {
     },
   },
   methods: {
-    generateToken() {
-      const timestamp = Math.floor(Date.now() / 1000)
-      const unixtimestamp = timestamp
-      const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
-      console.log('toHash :', toHash)
-      const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
-      const generatedtoken = hash.toString(CryptoJS.enc.Hex)
-      console.log('generatedtoken :', generatedtoken)
-      this.generateTokenKirimEmail = generatedtoken
-      return generatedtoken
-    },
-    subscribeKirimEmail() {
-      // this.generateToken()
-      const timestamp = Math.floor(Date.now() / 1000)
-      const unixtimestamp = timestamp
-      const toHash = `${kirimEmailConfig.username}::${kirimEmailConfig.token}::${unixtimestamp}`
-      // console.log('toHash :', toHash)
-      const hash = CryptoJS.HmacSHA256(toHash, kirimEmailConfig.token)
-      const generatedtoken = hash.toString(CryptoJS.enc.Hex)
-      // console.log('generatedtoken :', generatedtoken)
-      const data = qs.stringify({
-        lists: '19',
-        full_name: this.fullname,
-        email: this.userEmail,
-        'fields[no_hp]': this.nomorHandphone,
-        'fields[alamat]': 'Indonesia',
-        tags: 'new tag, test tag',
-      })
-
-      const config = {
-        method: 'post',
-        url: 'https://api.kirim.email/v3/subscriber/',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          Accept: 'application/json, text/plain, */*',
-          'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
-          'Access-Control-Allow-Credentials': true,
-
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Auth-Id': kirimEmailConfig.username,
-          'Auth-Token': generatedtoken,
-          Timestamp: unixtimestamp,
-        },
-        data,
-      }
-      // calling api
-      axios(config)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error))
-    },
     register() {
       this.loading = true
       this.usernameTaken = ''
@@ -143,7 +89,8 @@ export default {
       this.$refs.loginForm.validate().then(success => {
         if (success) {
           this.error = ''
-          this.subscribeKirimEmail()
+          this.$refs.inputkirimemail_email.value = this.userEmail
+          this.$refs.inputkirimemail_full_name.value = this.fullname
           httpKomship.post('/v1/register', {
             full_name: this.fullname,
             no_hp: this.nomorHandphone,
@@ -173,7 +120,9 @@ export default {
 
             if (data.code !== 400) {
               this.loading = false
-              this.$router.push({ name: 'komship-register-validate' })
+              const routeData = this.$router.resolve({ name: 'komship-register-validate' })
+              window.open(routeData.href, '_blank')
+              this.$refs.submitformkirimemail.click()
             }
             this.loading = false
           }).catch(() => {
