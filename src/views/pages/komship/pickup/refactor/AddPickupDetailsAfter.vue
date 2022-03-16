@@ -307,7 +307,20 @@
                     class="d-flex align-items-center justify-content-center"
                   >
                     <b-img
+                      v-if="itemsPrint.shipping === 'JNE'"
                       src="@/assets/images/expedisi/logo-jne.png"
+                      alt="ekspedisi"
+                      style="max-width: 50%;"
+                    />
+                    <b-img
+                      v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                      src="@/@core/assets/image/icons/logo__sicepat.svg"
+                      alt="ekspedisi"
+                      style="max-width: 50%;"
+                    />
+                    <b-img
+                      v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                      src="@/@core/assets/image/icons/logo-idexpress.svg"
                       alt="ekspedisi"
                       style="max-width: 50%;"
                     />
@@ -527,7 +540,20 @@
                   class="d-flex align-items-center justify-content-center"
                 >
                   <b-img
+                    v-if="itemsPrint.shipping === 'JNE'"
                     src="@/assets/images/expedisi/logo-jne.png"
+                    alt="ekspedisi"
+                    style="max-width: 50%;"
+                  />
+                  <b-img
+                    v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                    src="@/@core/assets/image/icons/logo__sicepat.svg"
+                    alt="ekspedisi"
+                    style="max-width: 50%;"
+                  />
+                  <b-img
+                    v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                    src="@/@core/assets/image/icons/logo-idexpress.svg"
                     alt="ekspedisi"
                     style="max-width: 50%;"
                   />
@@ -757,7 +783,20 @@
                     class="d-flex align-items-center justify-content-center"
                   >
                     <b-img
+                      v-if="itemsPrint.shipping === 'JNE'"
                       src="@/assets/images/expedisi/logo-jne.png"
+                      alt="ekspedisi"
+                      style="max-width: 50%;"
+                    />
+                    <b-img
+                      v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                      src="@/@core/assets/image/icons/logo__sicepat.svg"
+                      alt="ekspedisi"
+                      style="max-width: 50%;"
+                    />
+                    <b-img
+                      v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                      src="@/@core/assets/image/icons/logo-idexpress.svg"
                       alt="ekspedisi"
                       style="max-width: 50%;"
                     />
@@ -1084,7 +1123,20 @@
                   class="p-1 d-flex align-items-start justify-content-center"
                 >
                   <img
+                    v-if="itemsPrint.shipping === 'JNE'"
                     src="@/assets/images/logo/jne-bw.png"
+                    alt="ekspedisi"
+                    style="margin:auto;"
+                  >
+                  <img
+                    v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                    src="@/@core/assets/image/icons/logo__sicepat.svg"
+                    alt="ekspedisi"
+                    style="margin:auto;"
+                  >
+                  <img
+                    v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                    src="@/@core/assets/image/icons/logo-idexpress.svg"
                     alt="ekspedisi"
                     style="margin:auto;"
                   >
@@ -1287,7 +1339,20 @@
                   class="p-1 d-flex align-items-start justify-content-center"
                 >
                   <img
+                    v-if="itemsPrint.shipping === 'JNE'"
                     src="@/assets/images/logo/jne-bw.png"
+                    alt="ekspedisi"
+                    style="margin:auto;"
+                  >
+                  <img
+                    v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                    src="@/@core/assets/image/icons/logo__sicepat.svg"
+                    alt="ekspedisi"
+                    style="margin:auto;"
+                  >
+                  <img
+                    v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                    src="@/@core/assets/image/icons/logo-idexpress.svg"
                     alt="ekspedisi"
                     style="margin:auto;"
                   >

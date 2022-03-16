@@ -16,24 +16,39 @@
         </b-col>
       </b-row>
 
+      <b-row
+        v-if="itemsExpedition[0] === undefined"
+        class="justify-content-center"
+      >
+        <h4>
+          <strong>
+            Tidak ada data yang ditampilkan.
+          </strong>
+        </h4>
+      </b-row>
+
       <b-row class="justify-content-center wrapper__setting__ekspedisi">
         <b-col
+          v-for="(items, index) in itemsExpedition"
+          :key="index+1"
           cols="3"
           class="mr-3 mb-3"
         >
           <b-row
-            class="justify-content-center py-3"
+            class="justify-content-center h-44"
             style="
               background: #F8F8F8;
               border-top-right-radius: 18px;
               border-top-left-radius: 18px;
             "
           >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
+            <div class="align-self-center">
+              <b-img
+                :src="items.image_path"
+                fluid
+                width="150"
+              />
+            </div>
           </b-row>
           <b-row
             class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
@@ -45,131 +60,15 @@
             <div>
               <h4 class="text-primary">
                 <strong>
-                  JNE
+                  {{ items.shipping_name }}
                 </strong>
               </h4>
             </div>
             <b-form-checkbox
-              checked="true"
+              :checked="items.is_active === 1 ? true : false"
               name="check-button"
               switch
-            />
-          </b-row>
-        </b-col>
-        <b-col
-          cols="3"
-          class="mr-3 mb-3"
-        >
-          <b-row
-            class="justify-content-center py-3"
-            style="
-              background: #F8F8F8;
-              border-top-right-radius: 18px;
-              border-top-left-radius: 18px;
-            "
-          >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
-          </b-row>
-          <b-row
-            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
-            style="
-              border-bottom-left-radius: 18px;
-              border-bottom-right-radius: 18px;
-            "
-          >
-            <div>
-              <h4 class="text-primary">
-                <strong>
-                  JNE
-                </strong>
-              </h4>
-            </div>
-            <b-form-checkbox
-              checked="true"
-              name="check-button"
-              switch
-            />
-          </b-row>
-        </b-col>
-        <b-col
-          cols="3"
-          class="mr-3 mb-3"
-        >
-          <b-row
-            class="justify-content-center py-3"
-            style="
-              background: #F8F8F8;
-              border-top-right-radius: 18px;
-              border-top-left-radius: 18px;
-            "
-          >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
-          </b-row>
-          <b-row
-            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
-            style="
-              border-bottom-left-radius: 18px;
-              border-bottom-right-radius: 18px;
-            "
-          >
-            <div>
-              <h4 class="text-primary">
-                <strong>
-                  JNE
-                </strong>
-              </h4>
-            </div>
-            <b-form-checkbox
-              checked="true"
-              name="check-button"
-              switch
-            />
-          </b-row>
-        </b-col>
-        <b-col
-          cols="3"
-          class="mr-3 mb-3"
-        >
-          <b-row
-            class="justify-content-center py-3"
-            style="
-              background: #F8F8F8;
-              border-top-right-radius: 18px;
-              border-top-left-radius: 18px;
-            "
-          >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
-          </b-row>
-          <b-row
-            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
-            style="
-              border-bottom-left-radius: 18px;
-              border-bottom-right-radius: 18px;
-            "
-          >
-            <div>
-              <h4 class="text-primary">
-                <strong>
-                  JNE
-                </strong>
-              </h4>
-            </div>
-            <b-form-checkbox
-              checked="true"
-              name="check-button"
-              switch
+              @change="switchStatusEkspedisi(items)"
             />
           </b-row>
         </b-col>
@@ -177,22 +76,26 @@
 
       <b-row class="justify-content-center px-1 wrapper__setting__ekspedisi__mobile">
         <b-col
+          v-for="(items, index) in itemsExpedition"
+          :key="index+1"
           cols="12"
           class="mb-2"
         >
           <b-row
-            class="justify-content-center py-3"
+            class="justify-content-center h-44"
             style="
               background: #F8F8F8;
               border-top-right-radius: 18px;
               border-top-left-radius: 18px;
             "
           >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
+            <div class="align-self-center">
+              <b-img
+                :src="items.image_path"
+                fluid
+                width="150"
+              />
+            </div>
           </b-row>
           <b-row
             class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
@@ -204,131 +107,15 @@
             <div>
               <h4 class="text-primary">
                 <strong>
-                  JNE
+                  {{ items.shipping_name }}
                 </strong>
               </h4>
             </div>
             <b-form-checkbox
-              checked="true"
+              :checked="items.is_active === 1 ? true : false"
               name="check-button"
               switch
-            />
-          </b-row>
-        </b-col>
-        <b-col
-          cols="12"
-          class="mb-2"
-        >
-          <b-row
-            class="justify-content-center py-3"
-            style="
-              background: #F8F8F8;
-              border-top-right-radius: 18px;
-              border-top-left-radius: 18px;
-            "
-          >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
-          </b-row>
-          <b-row
-            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
-            style="
-              border-bottom-left-radius: 18px;
-              border-bottom-right-radius: 18px;
-            "
-          >
-            <div>
-              <h4 class="text-primary">
-                <strong>
-                  JNE
-                </strong>
-              </h4>
-            </div>
-            <b-form-checkbox
-              checked="true"
-              name="check-button"
-              switch
-            />
-          </b-row>
-        </b-col>
-        <b-col
-          cols="12"
-          class="mb-2"
-        >
-          <b-row
-            class="justify-content-center py-3"
-            style="
-              background: #F8F8F8;
-              border-top-right-radius: 18px;
-              border-top-left-radius: 18px;
-            "
-          >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
-          </b-row>
-          <b-row
-            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
-            style="
-              border-bottom-left-radius: 18px;
-              border-bottom-right-radius: 18px;
-            "
-          >
-            <div>
-              <h4 class="text-primary">
-                <strong>
-                  JNE
-                </strong>
-              </h4>
-            </div>
-            <b-form-checkbox
-              checked="true"
-              name="check-button"
-              switch
-            />
-          </b-row>
-        </b-col>
-        <b-col
-          cols="12"
-          class="mb-2"
-        >
-          <b-row
-            class="justify-content-center py-3"
-            style="
-              background: #F8F8F8;
-              border-top-right-radius: 18px;
-              border-top-left-radius: 18px;
-            "
-          >
-            <b-img
-              src="@/assets/images/expedisi/logo-jne.png"
-              fluid
-              width="150"
-            />
-          </b-row>
-          <b-row
-            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
-            style="
-              border-bottom-left-radius: 18px;
-              border-bottom-right-radius: 18px;
-            "
-          >
-            <div>
-              <h4 class="text-primary">
-                <strong>
-                  JNE
-                </strong>
-              </h4>
-            </div>
-            <b-form-checkbox
-              checked="true"
-              name="check-button"
-              switch
+              @change="switchStatusEkspedisi(items)"
             />
           </b-row>
         </b-col>
@@ -370,20 +157,97 @@ export default {
     return {
       loading: false,
       partnerId: JSON.parse(localStorage.getItem('userData')),
+
+      itemsExpedition: [],
     }
   },
   mounted() {
-    httpKomship.get('/v1/partner/shipment/not-active',
-      {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-      const { data } = response.data
-      console.log('data', data)
-      this.loading = false
-    })
+    this.getExpedition()
   },
   methods: {
-
+    getExpedition() {
+      this.loading = true
+      httpKomship.get('/v1/partner/shipment/not-active',
+        {
+          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        }).then(response => {
+        const { data } = response.data
+        console.log('data', data)
+        this.itemsExpedition = data
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data ekspedisi, silahkan refresh page!',
+            variant: 'danger',
+          },
+        }, 2000)
+      })
+    },
+    switchStatusEkspedisi(data) {
+      console.log('data', data)
+      if (data.is_active === 1) {
+        httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
+          shipping_name: data.shipping_name,
+          is_komship: 1,
+          partner_id: this.partnerId.partner_detail.id,
+          is_active: 0,
+        }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success update setting ekspedisi',
+              variant: 'success',
+            },
+          }, 2000)
+          this.getExpedition()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+      } else if (data.is_active === 0) {
+        httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
+          shipping_name: data.shipping_name,
+          is_komship: 1,
+          partner_id: this.partnerId.partner_detail.id,
+          is_active: 1,
+        }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success update setting ekspedisi',
+              variant: 'success',
+            },
+          }, 2000)
+          this.getExpedition()
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+      }
+    },
   },
 }
 </script>
