@@ -543,6 +543,7 @@
               v-model="discount"
               type="number"
               @input="getAdditionalCost"
+              @keyup="formatDiscount(discount)"
             />
           </b-col>
         </b-row>
@@ -617,11 +618,12 @@
             </b-form-radio>
             <b-form-input
               v-if="jenisBiayaLain === '1'"
-              v-model.number="sesuaiNominal"
+              v-model="sesuaiNominal"
               type="number"
               class="mt-1"
               style="width:250px;"
               @input="getAdditionalCost"
+              @keyup="formatAdditional(sesuaiNominal)"
             />
           </b-col>
         </b-row>
