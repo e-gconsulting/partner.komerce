@@ -137,6 +137,16 @@ export default {
       return `${day} ${monthName[month - 1]} ${year}`
     },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    formatDiscount(value) {
+      this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+    },
+    formatAdditional(value) {
+      if (value === '' || value === null) {
+        this.sesuaiNominal = 0
+      } else {
+        this.sesuaiNominal = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+      }
+    },
     getAddress() {
       this.$http_komship.get('/v1/address').then(async response => {
         const { data } = response.data
@@ -551,7 +561,7 @@ export default {
       }
     },
     async getAdditionalCost() {
-      if (this.potonganSaldo === false || this.discount === null) {
+      if (this.potonganSaldo === false || this.discount === null || this.discount === '') {
         this.discount = 0
       }
       if (this.biayaLain && this.jenisBiayaLain === '1') {
@@ -591,7 +601,7 @@ export default {
             this.isCalculate = true
             this.loadingCalculate = false
           }).catch(() => {
-            this.isCalculate = false
+            // this.isCalculate = false
             this.loadingCalculate = false
           })
       }
