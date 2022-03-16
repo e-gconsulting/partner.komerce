@@ -9,7 +9,7 @@
   >
     <b-card>
 
-      <h3 class="text-black">
+      <h3 class="text-black ml-50">
         <strong>Pengaturan Alamat Penjemputan</strong>
       </h3>
 
@@ -17,7 +17,7 @@
       <b-row
         v-for="(data, index) in dataAddress"
         :key="index + 1"
-        class="mt-3"
+        class="mt-3 ml-50"
       >
         <b-col
           cols="10"
@@ -361,7 +361,7 @@
       <transition name="fade">
         <b-row
           v-if="formAddAddress === true"
-          class="mt-3"
+          class="mt-3 ml-50"
         >
           <b-col
             cols="10"

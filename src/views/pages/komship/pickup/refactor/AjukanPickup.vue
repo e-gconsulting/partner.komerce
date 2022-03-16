@@ -31,7 +31,7 @@
             label-class="text-black font-weight-bold"
           >
             <b-row class="">
-              <b-col md="auto">
+              <b-col md="auto mt-50">
                 <h5 class="text-black">
                   <strong>
                     {{ addressName }}
@@ -64,32 +64,26 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-row>
+            <b-row class="mt-50">
               <b-col
-                md="2"
-                class="pr-0"
+                md="3"
               >
-                <flat-pickr
-                  ref="pickDate"
-                  v-model="dateValue"
-                  :config="config"
-                  @context="onChangeDate"
-                  @on-change="onChangeDate"
-                  @on-close="onChangeDate"
-                />
-              </b-col>
-              <b-col
-                md="10"
-                class="pl-0"
-              >
-                <b-button
-                  variant="flat-primary"
-                  class="btn-icon"
-                  size="sm"
-                  @click="openFlatPicker"
-                >
-                  <img src="@/assets/images/icons/date-picker-icon.svg">
-                </b-button>
+                <b-input-group class="rounded">
+                  <flat-pickr
+                    ref="pickDate"
+                    v-model="dateValue"
+                    :config="config"
+                    @context="onChangeDate"
+                    @on-change="onChangeDate"
+                    @on-close="onChangeDate"
+                  />
+                  <b-input-group-append is-text>
+                    <img
+                      src="@/assets/images/icons/date-picker-icon.svg"
+                      @click="openFlatPicker"
+                    >
+                  </b-input-group-append>
+                </b-input-group>
               </b-col>
             </b-row>
           </b-form-group>
@@ -539,8 +533,8 @@ export default {
     BForm,
     BButton,
     // BFormDatepicker,
-    // BInputGroup,
-    // BInputGroupAppend,
+    BInputGroup,
+    BInputGroupAppend,
     BFormTimepicker,
     // BIconChevronExpand,
     BModal,

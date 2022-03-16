@@ -8,63 +8,331 @@
     rounded="sm"
   >
     <b-card>
-      <b-row class="d-flex align-items-center mt-1">
+      <b-row class="d-flex align-items-center mt-1 mb-2">
         <b-col>
-          <h5>
+          <h3 class="text-black">
             <strong>Pengaturan Ekspedisi</strong>
-          </h5>
-        </b-col>
-        <b-col class="d-flex justify-content-end">
-          <b-form-checkbox
-            v-model="settingEkspedisi"
-            class="custom-control-primary"
-            name="check-button"
-            switch
-            @change="switchSettingEkspedisi"
-          />
+          </h3>
         </b-col>
       </b-row>
 
-      <b-row class="mt-2">
-        <b-col>
-          <b-table
-            :fields="fieldsSendKompship"
-            :items="itemsSendKompship"
-            class="border"
+      <b-row class="justify-content-center wrapper__setting__ekspedisi">
+        <b-col
+          cols="3"
+          class="mr-3 mb-3"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
           >
-
-            <template #cell(send_kompship)>
-
-              <b-table
-                :fields="fields"
-                :items="listEkspedisi"
-              >
-
-                <template #cell(shipping_name)="data">
-                  <b-col>
-                    <h5>
-                      {{ data.value }}
-                    </h5>
-                  </b-col>
-                </template>
-
-                <template #cell(is_active)="data">
-                  <b-form-checkbox
-                    v-model="data.item.is_active"
-                    class="custom-control-primary"
-                    name="check-button"
-                    switch
-                    @change="switchStatusEkspedisi(data)"
-                  />
-                </template>
-              </b-table>
-
-            </template>
-
-          </b-table>
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+        <b-col
+          cols="3"
+          class="mr-3 mb-3"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+        <b-col
+          cols="3"
+          class="mr-3 mb-3"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+        <b-col
+          cols="3"
+          class="mr-3 mb-3"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
         </b-col>
       </b-row>
 
+      <b-row class="justify-content-center px-1 wrapper__setting__ekspedisi__mobile">
+        <b-col
+          cols="12"
+          class="mb-2"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+        <b-col
+          cols="12"
+          class="mb-2"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+        <b-col
+          cols="12"
+          class="mb-2"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+        <b-col
+          cols="12"
+          class="mb-2"
+        >
+          <b-row
+            class="justify-content-center py-3"
+            style="
+              background: #F8F8F8;
+              border-top-right-radius: 18px;
+              border-top-left-radius: 18px;
+            "
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              fluid
+              width="150"
+            />
+          </b-row>
+          <b-row
+            class="justify-content-between pl-1 pr-50 py-2 border-2 border-top-0"
+            style="
+              border-bottom-left-radius: 18px;
+              border-bottom-right-radius: 18px;
+            "
+          >
+            <div>
+              <h4 class="text-primary">
+                <strong>
+                  JNE
+                </strong>
+              </h4>
+            </div>
+            <b-form-checkbox
+              checked="true"
+              name="check-button"
+              switch
+            />
+          </b-row>
+        </b-col>
+      </b-row>
     </b-card>
   </b-overlay>
 
@@ -76,10 +344,10 @@ import {
   BCard,
   BRow,
   BCol,
-  BFormCheckbox,
-  BTable,
   VBModal,
   BOverlay,
+  BImg,
+  BFormCheckbox,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -90,9 +358,9 @@ export default {
     BCard,
     BRow,
     BCol,
-    BFormCheckbox,
-    BTable,
     BOverlay,
+    BImg,
+    BFormCheckbox,
   },
   directives: {
     'b-modal': VBModal,
@@ -101,190 +369,42 @@ export default {
   data() {
     return {
       loading: false,
-
-      settingEkspedisi: false,
-      statusEkspedisiNonKomship: false,
-
-      formAddEkspedisi: false,
       partnerId: JSON.parse(localStorage.getItem('userData')),
-
-      fields: [
-        {
-          key: 'shipping_name', label: 'Nama Ekspedisi', class: 'col-md-3 bg-white border-bottom-0',
-        },
-        {
-          key: 'is_active', label: 'Status', class: 'bg-white border-bottom-0 ', thClass: 'text-right pr-5', tdClass: 'd-flex justify-content-end align-items-start',
-        },
-      ],
-
-      fieldsSendKompship: [
-        {
-          key: 'send_kompship', label: 'Pengiriman  komship',
-        },
-      ],
-
-      items: [
-        {
-          name_ekspedisi: 'JNE',
-        },
-      ],
-
-      itemsSendKompship: [
-        {
-          send_kompship: 'Ketika mengaktifkan pengiriman Non Komship, maka kamu tidak mendapatkan cashback dan fitur lainnya yang ada di membership Komship. ',
-        },
-      ],
-
-      listEkspedisi: [],
-      isActive: null,
     }
   },
   mounted() {
-    this.loadEkspedisi()
+    httpKomship.get('/v1/partner/shipment/not-active',
+      {
+        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+      }).then(response => {
+      const { data } = response.data
+      console.log('data', data)
+      this.loading = false
+    })
   },
   methods: {
-    loadEkspedisi() {
-      this.loading = true
-      httpKomship.get('/v1/partner/shipment/not-active',
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(response => {
-        const { data } = response.data
-        this.listEkspedisi = data
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.listEkspedisi.length; x++) {
-          if (this.listEkspedisi[x].is_active === 0) {
-            this.listEkspedisi[x].is_active = false
-          }
-          if (this.listEkspedisi[x].is_active === 1) {
-            this.listEkspedisi[x].is_active = true
-          }
 
-          if (!this.listEkspedisi[x].is_active === false) {
-            this.settingEkspedisi = true
-          }
-        }
-        this.loading = false
-        return this.listEkspedisi
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failed',
-            icon: 'AlertCircleIcon',
-            text: 'Failed load data, refresh page!',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
-    },
-    switchSettingEkspedisi() {
-      if (this.settingEkspedisi === true) {
-        this.isActive = 1
-      }
-      if (this.settingEkspedisi === false) {
-        this.isActive = 0
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.listEkspedisi.length; x++) {
-        httpKomship.put(`/v1/partner/shipment/update/${this.listEkspedisi[x].id}`, {
-          shipping_name: this.listEkspedisi[x].shipping_name,
-          is_komship: 1,
-          partner_id: this.partnerId.partner_detail.id,
-          is_active: this.isActive,
-        },
-        {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        }).then(() => {
-          if (x === this.listEkspedisi.length - 1) {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                icon: 'CheckIcon',
-                text: 'Success update setting ekspedisi',
-                variant: 'success',
-              },
-            }, 2000)
-          }
-          this.loadEkspedisi()
-        }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
-              variant: 'danger',
-            },
-          }, 2000)
-        })
-      }
-    },
-    switchStatusEkspedisi(data) {
-      if (data.item.is_active === false) {
-        httpKomship.put(`/v1/partner/shipment/update/${data.item.id}`, {
-          shipping_name: data.item.shipping_name,
-          is_komship: 1,
-          partner_id: this.partnerId.partner_detail.id,
-          is_active: 0,
-        }).then(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              icon: 'CheckIcon',
-              text: 'Success update setting ekspedisi',
-              variant: 'success',
-            },
-          }, 2000)
-          this.loadEkspedisi()
-        }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
-              variant: 'danger',
-            },
-          }, 2000)
-        })
-      }
-      if (data.item.is_active === true) {
-        httpKomship.put(`/v1/partner/shipment/update/${data.item.id}`, {
-          shipping_name: data.item.shipping_name,
-          is_komship: 1,
-          partner_id: this.partnerId.partner_detail.id,
-          is_active: 1,
-        }).then(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              icon: 'CheckIcon',
-              text: 'Success update setting ekspedisi',
-              variant: 'success',
-            },
-          }, 2000)
-          this.loadEkspedisi()
-        }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal update setting ekspedisi, silahkan coba lagi',
-              variant: 'danger',
-            },
-          }, 2000)
-        })
-      }
-    },
   },
 }
 </script>
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+
+@media only screen and (min-width: 991px) {
+
+  [dir] .wrapper__setting__ekspedisi__mobile {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 990px) {
+  [dir] .wrapper__setting__ekspedisi {
+    display: none!important;
+  }
+
+  [dir] .wrapper__setting__ekspedisi__mobile {
+    display: block;
+  }
+}
 </style>
