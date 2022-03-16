@@ -326,7 +326,7 @@ export default {
             const dtitems = parseData.data.sort((a, b) => b.partner_id - a.partner_id)
             this.items = dtitems
             this.filteredItems = dtitems
-            this.totalRows = dtitems.total
+            this.totalRows = parseData.last_page
           }
           this.loadDataAwal = false
           this.isLoadTable = false
