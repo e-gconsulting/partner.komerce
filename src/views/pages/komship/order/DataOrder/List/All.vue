@@ -115,12 +115,19 @@
         </template>
         <template #cell(customer_name)="data">
           <span class="font-bold">{{ data.item.customer_name }}</span><br>
-          <span
+          <img
             v-if="data.item.is_komship"
-            class="text-muted"
+            src="@/assets/images/logo/Komship.png"
           >
-            Komship
-          </span>
+          <div
+            v-if="data.item.is_komship"
+            class="d-flex"
+          >
+            <img
+              :src="data.item.shipment_image_path"
+              style="height:25px!important"
+            ><span class="my-auto">{{ data.item.shipping }}</span>
+          </div>
           <span
             v-else
             class="text-muted"
