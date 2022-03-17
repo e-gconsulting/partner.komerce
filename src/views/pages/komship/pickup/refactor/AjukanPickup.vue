@@ -136,7 +136,7 @@
             >
               <b-button
                 v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1 mb-1' : 'vehicle-button mr-1 mb-1'}`"
                 @click="() => onChooseVehicle('MOTOR')"
               >
                 <img src="@/assets/images/icons/motor.png">
@@ -144,7 +144,7 @@
               </b-button>
               <b-button
                 v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1 mb-1' : 'vehicle-button mr-1 mb-1'}`"
                 @click="() => onChooseVehicle('MOBIL')"
               >
                 <img src="@/assets/images/icons/mobil.png">
@@ -152,7 +152,7 @@
               </b-button>
               <b-button
                 v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
-                :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
+                :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button mb-1' : 'vehicle-button mb-1'}`"
                 @click="() => onChooseVehicle('TRUCK')"
               >
                 <img src="@/assets/images/icons/truk.png">
@@ -182,10 +182,13 @@
           </b-form-group>
           <b-col
             class="pl-0 pr-2"
-            cols="2"
           >
             <small>
-              Pilih orderan yang akan di pickup
+              Pilih orderan yang
+            </small>
+            <br>
+            <small>
+              akan di pickup
             </small>
           </b-col>
         </b-col>
@@ -313,7 +316,7 @@
         </b-row>
       </div>
 
-      <b-row class="mb-1 ml-3 pl-50">
+      <b-row class="mb-1 ml-3 pl-50 warning__wrapper__makesure">
         <p class="text-primary p-50 border-2 border-red-400 rounded-lg bg-red-50">
           *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
         </p>
@@ -783,7 +786,7 @@ export default {
         const { data } = response.data
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < data.length; x++) {
-          if (!data[x].is_active === true) {
+          if (!data[x].is_active === 1) {
             this.$refs['modal-validate-expedition'].show()
           }
         }
@@ -805,4 +808,11 @@ export default {
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
   @import '../add-pickup.scss';
+
+  @media only screen and (max-width: 990px) {
+    [dir] .warning__wrapper__makesure {
+      margin-left: 0px !important;
+      padding-left: 0px !important;
+    }
+  }
 </style>
