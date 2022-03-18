@@ -15,6 +15,14 @@ export default [
         action: 'read',
       },
       {
+        title: 'Dashboard Admin v11',
+        icon: 'HomeIcon',
+        tagVariant: 'light-warning',
+        route: 'dashboard-admin-v11',
+        resource: 'Dashboard Komship Admin',
+        action: 'read',
+      },
+      {
         title: 'Pencairan',
         icon: 'DownloadIcon',
         tagVariant: 'light-warning',
