@@ -427,7 +427,7 @@
           <v-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="this.getShippingList(), this.validateRekening(), this.paymentHistory = false"
+            @input="getShippingList(), validateRekening(), paymentHistory = false"
           />
         </b-col>
         <b-col
