@@ -9,7 +9,6 @@ import {
   last60,
   last7,
   firstDateOfMonth,
-  formatYmd,
 } from '@/store/helpers'
 import filterLib from '@/libs/filters'
 import DateRangePicker from 'vue2-daterange-picker'
@@ -17,7 +16,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 const formatDate = 'YYYY-MM-DDTHH:mm:ss'
-
+let timeoutCallApi = null
 export default {
   components: {
     BTable,
@@ -40,12 +39,12 @@ export default {
       },
       ranges: {
         '7 Hari Terakhir': [last7, today],
-        '30 Hari Terakhir': [last30, today],
+        '30 Hari Terakhir': [this.$moment().subtract(30, 'days').startOf('day').toDate(), today],
         '2 Bulan Terakhir': [last60, today],
         'Bulan Ini': [firstDateOfMonth, today],
       },
       rangeDate: {
-        startDate: last30,
+        startDate: this.$moment().subtract(30, 'days').startOf('day').toDate(),
         endDate: today,
       },
       isLoadTable: false,
@@ -185,7 +184,7 @@ export default {
         },
         {
           key: 'last_pickup',
-          label: 'Pickup Akhir',
+          label: 'Last Pickup',
           sortable: true,
           class: 'text-black text-right',
           tdClass: 'cell__custom',
@@ -250,8 +249,8 @@ export default {
         },
       ],
       paramsCallAPI: {
-        start_date: this.$moment(last30).startOf('day').format(formatDate),
-        end_date: this.$moment(today).endOf('day').format(formatDate),
+        start_date: this.$moment().subtract(30, 'days').startOf('day').format(formatDate),
+        end_date: this.$moment().endOf('day').format(formatDate),
         page: null,
         limits: 50,
       },
@@ -299,12 +298,12 @@ export default {
     },
   },
   mounted() {
-    this.totalRows = this.items.length
     this.fetchData()
   },
   methods: {
     fetchData() {
       this.isLoadTable = true
+      clearTimeout(timeoutCallApi)
       this.$http_komship({
         methods: 'GET',
         headers: {
@@ -327,6 +326,7 @@ export default {
             this.items = dtitems
             this.filteredItems = dtitems
             this.totalRows = parseData.last_page * this.perPage
+            timeoutCallApi = setTimeout(this.fetchData, 180000)
           }
           this.loadDataAwal = false
           this.isLoadTable = false
