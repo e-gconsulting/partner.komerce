@@ -1,0 +1,203 @@
+<b-row>
+  <b-col cols="12" class="mb-1">
+    <h2 class="text-black">
+      Dashboard
+    </h2>
+  </b-col>
+  <b-col cols="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-between">
+              <h4 class="text-black my-0">
+                Performa Ongkir Ekspedisi
+              </h4>
+              <span style="cursor: pointer;" @click="$router.push('/')">btn</span>
+            </div>
+          </b-col>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-end">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+              <b-form-group>
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+            </div>
+          </b-col>
+          <b-col cols="12">
+            <vue-apex-charts
+              type="area"
+              height="400"
+              :options="chartOptions"
+              :series="series"
+            />
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+  <b-col cols="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <h4 class="text-black my-0">
+              Top Ongkir Ekspedisi
+            </h4>
+          </b-col>
+          <b-col cols="12">
+            <div class="d-flex justify-content-end">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+              <b-form-group>
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+            </div>
+          </b-col>
+          <b-col cols="12">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <img
+                  src="@/assets/images/icons/profile-placehold.svg"
+                  alt="Photo"
+                  class="mr-1"
+                >
+                <h5 class="text-black my-0 text-uppercase">JNE</h5>
+              </div>
+              <div>
+                <h4 class="text-green-600 my-0">Rp 70.000.000</h4>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+  <b-col cols="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-between">
+              <h4 class="text-black my-0">
+                Performa Transaksi Partner
+              </h4>
+              <span style="cursor: pointer;" @click="$router.push('/')">btn</span>
+            </div>
+          </b-col>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-end">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+              <b-form-group>
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+            </div>
+          </b-col>
+          <b-col cols="12">
+            <vue-apex-charts
+              type="area"
+              height="400"
+              :options="chartOptions"
+              :series="series"
+            />
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+  <b-col cols="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <h4 class="text-black my-0">
+              Top Partner Transaksi
+            </h4>
+          </b-col>
+          <b-col cols="12">
+            <div class="d-flex justify-content-end">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+              <b-form-group>
+                <v-select
+                  v-model="selectedTopOngkirEkspedisi"
+                  label="name"
+                  style="min-width: 100px;"
+                  :options="optionTopOngkirEkspedisi"
+                />
+              </b-form-group>
+            </div>
+          </b-col>
+          <b-col cols="12">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <img
+                  src="@/assets/images/icons/profile-placehold.svg"
+                  alt="Photo"
+                  class="mr-1"
+                >
+                <h5 class="text-black my-0 text-capitalize">James Franci</h5>
+              </div>
+              <div>
+                <h4 class="text-green-600 my-0">Rp 25.000.000</h4>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+</b-row>
