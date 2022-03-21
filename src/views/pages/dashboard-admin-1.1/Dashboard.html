@@ -4,7 +4,7 @@
       Dashboard
     </h2>
   </b-col>
-  <b-col cols="6">
+  <b-col lg="6">
     <b-card
       no-body
       class="p-1 card__wrapper"
@@ -16,11 +16,19 @@
               <h4 class="text-black my-0">
                 Performa Ongkir Ekspedisi
               </h4>
-              <span style="cursor: pointer;" @click="$router.push('/')">btn</span>
+              <b-button
+                variant="outline"
+                class="button-custom"
+                @click="$router.push('/performa-ekspedisi')"
+              >
+                <feather-icon
+                  icon="ChevronRightIcon"
+                />
+              </b-button>
             </div>
           </b-col>
           <b-col cols="12" class="mb-1">
-            <div class="d-flex justify-content-end">  
+            <div class="d-flex justify-content-center">  
               <b-form-group class="mr-1">
                 <v-select
                   v-model="selectedTopOngkirEkspedisi"
@@ -51,7 +59,7 @@
       </template>
     </b-card>
   </b-col>
-  <b-col cols="6">
+  <b-col lg="6">
     <b-card
       no-body
       class="p-1 card__wrapper"
@@ -84,17 +92,20 @@
             </div>
           </b-col>
           <b-col cols="12">
-            <div class="d-flex align-items-center justify-content-between">
+            <div
+              v-for="(datatopekspedisi, idxtopekspedisi) in datatoplist.ekspedisi"
+              :key="idxtopekspedisi"
+              class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center">
                 <img
                   src="@/assets/images/icons/profile-placehold.svg"
                   alt="Photo"
                   class="mr-1"
                 >
-                <h5 class="text-black my-0 text-uppercase">JNE</h5>
+                <h5 class="text-black my-0 text-uppercase">{{ datatopekspedisi.shipping }}</h5>
               </div>
               <div>
-                <h4 class="text-green-600 my-0">Rp 70.000.000</h4>
+                <h4 class="text-green-600 my-0">{{ formatCurrency(datatopekspedisi.shipping_cost) }}</h4>
               </div>
             </div>
           </b-col>
@@ -102,7 +113,7 @@
       </template>
     </b-card>
   </b-col>
-  <b-col cols="6">
+  <b-col lg="6">
     <b-card
       no-body
       class="p-1 card__wrapper"
@@ -114,11 +125,19 @@
               <h4 class="text-black my-0">
                 Performa Transaksi Partner
               </h4>
-              <span style="cursor: pointer;" @click="$router.push('/')">btn</span>
+              <b-button
+                variant="outline"
+                class="button-custom"
+                @click="$router.push('/pendapatan')"
+              >
+                <feather-icon
+                  icon="ChevronRightIcon"
+                />
+              </b-button>
             </div>
           </b-col>
           <b-col cols="12" class="mb-1">
-            <div class="d-flex justify-content-end">  
+            <div class="d-flex justify-content-center">  
               <b-form-group class="mr-1">
                 <v-select
                   v-model="selectedTopOngkirEkspedisi"
@@ -149,7 +168,7 @@
       </template>
     </b-card>
   </b-col>
-  <b-col cols="6">
+  <b-col lg="6">
     <b-card
       no-body
       class="p-1 card__wrapper"
@@ -182,17 +201,20 @@
             </div>
           </b-col>
           <b-col cols="12">
-            <div class="d-flex align-items-center justify-content-between">
+            <div
+              v-for="(datatoppartner, idxtoppartner) in datatoplist.partner"
+              :key="idxtoppartner"
+              class="d-flex align-items-center justify-content-between">
               <div class="d-flex align-items-center">
                 <img
                   src="@/assets/images/icons/profile-placehold.svg"
                   alt="Photo"
                   class="mr-1"
                 >
-                <h5 class="text-black my-0 text-capitalize">James Franci</h5>
+                <h5 class="text-black my-0 text-capitalize">{{ datatoppartner.partner_name }}</h5>
               </div>
               <div>
-                <h4 class="text-green-600 my-0">Rp 25.000.000</h4>
+                <h4 class="text-green-600 my-0">{{ formatCurrency(datatoppartner.transaction_cod) }}</h4>
               </div>
             </div>
           </b-col>

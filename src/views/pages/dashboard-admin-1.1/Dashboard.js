@@ -2,6 +2,7 @@ import {
   BRow,
   BCol,
   BCard,
+  BButton,
   BFormGroup,
 } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
@@ -14,11 +15,23 @@ import {
 } from '@/store/helpers'
 import filtersLibs from '@/libs/filters'
 
+const typeOfCallingApi = {
+  chart: {
+    ekspedisi: 'ekspedisi',
+    partner: 'partner',
+  },
+  toplist: {
+    ekspedisi: 'ekspedisi',
+    partner: 'partner',
+  },
+}
+
 export default {
   components: {
     BRow,
     BCol,
     BCard,
+    BButton,
     VueApexCharts,
     BFormGroup,
     VSelect,
@@ -44,6 +57,9 @@ export default {
           type: 'area',
           stacked: false,
           height: 350,
+          toolbar: {
+            show: false,
+          },
           zoom: {
             enabled: false,
           },
@@ -135,6 +151,72 @@ export default {
           value: 2,
         },
       ],
+      datachart: {
+        expedisi: [],
+        partner: [],
+      },
+      datatoplist: {
+        ekspedisi: [
+          {
+            shipping: 'JNE',
+            shipping_cost: 22000,
+          },
+        ],
+        partner: [
+          {
+            partner_name: 'iiskun',
+            transaction_cod: 112000,
+          },
+        ],
+      },
     }
+  },
+  mounted() {
+    // this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
+    // this.fetchDataTop(typeOfCallingApi.toplist.partner)
+  },
+  methods: {
+    fetchDataTop(type = '') {
+      let endpoint = ''
+      switch (type.toLowerCase()) {
+        case typeOfCallingApi.toplist.partner:
+          endpoint = '/dashboard/topPartnerTransaction'
+          break
+        case typeOfCallingApi.toplist.ekspedisi:
+          endpoint = 'dashboardTopShippingExpeditors'
+          break
+        default:
+          break
+      }
+      this.$http_komship.get(`/v1/admin/${endpoint}`)
+        .then(res => {
+          console.log('response data: ', res)
+        })
+        .catch(e => console.log('error', e))
+    },
+    fetchDataChart(type = '') {
+      // payment_option 1: COD, 2: non COD, 3: total(cod dan non-cod)
+      // start_date => awal bulan tgl 1 00:00 contoh 2022-02-01T00:00:00
+      // end_date => skrng 23:59 contoh 2022-02-28 23:59:59
+      let endpoint = ''
+      switch (type.toLowerCase()) {
+        case typeOfCallingApi.toplist.partner:
+          endpoint = 'topPartnerTransaction'
+          break
+        case typeOfCallingApi.toplist.ekspedisi:
+          endpoint = 'TopShippingExpeditors'
+          break
+        default:
+          break
+      }
+      this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`)
+        .then(res => {
+          console.log('response data: ', res)
+        })
+        .catch(e => console.log('error', e))
+    },
+    formatCurrency(dt) {
+      return filtersLibs.rupiah(dt)
+    },
   },
 }
