@@ -313,13 +313,13 @@
                       style="max-width: 50%;"
                     />
                     <b-img
-                      v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                      v-if="itemsPrint.shipping === 'SICEPAT'"
                       src="@/@core/assets/image/icons/logo__sicepat.svg"
                       alt="ekspedisi"
                       style="max-width: 50%;"
                     />
                     <b-img
-                      v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                      v-if="itemsPrint.shipping === 'IDEXPRESS'"
                       src="@/@core/assets/image/icons/logo-idexpress.svg"
                       alt="ekspedisi"
                       style="max-width: 50%;"
@@ -546,13 +546,13 @@
                     style="max-width: 50%;"
                   />
                   <b-img
-                    v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                    v-if="itemsPrint.shipping === 'SICEPAT'"
                     src="@/@core/assets/image/icons/logo__sicepat.svg"
                     alt="ekspedisi"
                     style="max-width: 50%;"
                   />
                   <b-img
-                    v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                    v-if="itemsPrint.shipping === 'IDEXPRESS'"
                     src="@/@core/assets/image/icons/logo-idexpress.svg"
                     alt="ekspedisi"
                     style="max-width: 50%;"
@@ -789,13 +789,13 @@
                       style="max-width: 50%;"
                     />
                     <b-img
-                      v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                      v-if="itemsPrint.shipping === 'SICEPAT'"
                       src="@/@core/assets/image/icons/logo__sicepat.svg"
                       alt="ekspedisi"
                       style="max-width: 50%;"
                     />
                     <b-img
-                      v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                      v-if="itemsPrint.shipping === 'IDEXPRESS'"
                       src="@/@core/assets/image/icons/logo-idexpress.svg"
                       alt="ekspedisi"
                       style="max-width: 50%;"
@@ -1129,13 +1129,13 @@
                     style="margin:auto;"
                   >
                   <img
-                    v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                    v-if="itemsPrint.shipping === 'SICEPAT'"
                     src="@/@core/assets/image/icons/logo__sicepat.svg"
                     alt="ekspedisi"
                     style="margin:auto;"
                   >
                   <img
-                    v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                    v-if="itemsPrint.shipping === 'IDEXPRESS'"
                     src="@/@core/assets/image/icons/logo-idexpress.svg"
                     alt="ekspedisi"
                     style="margin:auto;"
@@ -1345,13 +1345,13 @@
                     style="margin:auto;"
                   >
                   <img
-                    v-if="itemsPrint.shipping !== 'SI CEPAT'"
+                    v-if="itemsPrint.shipping === 'SICEPAT'"
                     src="@/@core/assets/image/icons/logo__sicepat.svg"
                     alt="ekspedisi"
                     style="margin:auto;"
                   >
                   <img
-                    v-if="itemsPrint.shipping !== 'ID EXPRESS'"
+                    v-if="itemsPrint.shipping === 'IDEXPRESS'"
                     src="@/@core/assets/image/icons/logo-idexpress.svg"
                     alt="ekspedisi"
                     style="margin:auto;"
