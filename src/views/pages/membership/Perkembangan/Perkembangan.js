@@ -282,11 +282,13 @@ export default {
     },
     perPage: {
       handler(val) {
+        this.search = ''
         this.paramsCallAPI.limits = val
       },
     },
     currentPage: {
       handler(val) {
+        this.search = ''
         this.paramsCallAPI.page = val
       },
     },
