@@ -119,9 +119,9 @@ export default {
             }
 
             if (data.code !== 400) {
-              this.loading = false
-              const routeData = this.$router.resolve({ name: 'komship-register-validate' })
-              window.open(routeData.href, '_blank')
+              // this.loading = false
+              // const routeData = this.$router.resolve({ name: 'komship-register-validate' })
+              // window.open(routeData.href, '_blank')
               this.$refs.submitformkirimemail.click()
             }
             this.loading = false

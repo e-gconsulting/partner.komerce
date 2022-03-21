@@ -4,20 +4,13 @@ import {
   BSpinner,
   BCardBody,
 } from 'bootstrap-vue'
-import {
-  last30,
-  last60,
-  last7,
-  firstDateOfMonth,
-  formatYmd,
-} from '@/store/helpers'
 import filterLib from '@/libs/filters'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
-const formatDate = 'YYYY-MM-DDTHH:mm:ss'
-
+const formatDate = 'YYYY-MM-DDTHH:mm:ss\\Z'
+let timeoutCallApi = null
 export default {
   components: {
     BTable,
@@ -39,13 +32,13 @@ export default {
         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
       },
       ranges: {
-        '7 Hari Terakhir': [last7, today],
-        '30 Hari Terakhir': [last30, today],
-        '2 Bulan Terakhir': [last60, today],
-        'Bulan Ini': [firstDateOfMonth, today],
+        '7 Hari Terakhir': [this.$moment().subtract(7, 'days').startOf('day').toDate(), today],
+        '30 Hari Terakhir': [this.$moment().subtract(30, 'days').startOf('day').toDate(), today],
+        '2 Bulan Terakhir': [this.$moment().subtract(60, 'days').startOf('day').toDate(), today],
+        'Bulan Ini': [this.$moment().startOf('month').toDate(), today],
       },
       rangeDate: {
-        startDate: last30,
+        startDate: this.$moment().subtract(30, 'days').startOf('day').toDate(),
         endDate: today,
       },
       isLoadTable: false,
@@ -120,7 +113,7 @@ export default {
           label: 'Verifikasi Email',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -134,7 +127,7 @@ export default {
           label: 'On Boarding',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           thStyle: {
             color: 'black',
             textTransform: 'capitalize',
@@ -146,7 +139,7 @@ export default {
           label: '1st Produk',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -160,7 +153,7 @@ export default {
           label: '1st Order',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -174,7 +167,7 @@ export default {
           label: '1st Pickup',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -185,10 +178,10 @@ export default {
         },
         {
           key: 'last_pickup',
-          label: 'Pickup Akhir',
+          label: 'Last Pickup',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -250,8 +243,8 @@ export default {
         },
       ],
       paramsCallAPI: {
-        start_date: this.$moment(last30).startOf('day').format(formatDate),
-        end_date: this.$moment(today).endOf('day').format(formatDate),
+        start_date: this.$moment().subtract(30, 'days').startOf('day').format(formatDate),
+        end_date: this.$moment().endOf('day').format(formatDate),
         page: null,
         limits: 50,
       },
@@ -283,11 +276,13 @@ export default {
     },
     perPage: {
       handler(val) {
+        this.search = ''
         this.paramsCallAPI.limits = val
       },
     },
     currentPage: {
       handler(val) {
+        this.search = ''
         this.paramsCallAPI.page = val
       },
     },
@@ -299,12 +294,12 @@ export default {
     },
   },
   mounted() {
-    this.totalRows = this.items.length
     this.fetchData()
   },
   methods: {
     fetchData() {
       this.isLoadTable = true
+      clearTimeout(timeoutCallApi)
       this.$http_komship({
         methods: 'GET',
         headers: {
@@ -326,7 +321,8 @@ export default {
             const dtitems = parseData.data.sort((a, b) => b.partner_id - a.partner_id)
             this.items = dtitems
             this.filteredItems = dtitems
-            this.totalRows = dtitems.total
+            this.totalRows = parseData.last_page * this.perPage
+            timeoutCallApi = setTimeout(this.fetchData, 180000)
           }
           this.loadDataAwal = false
           this.isLoadTable = false
@@ -412,5 +408,8 @@ export default {
     setperPage(pagedt) {
       this.perPage = pagedt
     },
+  },
+  destroyed() {
+    clearTimeout(timeoutCallApi)
   },
 }
