@@ -31,7 +31,7 @@
             label-class="text-black font-weight-bold"
           >
             <b-row class="">
-              <b-col md="auto">
+              <b-col md="auto mt-50">
                 <h5 class="text-black">
                   <strong>
                     {{ addressName }}
@@ -64,32 +64,26 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-row>
+            <b-row class="mt-50">
               <b-col
-                md="2"
-                class="pr-0"
+                md="3"
               >
-                <flat-pickr
-                  ref="pickDate"
-                  v-model="dateValue"
-                  :config="config"
-                  @context="onChangeDate"
-                  @on-change="onChangeDate"
-                  @on-close="onChangeDate"
-                />
-              </b-col>
-              <b-col
-                md="10"
-                class="pl-0"
-              >
-                <b-button
-                  variant="flat-primary"
-                  class="btn-icon"
-                  size="sm"
-                  @click="openFlatPicker"
-                >
-                  <img src="@/assets/images/icons/date-picker-icon.svg">
-                </b-button>
+                <b-input-group class="rounded">
+                  <flat-pickr
+                    ref="pickDate"
+                    v-model="dateValue"
+                    :config="config"
+                    @context="onChangeDate"
+                    @on-change="onChangeDate"
+                    @on-close="onChangeDate"
+                  />
+                  <b-input-group-append is-text>
+                    <img
+                      src="@/assets/images/icons/date-picker-icon.svg"
+                      @click="openFlatPicker"
+                    >
+                  </b-input-group-append>
+                </b-input-group>
               </b-col>
             </b-row>
           </b-form-group>
@@ -142,7 +136,7 @@
             >
               <b-button
                 v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOTOR') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                :class="`vehicle-button-content ${chosenVehicle === 'MOTOR' ? 'vehicle-selected white-button mr-1 mb-1' : 'vehicle-button mr-1 mb-1'}`"
                 @click="() => onChooseVehicle('MOTOR')"
               >
                 <img src="@/assets/images/icons/motor.png">
@@ -150,7 +144,7 @@
               </b-button>
               <b-button
                 v-if="profile && profile.vehicle && profile.vehicle.indexOf('MOBIL') > -1"
-                :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1' : 'vehicle-button mr-1'}`"
+                :class="`vehicle-button-content ${chosenVehicle === 'MOBIL' ? 'vehicle-selected white-button mr-1 mb-1' : 'vehicle-button mr-1 mb-1'}`"
                 @click="() => onChooseVehicle('MOBIL')"
               >
                 <img src="@/assets/images/icons/mobil.png">
@@ -158,7 +152,7 @@
               </b-button>
               <b-button
                 v-if="profile && profile.vehicle && profile.vehicle.indexOf('TRUCK') > -1"
-                :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button' : 'vehicle-button'}`"
+                :class="`vehicle-button-content vehicle-button-content-truk ${chosenVehicle === 'TRUCK' ? 'vehicle-selected white-button mb-1' : 'vehicle-button mb-1'}`"
                 @click="() => onChooseVehicle('TRUCK')"
               >
                 <img src="@/assets/images/icons/truk.png">
@@ -188,10 +182,13 @@
           </b-form-group>
           <b-col
             class="pl-0 pr-2"
-            cols="2"
           >
             <small>
-              Pilih orderan yang akan di pickup
+              Pilih orderan yang
+            </small>
+            <br>
+            <small>
+              akan di pickup
             </small>
           </b-col>
         </b-col>
@@ -319,7 +316,7 @@
         </b-row>
       </div>
 
-      <b-row class="mb-1 ml-3 pl-50">
+      <b-row class="mb-1 ml-3 pl-50 warning__wrapper__makesure">
         <p class="text-primary p-50 border-2 border-red-400 rounded-lg bg-red-50">
           *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
         </p>
@@ -539,8 +536,8 @@ export default {
     BForm,
     BButton,
     // BFormDatepicker,
-    // BInputGroup,
-    // BInputGroupAppend,
+    BInputGroup,
+    BInputGroupAppend,
     BFormTimepicker,
     // BIconChevronExpand,
     BModal,
@@ -656,8 +653,6 @@ export default {
     onChangeDate() {
       this.dateLabel = this.changeDate(this.dateValue)
       this.changeDate(this.dateValue)
-      console.log('dateLabel', this.dateLabel)
-      console.log('dateValue', this.dateValue)
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
@@ -789,7 +784,7 @@ export default {
         const { data } = response.data
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < data.length; x++) {
-          if (!data[x].is_active === true) {
+          if (!data[x].is_active === 1) {
             this.$refs['modal-validate-expedition'].show()
           }
         }
@@ -811,4 +806,11 @@ export default {
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
   @import '../add-pickup.scss';
+
+  @media only screen and (max-width: 990px) {
+    [dir] .warning__wrapper__makesure {
+      margin-left: 0px !important;
+      padding-left: 0px !important;
+    }
+  }
 </style>

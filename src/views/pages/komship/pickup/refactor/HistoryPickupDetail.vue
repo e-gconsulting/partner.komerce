@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <b-row class="justify-content-between mx-2">
+    <b-row class="justify-content-between mx-2 wrapper__content__detail__pickup">
       <b-button
         variant="primary"
         tag="router-link"
@@ -402,4 +402,10 @@ export default {
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
   @import '../add-pickup.scss';
+
+  @media only screen and (max-width: 990px) {
+    [dir] .wrapper__content__detail__pickup {
+      margin: 0px !important;
+    }
+  }
 </style>
