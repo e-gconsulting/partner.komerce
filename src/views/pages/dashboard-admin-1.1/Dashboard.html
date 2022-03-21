@@ -31,27 +31,30 @@
             <div class="d-flex justify-content-center">  
               <b-form-group class="mr-1">
                 <v-select
-                  v-model="selectedTopOngkirEkspedisi"
+                  v-model="filterdata.ekspedisi.chart.selectOpt"
                   label="name"
                   style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
+                  :options="optionChart"
                 />
               </b-form-group>
-              <b-form-group>
-                <v-select
-                  v-model="selectedTopOngkirEkspedisi"
-                  label="name"
-                  style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
-                />
-              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.ekspedisi.chart.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
             </div>
           </b-col>
           <b-col cols="12">
             <vue-apex-charts
               type="area"
               height="400"
-              :options="chartOptions"
+              :options="chartOptionsEkspedisi"
               :series="series"
             />
           </b-col>
@@ -75,20 +78,23 @@
             <div class="d-flex justify-content-end">  
               <b-form-group class="mr-1">
                 <v-select
-                  v-model="selectedTopOngkirEkspedisi"
+                  v-model="filterdata.ekspedisi.toplist.selectOpt"
                   label="name"
                   style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
+                  :options="optionTopList"
                 />
               </b-form-group>
-              <b-form-group>
-                <v-select
-                  v-model="selectedTopOngkirEkspedisi"
-                  label="name"
-                  style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
-                />
-              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.ekspedisi.toplist.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
             </div>
           </b-col>
           <b-col cols="12">
@@ -140,27 +146,30 @@
             <div class="d-flex justify-content-center">  
               <b-form-group class="mr-1">
                 <v-select
-                  v-model="selectedTopOngkirEkspedisi"
+                  v-model="filterdata.partner.chart.selectOpt"
                   label="name"
                   style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
+                  :options="optionChart"
                 />
               </b-form-group>
-              <b-form-group>
-                <v-select
-                  v-model="selectedTopOngkirEkspedisi"
-                  label="name"
-                  style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
-                />
-              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.partner.chart.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
             </div>
           </b-col>
           <b-col cols="12">
             <vue-apex-charts
               type="area"
               height="400"
-              :options="chartOptions"
+              :options="chartOptionsPartner"
               :series="series"
             />
           </b-col>
@@ -184,20 +193,23 @@
             <div class="d-flex justify-content-end">  
               <b-form-group class="mr-1">
                 <v-select
-                  v-model="selectedTopOngkirEkspedisi"
+                  v-model="filterdata.partner.toplist.selectOpt"
                   label="name"
                   style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
+                  :options="optionTopList"
                 />
               </b-form-group>
-              <b-form-group>
-                <v-select
-                  v-model="selectedTopOngkirEkspedisi"
-                  label="name"
-                  style="min-width: 100px;"
-                  :options="optionTopOngkirEkspedisi"
-                />
-              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.partner.toplist.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
             </div>
           </b-col>
           <b-col cols="12">
