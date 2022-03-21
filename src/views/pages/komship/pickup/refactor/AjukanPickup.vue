@@ -653,8 +653,6 @@ export default {
     onChangeDate() {
       this.dateLabel = this.changeDate(this.dateValue)
       this.changeDate(this.dateValue)
-      console.log('dateLabel', this.dateLabel)
-      console.log('dateValue', this.dateValue)
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)

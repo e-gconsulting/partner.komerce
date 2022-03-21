@@ -172,7 +172,6 @@ export default {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {
         const { data } = response.data
-        console.log('data', data)
         this.itemsExpedition = data
         this.loading = false
       }).catch(() => {
@@ -189,7 +188,6 @@ export default {
       })
     },
     switchStatusEkspedisi(data) {
-      console.log('data', data)
       if (data.is_active === 1) {
         httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
           shipping_name: data.shipping_name,
