@@ -413,4 +413,7 @@ export default {
       this.perPage = pagedt
     },
   },
+  destroyed() {
+    clearTimeout(timeoutCallApi)
+  },
 }
