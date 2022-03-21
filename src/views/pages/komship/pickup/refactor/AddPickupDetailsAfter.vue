@@ -282,10 +282,10 @@
             :key="index+1"
           >
             <div
-              class="container"
+              class="container pt-1"
             >
               <div
-                class="border-4 border-slate-900 px-50 mb-50"
+                class="border-4 border-black px-50 mb-50"
               >
 
                 <b-row>
@@ -337,8 +337,8 @@
                   </b-col>
                 </b-row>
 
-                <b-row>
-                  <b-col class="border-4 border-slate-900 ml-1 mr-50">
+                <b-row class="mx-50">
+                  <b-col class="border-4 border-black mr-50">
                     <h4 class="text-center text-black">
                       <strong>
                         PENGIRIM
@@ -376,7 +376,7 @@
                       </b-list-group-item>
                     </b-list-group>
                   </b-col>
-                  <b-col class="border-4 border-slate-900 mr-1">
+                  <b-col class="border-4 border-black">
                     <h4 class="text-center text-black">
                       <strong>
                         PENERIMA
@@ -419,28 +419,35 @@
                 <b-row class="mt-50 mx-50">
                   <b-col
                     cols="4"
-                    class="d-flex justify-content-center align-items-center border-4 border-slate-900"
+                    class="d-flex justify-content-center align-items-center border-4 border-black"
                   >
-                    <div>
-                      <b-row>
+                    <b-row>
+                      <b-col
+                        cols="12"
+                        class="text-center"
+                      >
                         <h4 class="text-black">
                           <strong>
                             {{ itemsPrint.payment_method }}
                           </strong>
                         </h4>
-                      </b-row>
-                      <b-row v-if="itemsPrint.payment_method === 'COD'">
+                      </b-col>
+                      <b-col
+                        v-if="itemsPrint.payment_method === 'COD'"
+                        cols="12"
+                        class="text-center"
+                      >
                         <h5 class="text-black">
                           <strong>
                             Rp. {{ formatPrice(itemsPrint.grand_total) }}
                           </strong>
                         </h5>
-                      </b-row>
-                    </div>
+                      </b-col>
+                    </b-row>
                   </b-col>
                   <b-col
                     cols="8"
-                    class="border-4 border-slate-900"
+                    class="border-4 border-black border-l-0"
                   >
                     <b-row class="d-flex justify-content-center">
                       <h4 class="text-black">
@@ -461,10 +468,23 @@
                   </b-col>
                 </b-row>
 
-                <b-row class="mt-50 mx-50">
+                <b-row class="px-2 mt-50">
+                  <b-col
+                    cols="12"
+                    class="border-4 border-black pb-1 text-center"
+                  >
+                    <span class="text-black">
+                      <strong>
+                        Jenis layanan: {{ itemsPrint.shipping }}
+                      </strong>
+                    </span>
+                  </b-col>
+                </b-row>
+
+                <b-row class="mt-50 mx-50 pb-50">
                   <b-col
                     cols="4"
-                    class="border-4 border-slate-900"
+                    class="border-4 border-black pb-1"
                   >
                     <h4 class="text-black">
                       <strong>
@@ -475,7 +495,7 @@
                   </b-col>
                   <b-col
                     cols="8"
-                    class="border-4 border-slate-900 d-flex"
+                    class="border-4 border-black d-flex pb-1 align-items-center border-l-0"
                   >
                     <h4 class="text-black">
                       <strong>
@@ -490,13 +510,17 @@
                       <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                         <b-list-group-item class="border-0 px-0 pt-0 pb-50">
                           <span class="ml-1 text-black">
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                            <strong>
+                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                            </strong>
                           </span>
                         </b-list-group-item>
                       </div>
                       <div v-else>
                         <span class="ml-1 text-black">
-                          {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                          <strong>
+                            {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                          </strong>
                         </span>
                       </div>
                     </b-list-group>
@@ -515,7 +539,7 @@
             :key="index+1"
           >
             <div
-              class="border-4 border-slate-900 px-50 mb-50"
+              class="border-4 border-black px-50 mb-50"
               style="height: 555px;"
             >
 
@@ -572,7 +596,7 @@
               </b-row>
 
               <b-row>
-                <b-col class="border-4 border-slate-900 ml-1 mr-50">
+                <b-col class="border-4 border-black ml-1 mr-50">
                   <h4 class="text-center text-black">
                     <strong>
                       PENGIRIM
@@ -610,7 +634,7 @@
                     </b-list-group-item>
                   </b-list-group>
                 </b-col>
-                <b-col class="border-4 border-slate-900 mr-1">
+                <b-col class="border-4 border-black mr-1">
                   <h4 class="text-center text-black">
                     <strong>
                       PENERIMA
@@ -653,7 +677,7 @@
               <b-row class="mt-50 mx-50">
                 <b-col
                   cols="4"
-                  class="d-flex justify-content-center align-items-center border-4 border-slate-900"
+                  class="d-flex justify-content-center align-items-center border-4 border-black"
                 >
                   <div>
                     <b-row>
@@ -674,7 +698,7 @@
                 </b-col>
                 <b-col
                   cols="8"
-                  class="border-4 border-slate-900"
+                  class="border-4 border-black"
                 >
                   <b-row class="d-flex justify-content-center">
                     <h4 class="text-black">
@@ -698,7 +722,7 @@
               <b-row class="mt-50 mx-50">
                 <b-col
                   cols="4"
-                  class="border-4 border-slate-900"
+                  class="border-4 border-black"
                 >
                   <h4 class="text-black">
                     <strong>
@@ -709,7 +733,7 @@
                 </b-col>
                 <b-col
                   cols="8"
-                  class="border-4 border-slate-900 d-flex"
+                  class="border-4 border-black d-flex"
                 >
                   <h4 class="text-black">
                     <strong>
@@ -754,7 +778,7 @@
               :key="index+1"
             >
               <div
-                class="border-4 border-slate-900 px-50 mb-50"
+                class="border-4 border-black px-50 mb-50"
               >
                 <b-row>
                   <b-col
@@ -815,7 +839,7 @@
                 </b-row>
 
                 <b-row>
-                  <b-col class="border-4 border-slate-900 ml-1 mr-50">
+                  <b-col class="border-4 border-black ml-1 mr-50">
                     <span
                       class="text-center text-black"
                       style="font-size: 12px;"
@@ -871,7 +895,7 @@
                       </b-list-group-item>
                     </b-list-group>
                   </b-col>
-                  <b-col class="border-4 border-slate-900 mr-1">
+                  <b-col class="border-4 border-black mr-1">
                     <span
                       class="text-center text-black"
                       style="font-size: 10px;"
@@ -932,7 +956,7 @@
                 <b-row class="mt-50 mx-50">
                   <b-col
                     cols="4"
-                    class="d-flex justify-content-center align-items-center border-4 border-slate-900"
+                    class="d-flex justify-content-center align-items-center border-4 border-black"
                   >
                     <div>
                       <b-row class="d-flex justify-content-center align-items-center">
@@ -962,7 +986,7 @@
                   </b-col>
                   <b-col
                     cols="8"
-                    class="border-4 border-slate-900 border-left-0"
+                    class="border-4 border-black border-left-0"
                   >
                     <b-row class="d-flex justify-content-center mb-50">
                       <span
@@ -989,7 +1013,7 @@
                 <b-row class="mt-50 mx-50 pb-50">
                   <b-col
                     cols="4"
-                    class="border-4 border-slate-900"
+                    class="border-4 border-black"
                   >
                     <h4 class="text-black">
                       <strong>
@@ -1000,7 +1024,7 @@
                   </b-col>
                   <b-col
                     cols="8"
-                    class="border-4 border-slate-900 d-flex border-left-0 align-items-start"
+                    class="border-4 border-black d-flex border-left-0 align-items-start"
                   >
                     <span
                       class="text-black"

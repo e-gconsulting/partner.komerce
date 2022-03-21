@@ -424,6 +424,8 @@
     <!-- Modal Success Pickup -->
     <b-modal
       ref="modal-success-request-pickup"
+      no-close-on-backdrop
+      no-close-on-esc
       hide-footer
       hide-header
       centered
@@ -438,7 +440,7 @@
         <b-button
           class="org-button"
           tag="router-link"
-          :to="{ name: $route.meta.routeDetailAfter, params: { selected_order: selectedOrderToStore } }"
+          :to="{ name: $route.meta.routeDetailAfter }"
         >
           Oke
         </b-button>
@@ -489,6 +491,32 @@
           :to="{ name: $route.meta.routeToActiveExpedition }"
         >
           Aktifkan Ekspedisi
+        </b-button>
+      </div>
+    </b-modal>
+
+    <!-- Modal Pickup error success -->
+    <b-modal
+      ref="modal-pickup-error"
+      no-close-on-backdrop
+      no-close-on-esc
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <div class="image-wrapper">
+          <img src="@/assets/images/icons/warning.svg">
+        </div>
+        <div class="text-wrapper mb-3 px-2">
+          {{ itemsPickupSuccess.length }} dari {{ itemsPickupSuccess.length + itemsPickupError.length }} orderan telah berhasil diajukan pickup. Tenang, kamu masih bisa mengajukan pickup ulang untuk orderan yang gagal di pickup.
+        </div>
+        <b-button
+          class="org-button"
+          tag="router-link"
+          :to="{ name: $route.meta.routeDetailAfter }"
+        >
+          Oke
         </b-button>
       </div>
     </b-modal>
@@ -602,6 +630,9 @@ export default {
         dateFormat: 'Y-MMMM-d',
         mode: 'single',
       },
+
+      itemsPickupSuccess: [],
+      itemsPickupError: [],
     }
   },
   mounted() {
@@ -735,12 +766,17 @@ export default {
         orders: this.selectedOrdersId,
       }
 
-      httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
+      httpKomship.post(`/v2/pickup/${this.profile.partner_id}/store`, params)
         .then(response => {
-          if (response.data.code !== 500) {
-            this.$refs['modal-success-request-pickup'].show()
-          } else {
+          this.itemsPickupSuccess = response.data.data.pickup_success
+          this.itemsPickupError = response.data.data.pickup_error
+          if (response.data.code === 500) {
             this.$refs['modal-failed-request-pickup'].show()
+          }
+          if (response.data.data.pickup_error.length > 0) {
+            this.$refs['modal-pickup-error'].show()
+          } else {
+            this.$refs['modal-success-request-pickup'].show()
           }
         }).catch(() => {
           this.$toast({
@@ -795,6 +831,9 @@ export default {
     },
     openFlatPicker() {
       this.$refs.pickDate.fp.toggle()
+    },
+    closePopupPickupError() {
+      this.$refs['modal-pickup-error'].hide()
     },
   },
 }
