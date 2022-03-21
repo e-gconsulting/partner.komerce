@@ -119,7 +119,7 @@ export default {
           label: 'Verifikasi Email',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -133,7 +133,7 @@ export default {
           label: 'On Boarding',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           thStyle: {
             color: 'black',
             textTransform: 'capitalize',
@@ -145,7 +145,7 @@ export default {
           label: '1st Produk',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -159,7 +159,7 @@ export default {
           label: '1st Order',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -173,7 +173,7 @@ export default {
           label: '1st Pickup',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -187,7 +187,7 @@ export default {
           label: 'Last Pickup',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
