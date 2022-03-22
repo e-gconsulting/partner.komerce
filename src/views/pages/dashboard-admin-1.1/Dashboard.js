@@ -34,7 +34,21 @@ export default {
   },
   data() {
     return {
-      series: [
+      seriesEkspedisi: [
+        {
+          name: 'COD',
+          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+        },
+        {
+          name: 'Non - COD',
+          data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
+        },
+        {
+          name: 'Total',
+          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+        },
+      ],
+      seriesPartner: [
         {
           name: 'COD',
           data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
@@ -284,16 +298,16 @@ export default {
       },
       datatoplist: {
         ekspedisi: [
-          {
-            shipping: 'JNE',
-            shipping_cost: 22000,
-          },
+          // {
+          //   shipping: 'JNE',
+          //   shipping_cost: 22000,
+          // },
         ],
         partner: [
-          {
-            partner_name: 'iiskun',
-            transaction_cod: 112000,
-          },
+          // {
+          //   partner_name: 'iiskun',
+          //   transaction_cod: 112000,
+          // },
         ],
       },
     }
@@ -311,12 +325,12 @@ export default {
     },
     'filterdata.ekspedisi.toplist.selectOpt': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+        this.fetchDataTop(typeOfCallingApi.chart.ekspedisi)
       },
     },
     'filterdata.ekspedisi.toplist.bulan': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+        this.fetchDataTop(typeOfCallingApi.chart.ekspedisi)
       },
     },
     'filterdata.partner.chart.selectOpt': {
@@ -331,12 +345,12 @@ export default {
     },
     'filterdata.partner.toplist.selectOpt': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataTop(typeOfCallingApi.chart.toplist)
       },
     },
     'filterdata.partner.toplist.bulan': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataTop(typeOfCallingApi.chart.toplist)
       },
     },
   },
@@ -346,7 +360,7 @@ export default {
     },
   },
   mounted() {
-    // this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+    this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
     // this.fetchDataChart(typeOfCallingApi.chart.partner)
     // this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
     // this.fetchDataTop(typeOfCallingApi.toplist.partner)
@@ -358,25 +372,29 @@ export default {
       const params = {}
       switch (type.toLowerCase()) {
         case typeOfCallingApi.toplist.partner:
-          endpoint = '/dashboard/topPartnerTransaction'
+          endpoint = 'topPartnerTransaction'
           dtbulan = this.filterdata.partner.toplist.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.partner.toplist.selectOpt
+          params.payment_option = this.filterdata.partner.toplist.selectOpt.value
           break
         case typeOfCallingApi.toplist.ekspedisi:
-          endpoint = 'dashboardTopShippingExpeditors'
+          endpoint = 'topShippingExpeditors'
           dtbulan = this.filterdata.ekspedisi.toplist.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.ekspedisi.toplist.selectOpt
+          params.payment_option = this.filterdata.ekspedisi.toplist.selectOpt.value
           break
         default:
           break
       }
-      this.$http_komship.get(`/v1/admin/${endpoint}`, { params })
-        .then(res => {
-          console.log('response data: ', res)
+      this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
+        .then(({ data }) => {
+          if (type.toLowerCase() === typeOfCallingApi.toplist.ekspedisi) {
+            this.datatoplist[type.toLowerCase()] = data.data.cod
+          } else {
+            this.datatoplist[type.toLowerCase()] = data.data
+          }
         })
         .catch(e => console.log('error', e))
     },
@@ -393,14 +411,14 @@ export default {
           dtbulan = this.filterdata.partner.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.partner.chart.selectOpt
+          params.expedition_option = this.filterdata.partner.chart.selectOpt.value
           break
         case typeOfCallingApi.chart.ekspedisi:
           endpoint = 'shippingPerformancePerExpedition'
           dtbulan = this.filterdata.ekspedisi.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt
+          params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt.value
           break
         default:
           break

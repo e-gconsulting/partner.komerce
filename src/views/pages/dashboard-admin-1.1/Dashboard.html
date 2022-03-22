@@ -32,9 +32,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.ekspedisi.chart.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionChart"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -55,7 +55,7 @@
               type="area"
               height="400"
               :options="chartOptionsEkspedisi"
-              :series="series"
+              :series="seriesEkspedisi"
             />
           </b-col>
         </b-row>
@@ -79,9 +79,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.ekspedisi.toplist.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionTopList"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -92,6 +92,7 @@
                   dateFormat="MMM YYYY"
                   placeHolder="Pilih Bulan"
                   class="datepickerClass"
+                  style="height: 38px;"
                 >
                 </vue-monthly-picker>
               </div>
@@ -147,9 +148,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.partner.chart.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionChart"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -170,7 +171,7 @@
               type="area"
               height="400"
               :options="chartOptionsPartner"
-              :series="series"
+              :series="seriesPartner"
             />
           </b-col>
         </b-row>
@@ -194,9 +195,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.partner.toplist.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionTopList"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
