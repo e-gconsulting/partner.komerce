@@ -316,7 +316,7 @@
                   class="ml-16 pl-50"
                 >
                   <b-form-group
-                    label-cols-md="3"
+                    label-cols-md="4"
                   >
                     <b-form-checkbox
                       v-model="isDefault"
@@ -373,7 +373,7 @@
           class="mt-3 ml-50"
         >
           <b-col
-            cols="10"
+            cols="11"
             class="border"
           >
 
@@ -393,12 +393,12 @@
                 <b-row>
 
                   <b-col
-                    cols="10"
+                    cols="12"
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
-                        cols="3"
+                        cols="4"
                       >
                         <label>
                           <h4 class="text-black">
@@ -407,7 +407,7 @@
                         </label>
                       </b-col>
                       <b-col
-                        cols="9"
+                        cols="7"
                       >
                         <validation-provider
                           #default="{errors}"
@@ -426,12 +426,12 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
-                        cols="3"
+                        cols="4"
                       >
                         <label>
                           <h4 class="text-black">
@@ -440,7 +440,7 @@
                         </label>
                       </b-col>
                       <b-col
-                        cols="9"
+                        cols="7"
                       >
                         <validation-provider
                           #default="{errors}"
@@ -462,12 +462,12 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
                     class="mb-3 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
-                        cols="3"
+                        cols="4"
                       >
                         <label>
                           <h4 class="text-black">
@@ -479,7 +479,7 @@
                         </label>
                       </b-col>
                       <b-col
-                        cols="9"
+                        cols="7"
                       >
                         <validation-provider
                           #default="{errors}"
@@ -510,12 +510,12 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
-                        cols="3"
+                        cols="4"
                       >
                         <label for="name-product">
                           <h4 class="text-black">
@@ -524,7 +524,7 @@
                         </label>
                       </b-col>
                       <b-col
-                        cols="9"
+                        cols="7"
                       >
                         <b-form-input
                           v-model="fieldAddPicName"
@@ -535,12 +535,12 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
                     class="ml-16 pl-50"
                   >
                     <b-row>
                       <b-col
-                        cols="3"
+                        cols="4"
                       >
                         <label for="name-product">
                           <h4 class="text-black">
@@ -552,7 +552,7 @@
                         </label>
                       </b-col>
                       <b-col
-                        cols="9"
+                        cols="7"
                       >
                         <validation-provider
                           #default="{errors}"
@@ -572,11 +572,11 @@
                   </b-col>
 
                   <b-col
-                    md="10"
+                    md="12"
                     class="ml-16 pl-50"
                   >
                     <b-form-group
-                      label-cols-md="3"
+                      label-cols-md="4"
                     >
                       <b-form-checkbox
                         v-model="isDefault"
