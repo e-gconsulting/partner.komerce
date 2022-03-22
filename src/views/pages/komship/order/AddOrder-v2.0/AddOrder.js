@@ -538,7 +538,19 @@ export default {
           this.listShipping = result
           this.isShipping = true
         }).catch(err => {
-          console.log(err)
+          this.$swal({
+            title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
+            imageUrl: require('@/assets/images/icons/fail.svg'),
+            showCancelButton: true,
+            confirmButtonText: 'Aktifkan Ekspedisi',
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonText: 'Oke',
+            cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+          }).then(result => {
+            if (result.isConfirmed) {
+              this.$router.push('/setting-kompship/ekspedisi')
+            }
+          })
         })
       } else {
         this.shipping = null
