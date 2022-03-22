@@ -479,7 +479,7 @@
             <template slot="option" slot-scope="option">
               <div class="d-flex">
                 <img :src="option.image_path" style="height: 30px!important;" />
-                <span class="my-auto">{{ `${option.shipping_type} - Rp${option.shipping_cost}` }}</span>
+                <span class="my-auto" style="margin-left:5px;">{{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}</span>
               </div>
             </template>
         </v-select>

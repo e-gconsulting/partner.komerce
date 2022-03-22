@@ -527,17 +527,30 @@ export default {
         }).then(res => {
           const { data } = res.data
           const result = data.map(items => ({
-            label: `${items.shipment_name} - ${items.shipping_type} - Rp${items.shipping_cost}`,
+            label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${items.shipping_cost}`,
             value: items.value,
             image_path: items.image_path,
             shipment_name: items.shipment_name,
+            label_shipping_type: this.shippingTypeLabel(items.shipping_type),
             shipping_type: items.shipping_type,
             shipping_cost: items.shipping_cost,
           }))
           this.listShipping = result
           this.isShipping = true
         }).catch(err => {
-          console.log(err)
+          this.$swal({
+            title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
+            imageUrl: require('@/assets/images/icons/fail.svg'),
+            showCancelButton: true,
+            confirmButtonText: 'Aktifkan Ekspedisi',
+            confirmButtonClass: 'btn btn-primary',
+            cancelButtonText: 'Oke',
+            cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+          }).then(result => {
+            if (result.isConfirmed) {
+              this.$router.push('/setting-kompship/ekspedisi')
+            }
+          })
         })
       } else {
         this.shipping = null
@@ -604,6 +617,14 @@ export default {
       } else {
         this.isCalculate = false
       }
+    },
+    shippingTypeLabel(value) {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite') {
+        return 'Reguler'
+      } if (value === 'GOKIL') {
+        return 'Cargo'
+      }
+      return value
     },
     async submit(order) {
       if (this.paymentMethod === 'BANK TRANSFER' && this.rekening) {
