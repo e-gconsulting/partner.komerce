@@ -34,7 +34,7 @@ export default {
   },
   data() {
     return {
-      seriesEkspedisi: [
+      seriesekspedisi: [
         {
           name: 'COD',
           data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
@@ -48,7 +48,7 @@ export default {
           data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
         },
       ],
-      seriesPartner: [
+      seriespartner: [
         {
           name: 'COD',
           data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
@@ -103,7 +103,7 @@ export default {
               colors: '#8e8da4',
             },
             offsetX: 0,
-            formatter: val => `${val.toFixed(0) / 1000000} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -184,7 +184,7 @@ export default {
               colors: '#8e8da4',
             },
             offsetX: 0,
-            formatter: val => `${val.toFixed(0) / 1000000} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -325,32 +325,32 @@ export default {
     },
     'filterdata.ekspedisi.toplist.selectOpt': {
       handler(val) {
-        this.fetchDataTop(typeOfCallingApi.chart.ekspedisi)
+        this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
       },
     },
     'filterdata.ekspedisi.toplist.bulan': {
       handler(val) {
-        this.fetchDataTop(typeOfCallingApi.chart.ekspedisi)
+        this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
       },
     },
     'filterdata.partner.chart.selectOpt': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataChart(typeOfCallingApi.chart.partner)
       },
     },
     'filterdata.partner.chart.bulan': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataChart(typeOfCallingApi.chart.partner)
       },
     },
     'filterdata.partner.toplist.selectOpt': {
       handler(val) {
-        this.fetchDataTop(typeOfCallingApi.chart.toplist)
+        this.fetchDataTop(typeOfCallingApi.toplist.partner)
       },
     },
     'filterdata.partner.toplist.bulan': {
       handler(val) {
-        this.fetchDataTop(typeOfCallingApi.chart.toplist)
+        this.fetchDataTop(typeOfCallingApi.toplist.partner)
       },
     },
   },
@@ -361,7 +361,7 @@ export default {
   },
   mounted() {
     this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
-    // this.fetchDataChart(typeOfCallingApi.chart.partner)
+    this.fetchDataChart(typeOfCallingApi.chart.partner)
     // this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
     // this.fetchDataTop(typeOfCallingApi.toplist.partner)
   },
@@ -425,7 +425,21 @@ export default {
       }
       this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
         .then(({ data }) => {
-          console.log('response data: ', data)
+          // console.log('response data: ', data)
+          this[`series${type}`] = [
+            {
+              name: 'COD',
+              data: data.data.cod,
+            },
+            {
+              name: 'Non - COD',
+              data: data.data.non_cod,
+            },
+            {
+              name: 'Total',
+              data: data.data.total,
+            },
+          ]
         })
         .catch(e => console.log('error', e))
     },
