@@ -537,10 +537,11 @@
           <div
             v-for="(itemsPrint, index) in fieldItemsPrint"
             :key="index+1"
+            class="p-50"
           >
             <div
-              class="border-4 border-black px-50 mb-50"
-              style="height: 555px;"
+              class="border-4 border-black"
+              style="max-height: 555px;"
             >
 
               <b-row>
@@ -595,8 +596,8 @@
                 </b-col>
               </b-row>
 
-              <b-row>
-                <b-col class="border-4 border-black ml-1 mr-50">
+              <b-row class="mx-50">
+                <b-col class="border-4 border-black mr-50">
                   <h4 class="text-center text-black">
                     <strong>
                       PENGIRIM
@@ -634,7 +635,7 @@
                     </b-list-group-item>
                   </b-list-group>
                 </b-col>
-                <b-col class="border-4 border-black mr-1">
+                <b-col class="border-4 border-black">
                   <h4 class="text-center text-black">
                     <strong>
                       PENERIMA
@@ -719,10 +720,23 @@
                 </b-col>
               </b-row>
 
-              <b-row class="mt-50 mx-50">
+              <b-row class="px-2 mt-50">
+                  <b-col
+                    cols="12"
+                    class="border-4 border-black pb-1 text-center"
+                  >
+                    <span class="text-black">
+                      <strong>
+                        Jenis layanan: {{ itemsPrint.shipping }}
+                      </strong>
+                    </span>
+                  </b-col>
+                </b-row>
+
+              <b-row class="mt-50 mx-50 pb-50">
                 <b-col
                   cols="4"
-                  class="border-4 border-black"
+                  class="border-4 border-black pb-1"
                 >
                   <h4 class="text-black">
                     <strong>
@@ -733,7 +747,7 @@
                 </b-col>
                 <b-col
                   cols="8"
-                  class="border-4 border-black d-flex"
+                  class="border-4 border-black d-flex pb-1 align-items-center"
                 >
                   <h4 class="text-black">
                     <strong>
@@ -748,13 +762,17 @@
                     <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
                       <b-list-group-item class="border-0 px-0 pt-0 pb-50">
                         <span class="ml-1 text-black">
-                          {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                          <strong>
+                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                          </strong>
                         </span>
                       </b-list-group-item>
                     </div>
                     <div v-else>
                       <span class="ml-1 text-black">
-                        {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                        <strong>
+                          {{ dataProduct.qty }} {{ dataProduct.product_name }},
+                        </strong>
                       </span>
                     </div>
                   </b-list-group>
@@ -762,10 +780,10 @@
               </b-row>
 
             </div>
-            <!-- <div
+            <div
               v-if="index % 2 !== 0"
               class="html2pdf__page-break"
-            /> -->
+            />
           </div>
         </div>
 

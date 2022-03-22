@@ -20,7 +20,7 @@
         class="mt-3 ml-50"
       >
         <b-col
-          cols="10"
+          cols="11"
           class="border"
         >
 
@@ -71,12 +71,12 @@
               <b-row>
 
                 <b-col
-                  cols="10"
+                  cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
-                      cols="3"
+                      cols="4"
                     >
                       <label>
                         <h4 class="text-black">
@@ -85,7 +85,7 @@
                       </label>
                     </b-col>
                     <b-col
-                      cols="9"
+                      cols="7"
                     >
                       <validation-provider
                         #default="{errors}"
@@ -111,12 +111,12 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
-                      cols="3"
+                      cols="4"
                     >
                       <label>
                         <h4 class="text-black">
@@ -125,7 +125,7 @@
                       </label>
                     </b-col>
                     <b-col
-                      cols="9"
+                      cols="7"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
                         <validation-provider
@@ -177,12 +177,12 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
                   class="mb-3 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
-                      cols="3"
+                      cols="4"
                     >
                       <label>
                         <h4 class="text-black">
@@ -194,7 +194,7 @@
                       </label>
                     </b-col>
                     <b-col
-                      cols="9"
+                      cols="7"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
                         <validation-provider
@@ -235,12 +235,12 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
-                      cols="3"
+                      cols="4"
                     >
                       <label for="name-product">
                         <h4 class="text-black">
@@ -249,7 +249,7 @@
                       </label>
                     </b-col>
                     <b-col
-                      cols="9"
+                      cols="7"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
                         <b-form-input
@@ -267,12 +267,12 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
                     <b-col
-                      cols="3"
+                      cols="4"
                     >
                       <label for="name-product">
                         <h4 class="text-black">
@@ -284,7 +284,7 @@
                       </label>
                     </b-col>
                     <b-col
-                      cols="9"
+                      cols="7"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
                         <validation-provider
@@ -312,7 +312,7 @@
 
                 <b-col
                   v-if="editMode === true && editIdAddress === data.address_id"
-                  md="10"
+                  md="12"
                   class="ml-16 pl-50"
                 >
                   <b-form-group
@@ -880,7 +880,7 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data
-        await data.forEach(this.myLoop)
+        data.forEach(this.myLoop)
         this.dataAddress = data
         this.loading = false
         return this.dataAddress
@@ -903,6 +903,13 @@ export default {
       }).then(response => {
         if (response.data.data !== null) {
           this.tes.push(response.data.data)
+          const seen = new Set()
+
+          this.tes = this.tes.filter(el => {
+            const duplicate = seen.has(el.id)
+            seen.add(el.id)
+            return !duplicate
+          })
         }
       }).catch(() => {
         this.$toast({
