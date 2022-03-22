@@ -880,10 +880,9 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data
-        await data.forEach(this.myLoop)
+        data.forEach(this.myLoop)
         this.dataAddress = data
         this.loading = false
-        console.log('dataAddress', this.dataAddress)
         return this.dataAddress
       }).catch(() => {
         this.loading = false
@@ -904,15 +903,14 @@ export default {
       }).then(response => {
         if (response.data.data !== null) {
           this.tes.push(response.data.data)
-          // eslint-disable-next-line no-plusplus
-          for (let x = 0; x < this.tes.length; x++) {
-            if (this.tes[x].id === response.data.data.id) {
-              this.tes.splice(1, x)
-            }
-          }
+          const seen = new Set()
+
+          this.tes = this.tes.filter(el => {
+            const duplicate = seen.has(el.id)
+            seen.add(el.id)
+            return !duplicate
+          })
         }
-        console.log('tes', this.tes)
-        console.log('response', response)
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,
