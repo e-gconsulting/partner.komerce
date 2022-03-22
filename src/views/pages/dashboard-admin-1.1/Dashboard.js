@@ -5,15 +5,9 @@ import {
   BButton,
   BFormGroup,
 } from 'bootstrap-vue'
-import moment from 'moment'
 import VSelect from 'vue-select'
 import VueApexCharts from 'vue-apexcharts'
 import VueMonthlyPicker from 'vue-monthly-picker'
-import {
-  firstDateOfMonth,
-  lastDateOfMonth,
-  formatYmd,
-} from '@/store/helpers'
 import filtersLibs from '@/libs/filters'
 
 const typeOfCallingApi = {
@@ -52,6 +46,10 @@ export default {
         {
           name: 'Total',
           data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+        },
+        {
+          name: 'Order',
+          data: [200, 400, 450, 300, 400, 500, 1000],
         },
       ],
       chartOptionsEkspedisi: {
@@ -103,13 +101,13 @@ export default {
         xaxis: {
           type: 'datetime',
           tickAmount: 14,
-          min: moment().startOf('month').valueOf(),
-          max: moment().endOf('month').valueOf(),
-          // min: moment('2022-04-01').valueOf(),
-          // max: moment('2022-04-30').valueOf(),
+          min: this.$moment().startOf('month').valueOf(),
+          max: this.$moment().endOf('month').valueOf(),
+          // min: this.$moment('2022-04-01').valueOf(),
+          // max: this.$moment('2022-04-30').valueOf(),
           categories: ['2022-03-01T00:00:00.000', '2022-03-02T01:30:00.000', '2022-03-03T02:30:00.000', '2022-03-04T03:30:00.000', '2022-03-05T04:30:00.000', '2022-03-15T05:30:00.000', '2022-03-19T06:30:00.000'],
           labels: {
-            formatter: (val, timestamp) => moment(new Date(timestamp)).format('DD'),
+            formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
         },
         tooltip: {
@@ -133,7 +131,7 @@ export default {
           position: 'top',
           horizontalAlign: 'left',
         },
-        colors: ['orange', 'green', 'blue'],
+        colors: ['#FBA63C', '#34A770', '#08A0F7'],
       },
       chartOptionsPartner: {
         chart: {
@@ -184,13 +182,13 @@ export default {
         xaxis: {
           type: 'datetime',
           tickAmount: 14,
-          min: moment().startOf('month').valueOf(),
-          max: moment().endOf('month').valueOf(),
-          // min: moment('2022-04-01').valueOf(),
-          // max: moment('2022-04-30').valueOf(),
+          min: this.$moment().startOf('month').valueOf(),
+          max: this.$moment().endOf('month').valueOf(),
+          // min: this.$moment('2022-04-01').valueOf(),
+          // max: this.$moment('2022-04-30').valueOf(),
           categories: ['2022-03-01T00:00:00.000', '2022-03-02T01:30:00.000', '2022-03-03T02:30:00.000', '2022-03-04T03:30:00.000', '2022-03-05T04:30:00.000', '2022-03-15T05:30:00.000', '2022-03-19T06:30:00.000'],
           labels: {
-            formatter: (val, timestamp) => moment(new Date(timestamp)).format('DD'),
+            formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
         },
         tooltip: {
@@ -214,7 +212,7 @@ export default {
           position: 'top',
           horizontalAlign: 'left',
         },
-        colors: ['orange', 'green', 'blue'],
+        colors: ['#FBA63C', '#34A770', '#08A0F7', '#D3067B'],
       },
       optionTopList: [
         {
