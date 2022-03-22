@@ -342,6 +342,10 @@
             :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined"
             @click="submitPickup"
           >
+            <b-spinner
+              v-if="loadingSubmitPickup"
+              small
+            />
             Ajukan Pickup
           </b-button>
         </b-col>
@@ -543,6 +547,7 @@ import {
   BTable,
   BAvatar,
   BContainer,
+  BSpinner,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
@@ -575,6 +580,7 @@ export default {
     BAvatar,
     BContainer,
     flatPickr,
+    BSpinner,
   },
   directives: {
     Ripple,
@@ -633,6 +639,8 @@ export default {
 
       itemsPickupSuccess: [],
       itemsPickupError: [],
+
+      loadingSubmitPickup: false,
     }
   },
   mounted() {
@@ -750,6 +758,7 @@ export default {
       })
     },
     submitPickup() {
+      this.loadingSubmitPickup = true
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.selectedOrderToStore.length; x++) {
         this.selectedOrdersId.push(this.selectedOrderToStore[x].order_id)
@@ -778,6 +787,7 @@ export default {
           } else {
             this.$refs['modal-success-request-pickup'].show()
           }
+          this.loadingSubmitPickup = false
         }).catch(() => {
           this.$toast({
             component: ToastificationContent,
@@ -788,6 +798,7 @@ export default {
               variant: 'danger',
             },
           })
+          this.loadingSubmitPickup = false
         })
     },
     handleSubmitPopUpSuccess() {
