@@ -115,12 +115,19 @@
         </template>
         <template #cell(customer_name)="data">
           <span class="font-bold">{{ data.item.customer_name }}</span><br>
-          <span
+          <img
             v-if="data.item.is_komship"
-            class="text-muted"
+            src="@/assets/images/logo/Komship.png"
           >
-            Komship
-          </span>
+          <div
+            v-if="data.item.is_komship"
+            class="d-flex"
+          >
+            <img
+              :src="data.item.shipment_image_path"
+              style="width:45px"
+            ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
+          </div>
           <span
             v-else
             class="text-muted"
@@ -408,6 +415,14 @@ export default {
       const product = this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
       const { data } = product.data
       this.productList = data
+    },
+    shippingTypeLabel(value) {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite') {
+        return 'Reguler'
+      } if (value === 'GOKIL') {
+        return 'Cargo'
+      }
+      return value
     },
     async setPage(totalPage) {
       this.perPage = totalPage

@@ -125,8 +125,8 @@
           >
             <img
               :src="data.item.shipment_image_path"
-              style="height:25px!important"
-            ><span class="my-auto">{{ data.item.shipping }}</span>
+              style="width:45px"
+            ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
           </div>
           <span
             v-else
@@ -419,6 +419,14 @@ export default {
       const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
       const { data } = await product.data
       this.productList = data
+    },
+    shippingTypeLabel(value) {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite') {
+        return 'Reguler'
+      } if (value === 'GOKIL') {
+        return 'Cargo'
+      }
+      return value
     },
     async setPage(totalPage) {
       this.perPage = totalPage
