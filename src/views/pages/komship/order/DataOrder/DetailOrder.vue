@@ -368,7 +368,7 @@
               lg="3"
               class="text-right"
             >
-              <span>Rp {{ formatNumber(orderData.service_fee) }}</span>
+              <span>- Rp {{ formatNumber(orderData.service_fee) }}</span>
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -382,7 +382,7 @@
               lg="3"
               class="text-right"
             >
-              Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
+              - Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
           <b-row
