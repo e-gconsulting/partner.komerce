@@ -567,6 +567,7 @@
       id="modalTopUp"
       centered
       hide-header
+      hide-footer
     >
       <a
         href="#"
@@ -585,7 +586,10 @@
           Top Up Saldo
         </p>
       </div>
-      <form id="formTopUp">
+      <form
+        id="formTopUp"
+        class="mb-5"
+      >
         <div class="row align-items-center my-2">
           <div class="col-4">
             <p class="font-weight-bold h-text-sm h-text-dark mb-0">
@@ -609,24 +613,34 @@
           </b-form-group>
         </div>
       </form>
-      <template #modal-footer>
-        <button
-          class="btn btn-outline-primary rounded-lg"
-          @click="$bvModal.hide('modalTopUp')"
+      <b-row class="pb-1">
+        <b-col
+          cols="4"
+          class="text-right"
         >
-          Batal
-        </button>
-        <button
-          class="btn btn-primary rounded-lg"
-          @click="topUpSaldo()"
-        >
-          <b-spinner
-            v-if="loadingSubmitTopUp"
-            small
-          />
-          Top Up Sekarang
-        </button>
-      </template>
+          <button
+              class="btn btn-outline-primary rounded-lg btn-icon"
+              @click="$bvModal.hide('modalTopUp')"
+            >
+            Batal
+          </button>
+          </b-col>
+          <b-col
+            cols="8"
+            class="text-right"
+          >
+          <button
+            class="btn btn-primary rounded-lg btn-icon"
+            @click="topUpSaldo()"
+          >
+            <b-spinner
+              v-if="loadingSubmitTopUp"
+              small
+            />
+            Top Up Sekarang
+          </button>
+          </b-col>
+      </b-row>
     </b-modal>
     <b-modal
       id="modal-keuangan"
