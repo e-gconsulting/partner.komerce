@@ -1,5 +1,15 @@
 .card__wrapper {
   border-radius: 16px;
+  height: 550px;
+
+  &--toplist {
+    height: 420px;
+    overflow: hidden;
+    
+    &:hover {
+      overflow-y: scroll;
+    }
+  }
 }
 .button-custom{
   padding: 0;
