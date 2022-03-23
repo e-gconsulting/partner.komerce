@@ -407,8 +407,8 @@ export default {
   mounted() {
     // this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
     // this.fetchDataChart(typeOfCallingApi.chart.partner)
-    // this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
-    // this.fetchDataTop(typeOfCallingApi.toplist.partner)
+    this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
+    this.fetchDataTop(typeOfCallingApi.toplist.partner)
     this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
   },
   methods: {
@@ -437,7 +437,7 @@ export default {
       this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
         .then(({ data }) => {
           if (type.toLowerCase() === typeOfCallingApi.toplist.ekspedisi) {
-            this.datatoplist[type.toLowerCase()] = data.data.cod
+            this.datatoplist[type.toLowerCase()] = data.data[Object.keys(data.data)[0]]
           } else {
             this.datatoplist[type.toLowerCase()] = data.data
           }
