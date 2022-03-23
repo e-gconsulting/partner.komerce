@@ -319,6 +319,28 @@
                   </strong>
                 </span>, <span class="text-black"><strong>{{ data.item.detail_address }}</strong></span>
               </b-row>
+              <b-row class="wrapper__expand__product__mobile">
+                <b-button
+                  v-if="data.item.product.length > 1"
+                  variant="flat-dark"
+                  class="btn-icon"
+                  size="sm"
+                  @click="() => handleSetCollapseContent(data.item.product.isClose, data.index)"
+                >
+                  <div v-if="!data.item.product.isClose">
+                    {{ `${(data.item.product.length - 1)} Produk lainnya` }}
+                    <b-icon-chevron-down
+                      aria-hidden="true"
+                    />
+                  </div>
+                  <div v-else>
+                    Tutup
+                    <b-icon-chevron-up
+                      aria-hidden="true"
+                    />
+                  </div>
+                </b-button>
+              </b-row>
             </template>
 
             <template #cell(details)="detailsData">
@@ -865,7 +887,21 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style
+  lang="scss"
+>
   @import '~@core/scss/vue/libs/vue-select.scss';
   @import 'data-order.scss';
+
+  @media only screen and (min-width: 991px) {
+    [dir] .wrapper__expand__product__mobile {
+      display: none!important;
+    }
+  }
+
+  @media only screen and (max-width: 990px) {
+    [dir] .minmax-button-wrapper {
+      display: none!important;
+    }
+  }
 </style>
