@@ -21,6 +21,8 @@ const typeOfCallingApi = {
   },
 }
 
+const colorDefaultChart = ['#FBA63C', '#34A770', '#08A0F7']
+
 export default {
   components: {
     BRow,
@@ -131,21 +133,37 @@ export default {
             seriesIndex,
             dataPointIndex,
             w,
-          }) => `
-            <div class="d-grid p-1 rounded">
-              <p class="my-0 text-blue-600">${w.globals.seriesNames[2]}</span> <span class="text-black"> ${filtersLibs.rupiah(series[2][dataPointIndex])}</p>
+          }) => {
+            let htmlRender = ''
+            const arrayData = [...w.globals.series]
+            arrayData.forEach((x, idx) => {
+              if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
+                htmlRender += ''
+              } else {
+                htmlRender += `<p
+                  class="my-0 mt-1"
+                  style="color: ${colorDefaultChart[idx]};"
+                >
+                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${filtersLibs.rupiah(x[dataPointIndex])}
+                </p>`
+              }
+            })
+
+            return `
+            <div
+              class="d-grid px-1 rounded align-items-center"
+            >
+              ${htmlRender}
               <br/>
-              <p class="my-0 text-green-600">${w.globals.seriesNames[1]}</span><span class="text-black"> ${filtersLibs.rupiah(series[1][dataPointIndex])}</p>
-              <br/>
-              <p class="my-0 text-warning">${w.globals.seriesNames[0]}</span><span class="text-black"> ${filtersLibs.rupiah(series[0][dataPointIndex])}</p>
             </div>
-            `,
+            `
+          },
         },
         legend: {
           position: 'top',
           horizontalAlign: 'left',
         },
-        colors: ['#FBA63C', '#34A770', '#08A0F7'],
+        colors: colorDefaultChart,
       },
       chartOptionsPartner: {
         chart: {
@@ -212,21 +230,48 @@ export default {
             seriesIndex,
             dataPointIndex,
             w,
-          }) => `
-            <div class="d-grid p-1 rounded">
-              <p class="my-0 text-blue-600">${w.globals.seriesNames[2]}</span> <span class="text-black"> ${filtersLibs.rupiah(series[2][dataPointIndex])}</p>
+          }) => {
+            // console.log('ini series', series)
+            // console.log('ini series index', seriesIndex)
+            // console.log('ini W', w)
+            // w.globals.collapsedSeriesIndices: Array number
+            // w.globals.collapsedSeries: Array Object
+            /*
+              {data: Array(7) [ 200, 400, 450, … ]
+              index: 3
+              type: "area"}
+            */
+
+            let htmlRender = ''
+            const arrayData = [...w.globals.series]
+            arrayData.forEach((x, idx) => {
+              if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
+                htmlRender += ''
+              } else {
+                htmlRender += `<p
+                  class="my-0 mt-1"
+                  style="color: ${colorDefaultChart[idx]};"
+                >
+                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${filtersLibs.rupiah(x[dataPointIndex])}
+                </p>`
+              }
+            })
+
+            return `
+            <div
+              class="d-grid px-1 rounded align-items-center"
+            >
+              ${htmlRender}
               <br/>
-              <p class="my-0 text-green-600">${w.globals.seriesNames[1]}</span><span class="text-black"> ${filtersLibs.rupiah(series[1][dataPointIndex])}</p>
-              <br/>
-              <p class="my-0 text-warning">${w.globals.seriesNames[0]}</span><span class="text-black"> ${filtersLibs.rupiah(series[0][dataPointIndex])}</p>
             </div>
-            `,
+            `
+          },
         },
         legend: {
           position: 'top',
           horizontalAlign: 'left',
         },
-        colors: ['#FBA63C', '#34A770', '#08A0F7', '#D3067B'],
+        colors: [...colorDefaultChart, '#D3067B'],
       },
       optionTopList: [
         {
@@ -360,10 +405,11 @@ export default {
     },
   },
   mounted() {
-    this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
-    this.fetchDataChart(typeOfCallingApi.chart.partner)
+    // this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+    // this.fetchDataChart(typeOfCallingApi.chart.partner)
     // this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
     // this.fetchDataTop(typeOfCallingApi.toplist.partner)
+    this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
   },
   methods: {
     fetchDataTop(type = '') {

@@ -168,10 +168,11 @@
           </b-col>
           <b-col cols="12">
             <vue-apex-charts
-              type="area"
-              height="400"
+              ref="chartPerformancePartner"
               :options="chartOptionsPartner"
               :series="seriespartner"
+              type="area"
+              height="400"
             />
           </b-col>
         </b-row>
