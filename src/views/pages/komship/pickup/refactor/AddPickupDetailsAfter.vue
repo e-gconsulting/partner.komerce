@@ -1063,7 +1063,10 @@
           :key="index+1"
           class="pdf-item"
         >
-          <b-container fluid>
+          <b-container
+            style="color:black;font-weight:600"
+            fluid
+          >
             <div
               class="border-black mx-auto text-xs"
               style="height:auto;padding:5px;margin:8px;"
@@ -1266,7 +1269,10 @@
           :key="index+1"
           class="flex align-items-center justify-content-center text-xs"
         >
-          <section class="pdf-item">
+          <section
+            style="color:black;font-weight:600"
+            class="pdf-item"
+          >
             <div
               class="border-black mx-auto text-md"
               style="height:auto;padding:5px;margin:8px;"
