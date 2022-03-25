@@ -38,30 +38,30 @@ export default {
     return {
       seriesekspedisi: [
         {
-          name: 'COD',
-          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+          name: 'Total',
+          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
         },
         {
           name: 'Non - COD',
           data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
         },
         {
-          name: 'Total',
-          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+          name: 'COD',
+          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
         },
       ],
       seriespartner: [
         {
-          name: 'COD',
-          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+          name: 'Total',
+          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
         },
         {
           name: 'Non - COD',
           data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
         },
         {
-          name: 'Total',
-          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+          name: 'COD',
+          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
         },
         {
           name: 'Order',
@@ -231,7 +231,7 @@ export default {
             dataPointIndex,
             w,
           }) => {
-            // console.log('ini series', series)
+            console.log('ini series', series)
             // console.log('ini series index', seriesIndex)
             // console.log('ini W', w)
             // w.globals.collapsedSeriesIndices: Array number
@@ -244,6 +244,7 @@ export default {
 
             let htmlRender = ''
             const arrayData = [...w.globals.series]
+            // console.log('w.globals ', w.globals)
             arrayData.forEach((x, idx) => {
               if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
                 htmlRender += ''
@@ -252,7 +253,7 @@ export default {
                   class="my-0 mt-1"
                   style="color: ${colorDefaultChart[idx]};"
                 >
-                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx].toLowerCase() === 'order' ? x[dataPointIndex] : filtersLibs.rupiah(x[dataPointIndex])}
+                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx].toLowerCase() === 'order' ? x[dataPointIndex] : filtersLibs.rupiah(x[dataPointIndex])}</span>${w.globals.seriesNames[idx] === 'Total' ? `<span class="text-gray-600"> (${w.globals.seriesNames[3]}: ${w.globals.collapsedSeries[0].data[dataPointIndex]}) </span>` : ''}
                 </p>`
               }
             })
@@ -270,8 +271,12 @@ export default {
         legend: {
           position: 'top',
           horizontalAlign: 'left',
+          inverseOrder: true,
         },
-        colors: [...colorDefaultChart, '#D3067B'],
+        colors: [...colorDefaultChart.reverse(), '#D3067B'],
+        noData: {
+          text: 'NO DATA',
+        },
       },
       optionTopList: [
         {
@@ -412,6 +417,19 @@ export default {
     this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
   },
   methods: {
+    clickLegendPartner(event, chartContext, config) {
+      if (config.globals.collapsedSeriesIndices.indexOf(3) !== -1) {
+        this.$refs.chartPerformancePartner.chart.hideSeries('Non - COD')
+        this.$refs.chartPerformancePartner.chart.hideSeries('Total')
+        this.$refs.chartPerformancePartner.chart.hideSeries('COD')
+        this.$refs.chartPerformancePartner.chart.showSeries('Order')
+      } else {
+        this.$refs.chartPerformancePartner.chart.showSeries('Non - COD')
+        this.$refs.chartPerformancePartner.chart.showSeries('Total')
+        this.$refs.chartPerformancePartner.chart.showSeries('COD')
+        this.$refs.chartPerformancePartner.chart.hideSeries('Order')
+      }
+    },
     fetchDataTop(type = '') {
       let endpoint = ''
       let dtbulan = ''
