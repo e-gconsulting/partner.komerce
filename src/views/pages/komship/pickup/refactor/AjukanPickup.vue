@@ -342,7 +342,7 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined"
+            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === ''"
             @click="showAlertSubmitPickup"
           >
             Ajukan Pickup
@@ -714,8 +714,6 @@ export default {
     onChangeDate() {
       this.dateLabel = this.changeDate(this.dateValue)
       this.changeDate(this.dateValue)
-      console.log('dateLabel', this.dateLabel)
-      console.log('dateValue', this.dateValue)
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
@@ -783,35 +781,37 @@ export default {
     },
     submitPickup() {
       this.$refs['modal-animate-pickup'].show()
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.selectedOrderToStore.length; x++) {
-        this.selectedOrdersId.push(this.selectedOrderToStore[x].order_id)
-      }
-      const params = {
-        partner_name: this.profile.user_fullname,
-        pickup_date: this.changeDate(this.dateValue, 2),
-        pickup_time: this.timeValue,
-        pic: this.namePic,
-        pic_phone: this.picPhone,
-        vehicle: this.chosenVehicle,
-        address_id: this.addressId,
-        address_detail: this.addressDetail,
-        orders: this.selectedOrdersId,
-      }
+      setTimeout(() => {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.selectedOrderToStore.length; x++) {
+          this.selectedOrdersId.push(this.selectedOrderToStore[x].order_id)
+        }
+        const params = {
+          partner_name: this.profile.user_fullname,
+          pickup_date: this.changeDate(this.dateValue, 2),
+          pickup_time: this.timeValue,
+          pic: this.namePic,
+          pic_phone: this.picPhone,
+          vehicle: this.chosenVehicle,
+          address_id: this.addressId,
+          address_detail: this.addressDetail,
+          orders: this.selectedOrdersId,
+        }
 
-      httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
-        .then(response => {
-          if (response.data.code !== 500) {
-            this.$refs['modal-animate-pickup'].hide()
-            this.$refs['modal-success-request-pickup'].show()
-          } else {
+        httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
+          .then(response => {
+            if (response.data.code !== 500) {
+              this.$refs['modal-animate-pickup'].hide()
+              this.$refs['modal-success-request-pickup'].show()
+            } else {
+              this.$refs['modal-animate-pickup'].hide()
+              this.$refs['modal-failed-request-pickup'].show()
+            }
+          }).catch(() => {
             this.$refs['modal-animate-pickup'].hide()
             this.$refs['modal-failed-request-pickup'].show()
-          }
-        }).catch(() => {
-          this.$refs['modal-animate-pickup'].hide()
-          this.$refs['modal-failed-request-pickup'].show()
-        })
+          })
+      }, 1500)
     },
     handleSubmitPopUpSuccess() {
       this.$refs['modal-success-request-pickup'].hide()
