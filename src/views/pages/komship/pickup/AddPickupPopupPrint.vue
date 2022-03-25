@@ -57,12 +57,25 @@
         />
       </section>
 
-      <b-button
-        class="submit-button-on-popup-pickup org-button"
-        @click="handleSubmit"
-      >
-        Print
-      </b-button>
+      <b-row class="justify-content-end pb-2 wrapper__handle__print__label">
+        <b-button
+          variant="primary"
+          class="mr-3 py-1 px-3"
+          @click="handleSubmit"
+        >
+          Print
+        </b-button>
+      </b-row>
+
+      <b-row class="justify-content-end pb-2 wrapper__handle__print__label__mobile">
+        <b-button
+          variant="primary"
+          class="mr-3 py-1 px-3"
+          @click="handleSubmitMobile"
+        >
+          Print
+        </b-button>
+      </b-row>
     </b-modal>
   </div>
 </template>
@@ -72,6 +85,7 @@ import {
   BModal,
   BButton,
   BIconXCircle,
+  BRow,
 } from 'bootstrap-vue'
 import AddPickupPrintPanel from './AddPickupPrintPanel.vue'
 
@@ -81,6 +95,7 @@ export default {
     BButton,
     BIconXCircle,
     AddPickupPrintPanel,
+    BRow,
   },
   props: {
     selectedOption: {
@@ -104,6 +119,10 @@ export default {
       this.handleHidePopup()
       this.$emit('onSubmitOption', this.selectedOptions)
     },
+    handleSubmitMobile() {
+      this.handleHidePopup()
+      this.$emit('onSubmitOptionMobile', this.selectedOptions)
+    },
     handleHidePopup() {
       this.$root.$emit('bv::hide::modal', 'modal-8')
     },
@@ -124,4 +143,23 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
   }
+
+  @media only screen and (max-width: 990px) {
+    #modal-8 .modal-dialog {
+      max-width: 100vw;
+    }
+  }
+
+    @media only screen and (min-width: 601px) {
+      [dir] .wrapper__handle__print__label__mobile {
+        display: none!important;
+      }
+    }
+
+  @media only screen and (max-width: 600px) {
+    [dir] .wrapper__handle__print__label {
+      display: none!important;
+    }
+  }
+
 </style>
