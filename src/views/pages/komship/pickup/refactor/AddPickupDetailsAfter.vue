@@ -1063,7 +1063,10 @@
           :key="index+1"
           class="pdf-item"
         >
-          <b-container fluid>
+          <b-container
+            style="color:black;font-weight:600"
+            fluid
+          >
             <div
               class="border-black mx-auto text-xs"
               style="height:auto;padding:5px;margin:8px;"
@@ -1266,7 +1269,10 @@
           :key="index+1"
           class="flex align-items-center justify-content-center text-xs"
         >
-          <section class="pdf-item">
+          <section
+            style="color:black;font-weight:600"
+            class="pdf-item"
+          >
             <div
               class="border-black mx-auto text-md"
               style="height:auto;padding:5px;margin:8px;"
@@ -1450,6 +1456,53 @@
     <b-row>
       <b-col
         cols="12"
+        class="mb-1"
+      >
+        <div
+          class="bg-light d-flex justify-content-center align-items-center p-50 rounded"
+        >
+          <span class="text-black mr-50">
+            List per halaman:
+          </span>
+          <b-button
+            v-for="page in optionsPage"
+            :key="page"
+            class="btn-icon"
+            size="sm"
+            :variant="totalPerPage === page ? 'primary' : 'flat-dark'"
+            @click="setPerPage(page)"
+          >
+            {{ page }}
+          </b-button>
+        </div>
+      </b-col>
+      <b-col
+        cols="12"
+        class="d-flex justify-content-end"
+      >
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          first-number
+          last-number
+          class="pagination-primary"
+        >
+          <template #prev-text>
+            <feather-icon
+              size="18"
+              icon="ChevronLeftIcon"
+            />
+          </template>
+          <template #next-text>
+            <feather-icon
+              size="18"
+              icon="ChevronRightIcon"
+            />
+          </template>
+        </b-pagination>
+      </b-col>
+      <!-- <b-col
+        cols="12"
         class="d-flex justify-content-between"
       >
         <div
@@ -1490,7 +1543,7 @@
             />
           </template>
         </b-pagination>
-      </b-col>
+      </b-col> -->
     </b-row>
   </b-card>
 </template>

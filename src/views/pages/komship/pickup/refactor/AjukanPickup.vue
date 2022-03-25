@@ -342,8 +342,8 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined"
-            @click="submitPickup"
+            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === ''"
+            @click="showAlertSubmitPickup"
           >
             Ajukan Pickup
           </b-button>
@@ -496,6 +496,62 @@
       </div>
     </b-modal>
 
+    <!-- Modal alert submit pickup -->
+    <b-modal
+      ref="modal-alert-submit-pickup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <div class="modal-add-pickup-popup-success">
+        <div class="image-wrapper">
+          <img src="@/@core/assets/image/icon-popup-warning.png">
+        </div>
+        <div class="text-wrapper mb-3 px-1">
+          Apakah kamu yakin untuk melakukan Pengajuan Pickup?
+          Kurir akan menuju ke lokasi penjemputan kamu
+        </div>
+        <b-row class="justify-content-center">
+          <b-button
+            variant="outline-primary"
+            class="mr-1"
+            @click="handleCloseAlertSubmit"
+          >
+            Batal
+          </b-button>
+          <b-button
+            variant="primary"
+            @click="submitNewPickup"
+          >
+            Ajukan Pickup
+          </b-button>
+        </b-row>
+      </div>
+    </b-modal>
+
+    <!-- Modal animate pickup -->
+    <b-modal
+      ref="modal-animate-pickup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <lottie-animation
+        path="animation/animate-submit-pickup.json"
+        :width="300"
+        :height="300"
+      />
+      <b-row
+        class="justify-content-center pb-2"
+      >
+        <h5 class="text-black">
+          <strong class="proses__pickup">
+            Memproses Pengajuan Pickup
+          </strong>
+        </h5>
+      </b-row>
+    </b-modal>
+
   </b-card>
 </template>
 
@@ -523,6 +579,7 @@ import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
+import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship from '../../setting-kompship/http_komship'
@@ -550,6 +607,7 @@ export default {
     BAvatar,
     BContainer,
     flatPickr,
+    LottieAnimation,
   },
   directives: {
     Ripple,
@@ -656,8 +714,6 @@ export default {
     onChangeDate() {
       this.dateLabel = this.changeDate(this.dateValue)
       this.changeDate(this.dateValue)
-      console.log('dateLabel', this.dateLabel)
-      console.log('dateValue', this.dateValue)
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
@@ -724,40 +780,38 @@ export default {
       })
     },
     submitPickup() {
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.selectedOrderToStore.length; x++) {
-        this.selectedOrdersId.push(this.selectedOrderToStore[x].order_id)
-      }
-      const params = {
-        partner_name: this.profile.user_fullname,
-        pickup_date: this.changeDate(this.dateValue, 2),
-        pickup_time: this.timeValue,
-        pic: this.namePic,
-        pic_phone: this.picPhone,
-        vehicle: this.chosenVehicle,
-        address_id: this.addressId,
-        address_detail: this.addressDetail,
-        orders: this.selectedOrdersId,
-      }
+      this.$refs['modal-animate-pickup'].show()
+      setTimeout(() => {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < this.selectedOrderToStore.length; x++) {
+          this.selectedOrdersId.push(this.selectedOrderToStore[x].order_id)
+        }
+        const params = {
+          partner_name: this.profile.user_fullname,
+          pickup_date: this.changeDate(this.dateValue, 2),
+          pickup_time: this.timeValue,
+          pic: this.namePic,
+          pic_phone: this.picPhone,
+          vehicle: this.chosenVehicle,
+          address_id: this.addressId,
+          address_detail: this.addressDetail,
+          orders: this.selectedOrdersId,
+        }
 
-      httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
-        .then(response => {
-          if (response.data.code !== 500) {
-            this.$refs['modal-success-request-pickup'].show()
-          } else {
+        httpKomship.post(`/v1/pickup/${this.profile.partner_id}/store`, params)
+          .then(response => {
+            if (response.data.code !== 500) {
+              this.$refs['modal-animate-pickup'].hide()
+              this.$refs['modal-success-request-pickup'].show()
+            } else {
+              this.$refs['modal-animate-pickup'].hide()
+              this.$refs['modal-failed-request-pickup'].show()
+            }
+          }).catch(() => {
+            this.$refs['modal-animate-pickup'].hide()
             this.$refs['modal-failed-request-pickup'].show()
-          }
-        }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal mengajukan pickup, silahkan coba lagi!',
-              variant: 'danger',
-            },
           })
-        })
+      }, 1500)
     },
     handleSubmitPopUpSuccess() {
       this.$refs['modal-success-request-pickup'].hide()
@@ -801,14 +855,48 @@ export default {
     openFlatPicker() {
       this.$refs.pickDate.fp.toggle()
     },
+    submitNewPickup() {
+      this.$refs['modal-alert-submit-pickup'].hide()
+      this.submitPickup()
+    },
+    handleCloseAlertSubmit() {
+      this.$refs['modal-alert-submit-pickup'].hide()
+    },
+    showAlertSubmitPickup() {
+      this.$refs['modal-alert-submit-pickup'].show()
+    },
   },
 }
 </script>
 
-<style>
-
-</style>
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
   @import '../add-pickup.scss';
+
+  .proses__pickup:after {
+    content: ' .';
+    animation: dots 1s steps(5, end) infinite;
+  }
+
+  @keyframes dots {
+    0%, 20% {
+      color: rgba(0,0,0,0);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    40% {
+      color: black;
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    60% {
+      text-shadow:
+        .25em 0 0 black,
+        .5em 0 0 rgba(0,0,0,0);}
+    80%, 100% {
+      text-shadow:
+        .25em 0 0 black,
+        .5em 0 0 black;}
+  }
+
 </style>

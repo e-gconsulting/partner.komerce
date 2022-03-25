@@ -890,15 +890,17 @@ export default {
       httpKomship.get(`/v1/origin?search=${data.origin_code}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
-        this.itemsOrigin.push(response.data.data[0])
-        const result = this.itemsOrigin.reduce((unique, o) => {
-          if (!unique.some(obj => obj.label === o.label && obj.value === o.value)) {
-            unique.push(o)
-          }
-          return unique
-        }, [])
-        this.tes = result
-      }).catch(() => {
+        if (response.data.data[0] !== undefined) {
+          this.itemsOrigin.push(response.data.data[0])
+          const result = this.itemsOrigin.reduce((unique, o) => {
+            if (!unique.some(obj => obj.label === o.label && obj.value === o.value)) {
+              unique.push(o)
+            }
+            return unique
+          }, [])
+          this.tes = result
+        }
+      }).catch(err => {
         this.$toast({
           component: ToastificationContent,
           props: {
