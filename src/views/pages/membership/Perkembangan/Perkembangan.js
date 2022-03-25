@@ -405,8 +405,8 @@ export default {
       // console.log(field, isDesc)
       this.paramsCallAPI = {
         ...this.paramsCallAPI,
-        sort_by: field,
-        ordered_by: isDesc,
+        sort_by: isDesc,
+        ordered_by: field,
       }
     },
     setperPage(pagedt) {
