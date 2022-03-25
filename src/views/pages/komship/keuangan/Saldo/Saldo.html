@@ -3,7 +3,7 @@
     Informasi Saldo
   </h1>
   <div class="row">
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-4 mb-1">
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
           <div class="d-flex align-items-center">
@@ -76,7 +76,7 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-4 mb-1">
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
           <div class="d-flex align-items-center">
@@ -106,7 +106,7 @@
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-4">
+    <div class="col-12 col-md-4 mb-1">
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
           <div class="d-flex align-items-center">
@@ -261,106 +261,108 @@
           </div>
         </div>
         <div class="card-body">
-          <table class="table table-borderless mt-3">
-            <thead>
-              <tr>
-                <th
-                  v-for="title in tableTitles"
-                  :key="title"
-                  class="
-                    h-text-sm
-                    transform-none
-                    h-text-dark
-                    bg-white
-                    h-border-bottom
-                    pb-2
+          <div class="table-responsive">
+            <table class="table table-borderless mt-3">
+              <thead>
+                <tr>
+                  <th
+                    v-for="title in tableTitles"
+                    :key="title"
+                    class="
+                      h-text-sm
+                      transform-none
+                      h-text-dark
+                      bg-white
+                      h-border-bottom
+                      pb-2
+                    "
+                    scope="col"
+                  >
+                    {{ title }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="h-text-xs font-weight-bold">
+                <tr
+                  v-for="riwayat in riwayatPenarikans"
+                  :key="riwayatPenarikans.indexOf(riwayat)"
+                  :class="
+                    'py-1' +
+                      (riwayatPenarikans.indexOf(riwayat) !=
+                        riwayatPenarikans.length - 1
+                        ? ' border-bottom'
+                        : '')
                   "
-                  scope="col"
                 >
-                  {{ title }}
-                </th>
-              </tr>
-            </thead>
-            <tbody class="h-text-xs font-weight-bold">
-              <tr
-                v-for="riwayat in riwayatPenarikans"
-                :key="riwayatPenarikans.indexOf(riwayat)"
-                :class="
-                  'py-1' +
-                    (riwayatPenarikans.indexOf(riwayat) !=
-                      riwayatPenarikans.length - 1
-                      ? ' border-bottom'
-                      : '')
-                "
-              >
-                <th>
-                  <p class="mb-0 h-text-dark">
-                    {{ riwayat.tanggal }}
-                  </p>
-                  <p class="mb-0">
-                    {{ riwayat.jam }}
-                  </p>
-                </th>
-                <td>
-                  <p class="mb-0 h-text-dark">
-                    {{ riwayat.tujuan.nama }} - {{ riwayat.tujuan.bank }}
-                  </p>
-                  <p class="mb-0">
-                    {{ riwayat.tujuan.noRek }}
-                  </p>
-                </td>
-                <td class="h-text-dark">
-                  <div
-                    v-if="riwayat.status==='completed'"
-                    class="text-success"
-                  >
-                    Disetujui
-                  </div>
-                  <div
-                    v-if="riwayat.status==='requested'"
-                    class="text-warning"
-                  >
-                    Perlu Disetujui
-                  </div>
-                  <div
-                    v-if="riwayat.status==='on_review'"
-                    class="text-warning"
-                  >
-                    Sedang Direview
-                  </div>
-                  <div
-                    v-if="riwayat.status==='rejected'"
-                    class="text-danger"
-                  >
-                    Ditolak
-                  </div>
-                  <div
-                    v-if="riwayat.status==='rejected'"
-                    class="text-danger"
-                  >
-                    Dibatalkan
-                  </div>
-                </td>
-                <!-- <td class="h-text-dark">
-                  {{ formatRupiah(riwayat.saldo) }}
-                </td> -->
-                <td class="h-text-dark">
-                  {{ formatRupiah(riwayat.jumlahPenarikan) }}
-                </td>
-                <!-- <td class="h-text-dark">
-                  {{ riwayat.sisaSaldo == null ? '-' : formatRupiah(riwayat.sisaSaldo) }}
-                </td> -->
-                <td>
-                  <a
-                    :href="'/keuangan/saldo/rincian/' + riwayat.id"
-                    class="text-info"
-                  >
-                    Lihat Detail
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <th>
+                    <p class="mb-0 h-text-dark">
+                      {{ riwayat.tanggal }}
+                    </p>
+                    <p class="mb-0">
+                      {{ riwayat.jam }}
+                    </p>
+                  </th>
+                  <td>
+                    <p class="mb-0 h-text-dark">
+                      {{ riwayat.tujuan.nama }} - {{ riwayat.tujuan.bank }}
+                    </p>
+                    <p class="mb-0">
+                      {{ riwayat.tujuan.noRek }}
+                    </p>
+                  </td>
+                  <td class="h-text-dark">
+                    <div
+                      v-if="riwayat.status==='completed'"
+                      class="text-success"
+                    >
+                      Disetujui
+                    </div>
+                    <div
+                      v-if="riwayat.status==='requested'"
+                      class="text-warning"
+                    >
+                      Perlu Disetujui
+                    </div>
+                    <div
+                      v-if="riwayat.status==='on_review'"
+                      class="text-warning"
+                    >
+                      Sedang Direview
+                    </div>
+                    <div
+                      v-if="riwayat.status==='rejected'"
+                      class="text-danger"
+                    >
+                      Ditolak
+                    </div>
+                    <div
+                      v-if="riwayat.status==='rejected'"
+                      class="text-danger"
+                    >
+                      Dibatalkan
+                    </div>
+                  </td>
+                  <!-- <td class="h-text-dark">
+                    {{ formatRupiah(riwayat.saldo) }}
+                  </td> -->
+                  <td class="h-text-dark">
+                    {{ formatRupiah(riwayat.jumlahPenarikan) }}
+                  </td>
+                  <!-- <td class="h-text-dark">
+                    {{ riwayat.sisaSaldo == null ? '-' : formatRupiah(riwayat.sisaSaldo) }}
+                  </td> -->
+                  <td>
+                    <a
+                      :href="'/keuangan/saldo/rincian/' + riwayat.id"
+                      class="text-info"
+                    >
+                      Lihat Detail
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <b-pagination
             v-model="table.currentPage"
             class="mt-2 float-right"
@@ -428,6 +430,10 @@
         class="btn btn-primary rounded-lg"
         @click="topUpSaldo()"
       >
+        <b-spinner
+          v-if="loadingSubmitTopup"
+          small
+        />
         Top Up Sekarang
       </button>
     </template>

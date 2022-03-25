@@ -232,6 +232,7 @@ export default {
           confirmButtonText: 'Oke',
           customClass: {
             confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+            popup: 'mr-2 ml-1',
           },
           buttonsStyling: false,
         })

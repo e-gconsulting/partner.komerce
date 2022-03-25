@@ -8,6 +8,7 @@ import {
   BFormSelect,
   BPagination,
   BRow,
+  BSpinner,
 } from 'bootstrap-vue'
 import { mapState, mapGetters } from 'vuex'
 import DateRangePicker from 'vue2-daterange-picker'
@@ -36,6 +37,7 @@ export default {
     BRow,
     BButton,
     CodeInput,
+    BSpinner,
   },
   data() {
     return {
@@ -76,6 +78,8 @@ export default {
       status: true,
       visibilityPin: 'password',
       resTarikSaldo: {},
+
+      loadingSubmitTopup: false,
     }
   },
   mounted() {
@@ -137,6 +141,7 @@ export default {
       this.$bvModal.show('modalTopUp')
     },
     async topUpSaldo() {
+      this.loadingSubmitTopup = true
       try {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
@@ -156,6 +161,7 @@ export default {
         })
         window.open(response.data.data.invoice_xendit_url, '_blank').focus()
         this.$refs['modal-after-topup'].show()
+        this.loadingSubmitTopup = false
       } catch (e) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
@@ -169,8 +175,10 @@ export default {
           },
           buttonsStyling: false,
         })
+        this.loadingSubmitTopup = false
       } finally {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
+        this.loadingSubmitTopup = false
       }
     },
     formatDate(d) {
