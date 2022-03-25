@@ -21,7 +21,7 @@ const typeOfCallingApi = {
   },
 }
 
-const colorDefaultChart = ['#FBA63C', '#34A770', '#08A0F7']
+const colorDefaultChart = ['#08A0F7', '#34A770', '#FBA63C']
 
 export default {
   components: {
@@ -162,6 +162,7 @@ export default {
         legend: {
           position: 'top',
           horizontalAlign: 'left',
+          inverseOrder: true,
         },
         colors: colorDefaultChart,
       },
@@ -273,7 +274,7 @@ export default {
           horizontalAlign: 'left',
           inverseOrder: true,
         },
-        colors: [...colorDefaultChart.reverse(), '#D3067B'],
+        colors: [...colorDefaultChart, '#D3067B'],
         noData: {
           text: 'NO DATA',
         },
