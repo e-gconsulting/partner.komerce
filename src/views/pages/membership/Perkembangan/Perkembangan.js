@@ -4,6 +4,7 @@ import {
   BSpinner,
   BCardBody,
 } from 'bootstrap-vue'
+import moment from 'moment'
 import filterLib from '@/libs/filters'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
@@ -11,6 +12,13 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 
 const formatDate = 'YYYY-MM-DDTHH:mm:ss\\Z'
 let timeoutCallApi = null
+const InitParamsAPI = {
+  start_date: moment().subtract(30, 'days').startOf('day').format(formatDate),
+  end_date: moment().endOf('day').format(formatDate),
+  page: null,
+  limits: 50,
+  search: null,
+}
 export default {
   components: {
     BTable,
@@ -242,12 +250,7 @@ export default {
           },
         },
       ],
-      paramsCallAPI: {
-        start_date: this.$moment().subtract(30, 'days').startOf('day').format(formatDate),
-        end_date: this.$moment().endOf('day').format(formatDate),
-        page: null,
-        limits: 50,
-      },
+      paramsCallAPI: InitParamsAPI,
       filteredItems: [],
     }
   },
@@ -274,6 +277,14 @@ export default {
       },
       deep: true,
     },
+    search: {
+      handler(val) {
+        this.paramsCallAPI = {
+          ...this.paramsCallAPI,
+          search: val,
+        }
+      },
+    },
     perPage: {
       handler(val) {
         this.search = ''
@@ -298,6 +309,7 @@ export default {
   },
   methods: {
     fetchData() {
+      // params dikasih sory_by=email dan order_by=asc atau desc ?
       this.isLoadTable = true
       clearTimeout(timeoutCallApi)
       this.$http_komship({
@@ -381,33 +393,44 @@ export default {
           break
       }
     },
-    onChangeSearch(dtsearch) {
-      if (dtsearch) {
-        const filteredData = [...this.items].filter(x => {
-          if (x.full_name.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-            return true
-          }
-          if (x.email.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-            return true
-          }
-          if (x.no_hp.indexOf(dtsearch) !== -1) {
-            return true
-          }
-          return false
-        })
-        this.filteredItems = filteredData
-      } else {
-        this.filteredItems = this.items
-      }
-    },
     onFiltered(filteredItems) {
+      console.log(filteredItems)
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
+    sortingChanged(ctx) {
+      const field = ctx.sortBy
+      const isDesc = ctx.sortDesc ? 'desc' : 'asc'
+      // console.log(field, isDesc)
+      this.paramsCallAPI = {
+        ...this.paramsCallAPI,
+        sort_by: isDesc,
+        ordered_by: field,
+      }
+    },
     setperPage(pagedt) {
       this.perPage = pagedt
     },
+    // onChangeSearch(dtsearch) {
+    //   if (dtsearch) {
+    //     const filteredData = [...this.items].filter(x => {
+    //       if (x.full_name.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
+    //         return true
+    //       }
+    //       if (x.email.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
+    //         return true
+    //       }
+    //       if (x.no_hp.indexOf(dtsearch) !== -1) {
+    //         return true
+    //       }
+    //       return false
+    //     })
+    //     this.filteredItems = filteredData
+    //   } else {
+    //     this.filteredItems = this.items
+    //   }
+    // },
   },
   destroyed() {
     clearTimeout(timeoutCallApi)

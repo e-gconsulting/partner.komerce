@@ -5,16 +5,17 @@ import {
   BButton,
   BFormGroup,
 } from 'bootstrap-vue'
-import moment from 'moment'
 import VSelect from 'vue-select'
 import VueApexCharts from 'vue-apexcharts'
 import VueMonthlyPicker from 'vue-monthly-picker'
-import {
-  firstDateOfMonth,
-  lastDateOfMonth,
-  formatYmd,
-} from '@/store/helpers'
 import filtersLibs from '@/libs/filters'
+
+const seriesNameChart = {
+  cod: 'COD',
+  noncod: 'Non - COD',
+  total: 'Total',
+  order: 'Order',
+}
 
 const typeOfCallingApi = {
   chart: {
@@ -26,6 +27,8 @@ const typeOfCallingApi = {
     partner: 'partner',
   },
 }
+
+const colorDefaultChart = ['#08A0F7', '#34A770', '#FBA63C']
 
 export default {
   components: {
@@ -40,19 +43,37 @@ export default {
   },
   data() {
     return {
-      series: [
-        {
-          name: 'COD',
-          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
-        },
-        {
-          name: 'Non - COD',
-          data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
-        },
-        {
-          name: 'Total',
-          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
-        },
+      seriesekspedisi: [
+        // {
+        //   name: seriesNameChart.total,
+        //   data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+        // },
+        // {
+        //   name: seriesNameChart.noncod,
+        //   data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
+        // },
+        // {
+        //   name: seriesNameChart.cod,
+        //   data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+        // },
+      ],
+      seriespartner: [
+        // {
+        //   name: seriesNameChart.total,
+        //   data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+        // },
+        // {
+        //   name: seriesNameChart.noncod,
+        //   data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
+        // },
+        // {
+        //   name: seriesNameChart.cod,
+        //   data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+        // },
+        // {
+        //   name: seriesNameChart.order,
+        //   data: [200, 400, 450, 300, 400, 500, 1000],
+        // },
       ],
       chartOptionsEkspedisi: {
         chart: {
@@ -88,10 +109,10 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#8e8da4',
+              colors: '#000000',
             },
             offsetX: 0,
-            formatter: val => `${val.toFixed(0) / 1000000} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -103,13 +124,13 @@ export default {
         xaxis: {
           type: 'datetime',
           tickAmount: 14,
-          min: moment().startOf('month').valueOf(),
-          max: moment().endOf('month').valueOf(),
-          // min: moment('2022-04-01').valueOf(),
-          // max: moment('2022-04-30').valueOf(),
+          min: this.$moment().startOf('month').valueOf(),
+          max: this.$moment().endOf('month').valueOf(),
+          // min: this.$moment('2022-04-01').valueOf(),
+          // max: this.$moment('2022-04-30').valueOf(),
           categories: ['2022-03-01T00:00:00.000', '2022-03-02T01:30:00.000', '2022-03-03T02:30:00.000', '2022-03-04T03:30:00.000', '2022-03-05T04:30:00.000', '2022-03-15T05:30:00.000', '2022-03-19T06:30:00.000'],
           labels: {
-            formatter: (val, timestamp) => moment(new Date(timestamp)).format('DD'),
+            formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
         },
         tooltip: {
@@ -119,21 +140,41 @@ export default {
             seriesIndex,
             dataPointIndex,
             w,
-          }) => `
-            <div class="d-grid p-1 rounded">
-              <p class="my-0 text-blue-600">${w.globals.seriesNames[2]}</span> <span class="text-black"> ${filtersLibs.rupiah(series[2][dataPointIndex])}</p>
+          }) => {
+            let htmlRender = ''
+            const arrayData = [...w.globals.series]
+            arrayData.forEach((x, idx) => {
+              if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
+                htmlRender += ''
+              } else {
+                htmlRender += `<p
+                  class="my-0 mt-1"
+                  style="color: ${colorDefaultChart[idx]};"
+                >
+                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${filtersLibs.rupiah(x[dataPointIndex])}
+                </p>`
+              }
+            })
+
+            return `
+            <div
+              class="d-grid px-1 rounded align-items-center"
+            >
+              ${htmlRender}
               <br/>
-              <p class="my-0 text-green-600">${w.globals.seriesNames[1]}</span><span class="text-black"> ${filtersLibs.rupiah(series[1][dataPointIndex])}</p>
-              <br/>
-              <p class="my-0 text-warning">${w.globals.seriesNames[0]}</span><span class="text-black"> ${filtersLibs.rupiah(series[0][dataPointIndex])}</p>
             </div>
-            `,
+            `
+          },
         },
         legend: {
           position: 'top',
           horizontalAlign: 'left',
+          inverseOrder: true,
         },
-        colors: ['orange', 'green', 'blue'],
+        colors: colorDefaultChart,
+        noData: {
+          text: 'NO DATA',
+        },
       },
       chartOptionsPartner: {
         chart: {
@@ -169,10 +210,10 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#8e8da4',
+              colors: '#000000',
             },
             offsetX: 0,
-            formatter: val => `${val.toFixed(0) / 1000000} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -184,13 +225,13 @@ export default {
         xaxis: {
           type: 'datetime',
           tickAmount: 14,
-          min: moment().startOf('month').valueOf(),
-          max: moment().endOf('month').valueOf(),
-          // min: moment('2022-04-01').valueOf(),
-          // max: moment('2022-04-30').valueOf(),
+          min: this.$moment().startOf('month').valueOf(),
+          max: this.$moment().endOf('month').valueOf(),
+          // min: this.$moment('2022-04-01').valueOf(),
+          // max: this.$moment('2022-04-30').valueOf(),
           categories: ['2022-03-01T00:00:00.000', '2022-03-02T01:30:00.000', '2022-03-03T02:30:00.000', '2022-03-04T03:30:00.000', '2022-03-05T04:30:00.000', '2022-03-15T05:30:00.000', '2022-03-19T06:30:00.000'],
           labels: {
-            formatter: (val, timestamp) => moment(new Date(timestamp)).format('DD'),
+            formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
         },
         tooltip: {
@@ -200,29 +241,61 @@ export default {
             seriesIndex,
             dataPointIndex,
             w,
-          }) => `
-            <div class="d-grid p-1 rounded">
-              <p class="my-0 text-blue-600">${w.globals.seriesNames[2]}</span> <span class="text-black"> ${filtersLibs.rupiah(series[2][dataPointIndex])}</p>
+          }) => {
+            // console.log('ini series', series)
+            // console.log('ini series index', seriesIndex)
+            // console.log('ini W', w)
+            // w.globals.collapsedSeriesIndices: Array number
+            // w.globals.collapsedSeries: Array Object
+            /*
+              {data: Array(7) [ 200, 400, 450, … ]
+              index: 3
+              type: "area"}
+            */
+
+            let htmlRender = ''
+            const arrayData = [...w.globals.series]
+            // console.log('w.globals ', w.globals)
+            arrayData.forEach((x, idx) => {
+              if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
+                htmlRender += ''
+              } else {
+                htmlRender += `<p
+                  class="my-0 mt-1"
+                  style="color: ${colorDefaultChart[idx]};"
+                >
+                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : filtersLibs.rupiah(x[dataPointIndex])}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> (${w.globals.seriesNames[3]}: ${w.globals.collapsedSeries[0].data[dataPointIndex]}) </span>` : ''}
+                </p>`
+              }
+            })
+
+            return `
+            <div
+              class="d-grid px-1 rounded align-items-center"
+            >
+              ${htmlRender}
               <br/>
-              <p class="my-0 text-green-600">${w.globals.seriesNames[1]}</span><span class="text-black"> ${filtersLibs.rupiah(series[1][dataPointIndex])}</p>
-              <br/>
-              <p class="my-0 text-warning">${w.globals.seriesNames[0]}</span><span class="text-black"> ${filtersLibs.rupiah(series[0][dataPointIndex])}</p>
             </div>
-            `,
+            `
+          },
         },
         legend: {
           position: 'top',
           horizontalAlign: 'left',
+          inverseOrder: true,
         },
-        colors: ['orange', 'green', 'blue'],
+        colors: [...colorDefaultChart, '#D3067B'],
+        noData: {
+          text: 'NO DATA',
+        },
       },
       optionTopList: [
         {
-          name: 'COD',
+          name: seriesNameChart.cod,
           value: 1,
         },
         {
-          name: 'Non-COD',
+          name: seriesNameChart.noncod,
           value: 2,
         },
         {
@@ -286,16 +359,16 @@ export default {
       },
       datatoplist: {
         ekspedisi: [
-          {
-            shipping: 'JNE',
-            shipping_cost: 22000,
-          },
+          // {
+          //   shipping: 'JNE',
+          //   shipping_cost: 22000,
+          // },
         ],
         partner: [
-          {
-            partner_name: 'iiskun',
-            transaction_cod: 112000,
-          },
+          // {
+          //   partner_name: 'iiskun',
+          //   transaction_cod: 112000,
+          // },
         ],
       },
     }
@@ -313,32 +386,32 @@ export default {
     },
     'filterdata.ekspedisi.toplist.selectOpt': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+        this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
       },
     },
     'filterdata.ekspedisi.toplist.bulan': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+        this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
       },
     },
     'filterdata.partner.chart.selectOpt': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataChart(typeOfCallingApi.chart.partner)
       },
     },
     'filterdata.partner.chart.bulan': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataChart(typeOfCallingApi.chart.partner)
       },
     },
     'filterdata.partner.toplist.selectOpt': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataTop(typeOfCallingApi.toplist.partner)
       },
     },
     'filterdata.partner.toplist.bulan': {
       handler(val) {
-        this.fetchDataChart(typeOfCallingApi.chart.toplist)
+        this.fetchDataTop(typeOfCallingApi.toplist.partner)
       },
     },
   },
@@ -348,37 +421,55 @@ export default {
     },
   },
   mounted() {
-    // this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
-    // this.fetchDataChart(typeOfCallingApi.chart.partner)
-    // this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
-    // this.fetchDataTop(typeOfCallingApi.toplist.partner)
+    this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+    this.fetchDataChart(typeOfCallingApi.chart.partner)
+    this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
+    this.fetchDataTop(typeOfCallingApi.toplist.partner)
+    this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
   },
   methods: {
+    clickLegendPartner(event, chartContext, config) {
+      if (config.globals.collapsedSeriesIndices.indexOf(3) !== -1) {
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.noncod)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.total)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.cod)
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.order)
+      } else {
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.noncod)
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.total)
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.cod)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.order)
+      }
+    },
     fetchDataTop(type = '') {
       let endpoint = ''
       let dtbulan = ''
       const params = {}
       switch (type.toLowerCase()) {
         case typeOfCallingApi.toplist.partner:
-          endpoint = '/dashboard/topPartnerTransaction'
+          endpoint = 'topPartnerTransaction'
           dtbulan = this.filterdata.partner.toplist.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.partner.toplist.selectOpt
+          params.payment_option = this.filterdata.partner.toplist.selectOpt.value
           break
         case typeOfCallingApi.toplist.ekspedisi:
-          endpoint = 'dashboardTopShippingExpeditors'
+          endpoint = 'topShippingExpeditors'
           dtbulan = this.filterdata.ekspedisi.toplist.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.ekspedisi.toplist.selectOpt
+          params.payment_option = this.filterdata.ekspedisi.toplist.selectOpt.value
           break
         default:
           break
       }
-      this.$http_komship.get(`/v1/admin/${endpoint}`, { params })
-        .then(res => {
-          console.log('response data: ', res)
+      this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
+        .then(({ data }) => {
+          if (type.toLowerCase() === typeOfCallingApi.toplist.ekspedisi) {
+            this.datatoplist[type.toLowerCase()] = data.data[Object.keys(data.data)[0]]
+          } else {
+            this.datatoplist[type.toLowerCase()] = data.data
+          }
         })
         .catch(e => console.log('error', e))
     },
@@ -395,21 +486,75 @@ export default {
           dtbulan = this.filterdata.partner.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.partner.chart.selectOpt
+          params.expedition_option = this.filterdata.partner.chart.selectOpt.value
           break
         case typeOfCallingApi.chart.ekspedisi:
           endpoint = 'shippingPerformancePerExpedition'
           dtbulan = this.filterdata.ekspedisi.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt
+          params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt.value
           break
         default:
           break
       }
       this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
         .then(({ data }) => {
-          console.log('response data: ', data)
+          switch (type) {
+            case typeOfCallingApi.chart.ekspedisi:
+              this[`series${type}`] = [
+                {
+                  name: seriesNameChart.cod,
+                  data: data.data.cod.map(x => x.total_cod),
+                },
+                {
+                  name: seriesNameChart.noncod,
+                  data: data.data.non_cod.map(x => x.total_noncod),
+                },
+                {
+                  name: seriesNameChart.total,
+                  data: data.data.total.map(x => x.total),
+                },
+              ]
+              this.chartOptionsEkspedisi = {
+                ...this.chartOptionsEkspedisi,
+                xaxis: {
+                  ...this.chartOptionsEkspedisi.xaxis,
+                  categories: data.data.total.map(x => x.day),
+                },
+              }
+              break
+            case typeOfCallingApi.chart.partner:
+              this[`series${type}`] = [
+                {
+                  name: seriesNameChart.cod,
+                  data: data.data.cod.map(x => x.total_cod),
+                },
+                {
+                  name: seriesNameChart.noncod,
+                  data: data.data.non_cod.map(x => x.total_noncod),
+                },
+                {
+                  name: seriesNameChart.total,
+                  data: data.data.total.map(x => x.total),
+                },
+                {
+                  name: seriesNameChart.order,
+                  data: data.data.total.map(x => x.total_order),
+                },
+              ]
+              this.chartOptionsPartner = {
+                ...this.chartOptionsPartner,
+                xaxis: {
+                  ...this.chartOptionsPartner.xaxis,
+                  categories: data.data.total.map(x => x.day),
+                },
+              }
+              break
+            default:
+              break
+          }
+          // console.log('response data: ', data)
         })
         .catch(e => console.log('error', e))
     },

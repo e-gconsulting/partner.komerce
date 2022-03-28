@@ -1,16 +1,28 @@
 <div>
-  <div
-    v-if="!loadingOnboarding"
-    class="container p-0">
-    <div v-if="saldo < 0" class="alert alert-primary p-1">Kamu memiliki orderan retur yang belum lunas,
-      <b-button variant="none" class="text-primary m-0 p-0 font-bold underline" to="/data-order?tab=retur"> Cek Orderan.</b-button>
-      Untuk melakukan tambah order kembali silahkan  <b-button variant="none" class="text-primary m-0 p-0 font-bold underline" @click="showTopUpModal()">Top Up</b-button> saldo.
+  <div v-if="!loadingOnboarding" class="container p-0">
+    <div v-if="saldo < 0" class="alert alert-primary p-1">
+      Kamu memiliki orderan retur yang belum lunas,
+      <b-button
+        variant="none"
+        class="text-primary m-0 p-0 font-bold underline"
+        to="/data-order?tab=retur"
+      >
+        Cek Orderan.</b-button
+      >
+      Untuk melakukan tambah order kembali silahkan
+      <b-button
+        variant="none"
+        class="text-primary m-0 p-0 font-bold underline"
+        @click="showTopUpModal()"
+        >Top Up</b-button
+      >
+      saldo.
     </div>
     <h1 class="mb-2 h-text-xl">
       Dashboard
     </h1>
     <div class="row">
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-4 mb-1">
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
@@ -46,10 +58,7 @@
               "
               @click="showTopUpModal()"
             >
-              <img
-                src="@/assets/images/icons/send-square.svg"
-                alt="Top Up"
-              >
+              <img src="@/assets/images/icons/send-square.svg" alt="Top Up" />
               <p class="saldo-texts mb-0">
                 Top Up
               </p>
@@ -66,7 +75,7 @@
               <img
                 src="@/assets/images/icons/receive-square.svg"
                 alt="Tarik Saldo"
-              >
+              />
               <p class="h-text-xs mb-0">Tarik Saldo</p>
             </a>
             <a
@@ -79,16 +88,13 @@
                 align-items-center
               "
             >
-              <img
-                src="@/assets/images/icons/document-text.svg"
-                alt="Detail"
-              >
+              <img src="@/assets/images/icons/document-text.svg" alt="Detail" />
               <p class="h-text-xs mb-0">Detail</p>
             </a>
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-4 mb-1">
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
@@ -110,7 +116,7 @@
               <img
                 src="@/assets/images/icons/arrow-square-right.svg"
                 alt="Arrow Right"
-              >
+              />
             </b-button>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -118,7 +124,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-4">
+      <div class="col-12 mb-1 md:mb-0 col-md-4">
         <div class="card h-100">
           <div class="card-header mb-8 pb-0">
             <div class="d-flex align-items-center">
@@ -211,7 +217,7 @@
                     <img
                       src="@/assets/images/icons/arrow-right-2.svg"
                       alt="Arrow Right"
-                    >
+                    />
                   </b-button>
                 </div>
               </div>
@@ -251,7 +257,7 @@
                     <img
                       src="@/assets/images/icons/arrow-right-2.svg"
                       alt="Arrow Right"
-                    >
+                    />
                   </b-button>
                 </div>
               </div>
@@ -279,9 +285,7 @@
               >
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="d-flex align-items-center">
-                    <b-avatar
-                      :src="topAdminOrder.photo"
-                    />
+                    <b-avatar :src="topAdminOrder.photo" />
                     <p class="list-text-1 h-text-dark ml-2 mb-0">
                       {{ topAdminOrder.name }}
                     </p>
@@ -324,7 +328,7 @@
               <img
                 src="@/assets/images/icons/arrow-square-right.svg"
                 alt="Arrow Right"
-              >
+              />
             </b-button>
           </div>
           <div class="card-body">
@@ -348,14 +352,16 @@
                   :key="produkTerlarises.indexOf(produkTerlaris)"
                   class="list-group-item px-0"
                 >
-                  <div class="d-flex justify-content-between align-items-center">
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
                     <div class="d-flex align-items-center">
                       <img
                         width="35"
                         class="img-fluid"
                         :src="produkTerlaris.photo"
                         alt="Photo"
-                      >
+                      />
                       <div>
                         <p class="list-text-1 h-text-dark ml-2 mb-0">
                           {{ produkTerlaris.name }}
@@ -376,19 +382,19 @@
                           } rounded-pill font-weight-normal`
                         "
                       >
-                        {{ produkTerlaris.persentase >= 0 ? '+' : ''
-                        }}{{ produkTerlaris.persentase }}%
+                        {{ produkTerlaris.persentase >= 0 ? '+' : '' }}{{
+                        produkTerlaris.persentase }}%
                       </div>
                       <img
                         v-if="produkTerlaris.persentase >= 0"
                         src="@/assets/images/icons/arrow-going-up-alt.svg"
                         alt="arrow-going-up-alt"
-                      >
+                      />
                       <img
                         v-else
                         src="@/assets/images/icons/arrow-going-down-alt.svg"
                         alt="arrow-going-down-alt"
-                      >
+                      />
                     </div>
                   </div>
                 </li>
@@ -424,7 +430,7 @@
               <img
                 src="@/assets/images/icons/arrow-square-right.svg"
                 alt="Arrow Right"
-              >
+              />
             </b-button>
           </div>
           <div class="card-body">
@@ -563,29 +569,22 @@
         <button class="btn btn-outline-primary">Tutup</button>
       </div>
     </div> -->
-    <b-modal
-      id="modalTopUp"
-      centered
-      hide-header
-    >
-      <a
-        href="#"
-        @click="closeModal()"
-      >
+    <b-modal id="modalTopUp" centered hide-header hide-footer modal-class="wrapper__modal__topup__saldo">
+      <a href="#" @click="closeModal()">
         <img
           src="@/assets/images/icons/close-circle.svg"
           height="18"
           width="18"
           alt="close"
           class="float-right"
-        >
+        />
       </a>
       <div class="p-1">
         <p class="text-center h-text-lg mb-2">
           Top Up Saldo
         </p>
       </div>
-      <form id="formTopUp">
+      <form id="formTopUp" class="mb-5">
         <div class="row align-items-center my-2">
           <div class="col-4">
             <p class="font-weight-bold h-text-sm h-text-dark mb-0">
@@ -609,24 +608,21 @@
           </b-form-group>
         </div>
       </form>
-      <template #modal-footer>
+      <b-row class="pb-1 justify-content-end mr-50 wrapper__action__topup">
         <button
-          class="btn btn-outline-primary rounded-lg"
+          class="btn btn-outline-primary rounded-lg btn-icon mr-1"
           @click="$bvModal.hide('modalTopUp')"
         >
           Batal
         </button>
         <button
-          class="btn btn-primary rounded-lg"
+          class="btn btn-primary rounded-lg btn-icon"
           @click="topUpSaldo()"
         >
-          <b-spinner
-            v-if="loadingSubmitTopUp"
-            small
-          />
+          <b-spinner v-if="loadingSubmitTopUp" small />
           Top Up Sekarang
         </button>
-      </template>
+      </b-row>
     </b-modal>
     <b-modal
       id="modal-keuangan"
@@ -637,23 +633,17 @@
       no-close-on-backdrop
       no-close-on-esc
     >
-      <a
-        href="#"
-        @click="closeModal()"
-      >
+      <a href="#" @click="closeModal()">
         <img
           src="@/assets/images/icons/close-circle.svg"
           height="18"
           width="18"
           alt="close"
           class="float-right"
-        >
+        />
       </a>
       <div class="p-1">
-        <p
-          id="modal-title"
-          class="text-center h-text-lg mb-2"
-        >
+        <p id="modal-title" class="text-center h-text-lg mb-2">
           {{ modalTitle }}
         </p>
         <div v-if="stepNow === 0">
@@ -701,11 +691,7 @@
                 :reduce="items => items.value"
                 :options="rekTujuanOptions"
               >
-                <span
-                  v-if="rekTujuanOptions.length === 0"
-                  slot="no-options"
-                >
-  
+                <span v-if="rekTujuanOptions.length === 0" slot="no-options">
                   Anda belum menambahkan rekening bank
                 </span>
               </b-form-select>
@@ -729,10 +715,7 @@
           </form>
         </div>
         <div v-if="stepNow === 1">
-          <form
-            ref="form2"
-            @submit.stop.prevent="handleSubmit(2)"
-          >
+          <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
             <p class="text-center h-text-dark font-weight-bold mb-2">
               Mohon verifikasi identitas kamu dengan memasukan PIN
             </p>
@@ -751,7 +734,7 @@
                 @complete="onComplete"
               />
             </b-row>
-  
+
             <b-col class="d-flex justify-content-center">
               <b-button
                 variant="flat-primary"
@@ -761,13 +744,10 @@
                 Tampilkan
               </b-button>
             </b-col>
-  
+
             <div class="col-12 mt-2">
               <div class="text-center">
-                <button
-                  type="submit"
-                  class="btn btn-primary d-block m-auto"
-                >
+                <button type="submit" class="btn btn-primary d-block m-auto">
                   Konfirmasi
                 </button>
                 <button
@@ -781,63 +761,53 @@
             </div>
           </form>
         </div>
-        <div
-          v-if="stepNow === 2 && status===true"
-          class="text-center"
-        >
+        <div v-if="stepNow === 2 && status===true" class="text-center">
           <b-row class="justify-content-center">
             <img
               src="@/assets/images/icons/success.svg"
               alt="success"
               class="text-center"
-            >
+            />
           </b-row>
           <p class="mt-2 h-text-md text-center">
             Penarikan Saldo Berhasil
           </p>
           <p class="h-text-dark font-weight-bold">
-            Saldo sebesar {{ nominal }} akan segera dikirim ke
-            rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
-            1x24 jam
+            Saldo sebesar {{ nominal }} akan segera dikirim ke rekening atas
+            nama {{ rekening.nama }} - {{ rekening.bank }} dalam 1x24 jam
           </p>
         </div>
-        <div
-        v-if="stepNow === 2 && status===false"
-        class="text-center"
-      >
-        <b-row class="justify-content-center">
-          <img
-            src="@/assets/images/icons/fail.svg"
-            alt="fail"
-            class="text-center"
-          >
-        </b-row>
-        <p class="mt-2 h-text-md text-center">
-          Penarikan Saldo Gagal
-        </p>
-        <p class="h-text-dark font-weight-bold">
-          Maaf, kamu tidak dapat melakukan penarikan saldo dikarenakan nominal penarikan melebihi saldo utama anda.
-        </p>
-      </div>
+        <div v-if="stepNow === 2 && status===false" class="text-center">
+          <b-row class="justify-content-center">
+            <img
+              src="@/assets/images/icons/fail.svg"
+              alt="fail"
+              class="text-center"
+            />
+          </b-row>
+          <p class="mt-2 h-text-md text-center">
+            Penarikan Saldo Gagal
+          </p>
+          <p class="h-text-dark font-weight-bold">
+            Maaf, kamu tidak dapat melakukan penarikan saldo dikarenakan nominal
+            penarikan melebihi saldo utama anda.
+          </p>
+        </div>
       </div>
     </b-modal>
     <!-- modal after topup -->
-    <b-modal
-      ref="modal-after-topup"
-      hide-footer
-      hide-header
-      centered
-    >
+    <b-modal ref="modal-after-topup" hide-footer hide-header centered>
       <div class="modal-add-pickup-popup-success">
         <b-row class="justify-content-center mb-1 pt-1">
-          <img src="@/assets/images/icons/warning.svg">
+          <img src="@/assets/images/icons/warning.svg" />
         </b-row>
         <b-row class="text-center px-2 mb-1">
           <p>
-            Silahkan selesaikan pembayaran terlebih dahulu untuk memastikan proses Top Up Saldo Berhasil
+            Silahkan selesaikan pembayaran terlebih dahulu untuk memastikan
+            proses Top Up Saldo Berhasil
           </p>
         </b-row>
-        <b-row class="justify-content-center mb-1">
+        <b-row class="text-center mb-1">
           <h5 class="text-black">
             <strong>
               Sudah menyelesaikan pembayaran?
@@ -856,15 +826,10 @@
         </b-row>
       </div>
     </b-modal>
-    <b-modal
-      id="modal-notif-rekTujuanBlmAda"
-      hide-footer
-      hide-header
-      centered
-    >
+    <b-modal id="modal-notif-rekTujuanBlmAda" hide-footer hide-header centered>
       <div class="modal-add-pickup-popup-success">
         <b-row class="justify-content-center mb-1 pt-1">
-          <img src="@/assets/images/icons/warning.svg">
+          <img src="@/assets/images/icons/warning.svg" />
         </b-row>
         <b-row class="text-center px-4 mb-1">
           <p>
@@ -884,10 +849,7 @@
       </div>
     </b-modal>
   </div>
-  <div
-    v-else
-    class="d-flex justify-content-center"
-  >
+  <div v-else class="d-flex justify-content-center">
     <b-spinner variant="primary" label="Loading..." />
   </div>
   <!-- MODAL ONBOARDING -->
@@ -903,15 +865,18 @@
     size="lg"
   >
     <!-- STEP 1 -->
-    <div
-      v-if="stepped === 1"
-      class="modalOnboarding"
-    >
+    <div v-if="stepped === 1" class="modalOnboarding">
       <div class="modalOnboarding__step1--greeting">
-        <h5 class="modalOnboarding__step1--title my-0 text-black">Halo, Selamat datang di Komship!</h5>
-        <p class="modalOnboarding__step1--subtitle mt-1 mb-1">Yuk coba lakukan transaksi pertamamu di Komship dengan 
-          3 langkah dan dapatkan berbagai benefitnya</p>
-        <p class="modalOnboarding__step1--subtitle my-0">Sebelum memulai, pastikan kamu mengikuti arahan kami ya...</p>
+        <h5 class="modalOnboarding__step1--title my-0 text-black">
+          Halo, Selamat datang di Komship!
+        </h5>
+        <p class="modalOnboarding__step1--subtitle mt-1 mb-1">
+          Yuk coba lakukan transaksi pertamamu di Komship dengan 3 langkah dan
+          dapatkan berbagai benefitnya
+        </p>
+        <p class="modalOnboarding__step1--subtitle my-0">
+          Sebelum memulai, pastikan kamu mengikuti arahan kami ya...
+        </p>
       </div>
       <div class="modalOnboarding__step1--wrapLangkah">
         <div class="modalOnboarding__step1--wrapperbox">
@@ -926,10 +891,7 @@
           <h5 class="modalOnboarding__step1--boxdesc">Menambahkan Produk</h5>
         </div>
         <div class="modalOnboarding__step1--icon">
-          <feather-icon
-            icon="ChevronRightIcon"
-            size="2x"
-          />
+          <feather-icon icon="ChevronRightIcon" size="2x" />
         </div>
         <div class="modalOnboarding__step1--wrapperbox">
           <div class="modalOnboarding__step1--box">
@@ -944,10 +906,7 @@
         </div>
 
         <div class="modalOnboarding__step1--icon">
-          <feather-icon
-            icon="ChevronRightIcon"
-            size="2x"
-          />
+          <feather-icon icon="ChevronRightIcon" size="2x" />
         </div>
         <div class="modalOnboarding__step1--wrapperbox">
           <div class="modalOnboarding__step1--box">
@@ -962,7 +921,9 @@
         </div>
       </div>
       <div class="modalOnboarding__step1--wrapperNavStep">
-        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <p class="my-0 modalOnboarding__step1--navtext">
+          {{ stepped }}/{{ maxStepOnboard }}
+        </p>
         <b-button
           variant="contained-primary"
           @click="handleStepOnboard(2)"
@@ -980,10 +941,7 @@
       </div>
     </div>
     <!-- STEP 2 -->
-    <div
-      v-if="stepped === 2"
-      class="modalOnboarding"
-    >
+    <div v-if="stepped === 2" class="modalOnboarding">
       <div class="modalOnboarding__step2--box">
         <lottie-animation
           path="animation/menambah_produk.json"
@@ -992,18 +950,35 @@
           :height="200"
         />
       </div>
-      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title text-black">Tambahkan Produk</h3>
+      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title text-black">
+        Tambahkan Produk
+      </h3>
       <div class="modalOnboarding__step2--body">
-        <h5 class="modalOnboarding__step2--bodyText1">Ikuti langkah di bawah ini :</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">1. Pergi ke menu Produk.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">2. Lengkapi from untuk menambah Produk kamu.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">3. Jangan lupa untuk memeriksa ulang data yang telah dimasukan.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">4. Jika sudah, lalu klik simpan.</h5>
-        <h5 class="modalOnboarding__step2--bodyText3">Selamat, kamu berhasil menambahkan produk pertama kamu.
-          Di menu produk kamu dapat memantau penjualan setiap produk dan melihat produk paling laris.</h5>
+        <h5 class="modalOnboarding__step2--bodyText1">
+          Ikuti langkah di bawah ini :
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          1. Pergi ke menu Produk.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          2. Lengkapi from untuk menambah Produk kamu.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          3. Jangan lupa untuk memeriksa ulang data yang telah dimasukan.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          4. Jika sudah, lalu klik simpan.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText3">
+          Selamat, kamu berhasil menambahkan produk pertama kamu. Di menu produk
+          kamu dapat memantau penjualan setiap produk dan melihat produk paling
+          laris.
+        </h5>
       </div>
       <div class="modalOnboarding__step1--wrapperNavStep">
-        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <p class="my-0 modalOnboarding__step1--navtext">
+          {{ stepped }}/{{ maxStepOnboard }}
+        </p>
         <b-button
           variant="contained-primary"
           @click="handleStepOnboard(3)"
@@ -1021,10 +996,7 @@
       </div>
     </div>
     <!-- STEP 3 -->
-    <div
-      v-if="stepped === 3"
-      class="modalOnboarding"
-    >
+    <div v-if="stepped === 3" class="modalOnboarding">
       <div class="modalOnboarding__step2--box">
         <lottie-animation
           path="animation/membuat_order.json"
@@ -1033,21 +1005,42 @@
           :height="200"
         />
       </div>
-      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title text-black">Membuat Orderan</h3>
+      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title text-black">
+        Membuat Orderan
+      </h3>
       <div class="modalOnboarding__step2--body">
-        <h5 class="modalOnboarding__step2--bodyText1">Ikuti langkah di bawah ini :</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">1. Pergi ke menu Orderku.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">2. Pilih tanggal orderan kamu, tanggal ini digunakan untuk menandai orderan kamu. </h5>
-        <h5 class="modalOnboarding__step2--bodyText2">3. Pilih produk yang ingin kamu buat ordernya.</h5>
+        <h5 class="modalOnboarding__step2--bodyText1">
+          Ikuti langkah di bawah ini :
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          1. Pergi ke menu Orderku.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          2. Pilih tanggal orderan kamu, tanggal ini digunakan untuk menandai
+          orderan kamu.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          3. Pilih produk yang ingin kamu buat ordernya.
+        </h5>
         <h5 class="modalOnboarding__step2--bodyText2">4. Klik lanjutkan.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">5. Lengkapi form pengiriman orderan.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">6. Cek kembali form pengirimannya.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">7. klik Submit, Untuk membuat orderan.</h5>
-        <h5 class="modalOnboarding__step2--bodyText3">Orderan kamu berhasil dibuat!
-          Langkah selanjutnya adalah ajukan pickup agar paket orderanmu dijemput kurir.</h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          5. Lengkapi form pengiriman orderan.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          6. Cek kembali form pengirimannya.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          7. klik Submit, Untuk membuat orderan.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText3">
+          Orderan kamu berhasil dibuat! Langkah selanjutnya adalah ajukan pickup
+          agar paket orderanmu dijemput kurir.
+        </h5>
       </div>
       <div class="modalOnboarding__step1--wrapperNavStep">
-        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <p class="my-0 modalOnboarding__step1--navtext">
+          {{ stepped }}/{{ maxStepOnboard }}
+        </p>
         <b-button
           variant="contained-primary"
           @click="handleStepOnboard(4)"
@@ -1065,10 +1058,7 @@
       </div>
     </div>
     <!-- STEP 4 -->
-    <div
-      v-if="stepped === 4"
-      class="modalOnboarding"
-    >
+    <div v-if="stepped === 4" class="modalOnboarding">
       <div class="modalOnboarding__step2--box">
         <lottie-animation
           path="animation/ajukanpickup.json"
@@ -1077,20 +1067,40 @@
           :height="200"
         />
       </div>
-      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title text-black">Ajukan Pickup Orderan</h3>
+      <h3 class="mt-2 mb-0 modalOnBoarding__step2--title text-black">
+        Ajukan Pickup Orderan
+      </h3>
       <div class="modalOnboarding__step2--body">
-        <h5 class="modalOnboarding__step2--bodyText1">Ikuti langkah di bawah ini :</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">1. Pergi ke menu Pickup dan klik Ajukan Pickup</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">2. Pilih gudang yang sudah kamu tentukan untuk pengiriman orderan.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">3. Tentukan waktu pickup.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">4. Pilih jenis kendaraan pickup.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">5. Pilih Orderan  mana yang ingin kamu pickup.</h5>
-        <h5 class="modalOnboarding__step2--bodyText2">6. Lalu klik Ajukan Pickup</h5>
-        <h5 class="modalOnboarding__step2--bodyText3">Ajukan Pickup berhasil dan kamu melakukan label di menu Riwayat Pickup.
-          Pastikan semua orderan sudah siap untuk dikirim yaa!</h5>
+        <h5 class="modalOnboarding__step2--bodyText1">
+          Ikuti langkah di bawah ini :
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          1. Pergi ke menu Pickup dan klik Ajukan Pickup
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          2. Pilih gudang yang sudah kamu tentukan untuk pengiriman orderan.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          3. Tentukan waktu pickup.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          4. Pilih jenis kendaraan pickup.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          5. Pilih Orderan mana yang ingin kamu pickup.
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText2">
+          6. Lalu klik Ajukan Pickup
+        </h5>
+        <h5 class="modalOnboarding__step2--bodyText3">
+          Ajukan Pickup berhasil dan kamu melakukan label di menu Riwayat
+          Pickup. Pastikan semua orderan sudah siap untuk dikirim yaa!
+        </h5>
       </div>
       <div class="modalOnboarding__step1--wrapperNavStep">
-        <p class="my-0 modalOnboarding__step1--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <p class="my-0 modalOnboarding__step1--navtext">
+          {{ stepped }}/{{ maxStepOnboard }}
+        </p>
         <b-button
           variant="contained-primary"
           @click="handleStepOnboard(5)"
@@ -1108,10 +1118,7 @@
       </div>
     </div>
     <!-- STEP 5 -->
-    <div
-      v-if="stepped === 5"
-      class="modalOnboarding"
-    >
+    <div v-if="stepped === 5" class="modalOnboarding">
       <div class="modalOnboarding__step5--body">
         <h3 class="modalOnboarding__step5--title">Ayo Mulai Pakai Komship !</h3>
         <div class="modalOnboarding__step5--box">
@@ -1122,11 +1129,16 @@
             :height="200"
           />
         </div>
-        <h5 class="modalOnboarding__step5--bodyText2">Selanjutnya kamu dapat langsung menggunakan layanan Komship dan dapatkan segudang benefitnya.
-          Jika mengalami kesulitan. Jangan ragu untuk bertanya ke Customer Support kami melalui Live Chat ya...</h5>
+        <h5 class="modalOnboarding__step5--bodyText2">
+          Selanjutnya kamu dapat langsung menggunakan layanan Komship dan
+          dapatkan segudang benefitnya. Jika mengalami kesulitan. Jangan ragu
+          untuk bertanya ke Customer Support kami melalui Live Chat ya...
+        </h5>
       </div>
       <div class="modalOnboarding__step5--wrapperNavStep">
-        <p class="my-0 modalOnboarding__step5--navtext">{{ stepped }}/{{ maxStepOnboard }}</p>
+        <p class="my-0 modalOnboarding__step5--navtext">
+          {{ stepped }}/{{ maxStepOnboard }}
+        </p>
         <b-button
           variant="contained-primary"
           @click="handleStepOnboard('endsteponboarding')"

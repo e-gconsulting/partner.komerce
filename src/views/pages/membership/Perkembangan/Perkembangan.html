@@ -127,7 +127,6 @@
                   type="search"
                   placeholder="Search"
                   debounce="500"
-                  @input="onChangeSearch"
                 />
               </b-input-group>
             </b-form-group>
@@ -144,12 +143,11 @@
           :items="filteredItems"
           :busy="isLoadTable"
           :fields="fields"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :sort-direction="sortDirection"
+          :no-local-sorting="true"
           :filter="filter"
           :filter-included-fields="filterOn"
           @filtered="onFiltered"
+          @sort-changed="sortingChanged"
         >
           <template #head()="scope">
             <div class="text-nowrap">
