@@ -8,6 +8,7 @@ import {
   BFormSelect,
   BPagination,
   BRow,
+  BSpinner,
 } from 'bootstrap-vue'
 import { mapState, mapGetters } from 'vuex'
 import DateRangePicker from 'vue2-daterange-picker'
@@ -36,6 +37,7 @@ export default {
     BRow,
     BButton,
     CodeInput,
+    BSpinner,
   },
   data() {
     return {
@@ -76,6 +78,7 @@ export default {
       status: true,
       visibilityPin: 'password',
       resTarikSaldo: {},
+      loadingSubmitTopUp: false,
     }
   },
   mounted() {
@@ -137,25 +140,14 @@ export default {
       this.$bvModal.show('modalTopUp')
     },
     async topUpSaldo() {
+      this.loadingSubmitTopUp = true
       try {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
-        await this.$swal({
-          title:
-            '<span class="font-weight-bold h4">Top Up Saldo Berhasil</span>',
-          text: `Top Up sebesar ${this.formatRupiah(
-            response.data.data.amount,
-          )} berhasil. Silahkan Melakukan Pembayaran.`,
-          imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-          confirmButtonText: 'Buka Invoice',
-          customClass: {
-            confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-          },
-          buttonsStyling: false,
-        })
         window.open(response.data.data.invoice_xendit_url, '_blank').focus()
         this.$refs['modal-after-topup'].show()
+        this.loadingSubmitTopUp = false
       } catch (e) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
@@ -166,11 +158,14 @@ export default {
           confirmButtonText: 'Oke',
           customClass: {
             confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+            popup: 'mr-2 ml-1',
           },
           buttonsStyling: false,
         })
+        this.loadingSubmitTopUp = false
       } finally {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
+        this.loadingSubmitTopUp = false
       }
     },
     formatDate(d) {
@@ -259,6 +254,7 @@ export default {
                   confirmButtonText: 'Oke',
                   customClass: {
                     confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                    popup: 'mr-2 ml-1',
                   },
                   buttonsStyling: false,
                 })
@@ -277,6 +273,7 @@ export default {
               confirmButtonText: 'Oke',
               customClass: {
                 confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                popup: 'mr-2 ml-1',
               },
               buttonsStyling: false,
             })
@@ -355,6 +352,7 @@ export default {
         confirmButtonText: 'Oke',
         customClass: {
           confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+          popup: 'mr-2 ml-1',
         },
         buttonsStyling: false,
       })

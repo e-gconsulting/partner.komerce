@@ -32,9 +32,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.ekspedisi.chart.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionChart"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -55,7 +55,7 @@
               type="area"
               height="400"
               :options="chartOptionsEkspedisi"
-              :series="series"
+              :series="seriesekspedisi"
             />
           </b-col>
         </b-row>
@@ -79,9 +79,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.ekspedisi.toplist.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionTopList"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -92,16 +92,17 @@
                   dateFormat="MMM YYYY"
                   placeHolder="Pilih Bulan"
                   class="datepickerClass"
+                  style="height: 38px;"
                 >
                 </vue-monthly-picker>
               </div>
             </div>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="12" class="card__wrapper--toplist">
             <div
               v-for="(datatopekspedisi, idxtopekspedisi) in datatoplist.ekspedisi"
               :key="idxtopekspedisi"
-              class="d-flex align-items-center justify-content-between">
+              class="d-flex align-items-center justify-content-between mb-1">
               <div class="d-flex align-items-center">
                 <img
                   src="@/assets/images/icons/profile-placehold.svg"
@@ -147,9 +148,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.partner.chart.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionChart"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -167,10 +168,12 @@
           </b-col>
           <b-col cols="12">
             <vue-apex-charts
+              ref="chartPerformancePartner"
+              :options="chartOptionsPartner"
+              :series="seriespartner"
+              @click="clickLegendPartner"
               type="area"
               height="400"
-              :options="chartOptionsPartner"
-              :series="series"
             />
           </b-col>
         </b-row>
@@ -194,9 +197,9 @@
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.partner.toplist.selectOpt"
-                  label="name"
-                  style="min-width: 100px;"
                   :options="optionTopList"
+                  label="name"
+                  class="element__vueselect"
                 />
               </b-form-group>
               <div>
@@ -212,11 +215,11 @@
               </div>
             </div>
           </b-col>
-          <b-col cols="12">
+          <b-col cols="12" class="card__wrapper--toplist">
             <div
               v-for="(datatoppartner, idxtoppartner) in datatoplist.partner"
               :key="idxtoppartner"
-              class="d-flex align-items-center justify-content-between">
+              class="d-flex align-items-center justify-content-between mb-1">
               <div class="d-flex align-items-center">
                 <img
                   src="@/assets/images/icons/profile-placehold.svg"
