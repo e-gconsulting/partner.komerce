@@ -10,6 +10,13 @@ import VueApexCharts from 'vue-apexcharts'
 import VueMonthlyPicker from 'vue-monthly-picker'
 import filtersLibs from '@/libs/filters'
 
+const seriesNameChart = {
+  cod: 'COD',
+  noncod: 'Non - COD',
+  total: 'Total',
+  order: 'Order',
+}
+
 const typeOfCallingApi = {
   chart: {
     ekspedisi: 'ekspedisi',
@@ -21,7 +28,7 @@ const typeOfCallingApi = {
   },
 }
 
-const colorDefaultChart = ['#FBA63C', '#34A770', '#08A0F7']
+const colorDefaultChart = ['#08A0F7', '#34A770', '#FBA63C']
 
 export default {
   components: {
@@ -37,36 +44,36 @@ export default {
   data() {
     return {
       seriesekspedisi: [
-        {
-          name: 'COD',
-          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
-        },
-        {
-          name: 'Non - COD',
-          data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
-        },
-        {
-          name: 'Total',
-          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
-        },
+        // {
+        //   name: seriesNameChart.total,
+        //   data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+        // },
+        // {
+        //   name: seriesNameChart.noncod,
+        //   data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
+        // },
+        // {
+        //   name: seriesNameChart.cod,
+        //   data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+        // },
       ],
       seriespartner: [
-        {
-          name: 'COD',
-          data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
-        },
-        {
-          name: 'Non - COD',
-          data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
-        },
-        {
-          name: 'Total',
-          data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
-        },
-        {
-          name: 'Order',
-          data: [200, 400, 450, 300, 400, 500, 1000],
-        },
+        // {
+        //   name: seriesNameChart.total,
+        //   data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
+        // },
+        // {
+        //   name: seriesNameChart.noncod,
+        //   data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
+        // },
+        // {
+        //   name: seriesNameChart.cod,
+        //   data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
+        // },
+        // {
+        //   name: seriesNameChart.order,
+        //   data: [200, 400, 450, 300, 400, 500, 1000],
+        // },
       ],
       chartOptionsEkspedisi: {
         chart: {
@@ -102,7 +109,7 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#8e8da4',
+              colors: '#000000',
             },
             offsetX: 0,
             formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
@@ -162,8 +169,12 @@ export default {
         legend: {
           position: 'top',
           horizontalAlign: 'left',
+          inverseOrder: true,
         },
         colors: colorDefaultChart,
+        noData: {
+          text: 'NO DATA',
+        },
       },
       chartOptionsPartner: {
         chart: {
@@ -199,7 +210,7 @@ export default {
         yaxis: {
           labels: {
             style: {
-              colors: '#8e8da4',
+              colors: '#000000',
             },
             offsetX: 0,
             formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
@@ -244,6 +255,7 @@ export default {
 
             let htmlRender = ''
             const arrayData = [...w.globals.series]
+            // console.log('w.globals ', w.globals)
             arrayData.forEach((x, idx) => {
               if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
                 htmlRender += ''
@@ -252,7 +264,7 @@ export default {
                   class="my-0 mt-1"
                   style="color: ${colorDefaultChart[idx]};"
                 >
-                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${filtersLibs.rupiah(x[dataPointIndex])}
+                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : filtersLibs.rupiah(x[dataPointIndex])}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> (${w.globals.seriesNames[3]}: ${w.globals.collapsedSeries[0].data[dataPointIndex]}) </span>` : ''}
                 </p>`
               }
             })
@@ -270,16 +282,20 @@ export default {
         legend: {
           position: 'top',
           horizontalAlign: 'left',
+          inverseOrder: true,
         },
         colors: [...colorDefaultChart, '#D3067B'],
+        noData: {
+          text: 'NO DATA',
+        },
       },
       optionTopList: [
         {
-          name: 'COD',
+          name: seriesNameChart.cod,
           value: 1,
         },
         {
-          name: 'Non-COD',
+          name: seriesNameChart.noncod,
           value: 2,
         },
         {
@@ -405,13 +421,26 @@ export default {
     },
   },
   mounted() {
-    // this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
-    // this.fetchDataChart(typeOfCallingApi.chart.partner)
+    this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+    this.fetchDataChart(typeOfCallingApi.chart.partner)
     this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
     this.fetchDataTop(typeOfCallingApi.toplist.partner)
     this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
   },
   methods: {
+    clickLegendPartner(event, chartContext, config) {
+      if (config.globals.collapsedSeriesIndices.indexOf(3) !== -1) {
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.noncod)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.total)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.cod)
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.order)
+      } else {
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.noncod)
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.total)
+        this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.cod)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.order)
+      }
+    },
     fetchDataTop(type = '') {
       let endpoint = ''
       let dtbulan = ''
@@ -471,21 +500,61 @@ export default {
       }
       this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
         .then(({ data }) => {
+          switch (type) {
+            case typeOfCallingApi.chart.ekspedisi:
+              this[`series${type}`] = [
+                {
+                  name: seriesNameChart.cod,
+                  data: data.data.cod.map(x => x.total_cod),
+                },
+                {
+                  name: seriesNameChart.noncod,
+                  data: data.data.non_cod.map(x => x.total_noncod),
+                },
+                {
+                  name: seriesNameChart.total,
+                  data: data.data.total.map(x => x.total),
+                },
+              ]
+              this.chartOptionsEkspedisi = {
+                ...this.chartOptionsEkspedisi,
+                xaxis: {
+                  ...this.chartOptionsEkspedisi.xaxis,
+                  categories: data.data.total.map(x => x.day),
+                },
+              }
+              break
+            case typeOfCallingApi.chart.partner:
+              this[`series${type}`] = [
+                {
+                  name: seriesNameChart.cod,
+                  data: data.data.cod.map(x => x.total_cod),
+                },
+                {
+                  name: seriesNameChart.noncod,
+                  data: data.data.non_cod.map(x => x.total_noncod),
+                },
+                {
+                  name: seriesNameChart.total,
+                  data: data.data.total.map(x => x.total),
+                },
+                {
+                  name: seriesNameChart.order,
+                  data: data.data.total.map(x => x.total_order),
+                },
+              ]
+              this.chartOptionsPartner = {
+                ...this.chartOptionsPartner,
+                xaxis: {
+                  ...this.chartOptionsPartner.xaxis,
+                  categories: data.data.total.map(x => x.day),
+                },
+              }
+              break
+            default:
+              break
+          }
           // console.log('response data: ', data)
-          this[`series${type}`] = [
-            {
-              name: 'COD',
-              data: data.data.cod,
-            },
-            {
-              name: 'Non - COD',
-              data: data.data.non_cod,
-            },
-            {
-              name: 'Total',
-              data: data.data.total,
-            },
-          ]
         })
         .catch(e => console.log('error', e))
     },
