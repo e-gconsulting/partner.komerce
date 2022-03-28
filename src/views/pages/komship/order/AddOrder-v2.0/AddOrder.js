@@ -94,6 +94,7 @@ export default {
       .then(res => {
         this.profile = res.data.data
       }).then(() => {
+        this.checkExpedition()
         this.getAddress()
         this.getProduct()
         this.addToCart()
@@ -515,6 +516,28 @@ export default {
         })
       }
     },
+    async checkExpedition() {
+      await this.$http_komship.get('/v1/partner/shipment/not-active')
+        .then(res => {
+          const { data } = res.data
+          const result = data.filter(items => items.is_active === 1)
+          if (result.length < 1) {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
+              imageUrl: require('@/assets/images/icons/fail.svg'),
+              showCancelButton: true,
+              confirmButtonText: 'Aktifkan Ekspedisi',
+              confirmButtonClass: 'btn btn-primary',
+              cancelButtonText: 'Oke',
+              cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+            }).then(then => {
+              if (then.isConfirmed) {
+                this.$router.push('/setting-kompship/ekspedisi')
+              }
+            })
+          }
+        })
+    },
     async getShippingList() {
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         await this.$http_komship.get('v2/calculate', {
@@ -537,21 +560,7 @@ export default {
           }))
           this.listShipping = result
           this.isShipping = true
-        }).catch(err => {
-          this.$swal({
-            title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
-            imageUrl: require('@/assets/images/icons/fail.svg'),
-            showCancelButton: true,
-            confirmButtonText: 'Aktifkan Ekspedisi',
-            confirmButtonClass: 'btn btn-primary',
-            cancelButtonText: 'Oke',
-            cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
-          }).then(result => {
-            if (result.isConfirmed) {
-              this.$router.push('/setting-kompship/ekspedisi')
-            }
-          })
-        })
+        }).catch(err => console.log(err.message))
       } else {
         this.shipping = null
         this.listShipping = []
