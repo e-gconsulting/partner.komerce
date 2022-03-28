@@ -260,10 +260,10 @@
 
     <vue-html2pdf
       ref="html2Pdf"
-      :enable-download="false"
+      :enable-download="computeDownloadPdf"
       :show-layout="false"
       :float-layout="true"
-      :preview-modal="true"
+      :preview-modal="computePreviewModalPdf"
       :paginate-elements-by-height="1400"
       filename="hee hee"
       :pdf-quality="2"
@@ -273,7 +273,7 @@
 
       pdf-content-width="100%"
       @hasStartedGeneration="hasStartedGeneration()"
-      @hasGenerated="hasGenerated($event)"
+      @hasDownloaded="hasGenerated($event)"
     >
       <section slot="pdf-content">
         <div v-if="valuesOption === 1">
@@ -1016,6 +1016,7 @@
     <AddPickupPopupPrint
       :selected-option="printOption"
       @onSubmitOption="onSubmitOptionPrint"
+      @onSubmitOptionMobile="onSubmitOptionPrintMobile"
       @onChangeOption="handleChangeOption"
     />
     <b-modal
@@ -1044,8 +1045,8 @@
       ref="html2PdfThermalSquare"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
-      :preview-modal="true"
+      :enable-download="computeDownloadPdf"
+      :preview-modal="computePreviewModalPdf"
       filename="hehehe"
       :pdf-quality="2"
       pdf-format="a6"
@@ -1249,8 +1250,8 @@
       ref="html2PdfThermal"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
-      :preview-modal="true"
+      :enable-download="computeDownloadPdf"
+      :preview-modal="computePreviewModalPdf"
       filename="hehehe"
       :paginate-elements-by-height="500"
       :pdf-quality="2"
@@ -1453,7 +1454,7 @@
       </section>
     </vue-html2pdf>
 
-    <b-row>
+    <b-row class="wrapper__pagination__print__mobile">
       <b-col
         cols="12"
         class="mb-1"
@@ -1501,7 +1502,10 @@
           </template>
         </b-pagination>
       </b-col>
-      <!-- <b-col
+    </b-row>
+
+    <b-row class="wrapper__pagination__print">
+      <b-col
         cols="12"
         class="d-flex justify-content-between"
       >
@@ -1543,7 +1547,7 @@
             />
           </template>
         </b-pagination>
-      </b-col> -->
+      </b-col>
     </b-row>
   </b-card>
 </template>
@@ -1663,6 +1667,8 @@ export default {
       totalRows: 0,
       totalPerPage: 50,
       optionsPage: [50, 100, 200],
+
+      handlePreviewModalPrint: true,
     }
   },
   watch: {
@@ -1672,6 +1678,11 @@ export default {
           console.error(error)
         })
       },
+    },
+  },
+  computed: {
+    computePreviewModalPdf() {
+      return !(window.screen.width <= 600)
     },
   },
   mounted() {
@@ -1741,6 +1752,17 @@ export default {
       }
     },
     onSubmitOptionPrint(values) {
+      this.handlePreviewModalPrint = true
+      this.valuesOption = values
+      if (values === 150) {
+        this.$refs.html2PdfThermal.generatePdf()
+      } else if (values === 100) {
+        this.$refs.html2PdfThermalSquare.generatePdf()
+      } else {
+        this.$refs.html2Pdf.generatePdf()
+      }
+    },
+    onSubmitOptionPrintMobile(values) {
       this.valuesOption = values
       if (values === 150) {
         this.$refs.html2PdfThermal.generatePdf()
@@ -1873,6 +1895,11 @@ export default {
       this.$root.$emit('bv::toggle::collapse', `collapse${data.index}`)
       this.$refs.tableOrder.refresh()
     },
+    hasGenerated($event) {
+      console.log($event)
+      document.querySelector('prev')
+      this.handlePreviewModalPrint = false
+    },
   },
 }
 </script>
@@ -1901,4 +1928,14 @@ export default {
         display: inline-block!important;
     }
 }
+  @media only screen and (min-width: 579px) {
+    [dir] .wrapper__pagination__print__mobile {
+        display: none!important;
+    }
+  }
+  @media only screen and (max-width: 578px) {
+    [dir] .wrapper__pagination__print {
+        display: none!important;
+    }
+  }
 </style>
