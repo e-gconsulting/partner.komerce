@@ -502,7 +502,7 @@
                     >
                       <strong>
                         Berat : <span>
-                          {{ itemsPrint.product[0].weight }}
+                          {{ (itemsPrint.product[0].weight/1000).toFixed(2) }} Kg
                         </span>
                       </strong>
                     </span>
@@ -512,7 +512,7 @@
                     >
                       <strong>
                         Berat : <span>
-                          {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                          {{ (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
                         </span>
                       </strong>
                     </span>
@@ -808,7 +808,7 @@
                   >
                     <strong>
                       Berat : <span>
-                        {{ itemsPrint.product[0].weight }}
+                        {{ (itemsPrint.product[0].weight/1000).toFixed(2) }} Kg
                       </span>
                     </strong>
                   </span>
@@ -818,7 +818,7 @@
                   >
                     <strong>
                       Berat : <span>
-                        {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                        {{ (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
                       </span>
                     </strong>
                   </span>
@@ -1176,7 +1176,7 @@
                     >
                       <strong>
                         Berat : <span>
-                          {{ itemsPrint.product[0].weight }}
+                          {{ (itemsPrint.product[0].weight/1000).toFixed(2) }} Kg
                         </span>
                       </strong>
                     </span>
@@ -1186,7 +1186,7 @@
                     >
                       <strong>
                         Berat : <span>
-                          {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                          {{ (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
                         </span>
                       </strong>
                     </span>
@@ -1536,7 +1536,7 @@
                   >
                     <strong>
                       Berat : <span>
-                        {{ itemsPrint.product[0].weight }}
+                        {{ (itemsPrint.product[0].weight/1000).toFixed(2) }} Kg
                       </span>
                     </strong>
                   </span>
@@ -1546,7 +1546,7 @@
                   >
                     <strong>
                       Berat : <span>
-                        {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                        {{ (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
                       </span>
                     </strong>
                   </span>
@@ -1810,7 +1810,7 @@
                   >
                     <strong>
                       Berat : <span>
-                        {{ itemsPrint.product[0].weight }}
+                        {{ (itemsPrint.product[0].weight/1000).toFixed(2) }} Kg
                       </span>
                     </strong>
                   </span>
@@ -1820,7 +1820,7 @@
                   >
                     <strong>
                       Berat : <span>
-                        {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                        {{ (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
                       </span>
                     </strong>
                   </span>
