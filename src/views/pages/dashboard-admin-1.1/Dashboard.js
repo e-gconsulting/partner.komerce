@@ -381,6 +381,21 @@ export default {
     },
     'filterdata.ekspedisi.chart.bulan': {
       handler(val) {
+        // this.chartOptionsEkspedisi = {
+        //   ...this.chartOptionsEkspedisi,
+        //   xaxis: {
+        //     ...this.chartOptionsEkspedisi.xaxis,
+        //     categories:
+        //   }
+        // }
+        const lastDateInChoosenMonth = this.$moment(val).endOf('month').endOf('day').get('date')
+        const initDate = this.$moment(val).startOf('month').startOf('day').format('YYYY-MM-DD')
+        const dataCategories = [initDate]
+
+        for (let i = 1; i <= lastDateInChoosenMonth - 1; i + 1) {
+          dataCategories.push(this.$moment().add(i, 'days'))
+        }
+        console.log('data', dataCategories)
         this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
       },
     },
@@ -465,11 +480,7 @@ export default {
       }
       this.$http_komship.get(`/v1/admin/dashboard/${endpoint}`, { params })
         .then(({ data }) => {
-          if (type.toLowerCase() === typeOfCallingApi.toplist.ekspedisi) {
-            this.datatoplist[type.toLowerCase()] = data.data[Object.keys(data.data)[0]]
-          } else {
-            this.datatoplist[type.toLowerCase()] = data.data
-          }
+          this.datatoplist[type.toLowerCase()] = data.data
         })
         .catch(e => console.log('error', e))
     },
@@ -486,14 +497,14 @@ export default {
           dtbulan = this.filterdata.partner.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.partner.chart.selectOpt.value
+          params.expedition_option = this.filterdata.partner.chart.selectOpt.name
           break
         case typeOfCallingApi.chart.ekspedisi:
           endpoint = 'shippingPerformancePerExpedition'
           dtbulan = this.filterdata.ekspedisi.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt.value
+          params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt.name
           break
         default:
           break
