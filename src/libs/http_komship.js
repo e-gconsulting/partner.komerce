@@ -1,4 +1,4 @@
 import httpKomship from 'axios'
 
-httpKomship.defaults.baseURL = 'https://komshipdev.komerce.id/api'
+httpKomship.defaults.baseURL = 'http://prod-komship.komerce.id/api'
 export default httpKomship
