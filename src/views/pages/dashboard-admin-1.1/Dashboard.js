@@ -9,6 +9,7 @@ import VSelect from 'vue-select'
 import VueApexCharts from 'vue-apexcharts'
 import VueMonthlyPicker from 'vue-monthly-picker'
 import filtersLibs from '@/libs/filters'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
 const seriesNameChart = {
   cod: 'COD',
@@ -43,38 +44,8 @@ export default {
   },
   data() {
     return {
-      seriesekspedisi: [
-        // {
-        //   name: seriesNameChart.total,
-        //   data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
-        // },
-        // {
-        //   name: seriesNameChart.noncod,
-        //   data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
-        // },
-        // {
-        //   name: seriesNameChart.cod,
-        //   data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
-        // },
-      ],
-      seriespartner: [
-        // {
-        //   name: seriesNameChart.total,
-        //   data: [800000, 1400000, 1900000, 7000000, 10000000, 15000000, 20000000],
-        // },
-        // {
-        //   name: seriesNameChart.noncod,
-        //   data: [500000, 800000, 1000000, 5000000, 7000000, 10000000, 14000000],
-        // },
-        // {
-        //   name: seriesNameChart.cod,
-        //   data: [300000, 600000, 900000, 2000000, 3000000, 5000000, 6000000],
-        // },
-        // {
-        //   name: seriesNameChart.order,
-        //   data: [200, 400, 450, 300, 400, 500, 1000],
-        // },
-      ],
+      seriesekspedisi: [],
+      seriespartner: [],
       chartOptionsEkspedisi: {
         chart: {
           type: 'area',
@@ -98,7 +69,7 @@ export default {
           gradient: {
             shadeIntensity: 1,
             inverseColors: false,
-            opacityFrom: 0.45,
+            opacityFrom: 0.75,
             opacityTo: 0.05,
             stops: [20, 100, 100, 100],
           },
@@ -112,7 +83,7 @@ export default {
               colors: '#000000',
             },
             offsetX: 0,
-            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(4)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -126,9 +97,7 @@ export default {
           tickAmount: 14,
           min: this.$moment().startOf('month').valueOf(),
           max: this.$moment().endOf('month').valueOf(),
-          // min: this.$moment('2022-04-01').valueOf(),
-          // max: this.$moment('2022-04-30').valueOf(),
-          categories: ['2022-03-01T00:00:00.000', '2022-03-02T01:30:00.000', '2022-03-03T02:30:00.000', '2022-03-04T03:30:00.000', '2022-03-05T04:30:00.000', '2022-03-15T05:30:00.000', '2022-03-19T06:30:00.000'],
+          categories: [],
           labels: {
             formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
@@ -151,7 +120,7 @@ export default {
                   class="my-0 mt-1"
                   style="color: ${colorDefaultChart[idx]};"
                 >
-                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${filtersLibs.rupiah(x[dataPointIndex])}
+                  ${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${filtersLibs.rupiah(x[dataPointIndex] || 0)}
                 </p>`
               }
             })
@@ -199,7 +168,7 @@ export default {
           gradient: {
             shadeIntensity: 1,
             inverseColors: false,
-            opacityFrom: 0.45,
+            opacityFrom: 0.75,
             opacityTo: 0.05,
             stops: [20, 100, 100, 100],
           },
@@ -213,7 +182,7 @@ export default {
               colors: '#000000',
             },
             offsetX: 0,
-            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(4)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -227,9 +196,7 @@ export default {
           tickAmount: 14,
           min: this.$moment().startOf('month').valueOf(),
           max: this.$moment().endOf('month').valueOf(),
-          // min: this.$moment('2022-04-01').valueOf(),
-          // max: this.$moment('2022-04-30').valueOf(),
-          categories: ['2022-03-01T00:00:00.000', '2022-03-02T01:30:00.000', '2022-03-03T02:30:00.000', '2022-03-04T03:30:00.000', '2022-03-05T04:30:00.000', '2022-03-15T05:30:00.000', '2022-03-19T06:30:00.000'],
+          categories: [],
           labels: {
             formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
@@ -264,7 +231,7 @@ export default {
                   class="my-0 mt-1"
                   style="color: ${colorDefaultChart[idx]};"
                 >
-                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : filtersLibs.rupiah(x[dataPointIndex])}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> (${w.globals.seriesNames[3]}: ${w.globals.collapsedSeries[0].data[dataPointIndex]}) </span>` : ''}
+                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : (filtersLibs.rupiah(x[dataPointIndex] || 0))}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> (${w.globals.seriesNames[3]}: ${w.globals.collapsedSeries[0].data[dataPointIndex]}) </span>` : ''}
                 </p>`
               }
             })
@@ -282,7 +249,6 @@ export default {
         legend: {
           position: 'top',
           horizontalAlign: 'left',
-          inverseOrder: true,
         },
         colors: [...colorDefaultChart, '#D3067B'],
         noData: {
@@ -381,21 +347,6 @@ export default {
     },
     'filterdata.ekspedisi.chart.bulan': {
       handler(val) {
-        // this.chartOptionsEkspedisi = {
-        //   ...this.chartOptionsEkspedisi,
-        //   xaxis: {
-        //     ...this.chartOptionsEkspedisi.xaxis,
-        //     categories:
-        //   }
-        // }
-        const lastDateInChoosenMonth = this.$moment(val).endOf('month').endOf('day').get('date')
-        const initDate = this.$moment(val).startOf('month').startOf('day').format('YYYY-MM-DD')
-        const dataCategories = [initDate]
-
-        for (let i = 1; i <= lastDateInChoosenMonth - 1; i + 1) {
-          dataCategories.push(this.$moment().add(i, 'days'))
-        }
-        console.log('data', dataCategories)
         this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
       },
     },
@@ -440,7 +391,6 @@ export default {
     this.fetchDataChart(typeOfCallingApi.chart.partner)
     this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
     this.fetchDataTop(typeOfCallingApi.toplist.partner)
-    this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
   },
   methods: {
     clickLegendPartner(event, chartContext, config) {
@@ -482,7 +432,17 @@ export default {
         .then(({ data }) => {
           this.datatoplist[type.toLowerCase()] = data.data
         })
-        .catch(e => console.log('error', e))
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Gagal',
+              text: 'Gagal untuk mengambil data, silahkan coba lagi!',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
     },
     fetchDataChart(type = '') {
       // payment_option 1: COD, 2: non COD, 3: total(cod dan non-cod)
@@ -498,10 +458,26 @@ export default {
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
           params.expedition_option = this.filterdata.partner.chart.selectOpt.name
+          this.chartOptionsPartner = {
+            ...this.chartOptionsPartner,
+            xaxis: {
+              ...this.chartOptionsPartner.xaxis,
+              min: this.$moment(dtbulan).startOf('month').valueOf(),
+              max: this.$moment(dtbulan).endOf('month').valueOf(),
+            },
+          }
           break
         case typeOfCallingApi.chart.ekspedisi:
           endpoint = 'shippingPerformancePerExpedition'
           dtbulan = this.filterdata.ekspedisi.chart.bulan
+          this.chartOptionsEkspedisi = {
+            ...this.chartOptionsEkspedisi,
+            xaxis: {
+              ...this.chartOptionsEkspedisi.xaxis,
+              min: this.$moment(dtbulan).startOf('month').valueOf(),
+              max: this.$moment(dtbulan).endOf('month').valueOf(),
+            },
+          }
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
           params.expedition_option = this.filterdata.ekspedisi.chart.selectOpt.name
@@ -515,16 +491,16 @@ export default {
             case typeOfCallingApi.chart.ekspedisi:
               this[`series${type}`] = [
                 {
-                  name: seriesNameChart.cod,
-                  data: data.data.cod.map(x => x.total_cod),
+                  name: seriesNameChart.total,
+                  data: data.data.total.map(x => x.total),
                 },
                 {
                   name: seriesNameChart.noncod,
                   data: data.data.non_cod.map(x => x.total_noncod),
                 },
                 {
-                  name: seriesNameChart.total,
-                  data: data.data.total.map(x => x.total),
+                  name: seriesNameChart.cod,
+                  data: data.data.cod.map(x => x.total_cod),
                 },
               ]
               this.chartOptionsEkspedisi = {
@@ -538,16 +514,16 @@ export default {
             case typeOfCallingApi.chart.partner:
               this[`series${type}`] = [
                 {
-                  name: seriesNameChart.cod,
-                  data: data.data.cod.map(x => x.total_cod),
+                  name: seriesNameChart.total,
+                  data: data.data.total.map(x => x.total),
                 },
                 {
                   name: seriesNameChart.noncod,
                   data: data.data.non_cod.map(x => x.total_noncod),
                 },
                 {
-                  name: seriesNameChart.total,
-                  data: data.data.total.map(x => x.total),
+                  name: seriesNameChart.cod,
+                  data: data.data.cod.map(x => x.total_cod),
                 },
                 {
                   name: seriesNameChart.order,
@@ -561,13 +537,25 @@ export default {
                   categories: data.data.total.map(x => x.day),
                 },
               }
+              this.$nextTick(() => {
+                this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
+              })
               break
             default:
               break
           }
-          // console.log('response data: ', data)
         })
-        .catch(e => console.log('error', e))
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Gagal',
+              text: 'Gagal untuk mengambil data, silahkan coba lagi!',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
     },
     parseStartDate(dt) {
       return this.$moment(dt).startOf('month').format('YYYY-MM-DDTHH:mm:ss\\Z')
