@@ -260,12 +260,12 @@
 
     <vue-html2pdf
       ref="html2Pdf"
-      :enable-download="false"
+      :enable-download="true"
       :show-layout="false"
       :float-layout="true"
       :preview-modal="true"
       :paginate-elements-by-height="1400"
-      filename="hee hee"
+      :filename="labelformobile"
       :pdf-quality="2"
       :manual-pagination="false"
       pdf-format="a4"
@@ -428,7 +428,7 @@
                       >
                         <h4 class="text-black">
                           <strong>
-                            {{ itemsPrint.payment_method }}
+                            {{ itemsPrint.payment_method === 'COD' ? 'COD' : 'Non-COD' }}
                           </strong>
                         </h4>
                       </b-col>
@@ -475,7 +475,45 @@
                   >
                     <span class="text-black">
                       <strong>
-                        Jenis layanan: {{ itemsPrint.shipping }}
+                        Jenis layanan: {{ getService(itemsPrint.shipping_type) }}
+                      </strong>
+                    </span>
+                  </b-col>
+                </b-row>
+
+                <b-row class="mt-50 px-2">
+                  <b-col
+                    cols="4"
+                    class="border-4 border-black pb-1"
+                  >
+                    <span class="text-black">
+                      <strong>
+                        Asuransi : Tidak Ada
+                      </strong>
+                    </span>
+                  </b-col>
+                  <b-col
+                    cols="8"
+                    class="border-4 border-black pb-1"
+                  >
+                    <span
+                      v-if="itemsPrint.product[1] === undefined"
+                      class="text-black"
+                    >
+                      <strong>
+                        Berat : <span>
+                          {{ itemsPrint.product[0].weight }}
+                        </span>
+                      </strong>
+                    </span>
+                    <span
+                      v-if="itemsPrint.product[1] !== undefined"
+                      class="text-black"
+                    >
+                      <strong>
+                        Berat : <span>
+                          {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                        </span>
                       </strong>
                     </span>
                   </b-col>
@@ -495,35 +533,51 @@
                   </b-col>
                   <b-col
                     cols="8"
-                    class="border-4 border-black d-flex pb-1 align-items-center border-l-0"
+                    class="border-4 border-black d-flex pb-1 align-items-start border-l-0"
                   >
                     <h4 class="text-black">
                       <strong>
                         ISI PAKET:
                       </strong>
                     </h4>
-                    <b-list-group
-                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                      :key="indexProduct+1"
-                      class="ml-1"
-                    >
-                      <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
-                        <b-list-group-item class="border-0 px-0 pt-0 pb-50">
-                          <span class="ml-1 text-black">
-                            <strong>
-                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                            </strong>
-                          </span>
+                    <div>
+                      <b-list-group
+                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                        :key="indexProduct+1"
+                        class="ml-1"
+                      >
+                        <b-list-group-item class="d-flex border-0 align-items-center pt-0 pb-50">
+                          <div
+                            v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                            class="d-flex align-items-start"
+                          >
+                            <span
+                              class="text-black"
+                            >
+                              <strong>
+                                {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                              </strong>
+                            </span>
+                          </div>
+                          <div v-else>
+                            <span
+                              class="ml-1 text-black mr-50"
+                            >
+                              <strong>
+                                {{ dataProduct.qty }}
+                              </strong>
+                            </span>
+                            <span
+                              class="text-black"
+                            >
+                              <strong>
+                                {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                              </strong>
+                            </span>
+                          </div>
                         </b-list-group-item>
-                      </div>
-                      <div v-else>
-                        <span class="ml-1 text-black">
-                          <strong>
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }},
-                          </strong>
-                        </span>
-                      </div>
-                    </b-list-group>
+                      </b-list-group>
+                    </div>
                   </b-col>
                 </b-row>
 
@@ -721,17 +775,55 @@
               </b-row>
 
               <b-row class="px-2 mt-50">
-                  <b-col
-                    cols="12"
-                    class="border-4 border-black pb-1 text-center"
+                <b-col
+                  cols="12"
+                  class="border-4 border-black pb-1 text-center"
+                >
+                  <span class="text-black">
+                    <strong>
+                      Jenis layanan: {{ getService(itemsPrint.shipping_type) }}
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
+
+              <b-row class="mt-50 px-2">
+                <b-col
+                  cols="4"
+                  class="border-4 border-black pb-1"
+                >
+                  <span class="text-black">
+                    <strong>
+                      Asuransi : tidak ada
+                    </strong>
+                  </span>
+                </b-col>
+                <b-col
+                  cols="8"
+                  class="border-4 border-black pb-1"
+                >
+                  <span
+                    v-if="itemsPrint.product[1] === undefined"
+                    class="text-black"
                   >
-                    <span class="text-black">
-                      <strong>
-                        Jenis layanan: {{ itemsPrint.shipping }}
-                      </strong>
-                    </span>
-                  </b-col>
-                </b-row>
+                    <strong>
+                      Berat : <span>
+                        {{ itemsPrint.product[0].weight }}
+                      </span>
+                    </strong>
+                  </span>
+                  <span
+                    v-if="itemsPrint.product[1] !== undefined"
+                    class="text-black"
+                  >
+                    <strong>
+                      Berat : <span>
+                        {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                      </span>
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
 
               <b-row class="mt-50 mx-50 pb-50">
                 <b-col
@@ -754,28 +846,44 @@
                       ISI PAKET:
                     </strong>
                   </h4>
-                  <b-list-group
-                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                    :key="indexProduct+1"
-                    class="ml-1"
-                  >
-                    <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
-                      <b-list-group-item class="border-0 px-0 pt-0 pb-50">
-                        <span class="ml-1 text-black">
-                          <strong>
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                          </strong>
-                        </span>
+                  <div>
+                    <b-list-group
+                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                      :key="indexProduct+1"
+                      class="ml-1"
+                    >
+                      <b-list-group-item class="d-flex border-0 align-items-center pt-0 pb-50">
+                        <div
+                          v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                          class="d-flex align-items-start"
+                        >
+                          <span
+                            class="text-black"
+                          >
+                            <strong>
+                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                            </strong>
+                          </span>
+                        </div>
+                        <div v-else>
+                          <span
+                            class="ml-1 text-black mr-50"
+                          >
+                            <strong>
+                              {{ dataProduct.qty }}
+                            </strong>
+                          </span>
+                          <span
+                            class="text-black"
+                          >
+                            <strong>
+                              {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                            </strong>
+                          </span>
+                        </div>
                       </b-list-group-item>
-                    </div>
-                    <div v-else>
-                      <span class="ml-1 text-black">
-                        <strong>
-                          {{ dataProduct.qty }} {{ dataProduct.product_name }},
-                        </strong>
-                      </span>
-                    </div>
-                  </b-list-group>
+                    </b-list-group>
+                  </div>
                 </b-col>
               </b-row>
 
@@ -789,14 +897,14 @@
 
         <div v-if="valuesOption === 4">
           <div
-            class="grid grid-cols-2"
+            class="grid grid-cols-2 p-50"
           >
             <div
               v-for="(itemsPrint, index) in fieldItemsPrint"
               :key="index+1"
             >
               <div
-                class="border-4 border-black px-50 mb-50"
+                class="border-4 border-black pt-50 pl-50 mb-50 mr-50"
               >
                 <b-row>
                   <b-col
@@ -856,11 +964,11 @@
                   </b-col>
                 </b-row>
 
-                <b-row>
-                  <b-col class="border-4 border-black ml-1 mr-50">
+                <b-row class="mx-50">
+                  <b-col class="border-4 border-black mr-50">
                     <span
                       class="text-center text-black"
-                      style="font-size: 12px;"
+                      style="font-size: 10px;"
                     >
                       <strong>
                         PENGIRIM
@@ -913,7 +1021,7 @@
                       </b-list-group-item>
                     </b-list-group>
                   </b-col>
-                  <b-col class="border-4 border-black mr-1">
+                  <b-col class="border-4 border-black">
                     <span
                       class="text-center text-black"
                       style="font-size: 10px;"
@@ -983,7 +1091,7 @@
                           style="font-size: 12px;"
                         >
                           <strong>
-                            {{ itemsPrint.payment_method }}
+                            Non - COD
                           </strong>
                         </span>
                       </b-row>
@@ -1028,25 +1136,91 @@
                   </b-col>
                 </b-row>
 
-                <b-row class="mt-50 mx-50 pb-50">
+                <b-row class="px-2 mt-50">
                   <b-col
-                    cols="4"
-                    class="border-4 border-black"
-                  >
-                    <h4 class="text-black">
-                      <strong>
-                        Kuantitas:
-                      </strong>
-                      {{ sumAll(itemsPrint.product) }}
-                    </h4>
-                  </b-col>
-                  <b-col
-                    cols="8"
-                    class="border-4 border-black d-flex border-left-0 align-items-start"
+                    cols="12"
+                    class="border-4 border-black pb-1 text-center"
                   >
                     <span
                       class="text-black"
-                      style="font-size: 12px;"
+                      style="font-size: 10px;"
+                    >
+                      <strong>
+                        Jenis layanan: {{ getService(itemsPrint.shipping_type) }}
+                      </strong>
+                    </span>
+                  </b-col>
+                </b-row>
+
+                <b-row class="mt-50 px-2">
+                  <b-col
+                    cols="4"
+                    class="border-4 border-black pb-1"
+                  >
+                    <span
+                      class="text-black"
+                      style="font-size: 10px;"
+                    >
+                      <strong>
+                        Asuransi : tidak ada
+                      </strong>
+                    </span>
+                  </b-col>
+                  <b-col
+                    cols="8"
+                    class="border-4 border-black pb-1"
+                  >
+                    <span
+                      v-if="itemsPrint.product[1] === undefined"
+                      class="text-black"
+                    >
+                      <strong>
+                        Berat : <span>
+                          {{ itemsPrint.product[0].weight }}
+                        </span>
+                      </strong>
+                    </span>
+                    <span
+                      v-if="itemsPrint.product[1] !== undefined"
+                      class="text-black"
+                    >
+                      <strong>
+                        Berat : <span>
+                          {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                        </span>
+                      </strong>
+                    </span>
+                  </b-col>
+                </b-row>
+
+                <b-row class="mt-50 mx-50 pb-50">
+                  <b-col
+                    cols="4"
+                    class="border-4 border-black pb-1"
+                  >
+                    <span
+                      class="text-black"
+                      style="font-size: 10px;"
+                    >
+                      <strong>
+                        Kuantitas:
+                      </strong>
+                      <span
+                        class="text-black"
+                      >
+                        <strong>
+                          {{ sumAll(itemsPrint.product) }}
+                        </strong>
+                      </span>
+                    </span>
+                  </b-col>
+                  <b-col
+                    cols="8"
+                    class="border-4 border-black d-flex border-left-0 pt-50"
+                  >
+                    <span
+                      class="text-black"
+                      style="font-size: 10px;"
                     >
                       <strong>
                         ISI PAKET:
@@ -1058,24 +1232,36 @@
                         :key="indexProduct+1"
                         class="ml-1"
                       >
-                        <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
-                          <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
-                            <span class="ml-1 text-black">
-                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                        <b-list-group-item class="d-flex border-0 align-items-center pt-0 pb-50">
+                          <div
+                            v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                            class="d-flex align-items-start"
+                          >
+                            <span
+                              class="text-black"
+                              style="font-size: 8px;"
+                            >
+                              <strong>
+                                {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                              </strong>
                             </span>
                           </div>
                           <div v-else>
                             <span
                               class="ml-1 text-black mr-50"
-                              style="font-size: 10px"
+                              style="font-size: 8px;"
                             >
-                              {{ dataProduct.qty }}
+                              <strong>
+                                {{ dataProduct.qty }}
+                              </strong>
                             </span>
                             <span
                               class="text-black"
-                              style="font-size: 10px;"
+                              style="font-size: 8px;"
                             >
-                              {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                              <strong>
+                                {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                              </strong>
                             </span>
                           </div>
                         </b-list-group-item>
@@ -1125,9 +1311,9 @@
       ref="html2PdfThermalSquare"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
+      :enable-download="true"
       :preview-modal="true"
-      filename="hehehe"
+      :filename="labelformobile"
       :pdf-quality="2"
       pdf-format="a6"
       pdf-content-width="100%"
@@ -1142,7 +1328,7 @@
         <section
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
-          class="pdf-item"
+          class="pdf-item text-black"
         >
           <b-container fluid>
             <div
@@ -1309,6 +1495,64 @@
                   </div>
                 </div>
               </b-row>
+
+              <b-row class="px-1 mt-50">
+                <b-col
+                  cols="12"
+                  class="border-4 border-black pb-1 text-center"
+                >
+                  <span
+                    class="text-black"
+                    style="font-size: 8px;"
+                  >
+                    <strong>
+                      Jenis layanan: {{ getService(itemsPrint.shipping_type) }}
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
+
+              <b-row class="mt-50 px-1">
+                <b-col
+                  cols="4"
+                  class="border-4 border-black pb-1"
+                >
+                  <span
+                    class="text-black"
+                    style="font-size: 8px;"
+                  >
+                    <strong>
+                      Asuransi : tidak ada
+                    </strong>
+                  </span>
+                </b-col>
+                <b-col
+                  cols="8"
+                  class="border-4 border-black pb-1"
+                >
+                  <span
+                    v-if="itemsPrint.product[1] === undefined"
+                    class="text-black"
+                  >
+                    <strong>
+                      Berat : <span>
+                        {{ itemsPrint.product[0].weight }}
+                      </span>
+                    </strong>
+                  </span>
+                  <span
+                    v-if="itemsPrint.product[1] !== undefined"
+                    class="text-black"
+                  >
+                    <strong>
+                      Berat : <span>
+                        {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                      </span>
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
+
               <b-row
                 class="mx-auto"
                 style="margin-top:8px;"
@@ -1340,9 +1584,9 @@
       ref="html2PdfThermal"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
+      :enable-download="true"
       :preview-modal="true"
-      filename="hehehe"
+      :filename="labelformobile"
       :paginate-elements-by-height="500"
       :pdf-quality="2"
       pdf-format="a6"
@@ -1358,7 +1602,7 @@
         <b-container
           v-for="(itemsPrint, index) in fieldItemsPrint"
           :key="index+1"
-          class="flex align-items-center justify-content-center text-xs"
+          class="flex align-items-center justify-content-center text-xs text-black"
         >
           <section class="pdf-item">
             <div
@@ -1371,10 +1615,10 @@
               >
                 <b-col
                   cols="4"
-                  class="text-center p-1 text-xs"
+                  class="text-center p-1 text-xs text-black"
                 >
-                  <span class="font-bold">Order ID</span><br>
-                  <span>{{ itemsPrint.order_no }}</span>
+                  <span class="font-bold text-black">Order ID</span><br>
+                  <span class="text-black">{{ itemsPrint.order_no }}</span>
                 </b-col>
                 <b-col
                   cols="4"
@@ -1415,11 +1659,11 @@
                 style="margin-top:8px;"
               >
                 <b-col
-                  class="border-black"
+                  class="border-black text-black"
                   style="padding:5px;"
                 >
                   <div
-                    class="d-flex justify-center"
+                    class="d-flex justify-center text-black"
                   >PENGIRIM</div>
                   <div class="d-inline-flex h-auto align-items-start flex flex-row mt-1">
                     <span class="w-auto d-flex ">
@@ -1428,7 +1672,7 @@
                         size="15"
                       />
                     </span>
-                    <span class="ml-1">
+                    <span class="ml-1 text-black">
                       {{ profile.partner_business_name }}
                     </span>
                   </div>
@@ -1439,7 +1683,7 @@
                         size="15"
                       />
                     </div>
-                    <div class="ml-1 d-flex">
+                    <div class="ml-1 d-flex text-black">
                       {{ profile.partner_no_hp_business }}
                     </div>
                   </div>
@@ -1450,7 +1694,7 @@
                         size="15"
                       />
                     </div>
-                    <div class="ml-1">
+                    <div class="ml-1 text-black">
                       {{ idOrderFromHistory.district }}
                     </div>
                   </div>
@@ -1460,7 +1704,7 @@
                   class="border-black"
                 >
                   <div
-                    class="d-flex justify-center"
+                    class="d-flex justify-center text-black"
                   >PENERIMA</div>
                   <div class="d-inline-flex h-auto align-items-start justify-content-start items flex-row mt-1">
                     <div class="w-auto d-flex ">
@@ -1469,18 +1713,18 @@
                         size="15"
                       />
                     </div>
-                    <div class="ml-1">
+                    <div class="ml-1 text-black">
                       {{ itemsPrint.customer_name }}
                     </div>
                   </div>
                   <div class="d-inline-flex h-auto align-items-center items flex-row">
-                    <div class="w-auto d-flex ">
+                    <div class="w-auto d-flex">
                       <feather-icon
                         icon="PhoneIcon"
                         size="15"
                       />
                     </div>
-                    <div class="ml-1">
+                    <div class="ml-1 text-black">
                       {{ getCustomerPhone(itemsPrint.customer_phone) }}
                     </div>
                   </div>
@@ -1491,7 +1735,7 @@
                         size="15"
                       />
                     </div>
-                    <div class="ml-1">
+                    <div class="ml-1 text-black">
                       {{ `${itemsPrint.detail_address}, ${itemsPrint.customer_detail_address}` }}
                     </div>
                   </div>
@@ -1505,14 +1749,14 @@
                   style="width:23%;padding:5px;"
                   class="border-black text-center"
                 >
-                  <span class="font-bold text-lg"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
-                  <span class="font-bold">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
+                  <span class="font-bold text-lg text-black"><span v-if="itemsPrint.payment_method !== 'COD'">Non </span>COD</span><br>
+                  <span class="font-bold text-black">Rp. {{ formatPrice(itemsPrint.grand_total) }}</span>
                 </div>
                 <div
                   style="width:75%;padding:5px;margin-left:6px;"
                   class="justify-content-center d-flex flex-column align-items-center border-black"
                 >
-                  <span class="d-flex justify-center">Nomor Resi</span>
+                  <span class="d-flex justify-center text-black">Nomor Resi</span>
                   <div style="margin-top:5px">
                     <barcode
                       :value="itemsPrint.airway_bill"
@@ -1525,23 +1769,82 @@
                   </div>
                 </div>
               </b-row>
+
+              <b-row class="px-1 mt-50">
+                <b-col
+                  cols="12"
+                  class="border-4 border-black pb-1 text-center"
+                >
+                  <span
+                    class="text-black"
+                    style="font-size: 8px;"
+                  >
+                    <strong>
+                      Jenis layanan: {{ getService(itemsPrint.shipping_type) }}
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
+
+              <b-row class="mt-50 px-1">
+                <b-col
+                  cols="4"
+                  class="border-4 border-black pb-1"
+                >
+                  <span
+                    class="text-black"
+                    style="font-size: 8px;"
+                  >
+                    <strong>
+                      Asuransi : tidak ada
+                    </strong>
+                  </span>
+                </b-col>
+                <b-col
+                  cols="8"
+                  class="border-4 border-black pb-1"
+                >
+                  <span
+                    v-if="itemsPrint.product[1] === undefined"
+                    class="text-black"
+                  >
+                    <strong>
+                      Berat : <span>
+                        {{ itemsPrint.product[0].weight }}
+                      </span>
+                    </strong>
+                  </span>
+                  <span
+                    v-if="itemsPrint.product[1] !== undefined"
+                    class="text-black"
+                  >
+                    <strong>
+                      Berat : <span>
+                        {{ itemsPrint.product.reduce((x,y) => x+y.weight,0) }}
+                      </span>
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
+
               <b-row
                 class="mx-auto"
                 style="margin-top:8px;"
               >
                 <div
                   style="width:23%;padding:5px;"
-                  class="border-black "
+                  class="border-black text-black"
                 >
                   Kuantitas: {{ sumAll(itemsPrint.product) }}
                 </div>
                 <div
                   style="width:75%;padding:8px;margin-left:6px;"
-                  class="border-black"
+                  class="border-black text-black"
                 >
                   ISI PAKET: <span
                     v-for="(dataProduct, indexProduct) in itemsPrint.product"
                     :key="indexProduct+1"
+                    class="text-black"
                   >
                     {{ dataProduct.qty }} {{ dataProduct.product_name }}<span v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"> {{ dataProduct.variant_name }}</span>,
                   </span>
@@ -1717,7 +2020,15 @@ export default {
       totalRows: 0,
       totalPerPage: 50,
       optionsPage: [50, 100, 200],
+
+      itemsWeightProduct: 0,
     }
+  },
+  computed: {
+    labelformobile() {
+      const date = `${this.idOrderFromHistory.pickup_date}T${this.idOrderFromHistory.pickup_time}`
+      return `label-${this.$moment(date).format('YYYY-MM-DD-HH-mm-ss')}`
+    },
   },
   watch: {
     currentPage: {
@@ -1926,6 +2237,30 @@ export default {
       }
       this.$root.$emit('bv::toggle::collapse', `collapse${data.index}`)
       this.$refs.tableOrder.refresh()
+    },
+    getService(data) {
+      let result = ''
+      if (data === 'REG19' || data === 'CTC') {
+        result = 'Reguler'
+      } else if (data === 'GOKIL' || data === 'SIUNTUNG') {
+        result = data
+      } else {
+        result = data
+      }
+      return result
+    },
+    getWeightProduct(data) {
+      if (data[1] === undefined) {
+        this.itemsWeightProduct = data[0].weight
+      } else {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < data.length; x++) {
+          this.itemsWeightProduct += data[x].weight
+        }
+      }
+      console.log('result', this.itemsWeightProduct)
+      console.log('data', data)
+      return this.itemsWeightProduct
     },
   },
 }
