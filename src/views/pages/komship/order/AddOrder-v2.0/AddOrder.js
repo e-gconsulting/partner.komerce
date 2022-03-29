@@ -575,6 +575,7 @@ export default {
     },
     async calculate(getAdditional) {
       if (this.shipping && this.cartId.length > 0) {
+        let grandTotalNew
         this.loadingCalculate = true
         if (this.biayaLain && this.jenisBiayaLain === '1') {
           this.additionalCost = this.sesuaiNominal
@@ -582,6 +583,15 @@ export default {
           this.additionalCost = this.bebankanCustomer
         } else {
           this.additionalCost = 0
+        }
+        if (this.profile.partner_is_allowed_edit) {
+          if (getAdditional) {
+            grandTotalNew = null
+          } else {
+            grandTotalNew = this.newGrandTotal
+          }
+        } else {
+          grandTotalNew = null
         }
         await this.$http_komship.get('v2/calculate', {
           params: {
@@ -592,7 +602,7 @@ export default {
             cart: this.cartId.toString(),
             discount: this.discount,
             additional_cost: this.additionalCost,
-            grandtotal: getAdditional ? null : this.newGrandTotal,
+            grandtotal: grandTotalNew,
           },
         }).then(res => {
           const { data } = res.data
@@ -616,11 +626,11 @@ export default {
           this.serviceFee = Math.round(result.service_fee)
           this.serviceFeePercentage = result.service_fee_percentage
           this.weight = result.weight.toFixed(2)
-          if (this.profile.partner_is_allowed_edit) {
-            this.grandTotal = result.grandtotal
-          } else {
-            this.grandTotal = result.old_grandtotal
-          }
+          this.grandTotal = result.grandtotal
+          // if (this.profile.partner_is_allowed_edit) {
+          // } else {
+          //   this.grandTotal = result.old_grandtotal
+          // }
           this.cashback = result.cashback
           this.cashbackPercentage = result.cashback_percentage
           this.additionalCost = result.additional_cost
