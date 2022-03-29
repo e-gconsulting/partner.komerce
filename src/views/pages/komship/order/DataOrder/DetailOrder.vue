@@ -433,6 +433,7 @@ import {
   BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, VBModal, BTable, BCollapse,
 } from 'bootstrap-vue'
 import moment from 'moment'
+import httpKomship2 from '../../setting-kompship/http_komship2'
 
 export default {
   components: {
@@ -504,7 +505,7 @@ export default {
       const body = {
         data: this.orderData.airway_bill,
       }
-      await this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
+      await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
         this.itemAwb = res.data.data[0].history
         this.isLoading = false
       }).catch(err => {

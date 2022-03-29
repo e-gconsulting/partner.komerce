@@ -524,7 +524,7 @@ export default {
           if (result.length < 1) {
             this.$swal({
               title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
-              imageUrl: require('@/assets/images/icons/fail.svg'),
+              imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
               showCancelButton: true,
               confirmButtonText: 'Aktifkan Ekspedisi',
               confirmButtonClass: 'btn btn-primary',
@@ -616,7 +616,11 @@ export default {
           this.serviceFee = Math.round(result.service_fee)
           this.serviceFeePercentage = result.service_fee_percentage
           this.weight = result.weight.toFixed(2)
-          this.grandTotal = result.grandtotal
+          if (this.profile.partner_is_allowed_edit) {
+            this.grandTotal = result.grandtotal
+          } else {
+            this.grandTotal = result.old_grandtotal
+          }
           this.cashback = result.cashback
           this.cashbackPercentage = result.cashback_percentage
           this.additionalCost = result.additional_cost
