@@ -524,7 +524,7 @@ export default {
           if (result.length < 1) {
             this.$swal({
               title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
-              imageUrl: require('@/assets/images/icons/fail.svg'),
+              imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
               showCancelButton: true,
               confirmButtonText: 'Aktifkan Ekspedisi',
               confirmButtonClass: 'btn btn-primary',
