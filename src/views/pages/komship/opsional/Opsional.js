@@ -2,10 +2,11 @@ export default {
   data() {
     return {
       profile: [],
-      quickTypeValue: true,
+      quickTypeValue: null,
+      isGetting: false,
     }
   },
-  mounted() {
+  created() {
     this.getProfile()
   },
   methods: {
@@ -14,6 +15,11 @@ export default {
         .then(res => {
           this.profile = res.data.data
           this.quickTypeValue = res.data.data.partner_is_allowed_edit
+          this.isGetting = true
+        })
+        .catch(err => {
+          console.log(err)
+          this.isGetting = true
         })
     },
     quickType() {
