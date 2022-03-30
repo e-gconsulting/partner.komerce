@@ -540,31 +540,34 @@ export default {
     },
     async getShippingList() {
       if (this.destination && this.paymentMethod && this.profile && this.address) {
-        await this.$http_komship.get('v2/calculate', {
-          params: {
-            tariff_code: this.destination.value,
-            payment_method: this.paymentMethod,
-            partner_id: this.profile.partner_id,
-            partner_address_id: this.address.address_id,
-          },
-        }).then(res => {
-          const { data } = res.data
-          const result = data.map(items => ({
-            label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${items.shipping_cost}`,
-            value: items.value,
-            image_path: items.image_path,
-            shipment_name: items.shipment_name,
-            label_shipping_type: this.shippingTypeLabel(items.shipping_type),
-            shipping_type: items.shipping_type,
-            shipping_cost: items.shipping_cost,
-          }))
-          this.listShipping = result
-          this.isShipping = true
-        }).catch(err => console.log(err.message))
+        setTimeout(async () => {
+          await this.$http_komship.get('v2/calculate', {
+            params: {
+              tariff_code: this.destination.value,
+              payment_method: this.paymentMethod,
+              partner_id: this.profile.partner_id,
+              partner_address_id: this.address.address_id,
+            },
+          }).then(res => {
+            const { data } = res.data
+            const result = data.map(items => ({
+              label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
+              value: items.value,
+              image_path: items.image_path,
+              shipment_name: items.shipment_name,
+              label_shipping_type: this.shippingTypeLabel(items.shipping_type),
+              shipping_type: items.shipping_type,
+              shipping_cost: items.shipping_cost,
+            }))
+            this.listShipping = result
+            this.isShipping = true
+          }).catch(err => console.log(err.message))
+        }, 2000)
       } else {
         this.shipping = null
         this.listShipping = []
         this.isShipping = false
+        this.isCalculate = false
       }
     },
     checkNewTotal() {
@@ -593,46 +596,51 @@ export default {
         } else {
           grandTotalNew = null
         }
-        await this.$http_komship.get('v2/calculate', {
-          params: {
-            tariff_code: this.destination.value,
-            payment_method: this.paymentMethod,
-            partner_id: this.profile.partner_id,
-            partner_address_id: this.address.address_id,
-            cart: this.cartId.toString(),
-            discount: this.discount,
-            additional_cost: this.additionalCost,
-            grandtotal: grandTotalNew,
-          },
-        }).then(res => {
-          const { data } = res.data
-          const result = data.find(items => items.value === this.shipping.value)
-          if (getAdditional) {
-            this.sesuaiNominal = Math.round(result.service_fee)
-            this.bebankanCustomer = Math.round(result.service_fee)
-            this.newGrandTotal = result.grandtotal
-            if (this.paymentMethod === 'COD') {
-              this.jenisBiayaLain = '0'
-            } else {
-              this.jenisBiayaLain = '1'
+        setTimeout(async () => {
+          await this.$http_komship.get('v2/calculate', {
+            params: {
+              tariff_code: this.destination.value,
+              payment_method: this.paymentMethod,
+              partner_id: this.profile.partner_id,
+              partner_address_id: this.address.address_id,
+              cart: this.cartId.toString(),
+              discount: this.discount,
+              additional_cost: this.additionalCost,
+              grandtotal: grandTotalNew,
+            },
+          }).then(res => {
+            const { data } = res.data
+            const result = data.find(items => items.value === this.shipping.value)
+            if (getAdditional) {
+              this.sesuaiNominal = Math.round(result.service_fee)
+              this.bebankanCustomer = Math.round(result.service_fee)
+              this.newGrandTotal = result.grandtotal
+              if (this.paymentMethod === 'COD') {
+                this.jenisBiayaLain = '0'
+              } else {
+                this.jenisBiayaLain = '1'
+              }
             }
-          }
-          if (this.newGrandTotal === null) {
-            this.newGrandTotal = result.grandtotal
-          }
-          this.subTotal = result.subtotal
-          this.shippingCost = result.shipping_cost
-          this.netProfit = result.net_profit
-          this.serviceFee = Math.round(result.service_fee)
-          this.serviceFeePercentage = result.service_fee_percentage
-          this.weight = result.weight.toFixed(2)
-          this.grandTotal = result.grandtotal
-          this.cashback = result.cashback
-          this.cashbackPercentage = result.cashback_percentage
-          this.additionalCost = result.additional_cost
-          this.isCalculate = true
-          this.loadingCalculate = false
-        })
+            if (this.newGrandTotal === null) {
+              this.newGrandTotal = result.grandtotal
+            }
+            this.subTotal = result.subtotal
+            this.shippingCost = result.shipping_cost
+            this.netProfit = result.net_profit
+            this.serviceFee = Math.round(result.service_fee)
+            this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight.toFixed(2)
+            this.grandTotal = result.grandtotal
+            this.cashback = result.cashback
+            this.cashbackPercentage = result.cashback_percentage
+            this.additionalCost = result.additional_cost
+            this.isCalculate = true
+            this.loadingCalculate = false
+          }).catch(() => {
+            this.isCalculate = false
+            this.loadingCalculate = false
+          })
+        }, 2000)
       } else {
         this.isCalculate = false
       }

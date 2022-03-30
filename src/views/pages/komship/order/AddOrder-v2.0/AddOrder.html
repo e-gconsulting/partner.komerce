@@ -509,7 +509,7 @@
             v-model="potonganSaldo"
             :value="true"
             :unchecked-value="false"
-            @input="calculate(true)"
+            @change="calculate(true)"
           />
         </b-col>
       </b-row>
@@ -531,8 +531,7 @@
             <b-form-input
               v-model="discount"
               type="number"
-              @input="calculate(true)"
-              @keyup="formatDiscount(discount)"
+              @keyup="formatDiscount(discount), calculate(true)"
             />
           </b-col>
         </b-row>
@@ -611,8 +610,7 @@
               type="number"
               class="mt-1"
               style="width:250px;"
-              @input="calculate(false)"
-              @keyup="formatAdditional(sesuaiNominal)"
+              @keyup="formatAdditional(sesuaiNominal), calculate(false)"
             />
           </b-col>
         </b-row>
@@ -638,7 +636,7 @@
             <b-form-input
               v-model="newGrandTotal"
               type="number"
-              @input="calculate(false)"
+              @keyup="calculate(false)"
               @change="checkNewTotal()"
             />
           </b-col>
