@@ -115,10 +115,6 @@
         </template>
         <template #cell(customer_name)="data">
           <span class="font-bold">{{ data.item.customer_name }}</span><br>
-          <img
-            v-if="data.item.is_komship"
-            src="@/assets/images/logo/Komship.png"
-          >
           <div
             v-if="data.item.is_komship"
             class="d-flex"
@@ -414,7 +410,7 @@ export default {
       this.productList = data
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite') {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
       } if (value === 'GOKIL') {
         return 'Cargo'

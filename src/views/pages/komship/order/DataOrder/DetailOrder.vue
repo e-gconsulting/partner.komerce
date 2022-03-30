@@ -574,7 +574,7 @@ export default {
       }
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite') {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
       } if (value === 'GOKIL') {
         return 'Cargo'
