@@ -115,10 +115,6 @@
         </template>
         <template #cell(customer_name)="data">
           <span class="font-bold">{{ data.item.customer_name }}</span><br>
-          <img
-            v-if="data.item.is_komship"
-            src="@/assets/images/logo/Komship.png"
-          >
           <div
             v-if="data.item.is_komship"
             class="d-flex"
