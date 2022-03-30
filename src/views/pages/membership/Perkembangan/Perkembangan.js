@@ -18,6 +18,8 @@ const InitParamsAPI = {
   page: null,
   limits: 50,
   search: null,
+  ordered_by: 'full_name',
+  sort_by: 'asc',
 }
 export default {
   components: {
@@ -330,7 +332,7 @@ export default {
             this.totalRows = 0
           } else {
             // last
-            const dtitems = parseData.data.sort((a, b) => b.partner_id - a.partner_id)
+            const dtitems = parseData.data
             this.items = dtitems
             this.filteredItems = dtitems
             this.totalRows = parseData.last_page * this.perPage
