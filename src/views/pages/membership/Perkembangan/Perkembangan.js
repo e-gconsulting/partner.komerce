@@ -21,6 +21,8 @@ const InitParamsAPI = {
   ordered_by: 'full_name',
   sort_by: 'asc',
 }
+const smallScreenWidth = 576
+
 export default {
   components: {
     BTable,
@@ -85,7 +87,7 @@ export default {
           key: 'full_name',
           label: 'Nama',
           sortable: true,
-          stickyColumn: true,
+          stickyColumn: !(window.screen.width < smallScreenWidth),
           thClass: 'text-black',
           thStyle: {
             color: 'black',
@@ -263,6 +265,9 @@ export default {
         .filter(f => f.sortable)
         .map(f => ({ text: f.label, value: f.key }))
     },
+    isStickyHeader() {
+      return !(window.screen.width < smallScreenWidth)
+    },
   },
   watch: {
     rangeDate: {
@@ -414,25 +419,6 @@ export default {
     setperPage(pagedt) {
       this.perPage = pagedt
     },
-    // onChangeSearch(dtsearch) {
-    //   if (dtsearch) {
-    //     const filteredData = [...this.items].filter(x => {
-    //       if (x.full_name.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-    //         return true
-    //       }
-    //       if (x.email.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-    //         return true
-    //       }
-    //       if (x.no_hp.indexOf(dtsearch) !== -1) {
-    //         return true
-    //       }
-    //       return false
-    //     })
-    //     this.filteredItems = filteredData
-    //   } else {
-    //     this.filteredItems = this.items
-    //   }
-    // },
   },
   destroyed() {
     clearTimeout(timeoutCallApi)
