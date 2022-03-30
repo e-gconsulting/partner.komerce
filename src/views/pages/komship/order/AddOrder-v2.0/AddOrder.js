@@ -627,10 +627,6 @@ export default {
           this.serviceFeePercentage = result.service_fee_percentage
           this.weight = result.weight.toFixed(2)
           this.grandTotal = result.grandtotal
-          // if (this.profile.partner_is_allowed_edit) {
-          // } else {
-          //   this.grandTotal = result.old_grandtotal
-          // }
           this.cashback = result.cashback
           this.cashbackPercentage = result.cashback_percentage
           this.additionalCost = result.additional_cost
@@ -642,7 +638,7 @@ export default {
       }
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite') {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
       } if (value === 'GOKIL') {
         return 'Cargo'
