@@ -340,7 +340,7 @@
             type="reset"
             variant="primary"
             :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined"
-            @click="submitPickup"
+            @click.prevent="submitPickup"
           >
             <b-spinner
               v-if="loadingSubmitPickup"
@@ -501,9 +501,189 @@
 
     <!-- Modal Pickup error success -->
     <b-modal
-      ref="modal-pickup-error"
+      ref="modal-pickup-error-success"
       no-close-on-backdrop
       no-close-on-esc
+      hide-footer
+      hide-header
+      centered
+      size="xl"
+    >
+      <b-row class="justify-content-center mb-2 pt-2">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-2 px-2">
+        <b-col cols="10">
+          <span class="text-black">
+            Sebagian orderan telah berhasil diajukan pickup. Silahkan melakukan pickup ulang untuk orderan yang belum berhasil. Jika ada kendala silahkan hubungi CS.
+          </span>
+        </b-col>
+      </b-row>
+      <b-row class="mb-2">
+        <span class="text-black ml-2">
+          <strong>
+            Orderan yang gagal diajukan pickup :
+          </strong>
+        </span>
+      </b-row>
+      <b-row>
+        <b-table
+          responsive
+
+          :fields="fieldsDataOrder"
+          :items="itemsDataOrder"
+        >
+          <template #cell(date_order_after)="data">
+            <span class="text-black">
+              <strong>
+                {{ data.item.order_date }}
+              </strong>
+            </span>
+          </template>
+
+          <template #cell(pelanggan_after)="data">
+            <b-row>
+              <span class="text-black">
+                <strong>
+                  {{ data.item.customer_name }}
+                </strong>
+              </span>
+            </b-row>
+            <b-row
+              class="mb-50"
+            >
+              <b-img
+                src="@/assets/images/logo/Komship.png"
+              />
+            </b-row>
+            <b-row
+              v-if="data.item.shipping === 'JNE'"
+              class="align-items-center"
+            >
+              <b-img
+                src="@/assets/images/expedisi/logo-jne.png"
+                width="40"
+              />
+              <span class="text-black ml-50">
+                <strong>
+                  Reguler
+                </strong>
+              </span>
+            </b-row>
+            <b-row
+              v-if="data.item.shipping === 'SICEPAT'"
+              class="align-items-center"
+            >
+              <b-img
+                src="@/@core/assets/image/icons/logo__sicepat.svg"
+                width="60"
+              />
+              <span class="text-black ml-50">
+                <strong>
+                  {{ data.item.shipping_type }}
+                </strong>
+              </span>
+            </b-row>
+            <b-row
+              v-if="data.item.shipping === 'IDEXPRESS'"
+              class="align-items-center"
+            >
+              <b-img
+                src="@/@core/assets/image/icons/logo-idexpress.svg"
+                width="40"
+              />
+              <span class="text-black ml-50">
+                <strong>
+                  {{ data.item.shipping_type }}
+                </strong>
+              </span>
+            </b-row>
+          </template>
+
+          <template #cell(product_after)="data">
+            <div
+              v-for="(dataProduct, index) in data.item.product"
+              :key="index+1"
+            >
+              <b-row class="mb-2">
+                <b-container
+                  fluid
+                  class="d-flex"
+                >
+                  <div>
+                    <b-avatar
+                      variant="light-primary"
+                      square
+                      size="50px"
+                      :src="dataProduct.product_image"
+                    />
+                  </div>
+                  <div class="ml-1">
+                    <div class="d-flex">
+                      <div>
+                        <h5 class="text-black">
+                          <strong>{{ dataProduct.product_name }}</strong>
+                        </h5>
+                        <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
+                          <span class="text-primary"><strong>{{ dataProduct.variant_name }}</strong></span>
+                        </div>
+                        <div v-else>
+                          <span class="text-black">
+                            <strong>
+                              -
+                            </strong>
+                          </span>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="text-black">
+                          <strong>
+                            x{{ dataProduct.qty }}
+                          </strong>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </b-container>
+              </b-row>
+            </div>
+          </template>
+
+          <template #cell(grand_total_after)="data">
+            <span class="text-black">
+              <strong>
+                Rp. {{ formatPrice(data.item.grandtotal) }}
+              </strong>
+            </span>
+            <p class="text-primary">
+              <strong>
+                {{ data.item.payment_method === 'COD' ? data.item.payment_method : 'Non-COD' }}
+              </strong>
+            </p>
+          </template>
+
+          <template #cell(address_after)="data">
+            <span class="text-black">
+              <strong>
+                {{ data.item.customer_address }}
+              </strong>
+            </span>
+          </template>
+        </b-table>
+      </b-row>
+      <b-row class="justify-content-center pb-2">
+        <b-button
+          class="org-button"
+          @click="handleDataOrderPickupError"
+        >
+          Oke
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- Modal cek address pickup -->
+    <b-modal
+      ref="modal-check-address-pickup"
       hide-footer
       hide-header
       centered
@@ -512,15 +692,15 @@
         <div class="image-wrapper">
           <img src="@/assets/images/icons/warning.svg">
         </div>
-        <div class="text-wrapper mb-3 px-2">
-          {{ itemsPickupSuccess.length }} dari {{ itemsPickupSuccess.length + itemsPickupError.length }} orderan telah berhasil diajukan pickup. Tenang, kamu masih bisa mengajukan pickup ulang untuk orderan yang gagal di pickup.
+        <div class="text-wrapper mb-2 px-2">
+          Mohon maaf, alamat pickup kamu belum lengkap. Silahkan periksa alamat Pickup
         </div>
         <b-button
           class="org-button"
           tag="router-link"
-          :to="{ name: $route.meta.routeDetailAfter }"
+          :to="{ name: $route.meta.routeToAddressSetting }"
         >
-          Oke
+          Ke Alamat Pickup
         </b-button>
       </div>
     </b-modal>
@@ -548,6 +728,7 @@ import {
   BAvatar,
   BContainer,
   BSpinner,
+  BImg,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
@@ -581,6 +762,7 @@ export default {
     BContainer,
     flatPickr,
     BSpinner,
+    BImg,
   },
   directives: {
     Ripple,
@@ -641,9 +823,50 @@ export default {
       itemsPickupError: [],
 
       loadingSubmitPickup: false,
+
+      // Data Table Popup after submit pickup
+      fieldsDataOrder: [
+        {
+          key: 'date_order_after',
+          label: 'Tanggal Order',
+          class: 'bg-white',
+          thClass: 'border-top-0',
+          tdClass: 'border-top-0',
+        },
+        {
+          key: 'pelanggan_after',
+          label: 'Pelanggan',
+          class: 'bg-white',
+          thClass: 'border-top-0',
+          tdClass: 'border-top-0',
+        },
+        {
+          key: 'product_after',
+          label: 'Produk',
+          class: 'bg-white',
+          thClass: 'border-top-0',
+          tdClass: 'border-top-0',
+        },
+        {
+          key: 'grand_total_after',
+          label: 'Total Pembayaran',
+          class: 'bg-white',
+          thClass: 'border-top-0',
+          tdClass: 'border-top-0',
+        },
+        {
+          key: 'address_after',
+          label: 'Alamat',
+          class: 'bg-white',
+          thClass: 'border-top-0',
+          tdClass: 'border-top-0',
+        },
+      ],
+      itemsDataOrder: [],
     }
   },
   mounted() {
+    // this.$refs['modal-pickup-error-success'].show()
     this.cekExpedition()
     this.$http_komship.post('v1/my-profile', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -779,25 +1002,22 @@ export default {
         .then(response => {
           this.itemsPickupSuccess = response.data.data.pickup_success
           this.itemsPickupError = response.data.data.pickup_error
+          if (response.data.code === 400) {
+            this.$refs['modal-check-address-pickup'].show()
+          }
           if (response.data.code === 500) {
-            this.$refs['modal-failed-request-pickup'].show()
+            this.itemsDataOrder = []
+            this.handleDataErrorPickup(response.data.data)
+            if (response.data.data.pickup_error.length === 0) this.$refs['modal-failed-request-pickup'].show()
           }
           if (response.data.data.pickup_error.length > 0) {
-            this.$refs['modal-pickup-error'].show()
+            this.$refs['modal-pickup-error-success'].show()
           } else {
             this.$refs['modal-success-request-pickup'].show()
           }
           this.loadingSubmitPickup = false
         }).catch(() => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: 'Gagal mengajukan pickup, silahkan coba lagi!',
-              variant: 'danger',
-            },
-          })
+          this.$refs['modal-failed-request-pickup'].show()
           this.loadingSubmitPickup = false
         })
     },
@@ -844,7 +1064,28 @@ export default {
       this.$refs.pickDate.fp.toggle()
     },
     closePopupPickupError() {
-      this.$refs['modal-pickup-error'].hide()
+      this.$refs['modal-pickup-error-success'].hide()
+    },
+    handleDataErrorPickup(resData) {
+      console.log('resData', resData)
+      // eslint-disable-next-line array-callback-return
+      resData.pickup_error.map(items => {
+        this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${items.order_id}`).then(response => {
+          const { data } = response.data
+          this.itemsDataOrder.push(data)
+        }).catch(() => {
+          this.alertFail('Unable to get the order detail. Please try again later or contact support.')
+        })
+      })
+    },
+    handleDataOrderPickupError() {
+      this.itemsPreviewProductOrder = this.itemsDataOrder
+      this.$refs['modal-failed-request-pickup'].hide()
+      this.$refs['modal-pickup-error-success'].hide()
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
   },
 }

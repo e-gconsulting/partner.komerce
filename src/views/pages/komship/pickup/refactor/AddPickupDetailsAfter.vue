@@ -75,6 +75,59 @@
               {{ data.item.customer_name }}
             </strong>
           </h5>
+          <b-row
+            class="mb-50"
+          >
+            <b-img
+              src="@/assets/images/logo/Komship.png"
+              class="ml-1"
+            />
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'JNE'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              width="40"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                Reguler
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'SICEPAT'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo__sicepat.svg"
+              width="60"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ data.item.shipping_type }}
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'IDEXPRESS'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo-idexpress.svg"
+              width="40"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ data.item.shipping_type }}
+              </strong>
+            </span>
+          </b-row>
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product.length > 1">
@@ -1944,7 +1997,7 @@ export default {
     barcode: VueBarcode,
     AddPickupPopupPrint,
     PickupLabelPrint,
-    // BImg,
+    BImg,
     BListGroup,
     BListGroupItem,
     BOverlay,
