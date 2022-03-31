@@ -488,9 +488,10 @@ export default {
       return ''
     },
     postDate(date) {
+      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD MMMM YYYY HH:MM')
+        return moment(date).format('DD MMMM YYYY HH:mm')
       }
       return date
     },

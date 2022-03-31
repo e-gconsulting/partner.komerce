@@ -372,7 +372,7 @@ export default {
     moment(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD-MM-YYYY HH:MM')
+        return moment(date).format('DD-MM-YYYY HH:mm')
       }
       return date
     },
