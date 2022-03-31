@@ -418,6 +418,14 @@
             Penghasilan bersih yang kamu dapatkan
           </b-col>
           <b-col
+            v-if="orderData.net_profit.toString().charAt(0) === '-'"
+            lg="3"
+            class="text-right text-primary font-bold"
+          >
+            - Rp {{ formatNumber(orderData.net_profit) }}
+          </b-col>
+          <b-col
+            v-else
             lg="3"
             class="text-right text-success font-bold"
           >
@@ -490,7 +498,7 @@ export default {
     postDate(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD MMMM YYYY HH:MM')
+        return moment(date).format('DD MMMM YYYY HH:mm')
       }
       return date
     },
@@ -506,7 +514,8 @@ export default {
         data: this.orderData.airway_bill,
       }
       await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
-        this.itemAwb = res.data.data[0].history
+        const { data } = res.data
+        this.itemAwb = data.history
         this.isLoading = false
       }).catch(err => {
         this.isLoading = false
