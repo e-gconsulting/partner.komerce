@@ -506,7 +506,8 @@ export default {
         data: this.orderData.airway_bill,
       }
       await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
-        this.itemAwb = res.data.data[0].history
+        const { data } = res.data
+        this.itemAwb = data.history
         this.isLoading = false
       }).catch(err => {
         this.isLoading = false
