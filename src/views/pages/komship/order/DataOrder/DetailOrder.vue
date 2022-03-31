@@ -418,6 +418,14 @@
             Penghasilan bersih yang kamu dapatkan
           </b-col>
           <b-col
+            v-if="orderData.net_profit.toString().charAt(0) === '-'"
+            lg="3"
+            class="text-right text-primary font-bold"
+          >
+            - Rp {{ formatNumber(orderData.net_profit) }}
+          </b-col>
+          <b-col
+            v-else
             lg="3"
             class="text-right text-success font-bold"
           >
@@ -488,7 +496,6 @@ export default {
       return ''
     },
     postDate(date) {
-      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
         return moment(date).format('DD MMMM YYYY HH:mm')
