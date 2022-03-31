@@ -76,14 +76,6 @@
             </strong>
           </h5>
           <b-row
-            class="mb-50"
-          >
-            <b-img
-              src="@/assets/images/logo/Komship.png"
-              class="ml-1"
-            />
-          </b-row>
-          <b-row
             v-if="data.item.shipping === 'JNE'"
             class="align-items-center"
           >

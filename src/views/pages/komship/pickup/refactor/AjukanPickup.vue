@@ -1017,7 +1017,7 @@ export default {
           }
           this.loadingSubmitPickup = false
         }).catch(() => {
-          this.$refs['modal-failed-request-pickup'].show()
+          this.$refs['modal-check-address-pickup'].show()
           this.loadingSubmitPickup = false
         })
     },
