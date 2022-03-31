@@ -270,18 +270,10 @@ export default {
         },
       ],
       optionChart: [
-        {
-          name: 'JNE',
-          value: 1,
-        },
-        {
-          name: 'SiCepat',
-          value: 2,
-        },
-        {
-          name: 'IDExpress',
-          value: 3,
-        },
+        // {
+        //   name: 'JNE',
+        //   value: 1,
+        // },
       ],
       monthlabel: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Dec'],
       bulanChartExpedisi: '2022-02-02',
@@ -290,7 +282,7 @@ export default {
           chart: {
             selectOpt: {
               name: 'JNE',
-              value: 1,
+              value: 2,
             },
             bulan: this.$moment(),
           },
@@ -306,7 +298,7 @@ export default {
           chart: {
             selectOpt: {
               name: 'JNE',
-              value: 1,
+              value: 2,
             },
             bulan: this.$moment(),
           },
@@ -387,12 +379,30 @@ export default {
     },
   },
   mounted() {
+    this.getDataShippingName()
     this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
     this.fetchDataChart(typeOfCallingApi.chart.partner)
     this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
     this.fetchDataTop(typeOfCallingApi.toplist.partner)
   },
   methods: {
+    getDataShippingName() {
+      this.$http_komship.get('/v1/admin/dashboard/shippingName')
+        .then(({ data }) => {
+          this.optionChart = data.data.map((x, idx) => ({ name: x, value: (idx + 1) }))
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Gagal',
+              text: 'Gagal untuk mengambil data, silahkan coba lagi!',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
     clickLegendPartner(event, chartContext, config) {
       if (config.globals.collapsedSeriesIndices.indexOf(3) !== -1) {
         this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.noncod)
