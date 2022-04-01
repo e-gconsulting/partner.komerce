@@ -119,7 +119,7 @@
           :options="destinationList"
           placeholder="Masukkan Kelurahan/Kecamatan"
           @search="getDestination"
-          @input="getShippingType"
+          @input="getShippingList()"
         >
           <span
             slot="no-options"
@@ -404,18 +404,18 @@
             style="color:#828282;"
           >*Simpan setting ini untuk Orderan Selanjutya</span>
           <b-img
-            v-if="paymentMethod === null || shipping === null"
+            v-if="paymentMethod === null"
             src="@/assets/images/icons/archive-tick.png"
             class="my-auto cursor-pointer"
           />
           <b-img
-            v-if="paymentMethod !== null && shipping !== null && !paymentHistory"
+            v-if="paymentMethod !== null && !paymentHistory"
             src="@/assets/images/icons/archive-tick-ready.png"
             class="my-auto cursor-pointer"
             @click="savePaymentHistory"
           />
           <b-img
-            v-if="paymentMethod !== null && shipping !== null && paymentHistory"
+            v-if="paymentMethod !== null && paymentHistory"
             src="@/assets/images/icons/archive-tick-active.png"
             class="my-auto cursor-pointer"
             @click="removePaymentHistory"
@@ -429,14 +429,11 @@
         >
           <label class="text-lg">Metode Pembayaran</label>
         </b-col>
-        <b-col
-          md="4"
-          class="font-bold"
-        >
-          <b-form-select
+        <b-col md="4">
+          <v-select
             v-model="paymentMethod"
             :options="listPayment"
-            @input="getShippingType(), validateRekening(), paymentMethod === 'COD' ? jenisBiayaLain = '0' : jenisBiayaLain = '1', paymentHistory = false"
+            @input="getShippingList(), validateRekening(), paymentHistory = false"
           />
         </b-col>
         <b-col
@@ -478,28 +475,20 @@
           md="4"
           class="font-bold"
         >
-          <b-form-select
+          <v-select
             v-model="shipping"
             :options="listShipping"
-            @input="getShippingType(), paymentHistory = false"
-          />
-        </b-col>
-        <b-col md="4">
-          <v-select
-            ref="selectTypeShipping"
-            v-model="typeShipping"
-            :options="listTypeShipping"
             placeholder="Opsi Pengiriman"
-            :disabled="!isTypeShipping"
-            @input="calculate"
+            @input="calculate(true)"
+            :disabled="!isShipping"
           >
-            <span
-              slot="no-options"
-              @click="$refs.selectTypeShipping.open = false"
-            >
-              Tidak ada data untuk ditampilkan.
-            </span>
-          </v-select>
+            <template slot="option" slot-scope="option">
+              <div class="d-flex">
+                <img :src="option.image_path" style="height: 30px!important;" />
+                <span class="my-auto" style="margin-left:5px;">{{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}</span>
+              </div>
+            </template>
+        </v-select>
         </b-col>
       </b-row>
     </section>
@@ -526,7 +515,7 @@
             v-model="potonganSaldo"
             :value="true"
             :unchecked-value="false"
-            @input="getAdditionalCost"
+            @change="calculate(true)"
           />
         </b-col>
       </b-row>
@@ -548,8 +537,7 @@
             <b-form-input
               v-model="discount"
               type="number"
-              @input="getAdditionalCost"
-              @keyup="formatDiscount(discount)"
+              @keyup="formatDiscount(discount), calculate(true)"
             />
           </b-col>
         </b-row>
@@ -578,7 +566,7 @@
             v-model="biayaLain"
             :value="true"
             :unchecked-value="false"
-            @change="getAdditionalCost"
+            @change="calculate(false)"
           />
         </b-col>
       </b-row>
@@ -601,7 +589,7 @@
               <b-form-radio
                 v-model="jenisBiayaLain"
                 value="0"
-                @change="getAdditionalCost"
+                @change="calculate(false)"
               >
                 Bebankan biaya COD ke customer
               </b-form-radio>
@@ -618,7 +606,7 @@
               v-model="jenisBiayaLain"
               class="mt-1"
               value="1"
-              @change="getAdditionalCost"
+              @change="calculate(false)"
             >
               Sesuai Nominal
             </b-form-radio>
@@ -628,8 +616,7 @@
               type="number"
               class="mt-1"
               style="width:250px;"
-              @input="getAdditionalCost"
-              @keyup="formatAdditional(sesuaiNominal)"
+              @keyup="formatAdditional(sesuaiNominal), calculate(false)"
             />
           </b-col>
         </b-row>
@@ -655,7 +642,7 @@
             <b-form-input
               v-model="newGrandTotal"
               type="number"
-              @input="calculateTotal()"
+              @keyup="calculate(false)"
               @change="checkNewTotal()"
             />
           </b-col>

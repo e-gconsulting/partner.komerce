@@ -121,9 +121,15 @@
           </b-col>
           <b-col
             cols="6"
-            class="font-bold"
+            class="font-bold d-flex"
           >
-            {{ `${orderData.shipping} (${nameTypeShipping(orderData.shipping_type)})` }}
+            <img
+              :src="orderData.shipment_image_path"
+              style="width: 45px"
+            ><span
+              class="my-auto"
+              style="margin-left:5px"
+            >{{ shippingTypeLabel(orderData.shipping_type) }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -368,7 +374,7 @@
               lg="3"
               class="text-right"
             >
-              <span>Rp {{ formatNumber(orderData.service_fee) }}</span>
+              <span>- Rp {{ formatNumber(orderData.service_fee) }}</span>
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -382,7 +388,7 @@
               lg="3"
               class="text-right"
             >
-              Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
+              - Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
             </b-col>
           </b-row>
           <b-row
@@ -412,6 +418,14 @@
             Penghasilan bersih yang kamu dapatkan
           </b-col>
           <b-col
+            v-if="orderData.net_profit.toString().charAt(0) === '-'"
+            lg="3"
+            class="text-right text-primary font-bold"
+          >
+            - Rp {{ formatNumber(orderData.net_profit) }}
+          </b-col>
+          <b-col
+            v-else
             lg="3"
             class="text-right text-success font-bold"
           >
@@ -427,6 +441,7 @@ import {
   BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, VBModal, BTable, BCollapse,
 } from 'bootstrap-vue'
 import moment from 'moment'
+import httpKomship2 from '../../setting-kompship/http_komship2'
 
 export default {
   components: {
@@ -483,7 +498,7 @@ export default {
     postDate(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD MMMM YYYY HH:MM')
+        return moment(date).format('DD MMMM YYYY HH:mm')
       }
       return date
     },
@@ -498,8 +513,9 @@ export default {
       const body = {
         data: this.orderData.airway_bill,
       }
-      await this.$http_komship.post('v1/bulk-check-awb', body).then(res => {
-        this.itemAwb = res.data.data[0].history
+      await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
+        const { data } = res.data
+        this.itemAwb = data.history
         this.isLoading = false
       }).catch(err => {
         this.isLoading = false
@@ -566,21 +582,13 @@ export default {
       } catch ($e) {
       }
     },
-    nameTypeShipping(data) {
-      if (data === 'OKE19') {
-        return 'OKE'
-      } if (data === 'REG19') {
-        return 'REG'
-      } if (data === 'YES19') {
-        return 'YES'
-      } if (data === 'CTCOKE19') {
-        return 'OKE'
-      } if (data === 'CTCYES19') {
-        return 'YES'
-      } if (data === 'CTC19') {
-        return 'REG'
+    shippingTypeLabel(value) {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
+        return 'Reguler'
+      } if (value === 'GOKIL') {
+        return 'Cargo'
       }
-      return ''
+      return value
     },
   },
 }
