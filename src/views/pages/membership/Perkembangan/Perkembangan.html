@@ -5,8 +5,8 @@
         <div class="d-flex align-items-center">
           <h4 class="growth__title">Perkembangan Partner</h4>
         </div>
-        <div class="d-flex justify-content-end align-items-center mb-1">
-          <div class="d-flex justify-content-end mr-1">
+        <div class="filter__container">
+          <div class="filter__container--picker">
             <date-range-picker
               ref="picker"
               v-model="rangeDate"
@@ -18,7 +18,7 @@
             >
               <template
                 v-slot:input="picker"
-                style="min-width: 350px"
+                class="filter__container--picker-input"
               >
                 <div
                   class="d-flex justify-content-between align-items-center"
@@ -113,10 +113,10 @@
               </template>
             </date-range-picker>
           </div>
-          <div class="d-flex justify-content-end">
+          <div class="filter__container--search">
             <!-- filter -->
             <b-form-group class="mb-0">
-              <b-input-group class="input-group-merge">
+              <b-input-group class="input-group-merge filter__container--search-binputgroup">
                 <b-input-group-prepend is-text>
                   <feather-icon icon="SearchIcon" />
                 </b-input-group-prepend>
@@ -136,7 +136,7 @@
           striped
           hover
           responsive
-          :sticky-header="true"
+          :sticky-header="isStickyHeader"
           :per-page="0"
           style="max-width: 1260px; max-height: 55vh;"
           :current-page="currentPage"
@@ -208,7 +208,7 @@
             </div>
           </template>
         </b-table>
-        <div class="d-flex justify-between mt-2">
+        <div class="pagination__container">
           <div>
             <span class="text-black mr-1">List per halaman</span>
             <b-button
@@ -222,9 +222,7 @@
               {{ page }}
             </b-button>
           </div>
-          <b-col
-            cols=""
-          >
+          <div class="pagination__container--paging">
             <b-pagination
               v-model="currentPage"
               :total-rows="totalRows"
@@ -234,7 +232,7 @@
               class="my-0"
               aria-controls="my-table"
             />
-          </b-col>
+          </div>
         </div>
       </div>
     </b-card>
