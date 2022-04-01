@@ -146,19 +146,6 @@ export default {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
-        await this.$swal({
-          title:
-            '<span class="font-weight-bold h4">Top Up Saldo Berhasil</span>',
-          text: `Top Up sebesar ${this.formatRupiah(
-            response.data.data.amount,
-          )} berhasil. Silahkan Melakukan Pembayaran.`,
-          imageUrl: require('@/assets/images/icons/success.svg'), // eslint-disable-line
-          confirmButtonText: 'Buka Invoice',
-          customClass: {
-            confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-          },
-          buttonsStyling: false,
-        })
         window.open(response.data.data.invoice_xendit_url, '_blank').focus()
         this.$refs['modal-after-topup'].show()
         this.loadingSubmitTopup = false
@@ -172,6 +159,7 @@ export default {
           confirmButtonText: 'Oke',
           customClass: {
             confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+            popup: 'mr-2 ml-1',
           },
           buttonsStyling: false,
         })
@@ -267,6 +255,7 @@ export default {
                   confirmButtonText: 'Oke',
                   customClass: {
                     confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                    popup: 'mr-2 ml-1',
                   },
                   buttonsStyling: false,
                 })
@@ -285,6 +274,7 @@ export default {
               confirmButtonText: 'Oke',
               customClass: {
                 confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                popup: 'mr-2 ml-1',
               },
               buttonsStyling: false,
             })
@@ -363,6 +353,7 @@ export default {
         confirmButtonText: 'Oke',
         customClass: {
           confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+          popup: 'mr-2 ml-1',
         },
         buttonsStyling: false,
       })

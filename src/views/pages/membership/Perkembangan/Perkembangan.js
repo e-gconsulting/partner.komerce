@@ -4,19 +4,24 @@ import {
   BSpinner,
   BCardBody,
 } from 'bootstrap-vue'
-import {
-  last30,
-  last60,
-  last7,
-  firstDateOfMonth,
-  formatYmd,
-} from '@/store/helpers'
+import moment from 'moment'
 import filterLib from '@/libs/filters'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
-const formatDate = 'YYYY-MM-DDTHH:mm:ss'
+const formatDate = 'YYYY-MM-DDTHH:mm:ss\\Z'
+let timeoutCallApi = null
+const InitParamsAPI = {
+  start_date: moment().subtract(30, 'days').startOf('day').format(formatDate),
+  end_date: moment().endOf('day').format(formatDate),
+  page: null,
+  limits: 50,
+  search: null,
+  ordered_by: 'full_name',
+  sort_by: 'asc',
+}
+const smallScreenWidth = 576
 
 export default {
   components: {
@@ -39,13 +44,13 @@ export default {
         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
       },
       ranges: {
-        '7 Hari Terakhir': [last7, today],
-        '30 Hari Terakhir': [last30, today],
-        '2 Bulan Terakhir': [last60, today],
-        'Bulan Ini': [firstDateOfMonth, today],
+        '7 Hari Terakhir': [this.$moment().subtract(7, 'days').startOf('day').toDate(), today],
+        '30 Hari Terakhir': [this.$moment().subtract(30, 'days').startOf('day').toDate(), today],
+        '2 Bulan Terakhir': [this.$moment().subtract(60, 'days').startOf('day').toDate(), today],
+        'Bulan Ini': [this.$moment().startOf('month').toDate(), today],
       },
       rangeDate: {
-        startDate: last30,
+        startDate: this.$moment().subtract(30, 'days').startOf('day').toDate(),
         endDate: today,
       },
       isLoadTable: false,
@@ -82,7 +87,7 @@ export default {
           key: 'full_name',
           label: 'Nama',
           sortable: true,
-          stickyColumn: true,
+          stickyColumn: !(window.screen.width < smallScreenWidth),
           thClass: 'text-black',
           thStyle: {
             color: 'black',
@@ -120,7 +125,7 @@ export default {
           label: 'Verifikasi Email',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -134,7 +139,7 @@ export default {
           label: 'On Boarding',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           thStyle: {
             color: 'black',
             textTransform: 'capitalize',
@@ -146,7 +151,7 @@ export default {
           label: '1st Produk',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -160,7 +165,7 @@ export default {
           label: '1st Order',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -174,7 +179,7 @@ export default {
           label: '1st Pickup',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -185,10 +190,10 @@ export default {
         },
         {
           key: 'last_pickup',
-          label: 'Pickup Akhir',
+          label: 'Last Pickup',
           sortable: true,
           class: 'text-black text-right',
-          tdClass: 'cell__custom',
+          tdClass: 'text-capitalize',
           formatter: val => (this.$moment(val).isValid() ? this.$moment(val).format('DD MMMM YYYY') : val),
           thStyle: {
             color: 'black',
@@ -249,12 +254,7 @@ export default {
           },
         },
       ],
-      paramsCallAPI: {
-        start_date: this.$moment(last30).startOf('day').format(formatDate),
-        end_date: this.$moment(today).endOf('day').format(formatDate),
-        page: null,
-        limits: 50,
-      },
+      paramsCallAPI: InitParamsAPI,
       filteredItems: [],
     }
   },
@@ -264,6 +264,9 @@ export default {
       return this.fields
         .filter(f => f.sortable)
         .map(f => ({ text: f.label, value: f.key }))
+    },
+    isStickyHeader() {
+      return !(window.screen.width < smallScreenWidth)
     },
   },
   watch: {
@@ -281,13 +284,23 @@ export default {
       },
       deep: true,
     },
+    search: {
+      handler(val) {
+        this.paramsCallAPI = {
+          ...this.paramsCallAPI,
+          search: val,
+        }
+      },
+    },
     perPage: {
       handler(val) {
+        this.search = ''
         this.paramsCallAPI.limits = val
       },
     },
     currentPage: {
       handler(val) {
+        this.search = ''
         this.paramsCallAPI.page = val
       },
     },
@@ -299,12 +312,13 @@ export default {
     },
   },
   mounted() {
-    this.totalRows = this.items.length
     this.fetchData()
   },
   methods: {
     fetchData() {
+      // params dikasih sory_by=email dan order_by=asc atau desc ?
       this.isLoadTable = true
+      clearTimeout(timeoutCallApi)
       this.$http_komship({
         methods: 'GET',
         headers: {
@@ -323,10 +337,11 @@ export default {
             this.totalRows = 0
           } else {
             // last
-            const dtitems = parseData.data.sort((a, b) => b.partner_id - a.partner_id)
+            const dtitems = parseData.data
             this.items = dtitems
             this.filteredItems = dtitems
-            this.totalRows = dtitems.total
+            this.totalRows = parseData.last_page * this.perPage
+            timeoutCallApi = setTimeout(this.fetchData, 180000)
           }
           this.loadDataAwal = false
           this.isLoadTable = false
@@ -385,32 +400,27 @@ export default {
           break
       }
     },
-    onChangeSearch(dtsearch) {
-      if (dtsearch) {
-        const filteredData = [...this.items].filter(x => {
-          if (x.full_name.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-            return true
-          }
-          if (x.email.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-            return true
-          }
-          if (x.no_hp.indexOf(dtsearch) !== -1) {
-            return true
-          }
-          return false
-        })
-        this.filteredItems = filteredData
-      } else {
-        this.filteredItems = this.items
-      }
-    },
     onFiltered(filteredItems) {
+      console.log(filteredItems)
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
+    sortingChanged(ctx) {
+      const field = ctx.sortBy
+      const isDesc = ctx.sortDesc ? 'desc' : 'asc'
+      // console.log(field, isDesc)
+      this.paramsCallAPI = {
+        ...this.paramsCallAPI,
+        sort_by: isDesc,
+        ordered_by: field,
+      }
+    },
     setperPage(pagedt) {
       this.perPage = pagedt
     },
+  },
+  destroyed() {
+    clearTimeout(timeoutCallApi)
   },
 }

@@ -377,6 +377,7 @@
     id="modalTopUp"
     centered
     hide-header
+    hide-footer
   >
     <a
       href="#"
@@ -419,24 +420,21 @@
         </b-form-group>
       </div>
     </form>
-    <template #modal-footer>
+    <b-row class="pb-1 justify-content-end mr-50 wrapper__action__topup">
       <button
-        class="btn btn-outline-primary rounded-lg"
+        class="btn btn-outline-primary rounded-lg btn-icon mr-1"
         @click="$bvModal.hide('modalTopUp')"
       >
         Batal
       </button>
       <button
-        class="btn btn-primary rounded-lg"
+        class="btn btn-primary rounded-lg btn-icon"
         @click="topUpSaldo()"
       >
-        <b-spinner
-          v-if="loadingSubmitTopup"
-          small
-        />
+        <b-spinner v-if="loadingSubmitTopUp" small />
         Top Up Sekarang
       </button>
-    </template>
+    </b-row>
   </b-modal>
   <b-modal
     id="modal-keuangan"
@@ -640,7 +638,7 @@
         </p>
       </b-row>
       <b-row class="justify-content-center mb-1">
-        <h5 class="text-black">
+        <h5 class="text-black text-center">
           <strong>
             Sudah menyelesaikan pembayaran?
           </strong>
