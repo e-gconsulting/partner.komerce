@@ -302,10 +302,10 @@
 
     <vue-html2pdf
       ref="html2Pdf"
-      :enable-download="false"
+      :enable-download="computeDownloadPdf"
       :show-layout="false"
       :float-layout="true"
-      :preview-modal="true"
+      :preview-modal="computePreviewModalPdf"
       :paginate-elements-by-height="1400"
       :filename="labelformobile"
       :pdf-quality="2"
@@ -315,7 +315,7 @@
 
       pdf-content-width="100%"
       @hasStartedGeneration="hasStartedGeneration()"
-      @hasGenerated="hasGenerated($event)"
+      @hasDownloaded="hasGenerated($event)"
     >
       <section slot="pdf-content">
         <div v-if="valuesOption === 1">
@@ -1325,6 +1325,7 @@
     <AddPickupPopupPrint
       :selected-option="printOption"
       @onSubmitOption="onSubmitOptionPrint"
+      @onSubmitOptionMobile="onSubmitOptionPrintMobile"
       @onChangeOption="handleChangeOption"
     />
     <b-modal
@@ -1353,8 +1354,8 @@
       ref="html2PdfThermalSquare"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
-      :preview-modal="true"
+      :enable-download="computeDownloadPdf"
+      :preview-modal="computePreviewModalPdf"
       :filename="labelformobile"
       :pdf-quality="2"
       pdf-format="a6"
@@ -1753,8 +1754,8 @@
       ref="html2PdfThermal"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
-      :preview-modal="true"
+      :enable-download="computeDownloadPdf"
+      :preview-modal="computePreviewModalPdf"
       :filename="labelformobile"
       :paginate-elements-by-height="1400"
       :pdf-quality="2"
@@ -2150,7 +2151,57 @@
       </section>
     </vue-html2pdf>
 
-    <b-row>
+    <b-row class="wrapper__pagination__print__mobile">
+      <b-col
+        cols="12"
+        class="mb-1"
+      >
+        <div
+          class="bg-light d-flex justify-content-center align-items-center p-50 rounded"
+        >
+          <span class="text-black mr-50">
+            List per halaman:
+          </span>
+          <b-button
+            v-for="page in optionsPage"
+            :key="page"
+            class="btn-icon"
+            size="sm"
+            :variant="totalPerPage === page ? 'primary' : 'flat-dark'"
+            @click="setPerPage(page)"
+          >
+            {{ page }}
+          </b-button>
+        </div>
+      </b-col>
+      <b-col
+        cols="12"
+        class="d-flex justify-content-end"
+      >
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          first-number
+          last-number
+          class="pagination-primary"
+        >
+          <template #prev-text>
+            <feather-icon
+              size="18"
+              icon="ChevronLeftIcon"
+            />
+          </template>
+          <template #next-text>
+            <feather-icon
+              size="18"
+              icon="ChevronRightIcon"
+            />
+          </template>
+        </b-pagination>
+      </b-col>
+    </b-row>
+
+    <b-row class="wrapper__pagination__print">
       <b-col
         cols="12"
         class="d-flex justify-content-between"
@@ -2315,6 +2366,7 @@ export default {
       optionsPage: [50, 100, 200],
 
       itemsWeightProduct: 0,
+      handlePreviewModalPrint: true,
     }
   },
   computed: {
@@ -2322,12 +2374,8 @@ export default {
       const date = `${this.idOrderFromHistory.pickup_date}T${this.idOrderFromHistory.pickup_time}`
       return `label-${this.$moment(date).format('YYYY-MM-DD-HH-mm-ss')}`
     },
-    formatForPrint() {
-      let papper = 'a4'
-      if (this.valuesOption === 150) {
-        papper = 'a6'
-      }
-      return papper
+    computePreviewModalPdf() {
+      return !(window.screen.width <= 600)
     },
   },
   watch: {
@@ -2406,6 +2454,17 @@ export default {
       }
     },
     onSubmitOptionPrint(values) {
+      this.handlePreviewModalPrint = true
+      this.valuesOption = values
+      if (values === 150) {
+        this.$refs.html2PdfThermal.generatePdf()
+      } else if (values === 100) {
+        this.$refs.html2PdfThermalSquare.generatePdf()
+      } else {
+        this.$refs.html2Pdf.generatePdf()
+      }
+    },
+    onSubmitOptionPrintMobile(values) {
       this.valuesOption = values
       // this.$refs.html2Pdf.generatePdf()
       if (values === 150) {
@@ -2591,4 +2650,14 @@ export default {
         display: inline-block!important;
     }
 }
+  @media only screen and (min-width: 579px) {
+    [dir] .wrapper__pagination__print__mobile {
+        display: none!important;
+    }
+  }
+  @media only screen and (max-width: 578px) {
+    [dir] .wrapper__pagination__print {
+        display: none!important;
+    }
+  }
 </style>
