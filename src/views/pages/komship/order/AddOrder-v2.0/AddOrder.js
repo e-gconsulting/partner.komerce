@@ -581,6 +581,12 @@ export default {
         this.calculate(false)
       }
     },
+    checkDiscount() {
+      if (this.discount > this.subTotal) {
+        this.discount = this.subTotal
+        this.calculate(true)
+      }
+    },
     async calculate(getAdditional) {
       if (this.shipping && this.cartId.length > 0) {
         let grandTotalNew

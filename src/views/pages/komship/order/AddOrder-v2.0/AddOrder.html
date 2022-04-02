@@ -531,7 +531,7 @@
             <b-form-input
               v-model="discount"
               type="number"
-              @keyup="formatDiscount(discount), calculate(true)"
+              @keyup="formatDiscount(discount), checkDiscount()"
             />
           </b-col>
         </b-row>
