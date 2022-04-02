@@ -137,6 +137,11 @@ export default {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     formatDiscount(value) {
       this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+      if (value === '' || value === null) {
+        this.discount = 0
+      } else {
+        this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+      }
     },
     formatAdditional(value) {
       if (value === '' || value === null) {
@@ -576,6 +581,12 @@ export default {
         this.calculate(false)
       }
     },
+    checkDiscount() {
+      if (this.discount > this.subTotal) {
+        this.discount = this.subTotal
+        this.calculate(true)
+      }
+    },
     async calculate(getAdditional) {
       if (this.shipping && this.cartId.length > 0) {
         let grandTotalNew
@@ -586,6 +597,9 @@ export default {
           this.additionalCost = this.bebankanCustomer
         } else {
           this.additionalCost = 0
+        }
+        if (!this.potonganSaldo) {
+          this.discount = 0
         }
         if (this.profile.partner_is_allowed_edit) {
           if (getAdditional) {
@@ -637,7 +651,6 @@ export default {
             this.isCalculate = true
             this.loadingCalculate = false
           }).catch(() => {
-            this.isCalculate = false
             this.loadingCalculate = false
           })
         }, 2000)
