@@ -592,6 +592,9 @@ export default {
         } else {
           this.additionalCost = 0
         }
+        if (!this.potonganSaldo) {
+          this.discount = 0
+        }
         if (this.profile.partner_is_allowed_edit) {
           if (getAdditional) {
             grandTotalNew = null
