@@ -1,0 +1,240 @@
+<b-row>
+  <b-col cols="12" class="mb-1">
+    <h2 class="text-black">
+      Dashboard
+    </h2>
+  </b-col>
+  <b-col lg="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-between">
+              <h4 class="text-black my-0">
+                Performa Ongkir Ekspedisi
+              </h4>
+              <b-button
+                variant="outline"
+                class="button-custom"
+                @click="$router.push('/performa-ekspedisi')"
+              >
+                <feather-icon
+                  icon="ChevronRightIcon"
+                />
+              </b-button>
+            </div>
+          </b-col>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-center">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="filterdata.ekspedisi.chart.selectOpt"
+                  :options="optionChart"
+                  label="name"
+                  class="element__vueselect"
+                />
+              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.ekspedisi.chart.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
+            </div>
+          </b-col>
+          <b-col cols="12">
+            <vue-apex-charts
+              type="area"
+              height="400"
+              :options="chartOptionsEkspedisi"
+              :series="seriesekspedisi"
+            />
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+  <b-col lg="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <h4 class="text-black my-0">
+              Top Ongkir Ekspedisi
+            </h4>
+          </b-col>
+          <b-col cols="12">
+            <div class="d-flex justify-content-end">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="filterdata.ekspedisi.toplist.selectOpt"
+                  :options="optionTopList"
+                  label="name"
+                  class="element__vueselect"
+                />
+              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.ekspedisi.toplist.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                  style="height: 38px;"
+                >
+                </vue-monthly-picker>
+              </div>
+            </div>
+          </b-col>
+          <b-col cols="12" class="card__wrapper--toplist">
+            <div
+              v-for="(datatopekspedisi, idxtopekspedisi) in datatoplist.ekspedisi"
+              :key="idxtopekspedisi"
+              class="d-flex align-items-center justify-content-between mb-1">
+              <div class="d-flex align-items-center">
+                <img
+                  src="@/assets/images/icons/profile-placehold.svg"
+                  alt="Photo"
+                  class="mr-1"
+                >
+                <h5 class="text-black my-0 text-uppercase">{{ datatopekspedisi.shipping }}</h5>
+              </div>
+              <div>
+                <h4 class="text-green-600 my-0">{{ formatCurrency(datatopekspedisi.shipping_cost) }}</h4>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+  <b-col lg="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-between">
+              <h4 class="text-black my-0">
+                Performa Transaksi Partner
+              </h4>
+              <b-button
+                variant="outline"
+                class="button-custom"
+                @click="$router.push('/pendapatan')"
+              >
+                <feather-icon
+                  icon="ChevronRightIcon"
+                />
+              </b-button>
+            </div>
+          </b-col>
+          <b-col cols="12" class="mb-1">
+            <div class="d-flex justify-content-center">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="filterdata.partner.chart.selectOpt"
+                  :options="optionChart"
+                  label="name"
+                  class="element__vueselect"
+                />
+              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.partner.chart.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
+            </div>
+          </b-col>
+          <b-col cols="12">
+            <vue-apex-charts
+              ref="chartPerformancePartner"
+              :options="chartOptionsPartner"
+              :series="seriespartner"
+              @click="clickLegendPartner"
+              type="area"
+              height="400"
+            />
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+  <b-col lg="6">
+    <b-card
+      no-body
+      class="p-1 card__wrapper"
+    >
+      <template #default>
+        <b-row>
+          <b-col cols="12" class="mb-1">
+            <h4 class="text-black my-0">
+              Top Partner Transaksi
+            </h4>
+          </b-col>
+          <b-col cols="12">
+            <div class="d-flex justify-content-end">  
+              <b-form-group class="mr-1">
+                <v-select
+                  v-model="filterdata.partner.toplist.selectOpt"
+                  :options="optionTopList"
+                  label="name"
+                  class="element__vueselect"
+                />
+              </b-form-group>
+              <div>
+                <vue-monthly-picker
+                  v-model="filterdata.partner.toplist.bulan"
+                  :monthLabels="monthlabel"
+                  :max="maxDatePicker"
+                  dateFormat="MMM YYYY"
+                  placeHolder="Pilih Bulan"
+                  class="datepickerClass"
+                >
+                </vue-monthly-picker>
+              </div>
+            </div>
+          </b-col>
+          <b-col cols="12" class="card__wrapper--toplist">
+            <div
+              v-for="(datatoppartner, idxtoppartner) in datatoplist.partner"
+              :key="idxtoppartner"
+              class="d-flex align-items-center justify-content-between mb-1">
+              <div class="d-flex align-items-center">
+                <img
+                  src="@/assets/images/icons/profile-placehold.svg"
+                  alt="Photo"
+                  class="mr-1"
+                >
+                <h5 class="text-black my-0 text-capitalize">{{ datatoppartner.partner_name }}</h5>
+              </div>
+              <div>
+                <h4 class="text-green-600 my-0">{{ formatCurrency(datatoppartner.transaction_cod) }}</h4>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
+      </template>
+    </b-card>
+  </b-col>
+</b-row>

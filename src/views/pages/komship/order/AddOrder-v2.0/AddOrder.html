@@ -128,6 +128,8 @@
             Tidak ada data untuk ditampilkan.
           </span>
         </v-select>
+      </b-col>
+      <b-col md="1" style="margin-top:6px;">
         <b-spinner
           v-if="destinationSearch"
           variant="primary"
@@ -153,6 +155,37 @@
       class="p-2"
       style="border:1px solid #E2E2E2;border-radius:18px"
     >
+    <b-row class="mb-1">
+      <b-col md="7" />
+
+      <b-col
+        md="5"
+        class="d-flex justify-end"
+      >
+        <span
+          class="w-48 text-sm"
+          style="color:#828282;"
+        >*Simpan setting ini untuk Orderan Selanjuntya</span>
+        <b-img
+          v-if="productSelected.length === 0"
+          src="@/assets/images/icons/archive-tick.png"
+          class="my-auto cursor-pointer"
+          title="Tambahkan Produk Terlebih Dahulu"
+        />
+        <b-img
+          v-if="productSelected.length >= 1 && !productHistory"
+          src="@/assets/images/icons/archive-tick-ready.png"
+          class="my-auto cursor-pointer"
+          @click="saveProductHistory"
+        />
+        <b-img
+          v-if="productSelected.length >= 1 && productHistory"
+          src="@/assets/images/icons/archive-tick-active.png"
+          class="my-auto cursor-pointer"
+          @click="removeProductHistory"
+        />
+      </b-col>
+    </b-row>
       <b-row class="mb-1">
         <b-col
           md="3"
@@ -181,33 +214,6 @@
               Sedang Memuat ...
             </span>
           </v-select>
-        </b-col>
-        <b-col
-          md="5"
-          class="d-flex justify-end"
-        >
-          <span
-            class="w-48 text-sm"
-            style="color:#828282;"
-          >*Simpan setting ini untuk Orderan Selanjutnya</span>
-          <b-img
-            v-if="productSelected.length === 0"
-            src="@/assets/images/icons/archive-tick.png"
-            class="my-auto cursor-pointer"
-            title="Tambahkan Produk Terlebih Dahulu"
-          />
-          <b-img
-            v-if="productSelected.length >= 1 && !productHistory"
-            src="@/assets/images/icons/archive-tick-ready.png"
-            class="my-auto cursor-pointer"
-            @click="saveProductHistory"
-          />
-          <b-img
-            v-if="productSelected.length >= 1 && productHistory"
-            src="@/assets/images/icons/archive-tick-active.png"
-            class="my-auto cursor-pointer"
-            @click="removeProductHistory"
-          />
         </b-col>
       </b-row>
       <b-table
@@ -644,29 +650,28 @@
     </div>
     <div
       v-if="isCalculate"
-      class="mb-3"
+      class="mb-3 mt-2"
     >
-      <hr>
       <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
-        <b-col lg="5" />
-        <b-col lg="5">
+        <b-col md="5" />
+        <b-col md="5">
           Total Harga Produk
         </b-col>
         <b-col
-          lg="2"
-          class="d-flex justify-end"
+          md="2"
+          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
         >
           Rp {{ formatNumber(subTotal) }}
         </b-col>
       </b-row>
       <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
-        <b-col lg="5" />
-        <b-col lg="5">
+        <b-col md="5" />
+        <b-col md="5">
           Ongkos Kirim ({{ weight }} kg)
         </b-col>
         <b-col
-          lg="2"
-          class="d-flex justify-end"
+          md="2"
+          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
         >
           Rp {{ formatNumber(shippingCost) }}
         </b-col>
@@ -675,13 +680,13 @@
         v-if="potonganSaldo"
         class="mb-1 text-lg"
       >
-        <b-col lg="5" />
-        <b-col lg="5">
+        <b-col md="5" />
+        <b-col md="5">
           Potongan Harga
         </b-col>
         <b-col
-          lg="2"
-          class="d-flex justify-end"
+          md="2"
+          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -696,31 +701,31 @@
         v-if="biayaLain"
         class="mb-1 text-lg"
       >
-        <b-col lg="5" />
-        <b-col lg="5">
+        <b-col md="5" />
+        <b-col md="5">
           Biaya Lain
         </b-col>
         <b-col
-          lg="2"
-          class="d-flex justify-end"
+          md="2"
+          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
         >
           Rp {{ formatNumber(additionalCost) }}
         </b-col>
       </b-row>
       <b-row>
-        <b-col lg="5" />
-        <b-col lg="7">
-          <hr><span />
+        <b-col md="5" />
+        <b-col md="7">
+          <hr style="border-top: 1px solid #C2C2C2;"><span />
         </b-col>
       </b-row>
       <b-row class="text-xl font-bold mb-1">
-        <b-col lg="5" />
-        <b-col lg="5">
+        <b-col md="5" />
+        <b-col md="5">
           Total Pembayaran ({{ paymentMethod }})
         </b-col>
         <b-col
-          lg="2"
-          class="text-primary d-flex justify-end"
+          md="2"
+          class="text-primary d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -732,17 +737,18 @@
         </b-col>
       </b-row>
       <b-row>
-        <b-col lg="5" />
-        <b-col lg="5">
-          <hr><span />
+        <b-col md="5" />
+        <b-col md="6">
+          <hr style="border-top: 1px solid #C2C2C2;"><span />
         </b-col>
         <b-col
-          lg="2"
-          class="d-flex justify-end"
+          md="1"
+          class="d-flex justify-content-end pl-0"
         >
           <b-button
             v-b-toggle="'collapse-1'"
             class="buttonCollapse px-0"
+            style="margin-bottom: 8px;"
             variant="none"
             size="sm"
           >
@@ -756,13 +762,13 @@
           v-if="paymentMethod === 'COD'"
           class="mb-1 text-lg"
         >
-          <b-col lg="5" />
-          <b-col lg="5">
+          <b-col md="5" />
+          <b-col md="5">
             Biaya COD ({{ serviceFeePercentage }}% sudah termasuk PPN)
           </b-col>
           <b-col
-            lg="2"
-            class="d-flex justify-end"
+            md="2"
+            class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
           >
             <b-spinner
               v-if="loadingCalculate"
@@ -774,13 +780,13 @@
           </b-col>
         </b-row>
         <b-row class="mb-1 text-lg">
-          <b-col lg="5" />
-          <b-col lg="5">
+          <b-col md="5" />
+          <b-col md="5">
             Ongkos Kirim (dipotong cashback {{ cashbackPercentage }}%)
           </b-col>
           <b-col
-            lg="2"
-            class="d-flex justify-end"
+            md="2"
+            class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
           >
             <b-spinner
               v-if="loadingCalculate"
@@ -793,13 +799,13 @@
         </b-row>
       </b-collapse>
       <b-row class="mb-1 text-lg font-bold">
-        <b-col lg="5" />
-        <b-col lg="5">
+        <b-col md="5" />
+        <b-col md="5">
           Penghasilan bersih yang kamu dapatkan
         </b-col>
         <b-col
-          lg="2"
-          class="d-flex justify-end text-success"
+          md="2"
+          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0 text-success"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -814,10 +820,10 @@
         </b-col>
       </b-row>
     </div>
-    <hr>
+    <hr style="border-top: 1px solid #C2C2C2;">
     <b-row>
       <b-col
-        lg="6"
+        md="6"
         class="font-bold text-2xl text-center my-auto"
       >
         <span v-if="isCalculate">Total Pembayaran:
@@ -832,7 +838,7 @@
           > Rp {{ formatNumber(grandTotal) }}</span>
         </span>
       </b-col>
-      <b-col lg="6">
+      <b-col md="6" class="d-flex justify-center mt-1">
         <b-button
           variant="outline-primary"
           :disabled="!isCalculate"
