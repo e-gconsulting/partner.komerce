@@ -137,6 +137,11 @@ export default {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     formatDiscount(value) {
       this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+      if (value === '' || value === null) {
+        this.discount = 0
+      } else {
+        this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+      }
     },
     formatAdditional(value) {
       if (value === '' || value === null) {
@@ -637,7 +642,6 @@ export default {
             this.isCalculate = true
             this.loadingCalculate = false
           }).catch(() => {
-            this.isCalculate = false
             this.loadingCalculate = false
           })
         }, 2000)
