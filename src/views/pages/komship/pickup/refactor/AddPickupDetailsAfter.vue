@@ -302,7 +302,7 @@
 
     <vue-html2pdf
       ref="html2Pdf"
-      :enable-download="computeDownloadPdf"
+      :enable-download="computedDownloadPdf"
       :show-layout="false"
       :float-layout="true"
       :preview-modal="computePreviewModalPdf"
@@ -1354,7 +1354,7 @@
       ref="html2PdfThermalSquare"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="computeDownloadPdf"
+      :enable-download="computedDownloadPdf"
       :preview-modal="computePreviewModalPdf"
       :filename="labelformobile"
       :pdf-quality="2"
@@ -1754,7 +1754,7 @@
       ref="html2PdfThermal"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="computeDownloadPdf"
+      :enable-download="computedDownloadPdf"
       :preview-modal="computePreviewModalPdf"
       :filename="labelformobile"
       :paginate-elements-by-height="1400"
@@ -2376,6 +2376,9 @@ export default {
     },
     computePreviewModalPdf() {
       return !(window.screen.width <= 600)
+    },
+    computedDownloadPdf() {
+      return !(window.screen.width >= 600)
     },
   },
   watch: {
