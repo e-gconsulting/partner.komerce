@@ -405,7 +405,7 @@
               lg="3"
               class="text-right"
             >
-              Rp {{ formatNumber(orderData.shipping_retur) }}
+              - Rp {{ formatNumber(orderData.shipping_retur) }}
             </b-col>
           </b-row>
         </b-collapse>
