@@ -314,10 +314,17 @@
       pdf-orientation="portrait"
 
       pdf-content-width="100%"
+      @progress="onProgress($event)"
+      @startPagination="startPagination()"
+      @hasPaginated="hasPaginated()"
       @hasStartedGeneration="hasStartedGeneration()"
-      @hasDownloaded="hasGenerated($event)"
+      @beforeDownload="beforeDownload($event)"
+      @hasDownloaded="hasDownloaded($event)"
     >
-      <section slot="pdf-content">
+      <section
+        slot="pdf-content"
+        @domRendered="domRendered()"
+      >
         <div v-if="valuesOption === 1">
           <div
             v-for="(itemsPrint, index) in fieldItemsPrint"
@@ -780,7 +787,7 @@
                     <b-row>
                       <h4 class="text-black">
                         <strong>
-                          {{ itemsPrint.payment_method }}
+                          {{ itemsPrint.payment_method === 'COD' ? 'COD' : 'Non-COD' }}
                         </strong>
                       </h4>
                     </b-row>
@@ -1133,7 +1140,7 @@
                           style="font-size: 12px;"
                         >
                           <strong>
-                            Non - COD
+                            {{ itemsPrint.payment_method === 'COD' ? 'COD' : 'Non-COD' }}
                           </strong>
                         </span>
                       </b-row>
@@ -2395,6 +2402,46 @@ export default {
     this.getProfile()
   },
   methods: {
+    onProgress(progress) {
+      this.progress = progress
+      // console.log(`PDF generation progress: ${progress}%`)
+    },
+    startPagination() {
+      // console.log('PDF has started pagination')
+    },
+    hasPaginated() {
+      // console.log('PDF has been paginated')
+    },
+    async beforeDownload({ html2pdf, options, pdfContent }) {
+      // console.log('On Before PDF Generation')
+      await html2pdf().set(options).from(pdfContent).toPdf()
+        .get('pdf')
+        .then(pdf => {
+          const getIframe = document.getElementsByTagName('iframe')
+          // console.log(getIframe)
+          const totalPages = pdf.internal.getNumberOfPages()
+          // eslint-disable-next-line no-plusplus
+          for (let i = 1; i <= totalPages; i++) {
+            pdf.setPage(i)
+            pdf.setFontSize(10)
+            pdf.setTextColor(150)
+            pdf.text(`Page ${i} of ${totalPages}`, (pdf.internal.pageSize.getWidth() * 0.88), (pdf.internal.pageSize.getHeight() - 0.3))
+          }
+        })
+        // .save()
+    },
+    hasDownloaded(blobPdf) {
+      // console.log('PDF has downloaded yehey')
+      this.pdfDownloaded = true
+      // console.log(blobPdf)
+    },
+    domRendered() {
+      // console.log('Dom Has Rendered')
+      this.contentRendered = true
+    },
+    onBlobGenerate(blob) {
+      console.log(blob)
+    },
     getOrder() {
       this.loading = true
       this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
