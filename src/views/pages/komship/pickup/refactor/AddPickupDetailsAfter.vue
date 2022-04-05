@@ -2296,8 +2296,8 @@ export default {
     AddPickupPopupPrint,
     PickupLabelPrint,
     BImg,
-    // BListGroup,
-    // BListGroupItem,
+    BListGroup,
+    BListGroupItem,
     BOverlay,
     // BCol,
     BFormCheckbox,
@@ -2404,21 +2404,21 @@ export default {
   methods: {
     onProgress(progress) {
       this.progress = progress
-      console.log(`PDF generation progress: ${progress}%`)
+      // console.log(`PDF generation progress: ${progress}%`)
     },
     startPagination() {
-      console.log('PDF has started pagination')
+      // console.log('PDF has started pagination')
     },
     hasPaginated() {
-      console.log('PDF has been paginated')
+      // console.log('PDF has been paginated')
     },
     async beforeDownload({ html2pdf, options, pdfContent }) {
-      console.log('On Before PDF Generation')
+      // console.log('On Before PDF Generation')
       await html2pdf().set(options).from(pdfContent).toPdf()
         .get('pdf')
         .then(pdf => {
           const getIframe = document.getElementsByTagName('iframe')
-          console.log(getIframe)
+          // console.log(getIframe)
           const totalPages = pdf.internal.getNumberOfPages()
           // eslint-disable-next-line no-plusplus
           for (let i = 1; i <= totalPages; i++) {
@@ -2431,12 +2431,12 @@ export default {
         // .save()
     },
     hasDownloaded(blobPdf) {
-      console.log('PDF has downloaded yehey')
+      // console.log('PDF has downloaded yehey')
       this.pdfDownloaded = true
-      console.log(blobPdf)
+      // console.log(blobPdf)
     },
     domRendered() {
-      console.log('Dom Has Rendered')
+      // console.log('Dom Has Rendered')
       this.contentRendered = true
     },
     onBlobGenerate(blob) {
