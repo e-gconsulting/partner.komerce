@@ -16,6 +16,7 @@ const seriesNameChart = {
   noncod: 'Non - COD',
   total: 'Total',
   order: 'Order',
+  partner: 'Partner',
 }
 
 const typeOfCallingApi = {
@@ -78,12 +79,13 @@ export default {
           curve: 'smooth',
         },
         yaxis: {
+          forceNiceScale: true,
           labels: {
             style: {
               colors: '#000000',
             },
             offsetX: 0,
-            formatter: val => `${(val / 1000000).toFixed(4)} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -138,7 +140,6 @@ export default {
         legend: {
           position: 'top',
           horizontalAlign: 'left',
-          inverseOrder: true,
         },
         colors: colorDefaultChart,
         noData: {
@@ -177,12 +178,13 @@ export default {
           curve: 'smooth',
         },
         yaxis: {
+          forceNiceScale: true,
           labels: {
             style: {
               colors: '#000000',
             },
             offsetX: 0,
-            formatter: val => `${(val / 1000000).toFixed(4)} Jt`,
+            formatter: val => `${(val / 1000000).toFixed(0)} Jt`,
           },
           axisBorder: {
             show: false,
@@ -231,7 +233,7 @@ export default {
                   class="my-0 mt-1"
                   style="color: ${colorDefaultChart[idx]};"
                 >
-                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : (filtersLibs.rupiah(x[dataPointIndex] || 0))}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> (${w.globals.seriesNames[3]}: ${w.globals.collapsedSeries[0].data[dataPointIndex]}) </span>` : ''}
+                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : (filtersLibs.rupiah(x[dataPointIndex] || 0))}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> <br/>${w.globals.seriesNames[3]} ${w.globals.collapsedSeries[0].data[dataPointIndex]} (${w.globals.collapsedSeries[0].data[dataPointIndex]} Partner)</span>` : ''}
                 </p>`
               }
             })
@@ -408,11 +410,13 @@ export default {
         this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.noncod)
         this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.total)
         this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.cod)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.partner)
         this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.order)
       } else {
         this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.noncod)
         this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.total)
         this.$refs.chartPerformancePartner.chart.showSeries(seriesNameChart.cod)
+        this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.partner)
         this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.order)
       }
     },
@@ -539,6 +543,10 @@ export default {
                   name: seriesNameChart.order,
                   data: data.data.total.map(x => x.total_order),
                 },
+                {
+                  name: seriesNameChart.partner,
+                  data: data.data.total.map(x => x.total_partner),
+                },
               ]
               this.chartOptionsPartner = {
                 ...this.chartOptionsPartner,
@@ -548,7 +556,8 @@ export default {
                 },
               }
               this.$nextTick(() => {
-                this.$refs.chartPerformancePartner.chart.toggleSeries('Order')
+                this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.order)
+                this.$refs.chartPerformancePartner.chart.hideSeries(seriesNameChart.partner)
               })
               break
             default:
