@@ -16,6 +16,7 @@ import {
   BForm,
   BButton,
   BSpinner,
+  BModal,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 
@@ -33,6 +34,7 @@ export default {
     ValidationObserver,
     ValidationProvider,
     BSpinner,
+    BModal,
   },
   directives: {
     Ripple,
@@ -124,6 +126,7 @@ export default {
               // window.open(routeData.href, '_blank')
               this.$refs.submitformkirimemail.click()
             }
+            if (data.message === 'Akun Kamu Terdaftar Sebagai Management, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
             this.loading = false
           }).catch(() => {
             this.$toast({
@@ -201,6 +204,9 @@ export default {
       } else {
         this.messageValidateNo = ''
       }
+    },
+    closeModalValidateManajemen() {
+      this.$refs['modal-validate-existing-manajemen'].hide()
     },
   },
 }
