@@ -5,9 +5,9 @@ name: ci
 
 on:
   push:
-    branches: [ dev.partner.komerce.id ]
+    branches: [ internal.partner.komerce.id ]
   pull_request:
-    branches: [ dev.partner.komerce.id ]
+    branches: [ internal.partner.komerce.id ]
 
 jobs:
   ci:
