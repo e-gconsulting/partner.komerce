@@ -323,7 +323,6 @@
     >
       <section
         slot="pdf-content"
-        @domRendered="domRendered()"
       >
         <div v-if="valuesOption === 1">
           <div
@@ -421,7 +420,7 @@
                             size="16"
                           />
                         </span>
-                        <span class="text-black">{{ idOrderFromHistory.district }}</span>
+                        <span class="text-black">{{ getValueDistrict(idOrderFromHistory.district) }}</span>
                       </b-list-group-item>
                     </b-list-group>
                   </b-col>
@@ -573,22 +572,22 @@
                     cols="4"
                     class="border-4 border-black pb-1"
                   >
-                    <h4 class="text-black">
+                    <span class="text-black">
                       <strong>
                         Kuantitas:
                       </strong>
                       {{ sumAll(itemsPrint.product) }}
-                    </h4>
+                    </span>
                   </b-col>
                   <b-col
                     cols="8"
                     class="border-4 border-black d-flex pb-1 align-items-start border-l-0"
                   >
-                    <h4 class="text-black">
+                    <span class="text-black">
                       <strong>
                         ISI PAKET:
                       </strong>
-                    </h4>
+                    </span>
                     <div>
                       <b-list-group
                         v-for="(dataProduct, indexProduct) in itemsPrint.product"
@@ -627,6 +626,19 @@
                         </b-list-group-item>
                       </b-list-group>
                     </div>
+                  </b-col>
+                </b-row>
+
+                <b-row class="px-2 mt-50 pb-50">
+                  <b-col
+                    cols="12"
+                    class="border-4 border-black pb-1"
+                  >
+                    <span class="text-black">
+                      <strong>
+                        Catatan: Mohon hubungi nomor pembeli untuk konfirmasi pengiriman
+                      </strong>
+                    </span>
                   </b-col>
                 </b-row>
 
@@ -734,7 +746,7 @@
                           size="16"
                         />
                       </span>
-                      <span class="text-black">{{ idOrderFromHistory.district }}</span>
+                      <span class="text-black">{{ getValueDistrict(idOrderFromHistory.district) }}</span>
                     </b-list-group-item>
                   </b-list-group>
                 </b-col>
@@ -879,22 +891,22 @@
                   cols="4"
                   class="border-4 border-black pb-1"
                 >
-                  <h4 class="text-black">
+                  <span class="text-black">
                     <strong>
                       Kuantitas:
                     </strong>
                     {{ sumAll(itemsPrint.product) }}
-                  </h4>
+                  </span>
                 </b-col>
                 <b-col
                   cols="8"
                   class="border-4 border-black d-flex pb-1 align-items-center"
                 >
-                  <h4 class="text-black">
+                  <span class="text-black">
                     <strong>
                       ISI PAKET:
                     </strong>
-                  </h4>
+                  </span>
                   <div>
                     <b-list-group
                       v-for="(dataProduct, indexProduct) in itemsPrint.product"
@@ -936,6 +948,19 @@
                 </b-col>
               </b-row>
 
+              <b-row class="px-2 mt-50 pb-50">
+                <b-col
+                  cols="12"
+                  class="border-4 border-black pb-1"
+                >
+                  <span class="text-black">
+                    <strong>
+                      Catatan: Mohon hubungi nomor pembeli untuk konfirmasi pengiriman
+                    </strong>
+                  </span>
+                </b-col>
+              </b-row>
+
             </div>
             <div
               v-if="index % 2 !== 0"
@@ -946,7 +971,7 @@
 
         <div v-if="valuesOption === 4">
           <div
-            class="grid grid-cols-2"
+            class="grid grid-cols-2 pb-50"
           >
             <section
               v-for="(itemsPrint, index) in fieldItemsPrint"
@@ -955,8 +980,8 @@
               class="px-50 pt-50 pt-0"
             >
               <div
-                class="border-4 border-black"
-                style="height:30rem;"
+                class="border-4 border-black mt-1"
+                style="height:35rem;"
               >
 
                 <b-row>
@@ -966,7 +991,7 @@
                   >
                     <span
                       class="text-black"
-                      style="font-size: 8px;"
+                      style="font-size: 8px; margin-top: -10px;"
                     >
                       <strong>
                         Order ID
@@ -999,7 +1024,7 @@
                       alt="ekspedisi"
                       style="margin:auto;"
                       class="mt-50"
-                      width="60"
+                      width="70"
                     />
                     <b-img
                       v-if="itemsPrint.shipping === 'IDEXPRESS'"
@@ -1007,7 +1032,7 @@
                       alt="ekspedisi"
                       style="margin:auto;"
                       class="mt-50"
-                      width="45"
+                      width="50"
                     />
                   </b-col>
                   <b-col
@@ -1031,7 +1056,7 @@
                   >
                     <div
                       class="border-4 border-black"
-                      style="width: 100%; height: 100px;"
+                      style="width: 100%; height: 150px;"
                     >
                       <b-row class="justify-content-center">
                         <span
@@ -1047,13 +1072,13 @@
                         <ul>
                           <li
                             class="text-black d-flex align-items-center"
-                            style="line-height: 7px; margin-bottom: 1px;"
+                            style="line-height: 8px; margin-bottom: 1px;"
                           >
                             <span>
                               <feather-icon icon="UserIcon" />
                             </span>
                             <span
-                              style="font-size: 7px;"
+                              style="font-size: 8px;"
                               class="ml-50"
                             >
                               <strong>
@@ -1063,13 +1088,13 @@
                           </li>
                           <li
                             class="text-black d-flex align-items-center"
-                            style="line-height: 7px; margin-bottom: 1px;"
+                            style="line-height: 8px; margin-bottom: 1px;"
                           >
                             <span>
                               <feather-icon icon="PhoneIcon" />
                             </span>
                             <span
-                              style="font-size: 7px;"
+                              style="font-size: 8px;"
                               class="ml-50"
                             >
                               <strong>
@@ -1079,17 +1104,17 @@
                           </li>
                           <li
                             class="text-black d-flex"
-                            style="line-height: 8px;"
+                            style="line-height: 9px;"
                           >
                             <span>
                               <feather-icon icon="MapPinIcon" />
                             </span>
                             <span
-                              style="font-size: 7px;"
+                              style="font-size: 8px;"
                               class="ml-50"
                             >
                               <strong>
-                                {{ idOrderFromHistory.district }}
+                                {{ getValueDistrict(idOrderFromHistory.district) }}
                               </strong>
                             </span>
                           </li>
@@ -1103,7 +1128,7 @@
                   >
                     <div
                       class="border-4 border-black ml-50"
-                      style="width: 100%; height: 100px;"
+                      style="width: 100%; height: 150px;"
                     >
                       <b-row class="justify-content-center">
                         <span
@@ -1119,13 +1144,13 @@
                         <ul>
                           <li
                             class="text-black d-flex align-items-center"
-                            style="line-height: 7px; margin-bottom: 1px;"
+                            style="line-height: 8px; margin-bottom: 1px;"
                           >
                             <span>
                               <feather-icon icon="UserIcon" />
                             </span>
                             <span
-                              style="font-size: 7px;"
+                              style="font-size: 8px;"
                               class="ml-50"
                             >
                               <strong>
@@ -1135,13 +1160,13 @@
                           </li>
                           <li
                             class="text-black d-flex align-items-center"
-                            style="line-height: 7px; margin-bottom: 1px;"
+                            style="line-height: 8px; margin-bottom: 1px;"
                           >
                             <span>
                               <feather-icon icon="PhoneIcon" />
                             </span>
                             <span
-                              style="font-size: 7px;"
+                              style="font-size: 8px;"
                               class="ml-50"
                             >
                               <strong>
@@ -1151,13 +1176,13 @@
                           </li>
                           <li
                             class="text-black d-flex align-items-center pr-1 pb-5"
-                            style="line-height: 8px;"
+                            style="line-height: 9px;"
                           >
                             <span>
                               <feather-icon icon="MapPinIcon" />
                             </span>
                             <span
-                              style="font-size: 7px;"
+                              style="font-size: 8px;"
                               class="ml-50"
                             >
                               <strong>
@@ -1173,14 +1198,15 @@
 
                 <b-row class="border-4 border-black mx-50 mb-50">
                   <b-col
-                    cols="12"
+                    cols="4"
+                    style="border-right: 1px solid black"
                   >
                     <b-row
                       class="justify-content-center text-center align-items-center"
                     >
                       <h5
                         class="text-black text-center"
-                        style="font-size: 9px;"
+                        style="font-size: 14px; margin-top: 10px;"
                       >
                         <strong>
                           {{ itemsPrint.payment_method === 'COD' ? 'COD' : 'Non-COD' }}
@@ -1191,15 +1217,15 @@
                     </b-row>
                   </b-col>
                   <b-col
-                    cols="12"
+                    cols="8"
                     class="d-flex justify-content-center align-items-center"
                   >
                     <barcode
                       :value="itemsPrint.airway_bill"
-                      height="35"
-                      font-size="10"
+                      height="25"
+                      font-size="8"
                       font-options="bold"
-                      width="2"
+                      width="1"
                     >
                       Show this if the rendering fails.
                     </barcode>
@@ -1207,118 +1233,119 @@
                 </b-row>
 
                 <b-row
-                  class="border-4 border-black mx-50 mb-50"
-                  style="height: 14px;"
+                  class="border-4 border-black justify-content-center mx-50 mb-50"
+                  style="height: 20px;"
                 >
+                  <span
+                    class="text-black"
+                    style="font-size: 8px; line-height: 5px;"
+                  >
+                    <strong>
+                      Jenis Layanan: {{ getService(itemsPrint.shipping_type) }}
+                    </strong>
+                  </span>
+                </b-row>
+
+                <b-row class="mx-50 mb-50">
                   <b-col
                     cols="4"
-                    class="d-flex pl-0"
-                    style="border-right: 1px solid black;"
                   >
-                    <span
-                      class="text-black"
-                      style="font-size: 7px; line-height: 4px; margin-left: 3px;"
+                    <b-row
+                      class="border-4 border-black"
+                      style="border-right: 0px!important; height: 20px;"
                     >
-                      <strong>
-                        Jenis Layanan: {{ getService(itemsPrint.shipping_type) }}
-                      </strong>
-                    </span>
+                      <span
+                        class="text-black ml-50"
+                        style="font-size: 8px; line-height: 5px;"
+                      >
+                        <strong>
+                          Asuransi: tidak ada
+                        </strong>
+                      </span>
+                    </b-row>
                   </b-col>
                   <b-col
-                    cols="4"
-                    class="d-flex pl-0"
-                    style="border-right: 1px solid black;"
+                    cols="8"
                   >
-                    <span
-                      class="text-black"
-                      style="font-size: 7px; line-height: 4px; margin-left: 3px;"
+                    <b-row
+                      class="border-4 border-black"
+                      style="height: 20px;"
                     >
-                      <strong>
-                        Asuransi: tidak ada
-                      </strong>
-                    </span>
-                  </b-col>
-                  <b-col
-                    cols="4"
-                    class="d-flex pl-0"
-                  >
-                    <span
-                      class="text-black ml-50"
-                      style="font-size: 7px; line-height: 4px; margin-left: 2px;"
-                    >
-                      <strong>
-                        Berat: {{ itemsPrint.product[1] === undefined ? (itemsPrint.product[0].weight/1000).toFixed(2) : (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
-                      </strong>
-                    </span>
+                      <span
+                        class="text-black ml-50"
+                        style="font-size: 8px; line-height: 5px;"
+                      >
+                        <strong>
+                          Berat: {{ itemsPrint.product[1] === undefined ? (itemsPrint.product[0].weight/1000).toFixed(2) : (itemsPrint.product.reduce((x,y) => x+y.weight,0)/1000).toFixed(2) }} Kg
+                        </strong>
+                      </span>
+                    </b-row>
                   </b-col>
                 </b-row>
 
-                <b-row
-                  class="mx-50 mb-50 border-4 border-black"
-                  style="height: 55px;"
-                >
+                <b-row class="mx-50 mb-50">
                   <b-col
-                    cols="12"
-                    class="p-0 d-flex"
+                    cols="4"
                   >
-                    <span
-                      class="text-black ml-50"
-                      style="font-size: 7px;"
+                    <b-row
+                      class="border-4 border-black"
+                      style="border-right: 0px!important; height: 100px;"
                     >
-                      <strong>
-                        Kuantitas: {{ sumAll(itemsPrint.product) }}
-                      </strong>
-                    </span>
+                      <span
+                        class="text-black ml-50"
+                        style="font-size: 8px; line-height: 5px;"
+                      >
+                        <strong>
+                          Kuantitas: {{ sumAll(itemsPrint.product) }}
+                        </strong>
+                      </span>
+                    </b-row>
                   </b-col>
                   <b-col
-                    cols="12"
-                    class="pl-0"
+                    cols="8"
                   >
-                    <ul class="p-0">
-                      <li class="d-flex">
-                        <span
-                          class="text-black ml-50"
-                          style="font-size: 7px;"
-                        >
-                          <strong>
-                            Isi
-                          </strong>
-                        </span>
-                        <span
-                          class="text-black"
-                          style="font-size: 7px; margin-left: 4px;"
-                        >
-                          <strong>
-                            paket:
-                          </strong>
-                        </span>
-                        <span
-                          v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                          :key="indexProduct+1"
-                          class="text-black ml-50"
-                          style="font-size: 7px; line-height: 9px; margin-top: 1px;"
-                        >
-                          <strong
-                            v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                    <b-row
+                      class="border-4 border-black"
+                      style="height: 100px;"
+                    >
+                      <ul>
+                        <li class="d-flex">
+                          <span
+                            class="text-black mx-50"
+                            style="font-size: 8px; line-height: 10px;"
                           >
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }}, telinga candra, lengan candra, kaki candra, warna hitam, warna putih, warna biru, warna merah, perut candra, penuh warna, jari-jari candra
-                          </strong>
-                          <strong v-else>
-                            {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }}, telinga candra, lengan candra, kaki candra, warna hitam, warna putih, warna biru, warna merah, perut candra, penuh warna, jari-jari candra
-                          </strong>
-                        </span>
-                      </li>
-                    </ul>
+                            <strong>
+                              Isi paket:
+                            </strong>
+                          </span>
+                          <span
+                            v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                            :key="indexProduct+1"
+                            class="text-black"
+                            style="font-size: 8px; line-height: 9px;"
+                          >
+                            <strong
+                              v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                            >
+                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                            </strong>
+                            <strong v-else>
+                              {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                            </strong>
+                          </span>
+                        </li>
+                      </ul>
+                    </b-row>
                   </b-col>
                 </b-row>
 
                 <b-row
                   :class="itemsPrint.shipping === 'IDEXPRESS' ? 'border-4 border-black mx-50 mb-50' : 'border-4 border-black mx-50' "
-                  style="height: 14px;"
+                  style="height: 20px;"
                 >
                   <span
                     class="text-black ml-50"
-                    style="font-size: 7px; line-height: 4px;"
+                    style="font-size: 8px; line-height: 5px;"
                   >
                     <strong>
                       Catatan: Mohon hubungi nomor pembeli untuk konfirmasi pengiriman
