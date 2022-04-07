@@ -233,7 +233,7 @@ export default {
                   class="my-0 mt-1"
                   style="color: ${colorDefaultChart[idx]};"
                 >
-                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : (filtersLibs.rupiah(x[dataPointIndex] || 0))}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> <br/>${w.globals.seriesNames[3]} ${w.globals.collapsedSeries[0].data[dataPointIndex]} (${w.globals.collapsedSeries[0].data[dataPointIndex]} Partner)</span>` : ''}
+                  <span>${w.globals.seriesNames[idx]}</span> <span class="text-black"> ${w.globals.seriesNames[idx] === seriesNameChart.order ? x[dataPointIndex] : (filtersLibs.rupiah(x[dataPointIndex] || 0))}</span>${w.globals.seriesNames[idx] === seriesNameChart.total ? `<span class="text-gray-600"> <br/>${w.globals.seriesNames[3]} ${w.globals.collapsedSeries[0].data[dataPointIndex]} (${w.globals.collapsedSeries[1].data[dataPointIndex]} Partner)</span>` : ''}
                 </p>`
               }
             })
@@ -271,11 +271,12 @@ export default {
           value: 3,
         },
       ],
-      optionChart: [
-        // {
-        //   name: 'JNE',
-        //   value: 1,
-        // },
+      optionChartEkspedisi: [],
+      optionChartPartner: [
+        {
+          name: 'Semua',
+          value: 0,
+        },
       ],
       monthlabel: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Dec'],
       bulanChartExpedisi: '2022-02-02',
@@ -299,8 +300,8 @@ export default {
         partner: {
           chart: {
             selectOpt: {
-              name: 'JNE',
-              value: 2,
+              name: 'Semua',
+              value: 0,
             },
             bulan: this.$moment(),
           },
@@ -382,16 +383,25 @@ export default {
   },
   mounted() {
     this.getDataShippingName()
-    this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
-    this.fetchDataChart(typeOfCallingApi.chart.partner)
-    this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
-    this.fetchDataTop(typeOfCallingApi.toplist.partner)
   },
   methods: {
     getDataShippingName() {
       this.$http_komship.get('/v1/admin/dashboard/shippingName')
         .then(({ data }) => {
-          this.optionChart = data.data.map((x, idx) => ({ name: x, value: (idx + 1) }))
+          const oriOptions = data.data.map((x, idx) => ({ name: x, value: (idx + 1) }))
+          const optPartner = [...oriOptions]
+          optPartner.unshift({
+            name: 'Semua',
+            value: 0,
+          })
+          this.optionChartEkspedisi = oriOptions
+          this.optionChartPartner = optPartner
+          this.$nextTick(() => {
+            this.fetchDataChart(typeOfCallingApi.chart.ekspedisi)
+            this.fetchDataChart(typeOfCallingApi.chart.partner)
+            this.fetchDataTop(typeOfCallingApi.toplist.ekspedisi)
+            this.fetchDataTop(typeOfCallingApi.toplist.partner)
+          })
         })
         .catch(() => {
           this.$toast({
@@ -471,7 +481,7 @@ export default {
           dtbulan = this.filterdata.partner.chart.bulan
           params.start_date = this.parseStartDate(dtbulan)
           params.end_date = this.parseEndDate(dtbulan)
-          params.expedition_option = this.filterdata.partner.chart.selectOpt.name
+          params.expedition_option = this.filterdata.partner.chart.selectOpt.name.toLowerCase() === 'semua' ? this.optionChartEkspedisi.map(x => x.name).join() : this.filterdata.partner.chart.selectOpt.name
           this.chartOptionsPartner = {
             ...this.chartOptionsPartner,
             xaxis: {
