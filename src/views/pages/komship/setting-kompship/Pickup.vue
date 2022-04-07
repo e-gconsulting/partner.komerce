@@ -9,7 +9,7 @@
   >
     <b-card>
 
-      <h3 class="text-black">
+      <h3 class="text-black ml-50">
         <strong>Pengaturan Alamat Penjemputan</strong>
       </h3>
 
@@ -17,7 +17,7 @@
       <b-row
         v-for="(data, index) in dataAddress"
         :key="index + 1"
-        class="mt-3"
+        class="mt-3 ml-50"
       >
         <b-col
           cols="11"
@@ -120,7 +120,7 @@
                     >
                       <label>
                         <h4 class="text-black">
-                          Kota/Kabupaten<span class="text-primary">*</span>
+                          Kelurahan/Kecamatan<span class="text-primary">*</span>
                         </h4>
                       </label>
                     </b-col>
@@ -128,39 +128,48 @@
                       cols="7"
                     >
                       <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <div
-                          v-for="(dataOrigin, indexOrigin) in tes"
-                          :key="indexOrigin+1"
+                        <validation-provider
+                          #default="{errors}"
+                          name="Kelurahan/Kecamatan"
+                          rules="required"
                         >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Kota/Kabupaten"
-                            rules="required"
+                          <div
+                            v-for="(dataOrigin, indexOrigin) in tes"
+                            :key="indexOrigin+1"
                           >
                             <v-select
-                              v-if="dataOrigin.value === data.origin_code"
+                              v-if="dataOrigin.id === data.destination_id"
                               v-model="originValue"
                               :options="itemsOriginEdit"
-                              :reduce="options => options.value"
                               label="label"
                               :state="errors.length > 0 ? false:null"
                               @search="onSearchOrigin"
                             />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </div>
+                          </div>
+                          <v-select
+                            v-if="handleOldOrigin === true"
+                            v-model="originValue"
+                            :options="itemsOriginEdit"
+                            label="label"
+                            :state="errors.length > 0 ? false:null"
+                            @search="onSearchOrigin"
+                          />
+                          <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
                       </div>
                       <div v-else>
                         <div
                           v-for="(dataOrigin, indexOrigin) in tes"
                           :key="indexOrigin+1"
                         >
-                          <v-select
-                            v-if="dataOrigin.value === data.origin_code"
-                            v-model="dataOrigin.label"
-                            label="label"
-                            disabled
-                          />
+                          <div v-if="dataOrigin.id !== undefined">
+                            <v-select
+                              v-if="dataOrigin.id === data.destination_id"
+                              v-model="dataOrigin.label"
+                              label="label"
+                              disabled
+                            />
+                          </div>
                         </div>
                       </div>
                     </b-col>
@@ -361,7 +370,7 @@
       <transition name="fade">
         <b-row
           v-if="formAddAddress === true"
-          class="mt-3"
+          class="mt-3 ml-50"
         >
           <b-col
             cols="11"
@@ -426,7 +435,7 @@
                       >
                         <label>
                           <h4 class="text-black">
-                            Kota/Kabupaten<span class="text-primary">*</span>
+                            Kelurahan/Kecamatan<span class="text-primary">*</span>
                           </h4>
                         </label>
                       </b-col>
@@ -435,7 +444,7 @@
                       >
                         <validation-provider
                           #default="{errors}"
-                          name="Kota/Kabupaten"
+                          name="Kelurahan/Kecamatan"
                           rules="required"
                         >
                           <v-select
@@ -443,7 +452,7 @@
                             :options="itemsOriginEdit"
                             label="label"
                             :state="errors.length > 0 ? false:null"
-                            placeholder="Masukkan Kota/Kabupaten"
+                            placeholder="Masukkan Kelurahan/Kecamatan"
                             @search="onSearchOrigin"
                           />
                           <small class="text-danger">{{ errors[0] }}</small>
@@ -850,13 +859,15 @@ export default {
       fieldAddPhoneUser: '',
       fieldAddOrigin: '',
 
-      tes: null,
+      tes: [],
       dataDelete: null,
 
       // Validation
       required,
 
       dataIsDefault: 0,
+
+      handleOldOrigin: false,
     }
   },
   mounted() {
@@ -867,7 +878,7 @@ export default {
       this.loading = true
       httpKomship.get('/v1/address', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      }).then(async response => {
         const { data } = response.data
         data.forEach(this.myLoop)
         this.dataAddress = data
@@ -887,20 +898,20 @@ export default {
       })
     },
     myLoop(data) {
-      httpKomship.get(`/v1/origin?search=${data.origin_code}`, {
+      httpKomship.get(`/v1/destination?destination_id=${data.destination_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
-        if (response.data.data[0] !== undefined) {
-          this.itemsOrigin.push(response.data.data[0])
-          const result = this.itemsOrigin.reduce((unique, o) => {
-            if (!unique.some(obj => obj.label === o.label && obj.value === o.value)) {
-              unique.push(o)
-            }
-            return unique
-          }, [])
-          this.tes = result
+        if (response.data.data !== null) {
+          this.tes.push(response.data.data)
+          const seen = new Set()
+
+          this.tes = this.tes.filter(el => {
+            const duplicate = seen.has(el.id)
+            seen.add(el.id)
+            return !duplicate
+          })
         }
-      }).catch(err => {
+      }).catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -919,27 +930,44 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'post')
           formData.append('address_name', this.fieldAddAddressName)
-          formData.append('origin_code', this.fieldAddOrigin.value)
+          formData.append('origin_code', this.fieldAddOrigin.origin_code)
           formData.append('address_detail', this.fieldAddAddressDetail)
           formData.append('pic', this.fieldAddPicName)
+          formData.append('zip_code', this.fieldAddOrigin.zip_code)
+          formData.append('destination_id', this.fieldAddOrigin.id)
           formData.append('phone', this.fieldAddPhoneUser)
           formData.append('is_default', this.dataIsDefault)
 
           httpKomship.post('/v1/address/store', formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(() => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                icon: 'CheckIcon',
-                text: 'Success menambahkan alamat pickup',
-                variant: 'success',
-              },
-            }, 2000)
-            this.loadingSubmit = false
-            this.formAddAddress = false
-            this.getAddress()
+          }).then(response => {
+            if (response.data.code !== 400) {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success menambahkan alamat pickup',
+                  variant: 'success',
+                },
+              }, 2000)
+              this.loadingSubmit = false
+              this.formAddAddress = false
+              this.getAddress()
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal menambahkan alamat pickup, silahkan coba lagi!',
+                  variant: 'danger',
+                },
+              }, 2000)
+              this.loadingSubmit = false
+              this.formAddAddress = false
+              this.getAddress()
+            }
           }).catch(() => {
             this.loadingSubmit = false
             this.$toast({
@@ -985,17 +1013,20 @@ export default {
           const formData = new FormData()
           formData.append('_method', 'put')
           formData.append('address_name', this.addressName)
-          if (this.originValue !== null) {
-            formData.append('origin_code', this.originValue.value !== undefined ? this.originValue.value : this.originValue)
+          if (this.originValue !== null || this.originValue !== '') {
+            formData.append('origin_code', this.originValue.origin_code)
+            formData.append('destination_id', this.originValue.id)
+            formData.append('zip_code', this.originValue.zip_code)
           }
           formData.append('address_detail', this.addressDetail)
           formData.append('pic', this.picName)
           formData.append('phone', this.phoneUser)
           formData.append('is_default', this.dataIsDefault)
-
           httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
+            this.tes = []
+            this.handleOldOrigin = false
             this.loadingSubmit = false
             this.$toast({
               component: ToastificationContent,
@@ -1030,13 +1061,16 @@ export default {
       this.editIdAddress = data.address_id
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
-      this.originValue = data.origin_code
       // eslint-disable-next-line array-callback-return
       this.tes.map(items => {
-        if (items.value === data.origin_code) {
+        if (items.id === data.destination_id) {
           this.originValue = items
         }
       })
+      if (data.destination_id === 0) {
+        this.handleOldOrigin = true
+        this.originValue = null
+      }
       this.picName = data.pic
       this.phoneUser = data.phone
       if (data.is_default === 0) {
@@ -1086,10 +1120,10 @@ export default {
       that.loadOrigin(search).finally(() => loading(false))
     }, 500),
     loadOrigin(search) {
-      return httpKomship.get(`/v1/origin?search=${search}`, {
+      return httpKomship.get(`/v1/destination?search=${search}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
-        this.itemsOriginEdit = response.data.data
+        this.itemsOriginEdit = response.data.data.data
       }).catch(err => {
         this.$toast({
           component: ToastificationContent,

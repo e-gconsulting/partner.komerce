@@ -78,7 +78,8 @@ export default {
       status: true,
       visibilityPin: 'password',
       resTarikSaldo: {},
-      loadingSubmitTopUp: false,
+
+      loadingSubmitTopup: false,
     }
   },
   mounted() {
@@ -140,14 +141,14 @@ export default {
       this.$bvModal.show('modalTopUp')
     },
     async topUpSaldo() {
-      this.loadingSubmitTopUp = true
+      this.loadingSubmitTopup = true
       try {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
         window.open(response.data.data.invoice_xendit_url, '_blank').focus()
         this.$refs['modal-after-topup'].show()
-        this.loadingSubmitTopUp = false
+        this.loadingSubmitTopup = false
       } catch (e) {
         this.$swal({
           title: '<span class="font-weight-bold h4">Top Up Saldo Gagal</span>',
@@ -162,10 +163,10 @@ export default {
           },
           buttonsStyling: false,
         })
-        this.loadingSubmitTopUp = false
+        this.loadingSubmitTopup = false
       } finally {
         this.$store.commit('saldo/UPDATE_NOMINAL', '')
-        this.loadingSubmitTopUp = false
+        this.loadingSubmitTopup = false
       }
     },
     formatDate(d) {

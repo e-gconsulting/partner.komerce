@@ -24,6 +24,19 @@
     max-width: 340px;
   }
 }
+.filter__container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1em;
+
+  &--picker {
+    margin-right: 1em;
+    &-input {
+      min-width: 350px;
+    }
+  }
+}
 .cell__custom {
   min-width: 150px !important; 
   text-transform: capitalize;
@@ -60,6 +73,45 @@
     &btn{
       width: 178px;
       height: 56px;
+    }
+  }
+}
+.pagination__container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2em;
+}
+@media only screen and (max-width: 830px) {
+  .filter__container {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin: 1em 0px;
+
+    &--picker {
+      margin-right: unset;
+      &-input {
+        min-width: unset;
+        max-width: 350px;
+      }
+    }
+    &--search {
+      &-binputgroup {
+        flex-wrap: unset;
+      }
+    }
+  }
+  .growth__inputsearch {
+    height: 40px;
+    width: 150px;
+  }
+  .pagination__container {
+    display: grid;
+    justify-content: center;
+    margin: 2em auto 0px;
+
+    &--paging {
+      margin: 1.68em auto 0px;
     }
   }
 }

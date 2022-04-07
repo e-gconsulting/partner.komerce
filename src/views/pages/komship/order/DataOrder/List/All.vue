@@ -115,12 +115,15 @@
         </template>
         <template #cell(customer_name)="data">
           <span class="font-bold">{{ data.item.customer_name }}</span><br>
-          <span
+          <div
             v-if="data.item.is_komship"
-            class="text-muted"
+            class="d-flex"
           >
-            Komship
-          </span>
+            <img
+              :src="data.item.shipment_image_path"
+              style="width:45px"
+            ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
+          </div>
           <span
             v-else
             class="text-muted"
@@ -370,7 +373,7 @@ export default {
     moment(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD-MM-YYYY HH:MM')
+        return moment(date).format('DD-MM-YYYY HH:mm')
       }
       return date
     },
@@ -412,6 +415,14 @@ export default {
       const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
       const { data } = await product.data
       this.productList = data
+    },
+    shippingTypeLabel(value) {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
+        return 'Reguler'
+      } if (value === 'GOKIL') {
+        return 'Cargo'
+      }
+      return value
     },
     async setPage(totalPage) {
       this.perPage = totalPage

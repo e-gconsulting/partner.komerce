@@ -18,7 +18,11 @@ const InitParamsAPI = {
   page: null,
   limits: 50,
   search: null,
+  ordered_by: 'full_name',
+  sort_by: 'asc',
 }
+const smallScreenWidth = 576
+
 export default {
   components: {
     BTable,
@@ -83,7 +87,7 @@ export default {
           key: 'full_name',
           label: 'Nama',
           sortable: true,
-          stickyColumn: true,
+          stickyColumn: !(window.screen.width < smallScreenWidth),
           thClass: 'text-black',
           thStyle: {
             color: 'black',
@@ -261,6 +265,9 @@ export default {
         .filter(f => f.sortable)
         .map(f => ({ text: f.label, value: f.key }))
     },
+    isStickyHeader() {
+      return !(window.screen.width < smallScreenWidth)
+    },
   },
   watch: {
     rangeDate: {
@@ -330,7 +337,7 @@ export default {
             this.totalRows = 0
           } else {
             // last
-            const dtitems = parseData.data.sort((a, b) => b.partner_id - a.partner_id)
+            const dtitems = parseData.data
             this.items = dtitems
             this.filteredItems = dtitems
             this.totalRows = parseData.last_page * this.perPage
@@ -412,25 +419,6 @@ export default {
     setperPage(pagedt) {
       this.perPage = pagedt
     },
-    // onChangeSearch(dtsearch) {
-    //   if (dtsearch) {
-    //     const filteredData = [...this.items].filter(x => {
-    //       if (x.full_name.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-    //         return true
-    //       }
-    //       if (x.email.toLowerCase().indexOf(dtsearch.toLowerCase()) !== -1) {
-    //         return true
-    //       }
-    //       if (x.no_hp.indexOf(dtsearch) !== -1) {
-    //         return true
-    //       }
-    //       return false
-    //     })
-    //     this.filteredItems = filteredData
-    //   } else {
-    //     this.filteredItems = this.items
-    //   }
-    // },
   },
   destroyed() {
     clearTimeout(timeoutCallApi)
