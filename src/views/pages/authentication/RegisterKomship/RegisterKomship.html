@@ -797,5 +797,37 @@
     </div>
   </div>
 </div>
+
+  <b-modal
+    ref="modal-validate-existing-manajemen"
+    hide-footer
+    hide-header
+    centered
+  >
+
+    <b-row class="justify-content-center pt-2 mb-2">
+      <b-img
+        src="@/assets/images/icons/warning.svg"
+      />
+    </b-row>
+
+    <b-row class="justify-content-center text-center mb-2">
+      <b-col cols="9">
+        <span class="text-black">
+          Mohon maaf, email kamu terdaftar sebagai Manajemen/Talent Komerce. Silahkan register menggunakan email lainnya
+        </span>
+      </b-col>
+    </b-row>
+
+    <b-row class="justify-content-center pb-2">
+      <b-button
+        variant="primary"
+        @click="closeModalValidateManajemen"
+      >
+        Oke
+      </b-button>
+    </b-row>
+
+  </b-modal>
 </b-row>
   
