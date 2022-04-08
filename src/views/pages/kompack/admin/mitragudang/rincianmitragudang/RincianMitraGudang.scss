@@ -1,0 +1,64 @@
+.btn.disabled, .btn:disabled {
+  background-color: #dddddd !important;
+  color: white !important;
+  opacity: unset;
+  border: none;
+}
+.btnaction__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 7px;
+}
+.was-validated .form-control:invalid, .form-control.is-invalid {
+  background-image: unset;
+}
+.fieldFormData {
+  display: grid;
+  padding: 0px 40px;
+  margin-bottom: 32px;
+}
+.imagebox {
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #cdcdcd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  &__invalid {
+    border-color: red;
+  }
+  &__disabled {
+    border-color: unset;
+    background: gray;
+  }
+}
+.isverification__container {
+  display: flex;
+  align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .isverification__container {
+    display: grid;
+    grid-row-gap: 1em;
+    justify-content: center;
+    align-items: center;
+
+    &--btn {
+      display: grid;
+      justify-content: center;
+    }
+  }
+
+  .btnaction__container {
+    display: grid;
+    justify-content: start;
+    align-items: center;
+    margin-bottom: 1em;
+  }
+}

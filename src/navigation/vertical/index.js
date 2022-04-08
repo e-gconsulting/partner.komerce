@@ -63,6 +63,9 @@ import monitoring from './monitoring-komplace'
 import pengaturanKomplace from './pengaturanKomplace'
 import manajemenAdmin from './manajemenAdmin'
 
+// Kompack Admin
+import kompackadmin from './kompack/admin'
+
 // Array of sections
 export default [
   ...dashboard,
@@ -70,6 +73,7 @@ export default [
   ...talent,
   ...partner,
   ...komship,
+  ...kompackadmin,
   ...management,
   ...masterData,
   ...assignment,
