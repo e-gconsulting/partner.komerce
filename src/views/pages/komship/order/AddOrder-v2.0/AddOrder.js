@@ -722,8 +722,8 @@ export default {
             })
           })
           .catch(err => {
-            const res = err.response.data.message
-            if (res === 'Please Topup to continue your store Order.') {
+            const res = err.response.data.status
+            if (res === 'failed') {
               this.$swal({
                 title: '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>',
                 imageUrl: require('@/assets/images/icons/fail.svg'),
