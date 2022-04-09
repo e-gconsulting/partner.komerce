@@ -490,8 +490,6 @@ export default {
                 this.cartId = res.data.data.cart_id
                 this.loadingCalculate = false
                 this.calculate(true)
-              }).catch(() => {
-                this.loadingCalculate = false
               })
           })
       } else {
@@ -566,7 +564,7 @@ export default {
             }))
             this.listShipping = result
             this.isShipping = true
-          }).catch(err => console.log(err.message))
+          })
         }, 2000)
       } else {
         this.shipping = null
@@ -649,8 +647,6 @@ export default {
             this.cashbackPercentage = result.cashback_percentage
             this.additionalCost = result.additional_cost
             this.isCalculate = true
-            this.loadingCalculate = false
-          }).catch(() => {
             this.loadingCalculate = false
           })
         }, 2000)
