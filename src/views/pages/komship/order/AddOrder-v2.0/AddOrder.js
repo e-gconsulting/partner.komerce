@@ -493,8 +493,6 @@ export default {
                 this.cartId = res.data.data.cart_id
                 this.loadingCalculate = false
                 this.calculate(true)
-              }).catch(() => {
-                this.loadingCalculate = false
               })
           })
       } else {
@@ -569,7 +567,7 @@ export default {
             }))
             this.listShipping = result
             this.isShipping = true
-          }).catch(err => console.log(err.message))
+          })
         }, 2000)
       } else {
         this.shipping = null
@@ -653,8 +651,6 @@ export default {
             this.additionalCost = result.additional_cost
             this.isCalculate = true
             this.loadingCalculate = false
-          }).catch(() => {
-            this.loadingCalculate = false
           })
         }, 2000)
       } else {
@@ -737,8 +733,8 @@ export default {
             })
           })
           .catch(err => {
-            const res = err.response.data.message
-            if (res === 'Please Topup to continue your store Order.') {
+            const res = err.response.data.status
+            if (res === 'failed') {
               this.$swal({
                 title: '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>',
                 imageUrl: require('@/assets/images/icons/fail.svg'),
