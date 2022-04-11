@@ -38,17 +38,6 @@ export default {
         status: "nonaktif"
         total_partner: 0
       */
-        {
-          id: '1',
-          name: 'Gudang Orang 1',
-          addres: 'Tangerang Selatan, Banten',
-          owner: 'Orang 1',
-          email: 'maksdmksa@mail.com',
-          no_hp: '1238084091298',
-          status: dataGudangStatus.unverified,
-          image_logo_url: null,
-          total_partner: null,
-        },
       ],
       fields: [
         {
@@ -126,26 +115,22 @@ export default {
       })
     },
     fetchData() {
+      this.isLoadTable = true
       this.$http_kompack.get('/kompack/warehouse')
         .then(({ data }) => {
           console.log('data', data.data)
           this.items = data.data
         })
         .catch(error => {
-          if (error.response.data.message) {
-            this.$toast(
-              {
-                component: ToastificationContent,
-                props: {
-                  title: 'Failed',
-                  text: error.response.data.message,
-                  variant: 'danger',
-                  attachment: 'AlertTriangleIcon',
-                },
-              },
-              { timeout: 2500 },
-            )
-          }
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failed',
+              text: 'Galat, list mitra gudang',
+              variant: 'danger',
+              attachment: 'AlertTriangleIcon',
+            },
+          }, { timeout: 2500 })
         })
     },
   },

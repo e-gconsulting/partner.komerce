@@ -51,8 +51,8 @@ export default {
         { text: 'Penuh', value: 0 },
       ],
       optionsGender: [
-        { text: 'Laki - Laki', value: 1 },
-        { text: 'Perempuan', value: 0 },
+        { text: 'L', value: 1 },
+        { text: 'P', value: 0 },
       ],
       optionBuildingType: [
         {
@@ -107,10 +107,41 @@ export default {
   },
   mounted() {
     this.fetchDataSelectOption()
+    // this.fetchDataDestination()
   },
   methods: {
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')
+    },
+    fetchDataDestination() {
+      this.$http_kompack('/kompack/destination')
+        .then(({ data }) => {
+          const buildingType = [
+            {
+              value: null,
+              text: 'Pilih jenis bangunan',
+            },
+          ]
+          const ownerShip = [
+            {
+              value: null,
+              text: 'Pilih jenis kepemilikan',
+            },
+          ]
+          this.optionBuildingType = buildingType
+          this.optionsOwnership = ownerShip
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat tambah data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
     },
     fetchDataSelectOption() {
       this.$http_kompack('/kompack/select-option')
@@ -156,11 +187,6 @@ export default {
         })
     },
     savedatalist() {
-      // console.clear()
-      console.log('dataAkun ', this.dataAkun)
-      console.log('dataFulfillment ', this.dataFulfillment)
-      console.log('dataOwner ', this.dataOwner)
-      console.log('dataProperti ', this.dataProperti)
       this.btnSubmitDisabled = true
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
@@ -179,7 +205,9 @@ export default {
           formData.append('pic_name', this.dataFulfillment.pic_name)
           formData.append('pic_phone', this.dataFulfillment.pic_phone)
           formData.append('description', this.dataFulfillment.description)
-          formData.append('image_warehouse', this.dataFulfillment.image_warehouse) // array<string ($binary)>
+          this.dataFulfillment.image_warehouse.forEach(xt => {
+            formData.append('image_warehouse[]', xt) // array<string ($binary)>
+          })
           formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.building_area, 10))
           formData.append('detail_addres', this.dataProperti.detail_addres)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
@@ -187,14 +215,12 @@ export default {
           formData.append('ownership', this.dataProperti.ownership)
 
           // calling API untuk tambah mitra gudang
-          this.$http_kompack.post('/kompack/warehouse/store', formData, {
+          this.$http_kompack.post('/kompack/tambah-mitra-gudang', formData, {
             headers: {
               'content-type': 'multipart/form-data',
             },
           })
             .then(({ data }) => {
-              // jika sudah berhasil callapi
-              console.log('data mitra gudang', data)
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
@@ -212,7 +238,15 @@ export default {
             })
         } else {
           // jika ada error ketika validasi
-          console.log(success)
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat, ada data kurang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
         }
       })
     },
