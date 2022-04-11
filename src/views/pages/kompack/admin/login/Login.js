@@ -30,7 +30,6 @@ export default {
   components: {
     BButton,
     BForm,
-    // BAlert,
     BFormInput,
     BFormGroup,
     BCard,
@@ -63,12 +62,9 @@ export default {
       custommessages1: {
         required: 'Mohon masukan username atau email.',
       },
-
       messageResendEmailVerification: '',
       loadingResendVerification: false,
-
       countTimerEmail: 60,
-
       // Mode Page
       modeVerificationEmail: false,
       modeLogin: true,
