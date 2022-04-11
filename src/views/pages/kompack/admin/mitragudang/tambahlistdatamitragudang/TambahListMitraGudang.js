@@ -180,7 +180,7 @@ export default {
           formData.append('pic_phone', this.dataFulfillment.pic_phone)
           formData.append('description', this.dataFulfillment.description)
           formData.append('image_warehouse', this.dataFulfillment.image_warehouse) // array<string ($binary)>
-          formData.append('destination_id', this.dataProperti.destination_id)
+          formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.building_area, 10))
           formData.append('detail_addres', this.dataProperti.detail_addres)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
           formData.append('building_type', this.dataProperti.building_type)
@@ -208,6 +208,7 @@ export default {
                   variant: 'danger',
                 },
               })
+              this.btnSubmitDisabled = false
             })
         } else {
           // jika ada error ketika validasi
