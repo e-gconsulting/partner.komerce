@@ -134,7 +134,7 @@ export default {
       // eslint-disable-next-line no-param-reassign
       // if (userData.email_verified_at !== null) userData.email_verified_at = null
 
-      this.$http
+      this.$http_kompack
         .post('/user/get-profile', {
           user_id: this.userId,
         })

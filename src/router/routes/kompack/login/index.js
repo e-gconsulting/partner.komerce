@@ -6,7 +6,6 @@ export default [
     meta: {
       layout: 'full',
       resource: 'Auth',
-      redirectIfLoggedIn: true,
     },
   },
 ]
