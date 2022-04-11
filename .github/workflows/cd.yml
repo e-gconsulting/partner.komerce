@@ -38,4 +38,4 @@ jobs:
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
           local-dir: ./dist/
-          server-dir: ./internal.partner.komerce.id/
+          server-dir: ./dev.partner.komerce.id/
