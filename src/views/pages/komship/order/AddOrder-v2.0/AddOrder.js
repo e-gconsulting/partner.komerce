@@ -7,18 +7,6 @@ import moment from 'moment'
 import vSelect from 'vue-select'
 import '@core/scss/vue/libs/vue-select.scss'
 
-function debounce(fn, delay) {
-  let timeoutID = null
-  return () => {
-    clearTimeout(timeoutID)
-    const args = arguments
-    const that = this
-    timeoutID = setTimeout(() => {
-      fn.apply(that, args)
-    }, delay)
-  }
-}
-
 export default {
   components: { vSelect },
   data() {
@@ -649,7 +637,7 @@ export default {
             if (this.newGrandTotal === null) {
               this.newGrandTotal = result.grandtotal
             }
-            if (this.newGrandTotal === result.grandtotal) {
+            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
               this.subTotal = result.subtotal
               this.shippingCost = result.shipping_cost
               this.netProfit = result.net_profit
