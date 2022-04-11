@@ -93,6 +93,16 @@ export default {
         building_type: null,
         ownership: null,
       },
+      imageFieldFormType: {
+        fulfillmentLogo: 'fulfillmentLogo',
+        fulfillmentWarehouse: 'fulfillmentWarehouse',
+        ownerKTP: 'ownerKTP',
+      },
+      prevImg: {
+        logo: null,
+        warehouse: null,
+        ktp: null,
+      },
     }
   },
   mounted() {
@@ -146,11 +156,42 @@ export default {
         })
     },
     savedatalist() {
+      // console.clear()
+      console.log('dataAkun ', this.dataAkun)
+      console.log('dataFulfillment ', this.dataFulfillment)
+      console.log('dataOwner ', this.dataOwner)
+      console.log('dataProperti ', this.dataProperti)
       this.btnSubmitDisabled = true
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
+          // body data
+          const formData = new FormData()
+          formData.append('email', this.dataAkun.email)
+          formData.append('username', this.dataAkun.username)
+          formData.append('owner', this.dataOwner.owner)
+          formData.append('gender', this.dataOwner.gender)
+          formData.append('phone_number', this.dataOwner.phone_number)
+          formData.append('nik', this.dataOwner.nik)
+          formData.append('image_ktp_url', this.dataOwner.image_ktp_url) // string ($binary)
+          formData.append('image_logo', this.dataFulfillment.image_logo) // string ($binary)
+          formData.append('warehouse_name', this.dataFulfillment.warehouse_name)
+          formData.append('avability', this.dataFulfillment.avability)
+          formData.append('pic_name', this.dataFulfillment.pic_name)
+          formData.append('pic_phone', this.dataFulfillment.pic_phone)
+          formData.append('description', this.dataFulfillment.description)
+          formData.append('image_warehouse', this.dataFulfillment.image_warehouse) // array<string ($binary)>
+          formData.append('destination_id', this.dataProperti.destination_id)
+          formData.append('detail_addres', this.dataProperti.detail_addres)
+          formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
+          formData.append('building_type', this.dataProperti.building_type)
+          formData.append('ownership', this.dataProperti.ownership)
+
           // calling API untuk tambah mitra gudang
-          this.$http_kompack.get('/v1/warehouse/store')
+          this.$http_kompack.post('/kompack/warehouse/store', formData, {
+            headers: {
+              'content-type': 'multipart/form-data',
+            },
+          })
             .then(({ data }) => {
               // jika sudah berhasil callapi
               console.log('data mitra gudang', data)
@@ -170,12 +211,39 @@ export default {
             })
         } else {
           // jika ada error ketika validasi
-          // console.log(success)
+          console.log(success)
         }
       })
     },
-    previewLogo(files) {
-      // console.log(files)
+    previewLogo(evChange, type) {
+      const [dataimg] = evChange.target.files
+      let url = null
+      const multiFile = []
+      switch (type) {
+        case this.imageFieldFormType.fulfillmentLogo:
+          this.dataFulfillment.image_logo = dataimg
+          url = URL.createObjectURL(dataimg)
+          this.prevImg.logo = url
+          break
+        case this.imageFieldFormType.fulfillmentWarehouse:
+          evChange.target.files.forEach(fl => {
+            multiFile.push(fl)
+          })
+          this.dataFulfillment.image_warehouse = multiFile
+          url = []
+          evChange.target.files.forEach(x => {
+            url.push(URL.createObjectURL(x))
+          })
+          this.prevImg.warehouse = url
+          break
+        case this.imageFieldFormType.ownerKTP:
+          this.dataOwner.image_ktp_url = dataimg
+          url = URL.createObjectURL(dataimg)
+          this.prevImg.ktp = url
+          break
+        default:
+          break
+      }
     },
   },
 }

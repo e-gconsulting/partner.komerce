@@ -81,11 +81,10 @@
                   label="Logo"
                   vid="image_logo"
                   name="Logo"
-                  rules="required"
                 >
                   <input
                     id="image_logo"
-                    @change="previewLogo"
+                    @change="e => previewLogo(e, imageFieldFormType.fulfillmentLogo)"
                     :state="Boolean(dataFulfillment.image_logo)"
                     ref="image_logo"
                     name="image_logo"
@@ -97,7 +96,13 @@
                     @click="$refs.image_logo.click()"
                     class="imagebox"
                     :class="{ imagebox__invalid: !dataFulfillment.image_logo}"
-                  />
+                  >
+                    <img
+                      v-if="prevImg.logo"
+                      :src="prevImg.logo"
+                      class="w-100 h-100"
+                    >
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -244,23 +249,48 @@
                   label="Logo"
                   vid="image_warehouse"
                   name="Foto Gudang"
-                  rules="required"
                 >
                   <input
                     id="image_warehouse"
-                    @change="previewLogo"
+                    @change="e => previewLogo(e, imageFieldFormType.fulfillmentWarehouse)"
                     :state="Boolean(dataFulfillment.image_warehouse)"
                     ref="image_warehouse"
                     name="image_warehouse"
                     type="file"
+                    multiple
                     accept="image/jpeg, image/png, image/gif"
                     style="display: none;max-width: 150px;"
                   />
                   <div
+                    v-if="prevImg.warehouse === null || prevImg.warehouse.length === 0"
                     @click="$refs.image_warehouse.click()"
-                    class="imagebox"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_warehouse}"
+                    class="imagebox d-flex"
+                    :class="{ imagebox__invalid: !dataFulfillment.image_warehouse }"
                   />
+                  <div
+                    v-else
+                    class="d-flex align-items-center"
+                  >
+                    <div
+                      v-for="(dt, keydt) in prevImg.warehouse"
+                      :key="keydt"
+                      class="imagebox mr-1"
+                      :class="{ imagebox__invalid: !dt}"
+                    >
+                      <img
+                        :src="dt"
+                        class="w-100 h-100"
+                      >
+                    </div>
+                    <div
+                      @click="prevImg.warehouse = []"
+                      class="cursor-pointer"
+                    >
+                      <span class="text-red-500 font-bolder">
+                        Delete
+                      </span>
+                    </div>
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -289,7 +319,6 @@
                     v-model="dataOwner.owner"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Masukan nama pemilik fulfillment"
-                    class=""
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
@@ -386,12 +415,11 @@
                   label="Foto KTP"
                   vid="image_ktp_url"
                   name="Foto KTP"
-                  rules="required"
                 >
                   <input
                     id="image_ktp_url"
-                    @change="previewLogo"
-                    :state="Boolean(dataFulfillment.image_ktp_url)"
+                    @change="e => previewLogo(e, imageFieldFormType.ownerKTP)"
+                    :state="Boolean(dataOwner.image_ktp_url)"
                     ref="image_ktp_url"
                     name="image_ktp_url"
                     type="file"
@@ -401,8 +429,14 @@
                   <div
                     @click="$refs.image_ktp_url.click()"
                     class="imagebox"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_ktp_url}"
-                  />
+                    :class="{ imagebox__invalid: !dataOwner.image_ktp_url}"
+                  >
+                    <img
+                      v-if="prevImg.ktp"
+                      :src="prevImg.ktp"
+                      class="w-100 h-100"
+                    >
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
