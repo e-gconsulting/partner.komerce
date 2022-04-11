@@ -4,6 +4,7 @@
 /* eslint-disable prefer-destructuring */
 import moment from 'moment'
 import vSelect from 'vue-select'
+import httpKomship2 from '../../setting-kompship/http_komship2'
 import '@core/scss/vue/libs/vue-select.scss'
 
 export default {
@@ -87,10 +88,12 @@ export default {
       netProfit: null,
       grandTotal: null,
       newGrandTotal: null,
+      isValidate: false,
+      formData: null,
     }
   },
   created() {
-    this.$http_komship.post('v1/my-profile')
+    httpKomship2.post('v1/my-profile')
       .then(res => {
         this.profile = res.data.data
       }).then(() => {
@@ -662,8 +665,8 @@ export default {
       }
       return value
     },
-    async submit(order) {
-      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening) {
+    checkValidation() {
+      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.profile.partner_is_mutation_bank) {
         this.bankName = this.rekening.bank_name
         this.bankAccountName = this.rekening.account_name
         this.bankAccountNo = this.rekening.account_no
@@ -672,7 +675,16 @@ export default {
         this.bankAccountName = 0
         this.bankAccountNo = 0
       }
-      const formData = {
+      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.customerName && this.customerPhone && this.customerAddress) {
+        this.isValidate = true
+      } else if (this.paymentMethod === 'BANK TRANSFER' && !this.profile.partner_is_mutation_bank && this.customerName && this.customerPhone && this.customerAddress) {
+        this.isValidate = true
+      } else if (this.paymentMethod === 'COD' && this.customerName && this.customerPhone && this.customerAddress) {
+        this.isValidate = true
+      } else {
+        this.isValidate = false
+      }
+      this.formData = {
         date: this.dateOrder,
         tariff_code: this.destination.value,
         subdistrict_name: this.destination.subdistrict_name,
@@ -701,8 +713,11 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
       }
-      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.customerName && this.customerPhone && this.customerAddress) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
+    },
+    async submit(order) {
+      this.checkValidation()
+      if (this.isValidate) {
+        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, this.formData)
           .then(() => {
             this.$swal({
               title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
@@ -734,22 +749,6 @@ export default {
                 }
               })
             }
-          })
-      } else if (this.paymentMethod === 'COD' && this.customerName && this.customerPhone && this.customerAddress) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, formData)
-          .then(() => {
-            this.$swal({
-              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
-              imageUrl: require('@/assets/images/icons/success.svg'),
-              confirmButtonText: 'Oke',
-              confirmButtonClass: 'btn btn-primary',
-            }).then(() => {
-              if (order) {
-                window.location.reload()
-              } else {
-                this.$router.push('/data-order')
-              }
-            })
           })
       } else {
         this.$swal({

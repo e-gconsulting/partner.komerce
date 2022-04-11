@@ -8,9 +8,9 @@
                     <b-card-title class="d-flex justify-between">
                         <span class="font-bold text-primary">Input Cepat</span>
                         <b-form-checkbox
-                            v-model="quickTypeValue"
+                            v-model="quickType"
                             switch
-                            @input="quickType()"
+                            @input="setQuickType()"
                         />
                     </b-card-title>
                     <b-card-text>
@@ -18,19 +18,21 @@
                     </b-card-text>
                 </b-card>
             </b-col>
-            <!-- <b-col md="4">
+            <b-col v-if="isGetting" md="4">
                 <b-card img-src="@/assets/images/banner/mutasi-rekening.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
                     <b-card-title class="d-flex justify-between">
                         <span class="font-bold text-primary">Mutasi Rekening</span>
                         <b-form-checkbox
+                            v-model="mutationBank"
                             switch
+                            @input="setMutationBank()"
                         />
                     </b-card-title>
                     <b-card-text>
                         Memungkinkan kamu untuk menampilkan rekening tujuan untuk setiap orderan Non-COD.
                     </b-card-text>
                 </b-card>
-            </b-col> -->
+            </b-col>
         </b-row>
     </div>
 </b-card>

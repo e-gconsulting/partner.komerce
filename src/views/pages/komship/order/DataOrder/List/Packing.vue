@@ -216,6 +216,7 @@
           >
             <span class="text-primary">Transfer</span>
             <img
+              v-if="data.item.bank !== '0'"
               :id="`iconInfo` + data.item.order_id"
               src="@/assets/images/icons/info-circle.svg"
               class="icon-info"
