@@ -1,7 +1,7 @@
 name: cd
 on:
   push:
-    branches: [ dev.partner.komerce.id ]
+    branches: [ development ]
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
         with: 
           name: dist-folder
           path: ./dist/
-      - name: Deploy to partner.komerce.id
+      - name: Deploy to dev.partner.komerce.id
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with: 
           server: ${{ secrets.ftp_server }}
