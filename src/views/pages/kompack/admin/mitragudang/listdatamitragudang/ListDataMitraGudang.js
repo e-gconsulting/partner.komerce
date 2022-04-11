@@ -6,7 +6,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 
 const dataGudangStatus = {
   unverified: 'Belum Diverifikasi',
-  inactive: 'Non - Aktif',
+  inactive: 'nonaktif',
   active: 'Aktif',
 }
 
@@ -26,6 +26,18 @@ export default {
       sortDesc: false,
       sortDirection: 'asc',
       items: [
+      /*
+        address: "MATARAM, MATARAM"
+        email: "ragil@email.com"
+        id: 16
+        image_logo_url: "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg"
+        is_verification: 0
+        name: "ragil setiawans"
+        owner: "ragil setiawans"
+        phone_number: "081229460004"
+        status: "nonaktif"
+        total_partner: 0
+      */
         {
           id: '1',
           name: 'Gudang Orang 1',
@@ -59,7 +71,7 @@ export default {
           },
         },
         {
-          key: 'no_hp',
+          key: 'phone_number',
           label: 'Kontak',
           sortable: true,
           tdClass: 'text-black',
@@ -116,7 +128,8 @@ export default {
     fetchData() {
       this.$http_kompack.get('/kompack/warehouse')
         .then(({ data }) => {
-          console.log('data', data)
+          console.log('data', data.data)
+          this.items = data.data
         })
         .catch(error => {
           if (error.response.data.message) {

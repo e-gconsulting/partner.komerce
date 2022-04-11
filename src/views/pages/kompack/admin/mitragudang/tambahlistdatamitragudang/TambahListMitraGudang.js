@@ -59,27 +59,11 @@ export default {
           value: null,
           text: 'Pilih jenis bangunan',
         },
-        {
-          text: 'Type 1',
-          value: 1,
-        },
-        {
-          text: 'Type 2',
-          value: 2,
-        },
       ],
       optionsOwnership: [
         {
           value: null,
           text: 'Pilih jenis kepemilikan',
-        },
-        {
-          text: 'Ownership 1',
-          value: 1,
-        },
-        {
-          text: 'Ownership 2',
-          value: 2,
         },
       ],
       dataAkun: {
@@ -111,9 +95,6 @@ export default {
       },
     }
   },
-  computed: {
-    //
-  },
   mounted() {
     this.fetchDataSelectOption()
   },
@@ -124,8 +105,33 @@ export default {
     fetchDataSelectOption() {
       this.$http_kompack('/kompack/select-option')
         .then(({ data }) => {
-          console.log('data select-option :', data)
-          // masuk data tidak error maka munculkan popup success
+          const buildingType = [
+            {
+              value: null,
+              text: 'Pilih jenis bangunan',
+            },
+          ]
+          const ownerShip = [
+            {
+              value: null,
+              text: 'Pilih jenis kepemilikan',
+            },
+          ]
+
+          data.data.ownership.forEach(x => {
+            ownerShip.push({
+              value: x.id,
+              text: x.name,
+            })
+          })
+          data.data.building.forEach(x => {
+            buildingType.push({
+              value: x.id,
+              text: x.name,
+            })
+          })
+          this.optionBuildingType = buildingType
+          this.optionsOwnership = ownerShip
         })
         .catch(() => {
           this.$toast({
@@ -164,12 +170,12 @@ export default {
             })
         } else {
           // jika ada error ketika validasi
-          console.log(success)
+          // console.log(success)
         }
       })
     },
     previewLogo(files) {
-      console.log(files)
+      // console.log(files)
     },
   },
 }
