@@ -1,3 +1,4 @@
+/* eslint-disable prefer-rest-params */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-param-reassign */
 /* eslint-disable global-require */
@@ -5,6 +6,18 @@
 import moment from 'moment'
 import vSelect from 'vue-select'
 import '@core/scss/vue/libs/vue-select.scss'
+
+function debounce(fn, delay) {
+  let timeoutID = null
+  return () => {
+    clearTimeout(timeoutID)
+    const args = arguments
+    const that = this
+    timeoutID = setTimeout(() => {
+      fn.apply(that, args)
+    }, delay)
+  }
+}
 
 export default {
   components: { vSelect },
@@ -565,7 +578,7 @@ export default {
             this.listShipping = result
             this.isShipping = true
           })
-        }, 2000)
+        }, 800)
       } else {
         this.shipping = null
         this.listShipping = []
@@ -586,29 +599,29 @@ export default {
       }
     },
     async calculate(getAdditional) {
-      if (this.shipping && this.cartId.length > 0) {
-        let grandTotalNew
-        this.loadingCalculate = true
-        if (this.biayaLain && this.jenisBiayaLain === '1') {
-          this.additionalCost = this.sesuaiNominal
-        } else if (this.biayaLain && this.jenisBiayaLain === '0') {
-          this.additionalCost = this.bebankanCustomer
-        } else {
-          this.additionalCost = 0
-        }
-        if (!this.potonganSaldo) {
-          this.discount = 0
-        }
-        if (this.profile.partner_is_allowed_edit) {
-          if (getAdditional) {
-            grandTotalNew = null
+      setTimeout(async () => {
+        if (this.shipping && this.cartId.length > 0) {
+          this.loadingCalculate = true
+          let grandTotalNew
+          if (this.biayaLain && this.jenisBiayaLain === '1') {
+            this.additionalCost = this.sesuaiNominal
+          } else if (this.biayaLain && this.jenisBiayaLain === '0') {
+            this.additionalCost = this.bebankanCustomer
           } else {
-            grandTotalNew = this.newGrandTotal
+            this.additionalCost = 0
           }
-        } else {
-          grandTotalNew = null
-        }
-        setTimeout(async () => {
+          if (!this.potonganSaldo) {
+            this.discount = 0
+          }
+          if (this.profile.partner_is_allowed_edit) {
+            if (getAdditional) {
+              grandTotalNew = null
+            } else {
+              grandTotalNew = this.newGrandTotal
+            }
+          } else {
+            grandTotalNew = null
+          }
           await this.$http_komship.get('v2/calculate', {
             params: {
               tariff_code: this.destination.value,
@@ -620,7 +633,7 @@ export default {
               additional_cost: this.additionalCost,
               grandtotal: grandTotalNew,
             },
-          }).then(res => {
+          }).then(async res => {
             const { data } = res.data
             const result = data.find(items => items.value === this.shipping.value)
             if (getAdditional) {
@@ -636,23 +649,25 @@ export default {
             if (this.newGrandTotal === null) {
               this.newGrandTotal = result.grandtotal
             }
-            this.subTotal = result.subtotal
-            this.shippingCost = result.shipping_cost
-            this.netProfit = result.net_profit
-            this.serviceFee = Math.round(result.service_fee)
-            this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight.toFixed(2)
-            this.grandTotal = result.grandtotal
-            this.cashback = result.cashback
-            this.cashbackPercentage = result.cashback_percentage
-            this.additionalCost = result.additional_cost
-            this.isCalculate = true
-            this.loadingCalculate = false
-          })
-        }, 2000)
-      } else {
-        this.isCalculate = false
-      }
+            if (this.newGrandTotal === result.grandtotal) {
+              this.subTotal = result.subtotal
+              this.shippingCost = result.shipping_cost
+              this.netProfit = result.net_profit
+              this.serviceFee = Math.round(result.service_fee)
+              this.serviceFeePercentage = result.service_fee_percentage
+              this.weight = result.weight.toFixed(2)
+              this.grandTotal = result.grandtotal
+              this.cashback = result.cashback
+              this.cashbackPercentage = result.cashback_percentage
+              this.additionalCost = result.additional_cost
+              this.isCalculate = true
+              this.loadingCalculate = false
+            }
+          }).catch(async () => this.calculate(getAdditional))
+        } else {
+          this.isCalculate = false
+        }
+      }, 800)
     },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
