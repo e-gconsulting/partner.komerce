@@ -5,9 +5,9 @@ name: ci
 
 on:
   push:
-    branches: [ development-kompack ]
-    pull_request:
-    branches: [ development-kompack ]
+    branches: [ production ]
+  pull_request:
+    branches: [ production ]
 
 jobs:
   ci:

@@ -437,7 +437,7 @@
           />
         </b-col>
         <b-col
-          v-if="paymentMethod === 'BANK TRANSFER'"
+          v-if="paymentMethod === 'BANK TRANSFER' && profile.partner_is_mutation_bank"
           md="4"
         >
           <v-select
