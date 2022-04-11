@@ -640,7 +640,7 @@
             class="font-bold"
           >
             <b-form-input
-              v-model="newGrandTotal"
+              v-model.lazy="newGrandTotal"
               type="number"
               @keyup="calculate(false)"
               @change="checkNewTotal()"
