@@ -52,35 +52,19 @@ export default {
         { text: 'Penuh', value: 0 },
       ],
       optionsGender: [
-        { text: 'Laki - Laki', value: 1 },
-        { text: 'Perempuan', value: 0 },
+        { text: 'L', value: 1 },
+        { text: 'P', value: 0 },
       ],
       optionBuildingType: [
         {
           value: null,
           text: 'Pilih jenis bangunan',
         },
-        {
-          text: 'Type 1',
-          value: 1,
-        },
-        {
-          text: 'Type 2',
-          value: 2,
-        },
       ],
       optionsOwnership: [
         {
           value: null,
           text: 'Pilih jenis kepemilikan',
-        },
-        {
-          text: 'Ownership 1',
-          value: 1,
-        },
-        {
-          text: 'Ownership 2',
-          value: 2,
         },
       ],
       disabledField: {
@@ -152,57 +136,75 @@ export default {
   },
   mounted() {
     // call api get detail data
-    // this.getDataDetailMitra()
+    this.getDataDetailMitra()
   },
   methods: {
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')
     },
     getDataDetailMitra() {
-      this.$http_kompack.get(`/v1/warehouse/${this.$route.params.id}`)
+      this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
         .then(({ data }) => {
+          console.log(data.data)
           /*
-            "partner_warehouse": {
-              "id": 1,
-              "owner": "Budi Darmasto",
-              "no_hp": "812210123456",
-              "username": "budidarmasto",
-              "gender": "L",
-              "email": "budi@gmail.com",
-              "nik": "3303131808980001",
-              "is_verification": 1,
-              "account_status": 1,
-              "image_idcard_url": "string"
-            },
-            "warehouse": {
-              "id": 1,
-              "name": "Gudang Budi Darmasto",
-              "photo_logo_url": "string",
-              "description": "Gudang dengan kemersihan terjaga dan oacking rapi",
-              "pic_name": "Anak Budi",
-              "pic_phone": "812210123456",
-              "origin_code": "CGK10000",
-              "destination_id": 1,
-              "detail_addres": "Jl. Hr. Bonyamin No. 03",
-              "avability": 1,
-              "building_area": 200,
-              "ownership": 1,
-              "building_type": 2,
-              "is_verification": 1
-            },
-            "image_warehouse": [
-              {
-                "id": 1,
-                "image_url": "assets/image/front_image.jpg"
-              }
-            ]
+          {
+            "id": "16",
+            "user_id": 2593,
+            "email": "ragil@email.com",
+            "username": "ragils",
+            "owner": "ragil setiawans",
+            "phone_number": "081229460004",
+            "gender": "L",
+            "nik": "330313120897",
+            "warehouse_id": 2,
+            "warehouse_name": "ragil setiawans",
+            "avability": 0,
+            "pic_name": "Ragil",
+            "pic_phone": "081229460004",
+            "description": "Warehouse Estrige",
+            "destination_id": 5,
+            "detail_address": "jalan mangga no 5",
+            "building_area": 200,
+            "building_type": 1,
+            "ownership": 4,
+            "image_ktp_url": "public/kompack_image_ktp/CEfRNTovd5pz0dyFMD8QLytgdTSgEuZkjaT5IC8F.jpg",
+            "image_logo_url": "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg",
+            "image_warehouse": []
+            "warehouse_verification": 0,
+            "service_status": "nonaktif",
+            "partner_verification": 0,
+          }
           */
-          console.log(data)
-          // simpan data di dlm
-          // this.dataAkun =
-          // this.dataFulfillment =
-          // this.dataOwner =
-          // this.dataProperti =
+          this.dataAkun = {
+            email: data.data.email,
+            username: data.data.username,
+          }
+          this.dataFulfillment = {
+            warehouse_name: data.data.warehouse_name,
+            avability: data.data.avability,
+            pic_name: data.data.pic_name,
+            pic_phone: data.data.pic_phone,
+            description: data.data.description,
+            image_warehouse: data.data.image_warehouse,
+            image_logo: data.data.image_logo_url,
+            warehouse_verification: data.data.warehouse_verification,
+            is_verification: data.data.service_status,
+          }
+          this.dataOwner = {
+            owner: data.data.owner,
+            gender: data.data.gender === 'L' ? 1 : 0,
+            phone_number: data.data.phone_number,
+            nik: data.data.nik,
+            partner_verification: data.data.partner_verification,
+            image_ktp_url: data.data.image_ktp_url,
+          }
+          this.dataProperti = {
+            destination_id: data.data.destination_id,
+            detail_addres: data.data.detail_address,
+            building_area: data.data.building_area,
+            building_type: data.data.building_type,
+            ownership: data.data.ownership,
+          }
         })
         .catch(() => {
           this.$toast({
