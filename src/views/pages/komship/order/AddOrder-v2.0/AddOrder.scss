@@ -2,3 +2,12 @@
 .not-collapsed > .when-closed {
   display: none;
 }
+.detail-value {
+  display: flex;
+  justify-content: end;
+}
+@media (max-width: 767.98px) {
+  .detail-value {
+    justify-content: start;
+  }
+}

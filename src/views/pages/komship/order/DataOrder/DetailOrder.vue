@@ -342,6 +342,18 @@
             Rp {{ formatNumber(orderData.grandtotal) }}
           </b-col>
         </b-row>
+        <b-row
+          v-if="orderData.notes"
+          class="mt-1"
+        >
+          <b-col lg="3" />
+          <b-col
+            lg="5"
+            class="font-bold text-sm text-primary"
+          >
+            {{ orderData.notes }}
+          </b-col>
+        </b-row>
         <b-row class="mt-1">
           <b-col lg="3" />
           <b-col lg="7">
@@ -418,7 +430,7 @@
             Penghasilan bersih yang kamu dapatkan
           </b-col>
           <b-col
-            v-if="orderData.net_profit.toString().charAt(0) === '-'"
+            v-if="statusNetProfit === '-'"
             lg="3"
             class="text-right text-primary font-bold"
           >
@@ -463,6 +475,7 @@ export default {
       itemOrder: [],
       itemAwb: [],
       isLoading: false,
+      statusNetProfit: null,
     }
   },
   async created() {
@@ -506,6 +519,7 @@ export default {
       const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
       const { data } = await order.data
       this.orderData = await data
+      this.statusNetProfit = data.net_profit.toString().charAt(0)
       this.itemOrder = await data.product
       this.statusOrder = await this.setAlert(data.order_status)
     },
