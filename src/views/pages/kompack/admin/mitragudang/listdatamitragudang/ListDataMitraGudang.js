@@ -6,7 +6,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 
 const dataGudangStatus = {
   unverified: 'Belum Diverifikasi',
-  inactive: 'Non - Aktif',
+  inactive: 'nonaktif',
   active: 'Aktif',
 }
 
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      isLoadTable: false,
+      isLoadTable: true,
       perPage: 50,
       pageOptions: [50, 100, 200, 500],
       totalRows: 1,
@@ -26,17 +26,18 @@ export default {
       sortDesc: false,
       sortDirection: 'asc',
       items: [
-        {
-          id: '1',
-          name: 'Gudang Orang 1',
-          addres: 'Tangerang Selatan, Banten',
-          owner: 'Orang 1',
-          email: 'maksdmksa@mail.com',
-          no_hp: '1238084091298',
-          status: dataGudangStatus.unverified,
-          image_logo_url: null,
-          total_partner: null,
-        },
+      /*
+        address: "MATARAM, MATARAM"
+        email: "ragil@email.com"
+        id: 16
+        image_logo_url: "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg"
+        is_verification: 0
+        name: "ragil setiawans"
+        owner: "ragil setiawans"
+        phone_number: "081229460004"
+        status: "nonaktif"
+        total_partner: 0
+      */
       ],
       fields: [
         {
@@ -59,7 +60,7 @@ export default {
           },
         },
         {
-          key: 'no_hp',
+          key: 'phone_number',
           label: 'Kontak',
           sortable: true,
           tdClass: 'text-black',
@@ -116,23 +117,21 @@ export default {
     fetchData() {
       this.$http_kompack.get('/kompack/warehouse')
         .then(({ data }) => {
-          console.log('data', data)
+          this.items = data.data
+          this.$nextTick(() => {
+            this.isLoadTable = false
+          })
         })
         .catch(error => {
-          if (error.response.data.message) {
-            this.$toast(
-              {
-                component: ToastificationContent,
-                props: {
-                  title: 'Failed',
-                  text: error.response.data.message,
-                  variant: 'danger',
-                  attachment: 'AlertTriangleIcon',
-                },
-              },
-              { timeout: 2500 },
-            )
-          }
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failed',
+              text: 'Galat, list mitra gudang',
+              variant: 'danger',
+              attachment: 'AlertTriangleIcon',
+            },
+          }, { timeout: 2500 })
         })
     },
   },

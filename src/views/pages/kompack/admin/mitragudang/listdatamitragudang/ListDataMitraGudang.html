@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-start mb-2">
       <h3 class="text-black font-bold">Data Mitra Gudang</h3>
     </div>
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center mb-1">
       <b-table
         striped
         hover
@@ -27,15 +27,15 @@
               class="mr-1"
               style="width: 40px;"
             />
-            <div class="d-grid">
-              <h5 class="text-black font-bold">{{ data.item.name }}</h5>
-              <p class="text-gray-500 my-0">{{ data.item.addres }}</p>
+            <div class="d-grid align-items-center">
+              <h5 class="text-black font-bold mb-0.5">{{ data.item.name }}</h5>
+              <p class="text-gray-500 my-0">{{ data.item.address }}</p>
             </div>
           </div>
         </template>
-        <template #cell(no_hp)="data">
-          <div class="d-grid">
-            <p class="text-black">{{ data.item.no_hp }}</p>
+        <template #cell(phone_number)="data">
+          <div class="d-grid align-items-center">
+            <p class="text-black mb-0.5">{{ data.item.phone_number }}</p>
             <p class="text-black my-0">{{ data.item.email }}</p>
           </div>
         </template>
@@ -45,7 +45,7 @@
               class="rounded-lg py-0.5 px-1"
               :class="dataStatusClass(data.item.status)"
             >
-              <span class="font-bold my-0">{{ data.item.status }}</span>
+              <span class="font-bold my-0 text-capitalize">{{ data.item.status }}</span>
               <span
                 v-if="data.item.status === 'Aktif'"
               > | <span class="text-gray-600">{{ data.item.total_partner }} partner</span></span>
@@ -59,6 +59,12 @@
           >
             Lihat Rincian
           </span>
+        </template>
+        <template #table-busy>
+          <div class="text-center text-danger my-2">
+            <b-spinner class="align-middle" />
+            <strong> Loading...</strong>
+          </div>
         </template>
       </b-table>
     </div>
