@@ -52,7 +52,7 @@ export default {
       queryDestination: '',
       selectedDestination: null,
       inputPropsDestination: {
-        id: 'autosuggest__input',
+        id: 'inputPropsDestination',
         class: 'form-control',
         placeholder: 'Masukan Kode Pos/Kecamatan',
       },
@@ -120,6 +120,10 @@ export default {
   watch: {
     queryDestination: {
       handler(val) {
+        if (!val) {
+          this.selectedDestination = ''
+          this.dataProperti.destination_id = null
+        }
         this.fetchDataDestination()
       },
     },
@@ -264,7 +268,7 @@ export default {
             component: ToastificationContentVue,
             props: {
               title: 'Failed',
-              text: 'Galat, ada data kurang',
+              text: 'Galat, ada form belum diisi atau salah isi',
               icon: 'AlertCircleIcon',
               variant: 'danger',
             },

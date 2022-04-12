@@ -470,7 +470,6 @@
                     id="destination_id"
                     ref="refInputDestination"
                     v-model="queryDestination"
-                    :state="errors.length > 0 ? false : null"
                     :suggestions="filteredOptionsDesti"
                     :input-props="inputPropsDestination"
                     :limit="limitOptDestination"
@@ -481,7 +480,7 @@
                       <span class="mb-1">{{ suggestion.item.label }}</span>
                     </template>
                   </vue-autosuggest>
-                  <small class="text-primary">{{ errors[0] }}</small>
+                  <small v-if="!queryDestination && !selectedDestination" class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
               </b-form-group>
             </b-col>
