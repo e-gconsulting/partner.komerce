@@ -460,12 +460,27 @@
                   vid="destination_id"
                   rules="required"
                 >
-                  <b-form-input
+                  <!-- <b-form-input
                     id="destination_id"
                     v-model="dataProperti.destination_id"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Masukan Kode Pos/Kecamatan"
-                  />
+                  /> -->
+                  <vue-autosuggest
+                    id="destination_id"
+                    ref="refInputDestination"
+                    v-model="queryDestination"
+                    :state="errors.length > 0 ? false : null"
+                    :suggestions="filteredOptionsDesti"
+                    :input-props="inputPropsDestination"
+                    :limit="limitOptDestination"
+                    :getSuggestionValue="getDestinationValue"
+                    @input="onInputChangeDestination"
+                  >
+                    <template slot-scope="{suggestion}">
+                      <span class="mb-1">{{ suggestion.item.label }}</span>
+                    </template>
+                  </vue-autosuggest>
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
               </b-form-group>

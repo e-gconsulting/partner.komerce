@@ -17,6 +17,7 @@ import {
   BInputGroupAppend,
 } from 'bootstrap-vue'
 import { required, email } from '@validations'
+import { VueAutosuggest } from 'vue-autosuggest'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
@@ -36,6 +37,7 @@ export default {
     BFormSelect,
     BFormRadioGroup,
     BFormTextarea,
+    VueAutosuggest,
     BInputGroupPrepend,
     BInputGroupAppend,
     ValidationProvider,
@@ -46,6 +48,16 @@ export default {
       email,
       required,
       btnSubmitDisabled: false,
+      filteredOptionsDesti: [],
+      queryDestination: '',
+      selectedDestination: null,
+      inputPropsDestination: {
+        id: 'autosuggest__input',
+        class: 'form-control',
+        placeholder: 'Masukan Kode Pos/Kecamatan',
+      },
+      limitOptDestination: 10,
+      optionDestination: [],
       optionsKetersediaan: [
         { text: 'Tersedia', value: 1 },
         { text: 'Penuh', value: 0 },
@@ -105,43 +117,53 @@ export default {
       },
     }
   },
+  watch: {
+    queryDestination: {
+      handler(val) {
+        this.fetchDataDestination()
+      },
+    },
+  },
   mounted() {
     this.fetchDataSelectOption()
-    // this.fetchDataDestination()
+    this.fetchDataDestination()
   },
   methods: {
-    showModalBatal() {
-      this.$bvModal.show('modal-tambahmitra-warning')
+    getDestinationValue(suggestion) {
+      const { item } = suggestion
+      this.selectedDestination = item
+      this.dataProperti.destination_id = item.id
+      return item.label
+    },
+    onInputChangeDestination(text) {
+      if (text === '' || text === undefined) {
+        return
+      }
+      const filtered = this.optionDestination.filter(item => item.label.toLowerCase().indexOf(text.toLowerCase()) > -1).slice(0, this.limitOptDestination)
+      this.filteredOptionsDesti = [{
+        data: filtered,
+      }]
     },
     fetchDataDestination() {
-      this.$http_kompack('/kompack/destination')
-        .then(({ data }) => {
-          const buildingType = [
-            {
-              value: null,
-              text: 'Pilih jenis bangunan',
-            },
-          ]
-          const ownerShip = [
-            {
-              value: null,
-              text: 'Pilih jenis kepemilikan',
-            },
-          ]
-          this.optionBuildingType = buildingType
-          this.optionsOwnership = ownerShip
-        })
-        .catch(() => {
-          this.$toast({
-            component: ToastificationContentVue,
-            props: {
-              title: 'Failed',
-              text: 'Galat tambah data mitra gudang',
-              icon: 'AlertCircleIcon',
-              variant: 'danger',
-            },
+      const filtered = this.optionDestination.filter(item => item.label.toLowerCase().indexOf(this.queryDestination.toLowerCase()) > -1).slice(0, this.limitOptDestination)
+      if (!filtered.length) {
+        this.$http_kompack('/kompack/destination', { params: { search: this.queryDestination } })
+          .then(({ data }) => {
+            this.filteredOptionsDesti = [{ data: data.data }]
+            this.optionDestination = data.data
           })
-        })
+          .catch(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Failed',
+                text: 'Galat tambah data mitra gudang',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
     fetchDataSelectOption() {
       this.$http_kompack('/kompack/select-option')
@@ -279,6 +301,9 @@ export default {
         default:
           break
       }
+    },
+    showModalBatal() {
+      this.$bvModal.show('modal-tambahmitra-warning')
     },
   },
 }

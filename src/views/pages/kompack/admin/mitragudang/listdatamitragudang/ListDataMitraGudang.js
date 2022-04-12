@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      isLoadTable: false,
+      isLoadTable: true,
       perPage: 50,
       pageOptions: [50, 100, 200, 500],
       totalRows: 1,
@@ -115,11 +115,12 @@ export default {
       })
     },
     fetchData() {
-      this.isLoadTable = true
       this.$http_kompack.get('/kompack/warehouse')
         .then(({ data }) => {
-          console.log('data', data.data)
           this.items = data.data
+          this.$nextTick(() => {
+            this.isLoadTable = false
+          })
         })
         .catch(error => {
           this.$toast({
