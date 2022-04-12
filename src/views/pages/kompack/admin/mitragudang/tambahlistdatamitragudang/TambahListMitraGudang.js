@@ -273,6 +273,7 @@ export default {
               variant: 'danger',
             },
           })
+          this.btnSubmitDisabled = false
         }
       })
     },
@@ -305,6 +306,13 @@ export default {
         default:
           break
       }
+    },
+    isNumber(evt) {
+      const charCode = evt.which ? evt.which : evt.keyCode
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault()
+      }
+      return true
     },
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')

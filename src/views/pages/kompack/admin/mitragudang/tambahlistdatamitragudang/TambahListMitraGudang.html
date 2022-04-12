@@ -103,6 +103,7 @@
                       class="w-100 h-100"
                     >
                   </div>
+                  <small v-if="!dataFulfillment.image_logo" class="text-primary">Logo harus di upload</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -205,6 +206,7 @@
                     v-model="dataFulfillment.pic_phone"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Masukan nomor hp penanggung jawab fulfillment atau gudang"
+                    @keypress="isNumber($event)"
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
@@ -265,7 +267,7 @@
                     v-if="prevImg.warehouse === null || prevImg.warehouse.length === 0"
                     @click="$refs.image_warehouse.click()"
                     class="imagebox d-flex"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_warehouse }"
+                    :class="{ imagebox__invalid: (!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0) }"
                   />
                   <div
                     v-else
@@ -291,6 +293,7 @@
                       </span>
                     </div>
                   </div>
+                  <small v-if="!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0" class="text-primary">Gambar gudang harus di upload</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -372,6 +375,7 @@
                     v-model="dataOwner.phone_number"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Masukan nomor pemilik fulfillment"
+                    @keypress="isNumber($event)"
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
@@ -397,6 +401,7 @@
                     v-model="dataOwner.nik"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Masukan NIK pemilik fulfillment"
+                    @keypress="isNumber($event)"
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
@@ -437,6 +442,7 @@
                       class="w-100 h-100"
                     >
                   </div>
+                  <small v-if="!dataOwner.image_ktp_url" class="text-primary">Foto KTP harus di upload</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -460,14 +466,14 @@
                   vid="destination_id"
                   rules="required"
                 >
-                  <!-- <b-form-input
+                  <b-form-input
                     id="destination_id"
                     v-model="dataProperti.destination_id"
                     :state="errors.length > 0 ? false : null"
                     placeholder="Masukan Kode Pos/Kecamatan"
-                  /> -->
+                    style="display: none;"
+                  />
                   <vue-autosuggest
-                    id="destination_id"
                     ref="refInputDestination"
                     v-model="queryDestination"
                     :suggestions="filteredOptionsDesti"
@@ -530,6 +536,7 @@
                       id="building_area"
                       v-model="dataProperti.building_area"
                       :state="errors.length > 0 ? false : null"
+                      @keypress="isNumber($event)"
                       placeholder="0"
                     />
                     <b-input-group-append is-text>
@@ -605,7 +612,13 @@
                   type="submit"
                   variant="primary"
                   class="font-bold"
-                >Simpan</b-button>
+                >
+                  <b-spinner
+                    v-if="btnSubmitDisabled"
+                    small
+                  />
+                  Simpan
+                </b-button>
               </div>
             </b-col>
           </b-row>
