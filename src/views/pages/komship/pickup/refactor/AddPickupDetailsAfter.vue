@@ -983,31 +983,28 @@
                     class="border-4 border-black"
                     style="height: 100px;"
                   >
-                    <div
-                      v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                      :key="indexProduct+1"
-                      class="text-black"
+                    <span
+                      class="text-black mx-50"
                       style="font-size: 9px;"
                     >
-                      <span
-                        class="text-black mx-50"
-                        style="font-size: 9px;"
-                      >
-                        <strong>
-                          ISI PAKET:
-                        </strong>
-                      </span>
-                      <span>
-                        <strong
-                          v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                      <strong>
+                        ISI PAKET: <span
+                          v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                          :key="indexProduct+1"
+                          class="text-black ml-50"
+                          style="font-size: 9px;"
                         >
-                          {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                        </strong>
-                        <strong v-else>
-                          {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
-                        </strong>
-                      </span>
-                    </div>
+                          <strong
+                            v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                          >
+                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                          </strong>
+                          <strong v-else>
+                            {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                          </strong>
+                        </span>
+                      </strong>
+                    </span>
                   </b-row>
                 </b-col>
               </b-row>
@@ -1372,31 +1369,28 @@
                       class="border-4 border-black"
                       style="height: 100px;"
                     >
-                      <div
-                        v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                        :key="indexProduct+1"
-                        class="text-black"
-                        style="font-size: 8px; line-height: 9px;"
+                      <span
+                        class="text-black mx-50"
+                        style="font-size: 8px; line-height: 10px;"
                       >
-                        <span
-                          class="text-black mx-50"
-                          style="font-size: 8px; line-height: 10px;"
-                        >
-                          <strong>
-                            ISI PAKET:
-                          </strong>
-                        </span>
-                        <span>
-                          <strong
-                            v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                        <strong>
+                          ISI PAKET: <span
+                            v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                            :key="indexProduct+1"
+                            class="text-black ml-50"
+                            style="font-size: 8px; line-height: 0px;"
                           >
-                            {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                          </strong>
-                          <strong v-else>
-                            {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
-                          </strong>
-                        </span>
-                      </div>
+                            <strong
+                              v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                            >
+                              {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                            </strong>
+                            <strong v-else>
+                              {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                            </strong>
+                          </span>
+                        </strong>
+                      </span>
                     </b-row>
                   </b-col>
                 </b-row>
@@ -1800,26 +1794,23 @@
                 style="font-size: 7px;"
               >
                 <strong>
-                  ISI PAKET:
+                  ISI PAKET: <span
+                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                    :key="indexProduct+1"
+                    class="text-black ml-50 p-0"
+                    style="font-size: 7px; line-height: 9px; margin-top: 1px;"
+                  >
+                    <strong
+                      v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                    >
+                      {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                    </strong>
+                    <strong v-else>
+                      {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                    </strong>
+                  </span>
                 </strong>
               </span>
-              <div
-                v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                :key="indexProduct+1"
-                class="text-black ml-50 p-0"
-                style="font-size: 7px; line-height: 9px; margin-top: 1px;"
-              >
-                <span>
-                  <strong
-                    v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
-                  >
-                    {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                  </strong>
-                  <strong v-else>
-                    {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
-                  </strong>
-                </span>
-              </div>
             </b-col>
           </b-row>
 
@@ -2188,26 +2179,23 @@
                 style="font-size: 8px;"
               >
                 <strong>
-                  ISI PAKET:
+                  ISI PAKET: <span
+                    v-for="(dataProduct, indexProduct) in itemsPrint.product"
+                    :key="indexProduct+1"
+                    class="text-black ml-50 p-0"
+                    style="font-size: 8px; line-height: 9px;"
+                  >
+                    <strong
+                      v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
+                    >
+                      {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
+                    </strong>
+                    <strong v-else>
+                      {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
+                    </strong>
+                  </span>
                 </strong>
               </span>
-              <div
-                v-for="(dataProduct, indexProduct) in itemsPrint.product"
-                :key="indexProduct+1"
-                class="text-black ml-50 p-0"
-                style="font-size: 8px; line-height: 9px; margin-top: 1px;"
-              >
-                <span>
-                  <strong
-                    v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''"
-                  >
-                    {{ dataProduct.qty }} {{ dataProduct.product_name }} {{ dataProduct.variant_name }},
-                  </strong>
-                  <strong v-else>
-                    {{ dataProduct.qty }} {{ `${ dataProduct.product_name } ${ dataProduct.variant_name }` }},
-                  </strong>
-                </span>
-              </div>
             </b-col>
           </b-row>
 
