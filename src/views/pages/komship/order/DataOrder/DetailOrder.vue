@@ -342,6 +342,18 @@
             Rp {{ formatNumber(orderData.grandtotal) }}
           </b-col>
         </b-row>
+        <b-row
+          v-if="orderData.notes"
+          class="mt-1"
+        >
+          <b-col lg="3" />
+          <b-col
+            lg="5"
+            class="font-bold text-sm text-primary"
+          >
+            {{ orderData.notes }}
+          </b-col>
+        </b-row>
         <b-row class="mt-1">
           <b-col lg="3" />
           <b-col lg="7">
