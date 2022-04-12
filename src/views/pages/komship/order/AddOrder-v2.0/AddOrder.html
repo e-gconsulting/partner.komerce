@@ -659,7 +659,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           Rp {{ formatNumber(subTotal) }}
         </b-col>
@@ -671,7 +671,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           Rp {{ formatNumber(shippingCost) }}
         </b-col>
@@ -686,7 +686,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -707,7 +707,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           Rp {{ formatNumber(additionalCost) }}
         </b-col>
@@ -725,7 +725,7 @@
         </b-col>
         <b-col
           md="2"
-          class="text-primary d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="text-primary detail-value"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -768,7 +768,7 @@
           </b-col>
           <b-col
             md="2"
-            class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+            class="detail-value text-primary"
           >
             <b-spinner
               v-if="loadingCalculate"
@@ -786,7 +786,7 @@
           </b-col>
           <b-col
             md="2"
-            class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+            class="detail-value text-primary"
           >
             <b-spinner
               v-if="loadingCalculate"
@@ -805,7 +805,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0 text-success"
+          class="detail-value text-success"
         >
           <b-spinner
             v-if="loadingCalculate"
