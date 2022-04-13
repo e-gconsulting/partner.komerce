@@ -9,7 +9,7 @@
     <div class="btnaction__container">
       <h3 class="text-black font-bold mb-2">Profil Mitra Gudang</h3>
       <div
-        v-if="dataFulfillment.is_verification === 0"
+        v-if="statusProfile === dataStatusObj.nonaktif"
         class="d-flex align-items-center"
       >
         <b-button
@@ -19,7 +19,7 @@
         >Aktifkan Layanan</b-button>
       </div>
       <div
-        v-if="dataFulfillment.is_verification === 1"
+        v-if="statusProfile === dataStatusObj.unverified"
         class="d-flex align-items-center"
       >
         <b-button
@@ -35,8 +35,9 @@
         >Aktifkan Layanan</b-button>
       </div>
       <div
-        v-if="dataFulfillment.is_verification === 2"
-        class="d-flex align-items-center">
+        v-if="statusProfile === dataStatusObj.aktif"
+        class="d-flex align-items-center"
+      >
         <b-button
           @click="$router.push({
             name: 'kompack-rincian-mitra-gudang-information',
@@ -123,7 +124,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <h4 class="text-black font-bold">Data Fulfillment</h4>
             <div
-              v-if="dataFulfillment.is_verification === 0"
+              v-if="statusProfile === dataStatusObj.nonaktif || statusProfile === dataStatusObj.aktif"
               style="cursor: pointer;"
               @click="editdataFulfillment()"
             >
@@ -363,12 +364,12 @@
               <div
                 class="isverification__container"
                 :class="{
-                  'justify-content-between': dataFulfillment.is_verification === 2,
-                  'justify-content-end': dataFulfillment.is_verification === 1,
+                  'justify-content-between': dataOwner.partner_verification === 1,
+                  'justify-content-end': dataOwner.partner_verification === 0,
                 }"
               >
                 <div
-                  v-if="dataFulfillment.is_verification === 2"
+                  v-if="dataOwner.partner_verification === 1"
                   class="d-flex align-items-center bg-blue-100 rounded-md"
                   style="padding: 0.5em 1em;"
                 >
@@ -382,7 +383,7 @@
                 </div>
                 <div class="isverification__container--btn">
                   <b-button
-                    v-if="(dataFulfillment.is_verification === 1)"
+                    v-if="dataOwner.partner_verification === 1"
                     @click="() => {}"
                     variant="outline-primary"
                     class="font-bold"
@@ -390,7 +391,7 @@
                   >Batalkan Verifikasi
                   </b-button>
                   <b-button
-                    v-if="dataFulfillment.is_verification === 1"
+                    v-if="dataOwner.partner_verification === 0"
                     @click="() => {}"
                     variant="outline-primary"
                     class="font-bold"
@@ -560,12 +561,12 @@
               <div
                 class="isverification__container"
                 :class="{
-                  'justify-content-between': dataFulfillment.is_verification === 2,
-                  'justify-content-end': dataFulfillment.is_verification === 1,
+                  'justify-content-between': dataProperti.warehouse_verification === 1,
+                  'justify-content-end': dataProperti.warehouse_verification === 0,
                 }"
               >
                 <div
-                  v-if="dataFulfillment.is_verification === 2"
+                  v-if="dataProperti.warehouse_verification === 1"
                   class="d-flex align-items-center bg-blue-100 rounded-md"
                   style="padding: 0.5em 1em;"
                 >
@@ -579,7 +580,7 @@
                 </div>
                 <div class="isverification__container--btn">
                   <b-button
-                    v-if="(dataFulfillment.is_verification === 1)"
+                    v-if="dataProperti.warehouse_verification === 1"
                     @click="() => {}"
                     variant="outline-primary"
                     class="font-bold"
@@ -587,7 +588,7 @@
                   >Batalkan Verifikasi
                   </b-button>
                   <b-button
-                    v-if="dataFulfillment.is_verification === 1"
+                    v-if="dataProperti.warehouse_verification === 0"
                     @click="() => {}"
                     variant="outline-primary"
                     class="font-bold"

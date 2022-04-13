@@ -91,7 +91,7 @@ export default {
         image_warehouse: null,
         image_logo_url: null,
         // type of 0: non-aktif, 1: Belum Diverifikasi, 2: Sudah Diverifikasi
-        is_verification: '',
+        service_status: '',
       },
       dataOwner: {
         owner: '',
@@ -107,11 +107,17 @@ export default {
         building_type: null,
         ownership: null,
       },
+      statusProfile: '',
+      dataStatusObj: {
+        aktif: 'Aktif',
+        nonaktif: 'Non - Aktif',
+        notverified: 'Belum Verifikasi',
+      },
     }
   },
   watch: {
     // test changing data
-    // getselecOptData: {
+    // statusProfile: {
     //   handler(val) {
     //     console.log(val)
     //   },
@@ -123,7 +129,7 @@ export default {
     ...mapState('kompackAdmin', ['selecOptData']),
     // ...mapGetters('kompackAdmin', ['getselecOptData']),
     statuscomputed() {
-      switch (this.dataFulfillment.is_verification) {
+      switch (this.dataFulfillment.service_status) {
         case 'nonaktif':
           return `<span class="d-flex align-items-center mb-2 font-bold text-red-500">
             <span class="w-4 h-4 rounded-full bg-red-500 mr-0.5"></span>Non-Aktif</span>`
@@ -135,15 +141,24 @@ export default {
             <span class="w-4 h-4 rounded-full bg-warning mr-0.5"></span>Belum Terverifikasi</span>`
       }
     },
-  },
-  beforeMount() {
-    this.$store.dispatch('kompackAdmin/init')
-  },
-  mounted() {
-    // "warehouse_verification": 0,
-    // "partner_verification": 0,
-    // "service_status": "nonaktif",
+    // statusProfile() {
+    // dataStatusObj
+    // let datastatus = ''
+    // if (!(Boolean(this.dataOwner.partner_verification) && Boolean(this.dataProperti.warehouse_verification)) && this.dataProperti.service_status === 'nonaktif') {
+    //   datastatus = this.dataStatusObj.unverified
+    // }
+    // if (Boolean(this.dataOwner.partner_verification) && Boolean(this.dataProperti.warehouse_verification) && this.dataProperti.service_status === 'nonaktif') {
+    //   datastatus = this.dataStatusObj.nonaktif
+    // }
+    // if (Boolean(this.dataOwner.partner_verification) && Boolean(this.dataProperti.warehouse_verification) && this.dataProperti.service_status === 'aktif') {
+    //   datastatus = this.dataStatusObj.aktif
+    // }
+    // console.log('datastatus ', datastatus)
+    // return datastatus
     /*
+      this.dataOwner.partner_verification
+      this.dataProperti.warehouse_verification
+      this.dataProperti.service_status
       jika partner_verification = 0 & warehouse_verification = 0 & service_status = belum verifikasi
       jika partner_verification = 0 & warehouse_verification = 1 & service_status = belum verifikasi
       jika partner_verification = 1 & warehouse_verification = 0 & service_status = belum verifikasi
@@ -157,6 +172,12 @@ export default {
       - klik tombol non aktifkan layanan
       - hanya ada icon terverifikasi tidak ada lgi tombol batalkan verifikasi
     */
+    // },
+  },
+  beforeMount() {
+    this.$store.dispatch('kompackAdmin/init')
+  },
+  mounted() {
     this.getDataDetailMitra()
   },
   methods: {
@@ -207,7 +228,7 @@ export default {
             description: data.data.description,
             image_warehouse: data.data.image_warehouse,
             image_logo_url: data.data.image_logo_url,
-            is_verification: data.data.service_status,
+            service_status: data.data.service_status,
           }
           this.dataOwner = {
             owner: data.data.owner,
@@ -226,6 +247,7 @@ export default {
             warehouse_verification: data.data.warehouse_verification,
           }
           this.fetchDataDestination(data.data.destination_id)
+          this.getStatusDataProfile(data.data.partner_verification, data.data.warehouse_verification, data.data.service_status)
           this.$nextTick(() => {
             this.loadingPage = false
           })
@@ -311,6 +333,22 @@ export default {
     },
     previewLogo(files) {
       console.log(files)
+    },
+    getStatusDataProfile(partnerVerification, warehouseVerification, serviceStatus) {
+      let datastatus = ''
+      if (!(Boolean(partnerVerification) && Boolean(warehouseVerification)) && serviceStatus === 'nonaktif') {
+        this.statusProfile = this.dataStatusObj.unverified
+        datastatus = this.dataStatusObj.unverified
+      }
+      if (Boolean(partnerVerification) && Boolean(warehouseVerification) && serviceStatus === 'nonaktif') {
+        this.statusProfile = this.dataStatusObj.nonaktif
+        datastatus = this.dataStatusObj.nonaktif
+      }
+      if (Boolean(partnerVerification) && Boolean(warehouseVerification) && serviceStatus === 'aktif') {
+        this.statusProfile = this.dataStatusObj.aktif
+        datastatus = this.dataStatusObj.aktif
+      }
+      return datastatus
     },
   },
 }

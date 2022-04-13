@@ -1,5 +1,11 @@
 <b-card no-body class="px-1 py-1">
-  <div class="d-grid">
+  <div
+    v-if="isLoadingPage"
+    class="d-flex justify-content-center align-items-center min-h-screen"
+  >
+    <b-spinner variant="primary" />
+  </div>
+  <div v-else class="d-grid">
     <div class="d-flex align-items-center">
       <b-button
         variant="primary"
