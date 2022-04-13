@@ -47,6 +47,7 @@ export default {
       email,
       required,
       integer,
+      loadingPage: true,
       btnSubmitDisabled: false,
       optionsKetersediaan: [
         { text: 'Tersedia', value: 1 },
@@ -90,7 +91,7 @@ export default {
         image_warehouse: null,
         image_logo_url: null,
         // type of 0: non-aktif, 1: Belum Diverifikasi, 2: Sudah Diverifikasi
-        is_verification: 2,
+        is_verification: '',
       },
       dataOwner: {
         owner: '',
@@ -123,15 +124,15 @@ export default {
     // ...mapGetters('kompackAdmin', ['getselecOptData']),
     statuscomputed() {
       switch (this.dataFulfillment.is_verification) {
-        case 1:
-          return `<span class="d-flex align-items-center mb-2 font-bold text-warning">
-            <span class="w-4 h-4 rounded-full bg-warning mr-0.5"></span>Belum Terverifikasi</span>`
-        case 2:
+        case 'nonaktif':
+          return `<span class="d-flex align-items-center mb-2 font-bold text-red-500">
+            <span class="w-4 h-4 rounded-full bg-red-500 mr-0.5"></span>Non-Aktif</span>`
+        case 'aktif':
           return `<span class="d-flex align-items-center mb-2 font-bold text-green-500">
             <span class="w-4 h-4 rounded-full bg-green-500 mr-0.5"></span>Aktif</span>`
         default:
-          return `<span class="d-flex align-items-center mb-2 font-bold text-red-500">
-            <span class="w-4 h-4 rounded-full bg-red-500 mr-0.5"></span>Non-Aktif</span>`
+          return `<span class="d-flex align-items-center mb-2 font-bold text-warning">
+            <span class="w-4 h-4 rounded-full bg-warning mr-0.5"></span>Belum Terverifikasi</span>`
       }
     },
   },
@@ -190,7 +191,6 @@ export default {
             description: data.data.description,
             image_warehouse: data.data.image_warehouse,
             image_logo_url: data.data.image_logo_url,
-            warehouse_verification: data.data.warehouse_verification,
             is_verification: data.data.service_status,
           }
           this.dataOwner = {
@@ -207,8 +207,12 @@ export default {
             building_area: data.data.building_area,
             building_type: data.data.building_type,
             ownership: data.data.ownership,
+            warehouse_verification: data.data.warehouse_verification,
           }
           this.fetchDataDestination(data.data.destination_id)
+          this.$nextTick(() => {
+            this.loadingPage = false
+          })
         })
         .catch(() => {
           this.$toast({

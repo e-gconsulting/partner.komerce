@@ -1,5 +1,11 @@
 <b-card no-body class="px-1 py-1">
-  <div class="d-grid justify-content-center">
+  <div
+    v-if="loadingPage"
+    class="d-flex justify-content-center align-items-center min-h-screen"
+  >
+    <b-spinner variant="primary" />
+  </div>
+  <div v-else class="d-grid justify-content-center">
     <div class="btnaction__container">
       <h3 class="text-black font-bold mb-2">Profil Mitra Gudang</h3>
       <div
@@ -745,7 +751,13 @@
                   type="submit"
                   variant="primary"
                   class="font-bold"
-                >Simpan</b-button>
+                >
+                  <b-spinner
+                    v-if="btnSubmitDisabled"
+                    small
+                  />
+                  Simpan
+                </b-button>
               </div>
             </b-col>
           </b-row>
