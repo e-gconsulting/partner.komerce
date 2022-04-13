@@ -127,7 +127,7 @@
           <b-row>
             <b-col cols="12">
               <b-form-group
-                label-for="image_logo"
+                label-for="image_logo_url"
                 label-cols-md="3"
               >
                 <template #label>
@@ -136,32 +136,34 @@
                 <validation-provider
                   #default="{ errors }"
                   label="Logo"
-                  vid="image_logo"
+                  vid="image_logo_url"
                   name="Logo"
                   rules="required"
                 >
                   <input
-                    id="image_logo"
+                    id="image_logo_url"
                     @change="previewLogo"
-                    :state="Boolean(dataFulfillment.image_logo)"
-                    :disabled="disabledField.image_logo"
-                    ref="image_logo"
-                    name="image_logo"
+                    :state="Boolean(dataFulfillment.image_logo_url)"
+                    :disabled="disabledField.image_logo_url"
+                    ref="image_logo_url"
+                    name="image_logo_url"
                     type="file"
                     accept="image/jpeg, image/png, image/gif"
                     style="display: none;max-width: 150px;"
                   />
                   <div
-                    @click="$refs.image_logo.click()"
+                    @click="$refs.image_logo_url.click()"
                     class="imagebox"
                     :class="{
-                      imagebox__invalid: !dataFulfillment.image_logo,
+                      imagebox__invalid: !dataFulfillment.image_logo_url,
                     }"
                     :style="{
-                      background: disabledField.image_logo ? '#eee !important': 'inherit',
-                      border: disabledField.image_logo ? 'unset' : 'inherit',
+                      background: disabledField.image_logo_url ? '#eee !important': 'inherit',
+                      border: disabledField.image_logo_url ? 'unset' : 'inherit',
                     }"
-                  />
+                  >
+                    <img :src="dataFulfillment.image_logo_url" style="width: 100%; height: 100%;" />
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -325,14 +327,22 @@
                     style="display: none;max-width: 150px;"
                   />
                   <div
-                    @click="$refs.image_warehouse.click()"
-                    class="imagebox"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_warehouse}"
-                    :style="{
-                      background: disabledField.image_warehouse ? '#eee !important': 'inherit',
-                      border: disabledField.image_warehouse ? 'unset' : 'inherit',
-                    }"
-                  />
+                    class="d-flex"
+                  >
+                    <div
+                      v-for="(dataImg,keysdataImg) in dataFulfillment.image_warehouse"
+                      @click="$refs.image_warehouse.click()"
+                      class="imagebox mr-1"
+                      :key="keysdataImg"
+                      :class="{ imagebox__invalid: !dataFulfillment.image_warehouse}"
+                      :style="{
+                        background: disabledField.image_warehouse ? '#eee !important': 'inherit',
+                        border: disabledField.image_warehouse ? 'unset' : 'inherit',
+                      }"
+                    >
+                      <img :src="dataImg.image_url" style="width: 100%; height: 100%;" />
+                    </div>
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -511,7 +521,7 @@
                   <input
                     id="image_ktp_url"
                     @change="previewLogo"
-                    :state="Boolean(dataFulfillment.image_ktp_url)"
+                    :state="Boolean(dataOwner.image_ktp_url)"
                     :disabled="disabledField.image_ktp_url"
                     ref="image_ktp_url"
                     name="image_ktp_url"
@@ -522,12 +532,14 @@
                   <div
                     @click="$refs.image_ktp_url.click()"
                     class="imagebox"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_ktp_url}"
+                    :class="{ imagebox__invalid: !dataOwner.image_ktp_url}"
                     :style="{
                       background: disabledField.image_ktp_url ? '#eee !important': 'inherit',
                       border: disabledField.image_ktp_url ? 'unset' : 'inherit',
                     }"
-                  />
+                  >
+                    <img :src="dataOwner.image_ktp_url" class="w-100 h-100" alt="no-img">
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -617,16 +629,16 @@
                 </template>
                 <validation-provider
                   #default="{ errors }"
-                  label="detail_addres"
+                  label="detail_address"
                   name="Alamat"
-                  vid="detail_addres"
+                  vid="detail_address"
                   rules="required"
                 >
                   <b-form-textarea
-                    id="detail_addres"
-                    v-model="dataProperti.detail_addres"
+                    id="detail_address"
+                    v-model="dataProperti.detail_addresss"
                     :state="errors.length > 0 ? false : null"
-                    :disabled="disabledField.detail_addres"
+                    :disabled="disabledField.detail_address"
                     placeholder="Masukan detail alamat gudang"
                     rows="3"
                   />
@@ -684,7 +696,7 @@
                   <b-form-select
                     id="building_type"
                     v-model="dataProperti.building_type"
-                    :options="optionBuildingType"
+                    :options="selecOptData.building"
                     :state="errors.length > 0 ? false : null"
                     :disabled="disabledField.building_type"
                   />
@@ -710,7 +722,7 @@
                   <b-form-select
                     id="ownership"
                     v-model="dataProperti.ownership"
-                    :options="optionsOwnership"
+                    :options="selecOptData.ownership"
                     :state="errors.length > 0 ? false : null"
                     :disabled="disabledField.ownership"
                   />

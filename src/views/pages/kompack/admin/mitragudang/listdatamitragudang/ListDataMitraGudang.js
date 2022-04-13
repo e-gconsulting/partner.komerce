@@ -106,7 +106,6 @@ export default {
       }
     },
     lihatRincian(dt) {
-      console.log('data', dt)
       this.$router.push({
         name: 'kompack-rincian-mitra-gudang',
         params: {

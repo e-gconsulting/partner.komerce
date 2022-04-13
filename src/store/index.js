@@ -14,6 +14,7 @@ import verticalMenu from './vertical-menu'
 import auth from './auth'
 import menuaccess from './menuaccess'
 import pencairan from './pencairan'
+import kompackAdmin from './kompack/admin'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     saldoDetail,
     menuaccess,
     pencairan,
+    kompackAdmin,
   },
   plugins: [createPersistedState({
     key: 'vuex-store',

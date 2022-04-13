@@ -19,6 +19,7 @@ import {
 import { required, email, integer } from '@validations'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -55,18 +56,6 @@ export default {
         { text: 'L', value: 1 },
         { text: 'P', value: 0 },
       ],
-      optionBuildingType: [
-        {
-          value: null,
-          text: 'Pilih jenis bangunan',
-        },
-      ],
-      optionsOwnership: [
-        {
-          value: null,
-          text: 'Pilih jenis kepemilikan',
-        },
-      ],
       disabledField: {
         email: true,
         username: true,
@@ -76,14 +65,14 @@ export default {
         pic_phone: true,
         description: true,
         image_warehouse: true,
-        image_logo: true,
+        image_logo_url: true,
         owner: true,
         gender: true,
         phone_number: true,
         nik: true,
         image_ktp_url: true,
         destination_id: true,
-        detail_addres: true,
+        detail_address: true,
         building_area: true,
         building_type: true,
         ownership: true,
@@ -99,7 +88,7 @@ export default {
         pic_phone: '',
         description: '',
         image_warehouse: null,
-        image_logo: null,
+        image_logo_url: null,
         // type of 0: non-aktif, 1: Belum Diverifikasi, 2: Sudah Diverifikasi
         is_verification: 2,
       },
@@ -112,14 +101,26 @@ export default {
       },
       dataProperti: {
         destination_id: '',
-        detail_addres: '',
+        detail_address: '',
         building_area: 0,
         building_type: null,
         ownership: null,
       },
     }
   },
+  watch: {
+    // test changing data
+    // getselecOptData: {
+    //   handler(val) {
+    //     console.log(val)
+    //   },
+    //   deep: true,
+    // },
+  },
   computed: {
+    // ...mapFields('kompackAdmin', { cobaselecOptData: 'getselecOptData' }),
+    ...mapState('kompackAdmin', ['selecOptData']),
+    // ...mapGetters('kompackAdmin', ['getselecOptData']),
     statuscomputed() {
       switch (this.dataFulfillment.is_verification) {
         case 1:
@@ -134,6 +135,9 @@ export default {
       }
     },
   },
+  beforeMount() {
+    this.$store.dispatch('kompackAdmin/init')
+  },
   mounted() {
     // call api get detail data
     this.getDataDetailMitra()
@@ -145,7 +149,6 @@ export default {
     getDataDetailMitra() {
       this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
         .then(({ data }) => {
-          console.log(data.data)
           /*
           {
             "id": "16",
@@ -186,7 +189,7 @@ export default {
             pic_phone: data.data.pic_phone,
             description: data.data.description,
             image_warehouse: data.data.image_warehouse,
-            image_logo: data.data.image_logo_url,
+            image_logo_url: data.data.image_logo_url,
             warehouse_verification: data.data.warehouse_verification,
             is_verification: data.data.service_status,
           }
@@ -205,6 +208,7 @@ export default {
             building_type: data.data.building_type,
             ownership: data.data.ownership,
           }
+          this.fetchDataDestination(data.data.destination_id)
         })
         .catch(() => {
           this.$toast({
@@ -212,6 +216,23 @@ export default {
             props: {
               title: 'Failed',
               text: 'Galat detail data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
+    },
+    fetchDataDestination(dataId) {
+      this.$http_kompack('/kompack/destination', { params: { destination_id: dataId } })
+        .then(({ data }) => {
+          this.dataProperti.destination_id = data.data.zip_code
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat tambah data mitra gudang',
               icon: 'AlertCircleIcon',
               variant: 'danger',
             },
@@ -235,7 +256,7 @@ export default {
                 component: ToastificationContentVue,
                 props: {
                   title: 'Failed',
-                  text: 'Galat tambah data mitra gudang',
+                  text: 'Galat detail mitra gudang',
                   icon: 'AlertCircleIcon',
                   variant: 'danger',
                 },
@@ -244,7 +265,15 @@ export default {
         } else {
           // jika ada error ketika validasi
           this.btnSubmitDisabled = false
-          console.log(success)
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat edit data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
         }
       })
     },
@@ -257,7 +286,7 @@ export default {
         pic_phone: false,
         description: false,
         image_warehouse: false,
-        image_logo: false,
+        image_logo_url: false,
       }
     },
     previewLogo(files) {
