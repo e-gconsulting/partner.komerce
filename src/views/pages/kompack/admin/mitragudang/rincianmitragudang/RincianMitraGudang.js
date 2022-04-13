@@ -149,12 +149,10 @@ export default {
       jika partner_verification = 1 & warehouse_verification = 0 & service_status = belum verifikasi
       - klik tombol aktifkan layanan masih disabled
       - edit fitur utk semua atau sebagian
-
       jika partner_verification = 1 & warehouse_verification = 1 & service_status = nonaktif
       - klik tombol aktifkan layanan masih enable
       - tombol Batalkan Verifikasi ada
       - tombol data fulfillment bisa di klik dan edit field hanya fullfillment saja
-      
       jika partner_verification = 1 & warehouse_verification = 1 & service_status = aktif
       - klik tombol non aktifkan layanan
       - hanya ada icon terverifikasi tidak ada lgi tombol batalkan verifikasi
