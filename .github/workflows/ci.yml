@@ -6,7 +6,7 @@ name: ci
 on:
   push:
     branches: [ development-kompack ]
-    pull_request:
+  pull_request:
     branches: [ development-kompack ]
 
 jobs:
@@ -30,7 +30,3 @@ jobs:
       run: yarn
     - name: Build application
       run: yarn build
-    # - name: Run linter
-    #   run: yarn lint
-    # - name: Run tests
-    #   run: yarn test
