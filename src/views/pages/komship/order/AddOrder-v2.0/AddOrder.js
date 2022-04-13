@@ -91,6 +91,8 @@ export default {
       newGrandTotal: null,
       isValidate: false,
       formData: null,
+
+      dataErrSubmit: null,
     }
   },
   created() {
@@ -736,22 +738,27 @@ export default {
             })
           })
           .catch(err => {
-            const res = err.response.data.status
-            if (res === 'failed') {
-              this.$swal({
-                title: '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>',
-                imageUrl: require('@/assets/images/icons/fail.svg'),
-                showCancelButton: true,
-                confirmButtonText: 'Cek Saldo',
-                confirmButtonClass: 'btn btn-primary',
-                cancelButtonText: 'Oke',
-                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
-              }).then(result => {
-                if (result.isConfirmed) {
+            this.dataErrSubmit = err.response.data
+            this.$swal({
+              title: this.dataErrSubmit.message === 'Please Topup to continue your store Order.'
+                ? '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>'
+                : '<span class="font-weight-bold h4">Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu</span>',
+              imageUrl: require('@/assets/images/icons/fail.svg'),
+              showCancelButton: true,
+              confirmButtonText: this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order' ? 'Cek Produk' : 'Cek Saldo',
+              confirmButtonClass: 'btn btn-primary',
+              cancelButtonText: 'Oke',
+              cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+            }).then(result => {
+              if (result.isConfirmed) {
+                if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
                   this.$router.push('/dashboard-komship')
                 }
-              })
-            }
+                if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                  this.$router.push('/produk')
+                }
+              }
+            })
           })
       } else {
         this.$swal({
