@@ -516,7 +516,7 @@ export default {
       return date
     },
     async fetchData() {
-      const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
+      const order = await httpKomship2.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
       const { data } = await order.data
       this.orderData = await data
       this.statusNetProfit = data.net_profit.toString().charAt(0)
