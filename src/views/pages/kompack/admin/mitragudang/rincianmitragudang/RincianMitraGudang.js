@@ -137,6 +137,8 @@ export default {
         batalverif: 0,
         verifikasi: 1,
         isActivated: 'isActivated',
+        aktif: 'aktif',
+        nonaktif: 'nonaktif',
       },
     }
   },
@@ -155,10 +157,10 @@ export default {
     // ...mapGetters('kompackAdmin', ['getselecOptData']),
     statuscomputed() {
       switch (this.dataFulfillment.service_status) {
-        case 'nonaktif':
+        case this.actionStatusType.nonaktif:
           return `<span class="d-flex align-items-center mb-2 font-bold text-red-500">
             <span class="w-4 h-4 rounded-full bg-red-500 mr-0.5"></span>Non-Aktif</span>`
-        case 'aktif':
+        case this.actionStatusType.aktif:
           return `<span class="d-flex align-items-center mb-2 font-bold text-green-500">
             <span class="w-4 h-4 rounded-full bg-green-500 mr-0.5"></span>Aktif</span>`
         default:
@@ -177,6 +179,18 @@ export default {
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')
     },
+    checkAktivation(dt) {
+      switch (dt) {
+        case this.actionStatusType.nonaktif:
+          this.statusProfile = this.dataStatusObj.nonaktif
+          break
+        case this.actionStatusType.aktif:
+          this.statusProfile = this.dataStatusObj.aktif
+          break
+        default:
+          break
+      }
+    },
     verificationOrAktifData(dataParams, type = '') {
       let endpoint = ''
       switch (type) {
@@ -190,15 +204,16 @@ export default {
           break
         case this.actionStatusType.isActivated:
           endpoint = `kompack/warehouse/update/service?id_partner_warehouse=${this.$route.params.id}&type_service=${dataParams}`
-          this.statusProfile = dataParams
+          this.checkAktivation(dataParams)
           break
         default:
           break
       }
-      console.log(dataParams, type, endpoint)
       this.$http_kompack.put(endpoint)
         .then(({ data }) => {
-          console.log('data ', type, data.data)
+          if (data.status === 'success' && data.code === 200) {
+            this.getDataDetailMitra()
+          }
         })
         .catch(() => {
           this.$toast({
@@ -318,7 +333,6 @@ export default {
           this.$http_kompack.get('/v1/getdatamitra')
             .then(({ data }) => {
               // jika sudah berhasil callapi
-              console.log('data mitra gudang', data)
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
@@ -362,7 +376,7 @@ export default {
       }
     },
     previewLogo(files) {
-      console.log(files)
+      // console.log(files)
     },
     getStatusDataProfile(partnerVerification, warehouseVerification, serviceStatus) {
       let datastatus = ''

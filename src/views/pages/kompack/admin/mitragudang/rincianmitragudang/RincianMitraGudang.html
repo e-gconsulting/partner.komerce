@@ -30,12 +30,12 @@
         <b-button
           @click="verificationOrAktifData(actionStatusType.aktif, actionStatusType.isActivated)"
           variant="primary"
-          :disabled="dataOwner.partner_verification && dataProperti.warehouse_verification"
+          :disabled="!(Boolean(dataOwner.partner_verification) && Boolean(dataProperti.warehouse_verification))"
           class="font-bold"
         >Aktifkan Layanan</b-button>
       </div>
       <div
-        v-else
+        v-if="statusProfile === dataStatusObj.aktif"
         class="d-flex align-items-center"
       >
         <b-button
