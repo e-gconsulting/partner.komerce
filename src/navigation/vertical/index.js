@@ -65,6 +65,7 @@ import manajemenAdmin from './manajemenAdmin'
 
 // Kompack Admin
 import kompackadmin from './kompack/admin'
+import kompackpartner from './kompack/partner'
 
 // Array of sections
 export default [
@@ -74,6 +75,7 @@ export default [
   ...partner,
   ...komship,
   ...kompackadmin,
+  ...kompackpartner,
   ...management,
   ...masterData,
   ...assignment,

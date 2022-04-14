@@ -1,19 +1,25 @@
 <b-card no-body class="px-1 py-1">
-  <div class="d-grid justify-content-center">
+  <div
+    v-if="loadingPage"
+    class="d-flex justify-content-center align-items-center min-h-screen"
+  >
+    <b-spinner variant="primary" />
+  </div>
+  <div v-else class="d-grid justify-content-center">
     <div class="btnaction__container">
       <h3 class="text-black font-bold mb-2">Profil Mitra Gudang</h3>
       <div
-        v-if="dataFulfillment.is_verification === 0"
+        v-if="statusProfile === dataStatusObj.nonaktif"
         class="d-flex align-items-center"
       >
         <b-button
-          @click="() => {}"
+          @click="verificationOrAktifData(actionStatusType.aktif, actionStatusType.isActivated)"
           variant="primary"
           class="font-bold"
         >Aktifkan Layanan</b-button>
       </div>
       <div
-        v-if="dataFulfillment.is_verification === 1"
+        v-if="statusProfile === dataStatusObj.unverified"
         class="d-flex align-items-center"
       >
         <b-button
@@ -22,15 +28,16 @@
           class="mr-1 font-bold"
         >Edit</b-button>
         <b-button
-          @click="() => {}"
+          @click="verificationOrAktifData(actionStatusType.aktif, actionStatusType.isActivated)"
           variant="primary"
-          :disabled="true"
+          :disabled="!(Boolean(dataOwner.partner_verification) && Boolean(dataProperti.warehouse_verification))"
           class="font-bold"
         >Aktifkan Layanan</b-button>
       </div>
       <div
-        v-if="dataFulfillment.is_verification === 2"
-        class="d-flex align-items-center">
+        v-if="statusProfile === dataStatusObj.aktif"
+        class="d-flex align-items-center"
+      >
         <b-button
           @click="$router.push({
             name: 'kompack-rincian-mitra-gudang-information',
@@ -42,7 +49,7 @@
           class="mr-1 text-capitalize font-bold"
         >Lihat Info Gudang</b-button>
         <b-button
-          @click="() => {}"
+          @click="verificationOrAktifData(actionStatusType.nonaktif, actionStatusType.isActivated)"
           variant="primary"
           class="text-capitalize font-bold"
         >Non-Aktifkan</b-button>
@@ -117,17 +124,17 @@
           <div class="d-flex justify-content-between align-items-center">
             <h4 class="text-black font-bold">Data Fulfillment</h4>
             <div
-              v-if="dataFulfillment.is_verification === 0"
+              v-if="statusProfile === dataStatusObj.nonaktif || statusProfile === dataStatusObj.aktif"
               style="cursor: pointer;"
               @click="editdataFulfillment()"
             >
-              <feather-icon icon="EditIcon" />
+              <feather-icon v-if="!isOnEdit" icon="EditIcon" />
             </div>
           </div>
           <b-row>
             <b-col cols="12">
               <b-form-group
-                label-for="image_logo"
+                label-for="image_logo_url"
                 label-cols-md="3"
               >
                 <template #label>
@@ -136,32 +143,34 @@
                 <validation-provider
                   #default="{ errors }"
                   label="Logo"
-                  vid="image_logo"
+                  vid="image_logo_url"
                   name="Logo"
                   rules="required"
                 >
                   <input
-                    id="image_logo"
+                    id="image_logo_url"
                     @change="previewLogo"
-                    :state="Boolean(dataFulfillment.image_logo)"
-                    :disabled="disabledField.image_logo"
-                    ref="image_logo"
-                    name="image_logo"
+                    :state="Boolean(dataFulfillment.image_logo_url)"
+                    :disabled="disabledField.image_logo_url"
+                    ref="image_logo_url"
+                    name="image_logo_url"
                     type="file"
                     accept="image/jpeg, image/png, image/gif"
                     style="display: none;max-width: 150px;"
                   />
                   <div
-                    @click="$refs.image_logo.click()"
+                    @click="$refs.image_logo_url.click()"
                     class="imagebox"
                     :class="{
-                      imagebox__invalid: !dataFulfillment.image_logo,
+                      imagebox__invalid: !dataFulfillment.image_logo_url,
                     }"
                     :style="{
-                      background: disabledField.image_logo ? '#eee !important': 'inherit',
-                      border: disabledField.image_logo ? 'unset' : 'inherit',
+                      background: disabledField.image_logo_url ? '#eee !important': 'inherit',
+                      border: disabledField.image_logo_url ? 'unset' : 'inherit',
                     }"
-                  />
+                  >
+                    <img :src="dataFulfillment.image_logo_url" style="width: 100%; height: 100%;" />
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -325,14 +334,22 @@
                     style="display: none;max-width: 150px;"
                   />
                   <div
-                    @click="$refs.image_warehouse.click()"
-                    class="imagebox"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_warehouse}"
-                    :style="{
-                      background: disabledField.image_warehouse ? '#eee !important': 'inherit',
-                      border: disabledField.image_warehouse ? 'unset' : 'inherit',
-                    }"
-                  />
+                    class="d-flex"
+                  >
+                    <div
+                      v-for="(dataImg,keysdataImg) in dataFulfillment.image_warehouse"
+                      @click="$refs.image_warehouse.click()"
+                      class="imagebox mr-1"
+                      :key="keysdataImg"
+                      :class="{ imagebox__invalid: !dataFulfillment.image_warehouse}"
+                      :style="{
+                        background: disabledField.image_warehouse ? '#eee !important': 'inherit',
+                        border: disabledField.image_warehouse ? 'unset' : 'inherit',
+                      }"
+                    >
+                      <img :src="dataImg.image_url" style="width: 100%; height: 100%;" />
+                    </div>
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -347,12 +364,12 @@
               <div
                 class="isverification__container"
                 :class="{
-                  'justify-content-between': dataFulfillment.is_verification === 2,
-                  'justify-content-end': dataFulfillment.is_verification === 1,
+                  'justify-content-between': dataOwner.partner_verification === 1,
+                  'justify-content-end': dataOwner.partner_verification === 0,
                 }"
               >
                 <div
-                  v-if="dataFulfillment.is_verification === 2"
+                  v-if="dataOwner.partner_verification === 1"
                   class="d-flex align-items-center bg-blue-100 rounded-md"
                   style="padding: 0.5em 1em;"
                 >
@@ -366,16 +383,16 @@
                 </div>
                 <div class="isverification__container--btn">
                   <b-button
-                    v-if="(dataFulfillment.is_verification === 1)"
-                    @click="() => {}"
+                    v-if="dataOwner.partner_verification === 1 && statusProfile !== dataStatusObj.aktif"
+                    @click="verificationOrAktifData(actionStatusType.batalverif,actionStatusType.partner)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
                   >Batalkan Verifikasi
                   </b-button>
                   <b-button
-                    v-if="dataFulfillment.is_verification === 1"
-                    @click="() => {}"
+                    v-if="dataOwner.partner_verification === 0"
+                    @click="verificationOrAktifData(actionStatusType.verifikasi,actionStatusType.partner)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
@@ -511,7 +528,7 @@
                   <input
                     id="image_ktp_url"
                     @change="previewLogo"
-                    :state="Boolean(dataFulfillment.image_ktp_url)"
+                    :state="Boolean(dataOwner.image_ktp_url)"
                     :disabled="disabledField.image_ktp_url"
                     ref="image_ktp_url"
                     name="image_ktp_url"
@@ -522,12 +539,14 @@
                   <div
                     @click="$refs.image_ktp_url.click()"
                     class="imagebox"
-                    :class="{ imagebox__invalid: !dataFulfillment.image_ktp_url}"
+                    :class="{ imagebox__invalid: !dataOwner.image_ktp_url}"
                     :style="{
                       background: disabledField.image_ktp_url ? '#eee !important': 'inherit',
                       border: disabledField.image_ktp_url ? 'unset' : 'inherit',
                     }"
-                  />
+                  >
+                    <img :src="dataOwner.image_ktp_url" class="w-100 h-100" alt="no-img">
+                  </div>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -542,12 +561,12 @@
               <div
                 class="isverification__container"
                 :class="{
-                  'justify-content-between': dataFulfillment.is_verification === 2,
-                  'justify-content-end': dataFulfillment.is_verification === 1,
+                  'justify-content-between': dataProperti.warehouse_verification === 1,
+                  'justify-content-end': dataProperti.warehouse_verification === 0,
                 }"
               >
                 <div
-                  v-if="dataFulfillment.is_verification === 2"
+                  v-if="dataProperti.warehouse_verification === 1"
                   class="d-flex align-items-center bg-blue-100 rounded-md"
                   style="padding: 0.5em 1em;"
                 >
@@ -561,16 +580,16 @@
                 </div>
                 <div class="isverification__container--btn">
                   <b-button
-                    v-if="(dataFulfillment.is_verification === 1)"
-                    @click="() => {}"
+                    v-if="dataProperti.warehouse_verification === 1 && statusProfile !== dataStatusObj.aktif"
+                    @click="verificationOrAktifData(actionStatusType.batalverif,actionStatusType.warehouse)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
                   >Batalkan Verifikasi
                   </b-button>
                   <b-button
-                    v-if="dataFulfillment.is_verification === 1"
-                    @click="() => {}"
+                    v-if="dataProperti.warehouse_verification === 0"
+                    @click="verificationOrAktifData(actionStatusType.verifikasi,actionStatusType.warehouse)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
@@ -617,16 +636,16 @@
                 </template>
                 <validation-provider
                   #default="{ errors }"
-                  label="detail_addres"
+                  label="detail_address"
                   name="Alamat"
-                  vid="detail_addres"
+                  vid="detail_address"
                   rules="required"
                 >
                   <b-form-textarea
-                    id="detail_addres"
-                    v-model="dataProperti.detail_addres"
+                    id="detail_address"
+                    v-model="dataProperti.detail_addresss"
                     :state="errors.length > 0 ? false : null"
-                    :disabled="disabledField.detail_addres"
+                    :disabled="disabledField.detail_address"
                     placeholder="Masukan detail alamat gudang"
                     rows="3"
                   />
@@ -684,7 +703,7 @@
                   <b-form-select
                     id="building_type"
                     v-model="dataProperti.building_type"
-                    :options="optionBuildingType"
+                    :options="selecOptData.building"
                     :state="errors.length > 0 ? false : null"
                     :disabled="disabledField.building_type"
                   />
@@ -710,7 +729,7 @@
                   <b-form-select
                     id="ownership"
                     v-model="dataProperti.ownership"
-                    :options="optionsOwnership"
+                    :options="selecOptData.ownership"
                     :state="errors.length > 0 ? false : null"
                     :disabled="disabledField.ownership"
                   />
@@ -719,11 +738,11 @@
               </b-form-group>
             </b-col>
           </b-row>
-          <b-row class="mt-1">
+          <b-row v-if="isOnEdit" class="mt-1">
             <b-col cols="12">
               <div class="d-flex justify-content-end">
                 <b-button
-                  @click="showModalBatal()"
+                  @click="editdataFulfillment()"
                   type="button"
                   variant="outline-primary"
                   class="font-bold mr-1"
@@ -733,7 +752,13 @@
                   type="submit"
                   variant="primary"
                   class="font-bold"
-                >Simpan</b-button>
+                >
+                  <b-spinner
+                    v-if="btnSubmitDisabled"
+                    small
+                  />
+                  Simpan
+                </b-button>
               </div>
             </b-col>
           </b-row>

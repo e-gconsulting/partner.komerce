@@ -19,6 +19,25 @@ import {
 import { required, email, integer } from '@validations'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
+import { mapState } from 'vuex'
+
+/*
+  this.dataOwner.partner_verification
+  this.dataProperti.warehouse_verification
+  this.dataProperti.service_status
+  jika partner_verification = 0 & warehouse_verification = 0 & service_status = belum verifikasi
+  jika partner_verification = 0 & warehouse_verification = 1 & service_status = belum verifikasi
+  jika partner_verification = 1 & warehouse_verification = 0 & service_status = belum verifikasi
+  - klik tombol aktifkan layanan masih disabled
+  - edit fitur utk semua atau sebagian
+  jika partner_verification = 1 & warehouse_verification = 1 & service_status = nonaktif
+  - klik tombol aktifkan layanan masih enable
+  - tombol Batalkan Verifikasi ada
+  - tombol data fulfillment bisa di klik dan edit field hanya fullfillment saja
+  jika partner_verification = 1 & warehouse_verification = 1 & service_status = aktif
+  - klik tombol non aktifkan layanan
+  - hanya ada icon terverifikasi tidak ada lgi tombol batalkan verifikasi
+*/
 
 export default {
   components: {
@@ -46,42 +65,15 @@ export default {
       email,
       required,
       integer,
+      loadingPage: true,
       btnSubmitDisabled: false,
       optionsKetersediaan: [
         { text: 'Tersedia', value: 1 },
         { text: 'Penuh', value: 0 },
       ],
       optionsGender: [
-        { text: 'Laki - Laki', value: 1 },
-        { text: 'Perempuan', value: 0 },
-      ],
-      optionBuildingType: [
-        {
-          value: null,
-          text: 'Pilih jenis bangunan',
-        },
-        {
-          text: 'Type 1',
-          value: 1,
-        },
-        {
-          text: 'Type 2',
-          value: 2,
-        },
-      ],
-      optionsOwnership: [
-        {
-          value: null,
-          text: 'Pilih jenis kepemilikan',
-        },
-        {
-          text: 'Ownership 1',
-          value: 1,
-        },
-        {
-          text: 'Ownership 2',
-          value: 2,
-        },
+        { text: 'L', value: 1 },
+        { text: 'P', value: 0 },
       ],
       disabledField: {
         email: true,
@@ -92,14 +84,14 @@ export default {
         pic_phone: true,
         description: true,
         image_warehouse: true,
-        image_logo: true,
+        image_logo_url: true,
         owner: true,
         gender: true,
         phone_number: true,
         nik: true,
         image_ktp_url: true,
         destination_id: true,
-        detail_addres: true,
+        detail_address: true,
         building_area: true,
         building_type: true,
         ownership: true,
@@ -115,9 +107,8 @@ export default {
         pic_phone: '',
         description: '',
         image_warehouse: null,
-        image_logo: null,
-        // type of 0: non-aktif, 1: Belum Diverifikasi, 2: Sudah Diverifikasi
-        is_verification: 2,
+        image_logo_url: null,
+        service_status: '',
       },
       dataOwner: {
         owner: '',
@@ -128,81 +119,101 @@ export default {
       },
       dataProperti: {
         destination_id: '',
-        detail_addres: '',
+        detail_address: '',
         building_area: 0,
         building_type: null,
         ownership: null,
       },
+      isOnEdit: false,
+      statusProfile: '',
+      dataStatusObj: {
+        aktif: 'Aktif',
+        nonaktif: 'Non - Aktif',
+        unverified: 'Belum Diverifikasi',
+      },
+      actionStatusType: {
+        partner: 'partner',
+        warehouse: 'warehouse',
+        batalverif: 0,
+        verifikasi: 1,
+        isActivated: 'isActivated',
+        aktif: 'aktif',
+        nonaktif: 'nonaktif',
+      },
     }
   },
+  watch: {
+    // test changing data
+    // statusProfile: {
+    //   handler(val) {
+    //     console.log(val)
+    //   },
+    //   deep: true,
+    // },
+  },
   computed: {
+    // ...mapFields('kompackAdmin', { cobaselecOptData: 'getselecOptData' }),
+    ...mapState('kompackAdmin', ['selecOptData']),
+    // ...mapGetters('kompackAdmin', ['getselecOptData']),
     statuscomputed() {
-      switch (this.dataFulfillment.is_verification) {
-        case 1:
-          return `<span class="d-flex align-items-center mb-2 font-bold text-warning">
-            <span class="w-4 h-4 rounded-full bg-warning mr-0.5"></span>Belum Terverifikasi</span>`
-        case 2:
+      switch (this.dataFulfillment.service_status) {
+        case this.actionStatusType.nonaktif:
+          return `<span class="d-flex align-items-center mb-2 font-bold text-red-500">
+            <span class="w-4 h-4 rounded-full bg-red-500 mr-0.5"></span>Non-Aktif</span>`
+        case this.actionStatusType.aktif:
           return `<span class="d-flex align-items-center mb-2 font-bold text-green-500">
             <span class="w-4 h-4 rounded-full bg-green-500 mr-0.5"></span>Aktif</span>`
         default:
-          return `<span class="d-flex align-items-center mb-2 font-bold text-red-500">
-            <span class="w-4 h-4 rounded-full bg-red-500 mr-0.5"></span>Non-Aktif</span>`
+          return `<span class="d-flex align-items-center mb-2 font-bold text-warning">
+            <span class="w-4 h-4 rounded-full bg-warning mr-0.5"></span>Belum Terverifikasi</span>`
       }
     },
   },
+  beforeMount() {
+    this.$store.dispatch('kompackAdmin/init')
+  },
   mounted() {
-    // call api get detail data
-    // this.getDataDetailMitra()
+    this.getDataDetailMitra()
   },
   methods: {
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')
     },
-    getDataDetailMitra() {
-      this.$http_kompack.get(`/v1/warehouse/${this.$route.params.id}`)
+    checkAktivation(dt) {
+      switch (dt) {
+        case this.actionStatusType.nonaktif:
+          this.statusProfile = this.dataStatusObj.nonaktif
+          break
+        case this.actionStatusType.aktif:
+          this.statusProfile = this.dataStatusObj.aktif
+          break
+        default:
+          break
+      }
+    },
+    verificationOrAktifData(dataParams, type = '') {
+      let endpoint = ''
+      switch (type) {
+        case this.actionStatusType.partner:
+          endpoint = `/kompack/warehouse/verification-partner-warehouse?id_partner_warehouse=${this.$route.params.id}&is_verification=${dataParams}`
+          this.dataOwner.partner_verification = dataParams
+          break
+        case this.actionStatusType.warehouse:
+          endpoint = `kompack/warehouse/verification-warehouse?id_warehouse=${this.dataProperti.warehouse_id}&is_verification=${dataParams}`
+          this.dataProperti.warehouse_verification = dataParams
+          break
+        case this.actionStatusType.isActivated:
+          endpoint = `kompack/warehouse/update/service?id_partner_warehouse=${this.$route.params.id}&type_service=${dataParams}`
+          this.checkAktivation(dataParams)
+          break
+        default:
+          break
+      }
+      this.$http_kompack.put(endpoint)
         .then(({ data }) => {
-          /*
-            "partner_warehouse": {
-              "id": 1,
-              "owner": "Budi Darmasto",
-              "no_hp": "812210123456",
-              "username": "budidarmasto",
-              "gender": "L",
-              "email": "budi@gmail.com",
-              "nik": "3303131808980001",
-              "is_verification": 1,
-              "account_status": 1,
-              "image_idcard_url": "string"
-            },
-            "warehouse": {
-              "id": 1,
-              "name": "Gudang Budi Darmasto",
-              "photo_logo_url": "string",
-              "description": "Gudang dengan kemersihan terjaga dan oacking rapi",
-              "pic_name": "Anak Budi",
-              "pic_phone": "812210123456",
-              "origin_code": "CGK10000",
-              "destination_id": 1,
-              "detail_addres": "Jl. Hr. Bonyamin No. 03",
-              "avability": 1,
-              "building_area": 200,
-              "ownership": 1,
-              "building_type": 2,
-              "is_verification": 1
-            },
-            "image_warehouse": [
-              {
-                "id": 1,
-                "image_url": "assets/image/front_image.jpg"
-              }
-            ]
-          */
-          console.log(data)
-          // simpan data di dlm
-          // this.dataAkun =
-          // this.dataFulfillment =
-          // this.dataOwner =
-          // this.dataProperti =
+          if (data.status === 'success' && data.code === 200) {
+            this.getDataDetailMitra()
+          }
         })
         .catch(() => {
           this.$toast({
@@ -210,6 +221,104 @@ export default {
             props: {
               title: 'Failed',
               text: 'Galat detail data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
+    },
+    getDataDetailMitra() {
+      this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
+        .then(({ data }) => {
+          /*
+          {
+            "id": "16",
+            "user_id": 2593,
+            "email": "ragil@email.com",
+            "username": "ragils",
+            "owner": "ragil setiawans",
+            "phone_number": "081229460004",
+            "gender": "L",
+            "nik": "330313120897",
+            "warehouse_id": 2,
+            "warehouse_name": "ragil setiawans",
+            "avability": 0,
+            "pic_name": "Ragil",
+            "pic_phone": "081229460004",
+            "description": "Warehouse Estrige",
+            "destination_id": 5,
+            "detail_address": "jalan mangga no 5",
+            "building_area": 200,
+            "building_type": 1,
+            "ownership": 4,
+            "image_ktp_url": "public/kompack_image_ktp/CEfRNTovd5pz0dyFMD8QLytgdTSgEuZkjaT5IC8F.jpg",
+            "image_logo_url": "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg",
+            "image_warehouse": []
+            "warehouse_verification": 0,
+            "service_status": "nonaktif",
+            "partner_verification": 0,
+          }
+          */
+          this.dataAkun = {
+            email: data.data.email,
+            username: data.data.username,
+          }
+          this.dataFulfillment = {
+            warehouse_name: data.data.warehouse_name,
+            avability: data.data.avability,
+            pic_name: data.data.pic_name,
+            pic_phone: data.data.pic_phone,
+            description: data.data.description,
+            image_warehouse: data.data.image_warehouse,
+            image_logo_url: data.data.image_logo_url,
+            service_status: data.data.service_status,
+          }
+          this.dataOwner = {
+            owner: data.data.owner,
+            gender: data.data.gender === 'L' ? 1 : 0,
+            phone_number: data.data.phone_number,
+            nik: data.data.nik,
+            partner_verification: data.data.partner_verification,
+            image_ktp_url: data.data.image_ktp_url,
+          }
+          this.dataProperti = {
+            destination_id: data.data.destination_id,
+            detail_addres: data.data.detail_address,
+            building_area: data.data.building_area,
+            building_type: data.data.building_type,
+            ownership: data.data.ownership,
+            warehouse_id: data.data.warehouse_id,
+            warehouse_verification: data.data.warehouse_verification,
+          }
+          this.fetchDataDestination(data.data.destination_id)
+          this.getStatusDataProfile(data.data.partner_verification, data.data.warehouse_verification, data.data.service_status)
+          this.$nextTick(() => {
+            this.loadingPage = false
+          })
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat detail data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
+    },
+    fetchDataDestination(dataId) {
+      this.$http_kompack('/kompack/destination', { params: { destination_id: dataId } })
+        .then(({ data }) => {
+          this.dataProperti.destination_id = data.data.zip_code
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat tambah data mitra gudang',
               icon: 'AlertCircleIcon',
               variant: 'danger',
             },
@@ -224,7 +333,6 @@ export default {
           this.$http_kompack.get('/v1/getdatamitra')
             .then(({ data }) => {
               // jika sudah berhasil callapi
-              console.log('data mitra gudang', data)
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
@@ -233,7 +341,7 @@ export default {
                 component: ToastificationContentVue,
                 props: {
                   title: 'Failed',
-                  text: 'Galat tambah data mitra gudang',
+                  text: 'Galat detail mitra gudang',
                   icon: 'AlertCircleIcon',
                   variant: 'danger',
                 },
@@ -242,24 +350,51 @@ export default {
         } else {
           // jika ada error ketika validasi
           this.btnSubmitDisabled = false
-          console.log(success)
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat edit data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
         }
       })
     },
     editdataFulfillment() {
+      this.isOnEdit = !this.isOnEdit
       this.disabledField = {
         ...this.disabledField,
-        warehouse_name: false,
-        avability: false,
-        pic_name: false,
-        pic_phone: false,
-        description: false,
-        image_warehouse: false,
-        image_logo: false,
+        warehouse_name: !this.disabledField.warehouse_name,
+        avability: !this.disabledField.avability,
+        pic_name: !this.disabledField.pic_name,
+        pic_phone: !this.disabledField.pic_phone,
+        description: !this.disabledField.description,
+        image_warehouse: !this.disabledField.image_warehouse,
+        image_logo_url: !this.disabledField.image_logo_url,
       }
     },
     previewLogo(files) {
-      console.log(files)
+      // console.log(files)
+    },
+    getStatusDataProfile(partnerVerification, warehouseVerification, serviceStatus) {
+      let datastatus = ''
+      if (!(Boolean(partnerVerification) && Boolean(warehouseVerification))) {
+        if (serviceStatus === this.dataStatusObj.unverified) {
+          this.statusProfile = this.dataStatusObj.unverified
+          datastatus = this.dataStatusObj.unverified
+        }
+      }
+      if (serviceStatus === 'nonaktif') {
+        this.statusProfile = this.dataStatusObj.nonaktif
+        datastatus = this.dataStatusObj.nonaktif
+      }
+      if (Boolean(partnerVerification) && Boolean(warehouseVerification) && serviceStatus === 'aktif') {
+        this.statusProfile = this.dataStatusObj.aktif
+        datastatus = this.dataStatusObj.aktif
+      }
+      return datastatus
     },
   },
 }
