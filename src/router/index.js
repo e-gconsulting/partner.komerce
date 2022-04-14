@@ -49,6 +49,7 @@ import cetaklabel from './routes/cetak-label'
 // Kompack
 import kompackAdmin from './routes/kompack/admin'
 import kompackLogin from './routes/kompack/login'
+import kompackPartner from './routes/kompack/partner'
 
 Vue.use(VueRouter)
 
@@ -66,6 +67,7 @@ const router = new VueRouter({
     ...ekspedisi,
     ...kompackAdmin,
     ...kompackLogin,
+    ...kompackPartner,
     ...pages,
     ...training,
     ...talent,
