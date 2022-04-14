@@ -93,6 +93,7 @@ export default {
       formData: null,
 
       dataErrSubmit: null,
+      loading: false,
     }
   },
   created() {
@@ -548,6 +549,7 @@ export default {
         })
     },
     async getShippingList() {
+      this.loading = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         setTimeout(async () => {
           await this.$http_komship.get('v2/calculate', {
@@ -570,6 +572,7 @@ export default {
             }))
             this.listShipping = result
             this.isShipping = true
+            this.loading = false
           })
         }, 800)
       } else {
@@ -577,6 +580,7 @@ export default {
         this.listShipping = []
         this.isShipping = false
         this.isCalculate = false
+        this.loading = false
       }
     },
     checkNewTotal() {

@@ -480,8 +480,18 @@
             :options="listShipping"
             placeholder="Opsi Pengiriman"
             @input="calculate(true)"
+            :loading="loading"
             :disabled="!isShipping"
           >
+          <template #spinner="{ loading }">
+            <div
+              v-if="loading"
+              style="border-left-color: #F95031"
+              class="vs__spinner"
+            >
+              The .vs__spinner class will hide the text for me.
+            </div>
+          </template>
             <template slot="option" slot-scope="option">
               <div class="d-flex">
                 <img :src="option.image_path" style="height: 30px!important;" />
