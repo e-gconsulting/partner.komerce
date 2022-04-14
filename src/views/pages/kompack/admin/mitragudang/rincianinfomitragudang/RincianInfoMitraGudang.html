@@ -32,29 +32,47 @@
     </div>
     <b-row>
       <b-col lg="6">
-        image product
-      </b-col>
-      <b-col lg="6" class="p-x1 mt-1">
-        <div class="d-flex align-items-start justify-content-between">
-          <div class="d-flex align-items-center mb-1">
-            <img
-              src="@/assets/images/icons/profile-placehold.svg"
-              alt="Photo"
-              class="mr-1"
+        <div v-if="(detailInfo.productImg)" class="d-grid containerimg">
+          <div
+            class="border-gray-50 rounded-md mb-1 containerimg__first"
+          >
+            <img :src="detailInfo.productImg.first.image_url" class="w-100 h-100">
+          </div>
+          <div class="d-flex align-items-center justify-content-start containerimgchild">
+            <div
+              v-for="(dtImg, keysdtImg) in detailInfo.productImg.more"
+              class="border-gray-50 rounded-md containerimgchild__box"
             >
-            <div class="d-grid">
-              <h5 class="text-black my-0">Gudang Putra Jaya Abadi</h5>
-              <span class="text-gray-500">Tanggerang Selatan</span>
+              <img :src="dtImg.image_url" class="w-100 h-100">
             </div>
           </div>
-          <div class="py-1 px-1 bg-blue-100 d-flex aling-items-center rounded-lg">
+        </div>
+      </b-col>
+      <b-col lg="6" class="p-x1 mt-1">
+        <div class="d-flex align-items-center justify-content-between containerDetail">
+          <div class="d-flex align-items-center mb-1">
+            <img
+              :src="detailInfo.image_logo_url"
+              alt="Photo"
+              class="mr-1 border-radius"
+              style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;"
+            >
+            <div class="d-grid">
+              <h5 class="text-black my-0">{{ detailInfo.warehouse_name }}</h5>
+              <span class="text-gray-500">{{ detailInfo.city_name }}</span>
+            </div>
+          </div>
+          <div
+            class="px-1 bg-blue-100 d-flex aling-items-center rounded-lg"
+            style="padding-top: 8px; padding-bottom: 8px;"
+          >
             <div>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10.4902 2.22859L5.50016 4.10859C4.35016 4.53859 3.41016 5.89859 3.41016 7.11859V14.5486C3.41016 15.7286 4.19016 17.2786 5.14016 17.9886L9.44016 21.1986C10.8502 22.2586 13.1702 22.2586 14.5802 21.1986L18.8802 17.9886C19.8302 17.2786 20.6102 15.7286 20.6102 14.5486V7.11859C20.6102 5.88859 19.6702 4.52859 18.5202 4.09859L13.5302 2.22859C12.6802 1.91859 11.3202 1.91859 10.4902 2.22859Z" stroke="#08A0F7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M9.0498 11.8697L10.6598 13.4797L14.9598 9.17969" stroke="#08A0F7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <span class="text-blue-500">Terverifikasi</span>
+            <span class="text-blue-500">{{ detailInfo.partner_verification }}</span>
           </div>
         </div>
         <b-row class="mb-1">
@@ -63,8 +81,8 @@
           </b-col>
           <b-col>
             <span class="text-black">: </span>
-            <b-badge variant="light-success">
-              Tersedia
+            <b-badge :variant="detailInfo.avability === 'Penuh' ? 'light-primary' : 'light-success'">
+              {{ detailInfo.avability }}
             </b-badge>
           </b-col>
         </b-row>
@@ -74,7 +92,7 @@
           </b-col>
           <b-col>
             <span class="text-black">: </span>
-            <span class="text-black">333 Order Pengiriman</span>
+            <span class="text-black">{{ detailInfo.total_order }} Order Pengiriman</span>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -83,7 +101,7 @@
           </b-col>
           <b-col>
             <span class="text-black">: </span>
-            <span class="text-black">Budi Darmanto</span>
+            <span class="text-black">{{ detailInfo.owner }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-1">
@@ -92,7 +110,7 @@
           </b-col>
           <b-col>
             <span class="text-black">: </span>
-            <span class="text-black">01 Januari 2021</span>
+            <span class="text-black">{{ tglJoinData }}</span>
           </b-col>
         </b-row>
         <b-row class="mb-2">
@@ -101,16 +119,16 @@
           </b-col>
           <b-col>
             <span class="text-black">: </span>
-            <span class="text-black">Jl. Cucur Bar. No.B 2, RW.1, Pd. Karya, Kec. Pd. Aren, Kota Tangerang Selatan, Banten 15225</span>
+            <span class="text-black">{{ detailInfo.detail_address }}</span>
           </b-col>
         </b-row>
 
         <b-row>
-          <b-col lg="6">
+          <b-col lg="6" md="6" sm="12" class="columnChat">
             <b-button
               variant="outline-primary"
               class="d-flex justify-content-center align-items-center"
-              @click="() => {}"
+              disabled
             >
               <span class="mr-1">
                 <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -123,11 +141,11 @@
               </span>
             </b-button>
           </b-col>
-          <b-col lg="6">
+          <b-col lg="6" md="6" sm="12">
             <b-button
               variant="primary"
               class="text-center py-1 px-2"
-              @click="() => {}"
+              disabled
             >
               <span class="font-bolder">
                 Ajukan Penggunaan Gudang
@@ -143,7 +161,7 @@
   
     <div class="d-grid">
       <h5 class="text-black font-extrabold">Deskripsi</h5>
-      <span class="text-black mt-1">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
+      <span class="text-black mt-1">{{ detailInfo.description }}</span>
     </div>
   </div>
 </b-card>

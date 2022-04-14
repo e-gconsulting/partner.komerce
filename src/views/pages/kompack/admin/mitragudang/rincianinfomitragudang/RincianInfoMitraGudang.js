@@ -1,3 +1,4 @@
+import moment from 'moment'
 import {
   BCard,
   BButton,
@@ -21,6 +22,11 @@ export default {
       detailInfo: {},
     }
   },
+  computed: {
+    tglJoinData() {
+      return moment(this.detailInfo.join_date).format('DD MMMM YYYY')
+    },
+  },
   mounted() {
     this.fetchData()
   },
@@ -28,7 +34,6 @@ export default {
     fetchData() {
       this.$http_kompack(`/kompack/warehouse/information/${this.$route.params.id}`)
         .then(({ data }) => {
-          console.log(data)
           /*
           "data": {
             "id": "26",
@@ -49,17 +54,21 @@ export default {
                 "image_url": "https:\/\/kompackdev.komerce.id\/warehouse_images\/1649751303-Test_image_2.jpg",
                 "created_at": "2022-04-12T08:15:03.000000Z",
                 "updated_at": "2022-04-12T08:15:03.000000Z"
-            }, {
-                "id": 10,
-                "warehouse_id": 12,
-                "image_url": "https:\/\/kompackdev.komerce.id\/warehouse_images\/1649751305-Test_image.jpg",
-                "created_at": "2022-04-12T08:15:05.000000Z",
-                "updated_at": "2022-04-12T08:15:05.000000Z"
             }]
           }
           */
-          this.detailInfo = data.data
-          this.isLoadingPage = false
+          const dataAwal = data.data
+          const imageSplit = {}
+          const imgData = [...data.data.image_warehouse]
+          if (imgData && Array.isArray(imgData)) {
+            const [firstdata] = [...imgData].splice(0, 1)
+            imageSplit.first = firstdata
+            imageSplit.more = [...imgData].splice(1)
+          }
+          this.detailInfo = { ...dataAwal, productImg: imageSplit }
+          this.$nextTick(() => {
+            this.isLoadingPage = false
+          })
         })
         .catch(() => {
           this.$toast({
