@@ -21,6 +21,24 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { mapState } from 'vuex'
 
+/*
+  this.dataOwner.partner_verification
+  this.dataProperti.warehouse_verification
+  this.dataProperti.service_status
+  jika partner_verification = 0 & warehouse_verification = 0 & service_status = belum verifikasi
+  jika partner_verification = 0 & warehouse_verification = 1 & service_status = belum verifikasi
+  jika partner_verification = 1 & warehouse_verification = 0 & service_status = belum verifikasi
+  - klik tombol aktifkan layanan masih disabled
+  - edit fitur utk semua atau sebagian
+  jika partner_verification = 1 & warehouse_verification = 1 & service_status = nonaktif
+  - klik tombol aktifkan layanan masih enable
+  - tombol Batalkan Verifikasi ada
+  - tombol data fulfillment bisa di klik dan edit field hanya fullfillment saja
+  jika partner_verification = 1 & warehouse_verification = 1 & service_status = aktif
+  - klik tombol non aktifkan layanan
+  - hanya ada icon terverifikasi tidak ada lgi tombol batalkan verifikasi
+*/
+
 export default {
   components: {
     BRow,
@@ -90,7 +108,6 @@ export default {
         description: '',
         image_warehouse: null,
         image_logo_url: null,
-        // type of 0: non-aktif, 1: Belum Diverifikasi, 2: Sudah Diverifikasi
         service_status: '',
       },
       dataOwner: {
@@ -112,7 +129,14 @@ export default {
       dataStatusObj: {
         aktif: 'Aktif',
         nonaktif: 'Non - Aktif',
-        notverified: 'Belum Verifikasi',
+        unverified: 'Belum Diverifikasi',
+      },
+      actionStatusType: {
+        partner: 'partner',
+        warehouse: 'warehouse',
+        batalverif: 0,
+        verifikasi: 1,
+        isActivated: 'isActivated',
       },
     }
   },
@@ -142,38 +166,6 @@ export default {
             <span class="w-4 h-4 rounded-full bg-warning mr-0.5"></span>Belum Terverifikasi</span>`
       }
     },
-    // statusProfile() {
-    // dataStatusObj
-    // let datastatus = ''
-    // if (!(Boolean(this.dataOwner.partner_verification) && Boolean(this.dataProperti.warehouse_verification)) && this.dataProperti.service_status === 'nonaktif') {
-    //   datastatus = this.dataStatusObj.unverified
-    // }
-    // if (Boolean(this.dataOwner.partner_verification) && Boolean(this.dataProperti.warehouse_verification) && this.dataProperti.service_status === 'nonaktif') {
-    //   datastatus = this.dataStatusObj.nonaktif
-    // }
-    // if (Boolean(this.dataOwner.partner_verification) && Boolean(this.dataProperti.warehouse_verification) && this.dataProperti.service_status === 'aktif') {
-    //   datastatus = this.dataStatusObj.aktif
-    // }
-    // console.log('datastatus ', datastatus)
-    // return datastatus
-    /*
-      this.dataOwner.partner_verification
-      this.dataProperti.warehouse_verification
-      this.dataProperti.service_status
-      jika partner_verification = 0 & warehouse_verification = 0 & service_status = belum verifikasi
-      jika partner_verification = 0 & warehouse_verification = 1 & service_status = belum verifikasi
-      jika partner_verification = 1 & warehouse_verification = 0 & service_status = belum verifikasi
-      - klik tombol aktifkan layanan masih disabled
-      - edit fitur utk semua atau sebagian
-      jika partner_verification = 1 & warehouse_verification = 1 & service_status = nonaktif
-      - klik tombol aktifkan layanan masih enable
-      - tombol Batalkan Verifikasi ada
-      - tombol data fulfillment bisa di klik dan edit field hanya fullfillment saja
-      jika partner_verification = 1 & warehouse_verification = 1 & service_status = aktif
-      - klik tombol non aktifkan layanan
-      - hanya ada icon terverifikasi tidak ada lgi tombol batalkan verifikasi
-    */
-    // },
   },
   beforeMount() {
     this.$store.dispatch('kompackAdmin/init')
@@ -184,6 +176,41 @@ export default {
   methods: {
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')
+    },
+    verificationOrAktifData(dataParams, type = '') {
+      let endpoint = ''
+      switch (type) {
+        case this.actionStatusType.partner:
+          endpoint = `/kompack/warehouse/verification-partner-warehouse?id_partner_warehouse=${this.$route.params.id}&is_verification=${dataParams}`
+          this.dataOwner.partner_verification = dataParams
+          break
+        case this.actionStatusType.warehouse:
+          endpoint = `kompack/warehouse/verification-warehouse?id_warehouse=${this.dataProperti.warehouse_id}&is_verification=${dataParams}`
+          this.dataProperti.warehouse_verification = dataParams
+          break
+        case this.actionStatusType.isActivated:
+          endpoint = `kompack/warehouse/update/service?id_partner_warehouse=${this.$route.params.id}&type_service=${dataParams}`
+          this.statusProfile = dataParams
+          break
+        default:
+          break
+      }
+      console.log(dataParams, type, endpoint)
+      this.$http_kompack.put(endpoint)
+        .then(({ data }) => {
+          console.log('data ', type, data.data)
+        })
+        .catch(() => {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Failed',
+              text: 'Galat detail data mitra gudang',
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          })
+        })
     },
     getDataDetailMitra() {
       this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
@@ -245,6 +272,7 @@ export default {
             building_area: data.data.building_area,
             building_type: data.data.building_type,
             ownership: data.data.ownership,
+            warehouse_id: data.data.warehouse_id,
             warehouse_verification: data.data.warehouse_verification,
           }
           this.fetchDataDestination(data.data.destination_id)
@@ -338,11 +366,13 @@ export default {
     },
     getStatusDataProfile(partnerVerification, warehouseVerification, serviceStatus) {
       let datastatus = ''
-      if (!(Boolean(partnerVerification) && Boolean(warehouseVerification)) && serviceStatus === 'nonaktif') {
-        this.statusProfile = this.dataStatusObj.unverified
-        datastatus = this.dataStatusObj.unverified
+      if (!(Boolean(partnerVerification) && Boolean(warehouseVerification))) {
+        if (serviceStatus === this.dataStatusObj.unverified) {
+          this.statusProfile = this.dataStatusObj.unverified
+          datastatus = this.dataStatusObj.unverified
+        }
       }
-      if (Boolean(partnerVerification) && Boolean(warehouseVerification) && serviceStatus === 'nonaktif') {
+      if (serviceStatus === 'nonaktif') {
         this.statusProfile = this.dataStatusObj.nonaktif
         datastatus = this.dataStatusObj.nonaktif
       }

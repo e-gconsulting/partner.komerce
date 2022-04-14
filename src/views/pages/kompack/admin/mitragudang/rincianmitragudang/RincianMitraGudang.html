@@ -13,7 +13,7 @@
         class="d-flex align-items-center"
       >
         <b-button
-          @click="() => {}"
+          @click="verificationOrAktifData(actionStatusType.aktif, actionStatusType.isActivated)"
           variant="primary"
           class="font-bold"
         >Aktifkan Layanan</b-button>
@@ -28,14 +28,14 @@
           class="mr-1 font-bold"
         >Edit</b-button>
         <b-button
-          @click="() => {}"
+          @click="verificationOrAktifData(actionStatusType.aktif, actionStatusType.isActivated)"
           variant="primary"
-          :disabled="true"
+          :disabled="dataOwner.partner_verification && dataProperti.warehouse_verification"
           class="font-bold"
         >Aktifkan Layanan</b-button>
       </div>
       <div
-        v-if="statusProfile === dataStatusObj.aktif"
+        v-else
         class="d-flex align-items-center"
       >
         <b-button
@@ -49,7 +49,7 @@
           class="mr-1 text-capitalize font-bold"
         >Lihat Info Gudang</b-button>
         <b-button
-          @click="() => {}"
+          @click="verificationOrAktifData(actionStatusType.nonaktif, actionStatusType.isActivated)"
           variant="primary"
           class="text-capitalize font-bold"
         >Non-Aktifkan</b-button>
@@ -384,7 +384,7 @@
                 <div class="isverification__container--btn">
                   <b-button
                     v-if="dataOwner.partner_verification === 1 && statusProfile !== dataStatusObj.aktif"
-                    @click="() => {}"
+                    @click="verificationOrAktifData(actionStatusType.batalverif,actionStatusType.partner)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
@@ -392,7 +392,7 @@
                   </b-button>
                   <b-button
                     v-if="dataOwner.partner_verification === 0"
-                    @click="() => {}"
+                    @click="verificationOrAktifData(actionStatusType.verifikasi,actionStatusType.partner)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
@@ -581,7 +581,7 @@
                 <div class="isverification__container--btn">
                   <b-button
                     v-if="dataProperti.warehouse_verification === 1 && statusProfile !== dataStatusObj.aktif"
-                    @click="() => {}"
+                    @click="verificationOrAktifData(actionStatusType.batalverif,actionStatusType.warehouse)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
@@ -589,7 +589,7 @@
                   </b-button>
                   <b-button
                     v-if="dataProperti.warehouse_verification === 0"
-                    @click="() => {}"
+                    @click="verificationOrAktifData(actionStatusType.verifikasi,actionStatusType.warehouse)"
                     variant="outline-primary"
                     class="font-bold"
                     style="border: 1px solid #ccc !important;"
