@@ -2588,8 +2588,6 @@ export default {
       }
     },
     onSubmitOptionPrint(values) {
-      console.log(this.fieldItemsPrint)
-      console.log(values)
       this.handlePreviewModalPrint = true
       this.valuesOption = values
       if (values === 150) {
@@ -2597,6 +2595,7 @@ export default {
       } else if (values === 100) {
         this.$refs.html2PdfThermalSquare.generatePdf()
       } else if (values === 4) {
+        this.getPrintLabelBase64()
         const binary = atob(this.base64Label.replace(/\s/g, ''))
         const len = binary.length
         const buffer = new ArrayBuffer(len)
