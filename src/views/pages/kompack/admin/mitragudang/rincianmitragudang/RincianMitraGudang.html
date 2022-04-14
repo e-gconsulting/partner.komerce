@@ -128,7 +128,7 @@
               style="cursor: pointer;"
               @click="editdataFulfillment()"
             >
-              <feather-icon icon="EditIcon" />
+              <feather-icon v-if="!isOnEdit" icon="EditIcon" />
             </div>
           </div>
           <b-row>
@@ -383,7 +383,7 @@
                 </div>
                 <div class="isverification__container--btn">
                   <b-button
-                    v-if="dataOwner.partner_verification === 1"
+                    v-if="dataOwner.partner_verification === 1 && statusProfile !== dataStatusObj.aktif"
                     @click="() => {}"
                     variant="outline-primary"
                     class="font-bold"
@@ -580,7 +580,7 @@
                 </div>
                 <div class="isverification__container--btn">
                   <b-button
-                    v-if="dataProperti.warehouse_verification === 1"
+                    v-if="dataProperti.warehouse_verification === 1 && statusProfile !== dataStatusObj.aktif"
                     @click="() => {}"
                     variant="outline-primary"
                     class="font-bold"
@@ -738,11 +738,11 @@
               </b-form-group>
             </b-col>
           </b-row>
-          <b-row class="mt-1">
+          <b-row v-if="isOnEdit" class="mt-1">
             <b-col cols="12">
               <div class="d-flex justify-content-end">
                 <b-button
-                  @click="showModalBatal()"
+                  @click="editdataFulfillment()"
                   type="button"
                   variant="outline-primary"
                   class="font-bold mr-1"

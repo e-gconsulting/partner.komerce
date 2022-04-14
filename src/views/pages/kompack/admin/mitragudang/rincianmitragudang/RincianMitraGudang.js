@@ -107,6 +107,7 @@ export default {
         building_type: null,
         ownership: null,
       },
+      isOnEdit: false,
       statusProfile: '',
       dataStatusObj: {
         aktif: 'Aktif',
@@ -320,15 +321,16 @@ export default {
       })
     },
     editdataFulfillment() {
+      this.isOnEdit = !this.isOnEdit
       this.disabledField = {
         ...this.disabledField,
-        warehouse_name: false,
-        avability: false,
-        pic_name: false,
-        pic_phone: false,
-        description: false,
-        image_warehouse: false,
-        image_logo_url: false,
+        warehouse_name: !this.disabledField.warehouse_name,
+        avability: !this.disabledField.avability,
+        pic_name: !this.disabledField.pic_name,
+        pic_phone: !this.disabledField.pic_phone,
+        description: !this.disabledField.description,
+        image_warehouse: !this.disabledField.image_warehouse,
+        image_logo_url: !this.disabledField.image_logo_url,
       }
     },
     previewLogo(files) {
