@@ -93,7 +93,7 @@ export default {
       formData: null,
 
       dataErrSubmit: null,
-      loading: false,
+      loadingOptionExpedition: false,
     }
   },
   created() {
@@ -549,7 +549,7 @@ export default {
         })
     },
     async getShippingList() {
-      this.loading = true
+      this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         setTimeout(async () => {
           await this.$http_komship.get('v2/calculate', {
@@ -572,7 +572,7 @@ export default {
             }))
             this.listShipping = result
             this.isShipping = true
-            this.loading = false
+            this.loadingOptionExpedition = false
           })
         }, 800)
       } else {
@@ -580,7 +580,7 @@ export default {
         this.listShipping = []
         this.isShipping = false
         this.isCalculate = false
-        this.loading = false
+        this.loadingOptionExpedition = false
       }
     },
     checkNewTotal() {
@@ -596,6 +596,7 @@ export default {
       }
     },
     async calculate(getAdditional) {
+      this.loadingWrapperOtherCost = true
       setTimeout(async () => {
         if (this.shipping && this.cartId.length > 0) {
           this.loadingCalculate = true
@@ -660,9 +661,14 @@ export default {
               this.isCalculate = true
               this.loadingCalculate = false
             }
-          }).catch(async () => this.calculate(getAdditional))
+            this.loadingWrapperOtherCost = false
+          }).catch(async () => {
+            this.loadingWrapperOtherCost = false
+            this.calculate(getAdditional)
+          })
         } else {
           this.isCalculate = false
+          this.loadingWrapperOtherCost = false
         }
       }, 800)
     },
