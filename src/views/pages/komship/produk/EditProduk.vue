@@ -75,8 +75,21 @@
                       v-model="productName"
                       placeholder="Masukan nama produk kamu"
                       :state="errors.length > 0 ? false:null"
+                      :formatter="formatNameProduct"
+                      @keypress="validateInputProductName"
                     />
-                    <small class="text-primary">{{ errors[0] }}</small>
+                    <b-row class="justify-content-between">
+                      <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                      <small class="mr-1 mt-50">
+                        <small
+                          v-if="messageErrorIsActive"
+                          class="text-primary"
+                        >
+                          *hindari menggunakan simbol (/) (=) (:) (;)
+                        </small>
+                        {{ productName.length }}/60
+                      </small>
+                    </b-row>
                   </validation-provider>
                 </b-col>
               </b-row>
@@ -2393,6 +2406,8 @@ export default {
       fieldPreviewImage: [],
       fieldEditVariation: [],
 
+      messageErrorIsActive: false,
+
     }
   },
   computed: {
@@ -3324,6 +3339,17 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
+    formatNameProduct(e) {
+      return String(e).substring(0, 60)
+    },
+    validateInputProductName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorIsActive = true
+      } else {
+        this.messageErrorIsActive = false
+      }
+    },
   },
 }
 </script>
