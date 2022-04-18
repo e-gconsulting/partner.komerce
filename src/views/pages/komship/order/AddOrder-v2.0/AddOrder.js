@@ -18,7 +18,7 @@ export default {
       addressList: [],
       addressLength: null,
       customerId: null,
-      customerName: null,
+      customerName: '',
       customerPhone: null,
       customerAddress: null,
       customerList: [],
@@ -94,6 +94,10 @@ export default {
 
       dataErrSubmit: null,
       loadingOptionExpedition: false,
+
+      loadingWrapperOtherCost: false,
+      messageErrorLengthCustomerName: false,
+      messageErrorPhone: false,
     }
   },
   created() {
@@ -777,6 +781,29 @@ export default {
           confirmButtonText: 'Oke',
           confirmButtonClass: 'btn btn-primary',
         })
+      }
+    },
+    formatCustomerName(e) {
+      return String(e).substring(0, 30)
+    },
+    formatPhoneCustomer() {
+      if (this.customerPhone.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    validateInputCustomerName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthCustomerName = true
+      } else {
+        this.messageErrorLengthCustomerName = false
+      }
+    },
+    validateInputPhoneCustomer(e) {
+      if (e.keyCode === 46) {
+        e.preventDefault()
       }
     },
   },

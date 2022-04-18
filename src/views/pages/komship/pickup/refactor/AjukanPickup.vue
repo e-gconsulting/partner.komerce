@@ -179,6 +179,7 @@
             <b-button
               variant="primary"
               class="mt-50"
+              :disabled="addressName === '' || addressDetail === ''"
               @click="chooseOrder"
             >
               Pilih orderan

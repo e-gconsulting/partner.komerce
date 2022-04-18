@@ -2576,6 +2576,17 @@ export default {
         this.loadingButtonPrintLabel = false
         console.log('response base64', response)
         this.$bvModal.show('modal-8')
+      }).catch(() => {
+        this.loadingButtonPrintLabel = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal print label, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
       })
     },
     onUpdateScreenViewParent() {
@@ -2605,9 +2616,7 @@ export default {
           view[i] = binary.charCodeAt(i)
         }
         const file = new Blob([view], { type: 'application/pdf' })
-        console.log('file', file)
         const fileURL = URL.createObjectURL(file)
-        console.log('fileURL', fileURL)
         window.open(fileURL)
       } else {
         this.$refs.html2Pdf.generatePdf()

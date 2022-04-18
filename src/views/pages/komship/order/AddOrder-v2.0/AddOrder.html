@@ -76,6 +76,8 @@
           list="customerList"
           placeholder="Masukan nama atau cari dari data pelanggan"
           autocomplete="off"
+          :formatter="formatCustomerName"
+          @keypress="validateInputCustomerName"
           @keydown="getCustomer($event)"
         />
         <datalist id="customerList">
@@ -87,6 +89,17 @@
             {{ item.name }}, {{ item.phone }}, {{ item.address }}
           </option>
         </datalist>
+        <b-row class="justify-content-end">
+          <small class="mr-1 mt-50">
+            <small
+              v-if="messageErrorLengthCustomerName"
+              class="text-primary"
+            >
+              *hindari menggunakan simbol (/) (=) (:) (;)
+            </small>
+            {{ customerName.length }}/30
+          </small>
+        </b-row>
       </b-col>
     </b-row>
     <b-row class="mb-1">
@@ -104,7 +117,22 @@
               :value="phoneCode"
             />
           </template>
-          <b-form-input v-model="customerPhone" />
+          <b-form-input
+            v-model="customerPhone"
+            type="number"
+            @input="formatPhoneCustomer"
+            @keypress="validateInputPhoneCustomer"
+          />
+          <b-row class="justify-content-end">
+            <div>
+              <small
+                class="mr-1 text-primary ml-1"
+                v-if="messageErrorPhone"
+              >
+                *minimal 9 digit dan hanya berupa angka.
+              </small>
+            </div>
+          </b-row>
         </b-input-group>
       </b-col>
     </b-row>
