@@ -207,8 +207,21 @@
                             placeholder="Alamat Detail"
                             rows="3"
                             :state="errors.length > 0 ? false:null"
+                            :formatter="formatDetailAddress"
+                            @keypress="validateInputDetail"
                           />
-                          <small class="text-primary"> {{ errors[0] }}</small>
+                          <b-row class="justify-content-between">
+                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorLengthAddress"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
+                              {{ addressDetail.length }}/85
+                            </small>
+                          </b-row>
                         </validation-provider>
                       </div>
                       <div v-else>
@@ -254,7 +267,20 @@
                       <div v-if="editMode === true && editIdAddress === data.address_id">
                         <b-form-input
                           v-model="picName"
+                          :formatter="formatName"
+                          @keypress="validateInputName"
                         />
+                        <b-row class="justify-content-end">
+                          <small class="mr-1 mt-50">
+                            <small
+                              v-if="messageErrorLengthName"
+                              class="text-primary"
+                            >
+                              *hindari menggunakan simbol (/) (=) (:) (;)
+                            </small>
+                            {{ picName.length }}/30
+                          </small>
+                        </b-row>
                       </div>
                       <div v-else>
                         <b-form-input
@@ -296,8 +322,19 @@
                             v-model="phoneUser"
                             :state="errors.length > 0 ? false:null"
                             type="number"
+                            @keypress="validateEditInputPhone"
                           />
-                          <small class="text-primary">{{ errors[0] }}</small>
+                          <b-row class="justify-content-between">
+                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorPhone"
+                                class="text-primary"
+                              >
+                                *minimal 9 digit dan hanya berupa angka.
+                              </small>
+                            </small>
+                          </b-row>
                         </validation-provider>
                       </div>
                       <div v-else>
@@ -347,7 +384,7 @@
                       type="reset"
                       variant="primary"
                       class="mr-1"
-                      :disabled="invalid"
+                      :disabled="invalid || messageErrorPhone === true"
                       @click.prevent="submitUpdateAddress"
                     >
                       <b-spinner
@@ -491,8 +528,21 @@
                             placeholder="Contoh: Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355"
                             rows="3"
                             :state="errors.length > 0 ? false:null"
+                            :formatter="formatDetailAddress"
+                            @keypress="validateInputDetail"
                           />
-                          <small class="text-danger">{{ errors[0] }}</small>
+                          <b-row class="justify-content-between">
+                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorLengthAddress"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
+                              {{ fieldAddAddressDetail.length }}/85
+                            </small>
+                          </b-row>
                         </validation-provider>
                       </b-col>
                     </b-row>
@@ -529,7 +579,20 @@
                         <b-form-input
                           v-model="fieldAddPicName"
                           placeholder="Masukkan Nama Penanggung Jawab Gudang"
+                          :formatter="formatName"
+                          @keypress="validateInputName"
                         />
+                        <b-row class="justify-content-end">
+                          <small class="mr-1 mt-50">
+                            <small
+                              v-if="messageErrorLengthName"
+                              class="text-primary"
+                            >
+                              *hindari menggunakan simbol (/) (=) (:) (;)
+                            </small>
+                            {{ fieldAddPicName.length }}/30
+                          </small>
+                        </b-row>
                       </b-col>
                     </b-row>
                   </b-col>
@@ -564,8 +627,19 @@
                             placeholder="Masukkan Nomor HP Penanggung Jawab Gudang"
                             type="number"
                             :state="errors.length > 0 ? false:null"
+                            @keypress="validateInputPhone"
                           />
-                          <small class="text-primary">{{ errors[0] }}</small>
+                          <b-row class="justify-content-between">
+                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorPhone"
+                                class="text-primary"
+                              >
+                                *minimal 9 digit dan hanya berupa angka.
+                              </small>
+                            </small>
+                          </b-row>
                         </validation-provider>
                       </b-col>
                     </b-row>
@@ -606,7 +680,7 @@
                         type="reset"
                         variant="primary"
                         class="mr-1"
-                        :disabled="invalid"
+                        :disabled="invalid || messageErrorPhone === true"
                         @click.prevent="submitAddress"
                       >
                         <b-spinner
@@ -868,6 +942,10 @@ export default {
       dataIsDefault: 0,
 
       handleOldOrigin: false,
+
+      messageErrorLengthAddress: false,
+      messageErrorLengthName: false,
+      messageErrorPhone: false,
     }
   },
   mounted() {
@@ -1157,6 +1235,48 @@ export default {
     },
     handleSelectOrigin(data) {
       this.originValue = data
+    },
+    formatDetailAddress(e) {
+      return String(e).substring(0, 85)
+    },
+    formatName(e) {
+      return String(e).substring(0, 30)
+    },
+    validateInputDetail(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthAddress = true
+      } else {
+        this.messageErrorLengthAddress = false
+      }
+    },
+    validateInputName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthName = true
+      } else {
+        this.messageErrorLengthName = false
+      }
+    },
+    validateInputPhone(e) {
+      if (e.keyCode === 46) {
+        e.preventDefault()
+      }
+      if (this.fieldAddPhoneUser.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    validateEditInputPhone(e) {
+      if (e.keyCode === 46) {
+        e.preventDefault()
+      }
+      if (this.phoneUser.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
     },
   },
 
