@@ -176,7 +176,20 @@
         <b-form-textarea
           v-model="customerAddress"
           placeholder="Masukkan Alamat Lengkap"
+          :formatter="formatAddressDetail"
+          @keypress="validateInputAddressDetail"
         />
+        <b-row class="justify-content-end">
+          <small class="mr-1 mt-50">
+            <small
+              v-if="messageErrorAddressDetail"
+              class="text-primary"
+            >
+              *hindari menggunakan simbol (/) (=) (:) (;)
+            </small>
+            {{ customerAddress.length }}/85
+          </small>
+        </b-row>
       </b-col>
     </b-row>
     <section

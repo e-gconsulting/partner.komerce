@@ -98,6 +98,7 @@ export default {
       loadingWrapperOtherCost: false,
       messageErrorLengthCustomerName: false,
       messageErrorPhone: false,
+      messageErrorAddressDetail: false,
     }
   },
   created() {
@@ -786,6 +787,9 @@ export default {
     formatCustomerName(e) {
       return String(e).substring(0, 30)
     },
+    formatAddressDetail(e) {
+      return String(e).substring(0, 85)
+    },
     formatPhoneCustomer() {
       if (this.customerPhone.length < 9) {
         this.messageErrorPhone = true
@@ -799,6 +803,14 @@ export default {
         this.messageErrorLengthCustomerName = true
       } else {
         this.messageErrorLengthCustomerName = false
+      }
+    },
+    validateInputAddressDetail(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorAddressDetail = true
+      } else {
+        this.messageErrorAddressDetail = false
       }
     },
     validateInputPhoneCustomer(e) {
