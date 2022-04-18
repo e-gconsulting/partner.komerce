@@ -98,26 +98,30 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-form-timepicker
-              ref="dt1"
-              v-model="timeValue"
-              button-only
-              no-close-button
-              right
-              hide-header
-              locale="en"
-              :hour12="false"
-              button-variant="flat-dark"
-              @context="onChangeTime"
+            <b-button
+              id="popover-button-3"
+              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+              variant="flat-dark"
+              class="btn-icon border"
+              @click="showTimePicker = !showTimePicker"
             >
-              <template v-slot:button-content>
-                <b-form-input
-                  id="input-pickup-time"
-                  v-model="timeValueText"
-                  type="text"
-                />
-              </template>
-            </b-form-timepicker>
+              {{ timeValue }}
+            </b-button>
+            <b-popover
+              :show.sync="showTimePicker"
+              target="popover-button-3"
+              placement="bottom"
+              triggers="click"
+              variant="primary"
+            >
+              <b-time
+                v-model="timeValue"
+                locale="en"
+                hide-header
+                :hour12="false"
+                @context="onChangeTime"
+              />
+            </b-popover>
           </b-form-group>
         </b-col>
         <b-col
@@ -773,21 +777,18 @@ import {
   BRow,
   BCol,
   BFormGroup,
-  BFormInput,
   BForm,
   BButton,
-  BFormDatepicker,
   BInputGroup,
   BInputGroupAppend,
-  BFormTimepicker,
-  BIconChevronExpand,
   BModal,
   BFormRadio,
   BTable,
   BAvatar,
   BContainer,
-  BSpinner,
-  BImg,
+  BPopover,
+  VBPopover,
+  BTime,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
@@ -806,14 +807,10 @@ export default {
     BRow,
     BCol,
     BFormGroup,
-    BFormInput,
     BForm,
     BButton,
-    // BFormDatepicker,
     BInputGroup,
     BInputGroupAppend,
-    BFormTimepicker,
-    // BIconChevronExpand,
     BModal,
     BFormRadio,
     dataOrder,
@@ -822,8 +819,11 @@ export default {
     BContainer,
     flatPickr,
     LottieAnimation,
+    BTime,
+    BPopover,
   },
   directives: {
+    'b-popover': VBPopover,
     Ripple,
   },
   data() {
@@ -875,6 +875,7 @@ export default {
         altFormat: 'M j, Y',
         altInput: true,
         dateFormat: 'Y-MMMM-d',
+        minDate: 'today',
         mode: 'single',
       },
 
@@ -922,6 +923,8 @@ export default {
         },
       ],
       itemsDataOrder: [],
+
+      showTimePicker: false,
     }
   },
   mounted() {
