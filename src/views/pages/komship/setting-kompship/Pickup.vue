@@ -322,6 +322,7 @@
                             v-model="phoneUser"
                             :state="errors.length > 0 ? false:null"
                             type="number"
+                            @input="formatEditPhoneUser"
                             @keypress="validateEditInputPhone"
                           />
                           <b-row class="justify-content-between">
@@ -627,6 +628,7 @@
                             placeholder="Masukkan Nomor HP Penanggung Jawab Gudang"
                             type="number"
                             :state="errors.length > 0 ? false:null"
+                            @input="formatPhoneUser"
                             @keypress="validateInputPhone"
                           />
                           <b-row class="justify-content-between">
@@ -1242,6 +1244,20 @@ export default {
     formatName(e) {
       return String(e).substring(0, 30)
     },
+    formatEditPhoneUser() {
+      if (this.phoneUser.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    formatPhoneUser() {
+      if (this.fieldAddPhoneUser.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
     validateInputDetail(e) {
       if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
         e.preventDefault()
@@ -1262,20 +1278,10 @@ export default {
       if (e.keyCode === 46) {
         e.preventDefault()
       }
-      if (this.fieldAddPhoneUser.length < 9) {
-        this.messageErrorPhone = true
-      } else {
-        this.messageErrorPhone = false
-      }
     },
     validateEditInputPhone(e) {
       if (e.keyCode === 46) {
         e.preventDefault()
-      }
-      if (this.phoneUser.length < 9) {
-        this.messageErrorPhone = true
-      } else {
-        this.messageErrorPhone = false
       }
     },
   },
