@@ -149,7 +149,7 @@
                 >
                   <input
                     id="image_logo_url"
-                    @change="previewLogo"
+                    @change="e => previewLogo(e, imageFieldFormType.fulfillmentLogo)"
                     :state="Boolean(dataFulfillment.image_logo_url)"
                     :disabled="disabledField.image_logo_url"
                     ref="image_logo_url"
@@ -169,8 +169,13 @@
                       border: disabledField.image_logo_url ? 'unset' : 'inherit',
                     }"
                   >
-                    <img :src="dataFulfillment.image_logo_url" style="width: 100%; height: 100%;" />
+                    <img
+                      v-if="prevImg.logo"
+                      :src="prevImg.logo"
+                      style="width: 100%; height: 100%;"
+                    />
                   </div>
+                  <small v-if="!dataFulfillment.image_logo_url" class="text-primary">Logo harus di upload</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -527,7 +532,7 @@
                 >
                   <input
                     id="image_ktp_url"
-                    @change="previewLogo"
+                    @change="e => previewLogo(e, imageFieldFormType.ownerKTP)"
                     :state="Boolean(dataOwner.image_ktp_url)"
                     :disabled="disabledField.image_ktp_url"
                     ref="image_ktp_url"
@@ -545,7 +550,12 @@
                       border: disabledField.image_ktp_url ? 'unset' : 'inherit',
                     }"
                   >
-                    <img :src="dataOwner.image_ktp_url" class="w-100 h-100" alt="no-img">
+                    <img
+                      v-if="prevImg.ktp"
+                      :src="prevImg.ktp"
+                      style="width: 100%; height: 100%;"
+                      alt="no-img"
+                    >
                   </div>
                 </validation-provider>
               </b-form-group>
