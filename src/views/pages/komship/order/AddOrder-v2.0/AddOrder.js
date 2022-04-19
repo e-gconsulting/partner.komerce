@@ -20,7 +20,7 @@ export default {
       customerId: null,
       customerName: '',
       customerPhone: null,
-      customerAddress: null,
+      customerAddress: '',
       customerList: [],
       phoneCode: '+62',
       phoneCodeList: ['+62'],
