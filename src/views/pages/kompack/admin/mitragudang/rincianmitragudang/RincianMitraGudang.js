@@ -296,7 +296,7 @@ export default {
           }
           this.dataProperti = {
             destination_id: data.data.destination_id,
-            detail_addres: data.data.detail_address,
+            detail_address: data.data.detail_address,
             building_area: data.data.building_area,
             building_type: data.data.building_type,
             ownership: data.data.ownership,
@@ -361,7 +361,7 @@ export default {
             formData.append('image_warehouse[]', xt) // array<string ($binary)>
           })
           formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.building_area, 10))
-          formData.append('detail_addres', this.dataProperti.detail_addres)
+          formData.append('detail_address', this.dataProperti.detail_address)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
           formData.append('building_type', this.dataProperti.building_type)
           formData.append('ownership', this.dataProperti.ownership)
@@ -404,8 +404,16 @@ export default {
         }
       })
     },
-    editdataFulfillment() {
+    editdataAll() {
       this.isOnEdit = !this.isOnEdit
+      const newDataDisabled = {}
+      Object.keys(this.disabledField).map(dt => {
+        newDataDisabled[dt] = !this.disabledField[dt]
+        return dt
+      })
+      this.disabledField = newDataDisabled
+    },
+    editdataFulfillment() {
       this.disabledField = {
         ...this.disabledField,
         warehouse_name: !this.disabledField.warehouse_name,
