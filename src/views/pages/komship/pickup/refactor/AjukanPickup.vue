@@ -534,149 +534,158 @@
         </span>
       </b-row>
       <b-row>
-        <b-table
-          responsive
-
-          :fields="fieldsDataOrder"
-          :items="itemsDataOrder"
+        <b-overlay
+          variant="light"
+          :show="loadingPickupError"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
         >
-          <template #cell(date_order_after)="data">
-            <span class="text-black">
-              <strong>
-                {{ data.item.order_date }}
-              </strong>
-            </span>
-          </template>
+          <b-table
+            responsive
 
-          <template #cell(pelanggan_after)="data">
-            <b-row>
+            :fields="fieldsDataOrder"
+            :items="itemsDataOrder"
+          >
+            <template #cell(date_order_after)="data">
               <span class="text-black">
                 <strong>
-                  {{ data.item.customer_name }}
+                  {{ data.item.order_date }}
                 </strong>
               </span>
-            </b-row>
-            <b-row
-              class="mb-50"
-            >
-              <b-img
-                src="@/assets/images/logo/Komship.png"
-              />
-            </b-row>
-            <b-row
-              v-if="data.item.shipping === 'JNE'"
-              class="align-items-center"
-            >
-              <b-img
-                src="@/assets/images/expedisi/logo-jne.png"
-                width="40"
-              />
-              <span class="text-black ml-50">
-                <strong>
-                  Reguler
-                </strong>
-              </span>
-            </b-row>
-            <b-row
-              v-if="data.item.shipping === 'SICEPAT'"
-              class="align-items-center"
-            >
-              <b-img
-                src="@/@core/assets/image/icons/logo__sicepat.svg"
-                width="60"
-              />
-              <span class="text-black ml-50">
-                <strong>
-                  {{ data.item.shipping_type }}
-                </strong>
-              </span>
-            </b-row>
-            <b-row
-              v-if="data.item.shipping === 'IDEXPRESS'"
-              class="align-items-center"
-            >
-              <b-img
-                src="@/@core/assets/image/icons/logo-idexpress.svg"
-                width="40"
-              />
-              <span class="text-black ml-50">
-                <strong>
-                  {{ data.item.shipping_type }}
-                </strong>
-              </span>
-            </b-row>
-          </template>
+            </template>
 
-          <template #cell(product_after)="data">
-            <div
-              v-for="(dataProduct, index) in data.item.product"
-              :key="index+1"
-            >
-              <b-row class="mb-2">
-                <b-container
-                  fluid
-                  class="d-flex"
-                >
-                  <div>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="dataProduct.product_image"
-                    />
-                  </div>
-                  <div class="ml-1">
-                    <div class="d-flex">
-                      <div>
-                        <h5 class="text-black">
-                          <strong>{{ dataProduct.product_name }}</strong>
-                        </h5>
-                        <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
-                          <span class="text-primary"><strong>{{ dataProduct.variant_name }}</strong></span>
+            <template #cell(pelanggan_after)="data">
+              <b-row>
+                <span class="text-black">
+                  <strong>
+                    {{ data.item.customer_name }}
+                  </strong>
+                </span>
+              </b-row>
+              <b-row
+                class="mb-50"
+              >
+                <b-img
+                  src="@/assets/images/logo/Komship.png"
+                />
+              </b-row>
+              <b-row
+                v-if="data.item.shipping === 'JNE'"
+                class="align-items-center"
+              >
+                <b-img
+                  src="@/assets/images/expedisi/logo-jne.png"
+                  width="40"
+                />
+                <span class="text-black ml-50">
+                  <strong>
+                    Reguler
+                  </strong>
+                </span>
+              </b-row>
+              <b-row
+                v-if="data.item.shipping === 'SICEPAT'"
+                class="align-items-center"
+              >
+                <b-img
+                  src="@/@core/assets/image/icons/logo__sicepat.svg"
+                  width="60"
+                />
+                <span class="text-black ml-50">
+                  <strong>
+                    {{ data.item.shipping_type }}
+                  </strong>
+                </span>
+              </b-row>
+              <b-row
+                v-if="data.item.shipping === 'IDEXPRESS'"
+                class="align-items-center"
+              >
+                <b-img
+                  src="@/@core/assets/image/icons/logo-idexpress.svg"
+                  width="40"
+                />
+                <span class="text-black ml-50">
+                  <strong>
+                    {{ data.item.shipping_type }}
+                  </strong>
+                </span>
+              </b-row>
+            </template>
+
+            <template #cell(product_after)="data">
+              <div
+                v-for="(dataProduct, index) in data.item.product"
+                :key="index+1"
+              >
+                <b-row class="mb-2">
+                  <b-container
+                    fluid
+                    class="d-flex"
+                  >
+                    <div>
+                      <b-avatar
+                        variant="light-primary"
+                        square
+                        size="50px"
+                        :src="dataProduct.product_image"
+                      />
+                    </div>
+                    <div class="ml-1">
+                      <div class="d-flex">
+                        <div>
+                          <h5 class="text-black">
+                            <strong>{{ dataProduct.product_name }}</strong>
+                          </h5>
+                          <div v-if="dataProduct.variant_name !== '0' && dataProduct.variant_name !== ''">
+                            <span class="text-primary"><strong>{{ dataProduct.variant_name }}</strong></span>
+                          </div>
+                          <div v-else>
+                            <span class="text-black">
+                              <strong>
+                                -
+                              </strong>
+                            </span>
+                          </div>
                         </div>
-                        <div v-else>
+                        <div>
                           <span class="text-black">
                             <strong>
-                              -
+                              x{{ dataProduct.qty }}
                             </strong>
                           </span>
                         </div>
                       </div>
-                      <div>
-                        <span class="text-black">
-                          <strong>
-                            x{{ dataProduct.qty }}
-                          </strong>
-                        </span>
-                      </div>
                     </div>
-                  </div>
-                </b-container>
-              </b-row>
-            </div>
-          </template>
+                  </b-container>
+                </b-row>
+              </div>
+            </template>
 
-          <template #cell(grand_total_after)="data">
-            <span class="text-black">
-              <strong>
-                Rp. {{ formatPrice(data.item.grandtotal) }}
-              </strong>
-            </span>
-            <p class="text-primary">
-              <strong>
-                {{ data.item.payment_method === 'COD' ? data.item.payment_method : 'Non-COD' }}
-              </strong>
-            </p>
-          </template>
+            <template #cell(grand_total_after)="data">
+              <span class="text-black">
+                <strong>
+                  Rp. {{ formatPrice(data.item.grandtotal) }}
+                </strong>
+              </span>
+              <p class="text-primary">
+                <strong>
+                  {{ data.item.payment_method === 'COD' ? data.item.payment_method : 'Non-COD' }}
+                </strong>
+              </p>
+            </template>
 
-          <template #cell(address_after)="data">
-            <span class="text-black">
-              <strong>
-                {{ data.item.customer_address }}
-              </strong>
-            </span>
-          </template>
-        </b-table>
+            <template #cell(address_after)="data">
+              <span class="text-black">
+                <strong>
+                  {{ data.item.customer_address }}
+                </strong>
+              </span>
+            </template>
+          </b-table>
+        </b-overlay>
       </b-row>
       <b-row class="justify-content-center pb-2">
         <b-button
@@ -790,6 +799,7 @@ import {
   BPopover,
   VBPopover,
   BTime,
+  BOverlay,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
@@ -822,6 +832,7 @@ export default {
     LottieAnimation,
     BTime,
     BPopover,
+    BOverlay,
   },
   directives: {
     'b-popover': VBPopover,
@@ -926,6 +937,7 @@ export default {
       itemsDataOrder: [],
 
       showTimePicker: false,
+      loadingPickupError: false,
     }
   },
   mounted() {
@@ -1044,6 +1056,7 @@ export default {
       })
     },
     submitPickup() {
+      this.selectedOrdersId = []
       this.$refs['modal-animate-pickup'].show()
       setTimeout(() => {
         // eslint-disable-next-line no-plusplus
@@ -1078,9 +1091,15 @@ export default {
             } else {
               this.$refs['modal-success-request-pickup'].show()
             }
-          }).catch(() => {
-            this.$refs['modal-animate-pickup'].hide()
-            this.$refs['modal-check-address-pickup'].show()
+          }).catch(err => {
+            this.handleDataErrorPickup(err.response.data.data)
+            if (err.response.data.data.pickup_error.length > 0) {
+              this.$refs['modal-pickup-error-success'].show()
+              this.$refs['modal-animate-pickup'].hide()
+            } else {
+              this.$refs['modal-success-request-pickup'].show()
+            }
+            // this.$refs['modal-check-address-pickup'].show()
           })
       }, 1500)
     },
@@ -1130,12 +1149,16 @@ export default {
       this.$refs['modal-pickup-error-success'].hide()
     },
     handleDataErrorPickup(resData) {
+      this.itemsDataOrder = []
       // eslint-disable-next-line array-callback-return
       resData.pickup_error.map(items => {
+        this.loadingPickupError = true
         this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${items.order_id}`).then(response => {
           const { data } = response.data
           this.itemsDataOrder.push(data)
+          this.loadingPickupError = false
         }).catch(() => {
+          this.loadingPickupError = false
           this.alertFail('Unable to get the order detail. Please try again later or contact support.')
         })
       })
