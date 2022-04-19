@@ -591,7 +591,6 @@ export default {
             this.isShipping = true
             this.loadingOptionExpedition = false
           }).catch(err => {
-            console.log(err.response)
             if (err.response.data.message === 'Please Complete Your Address.') {
               this.$refs['modal-check-address-pickup'].show()
             }
@@ -829,7 +828,6 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
       }
-      console.log(this.formData)
     },
     async submit(order) {
       this.checkValidation()

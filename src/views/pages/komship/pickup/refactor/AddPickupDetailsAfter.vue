@@ -2472,46 +2472,6 @@ export default {
     this.getProfile()
   },
   methods: {
-    onProgress(progress) {
-      this.progress = progress
-      // console.log(`PDF generation progress: ${progress}%`)
-    },
-    startPagination() {
-      // console.log('PDF has started pagination')
-    },
-    hasPaginated() {
-      // console.log('PDF has been paginated')
-    },
-    async beforeDownload({ html2pdf, options, pdfContent }) {
-      // console.log('On Before PDF Generation')
-      await html2pdf().set(options).from(pdfContent).toPdf()
-        .get('pdf')
-        .then(pdf => {
-          const getIframe = document.getElementsByTagName('iframe')
-          // console.log(getIframe)
-          const totalPages = pdf.internal.getNumberOfPages()
-          // eslint-disable-next-line no-plusplus
-          for (let i = 1; i <= totalPages; i++) {
-            pdf.setPage(i)
-            pdf.setFontSize(10)
-            pdf.setTextColor(150)
-            pdf.text(`Page ${i} of ${totalPages}`, (pdf.internal.pageSize.getWidth() * 0.88), (pdf.internal.pageSize.getHeight() - 0.3))
-          }
-        })
-        // .save()
-    },
-    hasDownloaded(blobPdf) {
-      // console.log('PDF has downloaded yehey')
-      this.pdfDownloaded = true
-      // console.log(blobPdf)
-    },
-    domRendered() {
-      // console.log('Dom Has Rendered')
-      this.contentRendered = true
-    },
-    onBlobGenerate(blob) {
-      console.log(blob)
-    },
     getOrder() {
       this.loading = true
       this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
@@ -2574,7 +2534,6 @@ export default {
       }).then(response => {
         this.base64Label = response.data
         this.loadingButtonPrintLabel = false
-        console.log('response base64', response)
         this.$bvModal.show('modal-8')
       }).catch(() => {
         this.loadingButtonPrintLabel = false
@@ -2787,8 +2746,6 @@ export default {
           this.itemsWeightProduct += data[x].weight
         }
       }
-      console.log('result', this.itemsWeightProduct)
-      console.log('data', data)
       return this.itemsWeightProduct
     },
   },

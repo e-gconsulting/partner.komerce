@@ -1130,7 +1130,6 @@ export default {
       this.$refs['modal-pickup-error-success'].hide()
     },
     handleDataErrorPickup(resData) {
-      console.log('resData', resData)
       // eslint-disable-next-line array-callback-return
       resData.pickup_error.map(items => {
         this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${items.order_id}`).then(response => {
