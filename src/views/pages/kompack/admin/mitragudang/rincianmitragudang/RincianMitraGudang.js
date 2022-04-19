@@ -17,6 +17,7 @@ import {
   BInputGroupPrepend,
 } from 'bootstrap-vue'
 import { required, email, integer } from '@validations'
+import { VueAutosuggest } from 'vue-autosuggest'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { mapState } from 'vuex'
@@ -54,6 +55,7 @@ export default {
     BFormSelect,
     BInputGroup,
     BFormTextarea,
+    VueAutosuggest,
     BFormRadioGroup,
     BInputGroupAppend,
     BInputGroupPrepend,
@@ -67,6 +69,16 @@ export default {
       integer,
       loadingPage: true,
       btnSubmitDisabled: false,
+      filteredOptionsDesti: [],
+      queryDestination: '',
+      selectedDestination: null,
+      inputPropsDestination: {
+        id: 'inputPropsDestination',
+        class: 'form-control',
+        placeholder: 'Masukan Kode Pos/Kecamatan',
+      },
+      limitOptDestination: 10,
+      optionDestination: [],
       optionsKetersediaan: [
         { text: 'Tersedia', value: 1 },
         { text: 'Penuh', value: 0 },
@@ -153,13 +165,15 @@ export default {
     }
   },
   watch: {
-    // test changing data
-    // statusProfile: {
-    //   handler(val) {
-    //     console.log(val)
-    //   },
-    //   deep: true,
-    // },
+    queryDestination: {
+      handler(val) {
+        if (!val) {
+          this.selectedDestination = ''
+          this.dataProperti.destination_id = null
+        }
+        this.fetchDataDestination()
+      },
+    },
   },
   computed: {
     // ...mapFields('kompackAdmin', { cobaselecOptData: 'getselecOptData' }),
@@ -184,6 +198,7 @@ export default {
   },
   mounted() {
     this.getDataDetailMitra()
+    this.fetchDataDestination()
   },
   methods: {
     showModalBatal() {
@@ -303,7 +318,7 @@ export default {
             warehouse_id: data.data.warehouse_id,
             warehouse_verification: data.data.warehouse_verification,
           }
-          this.fetchDataDestination(data.data.destination_id)
+          this.fetchDataDestinationOne(data.data.destination_id)
           this.getStatusDataProfile(data.data.partner_verification, data.data.warehouse_verification, data.data.service_status)
           this.$nextTick(() => {
             this.loadingPage = false
@@ -321,7 +336,7 @@ export default {
           })
         })
     },
-    fetchDataDestination(dataId) {
+    fetchDataDestinationOne(dataId) {
       this.$http_kompack('/kompack/destination', { params: { destination_id: dataId } })
         .then(({ data }) => {
           this.dataProperti.destination_id = data.data.zip_code
@@ -340,6 +355,7 @@ export default {
     },
     savedatalist() {
       this.btnSubmitDisabled = true
+      console.log('this.dataFulfillment.image_warehouse ', this.dataFulfillment.image_warehouse)
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
           // body data
@@ -357,10 +373,14 @@ export default {
           formData.append('pic_name', this.dataFulfillment.pic_name)
           formData.append('pic_phone', this.dataFulfillment.pic_phone)
           formData.append('description', this.dataFulfillment.description)
-          this.dataFulfillment.image_warehouse.forEach(xt => {
-            formData.append('image_warehouse[]', xt) // array<string ($binary)>
+          this.dataFulfillment.image_warehouse.forEach(x => {
+            formData.append('image_warehouse_insert[]', x.image_url)
           })
-          formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.building_area, 10))
+          formData.append('image_warehouse_delete[]', [])
+          // this.dataFulfillment.image_warehouse.forEach(xt => {
+          //   formData.append('image_warehouse[]', xt) // array<string ($binary)>
+          // })
+          formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.destination_id, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.destination_id, 10))
           formData.append('detail_address', this.dataProperti.detail_address)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
           formData.append('building_type', this.dataProperti.building_type)
@@ -396,7 +416,7 @@ export default {
             component: ToastificationContentVue,
             props: {
               title: 'Failed',
-              text: 'Galat edit data mitra gudang',
+              text: 'Galat ada data yang kurang',
               icon: 'AlertCircleIcon',
               variant: 'danger',
             },
@@ -472,6 +492,42 @@ export default {
         datastatus = this.dataStatusObj.aktif
       }
       return datastatus
+    },
+    getDestinationValue(suggestion) {
+      const { item } = suggestion
+      this.selectedDestination = item
+      this.dataProperti.destination_id = item.id
+      return item.label
+    },
+    onInputChangeDestination(text) {
+      if (text === '' || text === undefined) {
+        return
+      }
+      const filtered = this.optionDestination.filter(item => item.label.toLowerCase().indexOf(text.toLowerCase()) > -1).slice(0, this.limitOptDestination)
+      this.filteredOptionsDesti = [{
+        data: filtered,
+      }]
+    },
+    fetchDataDestination() {
+      const filtered = this.optionDestination.filter(item => item.label.toLowerCase().indexOf(this.queryDestination.toLowerCase()) > -1).slice(0, this.limitOptDestination)
+      if (!filtered.length) {
+        this.$http_kompack('/kompack/destination', { params: { search: this.queryDestination } })
+          .then(({ data }) => {
+            this.filteredOptionsDesti = [{ data: data.data }]
+            this.optionDestination = data.data
+          })
+          .catch(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Failed',
+                text: 'Galat tambah data mitra gudang',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
   },
 }
