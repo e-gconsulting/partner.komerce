@@ -1019,6 +1019,16 @@ export default {
             this.valueAddressIsActive = this.itemsAddress[x].address_id
           }
         }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload data address, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
       })
     },
     openPopUpAddress() {
@@ -1053,6 +1063,15 @@ export default {
         this.listOrder = data
       }).catch(() => {
         // handle error
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal meload data list order by partner, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
       })
     },
     submitPickup() {
@@ -1137,6 +1156,16 @@ export default {
             this.$refs['modal-validate-expedition'].show()
           }
         }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal cek ekspedisi, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
       })
     },
     closeModal() {
