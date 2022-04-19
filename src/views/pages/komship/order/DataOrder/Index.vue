@@ -36,31 +36,43 @@
       >
         <all />
       </b-tab>
-      <b-tab
-        lazy
-      >
+      <b-tab lazy>
         <template slot="title">
           <b-badge
             class="mr-1"
             variant="primary"
             pill
           >
-            {{ totalSent }}
+            {{ totalAjukan }}
           </b-badge>
           Order Dibuat
         </template>
         <created />
       </b-tab>
-      <b-tab
-        title="Dipacking"
-        lazy
-      >
+      <b-tab lazy>
+        <template slot="title">
+          <b-badge
+            class="mr-1"
+            variant="primary"
+            pill
+          >
+            {{ totalPacking }}
+          </b-badge>
+          Dipacking
+        </template>
         <packing />
       </b-tab>
-      <b-tab
-        title="Dikirim"
-        lazy
-      >
+      <b-tab lazy>
+        <template slot="title">
+          <b-badge
+            class="mr-1"
+            variant="primary"
+            pill
+          >
+            {{ totalKirim }}
+          </b-badge>
+          Dikirim
+        </template>
         <send />
       </b-tab>
       <b-tab
@@ -99,7 +111,9 @@ export default {
       tabIndex: tabs.indexOf(this.$route.query.tab),
       tabs,
       profile: null,
-      totalSent: null,
+      totalAjukan: null,
+      totalPacking: null,
+      totalKirim: null,
     }
   },
   watch: {
@@ -118,15 +132,25 @@ export default {
       this.profile = await dataProfile
       await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: { order_status: 'Diajukan' },
+      }).then(res => {
+        const { data } = res.data
+        this.totalAjukan = data.total
+        return this.totalAjukan
       })
-        .then(res => {
-          const { data } = res.data
-          this.totalSent = data.total
-          return this.totalSent
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: { order_status: 'Dipacking' },
+      }).then(res => {
+        const { data } = res.data
+        this.totalPacking = data.total
+        return this.totalPacking
+      })
+      await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+        params: { order_status: 'Dikirim' },
+      }).then(res => {
+        const { data } = res.data
+        this.totalKirim = data.total
+        return this.totalKirim
+      })
     },
   },
 }

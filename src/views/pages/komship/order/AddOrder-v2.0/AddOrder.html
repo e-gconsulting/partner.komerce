@@ -74,8 +74,10 @@
         <b-form-input
           v-model="customerName"
           list="customerList"
-          placeholder="Masukkan Nama"
+          placeholder="Masukan nama atau cari dari data pelanggan"
           autocomplete="off"
+          :formatter="formatCustomerName"
+          @keypress="validateInputCustomerName"
           @keydown="getCustomer($event)"
         />
         <datalist id="customerList">
@@ -87,6 +89,17 @@
             {{ item.name }}, {{ item.phone }}, {{ item.address }}
           </option>
         </datalist>
+        <b-row class="justify-content-end">
+          <small class="mr-1 mt-50">
+            <small
+              v-if="messageErrorLengthCustomerName"
+              class="text-primary"
+            >
+              *hindari menggunakan simbol (/) (=) (:) (;)
+            </small>
+            {{ customerName.length }}/30
+          </small>
+        </b-row>
       </b-col>
     </b-row>
     <b-row class="mb-1">
@@ -104,7 +117,22 @@
               :value="phoneCode"
             />
           </template>
-          <b-form-input v-model="customerPhone" />
+          <b-form-input
+            v-model="customerPhone"
+            type="number"
+            @input="formatPhoneCustomer"
+            @keypress="validateInputPhoneCustomer"
+          />
+          <b-row class="justify-content-end">
+            <div>
+              <small
+                class="mr-1 text-primary ml-1"
+                v-if="messageErrorPhone"
+              >
+                *minimal 9 digit dan hanya berupa angka.
+              </small>
+            </div>
+          </b-row>
         </b-input-group>
       </b-col>
     </b-row>
@@ -480,8 +508,18 @@
             :options="listShipping"
             placeholder="Opsi Pengiriman"
             @input="calculate(true)"
+            :loading="loadingOptionExpedition"
             :disabled="!isShipping"
           >
+          <template #spinner="{ loading }">
+            <div
+              v-if="loadingOptionExpedition"
+              style="border-left-color: #F95031"
+              class="vs__spinner"
+            >
+              The .vs__spinner class will hide the text for me.
+            </div>
+          </template>
             <template slot="option" slot-scope="option">
               <div class="d-flex">
                 <img :src="option.image_path" style="height: 30px!important;" />
@@ -492,136 +530,181 @@
         </b-col>
       </b-row>
     </section>
-    <div
-      v-if="isCalculate && !profile.partner_is_allowed_edit"
-      class="p-1 mt-2"
-      style="border: 1px solid #E2E2E2;border-radius:16px;"
+
+    <b-overlay
+      variant="light"
+      :show="loadingWrapperOtherCost"
+      spinner-variant="primary"
+      blur="0"
+      opacity=".5"
+      rounded="sm"
     >
-      <b-row
-        class="mb-1"
+      <div
+        v-if="loadingWrapperOtherCost"
+        class="p-1 mt-2"
+        style="border: 1px solid #E2E2E2;border-radius:16px;"
       >
-        <b-col md="3">
-          <label
-            class="text-lg"
-            style="color:#828282;"
-          >Gunakan Potongan Saldo</label><br>
-          <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
-        </b-col>
-        <b-col
-          md="4"
-          class="font-bold"
+        <b-row>
+          <b-col
+            cols="3"
+          >
+            <div
+              class="mb-50"
+              style="
+              width: 180px;
+              height: 30px;
+              background: linear-gradient(270deg, #FFECE9 -71.11%, #F4F4F4 91.57%);
+            " />
+            <div style="
+              width:    220px;
+              height: 30px;
+              background: linear-gradient(270deg, #FFECE9 8.71%, #F4F4F4 91.57%);
+            "
+            />
+          </b-col>
+          <b-col
+            cols="9"
+          >
+          <div style="
+            width: 340px;
+            height: 60px;
+            background: #FFECE9;
+          " />
+          </b-col>
+        </b-row>
+      </div>
+      <div
+        v-if="isCalculate && !profile.partner_is_allowed_edit"
+        class="p-1 mt-2"
+        style="border: 1px solid #E2E2E2;border-radius:16px;"
+      >
+        <b-row
+          class="mb-1"
         >
-          <b-form-checkbox
-            v-model="potonganSaldo"
-            :value="true"
-            :unchecked-value="false"
-            @change="calculate(true)"
-          />
-        </b-col>
-      </b-row>
-      <b-collapse
-        v-model="potonganSaldo"
-        class="mt-2"
-      >
-        <b-row class="mb-1">
           <b-col md="3">
             <label
               class="text-lg"
               style="color:#828282;"
-            >Nominal Potongan</label>
+            >Gunakan Potongan Saldo</label><br>
+            <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
           </b-col>
           <b-col
             md="4"
             class="font-bold"
           >
-            <b-form-input
-              v-model="discount"
-              type="number"
-              @keyup="formatDiscount(discount),calculate(true), checkDiscount()"
+            <b-form-checkbox
+              v-model="potonganSaldo"
+              :value="true"
+              :unchecked-value="false"
+              @change="calculate(true)"
             />
           </b-col>
         </b-row>
-      </b-collapse>
-    </div>
-    <div
-      v-if="isCalculate && !profile.partner_is_allowed_edit"
-      class="p-1 mt-2"
-      style="border: 1px solid #E2E2E2;border-radius:16px;"
-    >
-      <b-row
-        class="mb-1"
-      >
-        <b-col md="3">
-          <label
-            class="text-lg"
-            style="color:#828282;"
-          >Biaya Tambahan Lain</label><br>
-          <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
-        </b-col>
-        <b-col
-          md="4"
-          class="font-bold"
+        <b-collapse
+          v-model="potonganSaldo"
+          class="mt-2"
         >
-          <b-form-checkbox
-            v-model="biayaLain"
-            :value="true"
-            :unchecked-value="false"
-            @change="calculate(false)"
-          />
-        </b-col>
-      </b-row>
-      <b-collapse
-        v-model="biayaLain"
-        class="mt-2"
+          <b-row class="mb-1">
+            <b-col md="3">
+              <label
+                class="text-lg"
+                style="color:#828282;"
+              >Nominal Potongan</label>
+            </b-col>
+            <b-col
+              md="4"
+              class="font-bold"
+            >
+              <b-form-input
+                v-model="discount"
+                type="number"
+                @keyup="formatDiscount(discount),calculate(true), checkDiscount()"
+              />
+            </b-col>
+          </b-row>
+        </b-collapse>
+      </div>
+      <div
+        v-if="isCalculate && !profile.partner_is_allowed_edit"
+        class="p-1 mt-2"
+        style="border: 1px solid #E2E2E2;border-radius:16px;"
       >
-        <b-row class="mb-1">
+        <b-row
+          class="mb-1"
+        >
           <b-col md="3">
             <label
               class="text-lg"
               style="color:#828282;"
-            >Jenis Biaya Lain</label>
+            >Biaya Tambahan Lain</label><br>
+            <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
           </b-col>
-          <b-col md="8">
-            <div
-              v-if="paymentMethod === 'COD'"
-              class="d-flex"
-            >
-              <b-form-radio
-                v-model="jenisBiayaLain"
-                value="0"
-                @change="calculate(false)"
-              >
-                Bebankan biaya COD ke customer
-              </b-form-radio>
-              <b-form-input
-                v-if="jenisBiayaLain === '0'"
-                v-model="bebankanCustomer"
-                type="number"
-                class="ml-1"
-                style="width:80px;height:20px;"
-                disabled
-              />
-            </div>
-            <b-form-radio
-              v-model="jenisBiayaLain"
-              class="mt-1"
-              value="1"
+          <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-checkbox
+              v-model="biayaLain"
+              :value="true"
+              :unchecked-value="false"
               @change="calculate(false)"
-            >
-              Sesuai Nominal
-            </b-form-radio>
-            <b-form-input
-              v-if="jenisBiayaLain === '1'"
-              v-model="sesuaiNominal"
-              type="number"
-              class="mt-1"
-              style="width:250px;"
-              @keyup="formatAdditional(sesuaiNominal), calculate(false)"
             />
           </b-col>
         </b-row>
-      </b-collapse>
-    </div>
+        <b-collapse
+          v-model="biayaLain"
+          class="mt-2"
+        >
+          <b-row class="mb-1">
+            <b-col md="3">
+              <label
+                class="text-lg"
+                style="color:#828282;"
+              >Jenis Biaya Lain</label>
+            </b-col>
+            <b-col md="8">
+              <div
+                v-if="paymentMethod === 'COD'"
+                class="d-flex"
+              >
+                <b-form-radio
+                  v-model="jenisBiayaLain"
+                  value="0"
+                  @change="calculate(false)"
+                >
+                  Bebankan biaya COD ke customer
+                </b-form-radio>
+                <b-form-input
+                  v-if="jenisBiayaLain === '0'"
+                  v-model="bebankanCustomer"
+                  type="number"
+                  class="ml-1"
+                  style="width:80px;height:20px;"
+                  disabled
+                />
+              </div>
+              <b-form-radio
+                v-model="jenisBiayaLain"
+                class="mt-1"
+                value="1"
+                @change="calculate(false)"
+              >
+                Sesuai Nominal
+              </b-form-radio>
+              <b-form-input
+                v-if="jenisBiayaLain === '1'"
+                v-model="sesuaiNominal"
+                type="number"
+                class="mt-1"
+                style="width:250px;"
+                @keyup="formatAdditional(sesuaiNominal), calculate(false)"
+              />
+            </b-col>
+          </b-row>
+        </b-collapse>
+      </div>
+    </b-overlay>
+
     <div
       v-if="isCalculate && profile.partner_is_allowed_edit"
       class="p-1 mt-2"
@@ -659,7 +742,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           Rp {{ formatNumber(subTotal) }}
         </b-col>
@@ -671,7 +754,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           Rp {{ formatNumber(shippingCost) }}
         </b-col>
@@ -686,7 +769,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -707,7 +790,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="detail-value text-primary"
         >
           Rp {{ formatNumber(additionalCost) }}
         </b-col>
@@ -725,7 +808,7 @@
         </b-col>
         <b-col
           md="2"
-          class="text-primary d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+          class="text-primary detail-value"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -768,7 +851,7 @@
           </b-col>
           <b-col
             md="2"
-            class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+            class="detail-value text-primary"
           >
             <b-spinner
               v-if="loadingCalculate"
@@ -786,7 +869,7 @@
           </b-col>
           <b-col
             md="2"
-            class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0"
+            class="detail-value text-primary"
           >
             <b-spinner
               v-if="loadingCalculate"
@@ -805,7 +888,7 @@
         </b-col>
         <b-col
           md="2"
-          class="d-flex lg:justify-end md:justify-end lg:pl-0 md:pl-0 text-success"
+          class="detail-value text-success"
         >
           <b-spinner
             v-if="loadingCalculate"

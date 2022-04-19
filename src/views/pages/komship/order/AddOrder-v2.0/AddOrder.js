@@ -18,7 +18,7 @@ export default {
       addressList: [],
       addressLength: null,
       customerId: null,
-      customerName: null,
+      customerName: '',
       customerPhone: null,
       customerAddress: null,
       customerList: [],
@@ -91,6 +91,13 @@ export default {
       newGrandTotal: null,
       isValidate: false,
       formData: null,
+
+      dataErrSubmit: null,
+      loadingOptionExpedition: false,
+
+      loadingWrapperOtherCost: false,
+      messageErrorLengthCustomerName: false,
+      messageErrorPhone: false,
     }
   },
   created() {
@@ -546,6 +553,7 @@ export default {
         })
     },
     async getShippingList() {
+      this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         setTimeout(async () => {
           await this.$http_komship.get('v2/calculate', {
@@ -568,6 +576,7 @@ export default {
             }))
             this.listShipping = result
             this.isShipping = true
+            this.loadingOptionExpedition = false
           })
         }, 800)
       } else {
@@ -575,6 +584,7 @@ export default {
         this.listShipping = []
         this.isShipping = false
         this.isCalculate = false
+        this.loadingOptionExpedition = false
       }
     },
     checkNewTotal() {
@@ -590,6 +600,7 @@ export default {
       }
     },
     async calculate(getAdditional) {
+      this.loadingWrapperOtherCost = true
       setTimeout(async () => {
         if (this.shipping && this.cartId.length > 0) {
           this.loadingCalculate = true
@@ -654,9 +665,14 @@ export default {
               this.isCalculate = true
               this.loadingCalculate = false
             }
-          }).catch(async () => this.calculate(getAdditional))
+            this.loadingWrapperOtherCost = false
+          }).catch(async () => {
+            this.loadingWrapperOtherCost = false
+            this.calculate(getAdditional)
+          })
         } else {
           this.isCalculate = false
+          this.loadingWrapperOtherCost = false
         }
       }, 800)
     },
@@ -736,22 +752,27 @@ export default {
             })
           })
           .catch(err => {
-            const res = err.response.data.status
-            if (res === 'failed') {
-              this.$swal({
-                title: '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>',
-                imageUrl: require('@/assets/images/icons/fail.svg'),
-                showCancelButton: true,
-                confirmButtonText: 'Cek Saldo',
-                confirmButtonClass: 'btn btn-primary',
-                cancelButtonText: 'Oke',
-                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
-              }).then(result => {
-                if (result.isConfirmed) {
+            this.dataErrSubmit = err.response.data
+            this.$swal({
+              title: this.dataErrSubmit.message === 'Please Topup to continue your store Order.'
+                ? '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>'
+                : '<span class="font-weight-bold h4">Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu</span>',
+              imageUrl: require('@/assets/images/icons/fail.svg'),
+              showCancelButton: true,
+              confirmButtonText: this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order' ? 'Cek Produk' : 'Cek Saldo',
+              confirmButtonClass: 'btn btn-primary',
+              cancelButtonText: 'Oke',
+              cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+            }).then(result => {
+              if (result.isConfirmed) {
+                if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
                   this.$router.push('/dashboard-komship')
                 }
-              })
-            }
+                if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                  this.$router.push('/produk')
+                }
+              }
+            })
           })
       } else {
         this.$swal({
@@ -760,6 +781,29 @@ export default {
           confirmButtonText: 'Oke',
           confirmButtonClass: 'btn btn-primary',
         })
+      }
+    },
+    formatCustomerName(e) {
+      return String(e).substring(0, 30)
+    },
+    formatPhoneCustomer() {
+      if (this.customerPhone.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    validateInputCustomerName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthCustomerName = true
+      } else {
+        this.messageErrorLengthCustomerName = false
+      }
+    },
+    validateInputPhoneCustomer(e) {
+      if (e.keyCode === 46) {
+        e.preventDefault()
       }
     },
   },
