@@ -590,6 +590,12 @@ export default {
             this.listShipping = result
             this.isShipping = true
             this.loadingOptionExpedition = false
+          }).catch(err => {
+            console.log(err.response)
+            if (err.response.data.message === 'Please Complete Your Address.') {
+              this.$refs['modal-check-address-pickup'].show()
+            }
+            this.loadingOptionExpedition = false
           })
         }, 800)
       } else {
@@ -678,8 +684,9 @@ export default {
               this.isCalculate = true
               this.loadingCalculate = false
             }
-          }).catch(async () => {
+          }).catch(async err => {
             this.calculate(getAdditional)
+            this.loadingWrapperOtherCost = false
           })
         } else {
           this.isCalculate = false
