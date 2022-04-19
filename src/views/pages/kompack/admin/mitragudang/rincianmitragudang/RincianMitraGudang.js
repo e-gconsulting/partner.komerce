@@ -223,7 +223,7 @@ export default {
           this.dataOwner.partner_verification = dataParams
           break
         case this.actionStatusType.warehouse:
-          endpoint = `kompack/warehouse/verification-warehouse?id_warehouse=${this.dataProperti.warehouse_id}&is_verification=${dataParams}`
+          endpoint = `kompack/warehouse/verification-warehouse?id_warehouse=${this.dataFulfillment.warehouse_id}&is_verification=${dataParams}`
           this.dataProperti.warehouse_verification = dataParams
           break
         case this.actionStatusType.isActivated:
@@ -255,11 +255,14 @@ export default {
       this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
         .then(({ data }) => {
           this.dataAkun = {
+            id: data.data.id,
+            user_id: data.data.user_id,
             email: data.data.email,
             username: data.data.username,
           }
           this.dataFulfillment = {
             warehouse_name: data.data.warehouse_name,
+            warehouse_id: data.data.warehouse_id,
             avability: data.data.avability,
             pic_name: data.data.pic_name,
             pic_phone: data.data.pic_phone,
@@ -285,7 +288,6 @@ export default {
             building_area: data.data.building_area,
             building_type: data.data.building_type,
             ownership: data.data.ownership,
-            warehouse_id: data.data.warehouse_id,
             warehouse_verification: data.data.warehouse_verification,
           }
           this.fetchDataDestinationOne(data.data.destination_id)
@@ -331,6 +333,8 @@ export default {
         if (success) {
           // body data
           const formData = new FormData()
+          formData.append('id', this.dataAkun.id)
+          formData.append('user_id', this.dataAkun.user_id)
           formData.append('email', this.dataAkun.email)
           formData.append('username', this.dataAkun.username)
           formData.append('owner', this.dataOwner.owner)
@@ -340,6 +344,7 @@ export default {
           formData.append('image_ktp_url', this.dataOwner.image_ktp_url) // string ($binary)
           formData.append('image_logo', this.dataFulfillment.image_logo_url) // string ($binary)
           formData.append('warehouse_name', this.dataFulfillment.warehouse_name)
+          formData.append('warehouse_id', this.dataFulfillment.warehouse_id)
           formData.append('avability', this.dataFulfillment.avability)
           formData.append('pic_name', this.dataFulfillment.pic_name)
           formData.append('pic_phone', this.dataFulfillment.pic_phone)
