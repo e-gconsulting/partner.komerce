@@ -109,7 +109,10 @@
       >
         <span class="text-lg">No Telepon</span>
       </b-col>
-      <b-col md="4">
+      <b-col
+        md="4"
+        class="pr-3"
+      >
         <b-input-group>
           <template #prepend>
             <b-form-select
@@ -140,13 +143,14 @@
       <b-col md="3">
         <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
       </b-col>
-      <b-col md="5">
+      <b-col md="4">
         <v-select
           ref="selectDestination"
           v-model="destination"
           :options="destinationList"
           placeholder="Masukkan Kelurahan/Kecamatan"
-          @search="getDestination"
+          :loading="loadingSearchDestination"
+          @search="onSearchDestination"
           @input="getShippingList()"
         >
           <span
@@ -155,14 +159,16 @@
           >
             Tidak ada data untuk ditampilkan.
           </span>
+          <template #spinner="{ loading }">
+            <div
+              v-if="loadingSearchDestination"
+              style="border-left-color: #F95031"
+              class="vs__spinner"
+            >
+              The .vs__spinner class will hide the text for me.
+            </div>
+          </template>
         </v-select>
-      </b-col>
-      <b-col md="1" style="margin-top:6px;">
-        <b-spinner
-          v-if="destinationSearch"
-          variant="primary"
-          small
-        />
       </b-col>
     </b-row>
     <b-row class="mb-1">
@@ -176,7 +182,20 @@
         <b-form-textarea
           v-model="customerAddress"
           placeholder="Masukkan Alamat Lengkap"
+          :formatter="formatAddressDetail"
+          @keypress="validateInputAddressDetail"
         />
+        <b-row class="justify-content-end">
+          <small class="mr-1 mt-50">
+            <small
+              v-if="messageErrorAddressDetail"
+              class="text-primary"
+            >
+              *hindari menggunakan simbol (/) (=) (:) (;)
+            </small>
+            {{ customerAddress.length }}/85
+          </small>
+        </b-row>
       </b-col>
     </b-row>
     <section
@@ -507,7 +526,7 @@
             v-model="shipping"
             :options="listShipping"
             placeholder="Opsi Pengiriman"
-            @input="calculate(true)"
+            @input="calculateOnExpedition(true)"
             :loading="loadingOptionExpedition"
             :disabled="!isShipping"
           >
@@ -574,7 +593,7 @@
         </b-row>
       </div>
       <div
-        v-if="isCalculate && !profile.partner_is_allowed_edit"
+        v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
         class="p-1 mt-2"
         style="border: 1px solid #E2E2E2;border-radius:16px;"
       >
@@ -625,7 +644,7 @@
         </b-collapse>
       </div>
       <div
-        v-if="isCalculate && !profile.partner_is_allowed_edit"
+        v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
         class="p-1 mt-2"
         style="border: 1px solid #E2E2E2;border-radius:16px;"
       >
@@ -706,7 +725,7 @@
     </b-overlay>
 
     <div
-      v-if="isCalculate && profile.partner_is_allowed_edit"
+      v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
       class="p-1 mt-2"
       style="border: 1px solid #E2E2E2;border-radius:16px;"
     >
@@ -732,7 +751,7 @@
       </b-row>
     </div>
     <div
-      v-if="isCalculate"
+      v-if="isCalculateOnExpedition"
       class="mb-3 mt-2"
     >
       <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
@@ -909,7 +928,7 @@
         md="6"
         class="font-bold text-2xl text-center my-auto"
       >
-        <span v-if="isCalculate">Total Pembayaran:
+        <span v-if="isCalculateOnExpedition">Total Pembayaran:
           <b-spinner
             v-if="loadingCalculate"
             class="ml-1"
@@ -924,7 +943,7 @@
       <b-col md="6" class="d-flex justify-center mt-1">
         <b-button
           variant="outline-primary"
-          :disabled="!isCalculate"
+          :disabled="!isCalculateOnExpedition"
           @click="submit(true)"
         >
           Submit & Tambah Order Lagi
@@ -932,7 +951,7 @@
         <b-button
           variant="primary"
           class="ml-1"
-          :disabled="!isCalculate"
+          :disabled="!isCalculateOnExpedition"
           @click="submit(false)"
         >
           Submit
