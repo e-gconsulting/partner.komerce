@@ -99,6 +99,7 @@ export default {
       messageErrorLengthCustomerName: false,
       messageErrorPhone: false,
       messageErrorAddressDetail: false,
+      oldGrandTotal: null,
     }
   },
   created() {
@@ -643,6 +644,7 @@ export default {
               this.sesuaiNominal = Math.round(result.service_fee)
               this.bebankanCustomer = Math.round(result.service_fee)
               this.newGrandTotal = result.grandtotal
+              this.oldGrandTotal = result.grandtotal
               if (this.paymentMethod === 'COD') {
                 this.jenisBiayaLain = '0'
               } else {
@@ -725,6 +727,7 @@ export default {
         bank_account_no: this.bankAccountNo,
         subtotal: this.subTotal,
         grandtotal: this.grandTotal,
+        old_grandtotal: this.oldGrandTotal,
         shipping_cost: this.shippingCost,
         service_fee: this.serviceFee,
         discount: this.discount,
@@ -733,6 +736,7 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
       }
+      console.log(this.formData)
     },
     async submit(order) {
       this.checkValidation()
