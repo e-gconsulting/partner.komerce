@@ -373,7 +373,7 @@ export default {
             },
           })
             .then(({ data }) => {
-              console.log('data ', data)
+              // console.log('data ', data)
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
