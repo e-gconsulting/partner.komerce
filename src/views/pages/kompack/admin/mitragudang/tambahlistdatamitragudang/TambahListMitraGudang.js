@@ -250,7 +250,21 @@ export default {
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
-            .catch(() => {
+            .catch(err => {
+              if (err?.response?.data) {
+                const dataError = Object.values(err.response.data.errors).map(x => x.join())
+                dataError.forEach(dt => {
+                  this.$toast({
+                    component: ToastificationContentVue,
+                    props: {
+                      title: 'Galat',
+                      text: dt,
+                      icon: 'AlertCircleIcon',
+                      variant: 'danger',
+                    },
+                  })
+                })
+              }
               this.$toast({
                 component: ToastificationContentVue,
                 props: {
