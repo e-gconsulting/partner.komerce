@@ -23,7 +23,7 @@
         class="d-flex align-items-center"
       >
         <b-button
-          @click="() => {}"
+          @click="editdataAll"
           variant="outline-primary"
           class="mr-1 font-bold"
         >Edit</b-button>
@@ -638,7 +638,7 @@
             </b-col>
             <b-col cols="12">
               <b-form-group
-                label-for="detail_addres"
+                label-for="detail_address"
                 label-cols-md="3"
               >
                 <template #label>
@@ -653,7 +653,7 @@
                 >
                   <b-form-textarea
                     id="detail_address"
-                    v-model="dataProperti.detail_addresss"
+                    v-model="dataProperti.detail_address"
                     :state="errors.length > 0 ? false : null"
                     :disabled="disabledField.detail_address"
                     placeholder="Masukan detail alamat gudang"
@@ -752,6 +752,7 @@
             <b-col cols="12">
               <div class="d-flex justify-content-end">
                 <b-button
+                  :disabled="btnSubmitDisabled"
                   @click="editdataFulfillment()"
                   type="button"
                   variant="outline-primary"

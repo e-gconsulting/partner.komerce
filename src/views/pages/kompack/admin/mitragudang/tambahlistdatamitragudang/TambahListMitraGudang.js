@@ -235,7 +235,7 @@ export default {
             formData.append('image_warehouse[]', xt) // array<string ($binary)>
           })
           formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.building_area, 10))
-          formData.append('detail_addres', this.dataProperti.detail_addres)
+          formData.append('detail_address', this.dataProperti.detail_addres)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
           formData.append('building_type', this.dataProperti.building_type)
           formData.append('ownership', this.dataProperti.ownership)
@@ -250,7 +250,21 @@ export default {
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
-            .catch(() => {
+            .catch(err => {
+              if (err?.response?.data) {
+                const dataError = Object.values(err.response.data.errors).map(x => x.join())
+                dataError.forEach(dt => {
+                  this.$toast({
+                    component: ToastificationContentVue,
+                    props: {
+                      title: 'Galat',
+                      text: dt,
+                      icon: 'AlertCircleIcon',
+                      variant: 'danger',
+                    },
+                  })
+                })
+              }
               this.$toast({
                 component: ToastificationContentVue,
                 props: {
