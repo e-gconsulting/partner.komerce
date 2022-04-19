@@ -198,7 +198,6 @@ export default {
   },
   mounted() {
     this.getDataDetailMitra()
-    this.fetchDataDestination()
   },
   methods: {
     showModalBatal() {
@@ -255,35 +254,6 @@ export default {
     getDataDetailMitra() {
       this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
         .then(({ data }) => {
-          /*
-          {
-            "id": "16",
-            "user_id": 2593,
-            "email": "ragil@email.com",
-            "username": "ragils",
-            "owner": "ragil setiawans",
-            "phone_number": "081229460004",
-            "gender": "L",
-            "nik": "330313120897",
-            "warehouse_id": 2,
-            "warehouse_name": "ragil setiawans",
-            "avability": 0,
-            "pic_name": "Ragil",
-            "pic_phone": "081229460004",
-            "description": "Warehouse Estrige",
-            "destination_id": 5,
-            "detail_address": "jalan mangga no 5",
-            "building_area": 200,
-            "building_type": 1,
-            "ownership": 4,
-            "image_ktp_url": "public/kompack_image_ktp/CEfRNTovd5pz0dyFMD8QLytgdTSgEuZkjaT5IC8F.jpg",
-            "image_logo_url": "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg",
-            "image_warehouse": []
-            "warehouse_verification": 0,
-            "service_status": "nonaktif",
-            "partner_verification": 0,
-          }
-          */
           this.dataAkun = {
             email: data.data.email,
             username: data.data.username,
@@ -340,6 +310,7 @@ export default {
       this.$http_kompack('/kompack/destination', { params: { destination_id: dataId } })
         .then(({ data }) => {
           this.dataProperti.destination_id = data.data.zip_code
+          this.queryDestination = data.data.zip_code
         })
         .catch(() => {
           this.$toast({
@@ -397,7 +368,21 @@ export default {
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
-            .catch(() => {
+            .catch(err => {
+              if (err?.response?.data) {
+                const dataError = Object.values(err.response.data.errors).map(x => x.join())
+                dataError.forEach(dt => {
+                  this.$toast({
+                    component: ToastificationContentVue,
+                    props: {
+                      title: 'Galat',
+                      text: dt,
+                      icon: 'AlertCircleIcon',
+                      variant: 'danger',
+                    },
+                  })
+                })
+              }
               this.$toast({
                 component: ToastificationContentVue,
                 props: {

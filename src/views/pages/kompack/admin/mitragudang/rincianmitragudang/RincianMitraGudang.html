@@ -634,9 +634,8 @@
                   <vue-autosuggest
                     ref="refInputDestination"
                     v-model="queryDestination"
-                    :disabled="disabledField.destination_id"
                     :suggestions="filteredOptionsDesti"
-                    :input-props="inputPropsDestination"
+                    :input-props="{...inputPropsDestination, disabled: disabledField.destination_id}"
                     :limit="limitOptDestination"
                     :getSuggestionValue="getDestinationValue"
                     @input="onInputChangeDestination"
