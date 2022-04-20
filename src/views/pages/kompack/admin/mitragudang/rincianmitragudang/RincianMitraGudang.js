@@ -328,9 +328,22 @@ export default {
     },
     savedatalist() {
       this.btnSubmitDisabled = true
-      console.log('this.dataFulfillment.image_warehouse ', this.dataFulfillment.image_warehouse)
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
+          if (this.dataOwner.image_ktp_url && this.dataFulfillment.image_warehouse && this.dataFulfillment.image_logo_url) {
+            //
+          } else {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Check ada file yang belum diupload',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+            this.btnSubmitDisabled = false
+          }
           // body data
           const formData = new FormData()
           formData.append('id', this.dataAkun.id)

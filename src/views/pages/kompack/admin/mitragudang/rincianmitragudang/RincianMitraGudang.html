@@ -169,7 +169,12 @@
                     }"
                   >
                     <img
-                      v-if="prevImg.logo"
+                      v-if="!prevImg.logo"
+                      src="@/assets/images/svg/gallery-add.svg"
+                      style="width: 50%; height: 50%;"
+                    />
+                    <img
+                      v-else
                       :src="prevImg.logo"
                       style="width: 100%; height: 100%;"
                     />
