@@ -553,6 +553,11 @@
                     }"
                   >
                     <img
+                      v-if="!prevImg.ktp"
+                      :src="require('@/assets/images/svg/gallery-add.svg')"
+                      style="width: 50%; height: 50%;"
+                    />
+                    <img
                       v-if="prevImg.ktp"
                       :src="prevImg.ktp"
                       style="width: 100%; height: 100%;"
