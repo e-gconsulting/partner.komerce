@@ -120,6 +120,7 @@
                   locale="en"
                   hide-header
                   :hour12="false"
+                  :show-seconds="false"
                   @context="onChangeTime"
                 />
               </b-popover>
@@ -855,7 +856,7 @@ export default {
       dateLabel: '',
 
       timeValueText: '09 : 00',
-      timeValue: '09:00',
+      timeValue: moment().format('HH:mm'),
       isNotCorrectTime: true,
       profile: null,
       chosenVehicle: '',
@@ -952,17 +953,21 @@ export default {
   watch: {
     timeValue: {
       handler(newVal, oldVal) {
-        const newMom = moment(newVal, 'HHmmss')
+        const newMom = moment(newVal, 'HHmm')
         const today = moment()
         if (newMom.isBefore(today) === true) {
           this.isNotCorrectTime = true
         } else {
           this.isNotCorrectTime = false
         }
+        this.timeValue = newMom.format('HH:mm')
       },
     },
   },
   mounted() {
+    // setInterval(() => {
+    //   this.timeValue = moment().format('HH:mm:ss')
+    // }, 1000)
     // this.$refs['modal-pickup-error-success'].show()
     this.cekExpedition()
     this.$http_komship.post('v1/my-profile', {
