@@ -27,20 +27,7 @@ export default {
       sortBy: '',
       sortDesc: false,
       sortDirection: 'asc',
-      items: [
-      /*
-        address: "MATARAM, MATARAM"
-        email: "ragil@email.com"
-        id: 16
-        image_logo_url: "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg"
-        is_verification: 0
-        name: "ragil setiawans"
-        owner: "ragil setiawans"
-        phone_number: "081229460004"
-        status: "nonaktif"
-        total_partner: 0
-      */
-      ],
+      items: [],
       fields: [
         {
           key: 'name',
@@ -126,7 +113,7 @@ export default {
     fetchData() {
       this.$http_kompack.get('/kompack/warehouse')
         .then(({ data }) => {
-          this.items = data.data
+          this.items = data.data.sort((x, y) => y.id - x.id)
           this.$nextTick(() => {
             this.isLoadTable = false
           })
