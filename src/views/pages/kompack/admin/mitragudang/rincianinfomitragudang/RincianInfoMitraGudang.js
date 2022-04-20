@@ -31,6 +31,17 @@ export default {
     this.fetchData()
   },
   methods: {
+    handleEditData() {
+      this.$router.push({
+        name: 'kompack-rincian-mitra-gudang',
+        params: {
+          id: this.$route.params.id,
+        },
+        query: {
+          isEditMode: true,
+        },
+      })
+    },
     fetchData() {
       this.$http_kompack(`/kompack/warehouse/information/${this.$route.params.id}`)
         .then(({ data }) => {

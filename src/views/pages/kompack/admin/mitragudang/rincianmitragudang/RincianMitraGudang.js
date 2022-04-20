@@ -197,6 +197,9 @@ export default {
     this.$store.dispatch('kompackAdmin/init')
   },
   mounted() {
+    if (this.$route.query.isEditMode) {
+      this.editdataFulfillment()
+    }
     this.getDataDetailMitra()
   },
   methods: {
@@ -427,16 +430,17 @@ export default {
         }
       })
     },
-    editdataAll() {
+    editdataAll(boolData) {
       this.isOnEdit = !this.isOnEdit
       const newDataDisabled = {}
       Object.keys(this.disabledField).map(dt => {
-        newDataDisabled[dt] = !this.disabledField[dt]
+        newDataDisabled[dt] = boolData
         return dt
       })
       this.disabledField = newDataDisabled
     },
     editdataFulfillment() {
+      this.isOnEdit = !this.isOnEdit
       this.disabledField = {
         ...this.disabledField,
         warehouse_name: !this.disabledField.warehouse_name,
@@ -530,6 +534,31 @@ export default {
               },
             })
           })
+      }
+    },
+    handleDeleteImg(type) {
+      switch (type) {
+        case this.imageFieldFormType.ownerKTP:
+          if (this.disabledField.image_ktp_url) {
+            //
+          } else {
+            this.prevImg.ktp = null
+          }
+          break
+        case this.imageFieldFormType.fulfillmentLogo:
+          if (this.disabledField.image_logo_url) {
+            //
+          } else {
+            this.prevImg.logo = null
+          }
+          break
+        default:
+          if (this.disabledField.image_warehouse) {
+            //
+          } else {
+            this.prevImg.warehouse = null
+          }
+          break
       }
     },
   },

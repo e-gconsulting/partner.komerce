@@ -23,7 +23,7 @@
         class="d-flex align-items-center"
       >
         <b-button
-          @click="editdataAll"
+          @click="isOnEdit ? editdataAll(true) : editdataAll(false)"
           variant="outline-primary"
           class="mr-1 font-bold"
         >{{ isOnEdit ? 'Cancel' : 'Edit' }}</b-button>
@@ -159,7 +159,7 @@
                   />
                   <div
                     @click="$refs.image_logo_url.click()"
-                    class="imagebox"
+                    class="imagebox relative"
                     :class="{
                       imagebox__invalid: !dataFulfillment.image_logo_url,
                     }"
@@ -168,6 +168,14 @@
                       border: disabledField.image_logo_url ? 'unset' : 'inherit',
                     }"
                   >
+                    <span
+                      v-if="prevImg.logo"
+                      @click="handleDeleteImg(imageFieldFormType.fulfillmentLogo)"
+                      class="absolute cursor-pointer"
+                      style="right: 3px; top: 5px;"
+                    >
+                      <img src="@/assets/images/svg/close-circle.svg" alt="dataimg" />
+                    </span>
                     <img
                       v-if="!prevImg.logo"
                       src="@/assets/images/svg/gallery-add.svg"
@@ -545,13 +553,21 @@
                   />
                   <div
                     @click="$refs.image_ktp_url.click()"
-                    class="imagebox"
+                    class="imagebox relative"
                     :class="{ imagebox__invalid: !dataOwner.image_ktp_url}"
                     :style="{
                       background: disabledField.image_ktp_url ? '#eee !important': 'inherit',
                       border: disabledField.image_ktp_url ? 'unset' : 'inherit',
                     }"
                   >
+                    <span
+                      v-if="prevImg.ktp"
+                      @click="handleDeleteImg(imageFieldFormType.ownerKTP)"
+                      class="absolute cursor-pointer"
+                      style="right: 3px; top: 5px;"
+                    >
+                      <img src="@/assets/images/svg/close-circle.svg" alt="dataimg" />
+                    </span>
                     <img
                       v-if="!prevImg.ktp"
                       :src="require('@/assets/images/svg/gallery-add.svg')"
