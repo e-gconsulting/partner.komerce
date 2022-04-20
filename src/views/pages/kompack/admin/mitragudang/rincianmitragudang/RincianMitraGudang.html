@@ -26,7 +26,7 @@
           @click="editdataAll"
           variant="outline-primary"
           class="mr-1 font-bold"
-        >Edit</b-button>
+        >{{ isOnEdit ? 'Cancel' : 'Edit' }}</b-button>
         <b-button
           @click="verificationOrAktifData(actionStatusType.aktif, actionStatusType.isActivated)"
           variant="primary"
@@ -145,7 +145,6 @@
                   label="Logo"
                   vid="image_logo_url"
                   name="Logo"
-                  rules="required"
                 >
                   <input
                     id="image_logo_url"
@@ -298,7 +297,6 @@
                   label="description"
                   name="Deskripsi"
                   vid="description"
-                  rules="required"
                 >
                   <b-form-textarea
                     id="description"
@@ -325,7 +323,6 @@
                   label="Logo"
                   vid="image_warehouse"
                   name="Foto Gudang"
-                  rules="required"
                 >
                   <input
                     id="image_warehouse"
@@ -355,6 +352,7 @@
                       <img :src="dataImg.image_url" style="width: 100%; height: 100%;" />
                     </div>
                   </div>
+                  <small v-if="!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0" class="text-primary">Gambar gudang harus di upload</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -528,7 +526,6 @@
                   label="Foto KTP"
                   vid="image_ktp_url"
                   name="Foto KTP"
-                  rules="required"
                 >
                   <input
                     id="image_ktp_url"
@@ -557,6 +554,7 @@
                       alt="no-img"
                     >
                   </div>
+                  <small v-if="!dataOwner.image_ktp_url" class="text-primary">Foto KTP harus di upload</small>
                 </validation-provider>
               </b-form-group>
             </b-col>
@@ -628,11 +626,25 @@
                   <b-form-input
                     id="destination_id"
                     v-model="dataProperti.destination_id"
-                    :state="errors.length > 0 ? false : null"
                     :disabled="disabledField.destination_id"
+                    :state="errors.length > 0 ? false : null"
                     placeholder="Masukan Kode Pos/Kecamatan"
+                    style="display: none;"
                   />
-                  <small class="text-primary">{{ errors[0] }}</small>
+                  <vue-autosuggest
+                    ref="refInputDestination"
+                    v-model="queryDestination"
+                    :suggestions="filteredOptionsDesti"
+                    :input-props="{...inputPropsDestination, disabled: disabledField.destination_id}"
+                    :limit="limitOptDestination"
+                    :getSuggestionValue="getDestinationValue"
+                    @input="onInputChangeDestination"
+                  >
+                    <template slot-scope="{suggestion}">
+                      <span class="mb-1">{{ suggestion.item.label }}</span>
+                    </template>
+                  </vue-autosuggest>
+                  <small v-if="!queryDestination && !selectedDestination" class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>  
               </b-form-group>
             </b-col>
@@ -756,7 +768,7 @@
                   @click="editdataFulfillment()"
                   type="button"
                   variant="outline-primary"
-                  class="font-bold mr-1"
+                  class="font-bold mr-1 border-none"
                 >Batalkan</b-button>
                 <b-button
                   :disabled="btnSubmitDisabled"

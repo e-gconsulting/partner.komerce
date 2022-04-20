@@ -17,6 +17,7 @@ import {
   BInputGroupPrepend,
 } from 'bootstrap-vue'
 import { required, email, integer } from '@validations'
+import { VueAutosuggest } from 'vue-autosuggest'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { mapState } from 'vuex'
@@ -54,6 +55,7 @@ export default {
     BFormSelect,
     BInputGroup,
     BFormTextarea,
+    VueAutosuggest,
     BFormRadioGroup,
     BInputGroupAppend,
     BInputGroupPrepend,
@@ -67,6 +69,16 @@ export default {
       integer,
       loadingPage: true,
       btnSubmitDisabled: false,
+      filteredOptionsDesti: [],
+      queryDestination: '',
+      selectedDestination: null,
+      inputPropsDestination: {
+        id: 'inputPropsDestination',
+        class: 'form-control',
+        placeholder: 'Masukan Kode Pos/Kecamatan',
+      },
+      limitOptDestination: 10,
+      optionDestination: [],
       optionsKetersediaan: [
         { text: 'Tersedia', value: 1 },
         { text: 'Penuh', value: 0 },
@@ -153,13 +165,15 @@ export default {
     }
   },
   watch: {
-    // test changing data
-    // statusProfile: {
-    //   handler(val) {
-    //     console.log(val)
-    //   },
-    //   deep: true,
-    // },
+    queryDestination: {
+      handler(val) {
+        if (!val) {
+          this.selectedDestination = ''
+          this.dataProperti.destination_id = null
+        }
+        this.fetchDataDestination()
+      },
+    },
   },
   computed: {
     // ...mapFields('kompackAdmin', { cobaselecOptData: 'getselecOptData' }),
@@ -209,7 +223,7 @@ export default {
           this.dataOwner.partner_verification = dataParams
           break
         case this.actionStatusType.warehouse:
-          endpoint = `kompack/warehouse/verification-warehouse?id_warehouse=${this.dataProperti.warehouse_id}&is_verification=${dataParams}`
+          endpoint = `kompack/warehouse/verification-warehouse?id_warehouse=${this.dataFulfillment.warehouse_id}&is_verification=${dataParams}`
           this.dataProperti.warehouse_verification = dataParams
           break
         case this.actionStatusType.isActivated:
@@ -240,41 +254,15 @@ export default {
     getDataDetailMitra() {
       this.$http_kompack.get(`/kompack/warehouse/${this.$route.params.id}`)
         .then(({ data }) => {
-          /*
-          {
-            "id": "16",
-            "user_id": 2593,
-            "email": "ragil@email.com",
-            "username": "ragils",
-            "owner": "ragil setiawans",
-            "phone_number": "081229460004",
-            "gender": "L",
-            "nik": "330313120897",
-            "warehouse_id": 2,
-            "warehouse_name": "ragil setiawans",
-            "avability": 0,
-            "pic_name": "Ragil",
-            "pic_phone": "081229460004",
-            "description": "Warehouse Estrige",
-            "destination_id": 5,
-            "detail_address": "jalan mangga no 5",
-            "building_area": 200,
-            "building_type": 1,
-            "ownership": 4,
-            "image_ktp_url": "public/kompack_image_ktp/CEfRNTovd5pz0dyFMD8QLytgdTSgEuZkjaT5IC8F.jpg",
-            "image_logo_url": "https://kompackdev.komerce.id/warehouse_logo/1649651136.mburi.jpg",
-            "image_warehouse": []
-            "warehouse_verification": 0,
-            "service_status": "nonaktif",
-            "partner_verification": 0,
-          }
-          */
           this.dataAkun = {
+            id: data.data.id,
+            user_id: data.data.user_id,
             email: data.data.email,
             username: data.data.username,
           }
           this.dataFulfillment = {
             warehouse_name: data.data.warehouse_name,
+            warehouse_id: data.data.warehouse_id,
             avability: data.data.avability,
             pic_name: data.data.pic_name,
             pic_phone: data.data.pic_phone,
@@ -300,10 +288,9 @@ export default {
             building_area: data.data.building_area,
             building_type: data.data.building_type,
             ownership: data.data.ownership,
-            warehouse_id: data.data.warehouse_id,
             warehouse_verification: data.data.warehouse_verification,
           }
-          this.fetchDataDestination(data.data.destination_id)
+          this.fetchDataDestinationOne(data.data.destination_id)
           this.getStatusDataProfile(data.data.partner_verification, data.data.warehouse_verification, data.data.service_status)
           this.$nextTick(() => {
             this.loadingPage = false
@@ -321,10 +308,11 @@ export default {
           })
         })
     },
-    fetchDataDestination(dataId) {
+    fetchDataDestinationOne(dataId) {
       this.$http_kompack('/kompack/destination', { params: { destination_id: dataId } })
         .then(({ data }) => {
           this.dataProperti.destination_id = data.data.zip_code
+          this.queryDestination = data.data.zip_code
         })
         .catch(() => {
           this.$toast({
@@ -340,10 +328,13 @@ export default {
     },
     savedatalist() {
       this.btnSubmitDisabled = true
+      console.log('this.dataFulfillment.image_warehouse ', this.dataFulfillment.image_warehouse)
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
           // body data
           const formData = new FormData()
+          formData.append('id', this.dataAkun.id)
+          formData.append('user_id', this.dataAkun.user_id)
           formData.append('email', this.dataAkun.email)
           formData.append('username', this.dataAkun.username)
           formData.append('owner', this.dataOwner.owner)
@@ -353,14 +344,19 @@ export default {
           formData.append('image_ktp_url', this.dataOwner.image_ktp_url) // string ($binary)
           formData.append('image_logo', this.dataFulfillment.image_logo_url) // string ($binary)
           formData.append('warehouse_name', this.dataFulfillment.warehouse_name)
+          formData.append('warehouse_id', this.dataFulfillment.warehouse_id)
           formData.append('avability', this.dataFulfillment.avability)
           formData.append('pic_name', this.dataFulfillment.pic_name)
           formData.append('pic_phone', this.dataFulfillment.pic_phone)
           formData.append('description', this.dataFulfillment.description)
-          this.dataFulfillment.image_warehouse.forEach(xt => {
-            formData.append('image_warehouse[]', xt) // array<string ($binary)>
+          this.dataFulfillment.image_warehouse.forEach(x => {
+            formData.append('image_warehouse_insert[]', x.image_url)
           })
-          formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.building_area, 10))
+          formData.append('image_warehouse_delete[]', [])
+          // this.dataFulfillment.image_warehouse.forEach(xt => {
+          //   formData.append('image_warehouse[]', xt) // array<string ($binary)>
+          // })
+          formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.destination_id, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.destination_id, 10))
           formData.append('detail_address', this.dataProperti.detail_address)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
           formData.append('building_type', this.dataProperti.building_type)
@@ -377,7 +373,21 @@ export default {
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
-            .catch(() => {
+            .catch(err => {
+              if (err?.response?.data) {
+                const dataError = Object.values(err.response.data.errors).map(x => x.join())
+                dataError.forEach(dt => {
+                  this.$toast({
+                    component: ToastificationContentVue,
+                    props: {
+                      title: 'Galat',
+                      text: dt,
+                      icon: 'AlertCircleIcon',
+                      variant: 'danger',
+                    },
+                  })
+                })
+              }
               this.$toast({
                 component: ToastificationContentVue,
                 props: {
@@ -396,7 +406,7 @@ export default {
             component: ToastificationContentVue,
             props: {
               title: 'Failed',
-              text: 'Galat edit data mitra gudang',
+              text: 'Galat ada data yang kurang',
               icon: 'AlertCircleIcon',
               variant: 'danger',
             },
@@ -472,6 +482,42 @@ export default {
         datastatus = this.dataStatusObj.aktif
       }
       return datastatus
+    },
+    getDestinationValue(suggestion) {
+      const { item } = suggestion
+      this.selectedDestination = item
+      this.dataProperti.destination_id = item.id
+      return item.label
+    },
+    onInputChangeDestination(text) {
+      if (text === '' || text === undefined) {
+        return
+      }
+      const filtered = this.optionDestination.filter(item => item.label.toLowerCase().indexOf(text.toLowerCase()) > -1).slice(0, this.limitOptDestination)
+      this.filteredOptionsDesti = [{
+        data: filtered,
+      }]
+    },
+    fetchDataDestination() {
+      const filtered = this.optionDestination.filter(item => item.label.toLowerCase().indexOf(this.queryDestination.toLowerCase()) > -1).slice(0, this.limitOptDestination)
+      if (!filtered.length) {
+        this.$http_kompack('/kompack/destination', { params: { search: this.queryDestination } })
+          .then(({ data }) => {
+            this.filteredOptionsDesti = [{ data: data.data }]
+            this.optionDestination = data.data
+          })
+          .catch(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Failed',
+                text: 'Galat tambah data mitra gudang',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
   },
 }
