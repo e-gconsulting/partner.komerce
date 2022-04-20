@@ -5,9 +5,11 @@ import {
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 const dataGudangStatus = {
-  unverified: 'Belum Diverifikasi',
   inactive: 'nonaktif',
-  active: 'Aktif',
+  active: 'aktif',
+  wordingActive: 'Aktif',
+  wordingInactive: 'Non - Aktif',
+  wordingUnverified: 'Belum Diverifikasi',
 }
 
 export default {
@@ -74,6 +76,7 @@ export default {
           label: 'Status',
           sortable: true,
           thStyle: {
+            minWidth: '20%',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -82,6 +85,7 @@ export default {
           key: 'rincian',
           label: 'Rincian',
           thStyle: {
+            minWidth: '14%',
             textTransform: 'capitalize',
             verticalAlign: 'middle',
           },
@@ -94,16 +98,22 @@ export default {
   },
   methods: {
     dataStatusClass(dt) {
-      switch (dt) {
-        case dataGudangStatus.unverified:
-          return 'bg-yellow-100 text-warning'
-        case dataGudangStatus.active:
-          return 'bg-green-100 text-green-600'
-        case dataGudangStatus.inactive:
+      if (dt.status === dataGudangStatus.inactive) {
+        if (dt.is_verification === 1) {
           return 'bg-red-100 text-red-600'
-        default:
-          return ''
+        }
+        return 'bg-yellow-100 text-warning'
       }
+      return 'bg-green-100 text-green-600'
+    },
+    dataStatusText(dt) {
+      if (dt.status === dataGudangStatus.inactive) {
+        if (dt.is_verification === 1) {
+          return dataGudangStatus.wordingInactive
+        }
+        return dataGudangStatus.wordingUnverified
+      }
+      return dataGudangStatus.wordingActive
     },
     lihatRincian(dt) {
       this.$router.push({
