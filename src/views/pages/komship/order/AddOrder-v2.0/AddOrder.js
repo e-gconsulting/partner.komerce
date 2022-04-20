@@ -590,6 +590,11 @@ export default {
             this.listShipping = result
             this.isShipping = true
             this.loadingOptionExpedition = false
+          }).catch(err => {
+            if (err.response.data.message === 'Please Complete Your Address.') {
+              this.$refs['modal-check-address-pickup'].show()
+            }
+            this.loadingOptionExpedition = false
           })
         }, 800)
       } else {
@@ -678,8 +683,9 @@ export default {
               this.isCalculate = true
               this.loadingCalculate = false
             }
-          }).catch(async () => {
+          }).catch(async err => {
             this.calculate(getAdditional)
+            this.loadingWrapperOtherCost = false
           })
         } else {
           this.isCalculate = false
@@ -822,7 +828,6 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
       }
-      console.log(this.formData)
     },
     async submit(order) {
       this.checkValidation()

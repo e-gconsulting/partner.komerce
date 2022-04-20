@@ -28,6 +28,7 @@
           </strong>
         </h4>
         <b-button
+          :disabled="labelIsActive"
           variant="primary"
           tag="router-link"
           :to="{ name: $route.meta.routeDetailOrderan, params: { selected_order_from_history: itemsDataOrder } }"
@@ -337,6 +338,8 @@ export default {
       id: this.$route.params.order_data_id,
 
       itemsDataOrder: [],
+
+      labelIsActive: true,
     }
   },
   mounted() {
@@ -362,6 +365,7 @@ export default {
           },
         })
         this.loading = false
+        this.labelIsActive = false
       })
     },
     getDetailPickup() {
@@ -379,6 +383,7 @@ export default {
           this.itemsPreviewProductOrder = data.data_order
         }
         this.loading = false
+        this.labelIsActive = false
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,
@@ -390,6 +395,7 @@ export default {
           },
         })
         this.loading = false
+        this.labelIsActive = false
       })
     },
   },
