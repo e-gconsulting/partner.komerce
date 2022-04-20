@@ -98,30 +98,38 @@
             label-cols-md="2"
             label-class="text-black font-weight-bold"
           >
-            <b-button
-              id="popover-button-3"
-              v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-              variant="flat-dark"
-              class="btn-icon border"
-              @click="showTimePicker = !showTimePicker"
+            <b-row>
+              <b-button
+                id="popover-button-3"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                class="btn-icon border ml-1"
+                @click="showTimePicker = !showTimePicker"
+              >
+                {{ timeValue }}
+              </b-button>
+              <b-popover
+                :show.sync="showTimePicker"
+                target="popover-button-3"
+                placement="bottom"
+                triggers="hover"
+                variant="primary"
+              >
+                <b-time
+                  v-model="timeValue"
+                  locale="en"
+                  hide-header
+                  :hour12="false"
+                  @context="onChangeTime"
+                />
+              </b-popover>
+            </b-row>
+            <small
+              v-if="isNotCorrectTime"
+              class="text-primary mt-50"
             >
-              {{ timeValue }}
-            </b-button>
-            <b-popover
-              :show.sync="showTimePicker"
-              target="popover-button-3"
-              placement="bottom"
-              triggers="click"
-              variant="primary"
-            >
-              <b-time
-                v-model="timeValue"
-                locale="en"
-                hide-header
-                :hour12="false"
-                @context="onChangeTime"
-              />
-            </b-popover>
+              *Tidak bisa angkut jam pickup kurang dari jam saat ini
+            </small>
           </b-form-group>
         </b-col>
         <b-col
@@ -344,7 +352,7 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === ''"
+            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime"
             @click="showAlertSubmitPickup"
           >
             <b-spinner
@@ -807,6 +815,7 @@ import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import '@/@core/scss/vue/libs/vue-flatpicker.scss'
+import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
@@ -847,7 +856,7 @@ export default {
 
       timeValueText: '09 : 00',
       timeValue: '09:00',
-
+      isNotCorrectTime: true,
       profile: null,
       chosenVehicle: '',
 
@@ -939,6 +948,19 @@ export default {
       showTimePicker: false,
       loadingPickupError: false,
     }
+  },
+  watch: {
+    timeValue: {
+      handler(newVal, oldVal) {
+        const newMom = moment(newVal, 'HHmmss')
+        const today = moment()
+        if (newMom.isBefore(today) === true) {
+          this.isNotCorrectTime = true
+        } else {
+          this.isNotCorrectTime = false
+        }
+      },
+    },
   },
   mounted() {
     // this.$refs['modal-pickup-error-success'].show()

@@ -8,6 +8,16 @@
       </h4>
     </b-row>
     <b-row class="justify-content-end mr-3 mt-2 mb-5">
+      <b-col cols="3">
+        <v-select
+          v-model="shipmentValue"
+          :options="itemsShipment"
+          label="shipping_name"
+          class="mr-1"
+          :reduce="items => items.shipping_name"
+          @input="filterPickup"
+        />
+      </b-col>
       <b-button
         :variant="disableButtonPrint === true ? 'dark' : 'primary'"
         :disabled="disableButtonPrint"
@@ -35,6 +45,7 @@
         hover
         responsive
         class="position-relative"
+        show-empty
         empty-text="Tidak ada data untuk ditampilkan."
         :fields="fields"
         :items="items"
@@ -2340,11 +2351,13 @@ import {
   BInputGroupAppend,
   BSpinner,
 } from 'bootstrap-vue'
+import vSelect from 'vue-select'
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
+import moment from 'moment'
 import printJS from 'print-js'
 import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
 import PickupLabelPrint from '../PickupLabelPrint.vue'
@@ -2370,6 +2383,7 @@ export default {
     BPagination,
     BCollapse,
     BSpinner,
+    vSelect,
   },
   directives: { VBModal },
   mixins: [dateFormat],
@@ -2444,6 +2458,9 @@ export default {
 
       orderIdBase64: [],
       loadingButtonPrintLabel: false,
+      itemsShipment: [],
+      shipmentValue: 'Semua Ekspedisi',
+      shippingName: '',
     }
   },
   computed: {
@@ -2470,17 +2487,20 @@ export default {
   mounted() {
     this.items = this.selectedOrder
     this.getProfile()
+    this.getShipment()
   },
   methods: {
     getOrder() {
       this.loading = true
       this.idOrderFromHistory.data_order.map(items => this.idOrder.push(items.id))
+      const params = {
+        order_id: this.idOrder.toString(),
+        page: this.currentPage,
+        total_per_page: this.totalPerPage,
+      }
+      if (this.shipmentValue !== 'Semua Ekspedisi') Object.assign(params, { shipping_name: this.shipmentValue })
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}`, {
-        params: {
-          order_id: this.idOrder.toString(),
-          page: this.currentPage,
-          total_per_page: this.totalPerPage,
-        },
+        params,
       }).then(response => {
         this.totalRows = response.data.data.total
         const { data } = response.data.data
@@ -2748,11 +2768,24 @@ export default {
       }
       return this.itemsWeightProduct
     },
+    getShipment() {
+      this.$http_komship.get('/v1/shipments')
+        .then(response => {
+          this.itemsShipment = response.data.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    filterPickup() {
+      this.getOrder()
+    },
   },
 }
 </script>
 
 <style lang="scss">
+  @import '~@core/scss/vue/libs/vue-select.scss';
   @import '../add-pickup-detail.scss';
 
   [dir] .expand-button-variation {
