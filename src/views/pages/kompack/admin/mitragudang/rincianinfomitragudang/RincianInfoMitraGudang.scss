@@ -21,7 +21,6 @@
   display: flex;
   align-items: center;
   position: relative;
-  padding: 0px 23px;
 }
 /*.boxFirst > img {
   -o-transition: 1s all ease-in-out;
@@ -32,7 +31,7 @@
 }*/
 .container__childBox {
   display: -webkit-box;
-  width: 440px;
+  width: 450px;
   overflow-x: scroll;
   overflow-y: hidden;
 }
@@ -53,12 +52,12 @@
 .cursorLeftSlide {
   cursor: pointer;
   position: absolute;
-  left: 0;
+  left: -35px;
 }
 .cursorRightSlide {
   cursor: pointer;
   position: absolute;
-  right: 0;
+  right: -35px;
 }
 @media only screen and (max-width: 900px) {
   .columnChat {
@@ -66,6 +65,15 @@
   }
 }
 @media only screen and (max-width: 500px) {
+  .container__childBox {
+    width: 85vw;
+  }
+  .cursorLeftSlide {
+    left: 0px;
+  }
+  .cursorRightSlide {
+    right: 0px;
+  }
   .boxFirst {
     width: 100%;
   }

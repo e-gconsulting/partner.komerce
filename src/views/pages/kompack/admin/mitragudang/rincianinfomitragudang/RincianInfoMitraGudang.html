@@ -43,11 +43,13 @@
           </div>
           <div class="container__navimg">
             <span
+              v-if="countSlide > 0"
               @click="handleCursor('left')"
               class="cursorLeftSlide"
             >
-              <img
-                src="https://via.placeholder.com/20"
+              <feather-icon
+                size="2x"
+                icon="ChevronLeftIcon"
               />
             </span>
             <div ref="imgcontainer__childBox" class="container__childBox">
@@ -66,10 +68,14 @@
               </div>
             </div>
             <span
+              v-if="countSlide < imagesothers.length - 1"
               @click="handleCursor('right')"
               class="cursorRightSlide"
             >
-              <img src="https://via.placeholder.com/20" />
+              <feather-icon
+                size="2x"
+                icon="ChevronRightIcon"
+              />
             </span>
           </div>
         </div>
@@ -81,7 +87,7 @@
               :src="detailInfo.image_logo_url"
               alt="Photo"
               class="mr-1 border-radius"
-              style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;"
+              style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;"
             >
             <div class="d-grid">
               <h5 class="text-black my-0">{{ detailInfo.warehouse_name }}</h5>
