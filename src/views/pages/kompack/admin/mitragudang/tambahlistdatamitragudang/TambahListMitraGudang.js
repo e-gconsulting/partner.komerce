@@ -216,6 +216,20 @@ export default {
       this.btnSubmitDisabled = true
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
+          if (this.dataOwner.image_ktp_url && this.dataFulfillment.image_warehouse && this.dataFulfillment.image_logo) {
+            //
+          } else {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Check ada file yang belum diupload',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+            this.btnSubmitDisabled = false
+          }
           // body data
           const formData = new FormData()
           formData.append('email', this.dataAkun.email)
@@ -305,6 +319,18 @@ export default {
           evChange.target.files.forEach(fl => {
             multiFile.push(fl)
           })
+          if (evChange.target.files.length > 8) {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Tidak bisa unggah lebih dari 8 berkas gambar',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+            return
+          }
           this.dataFulfillment.image_warehouse = multiFile
           url = []
           evChange.target.files.forEach(x => {

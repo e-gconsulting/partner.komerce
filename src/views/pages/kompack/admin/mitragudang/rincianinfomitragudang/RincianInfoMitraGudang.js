@@ -18,9 +18,27 @@ export default {
   },
   data() {
     return {
+      imagesone: '',
+      imagesothers: [],
       isLoadingPage: true,
       detailInfo: {},
+      countSlide: 0,
     }
+  },
+  watch: {
+    countSlide: {
+      handler(newVal, oldVal) {
+        console.log(newVal, oldVal)
+        this.imagesone = this.imagesothers[newVal]
+        this.$refs[`childOtherbox-${oldVal}`][0].classList.remove('borderActive')
+        this.$refs[`childOtherbox-${newVal}`][0].classList.toggle('borderActive')
+        if (oldVal > newVal) {
+          this.$refs.imgcontainer__childBox.scrollLeft -= 100
+        } else {
+          this.$refs.imgcontainer__childBox.scrollLeft += 100
+        }
+      },
+    },
   },
   computed: {
     tglJoinData() {
@@ -29,8 +47,48 @@ export default {
   },
   mounted() {
     this.fetchData()
+    // this.$nextTick(() => {
+    //   console.log(this.$refs['childOtherbox-0'])
+    //   // this.$refs['childOtherbox-0'][0].classList.toggle('borderActive')
+    // })
   },
   methods: {
+    handleChangeImge(dt, refKey) {
+      this.imagesone = dt
+      const [, indexData] = refKey.split('-')
+      this.countSlide = parseInt(indexData, 10)
+    },
+    handleCursor(type) {
+      switch (type) {
+        case 'left':
+          if (this.countSlide === 0) {
+            //
+          } else {
+            this.countSlide -= 1
+          }
+          break
+        case 'right':
+          if (this.countSlide === this.imagesothers.length - 1) {
+            //
+          } else {
+            this.countSlide += 1
+          }
+          break
+        default:
+          break
+      }
+    },
+    handleEditData() {
+      this.$router.push({
+        name: 'kompack-rincian-mitra-gudang',
+        params: {
+          id: this.$route.params.id,
+        },
+        query: {
+          isEditMode: true,
+        },
+      })
+    },
     fetchData() {
       this.$http_kompack(`/kompack/warehouse/information/${this.$route.params.id}`)
         .then(({ data }) => {
@@ -57,15 +115,9 @@ export default {
             }]
           }
           */
-          const dataAwal = data.data
-          const imageSplit = {}
-          const imgData = [...data.data.image_warehouse]
-          if (imgData && Array.isArray(imgData)) {
-            const [firstdata] = [...imgData].splice(0, 1)
-            imageSplit.first = firstdata
-            imageSplit.more = [...imgData].splice(1)
-          }
-          this.detailInfo = { ...dataAwal, productImg: imageSplit }
+          this.detailInfo = { ...data.data }
+          this.imagesone = data.data.image_warehouse[0].image_url
+          this.imagesothers = data.data.image_warehouse.map(x => x.image_url)
           this.$nextTick(() => {
             this.isLoadingPage = false
           })
@@ -75,7 +127,7 @@ export default {
             component: ToastificationContentVue,
             props: {
               title: 'Failed',
-              text: 'Galat tambah data mitra gudang',
+              text: 'Galat detail information mitra gudang',
               icon: 'AlertCircleIcon',
               variant: 'danger',
             },

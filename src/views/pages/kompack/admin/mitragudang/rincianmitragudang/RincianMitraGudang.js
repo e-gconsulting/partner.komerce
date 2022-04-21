@@ -197,6 +197,9 @@ export default {
     this.$store.dispatch('kompackAdmin/init')
   },
   mounted() {
+    if (this.$route.query.isEditMode) {
+      this.editdataFulfillment()
+    }
     this.getDataDetailMitra()
   },
   methods: {
@@ -328,9 +331,22 @@ export default {
     },
     savedatalist() {
       this.btnSubmitDisabled = true
-      console.log('this.dataFulfillment.image_warehouse ', this.dataFulfillment.image_warehouse)
       this.$refs.tambahlistdata.validate().then(success => {
         if (success) {
+          if (this.dataOwner.image_ktp_url && this.dataFulfillment.image_warehouse && this.dataFulfillment.image_logo_url) {
+            //
+          } else {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Check ada file yang belum diupload',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+            this.btnSubmitDisabled = false
+          }
           // body data
           const formData = new FormData()
           formData.append('id', this.dataAkun.id)
@@ -414,16 +430,17 @@ export default {
         }
       })
     },
-    editdataAll() {
+    editdataAll(boolData) {
       this.isOnEdit = !this.isOnEdit
       const newDataDisabled = {}
       Object.keys(this.disabledField).map(dt => {
-        newDataDisabled[dt] = !this.disabledField[dt]
+        newDataDisabled[dt] = boolData
         return dt
       })
       this.disabledField = newDataDisabled
     },
     editdataFulfillment() {
+      this.isOnEdit = !this.isOnEdit
       this.disabledField = {
         ...this.disabledField,
         warehouse_name: !this.disabledField.warehouse_name,
@@ -449,6 +466,19 @@ export default {
           evChange.target.files.forEach(fl => {
             multiFile.push(fl)
           })
+          if (multiFile.length > 8) {
+            console.log('masuk ?')
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Tidak bisa unggah lebih dari 8 berkas gambar',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+            return
+          }
           this.dataFulfillment.image_warehouse = multiFile
           url = []
           evChange.target.files.forEach(x => {
@@ -517,6 +547,31 @@ export default {
               },
             })
           })
+      }
+    },
+    handleDeleteImg(type) {
+      switch (type) {
+        case this.imageFieldFormType.ownerKTP:
+          if (this.disabledField.image_ktp_url) {
+            //
+          } else {
+            this.prevImg.ktp = null
+          }
+          break
+        case this.imageFieldFormType.fulfillmentLogo:
+          if (this.disabledField.image_logo_url) {
+            //
+          } else {
+            this.prevImg.logo = null
+          }
+          break
+        default:
+          if (this.disabledField.image_warehouse) {
+            //
+          } else {
+            this.prevImg.warehouse = null
+          }
+          break
       }
     },
   },
