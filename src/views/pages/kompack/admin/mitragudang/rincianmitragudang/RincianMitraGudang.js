@@ -80,8 +80,8 @@ export default {
       limitOptDestination: 10,
       optionDestination: [],
       optionsKetersediaan: [
-        { text: 'Tersedia', value: 1 },
-        { text: 'Penuh', value: 0 },
+        { text: 'Tersedia', value: 0 },
+        { text: 'Penuh', value: 1 },
       ],
       optionsGender: [
         { text: 'L', value: 1 },
