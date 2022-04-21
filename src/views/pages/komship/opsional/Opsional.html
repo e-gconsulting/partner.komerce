@@ -40,6 +40,7 @@
                         <b-form-checkbox
                             v-model="customLabel"
                             switch
+                            :disabled="customLabelIsDisable"
                             @input="setCustomLabel()"
                         />
                     </b-card-title>
@@ -171,7 +172,7 @@
             <feather-icon
                 icon="PlusIcon"
                 class="mr-50"
-                style="display: inline-block!Important;"
+                style="display: inline-block;"
             />
             <span class="align-middle">Tambah Identitas</span>
         </b-button>
@@ -183,6 +184,8 @@
       ref="modal-set-custom-label"
       hide-header
       hide-footer
+      no-close-on-backdrop
+      no-close-on-esc
       centered
     >
       <b-row class="justify-content-center mb-2 pt-2">
@@ -203,12 +206,14 @@
         <b-button
           variant="outline-primary"
           class="mr-1 btn-icon"
+          @click="alertCustomLabel"
         >
           Batal
         </b-button>
         <b-button
           variant="primary"
           class="btn-icon"
+          @click="handleNotActiveCustomLabel"
         >
           Non-Aktifkan
         </b-button>
