@@ -466,6 +466,19 @@ export default {
           evChange.target.files.forEach(fl => {
             multiFile.push(fl)
           })
+          if (multiFile.length > 8) {
+            console.log('masuk ?')
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Tidak bisa unggah lebih dari 8 berkas gambar',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+            return
+          }
           this.dataFulfillment.image_warehouse = multiFile
           url = []
           evChange.target.files.forEach(x => {

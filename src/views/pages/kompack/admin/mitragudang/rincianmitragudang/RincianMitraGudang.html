@@ -345,14 +345,27 @@
                     ref="image_warehouse"
                     name="image_warehouse"
                     type="file"
+                    multiple
                     accept="image/jpeg, image/png, image/gif"
                     style="display: none;max-width: 150px;"
                   />
                   <div
-                    class="d-flex"
+                    v-if="prevImg.warehouse === null || prevImg.warehouse.length === 0"
+                    @click="$refs.image_warehouse.click()"
+                    class="imagebox d-flex"
+                    :class="{ imagebox__invalid: (!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0) }"
+                  >
+                    <img
+                      :src="require('@/assets/images/svg/gallery-add.svg')"
+                      style="width: 50%; height: 50%;"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="d-flex align-items-center"
                   >
                     <div
-                      v-for="(dataImg,keysdataImg) in dataFulfillment.image_warehouse"
+                      v-for="(dataImg,keysdataImg) in prevImg.warehouse"
                       @click="$refs.image_warehouse.click()"
                       class="imagebox mr-1"
                       :key="keysdataImg"
@@ -363,6 +376,15 @@
                       }"
                     >
                       <img :src="dataImg.image_url" style="width: 100%; height: 100%;" />
+                    </div>
+                    <div
+                      v-if="prevImg.warehouse.length > 0 && isOnEdit"
+                      @click="prevImg.warehouse = []"
+                      class="cursor-pointer"
+                    >
+                      <span class="text-red-500 font-bolder">
+                        Delete
+                      </span>
                     </div>
                   </div>
                   <small v-if="!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0" class="text-primary">Gambar gudang harus di upload</small>
