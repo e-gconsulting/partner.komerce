@@ -117,7 +117,7 @@ export default {
           */
           this.detailInfo = { ...data.data }
           this.imagesone = data.data.image_warehouse[0].image_url
-          this.imagesothers = data.data.image_warehouse.map(x => x.image_url)
+          this.imagesothers = [...data.data.image_warehouse].splice(0, 8).map(x => x.image_url)
           this.$nextTick(() => {
             this.isLoadingPage = false
           })
