@@ -20,7 +20,7 @@ export default {
       customerId: null,
       customerName: '',
       customerPhone: null,
-      customerAddress: null,
+      customerAddress: '',
       customerList: [],
       phoneCode: '+62',
       phoneCodeList: ['+62'],
@@ -60,6 +60,7 @@ export default {
       loadingCalculate: false,
       cartId: [],
       isCalculate: false,
+      isCalculateOnExpedition: false,
       isShipping: false,
       paymentMethod: null,
       paymentHistory: false,
@@ -98,6 +99,9 @@ export default {
       loadingWrapperOtherCost: false,
       messageErrorLengthCustomerName: false,
       messageErrorPhone: false,
+      messageErrorAddressDetail: false,
+      oldGrandTotal: null,
+      loadingSearchDestination: false,
     }
   },
   created() {
@@ -105,6 +109,7 @@ export default {
       .then(res => {
         this.profile = res.data.data
       }).then(() => {
+        // this.getDestination()
         this.checkExpedition()
         this.getAddress()
         this.getProduct()
@@ -207,8 +212,16 @@ export default {
         })
       return this.customerList
     },
+    onSearchDestination(search, loading) {
+      if (search.length) {
+        this.loadingSearchDestination = true
+        this.searchDestination(loading, search, this)
+      }
+    },
+    searchDestination: _.debounce((loading, search, that) => {
+      that.getDestination(search).finally(() => {})
+    }, 500),
     async getDestination(search) {
-      this.destinationSearch = true
       setTimeout(() => {
         this.$http_komship.get('v1/destination', {
           params: { search },
@@ -216,10 +229,10 @@ export default {
           .then(res => {
             const { data } = res.data.data
             this.destinationList = data
-            this.destinationSearch = false
+            this.loadingSearchDestination = false
           })
           .catch(err => {
-            this.destinationSearch = false
+            this.loadingSearchDestination = false
           })
       }, 2000)
     },
@@ -577,6 +590,11 @@ export default {
             this.listShipping = result
             this.isShipping = true
             this.loadingOptionExpedition = false
+          }).catch(err => {
+            if (err.response.data.message === 'Please Complete Your Address.') {
+              this.$refs['modal-check-address-pickup'].show()
+            }
+            this.loadingOptionExpedition = false
           })
         }, 800)
       } else {
@@ -600,6 +618,82 @@ export default {
       }
     },
     async calculate(getAdditional) {
+      setTimeout(async () => {
+        if (this.shipping && this.cartId.length > 0) {
+          this.loadingCalculate = true
+          let grandTotalNew
+          if (this.biayaLain && this.jenisBiayaLain === '1') {
+            this.additionalCost = this.sesuaiNominal
+          } else if (this.biayaLain && this.jenisBiayaLain === '0') {
+            this.additionalCost = this.bebankanCustomer
+          } else {
+            this.additionalCost = 0
+          }
+          if (!this.potonganSaldo) {
+            this.discount = 0
+          }
+          if (this.profile.partner_is_allowed_edit) {
+            if (getAdditional) {
+              grandTotalNew = null
+            } else {
+              grandTotalNew = this.newGrandTotal
+            }
+          } else {
+            grandTotalNew = null
+          }
+          await this.$http_komship.get('v2/calculate', {
+            params: {
+              tariff_code: this.destination.value,
+              payment_method: this.paymentMethod,
+              partner_id: this.profile.partner_id,
+              partner_address_id: this.address.address_id,
+              cart: this.cartId.toString(),
+              discount: this.discount,
+              additional_cost: this.additionalCost,
+              grandtotal: grandTotalNew,
+            },
+          }).then(async res => {
+            const { data } = res.data
+            const result = data.find(items => items.value === this.shipping.value)
+            if (getAdditional) {
+              this.sesuaiNominal = Math.round(result.service_fee)
+              this.bebankanCustomer = Math.round(result.service_fee)
+              this.newGrandTotal = result.grandtotal
+              this.oldGrandTotal = result.grandtotal
+              if (this.paymentMethod === 'COD') {
+                this.jenisBiayaLain = '0'
+              } else {
+                this.jenisBiayaLain = '1'
+              }
+            }
+            if (this.newGrandTotal === null) {
+              this.newGrandTotal = result.grandtotal
+            }
+            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
+              this.subTotal = result.subtotal
+              this.shippingCost = result.shipping_cost
+              this.netProfit = result.net_profit
+              this.serviceFee = Math.round(result.service_fee)
+              this.serviceFeePercentage = result.service_fee_percentage
+              this.weight = result.weight.toFixed(2)
+              this.grandTotal = result.grandtotal
+              this.cashback = result.cashback
+              this.cashbackPercentage = result.cashback_percentage
+              this.additionalCost = result.additional_cost
+              this.isCalculate = true
+              this.loadingCalculate = false
+            }
+          }).catch(async err => {
+            this.calculate(getAdditional)
+            this.loadingWrapperOtherCost = false
+          })
+        } else {
+          this.isCalculate = false
+          this.loadingWrapperOtherCost = false
+        }
+      }, 800)
+    },
+    async calculateOnExpedition(getAdditional) {
       this.loadingWrapperOtherCost = true
       setTimeout(async () => {
         if (this.shipping && this.cartId.length > 0) {
@@ -642,6 +736,7 @@ export default {
               this.sesuaiNominal = Math.round(result.service_fee)
               this.bebankanCustomer = Math.round(result.service_fee)
               this.newGrandTotal = result.grandtotal
+              this.oldGrandTotal = result.grandtotal
               if (this.paymentMethod === 'COD') {
                 this.jenisBiayaLain = '0'
               } else {
@@ -662,16 +757,16 @@ export default {
               this.cashback = result.cashback
               this.cashbackPercentage = result.cashback_percentage
               this.additionalCost = result.additional_cost
-              this.isCalculate = true
+              this.isCalculateOnExpedition = true
               this.loadingCalculate = false
             }
             this.loadingWrapperOtherCost = false
           }).catch(async () => {
             this.loadingWrapperOtherCost = false
-            this.calculate(getAdditional)
+            this.calculateOnExpedition(getAdditional)
           })
         } else {
-          this.isCalculate = false
+          this.isCalculateOnExpedition = false
           this.loadingWrapperOtherCost = false
         }
       }, 800)
@@ -724,6 +819,7 @@ export default {
         bank_account_no: this.bankAccountNo,
         subtotal: this.subTotal,
         grandtotal: this.grandTotal,
+        old_grandtotal: this.oldGrandTotal,
         shipping_cost: this.shippingCost,
         service_fee: this.serviceFee,
         discount: this.discount,
@@ -786,6 +882,9 @@ export default {
     formatCustomerName(e) {
       return String(e).substring(0, 30)
     },
+    formatAddressDetail(e) {
+      return String(e).substring(0, 85)
+    },
     formatPhoneCustomer() {
       if (this.customerPhone.length < 9) {
         this.messageErrorPhone = true
@@ -799,6 +898,14 @@ export default {
         this.messageErrorLengthCustomerName = true
       } else {
         this.messageErrorLengthCustomerName = false
+      }
+    },
+    validateInputAddressDetail(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorAddressDetail = true
+      } else {
+        this.messageErrorAddressDetail = false
       }
     },
     validateInputPhoneCustomer(e) {
