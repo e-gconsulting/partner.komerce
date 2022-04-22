@@ -102,7 +102,7 @@ export default [
     },
   },
   {
-    path: '/reset-newpassword',
+    path: '/partner-reset-password',
     name: 'auth-reset-passworddata',
     component: () => import('@/views/pages/authentication/ResetPassword'),
     meta: {
