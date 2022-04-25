@@ -169,7 +169,7 @@
                     }"
                   >
                     <span
-                      v-if="prevImg.logo"
+                      v-if="prevImg.logo && isOnEdit"
                       @click="handleDeleteImg(imageFieldFormType.fulfillmentLogo)"
                       class="absolute cursor-pointer"
                       style="right: 3px; top: 5px;"
@@ -339,7 +339,7 @@
                 >
                   <input
                     id="image_warehouse"
-                    @change="previewLogo"
+                    @change="e => previewLogo(e, imageFieldFormType.fulfillmentWarehouse)"
                     :state="Boolean(dataFulfillment.image_warehouse)"
                     :disabled="disabledField.image_warehouse"
                     ref="image_warehouse"
@@ -366,8 +366,7 @@
                   >
                     <div
                       v-for="(dataImg,keysdataImg) in prevImg.warehouse"
-                      @click="$refs.image_warehouse.click()"
-                      class="imagebox mr-1"
+                      class="imagebox mr-1 relative"
                       :key="keysdataImg"
                       :class="{ imagebox__invalid: !dataFulfillment.image_warehouse}"
                       :style="{
@@ -375,15 +374,34 @@
                         border: disabledField.image_warehouse ? 'unset' : 'inherit',
                       }"
                     >
-                      <img :src="dataImg.image_url" style="width: 100%; height: 100%;" />
+                      <img :src="dataImg" style="width: 100%; height: 100%;" />
+                      <span
+                        v-if="isOnEdit"
+                        @click="handleDeleteImgWarehouse(keysdataImg, dataImg)"
+                        class="absolute cursor-pointer"
+                        style="right: 3px; top: 5px;"
+                      >
+                        <img src="@/assets/images/svg/close-circle.svg" alt="dataimg" />
+                      </span>
+                    </div>
+                    <div
+                      v-if="isOnEdit"
+                      @click="$refs.image_warehouse.click()"
+                      class="imagebox d-flex mr-1"
+                      :class="{ imagebox__invalid: (!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0) }"
+                    >
+                      <img
+                        :src="require('@/assets/images/svg/gallery-add.svg')"
+                        style="width: 50%; height: 50%;"
+                      />
                     </div>
                     <div
                       v-if="prevImg.warehouse.length > 0 && isOnEdit"
-                      @click="prevImg.warehouse = []"
+                      @click="handleDeleteImgWarehouse()"
                       class="cursor-pointer"
                     >
                       <span class="text-red-500 font-bolder">
-                        Delete
+                        <feather-icon icon="Trash2Icon" /> ALL
                       </span>
                     </div>
                   </div>
@@ -583,7 +601,7 @@
                     }"
                   >
                     <span
-                      v-if="prevImg.ktp"
+                      v-if="prevImg.ktp && isOnEdit"
                       @click="handleDeleteImg(imageFieldFormType.ownerKTP)"
                       class="absolute cursor-pointer"
                       style="right: 3px; top: 5px;"
@@ -813,7 +831,7 @@
               <div class="d-flex justify-content-end">
                 <b-button
                   :disabled="btnSubmitDisabled"
-                  @click="editdataFulfillment()"
+                  @click="editdataAll(true)"
                   type="button"
                   variant="outline-primary"
                   class="font-bold mr-1 border-none"
@@ -902,7 +920,7 @@
           </defs>
         </svg>
       </div>
-      <h5 class="w-70 text-black my-2">Tambah mitra gudang telah berhasil</h5>
+      <h5 class="w-70 text-black my-2">Simpan data mitra gudang telah berhasil</h5>
       <b-button
         @click="$router.push({ name: 'kompack-data-mitra-gudang' })"
         variant="primary"

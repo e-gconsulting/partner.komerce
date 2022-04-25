@@ -308,18 +308,28 @@ export default {
     previewLogo(evChange, type) {
       const [dataimg] = evChange.target.files
       let url = null
-      const multiFile = []
+      let multiFile = []
       switch (type) {
         case this.imageFieldFormType.fulfillmentLogo:
+          if (this.validateSize(dataimg)) {
+            //
+          } else {
+            return
+          }
           this.dataFulfillment.image_logo = dataimg
           url = URL.createObjectURL(dataimg)
           this.prevImg.logo = url
           break
         case this.imageFieldFormType.fulfillmentWarehouse:
+          if (Array.isArray(this.dataFulfillment.image_warehouse) && this.dataFulfillment.image_warehouse.length > 0) {
+            multiFile = [...this.dataFulfillment.image_warehouse]
+          }
           evChange.target.files.forEach(fl => {
-            multiFile.push(fl)
+            if (this.validateSize(fl)) {
+              multiFile.push(fl)
+            }
           })
-          if (evChange.target.files.length > 8) {
+          if (multiFile.length > 8) {
             this.$toast({
               component: ToastificationContentVue,
               props: {
@@ -333,12 +343,17 @@ export default {
           }
           this.dataFulfillment.image_warehouse = multiFile
           url = []
-          evChange.target.files.forEach(x => {
+          multiFile.forEach(x => {
             url.push(URL.createObjectURL(x))
           })
           this.prevImg.warehouse = url
           break
         case this.imageFieldFormType.ownerKTP:
+          if (this.validateSize(dataimg)) {
+            //
+          } else {
+            return
+          }
           this.dataOwner.image_ktp_url = dataimg
           url = URL.createObjectURL(dataimg)
           this.prevImg.ktp = url
@@ -353,6 +368,40 @@ export default {
         evt.preventDefault()
       }
       return true
+    },
+    validateSize(dt) {
+      // in MiB
+      const fileSize = dt.size / 1024 / 1024
+      if (fileSize > 2) {
+        this.$toast({
+          component: ToastificationContentVue,
+          props: {
+            title: 'Galat',
+            text: 'Ukuran berkas tidak boleh lebih dari 2 MB',
+            icon: 'AlertCircleIcon',
+            variant: 'danger',
+          },
+        })
+        return false
+      }
+      return true
+    },
+    handleDeleteImg(indexdt) {
+      if (indexdt) {
+        const oldData = {
+          prevImg: [...this.prevImg.warehouse],
+          dataFulfillment: [...this.dataFulfillment.image_warehouse],
+        }
+        const newData = {
+          prevImg: oldData.prevImg.filter((_, indx) => indx !== indexdt),
+          dataFulfillment: oldData.dataFulfillment.filter((_, indx) => indx !== indexdt),
+        }
+        this.prevImg.warehouse = newData.prevImg
+        this.dataFulfillment.image_warehouse = newData.dataFulfillment
+      } else {
+        this.prevImg.warehouse = []
+        this.dataFulfillment.image_warehouse = []
+      }
     },
     showModalBatal() {
       this.$bvModal.show('modal-tambahmitra-warning')

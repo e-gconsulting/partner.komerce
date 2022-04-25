@@ -275,7 +275,6 @@
                     :class="{ imagebox__invalid: (!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0) }"
                   >
                     <img
-                      v-if="!prevImg.warehouse"
                       :src="require('@/assets/images/svg/gallery-add.svg')"
                       style="width: 50%; height: 50%;"
                     />
@@ -287,20 +286,37 @@
                     <div
                       v-for="(dt, keydt) in prevImg.warehouse"
                       :key="keydt"
-                      class="imagebox mr-1"
+                      class="imagebox relative mr-1"
                       :class="{ imagebox__invalid: !dt}"
                     >
                       <img
                         :src="dt"
                         class="w-100 h-100"
                       >
+                      <span
+                        @click="handleDeleteImg(keydt)"
+                        class="absolute cursor-pointer"
+                        style="right: 3px; top: 5px;"
+                      >
+                        <img src="@/assets/images/svg/close-circle.svg" alt="dataimg" />
+                      </span>
                     </div>
                     <div
-                      @click="prevImg.warehouse = []"
+                      @click="$refs.image_warehouse.click()"
+                      class="imagebox d-flex mr-1"
+                      :class="{ imagebox__invalid: (!dataFulfillment.image_warehouse || prevImg.warehouse.length === 0) }"
+                    >
+                      <img
+                        :src="require('@/assets/images/svg/gallery-add.svg')"
+                        style="width: 50%; height: 50%;"
+                      />
+                    </div>
+                    <div
+                      @click="handleDeleteImg()"
                       class="cursor-pointer"
                     >
                       <span class="text-red-500 font-bolder">
-                        Delete
+                        <feather-icon icon="Trash2Icon" /> ALL
                       </span>
                     </div>
                   </div>
@@ -708,7 +724,7 @@
           </defs>
         </svg>
       </div>
-      <h5 class="w-70 text-black my-2">Tambah mitra gudang telah berhasil</h5>
+      <h5 class="w-70 text-black my-2">Simpan data mitra gudang telah berhasil</h5>
       <b-button
         @click="$router.push({ name: 'kompack-data-mitra-gudang' })"
         variant="primary"
