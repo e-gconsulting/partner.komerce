@@ -104,16 +104,14 @@
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="flat-dark"
                 class="btn-icon border ml-1"
-                @click="showTimePicker = !showTimePicker"
               >
                 {{ timeValue }}
               </b-button>
               <b-popover
-                :show.sync="showTimePicker"
                 target="popover-button-3"
                 placement="bottom"
-                triggers="hover"
                 variant="primary"
+                triggers="focus"
               >
                 <b-time
                   v-model="timeValue"
