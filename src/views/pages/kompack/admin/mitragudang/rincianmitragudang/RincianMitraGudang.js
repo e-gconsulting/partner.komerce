@@ -157,6 +157,12 @@ export default {
         fulfillmentWarehouse: 'fulfillmentWarehouse',
         ownerKTP: 'ownerKTP',
       },
+      changedImageData: {
+        ktp: null,
+        warehouse: null,
+        logo: null,
+        warehouseDeleted: null,
+      },
       prevImg: {
         logo: null,
         warehouse: null,
@@ -357,21 +363,28 @@ export default {
           formData.append('gender', this.dataOwner.gender)
           formData.append('phone_number', this.dataOwner.phone_number)
           formData.append('nik', this.dataOwner.nik)
-          formData.append('image_ktp_url', this.dataOwner.image_ktp_url) // string ($binary)
-          formData.append('image_logo', this.dataFulfillment.image_logo_url) // string ($binary)
+          formData.append('image_ktp_url', this.changedImageData.ktp) // string ($binary)
+          formData.append('image_logo', this.changedImageData.logo) // string ($binary)
           formData.append('warehouse_name', this.dataFulfillment.warehouse_name)
           formData.append('warehouse_id', this.dataFulfillment.warehouse_id)
           formData.append('avability', this.dataFulfillment.avability)
           formData.append('pic_name', this.dataFulfillment.pic_name)
           formData.append('pic_phone', this.dataFulfillment.pic_phone)
           formData.append('description', this.dataFulfillment.description)
-          this.dataFulfillment.image_warehouse.forEach(x => {
-            formData.append('image_warehouse_insert[]', x.image_url)
-          })
-          formData.append('image_warehouse_delete[]', [])
-          // this.dataFulfillment.image_warehouse.forEach(xt => {
-          //   formData.append('image_warehouse[]', xt) // array<string ($binary)>
-          // })
+          if (this.changedImageData.warehouse) {
+            this.changedImageData.warehouse.forEach(x => {
+              formData.append('image_warehouse_insert[]', x)
+            })
+          } else {
+            //
+          }
+          if (this.changedImageData.warehouseDeleted) {
+            this.changedImageData.warehouseDeleted.forEach(x => {
+              formData.append('image_warehouse_delete[]', x)
+            })
+          } else {
+            //
+          }
           formData.append('destination_id', Number.isNaN(parseInt(this.dataProperti.destination_id, 10)) ? this.dataProperti.destination_id : parseInt(this.dataProperti.destination_id, 10))
           formData.append('detail_address', this.dataProperti.detail_address)
           formData.append('building_area', Number.isNaN(parseInt(this.dataProperti.building_area, 10)) ? 0 : parseInt(this.dataProperti.building_area, 10))
@@ -461,13 +474,13 @@ export default {
           this.dataFulfillment.image_logo_url = dataimg
           url = URL.createObjectURL(dataimg)
           this.prevImg.logo = url
+          this.changedImageData.logo = dataimg
           break
         case this.imageFieldFormType.fulfillmentWarehouse:
           evChange.target.files.forEach(fl => {
             multiFile.push(fl)
           })
           if (multiFile.length > 8) {
-            console.log('masuk ?')
             this.$toast({
               component: ToastificationContentVue,
               props: {
@@ -480,6 +493,7 @@ export default {
             return
           }
           this.dataFulfillment.image_warehouse = multiFile
+          this.changedImageData.warehouse = multiFile
           url = []
           evChange.target.files.forEach(x => {
             url.push(URL.createObjectURL(x))
@@ -488,6 +502,7 @@ export default {
           break
         case this.imageFieldFormType.ownerKTP:
           this.dataOwner.image_ktp_url = dataimg
+          this.changedImageData.ktp = dataimg
           url = URL.createObjectURL(dataimg)
           this.prevImg.ktp = url
           break
