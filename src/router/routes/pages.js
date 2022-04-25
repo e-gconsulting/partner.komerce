@@ -30,6 +30,16 @@ export default [
     },
   },
   {
+    path: '/verified-partner',
+    name: 'verified',
+    component: () => import('@/views/pages/authentication/verifiedemailkompack.vue'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+      action: 'read',
+    },
+  },
+  {
     path: '/login',
     name: 'auth-login',
     component: () => import('@/views/pages/authentication/Login'),
@@ -92,7 +102,7 @@ export default [
     },
   },
   {
-    path: '/reset-newpassword',
+    path: '/partner-reset-password',
     name: 'auth-reset-passworddata',
     component: () => import('@/views/pages/authentication/ResetPassword'),
     meta: {
