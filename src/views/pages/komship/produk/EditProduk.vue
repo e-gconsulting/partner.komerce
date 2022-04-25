@@ -939,7 +939,7 @@
                               />
                             </div>
                           </div>
-                          <div v-else>
+                          <div>
                             <div
                               v-if="data.item.option[0] !== undefined"
                             >
@@ -1635,7 +1635,7 @@
                             </div>
                           </div>
                         </template>
-
+<!--
                         <template #cell(price)="data">
                           <div v-if="editMode === true && indexRow === data.index">
                             <div
@@ -1699,9 +1699,9 @@
                               Rp {{ formatPrice(data.item.price) }}
                             </div>
                           </div>
-                        </template>
+                        </template> -->
 
-                        <template #cell(stock)="data">
+                        <!-- <template #cell(stock)="data">
                           <div v-if="editMode === true && indexRow === data.index">
                             <div
                               v-if="data.item.option[0] !== undefined"
@@ -1764,7 +1764,7 @@
                               {{ data.item.stock }}
                             </div>
                           </div>
-                        </template>
+                        </template> -->
 
                         <template #cell(action)="data">
                           <b-button
@@ -2746,6 +2746,7 @@ export default {
                   sold: this.fieldEditVariation.options[x].options[y].sold,
                   stock: this.fieldEditVariation.options[x].options[y].variant_stock,
                   price: this.fieldEditVariation.options[x].options[y].option_price,
+                  option: [],
                 })
               } else {
                 this.variantItems[x].option.push({
