@@ -99,7 +99,7 @@ export default {
       }
     },
     resendEmailVerification() {
-      this.$http_komship.post('/v1/forgot-password', {
+      this.$http_kompack.post('/v1/send-link-reset-password', {
         email: this.usernameEmail,
       })
         .then(response => {
