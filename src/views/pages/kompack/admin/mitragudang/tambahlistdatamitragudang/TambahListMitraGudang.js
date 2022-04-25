@@ -370,7 +370,6 @@ export default {
       return true
     },
     validateSize(dt) {
-      console.log(dt)
       // in MiB
       const fileSize = dt.size / 1024 / 1024
       if (fileSize > 2) {

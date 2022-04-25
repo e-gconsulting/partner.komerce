@@ -22,24 +22,6 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { mapState } from 'vuex'
 
-/*
-  this.dataOwner.partner_verification
-  this.dataProperti.warehouse_verification
-  this.dataProperti.service_status
-  jika partner_verification = 0 & warehouse_verification = 0 & service_status = belum verifikasi
-  jika partner_verification = 0 & warehouse_verification = 1 & service_status = belum verifikasi
-  jika partner_verification = 1 & warehouse_verification = 0 & service_status = belum verifikasi
-  - klik tombol aktifkan layanan masih disabled
-  - edit fitur utk semua atau sebagian
-  jika partner_verification = 1 & warehouse_verification = 1 & service_status = nonaktif
-  - klik tombol aktifkan layanan masih enable
-  - tombol Batalkan Verifikasi ada
-  - tombol data fulfillment bisa di klik dan edit field hanya fullfillment saja
-  jika partner_verification = 1 & warehouse_verification = 1 & service_status = aktif
-  - klik tombol non aktifkan layanan
-  - hanya ada icon terverifikasi tidak ada lgi tombol batalkan verifikasi
-*/
-
 export default {
   components: {
     BRow,
@@ -159,9 +141,9 @@ export default {
       },
       changedImageData: {
         ktp: null,
-        warehouse: null,
+        warehouse: [],
         logo: null,
-        warehouseDeleted: null,
+        warehouseDeleted: [],
       },
       prevImg: {
         logo: null,
@@ -282,7 +264,7 @@ export default {
           }
           this.prevImg.ktp = data.data.image_ktp_url
           this.prevImg.logo = data.data.image_logo_url
-          this.prevImg.warehouse = data.data.image_warehouse
+          this.prevImg.warehouse = data.data.image_warehouse.map(x => x.image_url)
           this.dataOwner = {
             owner: data.data.owner,
             gender: data.data.gender === 'L' ? 1 : 0,
@@ -398,7 +380,6 @@ export default {
             },
           })
             .then(({ data }) => {
-              // console.log('data ', data)
               // masuk data tidak error maka munculkan popup success
               this.$bvModal.show('modal-tambahmitra-success')
             })
@@ -468,19 +449,32 @@ export default {
     previewLogo(evChange, type) {
       const [dataimg] = evChange.target.files
       let url = null
-      const multiFile = []
+      let multiFile = []
       switch (type) {
         case this.imageFieldFormType.fulfillmentLogo:
+          if (this.validateSize(dataimg)) {
+            //
+          } else {
+            return
+          }
           this.dataFulfillment.image_logo_url = dataimg
           url = URL.createObjectURL(dataimg)
           this.prevImg.logo = url
           this.changedImageData.logo = dataimg
           break
         case this.imageFieldFormType.fulfillmentWarehouse:
+          if (Array.isArray(this.prevImg.warehouse) && this.prevImg.warehouse.length > 0) {
+            // get old data for FILE only not url image
+            multiFile = [...this.changedImageData.warehouse]
+          }
+          // add data to variable multiple and validate size
           evChange.target.files.forEach(fl => {
-            multiFile.push(fl)
+            if (this.validateSize(fl)) {
+              multiFile.push(fl)
+            }
           })
-          if (multiFile.length > 8) {
+          // check if previous data dan files upload greater than 8 or not
+          if ((multiFile.length + this.prevImg.warehouse.length) > 8) {
             this.$toast({
               component: ToastificationContentVue,
               props: {
@@ -492,15 +486,27 @@ export default {
             })
             return
           }
-          this.dataFulfillment.image_warehouse = multiFile
+          // merge data previous and current changing
+          this.dataFulfillment.image_warehouse = [...this.dataFulfillment.image_warehouse, ...multiFile]
+          // add changed data with contain FILE only not URL
           this.changedImageData.warehouse = multiFile
           url = []
-          evChange.target.files.forEach(x => {
-            url.push(URL.createObjectURL(x))
+          multiFile.forEach(x => {
+            if (x instanceof File) {
+              url.push(URL.createObjectURL(x))
+            } else {
+              url.push(x)
+            }
           })
-          this.prevImg.warehouse = url
+          // merge previous and current data
+          this.prevImg.warehouse = [...this.prevImg.warehouse, ...url]
           break
         case this.imageFieldFormType.ownerKTP:
+          if (this.validateSize(dataimg)) {
+            //
+          } else {
+            return
+          }
           this.dataOwner.image_ktp_url = dataimg
           this.changedImageData.ktp = dataimg
           url = URL.createObjectURL(dataimg)
@@ -588,6 +594,53 @@ export default {
           }
           break
       }
+    },
+    handleDeleteImgWarehouse(indexdt, dtImg) {
+      if (indexdt) {
+        if (this.isValidHttpUrl(dtImg)) {
+          this.changedImageData.warehouseDeleted.push(dtImg)
+        }
+        const oldData = {
+          prevImg: [...this.prevImg.warehouse],
+          dataFulfillment: [...this.dataFulfillment.image_warehouse],
+        }
+        const newData = {
+          prevImg: oldData.prevImg.filter((_, indx) => indx !== indexdt),
+          dataFulfillment: oldData.dataFulfillment.filter((_, indx) => indx !== indexdt),
+        }
+        this.prevImg.warehouse = newData.prevImg
+        this.changedImageData.warehouse = newData.dataFulfillment.filter(x => x instanceof File)
+        this.dataFulfillment.image_warehouse = newData.dataFulfillment
+      } else {
+        this.prevImg.warehouse = []
+        this.dataFulfillment.image_warehouse = []
+      }
+    },
+    validateSize(dt) {
+      // in MiB
+      const fileSize = dt.size / 1024 / 1024
+      if (fileSize > 2) {
+        this.$toast({
+          component: ToastificationContentVue,
+          props: {
+            title: 'Galat',
+            text: 'Ukuran berkas tidak boleh lebih dari 2 MB',
+            icon: 'AlertCircleIcon',
+            variant: 'danger',
+          },
+        })
+        return false
+      }
+      return true
+    },
+    isValidHttpUrl(string) {
+      let url
+      try {
+        url = new URL(string)
+      } catch (_) {
+        return false
+      }
+      return url.protocol === 'http:' || url.protocol === 'https:'
     },
   },
 }
