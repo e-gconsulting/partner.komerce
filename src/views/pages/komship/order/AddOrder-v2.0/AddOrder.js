@@ -518,6 +518,7 @@ export default {
           })
       } else {
         this.isCalculate = false
+        this.isCalculateOnExpedition = false
         this.loadingCalculate = false
       }
     },
@@ -602,6 +603,7 @@ export default {
         this.listShipping = []
         this.isShipping = false
         this.isCalculate = false
+        this.isCalculateOnExpedition = false
         this.loadingOptionExpedition = false
       }
     },

@@ -2746,6 +2746,7 @@ export default {
                   sold: this.fieldEditVariation.options[x].options[y].sold,
                   stock: this.fieldEditVariation.options[x].options[y].variant_stock,
                   price: this.fieldEditVariation.options[x].options[y].option_price,
+                  option: [],
                 })
               } else {
                 this.variantItems[x].option.push({

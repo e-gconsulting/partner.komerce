@@ -550,14 +550,6 @@
       </b-row>
     </section>
 
-    <b-overlay
-      variant="light"
-      :show="loadingWrapperOtherCost"
-      spinner-variant="primary"
-      blur="0"
-      opacity=".5"
-      rounded="sm"
-    >
       <div
         v-if="loadingWrapperOtherCost"
         class="p-1 mt-2"
@@ -722,7 +714,6 @@
           </b-row>
         </b-collapse>
       </div>
-    </b-overlay>
 
     <div
       v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
