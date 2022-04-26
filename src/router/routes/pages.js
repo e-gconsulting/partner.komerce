@@ -30,8 +30,8 @@ export default [
     },
   },
   {
-    path: '/verified-partner',
-    name: 'verified',
+    path: '/verified-partner-kompack',
+    name: 'verified-kompack',
     component: () => import('@/views/pages/authentication/verifiedemailkompack.vue'),
     meta: {
       layout: 'full',
