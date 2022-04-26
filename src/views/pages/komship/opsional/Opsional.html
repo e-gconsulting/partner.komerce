@@ -13,7 +13,7 @@
                             @input="setQuickType()"
                         />
                     </b-card-title>
-                    <b-card-text>
+                    <b-card-text style="padding-bottom: 50px;">
                         Memungkinkan kamu untuk melakukan custom Nilai Pembayaran.
                     </b-card-text>
                 </b-card>
@@ -28,19 +28,18 @@
                             @input="setMutationBank()"
                         />
                     </b-card-title>
-                    <b-card-text>
+                    <b-card-text style="padding-bottom: 50px;">
                         Memungkinkan kamu untuk menampilkan rekening tujuan untuk setiap orderan Non-COD.
                     </b-card-text>
                 </b-card>
             </b-col>
-            <!-- <b-col v-if="isGetting" md="4">
-                <b-card img-src="@/assets/images/banner/mutasi-rekening.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
+            <b-col v-if="isGetting" md="4">
+                <b-card img-src="@/assets/images/banner/illustration-custom-label.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
                     <b-card-title class="d-flex justify-between">
                         <span class="font-bold text-primary">Custom Label</span>
                         <b-form-checkbox
                             v-model="customLabel"
                             switch
-                            :disabled="customLabelIsDisable"
                             @input="setCustomLabel()"
                         />
                     </b-card-title>
@@ -58,7 +57,7 @@
                         </b-button>
                     </b-row>
                 </b-card>
-            </b-col> -->
+            </b-col>
         </b-row>
     </div>
 
@@ -81,93 +80,312 @@
             Tambahkan Nama atau Identitas Pengirim untuk dapat ditampilkan di label sesuai kebutuhan kamu.
           </span>
       </b-row>
-      <b-row
-        class="mx-3 p-2 mb-2"
-        style="
-            border: 1px solid #E2E2E2;
-            border-radius: 8px;
-        "
-      >
-        <b-form @submit.prevent>
-            <b-row class="mb-1 align-items-center">
-                <b-col cols="auto">
-                    <span>
-                        <strong>
-                            Identitas 1
-                        </strong>
-                    </span>
-                </b-col>
-                <b-col cols="auto">
-                    <span>
-                        Default
-                    </span>
-                </b-col>
-                <b-col
-                    class="auto d-flex justify-content-end"
-                >
-                    <b-button
-                        class="btn-icon"
-                        size="sm"
-                        variant="flat-dark"
+      <b-overlay
+          variant="light"
+          :show="loadingWrapperCustom"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
+        >
+        <div
+          v-for="(items, index) in itemsCustomLabel"
+          :key="index+1"
+        >
+          <b-row
+            class="mx-3 p-2 mb-2"
+            style="
+                border: 1px solid #E2E2E2;
+                border-radius: 8px;
+            "
+          >
+            <validation-observer
+              ref="formEditRules"
+              #default="{invalid}"
+            >
+              <b-form>
+                  <b-row class="mb-1 align-items-center">
+                      <b-col cols="auto">
+                          <span>
+                              <strong>
+                                  Identitas {{ index+1 }}
+                              </strong>
+                          </span>
+                      </b-col>
+                      <b-col
+                        cols="auto"
+                      >
+                          <span>
+                              {{ items.is_default === 1 ? 'Default' : '' }}
+                          </span>
+                      </b-col>
+                      <b-col
+                          class="auto d-flex justify-content-end"
+                      >
+                          <b-button
+                              v-if="customLabelEditMode === true  && idCustomLabelEdit === items.id"
+                              class="btn-icon"
+                              size="sm"
+                              variant="flat-dark"
+                              @click="editSenderNoActive"
+                          >
+                              <feather-icon
+                                  icon="EditIcon"
+                              />
+                          </b-button>
+                          <b-button
+                              v-else
+                              class="btn-icon"
+                              size="sm"
+                              variant="flat-dark"
+                              @click="editSenderActive(items)"
+                          >
+                              <feather-icon
+                                  icon="EditIcon"
+                              />
+                          </b-button>
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="Name"
+                        label-for="name"
+                        label-cols-md="3"
+                      >
+                        <validation-provider
+                          #default="{errors}"
+                          name="Nama"
+                          rules="required"
+                        >
+                          <b-form-input
+                            v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                            placeholder="Nama"
+                            v-model="editNameSender"
+                            :state="errors.length > 0 ? false:null"
+                          />
+                          <b-form-input
+                            v-else
+                            placeholder="Nama"
+                            disabled
+                            v-model="items.name_label"
+                          />
+                          <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="NoHP"
+                        label-for="no-hp"
+                        label-cols-md="3"
+                      >
+                        <validation-provider
+                          #default="{errors}"
+                          name="No HP"
+                          rules="required"
+                        >
+                          <b-form-input
+                            v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                            placeholder="No HP"
+                            type="number"
+                            v-model="editNoHPSender"
+                            :state="errors.length > 0 ? false:null"
+                            @input="checkEditNumber"
+                          />
+                          <b-form-input
+                            v-else
+                            placeholder="No HP"
+                            type="number"
+                            disabled
+                            v-model="items.no_hp"
+                          />
+                          <small class="text-primary">{{ errors[0] }}</small>
+                          <small
+                            v-if="errorNumberEdit && idCustomLabelEdit === items.id"
+                            class="text-primary">{{ messageValidateNumber }}
+                          </small>
+                        </validation-provider>
+                      </b-form-group>
+                    </b-col>
+                    <b-col
+                      v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                      md="8"
+                      offset-md="3"
                     >
-                        <feather-icon
-                            icon="EditIcon"
+                      <b-form-group>
+                        <b-form-checkbox
+                          v-model="editSenderIsDefault"
+                        >
+                          Jadikan Default
+                        </b-form-checkbox>
+                      </b-form-group>
+                    </b-col>
+                
+                    <!-- delete and save -->
+                    <transition name="fade">
+                      <b-col
+                        v-if="customLabelEditMode && idCustomLabelEdit === items.id"
+                        class="d-flex justify-content-end"
+                      >
+                        <b-button
+                          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                          variant="outline-primary"
+                          class="mr-1 btin-icon"
+                          @click="deleteSenderLabel(items)"
+                        >
+                          <b-spinner
+                            v-if="loadingDeleteSender"
+                            small
+                          />
+                          Hapus
+                        </b-button>
+                        <b-button
+                          v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                          variant="primary"
+                          class="btn-icon"
+                          :disabled="invalid || errorNumberEdit"
+                          @click.prevent="updateSenderLabel"
+                        >
+                          <b-spinner
+                            v-if="loadingSubmitSender"
+                            small
+                          />
+                          Simpan
+                        </b-button>
+                      </b-col>
+                    </transition>
+                  </b-row>
+              </b-form>
+            </validation-observer>
+          </b-row>
+        </div>
+      </b-overlay>
+
+      <!-- Add sender -->
+      <transition name="fade">
+        <b-row
+          v-if="fieldAddSender"
+          class="mx-3 p-2 mb-2"
+          style="
+              border: 1px solid #E2E2E2;
+              border-radius: 8px;
+          "
+        >
+          <validation-observer
+            ref="formRulesAdd"
+          >
+            <b-form>
+                <b-row class="mb-1 align-items-center">
+                    <b-col cols="auto">
+                        <span>
+                            <strong>
+                                Identitas {{ itemsCustomLabel.length + 1 }}
+                            </strong>
+                        </span>
+                    </b-col>
+                </b-row>
+                <b-row>
+                  <b-col cols="12">
+                    <b-form-group
+                      label="Name"
+                      label-for="name"
+                      label-cols-md="3"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Nama"
+                        rules="required"
+                      >
+                        <b-form-input
+                          id="name"
+                          placeholder="Nama"
+                          v-model="nameSender"
+                          :state="errors.length > 0 ? false:null"
                         />
+                        <small class="text-primary">{{ errors[0] }}</small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+                  <b-col cols="12">
+                    <b-form-group
+                      label="No HP"
+                      label-for="no-hp"
+                      label-cols-md="3"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="No HP"
+                        rules="required"
+                      >
+                        <b-form-input
+                          id="no-hp"
+                          placeholder="No HP"
+                          type="number"
+                          v-model="noHPSender"
+                          :state="errors.length > 0 ? false:null"
+                          @input="checkNumber"
+                        />
+                        <b-row>
+                          <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                        </b-row>
+                        <small
+                          v-if="errorNumber"
+                          class="text-primary">{{ messageValidateNumber }}
+                        </small>
+                      </validation-provider>
+                    </b-form-group>
+                  </b-col>
+                  <b-col
+                    md="8"
+                    offset-md="3"
+                  >
+                    <b-form-group>
+                      <b-form-checkbox
+                        v-model="senderIsDefault"
+                      >
+                        Jadikan Default
+                      </b-form-checkbox>
+                    </b-form-group>
+                  </b-col>
+            
+                  <!-- delete and save -->
+                  <b-col class="d-flex justify-content-end">
+                    <b-button
+                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                      variant="outline-primary"
+                      class="mr-1 btin-icon"
+                      @click="removeFieldAddSender"
+                    >
+                      Hapus
                     </b-button>
-                </b-col>
-            </b-row>
-            <b-row>
-              <b-col cols="12">
-                <b-form-group
-                  label="Name"
-                  label-for="name"
-                  label-cols-md="3"
-                >
-                  <b-form-input
-                    id="name"
-                    placeholder="Nama"
-                  />
-                </b-form-group>
-              </b-col>
-              <b-col cols="12">
-                <b-form-group
-                  label="NoHP"
-                  label-for="no-hp"
-                  label-cols-md="3"
-                >
-                  <b-form-input
-                    id="no-hp"
-                    placeholder="No HP"
-                  />
-                </b-form-group>
-              </b-col>
-        
-              <!-- delete and save -->
-              <b-col class="d-flex justify-content-end">
-                <b-button
-                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                  type="submit"
-                  variant="outline-primary"
-                  class="mr-1 btin-icon"
-                >
-                  Hapus
-                </b-button>
-                <b-button
-                  v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                  type="reset"
-                  variant="primary"
-                  class="btn-icon"
-                >
-                  Simpan
-                </b-button>
-              </b-col>
-            </b-row>
-          </b-form>
-      </b-row>
-      <b-row class="justify-content-center pb-2">
+                    <b-button
+                      v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                      variant="primary"
+                      class="btn-icon"
+                      :disabled="errorNumber"
+                      @click.prevent="submitSender"
+                    >
+                      <b-spinner
+                        v-if="loadingSubmitSender"
+                        small
+                      />
+                      Simpan
+                    </b-button>
+                  </b-col>
+                </b-row>
+            </b-form>
+          </validation-observer>
+        </b-row>
+      </transition>
+      <b-row
+        v-if="itemsCustomLabel.length < 14"
+        class="justify-content-center pb-2"
+      >
         <b-button
             variant="primary"
             class="btn-icon"
+            @click="addSender"
         >
             <feather-icon
                 icon="PlusIcon"
