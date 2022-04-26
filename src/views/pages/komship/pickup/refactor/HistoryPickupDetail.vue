@@ -2533,6 +2533,7 @@
           <b-pagination
             v-model="currentPage"
             :total-rows="totalRows"
+            :per-page="totalPerPage"
             first-number
             last-number
             class="pagination-primary"
