@@ -41,6 +41,7 @@ export default [
       resource: 'Order',
       routeToAddressPickup: 'kompship-pickup',
       routeToAddProduct: 'add-produk',
+      routeToAddressSetting: 'kompship-pickup',
       routeDetail: 'detail-add-order',
       action: 'manage',
       breadcrumb: [

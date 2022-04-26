@@ -127,6 +127,8 @@ export default {
               this.$refs.submitformkirimemail.click()
             }
             if (data.message === 'Akun Kamu Terdaftar Sebagai Management, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+            if (data.message === 'Akun Kamu Terdaftar Sebagai Talent, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+            if (data.message === 'Akun Kamu Terdaftar Sebagai Talent Partner Komship, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
             this.loading = false
           }).catch(() => {
             this.$toast({

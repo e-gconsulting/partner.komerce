@@ -1,12 +1,25 @@
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import {
+  BModal,
+  VBModal,
+} from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
 import httpKomship2 from '../setting-kompship/http_komship2'
 
 export default {
+  components: {
+    BModal,
+  },
+  directives: {
+    'b-modal': VBModal,
+    Ripple,
+  },
   data() {
     return {
       profile: [],
       quickType: null,
       mutationBank: null,
+      customLabel: null,
       isGetting: false,
     }
   },
@@ -60,6 +73,10 @@ export default {
             }, 2000)
           }
         })
+    },
+    setCustomLabel() {
+      console.log(this.customLabel)
+      if (this.customLabel === false) this.$refs['modal-set-custom-label'].show()
     },
   },
 }
