@@ -91,7 +91,7 @@ export default {
           this.error = ''
           this.$refs.inputkirimemail_email.value = this.userEmail
           this.$refs.inputkirimemail_full_name.value = this.fullname
-          httpKompack.post('/v1/register', {
+          httpKompack.post('/kompack/v1/register', {
             full_name: this.fullname,
             no_hp: this.nomorHandphone,
             email: this.userEmail,
@@ -177,7 +177,7 @@ export default {
             email: this.userEmailExisting,
           }).then(response => {
             this.loading = false
-            this.$router.push({ name: 'komship-register-validate' })
+            this.$router.push({ name: 'verified-kompack' })
           }).catch(() => {
             this.loading = false
             this.$toast({
