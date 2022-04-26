@@ -173,7 +173,7 @@ export default {
       this.loading = true
       this.$refs.loginFormExisting.validate().then(success => {
         if (success) {
-          this.$http.put('/register/partner-existing', {
+          this.$http.put('kompack/v1/register/existing', {
             email: this.userEmailExisting,
           }).then(response => {
             this.loading = false
