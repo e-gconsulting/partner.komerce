@@ -181,7 +181,6 @@ export default {
           const { data } = response.data
           this.itemsCustomLabel = data
           const getDefault = this.itemsCustomLabel.find(items => items.is_default === 1)
-          console.log('tes')
           const getSenderIdentity1 = this.itemsCustomLabel.find(items => items.name_label === this.profile.partner_name)
           this.senderIdentity1Name = getSenderIdentity1.name_label
           this.senderIdentity1NoHp = getSenderIdentity1.no_hp
