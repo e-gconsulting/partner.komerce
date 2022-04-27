@@ -102,6 +102,9 @@ export default {
       messageErrorAddressDetail: false,
       oldGrandTotal: null,
       loadingSearchDestination: false,
+
+      itemsCustomLabel: [],
+      customLabel: null,
     }
   },
   created() {
@@ -115,6 +118,7 @@ export default {
         this.getProduct()
         this.addToCart()
         this.getRekening()
+        this.getCustomLabel()
       })
     if (localStorage.getItem('productSelected') && localStorage.productHistory) {
       try {
@@ -165,6 +169,17 @@ export default {
       } else {
         this.sesuaiNominal = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
       }
+    },
+    getCustomLabel() {
+      this.$http_komship.get(`/v1/custom-labels/${this.profile.partner_id}`)
+        .then(response => {
+          const { data } = response.data
+          this.itemsCustomLabel = data
+          const defaultLabel = this.itemsCustomLabel.find(items => items.is_default === 1)
+          this.customLabel = defaultLabel
+        }).catch(err => {
+          console.log(err)
+        })
     },
     getAddress() {
       this.$http_komship.get('/v1/address').then(async response => {
@@ -518,6 +533,7 @@ export default {
           })
       } else {
         this.isCalculate = false
+        this.isCalculateOnExpedition = false
         this.loadingCalculate = false
       }
     },
@@ -602,6 +618,7 @@ export default {
         this.listShipping = []
         this.isShipping = false
         this.isCalculate = false
+        this.isCalculateOnExpedition = false
         this.loadingOptionExpedition = false
       }
     },
@@ -827,7 +844,9 @@ export default {
         shipping_cashback: this.cashback,
         net_profit: this.netProfit,
         cart: this.cartId,
+        custom_label_id: this.customLabel,
       }
+      console.log(this.formData)
     },
     async submit(order) {
       this.checkValidation()

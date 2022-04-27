@@ -63,6 +63,28 @@
         </v-select>
       </b-col>
     </b-row>
+    <b-row
+      v-if="profile.partner_is_custom_label"
+      class="mb-1 align-items-center"
+    >
+      <b-col
+        md="3"
+        class="my-auto"
+      >
+        <b-row>
+          <span class="text-lg ml-1">Kirim Sebagai</span>
+        </b-row>
+        <small>*nama Pengirim akan muncul di Label Resi</small>
+      </b-col>
+      <b-col md="4">
+        <v-select
+          v-model="customLabel"
+          :options="itemsCustomLabel"
+          label="name_label"
+          :reduce="items => items.id"
+        />
+      </b-col>
+    </b-row>
     <b-row class="mb-1">
       <b-col
         md="3"
@@ -550,14 +572,6 @@
       </b-row>
     </section>
 
-    <b-overlay
-      variant="light"
-      :show="loadingWrapperOtherCost"
-      spinner-variant="primary"
-      blur="0"
-      opacity=".5"
-      rounded="sm"
-    >
       <div
         v-if="loadingWrapperOtherCost"
         class="p-1 mt-2"
@@ -722,7 +736,6 @@
           </b-row>
         </b-collapse>
       </div>
-    </b-overlay>
 
     <div
       v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
