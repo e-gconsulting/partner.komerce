@@ -51,7 +51,8 @@ export default {
       errorNumber: false,
       errorNumberEdit: false,
       messageErrorLengthSenderName: false,
-      senderIdentity: null,
+      senderIdentity1Name: null,
+      senderIdentity1NoHp: null,
       indexIdentity: 1,
     }
   },
@@ -181,7 +182,8 @@ export default {
           this.itemsCustomLabel = data
           const getDefault = this.itemsCustomLabel.find(items => items.is_default === 1)
           const getSenderIdentity1 = this.itemsCustomLabel.find(items => items.name_label === this.profile.partner_name)
-          this.senderIdentity = getSenderIdentity1
+          this.senderIdentity1Name = getSenderIdentity1.name_label
+          this.senderIdentity1NoHp = getSenderIdentity1.no_hp
           if (getSenderIdentity1 !== undefined) {
             // eslint-disable-next-line no-plusplus
             for (let x = 0; x < this.itemsCustomLabel.length; x++) {
