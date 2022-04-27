@@ -1,7 +1,7 @@
 <b-card>
-    <h3 class="font-bold mb-2">Fitur Pendukung</h3>
-    <div class="p-1" style="border:1px solid #E2E2E2;border-radius:16px">
-        <h3 class="m-1 mb-1 font-bold">Order</h3>
+    <h3 class="font-bold mb-2 text-black">Fitur Pendukung</h3>
+    <div class="p-1 mb-2" style="border:1px solid #E2E2E2;border-radius:16px">
+        <h4 class="m-1 mb-1 font-bold text-black">Order</h4>
         <b-row>
             <b-col v-if="isGetting" md="4">
                 <b-card img-src="@/assets/images/banner/input-cepat.svg" style="border:1px solid #E2E2E2;border-radius:20px;" img-alt="Input Cepat" img-top>
@@ -33,40 +33,47 @@
                     </b-card-text>
                 </b-card>
             </b-col>
-            <b-col v-if="isGetting" md="4">
-                <b-card img-src="@/assets/images/banner/illustration-custom-label.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
-                    <b-card-title class="d-flex justify-between">
-                        <span class="font-bold text-primary">Custom Label</span>
-                        <b-form-checkbox
-                            v-model="customLabel"
-                            switch
-                            @input="setCustomLabel()"
-                        />
-                    </b-card-title>
-                    <b-card-text>
-                        Memungkinkan kamu custom data pengirim. Cocok buat dropship atau E-comerce lebih dari 1
-                    </b-card-text>
-                    <b-row class="justify-content-center">
-                        <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            v-b-modal.modal-set-custom-label
-                            variant="primary"
-                            class="btn-icon"
-                        >
-                            Sesuaikan
-                        </b-button>
-                    </b-row>
-                </b-card>
-            </b-col>
         </b-row>
     </div>
+
+    <div class="p-1" style="border:1px solid #E2E2E2;border-radius:16px">
+      <h4 class="m-1 mb-1 font-bold text-black">Pickup & Label</h4>
+      <b-row>
+          <b-col v-if="isGetting" md="4">
+              <b-card img-src="@/assets/images/banner/illustration-custom-label.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
+                  <b-card-title class="d-flex justify-between">
+                      <span class="font-bold text-primary">Custom Label</span>
+                      <b-form-checkbox
+                          v-model="customLabel"
+                          switch
+                          @input="setCustomLabel()"
+                      />
+                  </b-card-title>
+                  <b-card-text>
+                      Memungkinkan kamu custom data pengirim. Cocok buat dropship atau nama brand lebih dari satu.
+                  </b-card-text>
+                  <b-row class="justify-content-center">
+                      <b-button
+                          v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                          v-b-modal.modal-set-custom-label
+                          variant="primary"
+                          class="btn-icon"
+                      >
+                          Sesuaikan
+                      </b-button>
+                  </b-row>
+              </b-card>
+          </b-col>
+      </b-row>
+  </div>
 
     <!-- Modal Custom Label -->
     <b-modal
       id="modal-set-custom-label"
-      centered
       hide-footer
       modal-class="modal-primary"
+      scrollable
+      footer-class="footer-class"
     >
       <b-row class="justify-content-center mb-1">
           <h4 class="text-black">
@@ -88,6 +95,54 @@
           opacity=".5"
           rounded="sm"
         >
+
+        <b-row
+            class="mx-3 p-2 mb-2"
+            style="
+                border: 1px solid #E2E2E2;
+                border-radius: 8px;
+            "
+          >
+                  <b-row class="mb-1 align-items-center">
+                      <b-col cols="auto">
+                          <span>
+                              <strong>
+                                  Identitas 1
+                              </strong>
+                          </span>
+                      </b-col>
+                  </b-row>
+                  <b-row>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="Name"
+                        label-for="name"
+                        label-cols-md="3"
+                      >
+                          <b-form-input
+                            placeholder="Nama"
+                            disabled
+                            v-model="senderIdentity.name_label"
+                          />
+                      </b-form-group>
+                    </b-col>
+                    <b-col cols="12">
+                      <b-form-group
+                        label="NoHP"
+                        label-for="no-hp"
+                        label-cols-md="3"
+                      >
+                          <b-form-input
+                            placeholder="No HP"
+                            type="number"
+                            disabled
+                            v-model="senderIdentity.no_hp"
+                          />
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+          </b-row>
+
         <div
           v-for="(items, index) in itemsCustomLabel"
           :key="index+1"
@@ -108,7 +163,7 @@
                       <b-col cols="auto">
                           <span>
                               <strong>
-                                  Identitas {{ index+1 }}
+                                  Identitas {{ indexIdentity + index +1 }}
                               </strong>
                           </span>
                       </b-col>
@@ -280,7 +335,7 @@
                     <b-col cols="auto">
                         <span>
                             <strong>
-                                Identitas {{ itemsCustomLabel.length + 1 }}
+                                Identitas {{ indexIdentity + itemsCustomLabel.length + 1 }}
                             </strong>
                         </span>
                     </b-col>
@@ -302,8 +357,21 @@
                           placeholder="Nama"
                           v-model="nameSender"
                           :state="errors.length > 0 ? false:null"
+                          :formatter="formatNameSender"
+                          @keypress="validateInputNameSender"
                         />
-                        <small class="text-primary">{{ errors[0] }}</small>
+                        <b-row class="justify-content-between">
+                          <small class="text-primary ml-1">{{ errors[0] }}</small>
+                          <small class="mr-1">
+                            {{ nameSender.length }}/30
+                          </small>
+                        </b-row>
+                        <small
+                              v-if="messageErrorLengthSenderName"
+                              class="text-primary"
+                            >
+                              *hindari menggunakan simbol (/) (=) (:) (;)
+                            </small>
                       </validation-provider>
                     </b-form-group>
                   </b-col>

@@ -343,7 +343,7 @@
           </b-col>
         </b-row>
         <b-row
-          v-if="orderData.notes"
+          v-if="orderData.grandtotal !== orderData.old_grandtotal"
           class="mt-1"
         >
           <b-col lg="3" />

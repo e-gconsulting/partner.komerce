@@ -5,6 +5,7 @@
 /* eslint-disable prefer-destructuring */
 import moment from 'moment'
 import vSelect from 'vue-select'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship2 from '../../setting-kompship/http_komship2'
 import '@core/scss/vue/libs/vue-select.scss'
 
@@ -19,7 +20,7 @@ export default {
       addressLength: null,
       customerId: null,
       customerName: '',
-      customerPhone: null,
+      customerPhone: '',
       customerAddress: '',
       customerList: [],
       phoneCode: '+62',
@@ -119,6 +120,16 @@ export default {
         this.addToCart()
         this.getRekening()
         this.getCustomLabel()
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        })
       })
     if (localStorage.getItem('productSelected') && localStorage.productHistory) {
       try {
@@ -176,6 +187,13 @@ export default {
           const { data } = response.data
           this.itemsCustomLabel = data
           const defaultLabel = this.itemsCustomLabel.find(items => items.is_default === 1)
+          // eslint-disable-next-line no-plusplus
+          for (let x = 0; x < this.itemsCustomLabel.length; x++) {
+            if (this.itemsCustomLabel[x].is_default === 1) {
+              this.itemsCustomLabel.splice(x, 1)
+            }
+          }
+          this.itemsCustomLabel.unshift(defaultLabel)
           this.customLabel = defaultLabel
         }).catch(err => {
           console.log(err)
@@ -700,9 +718,11 @@ export default {
               this.isCalculate = true
               this.loadingCalculate = false
             }
+            this.loadingCalculate = false
           }).catch(async err => {
             this.calculate(getAdditional)
             this.loadingWrapperOtherCost = false
+            this.loadingCalculate = false
           })
         } else {
           this.isCalculate = false
@@ -778,8 +798,10 @@ export default {
               this.loadingCalculate = false
             }
             this.loadingWrapperOtherCost = false
+            this.loadingCalculate = false
           }).catch(async () => {
             this.loadingWrapperOtherCost = false
+            this.loadingCalculate = false
             this.calculateOnExpedition(getAdditional)
           })
         } else {
@@ -846,7 +868,6 @@ export default {
         cart: this.cartId,
         custom_label_id: this.customLabel,
       }
-      console.log(this.formData)
     },
     async submit(order) {
       this.checkValidation()
@@ -928,7 +949,12 @@ export default {
       }
     },
     validateInputPhoneCustomer(e) {
-      if (e.keyCode === 46) {
+      if (this.customerPhone.length === 0) {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        }
+      }
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
         e.preventDefault()
       }
     },

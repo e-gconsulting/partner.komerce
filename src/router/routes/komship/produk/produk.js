@@ -44,6 +44,7 @@ export default [
     meta: {
       name: pageName,
       resource: 'Produk',
+      navActiveLink: 'data-produk',
       routeAllProduk: 'data-produk',
       routeDraftProduk: 'data-produk',
       action: 'manage',
