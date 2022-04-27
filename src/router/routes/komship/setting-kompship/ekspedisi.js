@@ -7,6 +7,7 @@ export default [
     component: () => import('@/views/pages/komship/setting-kompship/Ekspedisi.vue'),
     meta: {
       name: pageName.singular,
+      routeToAddressSetting: 'kompship-pickup',
       resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [

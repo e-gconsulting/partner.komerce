@@ -71,22 +71,4 @@ export default [
       ],
     },
   },
-  {
-    path: '/detail-orderan-pickup',
-    name: 'detail-orderan-pickup-after',
-    component: () => import('@/views/pages/komship/pickup/refactor/AddPickupDetailsAfter'),
-    meta: {
-      name: 'detail-orderan-pickup-after',
-      resource: 'Pickup',
-      routeToProfile: 'kompship-profile',
-      routeBack: 'ajukan-pickup',
-      action: 'manage',
-      breadcrumb: [
-        {
-          text: 'Detail Orderan Pickup',
-          active: true,
-        },
-      ],
-    },
-  },
 ]

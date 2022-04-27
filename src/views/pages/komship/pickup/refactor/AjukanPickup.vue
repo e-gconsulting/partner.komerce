@@ -104,16 +104,14 @@
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="flat-dark"
                 class="btn-icon border ml-1"
-                @click="showTimePicker = !showTimePicker"
               >
                 {{ timeValue }}
               </b-button>
               <b-popover
-                :show.sync="showTimePicker"
                 target="popover-button-3"
                 placement="bottom"
-                triggers="hover"
                 variant="primary"
+                triggers="focus"
               >
                 <b-time
                   v-model="timeValue"
@@ -126,7 +124,7 @@
               </b-popover>
             </b-row>
             <small
-              v-if="isNotCorrectTime"
+              v-if="isNotCorrectTime && isNotCorrectDate"
               class="text-primary mt-50"
             >
               *Tidak bisa angkut jam pickup kurang dari jam saat ini
@@ -858,6 +856,7 @@ export default {
       timeValueText: '09 : 00',
       timeValue: moment().format('HH:mm'),
       isNotCorrectTime: true,
+      isNotCorrectDate: true,
       profile: null,
       chosenVehicle: '',
 
@@ -954,8 +953,8 @@ export default {
     timeValue: {
       handler(newVal, oldVal) {
         const newMom = moment(newVal, 'HHmm')
-        const today = moment()
-        if (newMom.isBefore(today) === true) {
+        const timeToday = moment()
+        if (newMom.isBefore(timeToday) === true) {
           this.isNotCorrectTime = true
         } else {
           this.isNotCorrectTime = false
@@ -1017,6 +1016,23 @@ export default {
     onChangeDate() {
       this.dateLabel = this.changeDate(this.dateValue)
       this.changeDate(this.dateValue)
+      const dateToday = moment().format('YYYY-M-DD')
+
+      // Date
+      if (moment(dateToday).isBefore(this.changeDate(this.dateValue, 2)) === true) {
+        this.isNotCorrectTime = false
+        this.isNotCorrectDate = false
+      } else {
+        // Time
+        const newMom = moment(this.timeValue, 'HHmm')
+        const timeToday = moment()
+        if (newMom.isBefore(timeToday) === true) {
+          this.isNotCorrectTime = true
+        } else {
+          this.isNotCorrectTime = false
+        }
+        this.isNotCorrectDate = true
+      }
     },
     onChangeTime(ctx) {
       if (ctx && ctx.formatted) this.timeValueText = this.getTimeFormatted(ctx.formatted)
