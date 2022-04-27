@@ -21,6 +21,7 @@ export default [
     name: 'detail-order',
     component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
     meta: {
+      navActiveLink: 'data-order',
       name: 'detail-order',
       resource: 'Order',
       action: 'manage',

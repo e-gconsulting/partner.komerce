@@ -10,7 +10,7 @@ const token = jwt.getToken()
 // instance for main komerce
 const axiosIns = axios.create({
   baseURL: process.env.VUE_APP_BASE_URL,
-  timeout: 14000,
+  timeout: 12000,
   headers: {
     'Application-Name': 'Web Komerce',
   },
@@ -22,7 +22,7 @@ const komshipAxiosIns = axios.create({
     Authorization: `Bearer ${token}`,
   },
   baseURL: process.env.VUE_APP_BASE_URL_KOMSHIP,
-  timeout: 14000,
+  timeout: 12000,
 })
 
 axiosIns.interceptors.response.use(

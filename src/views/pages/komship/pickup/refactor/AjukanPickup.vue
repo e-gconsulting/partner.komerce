@@ -370,7 +370,7 @@
       hide-footer
       hide-header
       modal-class="modal-primary"
-      centered
+      scrollable
     >
 
       <b-row class="justify-content-end mt-50 mr-50">
@@ -423,19 +423,10 @@
     </b-modal>
 
     <!-- Popup order -->
-    <b-modal
-      id="popupOrder"
-      ref="popup-order"
-      hide-footer
-      modal-class="modal-primary"
-      centered
-      size="xl"
-    >
-      <data-order
-        :pass-address-id="addressId"
-        @passDataToParent="getDataOrderToStore"
-      />
-    </b-modal>
+    <data-order
+      :pass-address-id="addressId"
+      @passDataToParent="getDataOrderToStore"
+    />
 
     <!-- Modal Success Pickup -->
     <b-modal

@@ -50,6 +50,9 @@ export default {
       messageValidateNumber: '',
       errorNumber: false,
       errorNumberEdit: false,
+      messageErrorLengthSenderName: false,
+      senderIdentity: null,
+      indexIdentity: 1,
     }
   },
   created() {
@@ -176,6 +179,26 @@ export default {
         .then(response => {
           const { data } = response.data
           this.itemsCustomLabel = data
+          const getDefault = this.itemsCustomLabel.find(items => items.is_default === 1)
+          const getSenderIdentity1 = this.itemsCustomLabel.find(items => items.name_label === this.profile.partner_name)
+          this.senderIdentity = getSenderIdentity1
+          if (getSenderIdentity1 !== undefined) {
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < this.itemsCustomLabel.length; x++) {
+              if (this.itemsCustomLabel[x].name_label === this.profile.partner_name) {
+                this.itemsCustomLabel.splice(x, 1)
+              }
+            }
+          }
+          if (getDefault !== undefined) {
+            // eslint-disable-next-line no-plusplus
+            for (let x = 0; x < this.itemsCustomLabel.length; x++) {
+              if (this.itemsCustomLabel[x].is_default === 1) {
+                this.itemsCustomLabel.splice(x, 1)
+              }
+            }
+            this.itemsCustomLabel.unshift(getDefault)
+          }
           this.loadingWrapperCustom = false
         }).catch(err => {
           console.log(err)
@@ -202,6 +225,9 @@ export default {
                   variant: 'success',
                 },
               }, 2000)
+              this.nameSender = ''
+              this.noHPSender = ''
+              this.senderIsDefault = false
               this.getCustomLabel()
               this.fieldAddSender = false
               this.loadingSubmitSender = false
@@ -211,7 +237,7 @@ export default {
                 props: {
                   title: 'Failure',
                   icon: 'AlertCircleIcon',
-                  text: err.response.data.message,
+                  text: err.response.message,
                   variant: 'danger',
                 },
               }, 2000)
@@ -330,6 +356,17 @@ export default {
       } else {
         this.errorNumber = false
         this.messageValidateNumber = ''
+      }
+    },
+    formatNameSender(e) {
+      return String(e).substring(0, 30)
+    },
+    validateInputNameSender(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthSenderName = true
+      } else {
+        this.messageErrorLengthSenderName = false
       }
     },
   },
