@@ -198,7 +198,7 @@ export default {
             this.itemsCustomLabel.unshift(defaultLabel)
             this.customLabel = defaultLabel
           }
-          if (isNotDefaultLabel !== undefined) {
+          if (isNotDefaultLabel !== undefined && defaultLabel === undefined) {
             this.customLabel = isNotDefaultLabel
           }
         }).catch(err => {
