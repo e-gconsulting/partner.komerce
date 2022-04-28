@@ -199,7 +199,7 @@ export default {
             this.customLabel = defaultLabel
           }
           if (isNotDefaultLabel !== undefined && defaultLabel === undefined) {
-            this.customLabel = isNotDefaultLabel
+            this.customLabel = isNotDefaultLabel.id
           }
         }).catch(err => {
           console.log(err)
@@ -874,6 +874,9 @@ export default {
         cart: this.cartId,
         custom_label_id: this.customLabel,
       }
+    },
+    handleCustomLabel(items) {
+      this.customLabel = items
     },
     async submit(order) {
       this.checkValidation()
