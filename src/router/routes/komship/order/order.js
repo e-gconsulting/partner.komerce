@@ -22,6 +22,7 @@ export default [
     component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
     meta: {
       navActiveLink: 'data-order',
+      editOrder: 'edit-order',
       name: 'detail-order',
       resource: 'Order',
       action: 'manage',
@@ -99,6 +100,16 @@ export default [
           active: true,
         },
       ],
+    },
+  },
+  {
+    path: '/edit',
+    name: 'edit-order',
+    component: () => import('@/views/pages/komship/order/EditOrder/EditOrder.vue'),
+    meta: {
+      navActiveLink: 'data-order',
+      resource: 'Order',
+      action: 'manage',
     },
   },
 ]
