@@ -878,7 +878,7 @@
                             size="16"
                           />
                         </span>
-                        <span class="text-black">{{ profile.partner_business_name }}</span>
+                        <span class="text-black">{{ itemsPrint.custom_label_id === 0 ? profile.partner_business_name : itemsPrint.custom_label.name_label }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -888,7 +888,7 @@
                             size="17"
                           />
                         </span>
-                        <span class="text-black">{{ profile.partner_no_hp_business }}</span>
+                        <span class="text-black">{{ itemsPrint.custom_label_id === 0 ? profile.partner_no_hp_business : itemsPrint.custom_label.no_hp }}</span>
                       </b-list-group-item>
 
                       <b-list-group-item class="d-flex border-0 align-items-center px-0 pt-0 pb-50">
@@ -1235,7 +1235,7 @@
                             class="ml-50"
                           >
                             <strong>
-                              {{ profile.partner_business_name }}
+                              {{ itemsPrint.custom_label_id === 0 ? profile.partner_business_name : itemsPrint.custom_label.name_label }}
                             </strong>
                           </span>
                         </li>
@@ -1251,7 +1251,7 @@
                             class="ml-50"
                           >
                             <strong>
-                              {{ profile.partner_no_hp_business }}
+                              {{ itemsPrint.custom_label_id === 0 ? profile.partner_no_hp_business : itemsPrint.custom_label.no_hp }}
                             </strong>
                           </span>
                         </li>
@@ -1635,7 +1635,7 @@
                         class="ml-50"
                       >
                         <strong>
-                          {{ profile.partner_business_name }}
+                          {{ itemsPrint.custom_label_id === 0 ? profile.partner_business_name : itemsPrint.custom_label.name_label }}
                         </strong>
                       </span>
                     </li>
@@ -1651,7 +1651,7 @@
                         class="ml-50"
                       >
                         <strong>
-                          {{ profile.partner_no_hp_business }}
+                          {{ itemsPrint.custom_label_id === 0 ? profile.partner_no_hp_business : itemsPrint.custom_label.no_hp }}
                         </strong>
                       </span>
                     </li>
@@ -2020,7 +2020,7 @@
                         class="ml-50"
                       >
                         <strong>
-                          {{ profile.partner_business_name }}
+                          {{ itemsPrint.custom_label_id === 0 ? profile.partner_business_name : itemsPrint.custom_label.name_label }}
                         </strong>
                       </span>
                     </li>
@@ -2036,7 +2036,7 @@
                         class="ml-50"
                       >
                         <strong>
-                          {{ profile.partner_no_hp_business }}
+                          {{ itemsPrint.custom_label_id === 0 ? profile.partner_no_hp_business : itemsPrint.custom_label.no_hp }}
                         </strong>
                       </span>
                     </li>
