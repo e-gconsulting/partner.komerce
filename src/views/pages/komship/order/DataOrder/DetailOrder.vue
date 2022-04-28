@@ -10,20 +10,40 @@
         <b-icon-chevron-left />
       </b-button>
     </b-row>
-    <div class="d-flex justify-between">
-      <h3 class="font-bold mb-3">
-        Detail Order
-      </h3>
-      <b-button
-        v-if="orderData.order_status === 'Diajukan'"
-        variant="default"
-        size="sm"
-        class="my-auto text-primary font-bold"
-        @click="cancelOrder"
-      >
-        Batal
-      </b-button>
-    </div>
+    <b-row class="justify-content-between">
+      <div>
+        <h3 class="font-bold mb-3 ml-1">
+          Detail Order
+        </h3>
+      </div>
+      <div class="mr-2">
+        <b-button
+          v-if="orderData.order_status === 'Diajukan'"
+          variant="flat-primary"
+          size="sm"
+          class="my-auto text-primary font-bold mr-50"
+          @click="cancelOrder"
+        >
+          Batal
+        </b-button>
+        <!-- <b-button
+          variant="primary"
+          size="sm"
+          class="btn-icon mr-50"
+          tag="router-link"
+          :to="{ name: $route.meta.editOrder, params: { idOrder: idEditOrder } }"
+        >
+          Edit
+        </b-button>
+        <b-button
+          variant="flat-primary"
+          size="sm"
+          class="btn-icon mr-50"
+        >
+          Delete
+        </b-button> -->
+      </div>
+    </b-row>
     <b-container>
       <h4 class="font-bold mb-1">
         Informasi Order
@@ -343,7 +363,7 @@
           </b-col>
         </b-row>
         <b-row
-          v-if="orderData.notes"
+          v-if="orderData.grandtotal !== orderData.old_grandtotal"
           class="mt-1"
         >
           <b-col lg="3" />
@@ -476,6 +496,7 @@ export default {
       itemAwb: [],
       isLoading: false,
       statusNetProfit: null,
+      idEditOrder: this.$route.params.order_id,
     }
   },
   async created() {
@@ -483,6 +504,10 @@ export default {
     const dataProfile = await profile.data.data
     this.profile = await dataProfile
     this.fetchData()
+  },
+  mounted() {
+    this.idEditOrder = this.$route.params.order_id
+    console.log(this.idEditOrder)
   },
   methods: {
     lacakresi() {
