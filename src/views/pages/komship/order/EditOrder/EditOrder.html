@@ -1,15 +1,8 @@
 <b-card>
     <b-row class="d-flex justify-between px-1 mb-2 font-bold">
-      <h3 class="font-bold">
-        Tambah Order
+      <h3 class="font-bold text-black">
+        Edit Order
       </h3>
-      <span class="d-flex my-auto">
-        Pengiriman via <img
-          src="@/assets/images/logo/Komship.png"
-          style="margin-left:7px;"
-          alt="Komship"
-        >
-      </span>
     </b-row>
     <b-row
       class="text-lg"
@@ -63,7 +56,7 @@
         </v-select>
       </b-col>
     </b-row>
-    <b-row
+    <!-- <b-row
       v-if="profile.partner_is_custom_label"
       class="mb-1 align-items-center"
     >
@@ -82,10 +75,9 @@
           :options="itemsCustomLabel"
           label="name_label"
           :reduce="items => items.id"
-          @input="handleCustomLabel"
         />
       </b-col>
-    </b-row>
+    </b-row> -->
     <b-row class="mb-1">
       <b-col
         md="3"
@@ -164,7 +156,7 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
+        <span class="text-lg">Tujuan</span>
       </b-col>
       <b-col md="4">
         <v-select
@@ -225,37 +217,6 @@
       class="p-2"
       style="border:1px solid #E2E2E2;border-radius:18px"
     >
-    <b-row class="mb-1">
-      <b-col md="7" />
-
-      <b-col
-        md="5"
-        class="d-flex justify-end"
-      >
-        <span
-          class="w-48 text-sm"
-          style="color:#828282;"
-        >*Simpan setting ini untuk Orderan Selanjutnya</span>
-        <b-img
-          v-if="productSelected.length === 0"
-          src="@/assets/images/icons/archive-tick.png"
-          class="my-auto cursor-pointer"
-          title="Tambahkan Produk Terlebih Dahulu"
-        />
-        <b-img
-          v-if="productSelected.length >= 1 && !productHistory"
-          src="@/assets/images/icons/archive-tick-ready.png"
-          class="my-auto cursor-pointer"
-          @click="saveProductHistory"
-        />
-        <b-img
-          v-if="productSelected.length >= 1 && productHistory"
-          src="@/assets/images/icons/archive-tick-active.png"
-          class="my-auto cursor-pointer"
-          @click="removeProductHistory"
-        />
-      </b-col>
-    </b-row>
       <b-row class="mb-1">
         <b-col
           md="3"
@@ -404,9 +365,42 @@
             v-if="data.item.is_variant < 1 || data.item.variantSubmit"
             class="text-lg"
           >Rp {{ formatNumber(data.item.price) }}</span>
+          <span
+            v-else
+            class="text-lg"
+          >Rp {{ formatNumber(data.item.price) }}</span>
         </template>
         <template #cell(amount)="data">
           <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
+            <div class="d-flex justify-center">
+              <b-button
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.quantity <= 1"
+                @click="setQuantity('minus',data.index)"
+              >
+                <span class="font-bold text-lg">-</span>
+              </b-button>
+              <span
+                class="text-lg"
+                style="margin: 0 10px"
+              >{{ data.item.quantity }}</span>
+              <b-button
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
+                @click="setQuantity('plus',data.index)"
+              >
+                <span class="font-bold text-lg">+</span>
+              </b-button>
+            </div>
+            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia:</span>
+          </div>
+          <div v-else>
             <div class="d-flex justify-center">
               <b-button
                 variant="outline-primary"
@@ -445,6 +439,10 @@
             v-if="data.item.is_variant < 1 || data.item.variantSubmit"
             class="text-lg d-flex justify-center"
           >Rp {{ formatNumber(data.item.subtotal) }}</span>
+          <span
+            v-else
+            class="text-lg d-flex justify-center"
+          >Rp {{ formatNumber(data.item.subtotal) }}</span>
         </template>
         <template #cell(action)="data">
           <div class="d-flex justify-center">
@@ -463,35 +461,6 @@
       class="p-2 mt-1"
       style="border:1px solid #E2E2E2;border-radius:18px"
     >
-      <b-row class="mb-1">
-        <b-col md="7" />
-        <b-col
-          md="5"
-          class="d-flex justify-end"
-        >
-          <span
-            class="w-48 text-sm"
-            style="color:#828282;"
-          >*Simpan setting ini untuk Orderan Selanjutnya</span>
-          <b-img
-            v-if="paymentMethod === null"
-            src="@/assets/images/icons/archive-tick.png"
-            class="my-auto cursor-pointer"
-          />
-          <b-img
-            v-if="paymentMethod !== null && !paymentHistory"
-            src="@/assets/images/icons/archive-tick-ready.png"
-            class="my-auto cursor-pointer"
-            @click="savePaymentHistory"
-          />
-          <b-img
-            v-if="paymentMethod !== null && paymentHistory"
-            src="@/assets/images/icons/archive-tick-active.png"
-            class="my-auto cursor-pointer"
-            @click="removePaymentHistory"
-          />
-        </b-col>
-      </b-row>
       <b-row class="mb-1">
         <b-col
           md="3"

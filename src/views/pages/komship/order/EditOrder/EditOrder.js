@@ -106,6 +106,10 @@ export default {
 
       itemsCustomLabel: [],
       customLabel: null,
+
+      idOrder: this.$route.params.idOrder,
+      partnerId: null,
+      itemsEditOrder: [],
     }
   },
   created() {
@@ -120,6 +124,7 @@ export default {
         this.addToCart()
         this.getRekening()
         this.getCustomLabel()
+        this.fetchDataOrder()
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,
@@ -131,33 +136,22 @@ export default {
           },
         })
       })
-    if (localStorage.getItem('productSelected') && localStorage.productHistory) {
-      try {
-        this.productSelected = JSON.parse(localStorage.getItem('productSelected'))
-        this.productHistory = localStorage.productHistory
-      } catch (e) {
-        localStorage.removeItem('productSelected')
-        localStorage.removeItem('productHistory')
-      }
-    }
-    if (localStorage.getItem('rekening')) {
-      try {
-        this.rekening = JSON.parse(localStorage.getItem('rekening'))
-      } catch (e) {
-        localStorage.removeItem('rekening')
-      }
-    }
-    if (localStorage.paymentMethod && localStorage.paymentHistory) {
-      try {
-        this.paymentMethod = localStorage.paymentMethod
-        this.paymentHistory = localStorage.paymentHistory
-      } catch (e) {
-        localStorage.removeItem('paymentMethod')
-        localStorage.removeItem('paymentHistory')
-      }
-    }
   },
   methods: {
+    fetchDataOrder() {
+      this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
+        .then(response => {
+          const { data } = response.data
+          this.itemsEditOrder = data
+          console.log(this.itemsEditOrder)
+          this.customerName = this.itemsEditOrder.customer_name
+          this.customerPhone = this.itemsEditOrder.customer_phone
+          this.customerAddress = this.itemsEditOrder.customer_address
+          this.product = this.itemsEditOrder.product.forEach(this.addProduct)
+          this.paymentMethod = this.itemsEditOrder.payment_method
+          this.shipping = this.itemsEditOrder.shipping
+        })
+    },
     formatDate(date) {
       const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
       const day = moment(date).format('DD')
@@ -196,10 +190,10 @@ export default {
               }
             }
             this.itemsCustomLabel.unshift(defaultLabel)
-            this.customLabel = defaultLabel.id
+            this.customLabel = defaultLabel
           }
-          if (isNotDefaultLabel !== undefined && defaultLabel === undefined) {
-            this.customLabel = isNotDefaultLabel.id
+          if (isNotDefaultLabel !== undefined) {
+            this.customLabel = isNotDefaultLabel
           }
         }).catch(err => {
           console.log(err)
@@ -285,6 +279,9 @@ export default {
         })
     },
     addProduct(itemSelected) {
+      const findProduct = this.productList.find(items => items.product_id === itemSelected.product_id)
+      console.log('itemSelected', itemSelected)
+      console.log('findProduct', this.productSelected)
       if (itemSelected) {
         const result = this.productSelected.find(item => item.product_id === itemSelected.product_id)
         if (result === undefined || result.length === 0 || result.variantSubmit) {
@@ -874,9 +871,6 @@ export default {
         cart: this.cartId,
         custom_label_id: this.customLabel,
       }
-    },
-    handleCustomLabel(items) {
-      this.customLabel = items
     },
     async submit(order) {
       this.checkValidation()
