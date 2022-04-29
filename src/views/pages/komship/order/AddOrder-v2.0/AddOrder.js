@@ -196,7 +196,7 @@ export default {
               }
             }
             this.itemsCustomLabel.unshift(defaultLabel)
-            this.customLabel = defaultLabel
+            this.customLabel = defaultLabel.id
           }
           if (isNotDefaultLabel !== undefined && defaultLabel === undefined) {
             this.customLabel = isNotDefaultLabel.id
