@@ -112,4 +112,14 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/method-order',
+    name: 'method-order',
+    component: () => import('@/views/pages/komship/order/MethodOrder'),
+    meta: {
+      navActiveLink: 'add-order',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
 ]
