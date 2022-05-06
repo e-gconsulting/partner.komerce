@@ -109,6 +109,7 @@ export default {
 
       idOrder: this.$route.params.idOrder,
       partnerId: null,
+      itemsEditOrder: [],
     }
   },
   created() {
@@ -140,7 +141,15 @@ export default {
     fetchDataOrder() {
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
         .then(response => {
-          console.log(response)
+          const { data } = response.data
+          this.itemsEditOrder = data
+          console.log(this.itemsEditOrder)
+          this.customerName = this.itemsEditOrder.customer_name
+          this.customerPhone = this.itemsEditOrder.customer_phone
+          this.customerAddress = this.itemsEditOrder.customer_address
+          this.product = this.itemsEditOrder.product.forEach(this.addProduct)
+          this.paymentMethod = this.itemsEditOrder.payment_method
+          this.shipping = this.itemsEditOrder.shipping
         })
     },
     formatDate(date) {
@@ -270,6 +279,9 @@ export default {
         })
     },
     addProduct(itemSelected) {
+      const findProduct = this.productList.find(items => items.product_id === itemSelected.product_id)
+      console.log('itemSelected', itemSelected)
+      console.log('findProduct', this.productSelected)
       if (itemSelected) {
         const result = this.productSelected.find(item => item.product_id === itemSelected.product_id)
         if (result === undefined || result.length === 0 || result.variantSubmit) {

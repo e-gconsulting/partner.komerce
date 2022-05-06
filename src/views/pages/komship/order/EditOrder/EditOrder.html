@@ -365,6 +365,10 @@
             v-if="data.item.is_variant < 1 || data.item.variantSubmit"
             class="text-lg"
           >Rp {{ formatNumber(data.item.price) }}</span>
+          <span
+            v-else
+            class="text-lg"
+          >Rp {{ formatNumber(data.item.price) }}</span>
         </template>
         <template #cell(amount)="data">
           <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
@@ -396,6 +400,35 @@
             </div>
             <span class="text-primary text-sm d-flex justify-center">Stok Tersedia:</span>
           </div>
+          <div v-else>
+            <div class="d-flex justify-center">
+              <b-button
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.quantity <= 1"
+                @click="setQuantity('minus',data.index)"
+              >
+                <span class="font-bold text-lg">-</span>
+              </b-button>
+              <span
+                class="text-lg"
+                style="margin: 0 10px"
+              >{{ data.item.quantity }}</span>
+              <b-button
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
+                @click="setQuantity('plus',data.index)"
+              >
+                <span class="font-bold text-lg">+</span>
+              </b-button>
+            </div>
+            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
+          </div>
           <div
             v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
             class="d-flex justify-center text-primary text-lg"
@@ -405,7 +438,11 @@
           <span
             v-if="data.item.is_variant < 1 || data.item.variantSubmit"
             class="text-lg d-flex justify-center"
-          >Rp 0</span>
+          >Rp {{ formatNumber(data.item.subtotal) }}</span>
+          <span
+            v-else
+            class="text-lg d-flex justify-center"
+          >Rp {{ formatNumber(data.item.subtotal) }}</span>
         </template>
         <template #cell(action)="data">
           <div class="d-flex justify-center">

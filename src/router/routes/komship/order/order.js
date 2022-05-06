@@ -17,7 +17,7 @@ export default [
     },
   },
   {
-    path: '/detail-order/:order_id',
+    path: '/data-order/detail-order/:order_id',
     name: 'detail-order',
     component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
     meta: {
@@ -103,7 +103,7 @@ export default [
     },
   },
   {
-    path: '/edit',
+    path: '/data-order/detail-order/edit/:order_id',
     name: 'edit-order',
     component: () => import('@/views/pages/komship/order/EditOrder/EditOrder.vue'),
     meta: {
