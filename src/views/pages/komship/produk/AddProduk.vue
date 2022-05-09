@@ -217,6 +217,7 @@
                       <feather-icon
                         icon="PlusIcon"
                         size="55"
+                        style="display: inline-block"
                       />
                     </b-avatar>
                     <label>
@@ -354,6 +355,7 @@
                   <feather-icon
                     icon="PlusIcon"
                     class="mr-50"
+                    style="display: inline-block"
                   />
                   <span class="align-middle">Tambahkan Variasi</span>
                 </b-button>
@@ -483,6 +485,7 @@
                             <feather-icon
                               icon="PlusIcon"
                               class="mr-50"
+                              style="display: inline-block"
                             />
                             <span class="align-middle">Tambahkan Pilihan</span>
                           </b-button>
@@ -609,6 +612,7 @@
                             <feather-icon
                               icon="PlusIcon"
                               class="mr-50"
+                              style="display: inline-block"
                             />
                             <span class="align-middle">Tambahkan Pilihan</span>
                           </b-button>
@@ -729,6 +733,7 @@
                             <feather-icon
                               icon="PlusIcon"
                               class="mr-50"
+                              style="display: inline-block"
                             />
                             <span class="align-middle">Tambahkan Pilihan</span>
                           </b-button>
@@ -753,6 +758,7 @@
                       <feather-icon
                         icon="PlusIcon"
                         class="mr-50"
+                        style="display: inline-block"
                       />
                       <span class="align-middle">Tambahkan Variasi</span>
                     </b-button>
@@ -774,6 +780,7 @@
                       <feather-icon
                         icon="PlusIcon"
                         class="mr-50"
+                        style="display: inline-block"
                       />
                       <span class="align-middle">Tambahkan Variasi</span>
                     </b-button>
@@ -1101,6 +1108,7 @@
                   <feather-icon
                     icon="PlusIcon"
                     class="mr-50"
+                    style="display: inline-block"
                   />
                   <span class="align-middle">Tambahkan Variasi</span>
                 </b-button>
@@ -1230,6 +1238,7 @@
                             <feather-icon
                               icon="PlusIcon"
                               class="mr-50"
+                              style="display: inline-block"
                             />
                             <span class="align-middle">Tambahkan Pilihan</span>
                           </b-button>
@@ -1356,6 +1365,7 @@
                             <feather-icon
                               icon="PlusIcon"
                               class="mr-50"
+                              style="display: inline-block"
                             />
                             <span class="align-middle">Tambahkan Pilihan</span>
                           </b-button>
@@ -1476,6 +1486,7 @@
                             <feather-icon
                               icon="PlusIcon"
                               class="mr-50"
+                              style="display: inline-block"
                             />
                             <span class="align-middle">Tambahkan Pilihan</span>
                           </b-button>
@@ -1500,6 +1511,7 @@
                       <feather-icon
                         icon="PlusIcon"
                         class="mr-50"
+                        style="display: inline-block"
                       />
                       <span class="align-middle">Tambahkan Variasi</span>
                     </b-button>
@@ -1521,6 +1533,7 @@
                       <feather-icon
                         icon="PlusIcon"
                         class="mr-50"
+                        style="display: inline-block"
                       />
                       <span class="align-middle">Tambahkan Variasi</span>
                     </b-button>

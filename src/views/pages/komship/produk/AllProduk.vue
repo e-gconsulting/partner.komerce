@@ -1050,6 +1050,14 @@ export default {
     }
 }
 
+[dir] .when-closed {
+  display: inline-block;
+}
+
+[dir] .when-opened {
+  display: inline-block;
+}
+
 .collapsed > .when-opened,
     :not(.collapsed) > .when-closed {
         display: none;
