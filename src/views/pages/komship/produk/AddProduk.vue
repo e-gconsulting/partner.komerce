@@ -3275,8 +3275,6 @@ export default {
       }
     },
     validateInputWeight(e) {
-      console.log(e)
-      console.log(this.weightProduct)
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
