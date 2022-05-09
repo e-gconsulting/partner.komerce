@@ -2039,6 +2039,7 @@
                       type="number"
                       placeholder="1000"
                       :state="errors.length > 0 ? false:null"
+                      @keypress="validateInputWeight"
                     />
                     <b-input-group-append is-text>
                       gram
@@ -3258,6 +3259,19 @@ export default {
         this.messageErrorIsActive = true
       } else {
         this.messageErrorIsActive = false
+      }
+    },
+    validateInputWeight(e) {
+      console.log(e)
+      console.log(this.weightProduct)
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.weightProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.weightProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
       }
     },
   },
