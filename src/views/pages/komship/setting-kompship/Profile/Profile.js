@@ -336,13 +336,18 @@ export default {
       }
     },
     validateInputPhoneProfile(e) {
-      if (e.keyCode === 46) {
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 101 || e.keyCode === 44) {
         e.preventDefault()
       }
       if (this.phoneBusiness.length < 9) {
         this.messageErrorPhone = true
       } else {
         this.messageErrorPhone = false
+      }
+    },
+    handleArrowInput(e) {
+      if (e.which === 38 || e.which === 40) {
+        e.preventDefault()
       }
     },
   },
