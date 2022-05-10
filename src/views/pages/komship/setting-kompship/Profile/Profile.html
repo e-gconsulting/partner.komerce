@@ -331,6 +331,7 @@
                   type="number"
                   @input="formatPhoneProfile"
                   @keypress="validateInputPhoneProfile"
+                  @keydown="handleArrowInput"
                 />
                 <b-row class="justify-content-between">
                   <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>

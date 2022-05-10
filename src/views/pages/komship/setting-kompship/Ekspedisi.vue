@@ -112,7 +112,6 @@
               </h4>
             </div>
             <b-form-checkbox
-              v-model="items.shipping_name"
               :checked="items.is_active === 1 ? true : false"
               name="check-button"
               switch

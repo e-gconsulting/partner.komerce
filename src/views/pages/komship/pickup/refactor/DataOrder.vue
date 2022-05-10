@@ -491,8 +491,8 @@ export default {
   },
   props: {
     passAddressId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -580,8 +580,15 @@ export default {
         })
       },
     },
+    passAddressId: {
+      handler() {
+        this.reload().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
-  async mounted() {
+  created() {
     this.reload()
   },
   methods: {
