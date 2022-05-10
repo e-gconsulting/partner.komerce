@@ -491,8 +491,8 @@ export default {
   },
   props: {
     passAddressId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -580,8 +580,15 @@ export default {
         })
       },
     },
+    passAddressId: {
+      handler() {
+        this.reload().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
-  async mounted() {
+  created() {
     this.reload()
   },
   methods: {
@@ -754,6 +761,7 @@ export default {
     },
     getOrder() {
       this.loading = true
+      console.log(this.passAddressId)
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
           page: this.currentPage,

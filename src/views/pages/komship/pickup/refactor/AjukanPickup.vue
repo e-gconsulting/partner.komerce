@@ -1048,7 +1048,7 @@ export default {
             this.addressDetail = this.itemsAddress[x].address_detail
             this.selectedAddress = this.itemsAddress[x].is_default
             this.namePic = this.itemsAddress[x].pic
-            this.addressId = this.itemsAddress[x].address_id
+            this.addressId = String(this.itemsAddress[x].address_id)
             this.picPhone = this.itemsAddress[x].phone
             this.valueAddressIsActive = this.itemsAddress[x].address_id
           }
@@ -1075,7 +1075,7 @@ export default {
       this.addressName = data.address_name
       this.addressDetail = data.address_detail
       this.namePic = data.pic
-      this.addressId = data.address_id
+      this.addressId = String(data.address_id)
       this.picPhone = data.phone
       this.valueAddressIsActive = data.address_id
     },
