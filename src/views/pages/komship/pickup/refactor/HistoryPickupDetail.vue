@@ -2576,6 +2576,10 @@ export default {
           }
         }
         this.loadingPrintLabel = false
+        this.allSelectItemPrint = false
+        this.fieldItemsPrint = []
+        this.totalLabel = 0
+        this.disableButtonPrint = true
         return this.items
       }).catch(() => {
         this.$toast({

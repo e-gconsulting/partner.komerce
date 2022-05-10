@@ -450,6 +450,7 @@
             <feather-icon
               icon="PlusIcon"
               class="mr-50"
+              style="display: inline-block"
             />
             <span class="align-middle">Tambahkan Rekening</span>
           </b-button>
