@@ -761,7 +761,6 @@ export default {
     },
     getOrder() {
       this.loading = true
-      console.log(this.passAddressId)
       return this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
         params: {
           page: this.currentPage,
