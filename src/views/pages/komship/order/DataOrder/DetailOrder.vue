@@ -26,7 +26,7 @@
         >
           Batal
         </b-button>
-        <!-- <b-button
+        <b-button
           variant="primary"
           size="sm"
           class="btn-icon mr-50"
@@ -40,8 +40,8 @@
           size="sm"
           class="btn-icon mr-50"
         >
-          Delete
-        </b-button> -->
+          Batalkan
+        </b-button>
       </div>
     </b-row>
     <b-container>

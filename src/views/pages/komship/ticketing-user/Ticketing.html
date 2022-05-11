@@ -1,3 +1,340 @@
-<h4 class="text-black">
-    Buat Tiket
-</h4>
+<b-card>
+    <div
+        class="py-1 px-2"
+        style="
+            border: 1px solid #E2E2E2;
+            border-radius: 16px;
+        "
+    >
+        <b-row class="mb-1">
+            <h3 class="text-black">
+                <strong>
+                    Buat Tiket
+                </strong>
+            </h3>
+        </b-row>
+
+        <b-form>
+            <b-row>
+        
+            <b-col md="6">
+                <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>
+                                Nomor Resi
+                            </strong>
+                        </span>
+                    </template>
+                <v-select
+                    placeholder="1221662200009921"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>
+                                Jenis Tiket
+                            </strong>
+                        </span>
+                    </template>
+                <v-select
+                    placeholder="Alamat penerima / Nomor HP tidak lengkap"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span>
+                        Customer
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="Mas Maung"
+                />
+                </b-form-group>
+                <b-form-file
+                    placeholder="Choose a file or drop it here..."
+                    drop-placeholder="Drop file here..."
+                    multiple
+                />
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Deskripsi
+                        </strong>
+                    </span>
+                </template>
+                <b-form-textarea
+                    placeholder="Nomor tidak bisa dihubungi"
+                    rows="3"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col
+                md="12"
+                class="mt-50"
+            >
+                <b-row class="justify-content-end mr-50">
+                    <b-button
+                        variant="outline-primary"
+                        class="btn-icon mr-1"
+                    >
+                        Batalkan
+                    </b-button>
+                    <b-button
+                        class="btn-icon"
+                        variant="primary"
+                        @click="submitTicket"
+                    >
+                        Buat Tiket
+                    </b-button>
+                </b-row>
+            </b-col>
+        
+            </b-row>
+        </b-form>
+    </div>
+
+    <b-row class="my-2">
+        <h3 class="text-black ml-1">
+            <strong>
+                Tiket Pengiriman
+            </strong>
+        </h3>
+    </b-row>
+
+    <div
+        class="py-1 px-2 mb-2"
+        style="
+            border: 1px solid #E2E2E2;
+            border-radius: 16px;
+        "
+    >
+        <b-row class="mx-50 my-2">
+            <div
+                class="d-flex justify-content-center align-items-center mr-2"
+                style="
+                    background: #FCD4BE;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 240px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #AB2900;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Perlu Tindak Lanjut
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #AB2900;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        1
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="d-flex justify-content-center align-items-center mr-2"
+                style="
+                    background: #FFEDED;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 240px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #E31A1A;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Belum Diproses
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #E31A1A;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        2
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="d-flex justify-content-center align-items-center"
+                style="
+                    background: #FCEBBE;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 240px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #FBA63C;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Sedang Diproses
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #FBA63C;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        4
+                    </p>
+                </div>
+            </div>
+        </b-row>
+    </div>
+
+    <b-row class="justify-content-end mb-1">
+        <b-col
+            md="4"
+            class="pr-0"
+        >
+          <b-input-group class="input-group-merge">
+            <b-input-group-prepend is-text>
+              <feather-icon icon="SearchIcon" />
+            </b-input-group-prepend>
+            <b-form-input placeholder="Search" />
+          </b-input-group>
+        </b-col>
+
+        <b-col
+            md="2"
+        >
+            <v-select
+              placeholder="Status"
+            />
+        </b-col>
+    </b-row>
+
+    <b-row class="justify-content-end mb-2">
+        <b-col
+            md="2"
+            class="pr-0"
+        >
+            <v-select
+              placeholder="Jenis Tiket"
+            />
+        </b-col>
+
+        <b-col
+            md="2"
+            class="pr-0"
+        >
+            <v-select
+              placeholder="Status Tiket"
+            />
+        </b-col>
+
+        <b-col
+            md="2"
+            class="pr-0"
+        >
+            <v-select
+              placeholder="Waktu Dibuat"
+            />
+        </b-col>
+
+        <b-col
+            md="2"
+        >
+            <v-select
+              placeholder="Waktu Diupdate"
+            />
+        </b-col>
+
+        <b-button
+            variant="outline-primary"
+            class="btn-icon mr-1"
+        >
+            Hapus Filter
+        </b-button>
+    </b-row>
+
+    <!-- Data table -->
+    <b-table
+        :items="itemsTicket"
+        :fields="fieldsTicket"
+        responsive
+    />
+
+    <!-- Popup success create ticket -->
+    <b-modal
+        ref="popup-success-create-ticket"
+        variant="primary"
+        centered
+        hide-header
+        hide-footer
+    >
+        <b-row class="justify-content-center mb-2 pt-2">
+            <b-img src="@/assets/images/icons/success.svg" />
+        </b-row>
+
+        <b-row class="justify-content-center mb-2">
+            <span class="text-black text-center">
+                <strong>
+                    Tiket kendala berhasil dibuat
+                </strong>
+            </span>
+        </b-row>
+
+        <b-row class="justify-content-center pb-2">
+            <b-col md="4">
+                <b-button
+                        variant="primary"
+                        block
+                        @click="closeSuccessCreateTicket"
+                    >
+                        Oke
+                    </b-button>
+            </b-col>
+        </b-row>
+    </b-modal>
+</b-card>
