@@ -74,5 +74,9 @@ export default
     closeSuccessCreateTicket() {
       this.$refs['popup-success-create-ticket'].hide()
     },
+    onRowSelected(data) {
+      console.log(data)
+      this.$router.push('/ticketing/detail')
+    },
   },
 }

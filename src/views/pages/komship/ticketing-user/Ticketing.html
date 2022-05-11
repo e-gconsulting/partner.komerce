@@ -303,6 +303,8 @@
         :items="itemsTicket"
         :fields="fieldsTicket"
         responsive
+        selectable
+        @row-selected="onRowSelected"
     />
 
     <!-- Popup success create ticket -->
