@@ -27,7 +27,9 @@
                         </span>
                     </template>
                 <v-select
+                    v-model="noResi"
                     placeholder="1221662200009921"
+                    @search="cekResi"
                 />
                 </b-form-group>
             </b-col>
@@ -299,13 +301,63 @@
     </b-row>
 
     <!-- Data table -->
-    <b-table
-        :items="itemsTicket"
-        :fields="fieldsTicket"
-        responsive
-        selectable
-        @row-selected="onRowSelected"
-    />
+    <b-row>
+        <b-table
+            :items="itemsTicket"
+            :fields="fieldsTicket"
+            responsive
+            selectable
+            @row-selected="onRowSelected"
+        >
+            <template #cell(no_ticket)="dataNoTicket">
+                <span class="text-primary font-medium">
+                    {{ dataNoTicket.value }}
+                </span>
+            </template>
+
+            <template #cell(nomor_resi)="dataNomorResi">
+                <span class="text-black font-medium">
+                    {{ dataNomorResi.value }}
+                </span>
+            </template>
+
+            <template #cell(ekspedisi)="dataEkspedisi">
+                <span class="text-black font-medium">
+                    {{ dataEkspedisi.value }}
+                </span>
+            </template>
+
+            <template #cell(customer)="dataCustomer">
+                <span class="text-black font-medium">
+                    {{ dataCustomer.value }}
+                </span>
+            </template>
+
+            <template #cell(jenis_ticket)="dataJenisticket">
+                <span class="text-black font-medium">
+                    {{ dataJenisticket.value }}
+                </span>
+            </template>
+
+            <template #cell(status_ticket)="dataStatusTicket">
+                <span class="text-primary font-medium">
+                    {{ dataStatusTicket.value }}
+                </span>
+            </template>
+
+            <template #cell(waktu_dibuat)="dataWaktuDibuat">
+                <span class="text-black font-medium">
+                    {{ dataWaktuDibuat.value }}
+                </span>
+            </template>
+
+            <template #cell(waktu_diupdate)="dataWaktuDiupdate">
+                <span class="text-black font-medium">
+                    {{ dataWaktuDiupdate.value }}
+                </span>
+            </template>
+        </b-table>
+    </b-row>
 
     <!-- Popup success create ticket -->
     <b-modal
