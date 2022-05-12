@@ -150,7 +150,7 @@ export default
       that.loadResi(search).finally(() => loading(false))
     }, 500),
     loadResi(search) {
-      return this.$http_komship.get(`/v1/ticket-partner/check_resi/${search}`)
+      return this.$http_komship.get(`/v1/ticket-partner/check-resi/${search}`)
         .then(response => {
           console.log(response)
         }).catch(err => {
