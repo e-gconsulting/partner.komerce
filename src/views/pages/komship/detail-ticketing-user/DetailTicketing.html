@@ -1,5 +1,211 @@
 <b-card>
-    <h4 class="text-black">
-        Detail
-    </h4>
-</b-card>
+    <b-row class="align-items-center mb-2">
+        <b-button
+            variant="primary"
+            class="btn-icon mr-1 ml-2"
+            size="sm"
+        >
+            <feather-icon
+                icon="ChevronLeftIcon"
+                size="30"
+            />
+        </b-button>
+        <h3 class="text-black">
+            <strong>
+                Detail Tiket
+            </strong>
+        </h3>
+    </b-row>
+    
+    <b-row>
+        <div
+            class="p-2 mx-2"
+            style="
+                border: 2px solid #E2E2E2;
+                border-radius: 20px;
+            "
+        >
+        <b-form>
+            <b-row>
+        
+            <b-col md="6">
+                <b-form-group>
+                    <template #label>
+                        <span>
+                            <strong>
+                                Status tiket
+                            </strong>
+                        </span>
+                    </template>
+                    <b-badge variant="light-primary">
+                        Belum Diproses
+                    </b-badge>
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                    <template #label>
+                        <span>
+                            <strong>
+                                Status Order
+                            </strong>
+                        </span>
+                    </template>
+                    <b-badge variant="light-info">
+                        Dikirim
+                    </b-badge>
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span>
+                        Nomor Tiket
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="TIC9999999"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Nomor Resi
+                        </strong>
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="1221662200000071"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Ekspedisi
+                        </strong>
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="JNE"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Seller
+                        </strong>
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="Candra Maung"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Jenis Tiket
+                        </strong>
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="Jadwal Ulang Pengiriman"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Customer
+                        </strong>
+                    </span>
+                </template>
+                <b-form-input
+                    placeholder="Candra maung sekali"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span class="text-black">
+                        <strong>
+                            Deskripsi
+                        </strong>
+                    </span>
+                </template>
+                <b-form-textarea
+                    placeholder="Mohon untuk diantarkan ulang"
+                    rows="3"
+                />
+                </b-form-group>
+            </b-col>
+
+            <b-col md="6">
+                <b-form-group>
+                <template #label>
+                    <span>
+                        File
+                    </span>
+                </template>
+                <b-form-file
+                    placeholder="Choose a file or drop it here..."
+                    drop-placeholder="Drop file here..."
+                    multiple
+                />
+                </b-form-group>
+                <b-row class="justify-content-end">
+                    <b-button
+                            variant="outline-primary"
+                            class="btn-icon mr-1"
+                        >
+                            Batalkan Tiket
+                    </b-button>
+                </b-row>
+            </b-col>
+        
+            </b-row>
+        </b-form>
+    </div>
+    </b-row>
+
+    <b-row class="my-2">
+        <h3 class="text-black ml-2">
+            <strong>
+                Riwayat Tiket
+            </strong>
+        </h3>
+    </b-row>
+
+    <b-row>
+        <div
+            style="
+                background: #F8F8F8;
+                border: 2px solid #E2E2E2;
+                border-radius: 20px;
+            "
+        >
+        </div>
+    </b-row>
+ </b-card>
