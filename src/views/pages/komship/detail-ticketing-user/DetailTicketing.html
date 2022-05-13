@@ -201,7 +201,7 @@
     <b-row class="mb-2">
         <b-col cols="12">
             <div
-                class="p-2 mx-2"
+                class="p-1 mx-2"
                 style="
                     border: 2px solid #E2E2E2;
                     border-radius: 20px;
@@ -212,62 +212,169 @@
                     class="overflow-auto"
                     style="height: 521px;"
                 >
-                ...
+                    <b-row class="mx-50">
+                        <b-col
+                            md="12"
+                        >
+                            <b-row class="justify-content-end mb-50">
+                                <small class="text-black">
+                                    Candra Maung
+                                </small>
+                            </b-row>
+                            <b-row class="justify-content-end mb-50">
+                                <div class="wrapper__chat__user p-1">
+                                    <p class="text-white">
+                                        Jenis Tiket : Jadwal Ulang Pengiriman
+                                        <br>
+                                        Deskripsi : Mohon untuk diantarkan ulang
+                                    </p>
+                                </div>
+                            </b-row>
+                            <b-row class="justify-content-end">
+                                <small class="text-black">
+                                    10 April 2022 | 13.40
+                                </small>
+                            </b-row>
+                        </b-col>
+
+                        <b-col
+                            md="12"
+                        >
+                            <b-row class="justify-content-start mb-50">
+                                <small class="text-black">
+                                    Candra Maung
+                                </small>
+                            </b-row>
+                            <b-row class="justify-content-start mb-50">
+                                <div class="wrapper__chat__isnotuser p-1">
+                                    <p class="text-black">
+                                        Akan dieskalasi ke cabang terkait
+                                    </p>
+                                </div>
+                            </b-row>
+                            <b-row class="justify-content-start">
+                                <small class="text-black">
+                                    10 April 2022 | 13.40
+                                </small>
+                            </b-row>
+                        </b-col>
+
+                        <b-col
+                            md="12"
+                        >
+                            <b-row class="justify-content-end mb-50">
+                                <small class="text-black">
+                                    Candra Maung
+                                </small>
+                            </b-row>
+                            <b-row class="justify-content-end mb-50">
+                                <div class="wrapper__chat__user p-1">
+                                    <p class="text-white">
+                                        Jenis Tiket : Jadwal Ulang Pengiriman
+                                        <br>
+                                        Deskripsi : Mohon untuk diantarkan ulang
+                                    </p>
+                                </div>
+                            </b-row>
+                            <b-row class="justify-content-end">
+                                <small class="text-black">
+                                    10 April 2022 | 13.40
+                                </small>
+                            </b-row>
+                        </b-col>
+
+                        <b-col
+                            md="12"
+                        >
+                            <b-row class="justify-content-start mb-50">
+                                <small class="text-black">
+                                    Candra Maung
+                                </small>
+                            </b-row>
+                            <b-row class="justify-content-start mb-50">
+                                <div class="wrapper__chat__isnotuser p-1">
+                                    <p class="text-black">
+                                        Akan dieskalasi ke cabang terkait
+                                    </p>
+                                </div>
+                            </b-row>
+                            <b-row class="justify-content-start">
+                                <small class="text-black">
+                                    10 April 2022 | 13.40
+                                </small>
+                            </b-row>
+                        </b-col>
+
+                        <b-col
+                            md="12"
+                        >
+                            <b-row class="justify-content-end mb-50">
+                                <small class="text-black">
+                                    Candra Maung
+                                </small>
+                            </b-row>
+                            <b-row class="justify-content-end mb-50">
+                                <div class="wrapper__chat__user p-1">
+                                    <p class="text-white">
+                                        Jenis Tiket : Jadwal Ulang Pengiriman
+                                        <br>
+                                        Deskripsi : Mohon untuk diantarkan ulang
+                                    </p>
+                                </div>
+                            </b-row>
+                            <b-row class="justify-content-end">
+                                <small class="text-black">
+                                    10 April 2022 | 13.40
+                                </small>
+                            </b-row>
+                        </b-col>
+
+
+                    </b-row>
                 </div>
             </div>
         </b-col>
     </b-row>
 
-    <b-row>
+    <b-row class="mx-50">
         <b-col cols="12">
-
-            <b-form-textarea
-                placeholder="Tulis pesan untuk menanggapi"
-            />
-            <!-- <div
-                class="mx-2 p-2 pt-50"
-                style="
-                    border: 2px solid #E2E2E2;
-                    border-radius: 20px;
-                "
-            >
-
-            <b-row>
-                <b-col
-                    md="10"
+                <b-input-group
+                    class="p-50"
+                    style="border: 2px solid #E2E2E2;
+                    border-radius: 20px;"
                 >
+                    <template #append>
+                        <div class="d-flex align-items-center">
+                            <b-button
+                                variant="flat-dark"
+                                class="btn-icon"
+                                size="sm"
+                            >
+                                <feather-icon
+                                    icon="Link2Icon"
+                                    size="25"
+                                />
+                            </b-button>
+                            <span
+                                style="font-size: 25px;"
+                            >|</span>
+                            <b-button
+                                variant="flat-dark"
+                                class="btn-icon"
+                                size="sm"
+                            >
+                                <b-img 
+                                    src="@/assets/images/icons/send-chat.svg"
+                                />
+                            </b-button>
+                        </div>
+                    </template>
                     <b-form-textarea
+                        no-resize
+                        class="border-0"
                         placeholder="Tulis pesan untuk menanggapi"
-                        rows="3"
                     />
-                </b-col>
-                <b-col
-                    md="2"
-                >
-                    <b-row class="justify-content-end align-items-start">
-                        <b-button
-                            variant="flat-dark"
-                            class="btn-icon mr-50"
-                            size="sm"
-                        >
-                            <feather-icon
-                                icon="Link2Icon"
-                            />
-                        </b-button>
-                        <b-button
-                            variant="flat-primary"
-                            class="btn-icon"
-                            size="sm"
-                        >
-                            <feather-icon
-                                icon="UserIcon"
-                            />
-                        </b-button>
-                    </b-row>
-                </b-col>
-            </b-row>
-            
-            </div> -->
+                </b-input-group>
         </b-col>
     </b-row>
  </b-card>
