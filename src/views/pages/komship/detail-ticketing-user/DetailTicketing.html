@@ -169,11 +169,31 @@
                         File
                     </span>
                 </template>
+
+                <!-- Put File -->
+                <label
+                    for="formFile"
+                    class="text-info btn btn-flat-info p-0"
+                >
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <feather-icon
+                                icon="FileIcon"
+                                size="20"
+                                class="mr-50 text-info"
+                            />
+                        </div>
+                        Lampirkan File
+                    </div>
+                </label>
                 <b-form-file
+                    id="formFile"
                     placeholder="Choose a file or drop it here..."
                     drop-placeholder="Drop file here..."
                     multiple
+                    class="d-none"
                 />
+
                 </b-form-group>
                 <b-row class="justify-content-end">
                     <b-button
@@ -344,37 +364,43 @@
                     border-radius: 20px;"
                 >
                     <template #append>
-                        <div class="d-flex align-items-center">
-                            <b-button
-                                variant="flat-dark"
-                                class="btn-icon"
-                                size="sm"
-                            >
-                                <feather-icon
-                                    icon="Link2Icon"
-                                    size="25"
-                                />
-                            </b-button>
-                            <span
-                                style="font-size: 25px;"
-                            >|</span>
-                            <b-button
-                                variant="flat-dark"
-                                class="btn-icon"
-                                size="sm"
-                            >
-                                <b-img 
-                                    src="@/assets/images/icons/send-chat.svg"
-                                />
-                            </b-button>
+                        <div class="d-flex align-items-top">
+                            <div>
+                                <b-button
+                                    variant="flat-dark"
+                                    class="btn-icon"
+                                    size="sm"
+                                    style="
+                                        border-right: 1px solid #C2C2C2;
+                                        border-top-right-radius: 0px;
+                                        border-bottom-right-radius: 0px;
+                                    "
+                                >
+                                    <feather-icon
+                                        icon="Link2Icon"
+                                        size="25"
+                                    />
+                                </b-button>
+                                <b-button
+                                    variant="flat-dark"
+                                    class="btn-icon"
+                                    size="sm"
+                                >
+                                    <b-img 
+                                        src="@/assets/images/icons/send-chat.svg"
+                                    />
+                                </b-button>
+                            </div>
                         </div>
                     </template>
                     <b-form-textarea
                         no-resize
                         class="border-0"
+                        rows="4"
                         placeholder="Tulis pesan untuk menanggapi"
                     />
                 </b-input-group>
+                
         </b-col>
     </b-row>
  </b-card>

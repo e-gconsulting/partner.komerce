@@ -28,7 +28,6 @@
                     </template>
                 <v-select
                     v-model="noResi"
-                    placeholder="1221662200009921"
                     @search="cekResi"
                 />
                 </b-form-group>
@@ -60,11 +59,53 @@
                     placeholder="Mas Maung"
                 />
                 </b-form-group>
+
+                <!-- Put File -->
+                <label
+                    for="formFile"
+                    class="text-info btn btn-flat-info p-0"
+                >
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <feather-icon
+                                icon="FileIcon"
+                                size="20"
+                                class="mr-50 text-info"
+                            />
+                        </div>
+                        Lampirkan File
+                    </div>
+                </label>
                 <b-form-file
+                    id="formFile"
                     placeholder="Choose a file or drop it here..."
                     drop-placeholder="Drop file here..."
                     multiple
+                    class="d-none"
                 />
+
+                <!-- Preview File -->
+                <b-row>
+                    <label
+                        class="text-info btn btn-flat-info p-0 ml-1"
+                    >
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <feather-icon
+                                    icon="FileIcon"
+                                    size="20"
+                                    class="mr-50 text-info"
+                                />
+                            </div>
+                            Screenshoot-Wa-22042022.jpg
+                        </div>
+                    </label>
+                    <feather-icon
+                        icon="Trash2Icon"
+                        size="20"
+                        class="ml-50 text-black"
+                    />
+                </b-row>
             </b-col>
 
             <b-col md="6">
@@ -301,63 +342,74 @@
     </b-row>
 
     <!-- Data table -->
-    <b-row>
-        <b-table
-            :items="itemsTicket"
-            :fields="fieldsTicket"
-            responsive
-            selectable
-            @row-selected="onRowSelected"
-        >
-            <template #cell(no_ticket)="dataNoTicket">
-                <span class="text-primary font-medium">
-                    {{ dataNoTicket.value }}
-                </span>
-            </template>
-
-            <template #cell(nomor_resi)="dataNomorResi">
-                <span class="text-black font-medium">
-                    {{ dataNomorResi.value }}
-                </span>
-            </template>
-
-            <template #cell(ekspedisi)="dataEkspedisi">
-                <span class="text-black font-medium">
-                    {{ dataEkspedisi.value }}
-                </span>
-            </template>
-
-            <template #cell(customer)="dataCustomer">
-                <span class="text-black font-medium">
-                    {{ dataCustomer.value }}
-                </span>
-            </template>
-
-            <template #cell(jenis_ticket)="dataJenisticket">
-                <span class="text-black font-medium">
-                    {{ dataJenisticket.value }}
-                </span>
-            </template>
-
-            <template #cell(status_ticket)="dataStatusTicket">
-                <span class="text-primary font-medium">
-                    {{ dataStatusTicket.value }}
-                </span>
-            </template>
-
-            <template #cell(waktu_dibuat)="dataWaktuDibuat">
-                <span class="text-black font-medium">
-                    {{ dataWaktuDibuat.value }}
-                </span>
-            </template>
-
-            <template #cell(waktu_diupdate)="dataWaktuDiupdate">
-                <span class="text-black font-medium">
-                    {{ dataWaktuDiupdate.value }}
-                </span>
-            </template>
-        </b-table>
-    </b-row>
+    <b-overlay
+        :show="loadingDataTable"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+    >
+        <b-row>
+            <b-table
+                :items="itemsTicket"
+                :fields="fieldsTicket"
+                show-empty
+                empty-text="Tidak ada data yang ditampilkan."
+                responsive
+                selectable
+                @row-selected="onRowSelected"
+            >
+                <template #cell(no_ticket)="dataNoTicket">
+                    <span class="text-primary font-medium">
+                        {{ dataNoTicket.value }}
+                    </span>
+                </template>
+    
+                <template #cell(nomor_resi)="dataNomorResi">
+                    <span class="text-black font-medium">
+                        {{ dataNomorResi.value }}
+                    </span>
+                </template>
+    
+                <template #cell(ekspedisi)="dataEkspedisi">
+                    <span class="text-black font-medium">
+                        {{ dataEkspedisi.value }}
+                    </span>
+                </template>
+    
+                <template #cell(customer)="dataCustomer">
+                    <span class="text-black font-medium">
+                        {{ dataCustomer.value }}
+                    </span>
+                </template>
+    
+                <template #cell(jenis_ticket)="dataJenisticket">
+                    <span class="text-black font-medium">
+                        {{ dataJenisticket.value }}
+                    </span>
+                </template>
+    
+                <template #cell(status_ticket)="dataStatusTicket">
+                    <span class="text-primary font-medium">
+                        {{ dataStatusTicket.value }}
+                    </span>
+                </template>
+    
+                <template #cell(waktu_dibuat)="dataWaktuDibuat">
+                    <span class="text-black font-medium">
+                        {{ dataWaktuDibuat.value }}
+                    </span>
+                </template>
+    
+                <template #cell(waktu_diupdate)="dataWaktuDiupdate">
+                    <span class="text-black font-medium">
+                        {{ dataWaktuDiupdate.value }}
+                    </span>
+                </template>
+            </b-table>
+        </b-row>
+    </b-overlay>
 
     <!-- Popup success create ticket -->
     <b-modal

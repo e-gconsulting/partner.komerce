@@ -6,6 +6,7 @@ import {
   BFormGroup,
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default
 {
@@ -19,6 +20,7 @@ export default
   },
   data() {
     return {
+      loadingDataTable: true,
       fieldsTicket: [
         {
           key: 'no_ticket',
@@ -121,15 +123,31 @@ export default
     }
   },
   mounted() {
-    this.$http_komship.get('/v1/ticket-partner/list')
-      .then(response => {
-        console.log(response)
-      })
-      .catch(err => {
-        console.log(err)
-      })
+    this.fetchTicket()
   },
   methods: {
+    fetchTicket() {
+      this.$http_komship.get('/v1/ticket-partner/list')
+        .then(response => {
+          console.log(response)
+          const { data } = response.data.data
+          this.itemsTicket = data
+          this.loadingDataTable = false
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.data.message,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
+    },
     submitTicket() {
       this.$refs['popup-success-create-ticket'].show()
     },
