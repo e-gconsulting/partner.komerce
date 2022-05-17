@@ -14,94 +14,83 @@
             </h3>
         </b-row>
 
-        <b-form>
-            <b-row>
-        
-            <b-col md="6">
-                <b-form-group>
-                    <template #label>
-                        <span class="text-black">
-                            <strong>
-                                Nomor Resi
-                            </strong>
-                        </span>
-                    </template>
-                <v-select
-                    v-model="itemsNoResi"
-                    :options="itemsResi"
-                    label="no_resi"
-                    @input="fetchDataResi"
-                    @search="cekResi"
-                />
-                </b-form-group>
-            </b-col>
-
-            <b-col md="6">
-                <b-form-group>
-                    <template #label>
-                        <span class="text-black">
-                            <strong>
-                                Jenis Tiket
-                            </strong>
-                        </span>
-                    </template>
-                <v-select
-                    v-model="ticketType"
-                    :options="jenisTicketItems"
-                    @input="fetchJenisTicket"
-                />
-                </b-form-group>
-            </b-col>
-
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span>
-                        Customer
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="customerName"
-                    placeholder="Mas Maung"
-                    disabled
-                />
-                </b-form-group>
-
-                <!-- Put File -->
-                <label
-                    v-if="itemsImageInitialFile[0] === undefined"
-                    for="formFile"
-                    class="text-info btn btn-flat-info p-0"
-                >
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <feather-icon
-                                icon="FileIcon"
-                                size="20"
-                                class="mr-50 text-info"
+        <validation-observer
+            ref="formRules"
+        >
+            <b-form>
+                <b-row>
+            
+                <b-col md="6">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Nomor Resi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Nomor Resi"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="itemsNoResi"
+                                :options="itemsResi"
+                                label="no_resi"
+                                :state="errors.length > 0 ? false:null"
+                                @input="fetchDataResi"
+                                @search="cekResi"
                             />
-                        </div>
-                        Lampirkan File
-                    </div>
-                </label>
-                <b-form-file
-                    id="formFile"
-                    v-model="imageFile"
-                    placeholder="Choose a file or drop it here..."
-                    drop-placeholder="Drop file here..."
-                    multiple
-                    class="d-none"
-                    @change="onChangeFile"
-                />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
 
-                <!-- Preview File -->
-                <b-row
-                    v-for="(items, index) in itemsImageInitialFile"
-                    :key="index+1"
-                    class="align-items-center"
-                >
+                <b-col md="6">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Jenis Tiket"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="ticketType"
+                                :options="jenisTicketItems"
+                                :state="errors.length > 0 ? false:null"
+                                @input="fetchJenisTicket"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span>
+                            Customer
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="customerName"
+                        placeholder="Mas Maung"
+                        disabled
+                    />
+                    </b-form-group>
+
+                    <!-- Put File -->
                     <label
-                        class="text-info btn btn-flat-info p-0 ml-1"
+                        v-if="itemsImageInitialFile[0] === undefined"
+                        for="formFile"
+                        class="text-info btn btn-flat-info p-0"
                     >
                         <div class="d-flex align-items-center">
                             <div>
@@ -111,65 +100,104 @@
                                     class="mr-50 text-info"
                                 />
                             </div>
-                            <a id="previewImage" :href="fileUrl(items)" target="_blank" class="text-info">
-                                {{ items.name }}
-                            </a>
+                            Lampirkan File
                         </div>
                     </label>
-                    <b-button
-                        variant="flat-dark"
-                        class="btn-icon"
-                        size="sm"
-                        @click="deleteFile(items)"
-                    >
-                        <feather-icon
-                            icon="Trash2Icon"
-                            size="20"
-                            class="text-black"
-                        />
-                    </b-button>
-                </b-row>
-            </b-col>
+                    <b-form-file
+                        id="formFile"
+                        v-model="imageFile"
+                        placeholder="Choose a file or drop it here..."
+                        drop-placeholder="Drop file here..."
+                        multiple
+                        class="d-none"
+                        @change="onChangeFile"
+                    />
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Deskripsi
-                        </strong>
-                    </span>
-                </template>
-                <b-form-textarea
-                    v-model="description"
-                    rows="3"
-                />
-                </b-form-group>
-            </b-col>
+                    <!-- Preview File -->
+                    <b-row
+                        v-for="(items, index) in itemsImageInitialFile"
+                        :key="index+1"
+                        class="align-items-center"
+                    >
+                        <label
+                            class="text-info btn btn-flat-info p-0 ml-1"
+                        >
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <feather-icon
+                                        icon="FileIcon"
+                                        size="20"
+                                        class="mr-50 text-info"
+                                    />
+                                </div>
+                                <a id="previewImage" :href="fileUrl(items)" target="_blank" class="text-info">
+                                    {{ items.name }}
+                                </a>
+                            </div>
+                        </label>
+                        <b-button
+                            variant="flat-dark"
+                            class="btn-icon"
+                            size="sm"
+                            @click="deleteFile(items)"
+                        >
+                            <feather-icon
+                                icon="Trash2Icon"
+                                size="20"
+                                class="text-black"
+                            />
+                        </b-button>
+                    </b-row>
+                </b-col>
 
-            <b-col
-                md="12"
-                class="mt-50"
-            >
-                <b-row class="justify-content-end mr-50">
-                    <b-button
-                        variant="outline-primary"
-                        class="btn-icon mr-1"
-                    >
-                        Batalkan
-                    </b-button>
-                    <b-button
-                        class="btn-icon"
-                        variant="primary"
-                        @click="submitTicket"
-                    >
-                        Buat Tiket
-                    </b-button>
+                <b-col md="6">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Deskripsi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Deskripsi"
+                            rules="required"
+                        >
+                            <b-form-textarea
+                                v-model="description"
+                                rows="3"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col
+                    md="12"
+                    class="mt-50"
+                >
+                    <b-row class="justify-content-end mr-50">
+                        <b-button
+                            variant="outline-primary"
+                            class="btn-icon mr-1"
+                        >
+                            Batalkan
+                        </b-button>
+                        <b-button
+                            class="btn-icon"
+                            variant="primary"
+                            @click="submitTicket"
+                        >
+                            Buat Tiket
+                        </b-button>
+                    </b-row>
+                </b-col>
+            
                 </b-row>
-            </b-col>
-        
-            </b-row>
-        </b-form>
+            </b-form>
+        </validation-observer>
     </div>
 
     <b-row class="my-2">

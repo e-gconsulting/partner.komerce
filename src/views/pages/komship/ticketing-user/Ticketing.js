@@ -11,6 +11,10 @@ import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import Ripple from 'vue-ripple-directive'
 import { mapFields } from 'vuex-map-fields'
+import { ValidationProvider, ValidationObserver } from 'vee-validate'
+import {
+  required,
+} from '@validations'
 import {
   today,
   last7,
@@ -30,6 +34,8 @@ export default
     BFormGroup,
     vSelect,
     DateRangePicker,
+    ValidationProvider,
+    ValidationObserver,
   },
   directives: {
     Ripple,
@@ -118,6 +124,9 @@ export default
       perluTindakLanjut: 0,
       sedangDiProses: 0,
 
+      // Validation
+      required,
+
       // Store
       itemsNoResi: null,
       noResi: null,
@@ -185,23 +194,34 @@ export default
       console.log(this.ticketType)
     },
     submitTicket() {
-      console.log(this.noResi)
-      console.log(this.customerName)
-      console.log(this.ticketType)
-      console.log(this.itemsImageInitialFile)
-      console.log(this.description)
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          console.log(this.noResi)
+          console.log(this.customerName)
+          console.log(this.ticketType)
+          console.log(this.itemsImageInitialFile)
+          console.log(this.description)
 
-      const formData = new FormData()
-      formData.append('no_resi', this.noResi)
-      formData.append('customer_name', this.customerName)
-      formData.append('ticket_type', this.ticketType.value)
-      formData.append('description', this.description)
-      formData.append('file', this.itemsImageInitialFile)
+          const formData = new FormData()
+          formData.append('no_resi', this.noResi)
+          formData.append('customer_name', this.customerName)
+          formData.append('ticket_type', this.ticketType.value)
+          formData.append('description', this.description)
+          if (this.itemsImageInitialFile.length > 1) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.itemsImageInitialFile.length; i++) {
+              formData.append('file[]', this.itemsImageInitialFile[i])
+            }
+          } else {
+            formData.append('file[]', this.itemsImageInitialFile[0])
+          }
 
-      this.$http_komship.post('/v1/ticket-partner/store', formData)
-        .then(response => {
-          console.log(response)
-        })
+          this.$http_komship.post('/v1/ticket-partner/store', formData)
+            .then(response => {
+              console.log(response)
+            })
+        }
+      })
       // this.$refs['popup-success-create-ticket'].show()
     },
     closeSuccessCreateTicket() {
