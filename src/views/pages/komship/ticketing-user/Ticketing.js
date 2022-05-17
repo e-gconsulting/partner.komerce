@@ -169,7 +169,6 @@ export default
       this.$http_komship.get('v1/ticket-partner/count')
         .then(response => {
           const { data } = response.data
-          console.log(data)
           this.belumDiProses = data.belum_diproses
           this.perluTindakLanjut = data.perlu_tindak_lanjut
           this.sedangDiProses = data.sedang_diproses
