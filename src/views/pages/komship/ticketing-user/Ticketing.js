@@ -228,8 +228,7 @@ export default
       this.$refs['popup-success-create-ticket'].hide()
     },
     onRowSelected(data) {
-      console.log(data)
-      this.$router.push('/ticketing/detail')
+      this.$router.push({ path: `/ticketing/detail/${data[0].id}`, params: { data_ticket: data } })
     },
     cekResi(search, loading) {
       if (search.length) {
