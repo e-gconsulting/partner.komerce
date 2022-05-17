@@ -38,7 +38,7 @@
                         </span>
                     </template>
                     <b-badge variant="light-primary">
-                        Belum Diproses
+                        {{ ticketStatus }}
                     </b-badge>
                 </b-form-group>
             </b-col>
@@ -53,7 +53,7 @@
                         </span>
                     </template>
                     <b-badge variant="light-info">
-                        Dikirim
+                        {{ orderStatus }}
                     </b-badge>
                 </b-form-group>
             </b-col>
@@ -66,7 +66,7 @@
                     </span>
                 </template>
                 <b-form-input
-                    placeholder="TIC9999999"
+                    v-model="ticketNo"
                 />
                 </b-form-group>
             </b-col>
@@ -81,7 +81,7 @@
                     </span>
                 </template>
                 <b-form-input
-                    placeholder="1221662200000071"
+                    v-model="noResi"
                 />
                 </b-form-group>
             </b-col>
@@ -96,7 +96,7 @@
                     </span>
                 </template>
                 <b-form-input
-                    placeholder="JNE"
+                    v-model="ekspedisi"
                 />
                 </b-form-group>
             </b-col>
@@ -111,7 +111,7 @@
                     </span>
                 </template>
                 <b-form-input
-                    placeholder="Candra Maung"
+                    v-model="seller"
                 />
                 </b-form-group>
             </b-col>
@@ -126,7 +126,7 @@
                     </span>
                 </template>
                 <b-form-input
-                    placeholder="Jadwal Ulang Pengiriman"
+                    v-model="ticketType"
                 />
                 </b-form-group>
             </b-col>
@@ -141,7 +141,7 @@
                     </span>
                 </template>
                 <b-form-input
-                    placeholder="Candra maung sekali"
+                    v-model="customerName"
                 />
                 </b-form-group>
             </b-col>
@@ -156,7 +156,7 @@
                     </span>
                 </template>
                 <b-form-textarea
-                    placeholder="Mohon untuk diantarkan ulang"
+                    v-model="description"
                     rows="3"
                 />
                 </b-form-group>
