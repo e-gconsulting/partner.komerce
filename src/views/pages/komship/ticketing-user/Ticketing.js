@@ -7,6 +7,17 @@ import {
 } from 'bootstrap-vue'
 import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import DateRangePicker from 'vue2-daterange-picker'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import { mapFields } from 'vuex-map-fields'
+import {
+  today,
+  last7,
+  last30,
+  firstDateOfMonth,
+  lastDateOfMonth,
+} from '@/store/helpers'
+import moment from 'moment'
 
 export default
 {
@@ -17,6 +28,7 @@ export default
     BForm,
     BFormGroup,
     vSelect,
+    DateRangePicker,
   },
   data() {
     return {
@@ -114,6 +126,29 @@ export default
         },
       ],
 
+      // Date range picker
+      picker: {
+        startDate: firstDateOfMonth,
+        endDate: lastDateOfMonth,
+      },
+      locale: {
+        format: 'dd/mm/yyyy',
+        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+      },
+      ranges: {
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan Ini': [firstDateOfMonth, today],
+      },
+      today,
+      last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
+
+      selected: true,
+
       // Store
       noResi: '',
       customerName: '',
@@ -121,6 +156,11 @@ export default
       description: '',
       file: null,
     }
+  },
+  computed: {
+    ...mapFields('penghasilan', [
+      'dateRange',
+    ]),
   },
   mounted() {
     this.fetchTicket()
@@ -174,6 +214,12 @@ export default
         }).catch(err => {
           console.log(err)
         })
+    },
+    handleChangeDatePicker() {
+
+    },
+    formatDate(d) {
+      return moment(d).format('D MMM YYYY')
     },
   },
 }

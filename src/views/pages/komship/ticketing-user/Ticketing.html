@@ -289,56 +289,261 @@
         </b-col>
 
         <b-col
-            md="2"
+            md="auto"
         >
-            <v-select
-              placeholder="Status"
-            />
+            <b-button
+                id="popoverStatus"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    Status
+                    <div class="ml-3">
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                target="popoverStatus"
+                triggers="focus"
+                placement="bottom"
+            >
+                <div class="p-50">
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Menunggu Tindak Lanjut
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Belum Diproses
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Sedang Diproses
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary"
+                    >
+                        <span class="text-black">
+                            Selesai
+                        </span>
+                    </b-form-checkbox>
+                </div>
+            </b-popover>
         </b-col>
     </b-row>
 
     <b-row class="justify-content-end mb-2">
         <b-col
-            md="2"
+            md="auto"
             class="pr-0"
         >
-            <v-select
-              placeholder="Jenis Tiket"
-            />
+            <b-button
+                id="popoverJenisTicket"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    Jenis Tiket
+                    <div class="ml-3">
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                target="popoverJenisTicket"
+                triggers="focus"
+                placement="bottom"
+            >
+                <div class="p-50">
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Alamat/Nomor HP Penerima Tidak Lengkap
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Penerima Tidak Dikenal
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Penerima Tidak Berada Ditempat
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Penerima Menolak Paket
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary"
+                    >
+                        <span class="text-black">
+                            Permintaan Pengiriman Ulang
+                        </span>
+                    </b-form-checkbox>
+                </div>
+            </b-popover>
+        </b-col>
+
+        <b-col
+            md="auto"
+            class="pr-0"
+        >
+            <b-button
+                id="popoverStatusTicket"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    Status Tiket
+                    <div class="ml-3">
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                target="popoverStatusTicket"
+                triggers="focus"
+                placement="bottom"
+            >
+                <div class="p-50">
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Menunggu Tindak Lanjut
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Belum Diproses
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary mb-1"
+                    >
+                        <span class="text-black">
+                            Sedang Diproses
+                        </span>
+                    </b-form-checkbox>
+                    <b-form-checkbox
+                        v-model="selected"
+                        class="custom-control-primary"
+                    >
+                        <span class="text-black">
+                            Selesai
+                        </span>
+                    </b-form-checkbox>
+                </div>
+            </b-popover>
+        </b-col>
+
+        <b-col
+            class="pr-0"
+            md="2"
+        >
+            <date-range-picker
+              ref="picker"
+              v-model="dateRange"
+              :locale-data="locale"
+              :ranges="ranges"
+              :opens="'left'"
+              class="w-100"
+              @input="handleChangeDatePicker"
+            >
+              <template
+                v-slot:input="picker"
+                style="min-width: 350px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center w-100"
+                >
+                    <div>
+                        <span class="text-black">Waktu Dibuat</span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </div>
+              </template>
+            </date-range-picker>
         </b-col>
 
         <b-col
             md="2"
-            class="pr-0"
         >
-            <v-select
-              placeholder="Status Tiket"
-            />
+            <date-range-picker
+                ref="picker"
+                v-model="dateRange"
+                :locale-data="locale"
+                :ranges="ranges"
+                :opens="'left'"
+                class="w-100"
+                @input="handleChangeDatePicker"
+            >
+                <template
+                    v-slot:input="picker"
+                    style="min-width: 350px"
+                >
+                    <div
+                        class="d-flex justify-content-between align-items-center w-100"
+                    >
+                        <span class="text-black">Waktu Diupdate</span>
+                        <div>
+                            <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                        </div>
+                    </div>
+                </template>
+            </date-range-picker>
         </b-col>
 
-        <b-col
-            md="2"
-            class="pr-0"
-        >
-            <v-select
-              placeholder="Waktu Dibuat"
-            />
-        </b-col>
-
-        <b-col
-            md="2"
-        >
-            <v-select
-              placeholder="Waktu Diupdate"
-            />
-        </b-col>
-
-        <b-button
-            variant="outline-primary"
-            class="btn-icon mr-1"
-        >
-            Hapus Filter
-        </b-button>
+        <div>
+            <b-button
+                variant="outline-primary"
+                class="btn-icon mr-1"
+            >
+                Hapus Filter
+            </b-button>
+        </div>
     </b-row>
 
     <!-- Data table -->
