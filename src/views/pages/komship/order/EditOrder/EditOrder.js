@@ -961,5 +961,8 @@ export default {
         e.preventDefault()
       }
     },
+    handleEditMode() {
+      this.$emit('handleNonActiveEditMode')
+    },
   },
 }

@@ -1,412 +1,299 @@
 <template>
   <b-card>
-    <b-row class="mb-4 px-1">
-      <b-button
-        variant="primary"
-        class="rounded-lg"
-        size="sm"
-        to="/data-order"
-      >
-        <b-icon-chevron-left />
-      </b-button>
-    </b-row>
-    <b-row class="justify-content-between">
-      <div>
-        <h3 class="font-bold mb-3 ml-1">
-          Detail Order
-        </h3>
-      </div>
-      <div class="mr-2">
-        <b-button
-          v-if="orderData.order_status === 'Diajukan'"
-          variant="flat-primary"
-          size="sm"
-          class="my-auto text-primary font-bold mr-50"
-          @click="cancelOrder"
-        >
-          Batal
-        </b-button>
+    <div v-if="editMode === false">
+      <b-row class="mb-4 px-1">
         <b-button
           variant="primary"
+          class="rounded-lg"
           size="sm"
-          class="btn-icon mr-50"
-          tag="router-link"
-          :to="{ name: $route.meta.editOrder, params: { idOrder: idEditOrder } }"
+          to="/data-order"
         >
-          Edit
+          <b-icon-chevron-left />
         </b-button>
-        <b-button
-          variant="flat-primary"
-          size="sm"
-          class="btn-icon mr-50"
-        >
-          Batalkan
-        </b-button>
-      </div>
-    </b-row>
-    <b-container>
-      <h4 class="font-bold mb-1">
-        Informasi Order
-      </h4>
-      <div class="border px-2 pt-2">
-        <b-row class="mb-1">
-          <b-col cols="6">
-            No Order
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold"
+      </b-row>
+      <b-row class="justify-content-between">
+        <div>
+          <h3 class="font-bold mb-3 ml-1">
+            Detail Order
+          </h3>
+        </div>
+        <div class="mr-2">
+          <b-button
+            v-if="orderData.order_status === 'Diajukan'"
+            variant="flat-primary"
+            size="sm"
+            class="my-auto text-primary font-bold mr-50"
+            @click="cancelOrder"
           >
-            {{ orderData.order_no }}
-          </b-col>
-        </b-row>
-        <b-row class="mb-1">
-          <b-col cols="6">
-            Tanggal Order
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold"
+            Batal
+          </b-button>
+          <b-button
+            variant="primary"
+            size="sm"
+            class="btn-icon mr-50"
+            @click="handleEditMode"
           >
-            {{ moment(orderData.order_date) }}
-          </b-col>
-        </b-row>
-        <b-row class="mb-1">
-          <b-col cols="6">
-            Metode Pembayaran
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold"
+            Edit
+          </b-button>
+          <b-button
+            variant="flat-primary"
+            size="sm"
+            class="btn-icon mr-50"
           >
-            {{ orderData.payment_method }}
-          </b-col>
-        </b-row>
-        <b-row class="mb-1">
-          <b-col cols="6">
-            Status
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold"
-          >
-            <b-alert
-              show
-              :variant="statusOrder"
-              class="px-1 w-36 text-center"
-              style="padding: 5px 0;"
+            Batalkan
+          </b-button>
+        </div>
+      </b-row>
+      <b-container>
+        <h4 class="font-bold mb-1">
+          Informasi Order
+        </h4>
+        <div class="border px-2 pt-2">
+          <b-row class="mb-1">
+            <b-col cols="6">
+              No Order
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold"
             >
-              <span v-if="orderData.order_status === 'Diajukan'">Order Dibuat</span>
-              <span v-else>{{ orderData.order_status }}</span>
-            </b-alert>
-          </b-col>
-        </b-row>
-        <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
-      </div>
-      <h4 class="font-bold mt-2 mb-1">
-        Informasi Pengiriman
-      </h4>
-      <div class="border px-2 pt-2 pb-1">
-        <b-row class="mb-1">
-          <b-col cols="6">
-            <div class="d-flex">
-              <img
-                src="@/assets/images/icons/profile-placehold.svg"
+              {{ orderData.order_no }}
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col cols="6">
+              Tanggal Order
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold"
+            >
+              {{ moment(orderData.order_date) }}
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col cols="6">
+              Metode Pembayaran
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold"
+            >
+              {{ orderData.payment_method }}
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col cols="6">
+              Status
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold"
+            >
+              <b-alert
+                show
+                :variant="statusOrder"
+                class="px-1 w-36 text-center"
+                style="padding: 5px 0;"
               >
-              <div class="ml-1 my-auto">
-                <span class="font-bold">{{ orderData.customer_name }}</span><br>
-                <span>{{ orderData.customer_phone }}</span>
-              </div>
-            </div>
-          </b-col>
-          <b-col cols="6">
-            <span
-              v-if="profile.is_komship === 1"
-              class="d-flex my-auto justify-end"
-            >
-              Pengiriman via <img
-                src="@/assets/images/logo/Komship.png"
-                style="margin-left:5px;"
-                alt="Komship"
-              >
-            </span>
-            <span v-else>
-              Pengiriman Non Komship
-            </span>
-          </b-col>
-        </b-row>
-        <b-row class="mb-1">
-          <b-col cols="6">
-            Ekspedisi
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold d-flex"
-          >
-            <img
-              :src="orderData.shipment_image_path"
-              style="width: 45px"
-            ><span
-              class="my-auto"
-              style="margin-left:5px"
-            >{{ shippingTypeLabel(orderData.shipping_type) }}</span>
-          </b-col>
-        </b-row>
-        <b-row class="mb-1">
-          <b-col cols="6">
-            No Resi
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold d-flex"
-          >
-            {{ orderData.airway_bill }}
-            <img
-              v-if="orderData.airway_bill"
-              src="@/assets/images/icons/copy.png"
-              class="copy-resi"
-              @click.prevent="copyResi(orderData.airway_bill)"
-            >
-            <span v-if="orderData.airway_bill === null">-</span>
-          </b-col>
-        </b-row>
-        <b-row class="mb-1">
-          <b-col cols="6">
-            Detail Alamat
-          </b-col>
-          <b-col
-            cols="6"
-            class="font-bold"
-          >
-            {{ orderData.customer_address }}
-          </b-col>
-        </b-row>
-        <b-row class="mt-3">
-          <b-col class="d-flex justify-content-end">
-            <button
-              class="btn btn-outline-primary"
-              @click="lacakresi()"
-            >
-              Lacak resi
-            </button>
-            <b-modal
-              id="bv-modal-cek-resi"
-              ref="bv-modal-cek-resi"
-              hide-footer
-            >
-              <template #modal-title>
-                <div class="d-flex flex-row justify-content-between">
-                  <div class="font-weight-bold bold">
-                    Riwayat Perjalanan
-                  </div>
+                <span v-if="orderData.order_status === 'Diajukan'">Order Dibuat</span>
+                <span v-else>{{ orderData.order_status }}</span>
+              </b-alert>
+            </b-col>
+          </b-row>
+          <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
+        </div>
+        <h4 class="font-bold mt-2 mb-1">
+          Informasi Pengiriman
+        </h4>
+        <div class="border px-2 pt-2 pb-1">
+          <b-row class="mb-1">
+            <b-col cols="6">
+              <div class="d-flex">
+                <img
+                  src="@/assets/images/icons/profile-placehold.svg"
+                >
+                <div class="ml-1 my-auto">
+                  <span class="font-bold">{{ orderData.customer_name }}</span><br>
+                  <span>{{ orderData.customer_phone }}</span>
                 </div>
-              </template>
-              <b-row class="my-8 overflow-auto h-50">
-                <b-col v-if="itemAwb.length > 0">
-                  <div
-                    class="d-block"
-                  >
-                    <div
-                      v-for="item in itemAwb"
-                      :key="item.code"
-                      class="steps step-actives"
-                    >
-                      <div>
-                        <div class="circles" />
-                      </div>
-                      <div>
-                        <div class="titles font-weight-bold bold">
-                          {{ item.desc }}
-                        </div>
-                        <div class="captions">
-                          {{ item.date }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </b-col>
-                <b-col v-else>
-                  <div
-                    v-if="isLoading===false"
-                    class="d-block mt-5 mb-5 align-content-center text-center"
-                  >
-                    Data riwayat perjalan tidak ditemukan
-                  </div>
-                  <div
-                    v-if="isLoading===true"
-                    class="d-block mt-5 mb-5 align-content-center text-center"
-                  >
-                    <div
-                      class="spinner-border text-primary"
-                      role="status"
-                    >
-                      <span class="sr-only">Loading...</span>
-                    </div>
-                  </div>
-                </b-col>
-              </b-row>
-            </b-modal>
-          </b-col>
-        </b-row>
-      </div>
-      <h4 class="font-bold mt-2 mb-1">
-        Informasi Penjualan
-      </h4>
-      <div class="border pb-2">
-        <b-table
-          responsive
-          :fields="fieldOrder"
-          :items="itemOrder"
-        >
-          <template #cell(no)="data">
-            {{ data.index + 1 }}
-          </template>
-
-          <template #cell(product_name)="data">
-            <h5 class="text-black">
-              <strong>
-                {{ data.item.product_name }}
-              </strong>
-            </h5>
-            <h4 class="text-primary">
-              <strong>
-                {{ data.item.variant_name }}
-              </strong>
-            </h4>
-          </template>
-          <template #cell(price)="data">
-            Rp {{ formatNumber(data.item.price) }}
-          </template>
-          <template #cell(subtotal)="data">
-            Rp {{ formatNumber(data.item.price * data.item.qty) }}
-          </template>
-        </b-table>
-        <hr>
-        <b-row class="mt-3">
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-          >
-            Total Harga Produk
-          </b-col>
-          <b-col
-            lg="3"
-            class="text-right"
-          >
-            Rp {{ formatNumber(orderData.subtotal) }}
-          </b-col>
-        </b-row>
-        <b-row class="mt-1">
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-          >
-            Ongkos Kirim
-          </b-col>
-          <b-col
-            lg="3"
-            class="text-right"
-          >
-            Rp {{ formatNumber(orderData.shipping_cost) }}
-          </b-col>
-        </b-row>
-        <b-row class="mt-1">
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-          >
-            Potongan Harga
-          </b-col>
-          <b-col
-            lg="3"
-            class="text-right"
-          >
-            - Rp {{ formatNumber(orderData.discount) }}
-          </b-col>
-        </b-row>
-        <b-row class="mt-1">
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-          >
-            Biaya Lain
-          </b-col>
-          <b-col
-            lg="3"
-            class="text-right"
-          >
-            Rp {{ formatNumber(orderData.additional_cost) }}
-          </b-col>
-        </b-row>
-        <b-row class="mt-1">
-          <b-col lg="3" />
-          <b-col lg="8">
-            <hr><span />
-          </b-col>
-        </b-row>
-        <b-row
-          class="mt-1"
-          :class="orderData.order_status === 'Retur' ? 'line-through' : ''"
-        >
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-            class="font-bold text-xl"
-          >
-            Total Pembayaran ({{ orderData.payment_method }}) :
-          </b-col>
-          <b-col
-            lg="3"
-            class="text-right font-bold text-primary text-xl"
-          >
-            Rp {{ formatNumber(orderData.grandtotal) }}
-          </b-col>
-        </b-row>
-        <b-row
-          v-if="orderData.grandtotal !== orderData.old_grandtotal"
-          class="mt-1"
-        >
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-            class="font-bold text-sm text-primary"
-          >
-            {{ orderData.notes }}
-          </b-col>
-        </b-row>
-        <b-row class="mt-1">
-          <b-col lg="3" />
-          <b-col lg="7">
-            <hr><span />
-          </b-col>
-          <b-col
-            lg="2"
-            class="d-flex justify-start"
-          >
-            <b-button
-              v-b-toggle="'collapse-1'"
-              class="buttonCollapse px-0"
-              variant="none"
-              size="sm"
+              </div>
+            </b-col>
+            <b-col cols="6">
+              <span
+                v-if="profile.is_komship === 1"
+                class="d-flex my-auto justify-end"
+              >
+                Pengiriman via <img
+                  src="@/assets/images/logo/Komship.png"
+                  style="margin-left:5px;"
+                  alt="Komship"
+                >
+              </span>
+              <span v-else>
+                Pengiriman Non Komship
+              </span>
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col cols="6">
+              Ekspedisi
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold d-flex"
             >
-              <span class="when-open">Tutup <b-icon-chevron-up /></span>
-              <span class="when-closed">Buka <b-icon-chevron-down /></span>
-            </b-button>
-          </b-col>
-        </b-row>
-        <b-collapse id="collapse-1">
-          <b-row class="mt-1">
+              <img
+                :src="orderData.shipment_image_path"
+                style="width: 45px"
+              ><span
+                class="my-auto"
+                style="margin-left:5px"
+              >{{ shippingTypeLabel(orderData.shipping_type) }}</span>
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col cols="6">
+              No Resi
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold d-flex"
+            >
+              {{ orderData.airway_bill }}
+              <img
+                v-if="orderData.airway_bill"
+                src="@/assets/images/icons/copy.png"
+                class="copy-resi"
+                @click.prevent="copyResi(orderData.airway_bill)"
+              >
+              <span v-if="orderData.airway_bill === null">-</span>
+            </b-col>
+          </b-row>
+          <b-row class="mb-1">
+            <b-col cols="6">
+              Detail Alamat
+            </b-col>
+            <b-col
+              cols="6"
+              class="font-bold"
+            >
+              {{ orderData.customer_address }}
+            </b-col>
+          </b-row>
+          <b-row class="mt-3">
+            <b-col class="d-flex justify-content-end">
+              <button
+                class="btn btn-outline-primary"
+                @click="lacakresi()"
+              >
+                Lacak resi
+              </button>
+              <b-modal
+                id="bv-modal-cek-resi"
+                ref="bv-modal-cek-resi"
+                hide-footer
+              >
+                <template #modal-title>
+                  <div class="d-flex flex-row justify-content-between">
+                    <div class="font-weight-bold bold">
+                      Riwayat Perjalanan
+                    </div>
+                  </div>
+                </template>
+                <b-row class="my-8 overflow-auto h-50">
+                  <b-col v-if="itemAwb.length > 0">
+                    <div
+                      class="d-block"
+                    >
+                      <div
+                        v-for="item in itemAwb"
+                        :key="item.code"
+                        class="steps step-actives"
+                      >
+                        <div>
+                          <div class="circles" />
+                        </div>
+                        <div>
+                          <div class="titles font-weight-bold bold">
+                            {{ item.desc }}
+                          </div>
+                          <div class="captions">
+                            {{ item.date }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </b-col>
+                  <b-col v-else>
+                    <div
+                      v-if="isLoading===false"
+                      class="d-block mt-5 mb-5 align-content-center text-center"
+                    >
+                      Data riwayat perjalan tidak ditemukan
+                    </div>
+                    <div
+                      v-if="isLoading===true"
+                      class="d-block mt-5 mb-5 align-content-center text-center"
+                    >
+                      <div
+                        class="spinner-border text-primary"
+                        role="status"
+                      >
+                        <span class="sr-only">Loading...</span>
+                      </div>
+                    </div>
+                  </b-col>
+                </b-row>
+              </b-modal>
+            </b-col>
+          </b-row>
+        </div>
+        <h4 class="font-bold mt-2 mb-1">
+          Informasi Penjualan
+        </h4>
+        <div class="border pb-2">
+          <b-table
+            responsive
+            :fields="fieldOrder"
+            :items="itemOrder"
+          >
+            <template #cell(no)="data">
+              {{ data.index + 1 }}
+            </template>
+
+            <template #cell(product_name)="data">
+              <h5 class="text-black">
+                <strong>
+                  {{ data.item.product_name }}
+                </strong>
+              </h5>
+              <h4 class="text-primary">
+                <strong>
+                  {{ data.item.variant_name }}
+                </strong>
+              </h4>
+            </template>
+            <template #cell(price)="data">
+              Rp {{ formatNumber(data.item.price) }}
+            </template>
+            <template #cell(subtotal)="data">
+              Rp {{ formatNumber(data.item.price * data.item.qty) }}
+            </template>
+          </b-table>
+          <hr>
+          <b-row class="mt-3">
             <b-col lg="3" />
             <b-col
               lg="5"
             >
-              Biaya {{ orderData.payment_method }} ({{ orderData.service_fee_to }}% sudah termasuk PPN)
+              Total Harga Produk
             </b-col>
             <b-col
               lg="3"
               class="text-right"
             >
-              <span>- Rp {{ formatNumber(orderData.service_fee) }}</span>
+              Rp {{ formatNumber(orderData.subtotal) }}
             </b-col>
           </b-row>
           <b-row class="mt-1">
@@ -414,58 +301,177 @@
             <b-col
               lg="5"
             >
-              Ongkos Kirim (dipotong Cashback {{ orderData.cashback_to }}%)
+              Ongkos Kirim
             </b-col>
             <b-col
               lg="3"
               class="text-right"
             >
-              - Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
+              Rp {{ formatNumber(orderData.shipping_cost) }}
+            </b-col>
+          </b-row>
+          <b-row class="mt-1">
+            <b-col lg="3" />
+            <b-col
+              lg="5"
+            >
+              Potongan Harga
+            </b-col>
+            <b-col
+              lg="3"
+              class="text-right"
+            >
+              - Rp {{ formatNumber(orderData.discount) }}
+            </b-col>
+          </b-row>
+          <b-row class="mt-1">
+            <b-col lg="3" />
+            <b-col
+              lg="5"
+            >
+              Biaya Lain
+            </b-col>
+            <b-col
+              lg="3"
+              class="text-right"
+            >
+              Rp {{ formatNumber(orderData.additional_cost) }}
+            </b-col>
+          </b-row>
+          <b-row class="mt-1">
+            <b-col lg="3" />
+            <b-col lg="8">
+              <hr><span />
             </b-col>
           </b-row>
           <b-row
-            v-if="orderData.order_status === 'Retur'"
+            class="mt-1"
+            :class="orderData.order_status === 'Retur' ? 'line-through' : ''"
+          >
+            <b-col lg="3" />
+            <b-col
+              lg="5"
+              class="font-bold text-xl"
+            >
+              Total Pembayaran ({{ orderData.payment_method }}) :
+            </b-col>
+            <b-col
+              lg="3"
+              class="text-right font-bold text-primary text-xl"
+            >
+              Rp {{ formatNumber(orderData.grandtotal) }}
+            </b-col>
+          </b-row>
+          <b-row
+            v-if="orderData.grandtotal !== orderData.old_grandtotal"
             class="mt-1"
           >
             <b-col lg="3" />
             <b-col
               lg="5"
+              class="font-bold text-sm text-primary"
             >
-              Ongkos Kirim Pengembalian (diskon {{ orderData.percentage_cost_retur }}%)
-            </b-col>
-            <b-col
-              lg="3"
-              class="text-right"
-            >
-              - Rp {{ formatNumber(orderData.shipping_retur) }}
+              {{ orderData.notes }}
             </b-col>
           </b-row>
-        </b-collapse>
-        <b-row class="mt-1">
-          <b-col lg="3" />
-          <b-col
-            lg="5"
-            class="font-bold"
-          >
-            Penghasilan bersih yang kamu dapatkan
-          </b-col>
-          <b-col
-            v-if="statusNetProfit === '-'"
-            lg="3"
-            class="text-right text-primary font-bold"
-          >
-            - Rp {{ formatNumber(orderData.net_profit) }}
-          </b-col>
-          <b-col
-            v-else
-            lg="3"
-            class="text-right text-success font-bold"
-          >
-            Rp {{ formatNumber(orderData.net_profit) }}
-          </b-col>
-        </b-row>
-      </div>
-    </b-container>
+          <b-row class="mt-1">
+            <b-col lg="3" />
+            <b-col lg="7">
+              <hr><span />
+            </b-col>
+            <b-col
+              lg="2"
+              class="d-flex justify-start"
+            >
+              <b-button
+                v-b-toggle="'collapse-1'"
+                class="buttonCollapse px-0"
+                variant="none"
+                size="sm"
+              >
+                <span class="when-open">Tutup <b-icon-chevron-up /></span>
+                <span class="when-closed">Buka <b-icon-chevron-down /></span>
+              </b-button>
+            </b-col>
+          </b-row>
+          <b-collapse id="collapse-1">
+            <b-row class="mt-1">
+              <b-col lg="3" />
+              <b-col
+                lg="5"
+              >
+                Biaya {{ orderData.payment_method }} ({{ orderData.service_fee_to }}% sudah termasuk PPN)
+              </b-col>
+              <b-col
+                lg="3"
+                class="text-right"
+              >
+                <span>- Rp {{ formatNumber(orderData.service_fee) }}</span>
+              </b-col>
+            </b-row>
+            <b-row class="mt-1">
+              <b-col lg="3" />
+              <b-col
+                lg="5"
+              >
+                Ongkos Kirim (dipotong Cashback {{ orderData.cashback_to }}%)
+              </b-col>
+              <b-col
+                lg="3"
+                class="text-right"
+              >
+                - Rp {{ formatNumber(orderData.shipping_cost - orderData.shipping_cashback) }}
+              </b-col>
+            </b-row>
+            <b-row
+              v-if="orderData.order_status === 'Retur'"
+              class="mt-1"
+            >
+              <b-col lg="3" />
+              <b-col
+                lg="5"
+              >
+                Ongkos Kirim Pengembalian (diskon {{ orderData.percentage_cost_retur }}%)
+              </b-col>
+              <b-col
+                lg="3"
+                class="text-right"
+              >
+                - Rp {{ formatNumber(orderData.shipping_retur) }}
+              </b-col>
+            </b-row>
+          </b-collapse>
+          <b-row class="mt-1">
+            <b-col lg="3" />
+            <b-col
+              lg="5"
+              class="font-bold"
+            >
+              Penghasilan bersih yang kamu dapatkan
+            </b-col>
+            <b-col
+              v-if="statusNetProfit === '-'"
+              lg="3"
+              class="text-right text-primary font-bold"
+            >
+              - Rp {{ formatNumber(orderData.net_profit) }}
+            </b-col>
+            <b-col
+              v-else
+              lg="3"
+              class="text-right text-success font-bold"
+            >
+              Rp {{ formatNumber(orderData.net_profit) }}
+            </b-col>
+          </b-row>
+        </div>
+      </b-container>
+    </div>
+
+    <!-- Edit Order -->
+    <div v-else>
+      <edit-order @handleNonActiveEditMode="handleDeactiveEditMode" />
+    </div>
   </b-card>
 </template>
 <script>
@@ -474,10 +480,11 @@ import {
 } from 'bootstrap-vue'
 import moment from 'moment'
 import httpKomship2 from '../../setting-kompship/http_komship2'
+import EditOrder from '../EditOrder/EditOrder.vue'
 
 export default {
   components: {
-    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse,
+    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder,
   },
   directives: { VBModal },
   data() {
@@ -497,6 +504,8 @@ export default {
       isLoading: false,
       statusNetProfit: null,
       idEditOrder: this.$route.params.order_id,
+
+      editMode: false,
     }
   },
   async created() {
@@ -628,6 +637,12 @@ export default {
         return 'Cargo'
       }
       return value
+    },
+    handleEditMode() {
+      this.editMode = true
+    },
+    handleDeactiveEditMode() {
+      this.editMode = false
     },
   },
 }
