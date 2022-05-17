@@ -9,6 +9,7 @@ import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import Ripple from 'vue-ripple-directive'
 import { mapFields } from 'vuex-map-fields'
 import {
   today,
@@ -30,18 +31,21 @@ export default
     vSelect,
     DateRangePicker,
   },
+  directives: {
+    Ripple,
+  },
   data() {
     return {
       loadingDataTable: true,
       fieldsTicket: [
         {
-          key: 'no_ticket',
+          key: 'ticket_no',
           label: 'No. Tiket',
           trClass: 'border-top-0 bg-warning',
           class: 'bg-white',
         },
         {
-          key: 'nomor_resi',
+          key: 'no_resi',
           label: 'Nomor Resi',
           trClass: 'border-top-0',
           class: 'bg-white',
@@ -53,7 +57,7 @@ export default
           class: 'bg-white',
         },
         {
-          key: 'customer',
+          key: 'customer_name',
           label: 'Customer',
           trClass: 'border-top-0',
           class: 'bg-white',
@@ -65,66 +69,26 @@ export default
           class: 'bg-white',
         },
         {
-          key: 'status_ticket',
+          key: 'ticket_status',
           label: 'Status Tiket',
           trClass: 'border-top-0',
           class: 'bg-white',
         },
         {
-          key: 'waktu_dibuat',
+          key: 'date_created',
           label: 'Waktu Dibuat',
           trClass: 'border-top-0',
           class: 'bg-white',
         },
         {
-          key: 'waktu_diupdate',
+          key: 'date_updated',
           label: 'Waktu Diupdate',
           trClass: 'border-top-0',
           class: 'bg-white',
         },
       ],
-      itemsTicket: [
-        {
-          no_ticket: 'TIC747220323008 ',
-          nomor_resi: '1221662200098800',
-          ekspedisi: 'JNE',
-          customer: 'Candra Maung',
-          jenis_ticket: 'Fake Ticket',
-          status_ticket: 'Belum Diproses',
-          waktu_dibuat: '15:30 23/03/2022',
-          waktu_diupdate: '15:30 23/03/2022',
-        },
-        {
-          no_ticket: 'TIC747220323008 ',
-          nomor_resi: '1221662200098800',
-          ekspedisi: 'JNE',
-          customer: 'Candra Maung',
-          jenis_ticket: 'Fake Ticket',
-          status_ticket: 'Belum Diproses',
-          waktu_dibuat: '15:30 23/03/2022',
-          waktu_diupdate: '15:30 23/03/2022',
-        },
-        {
-          no_ticket: 'TIC747220323008 ',
-          nomor_resi: '1221662200098800',
-          ekspedisi: 'JNE',
-          customer: 'Candra Maung',
-          jenis_ticket: 'Fake Ticket',
-          status_ticket: 'Belum Diproses',
-          waktu_dibuat: '15:30 23/03/2022',
-          waktu_diupdate: '15:30 23/03/2022',
-        },
-        {
-          no_ticket: 'TIC747220323008 ',
-          nomor_resi: '1221662200098800',
-          ekspedisi: 'JNE',
-          customer: 'Candra Maung',
-          jenis_ticket: 'Fake Ticket',
-          status_ticket: 'Belum Diproses',
-          waktu_dibuat: '15:30 23/03/2022',
-          waktu_diupdate: '15:30 23/03/2022',
-        },
-      ],
+      itemsTicket: [],
+      itemsResi: [],
 
       // Date range picker
       picker: {
@@ -146,13 +110,25 @@ export default
       last30,
       firstDateOfMonth,
       lastDateOfMonth,
-
+      imageFile: null,
+      imageInitialFile: null,
+      itemsImageInitialFile: [],
       selected: true,
+      belumDiProses: 0,
+      perluTindakLanjut: 0,
+      sedangDiProses: 0,
 
       // Store
-      noResi: '',
+      itemsNoResi: null,
+      noResi: null,
       customerName: '',
-      ticketType: '',
+      jenisTicketItems: [
+        {
+          label: 'Alamat penerima / Nomor HP tidak lengkap',
+          value: 5,
+        },
+      ],
+      ticketType: null,
       description: '',
       file: null,
     }
@@ -164,13 +140,14 @@ export default
   },
   mounted() {
     this.fetchTicket()
+    this.fetchTicketPartnerCount()
   },
   methods: {
     fetchTicket() {
       this.$http_komship.get('/v1/ticket-partner/list')
         .then(response => {
           console.log(response)
-          const { data } = response.data.data
+          const { data } = response.data
           this.itemsTicket = data
           this.loadingDataTable = false
         })
@@ -188,8 +165,45 @@ export default
           this.loadingDataTable = false
         })
     },
+    fetchTicketPartnerCount() {
+      this.$http_komship.get('v1/ticket-partner/count')
+        .then(response => {
+          const { data } = response.data
+          console.log(data)
+          this.belumDiProses = data.belum_diproses
+          this.perluTindakLanjut = data.perlu_tindak_lanjut
+          this.sedangDiProses = data.sedang_diproses
+        }).catch(err => {
+          console.log(err.response)
+        })
+    },
+    fetchDataResi() {
+      console.log(this.noResi)
+      this.customerName = this.itemsNoResi.customer_name
+      this.noResi = this.itemsNoResi.no_resi
+    },
+    fetchJenisTicket() {
+      console.log(this.ticketType)
+    },
     submitTicket() {
-      this.$refs['popup-success-create-ticket'].show()
+      console.log(this.noResi)
+      console.log(this.customerName)
+      console.log(this.ticketType)
+      console.log(this.itemsImageInitialFile)
+      console.log(this.description)
+
+      const formData = new FormData()
+      formData.append('no_resi', this.noResi)
+      formData.append('customer_name', this.customerName)
+      formData.append('ticket_type', this.ticketType.value)
+      formData.append('description', this.description)
+      formData.append('file', this.itemsImageInitialFile)
+
+      this.$http_komship.post('/v1/ticket-partner/store', formData)
+        .then(response => {
+          console.log(response)
+        })
+      // this.$refs['popup-success-create-ticket'].show()
     },
     closeSuccessCreateTicket() {
       this.$refs['popup-success-create-ticket'].hide()
@@ -210,7 +224,9 @@ export default
     loadResi(search) {
       return this.$http_komship.get(`/v1/ticket-partner/check-resi/${search}`)
         .then(response => {
-          console.log(response)
+          const { data } = response.data
+          this.itemsResi = data
+          console.log(this.itemsResi)
         }).catch(err => {
           console.log(err)
         })
@@ -220,6 +236,21 @@ export default
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
+    },
+    onChangeFile(event) {
+      console.log('event', event)
+      console.log('imageFile', this.imageFile)
+      event.target.files.forEach(this.myFile)
+    },
+    myFile(data) {
+      this.itemsImageInitialFile.push(data)
+    },
+    fileUrl: file => (file ? URL.createObjectURL(file) : null),
+    deleteFile(data) {
+      console.log(data)
+      const findIndexObj = this.itemsImageInitialFile.findIndex(items => items.name === data.name)
+      console.log('findObject', findIndexObj)
+      this.itemsImageInitialFile.splice(findIndexObj, 1)
     },
   },
 }

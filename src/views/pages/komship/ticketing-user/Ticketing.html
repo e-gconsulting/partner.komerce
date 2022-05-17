@@ -27,7 +27,10 @@
                         </span>
                     </template>
                 <v-select
-                    v-model="noResi"
+                    v-model="itemsNoResi"
+                    :options="itemsResi"
+                    label="no_resi"
+                    @input="fetchDataResi"
                     @search="cekResi"
                 />
                 </b-form-group>
@@ -43,7 +46,9 @@
                         </span>
                     </template>
                 <v-select
-                    placeholder="Alamat penerima / Nomor HP tidak lengkap"
+                    v-model="ticketType"
+                    :options="jenisTicketItems"
+                    @input="fetchJenisTicket"
                 />
                 </b-form-group>
             </b-col>
@@ -56,12 +61,15 @@
                     </span>
                 </template>
                 <b-form-input
+                    v-model="customerName"
                     placeholder="Mas Maung"
+                    disabled
                 />
                 </b-form-group>
 
                 <!-- Put File -->
                 <label
+                    v-if="itemsImageInitialFile[0] === undefined"
                     for="formFile"
                     class="text-info btn btn-flat-info p-0"
                 >
@@ -78,14 +86,20 @@
                 </label>
                 <b-form-file
                     id="formFile"
+                    v-model="imageFile"
                     placeholder="Choose a file or drop it here..."
                     drop-placeholder="Drop file here..."
                     multiple
                     class="d-none"
+                    @change="onChangeFile"
                 />
 
                 <!-- Preview File -->
-                <b-row>
+                <b-row
+                    v-for="(items, index) in itemsImageInitialFile"
+                    :key="index+1"
+                    class="align-items-center"
+                >
                     <label
                         class="text-info btn btn-flat-info p-0 ml-1"
                     >
@@ -97,14 +111,23 @@
                                     class="mr-50 text-info"
                                 />
                             </div>
-                            Screenshoot-Wa-22042022.jpg
+                            <a id="previewImage" :href="fileUrl(items)" target="_blank" class="text-info">
+                                {{ items.name }}
+                            </a>
                         </div>
                     </label>
-                    <feather-icon
-                        icon="Trash2Icon"
-                        size="20"
-                        class="ml-50 text-black"
-                    />
+                    <b-button
+                        variant="flat-dark"
+                        class="btn-icon"
+                        size="sm"
+                        @click="deleteFile(items)"
+                    >
+                        <feather-icon
+                            icon="Trash2Icon"
+                            size="20"
+                            class="text-black"
+                        />
+                    </b-button>
                 </b-row>
             </b-col>
 
@@ -118,7 +141,7 @@
                     </span>
                 </template>
                 <b-form-textarea
-                    placeholder="Nomor tidak bisa dihubungi"
+                    v-model="description"
                     rows="3"
                 />
                 </b-form-group>
@@ -196,7 +219,7 @@
                             font-size: 20px;
                         "
                     >
-                        1
+                        {{ perluTindakLanjut }}
                     </p>
                 </div>
             </div>
@@ -232,7 +255,7 @@
                             font-size: 20px;
                         "
                     >
-                        2
+                        {{ belumDiProses }}
                     </p>
                 </div>
             </div>
@@ -268,7 +291,7 @@
                             font-size: 20px;
                         "
                     >
-                        4
+                        {{ sedangDiProses }}
                     </p>
                 </div>
             </div>
@@ -565,13 +588,13 @@
                 selectable
                 @row-selected="onRowSelected"
             >
-                <template #cell(no_ticket)="dataNoTicket">
+                <template #cell(ticket_no)="dataNoTicket">
                     <span class="text-primary font-medium">
                         {{ dataNoTicket.value }}
                     </span>
                 </template>
     
-                <template #cell(nomor_resi)="dataNomorResi">
+                <template #cell(no_resi)="dataNomorResi">
                     <span class="text-black font-medium">
                         {{ dataNomorResi.value }}
                     </span>
@@ -583,7 +606,7 @@
                     </span>
                 </template>
     
-                <template #cell(customer)="dataCustomer">
+                <template #cell(customer_name)="dataCustomer">
                     <span class="text-black font-medium">
                         {{ dataCustomer.value }}
                     </span>
@@ -595,19 +618,19 @@
                     </span>
                 </template>
     
-                <template #cell(status_ticket)="dataStatusTicket">
+                <template #cell(ticket_status)="dataStatusTicket">
                     <span class="text-primary font-medium">
                         {{ dataStatusTicket.value }}
                     </span>
                 </template>
     
-                <template #cell(waktu_dibuat)="dataWaktuDibuat">
+                <template #cell(date_created)="dataWaktuDibuat">
                     <span class="text-black font-medium">
                         {{ dataWaktuDibuat.value }}
                     </span>
                 </template>
     
-                <template #cell(waktu_diupdate)="dataWaktuDiupdate">
+                <template #cell(date_updated)="dataWaktuDiupdate">
                     <span class="text-black font-medium">
                         {{ dataWaktuDiupdate.value }}
                     </span>
