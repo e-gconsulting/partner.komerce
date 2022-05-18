@@ -4,6 +4,8 @@
             variant="primary"
             class="btn-icon mr-1 ml-2"
             size="sm"
+            tag="router-link"
+            :to="{ name: $route.meta.routeTicket }"
         >
             <feather-icon
                 icon="ChevronLeftIcon"
@@ -17,198 +19,212 @@
         </h3>
     </b-row>
     
-    <b-row>
-        <div
-            class="p-2 mx-2"
-            style="
-                border: 2px solid #E2E2E2;
-                border-radius: 20px;
-            "
-        >
-        <b-form>
-            <b-row>
-        
-            <b-col md="6">
-                <b-form-group>
+    <b-overlay
+        :show="loadingDataDetail"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+    >
+        <b-row>
+            <div
+                class="p-2 mx-2"
+                style="
+                    border: 2px solid #E2E2E2;
+                    border-radius: 20px;
+                "
+            >
+            <b-form>
+                <b-row>
+            
+                <b-col md="6">
+                    <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Status tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <b-badge variant="light-primary">
+                            {{ ticketStatus }}
+                        </b-badge>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="6">
+                    <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Status Order
+                                </strong>
+                            </span>
+                        </template>
+                        <b-badge variant="light-info">
+                            {{ orderStatus }}
+                        </b-badge>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="6">
+                    <b-form-group>
                     <template #label>
                         <span>
+                            Nomor Tiket
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="ticketNo"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span class="text-black">
                             <strong>
-                                Status tiket
+                                Nomor Resi
                             </strong>
                         </span>
                     </template>
-                    <b-badge variant="light-primary">
-                        {{ ticketStatus }}
-                    </b-badge>
-                </b-form-group>
-            </b-col>
+                    <b-form-input
+                        v-model="noResi"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
 
-            <b-col md="6">
-                <b-form-group>
+                <b-col md="6">
+                    <b-form-group>
                     <template #label>
-                        <span>
+                        <span class="text-black">
                             <strong>
-                                Status Order
+                                Ekspedisi
                             </strong>
                         </span>
                     </template>
-                    <b-badge variant="light-info">
-                        {{ orderStatus }}
-                    </b-badge>
-                </b-form-group>
-            </b-col>
+                    <b-form-input
+                        v-model="ekspedisi"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span>
-                        Nomor Tiket
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="ticketNo"
-                />
-                </b-form-group>
-            </b-col>
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>
+                                Seller
+                            </strong>
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="seller"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Nomor Resi
-                        </strong>
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="noResi"
-                />
-                </b-form-group>
-            </b-col>
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>
+                                Jenis Tiket
+                            </strong>
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="ticketType"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Ekspedisi
-                        </strong>
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="ekspedisi"
-                />
-                </b-form-group>
-            </b-col>
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>
+                                Customer
+                            </strong>
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="customerName"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Seller
-                        </strong>
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="seller"
-                />
-                </b-form-group>
-            </b-col>
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>
+                                Deskripsi
+                            </strong>
+                        </span>
+                    </template>
+                    <b-form-textarea
+                        v-model="description"
+                        rows="3"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Jenis Tiket
-                        </strong>
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="ticketType"
-                />
-                </b-form-group>
-            </b-col>
+                <b-col md="6">
+                    <b-form-group>
+                    <template #label>
+                        <span>
+                            File
+                        </span>
+                    </template>
 
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Customer
-                        </strong>
-                    </span>
-                </template>
-                <b-form-input
-                    v-model="customerName"
-                />
-                </b-form-group>
-            </b-col>
-
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span class="text-black">
-                        <strong>
-                            Deskripsi
-                        </strong>
-                    </span>
-                </template>
-                <b-form-textarea
-                    v-model="description"
-                    rows="3"
-                />
-                </b-form-group>
-            </b-col>
-
-            <b-col md="6">
-                <b-form-group>
-                <template #label>
-                    <span>
-                        File
-                    </span>
-                </template>
-
-                <!-- Put File -->
-                <label
-                    for="formFile"
-                    class="text-info btn btn-flat-info p-0"
-                >
-                    <div class="d-flex align-items-center">
-                        <div>
-                            <feather-icon
-                                icon="FileIcon"
-                                size="20"
-                                class="mr-50 text-info"
-                            />
-                        </div>
-                        Lampirkan File
-                    </div>
-                </label>
-                <b-form-file
-                    id="formFile"
-                    placeholder="Choose a file or drop it here..."
-                    drop-placeholder="Drop file here..."
-                    multiple
-                    class="d-none"
-                />
-
-                </b-form-group>
-                <b-row class="justify-content-end">
-                    <b-button
-                            variant="outline-primary"
-                            class="btn-icon mr-1"
+                    <!-- Put File -->
+                    <b-row
+                        v-for="(itemFile, index) in files"
+                        :key="index+1"
+                    >
+                        <a
+                            :href="itemFile.path"
+                            target="_blank"
+                            class="text-info btn btn-flat-info p-0 mx-1 mb-1"
                         >
-                            Batalkan Tiket
-                    </b-button>
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <feather-icon
+                                        icon="FileIcon"
+                                        size="20"
+                                        class="mr-50 text-info"
+                                    />
+                                </div>
+                                <small>{{ itemFile.path.substr() }}</small>
+                            </div>
+                        </a>
+                    </b-row>
+
+                    </b-form-group>
+                    <b-row class="justify-content-end">
+                        <b-button
+                                variant="outline-primary"
+                                class="btn-icon mr-1"
+                            >
+                                Batalkan Tiket
+                        </b-button>
+                    </b-row>
+                </b-col>
+            
                 </b-row>
-            </b-col>
-        
-            </b-row>
-        </b-form>
-    </div>
-    </b-row>
+            </b-form>
+        </div>
+        </b-row>
+    </b-overlay>
 
     <b-row class="my-2">
         <h3 class="text-black ml-2">

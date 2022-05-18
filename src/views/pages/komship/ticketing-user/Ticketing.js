@@ -123,6 +123,21 @@ export default
       belumDiProses: 0,
       perluTindakLanjut: 0,
       sedangDiProses: 0,
+      searchType: 'Nomor Tiket',
+      searchItems: [
+        {
+          label: 'Nomor Tiket',
+          value: 0,
+        },
+        {
+          label: 'Nomor Resi',
+          value: 1,
+        },
+        {
+          label: 'Nama Customer',
+          value: 2,
+        },
+      ],
 
       // Validation
       required,
@@ -140,6 +155,31 @@ export default
       ticketType: null,
       description: '',
       file: null,
+
+      // Filter
+      ticketStatus: [],
+      ticketStatusItems: [
+        {
+          label: 'Menunggu Tindak Lanjut',
+          value: 0,
+          onCheck: false,
+        },
+        {
+          label: 'Belum Diproses',
+          value: 1,
+          onCheck: false,
+        },
+        {
+          label: 'Sedang Diproses',
+          value: 2,
+          onCheck: false,
+        },
+        {
+          label: 'Selesai',
+          value: 3,
+          onCheck: false,
+        },
+      ],
     }
   },
   computed: {
@@ -153,7 +193,12 @@ export default
   },
   methods: {
     fetchTicket() {
-      this.$http_komship.get('/v1/ticket-partner/list')
+      this.loadingDataTable = true
+      const params = {}
+      if (this.ticketStatus) Object.assign(params, { ticket_status: this.ticketStatus.join() })
+      this.$http_komship.get('/v1/ticket-partner/list', {
+        params,
+      })
         .then(response => {
           console.log(response)
           const { data } = response.data
@@ -269,6 +314,20 @@ export default
       const findIndexObj = this.itemsImageInitialFile.findIndex(items => items.name === data.name)
       console.log('findObject', findIndexObj)
       this.itemsImageInitialFile.splice(findIndexObj, 1)
+    },
+    setSearchType(data) {
+      this.searchType = data.label
+      this.$root.$emit('bv::hide::popover', 'popover-search-type')
+    },
+    filterTicketByStatus(data) {
+      const findIndexObj = this.ticketStatusItems.findIndex(items => items.value === data.value)
+      const findObj = this.ticketStatus.findIndex(items => items === data.value)
+      if (this.ticketStatusItems[findIndexObj].onCheck === true) {
+        this.ticketStatus.push(data.value)
+      } else {
+        this.ticketStatus.splice(findObj, 1)
+      }
+      this.fetchTicket()
     },
   },
 }

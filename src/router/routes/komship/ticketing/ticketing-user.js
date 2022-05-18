@@ -16,6 +16,7 @@ export default [
     component: () => import('@/views/pages/komship/detail-ticketing-user/DetailTicketing.vue'),
     meta: {
       name: 'detail-ticketing-user',
+      routeTicket: 'ticketing-user',
       navActiveLink: 'ticketing-user',
       resource: 'Produk',
       action: 'manage',

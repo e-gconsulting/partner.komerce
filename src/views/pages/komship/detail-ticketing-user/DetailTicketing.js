@@ -3,6 +3,7 @@ export default {
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
+      loadingDataDetail: true,
 
       ticketStatus: '',
       orderStatus: '',
@@ -13,7 +14,7 @@ export default {
       ticketType: '',
       customerName: '',
       description: '',
-      file: null,
+      files: [],
     }
   },
 
@@ -35,10 +36,12 @@ export default {
           this.seller = data.partner_name
           this.ekspedisi = data.shipping
           this.noResi = data.no_resi
-          this.file = data.file
+          this.files = data.file
+          this.loadingDataDetail = false
         })
         .catch(err => {
           console.log(err)
+          this.loadingDataDetail = false
         })
     },
   },

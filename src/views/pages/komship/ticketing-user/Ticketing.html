@@ -350,50 +350,29 @@
                 border-radius: 8px;"
             >
                 <b-row class="align-items-center justify-content-between">
-                    Status
+                    {{ searchType }}
                     <div class="ml-3">
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
                 </b-row>
             </b-button>
             <b-popover
+                id="popover-search-type"
                 target="popoverStatus"
                 triggers="focus"
                 placement="bottom"
             >
-                <div class="p-50">
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
+                <div
+                    v-for="(items, index) in searchItems"
+                    :key="index+1"
+                >
+                    <b-button
+                        v-model="items.value"
+                        variant="flat-dark"
+                        @click="setSearchType(items)"
                     >
-                        <span class="text-black">
-                            Menunggu Tindak Lanjut
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Belum Diproses
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Sedang Diproses
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary"
-                    >
-                        <span class="text-black">
-                            Selesai
-                        </span>
-                    </b-form-checkbox>
+                        {{ items.label }}
+                    </b-button>
                 </div>
             </b-popover>
         </b-col>
@@ -491,37 +470,18 @@
                 triggers="focus"
                 placement="bottom"
             >
-                <div class="p-50">
+                <div
+                    class="p-50"
+                    v-for="(items, index) in ticketStatusItems"
+                    :key="index+1"
+                >
                     <b-form-checkbox
-                        v-model="selected"
+                        v-model="items.onCheck"
                         class="custom-control-primary mb-1"
+                        @change="filterTicketByStatus(items)"
                     >
                         <span class="text-black">
-                            Menunggu Tindak Lanjut
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Belum Diproses
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Sedang Diproses
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary"
-                    >
-                        <span class="text-black">
-                            Selesai
+                            {{ items.label }}
                         </span>
                     </b-form-checkbox>
                 </div>
