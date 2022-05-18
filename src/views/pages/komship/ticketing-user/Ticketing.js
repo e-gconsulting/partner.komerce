@@ -15,6 +15,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   required,
 } from '@validations'
+import moment from 'moment'
 import {
   today,
   last7,
@@ -22,7 +23,6 @@ import {
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
-import moment from 'moment'
 
 export default
 {

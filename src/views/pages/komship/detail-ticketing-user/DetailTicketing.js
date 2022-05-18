@@ -1,3 +1,5 @@
+import fire from '@/fire'
+
 export default {
   components: {},
   data() {
@@ -15,11 +17,15 @@ export default {
       customerName: '',
       description: '',
       files: [],
+
+      // Chat
+      messages: [],
     }
   },
 
   mounted() {
     this.fetchDetailTicket()
+    console.log(fire)
   },
   methods: {
     fetchDetailTicket() {
