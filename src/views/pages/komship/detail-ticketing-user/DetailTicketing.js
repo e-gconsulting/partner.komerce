@@ -1,28 +1,9 @@
 /* eslint-disable import/no-unresolved */
-import firebase from '@/fire'
+// import firebase from '@/fire'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
 
 const messaging = getMessaging()
-getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
-  if (currentToken) {
-    console.log(currentToken)
-    this.receiveMessage()
-    this.$toast({
-      component: ToastificationContent,
-      props: {
-        title: 'Message',
-        icon: 'AlertCircleIcon',
-        text: 'You have a message',
-        variant: 'danger',
-      },
-    }, 2000)
-  } else {
-    console.log('No registration token available. Request permission to generate one.')
-  }
-}).catch(err => {
-  console.log('An error occurred while retrieving token. ', err)
-})
 
 export default {
   components: {},
@@ -45,17 +26,11 @@ export default {
       // Chat
       messages: [],
       chatItem: '',
+      fcmToken: '',
     }
   },
-  watch: {
-    messages(newMessage, oldMessage) {
-      if (newMessage.length !== oldMessage.length) {
-        this.receiveMessage()
-      }
-    },
-  },
   created() {
-    this.receiveMessage()
+    this.fetchDataFirebase()
   },
   mounted() {
     this.fetchDetailTicket()
@@ -65,7 +40,6 @@ export default {
       this.$http_komship.get(`v1/ticket-partner/detail/${this.ticketId}`)
         .then(response => {
           const { data } = response.data
-          console.log(data)
           this.ticketStatus = data.ticket_status
           this.orderStatus = data.order_status
           this.ticketNo = data.ticket_no
@@ -88,10 +62,22 @@ export default {
       const formData = new FormData()
       formData.append('message', this.chatItem)
       formData.append('ticket_id', Number(this.ticketId))
+      const message = {
+        token: this.fcmToken,
+      }
       this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
         .then(response => {
-          console.log(response)
-          this.fetchDetailTicket()
+          // Send a message to the device corresponding to the provided
+          // registration token.
+          messaging.send(message)
+            .then(res => {
+              // Response is a message ID string.
+              this.fetchDetailTicket()
+              console.log('Successfully sent message:', res)
+            })
+            .catch(error => {
+              console.log('Error sending message:', error)
+            })
         }).catch(err => {
           console.log(err)
         })
@@ -144,7 +130,25 @@ export default {
       return result
     },
     fetchDataFirebase() {
-
+      getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
+        if (currentToken) {
+          console.log(currentToken)
+          this.fcmToken = currentToken
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Message',
+              icon: 'AlertCircleIcon',
+              text: 'You have a message',
+              variant: 'danger',
+            },
+          }, 2000)
+        } else {
+          console.log('No registration token available. Request permission to generate one.')
+        }
+      }).catch(err => {
+        console.log('An error occurred while retrieving token. ', err)
+      })
     },
   },
 }
