@@ -152,6 +152,7 @@ export default
           value: 5,
         },
       ],
+      ticketTypeItems: [],
       ticketType: null,
       description: '',
       file: null,
@@ -180,6 +181,9 @@ export default
           onCheck: false,
         },
       ],
+      fontClassTicketStatus: {
+        color: 'salmon',
+      },
     }
   },
   computed: {
@@ -190,6 +194,7 @@ export default
   mounted() {
     this.fetchTicket()
     this.fetchTicketPartnerCount()
+    this.fetchTicketType()
   },
   methods: {
     fetchTicket() {
@@ -328,6 +333,15 @@ export default
         this.ticketStatus.splice(findObj, 1)
       }
       this.fetchTicket()
+    },
+    fetchTicketType() {
+      this.$http_komship.get('/v1/ticket-partner/ticket-type/list')
+        .then(response => {
+          const { data } = response.data
+          this.ticketTypeItems = data
+        }).catch(err => {
+          console.log(err)
+        })
     },
   },
 }

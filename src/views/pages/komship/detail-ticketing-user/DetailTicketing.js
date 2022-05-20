@@ -19,7 +19,21 @@ export default {
       files: [],
 
       // Chat
-      messages: [],
+      messages: [
+        {
+          role: 'user',
+          name: 'candra bangor',
+          message: 'Jenis Tiket : Jadwal Ulang Pengiriman, Deskripsi : Mohon untuk diantarkan ulang',
+          time: '10 April 2022 | 13.40',
+        },
+        {
+          role: 'mitra',
+          name: 'candra maung',
+          message: 'Akan dieskalasi ke cabang terkait',
+          time: '10 April 2022 | 13.40',
+        },
+      ],
+      chatItem: '',
     }
   },
 
@@ -48,6 +62,17 @@ export default {
         .catch(err => {
           console.log(err)
           this.loadingDataDetail = false
+        })
+    },
+    storeChat() {
+      const formData = new FormData()
+      formData.append('message', this.chatItem)
+      formData.append('ticket_id', Number(this.ticketId))
+      this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+        .then(response => {
+          console.log(response)
+        }).catch(err => {
+          console.log(err)
         })
     },
   },

@@ -248,123 +248,47 @@
                     class="overflow-auto"
                     style="height: 521px;"
                 >
-                    <b-row class="mx-50">
+                    <b-row
+                        class="mx-50"
+                        v-for="(messageItem, index) in messages"
+                        :key="index+1"
+                    >
                         <b-col
                             md="12"
+                            class="mb-2"
                         >
-                            <b-row class="justify-content-end mb-50">
+                            <b-row :class="messageItem.role === 'user' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                 <small class="text-black">
-                                    Candra Maung
+                                    {{ messageItem.name }}
                                 </small>
                             </b-row>
-                            <b-row class="justify-content-end mb-50">
-                                <div class="wrapper__chat__user p-1">
-                                    <p class="text-white">
-                                        Jenis Tiket : Jadwal Ulang Pengiriman
-                                        <br>
-                                        Deskripsi : Mohon untuk diantarkan ulang
+                            <b-row :class="messageItem.role === 'user' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                <div :class="messageItem.role === 'user' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
+                                    <p :class="messageItem.role === 'user' ? 'text-white' : 'text-black'">
+                                        {{ messageItem.message}}
                                     </p>
                                 </div>
                             </b-row>
-                            <b-row class="justify-content-end">
+                            <b-row :class="messageItem.role === 'user' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
                                 <small class="text-black">
-                                    10 April 2022 | 13.40
+                                    {{ messageItem.time }}
                                 </small>
                             </b-row>
-                        </b-col>
 
-                        <b-col
-                            md="12"
-                        >
-                            <b-row class="justify-content-start mb-50">
-                                <small class="text-black">
-                                    Candra Maung
-                                </small>
-                            </b-row>
-                            <b-row class="justify-content-start mb-50">
-                                <div class="wrapper__chat__isnotuser p-1">
-                                    <p class="text-black">
-                                        Akan dieskalasi ke cabang terkait
-                                    </p>
-                                </div>
-                            </b-row>
-                            <b-row class="justify-content-start">
-                                <small class="text-black">
-                                    10 April 2022 | 13.40
-                                </small>
-                            </b-row>
+                            <!-- File -->
+                            <div
+                                v-if="messageItem.file !== undefined"
+                            >
+                                <b-row class="justify-content-end mb-50">
+                                    <b-img :src="messageItem.file.path" width="160px" />
+                                </b-row>
+                                <b-row :class="messageItem.role === 'user' ? 'justify-content-end' : 'justify-content-start'">
+                                    <small class="text-black">
+                                        {{ messageItem.file.time }}
+                                    </small>
+                                </b-row>
+                            </div>
                         </b-col>
-
-                        <b-col
-                            md="12"
-                        >
-                            <b-row class="justify-content-end mb-50">
-                                <small class="text-black">
-                                    Candra Maung
-                                </small>
-                            </b-row>
-                            <b-row class="justify-content-end mb-50">
-                                <div class="wrapper__chat__user p-1">
-                                    <p class="text-white">
-                                        Jenis Tiket : Jadwal Ulang Pengiriman
-                                        <br>
-                                        Deskripsi : Mohon untuk diantarkan ulang
-                                    </p>
-                                </div>
-                            </b-row>
-                            <b-row class="justify-content-end">
-                                <small class="text-black">
-                                    10 April 2022 | 13.40
-                                </small>
-                            </b-row>
-                        </b-col>
-
-                        <b-col
-                            md="12"
-                        >
-                            <b-row class="justify-content-start mb-50">
-                                <small class="text-black">
-                                    Candra Maung
-                                </small>
-                            </b-row>
-                            <b-row class="justify-content-start mb-50">
-                                <div class="wrapper__chat__isnotuser p-1">
-                                    <p class="text-black">
-                                        Akan dieskalasi ke cabang terkait
-                                    </p>
-                                </div>
-                            </b-row>
-                            <b-row class="justify-content-start">
-                                <small class="text-black">
-                                    10 April 2022 | 13.40
-                                </small>
-                            </b-row>
-                        </b-col>
-
-                        <b-col
-                            md="12"
-                        >
-                            <b-row class="justify-content-end mb-50">
-                                <small class="text-black">
-                                    Candra Maung
-                                </small>
-                            </b-row>
-                            <b-row class="justify-content-end mb-50">
-                                <div class="wrapper__chat__user p-1">
-                                    <p class="text-white">
-                                        Jenis Tiket : Jadwal Ulang Pengiriman
-                                        <br>
-                                        Deskripsi : Mohon untuk diantarkan ulang
-                                    </p>
-                                </div>
-                            </b-row>
-                            <b-row class="justify-content-end">
-                                <small class="text-black">
-                                    10 April 2022 | 13.40
-                                </small>
-                            </b-row>
-                        </b-col>
-
 
                     </b-row>
                 </div>
@@ -401,6 +325,7 @@
                                     variant="flat-dark"
                                     class="btn-icon"
                                     size="sm"
+                                    @click="storeChat"
                                 >
                                     <b-img 
                                         src="@/assets/images/icons/send-chat.svg"
@@ -410,9 +335,9 @@
                         </div>
                     </template>
                     <b-form-textarea
+                        v-model="chatItem"
                         no-resize
                         class="border-0"
-                        rows="4"
                         placeholder="Tulis pesan untuk menanggapi"
                     />
                 </b-input-group>

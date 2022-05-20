@@ -402,45 +402,17 @@
                 triggers="focus"
                 placement="bottom"
             >
-                <div class="p-50">
+                <div
+                    class="p-50"
+                    v-for="(item, index) in ticketTypeItems"
+                    :key="index+1"
+                >
                     <b-form-checkbox
-                        v-model="selected"
+                        v-model="item.id"
                         class="custom-control-primary mb-1"
                     >
                         <span class="text-black">
-                            Alamat/Nomor HP Penerima Tidak Lengkap
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Penerima Tidak Dikenal
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Penerima Tidak Berada Ditempat
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary mb-1"
-                    >
-                        <span class="text-black">
-                            Penerima Menolak Paket
-                        </span>
-                    </b-form-checkbox>
-                    <b-form-checkbox
-                        v-model="selected"
-                        class="custom-control-primary"
-                    >
-                        <span class="text-black">
-                            Permintaan Pengiriman Ulang
+                            {{ item.name }}
                         </span>
                     </b-form-checkbox>
                 </div>
@@ -607,7 +579,39 @@
                 </template>
     
                 <template #cell(ticket_status)="dataStatusTicket">
-                    <span class="text-primary font-medium">
+                    <span
+                        v-if="dataStatusTicket.value === 'Perlu tindak lanjut'"
+                        class="font-medium"
+                        style="color: #AB2900" 
+                    >
+                        {{ dataStatusTicket.value }}
+                    </span>
+                    <span
+                        v-if="dataStatusTicket.value === 'Belum diproses'"
+                        class="font-medium"
+                        style="color: #E31A1A"
+                    >
+                        {{ dataStatusTicket.value }}
+                    </span>
+                    <span
+                        v-if="dataStatusTicket.value === 'Sedang diproses'"
+                        class="font-medium"
+                        style="color: #FBA63C"
+                    >
+                        {{ dataStatusTicket.value }}
+                    </span>
+                    <span
+                        v-if="dataStatusTicket.value === 'Selesai'"
+                        class="font-medium"
+                        style="color: #34A770"
+                    >
+                        {{ dataStatusTicket.value }}
+                    </span>
+                    <span
+                        v-if="dataStatusTicket.value === 'Dibatalkan'"
+                        class="font-medium"
+                        style="color: #828282"
+                    >
                         {{ dataStatusTicket.value }}
                     </span>
                 </template>
