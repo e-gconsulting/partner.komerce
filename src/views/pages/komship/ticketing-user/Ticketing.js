@@ -57,7 +57,7 @@ export default
           class: 'bg-white',
         },
         {
-          key: 'ekspedisi',
+          key: 'shipping',
           label: 'Ekspedisi',
           trClass: 'border-top-0',
           class: 'bg-white',
@@ -69,7 +69,7 @@ export default
           class: 'bg-white',
         },
         {
-          key: 'jenis_ticket',
+          key: 'name',
           label: 'Jenis Tiket',
           trClass: 'border-top-0',
           class: 'bg-white',
@@ -342,6 +342,21 @@ export default
         }).catch(err => {
           console.log(err)
         })
+    },
+    statusTicketClass(data) {
+      let resultVariant = ''
+      if (data === 'Belum diproses') {
+        resultVariant = 'font-medium text-primary'
+      } else if (data === 'Sedang diproses') {
+        resultVariant = 'font-medium text-warning'
+      } else if (data === 'Selesai') {
+        resultVariant = 'font-medium text-success'
+      } else if (data === 'Dikirim') {
+        resultVariant = 'font-medium text-info'
+      } else if (data === 'Dibatalkan') {
+        resultVariant = 'font-medium text-secondary'
+      }
+      return resultVariant
     },
   },
 }

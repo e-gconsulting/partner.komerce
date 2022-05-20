@@ -46,7 +46,19 @@
                                 </strong>
                             </span>
                         </template>
-                        <b-badge variant="light-primary">
+                        <b-badge
+                            v-if="ticketStatus === 'Belum diproses'"
+                            :variant="statusTicketVariant(ticketStatus)"
+                        >
+                            {{ ticketStatus }}
+                        </b-badge>
+                        <b-badge
+                            v-if="ticketStatus === 'Perlu tindak lanjut'"
+                            style="
+                                background: #FCD4BE;
+                                color: #AB2900;
+                            "
+                        >
                             {{ ticketStatus }}
                         </b-badge>
                     </b-form-group>
@@ -61,7 +73,7 @@
                                 </strong>
                             </span>
                         </template>
-                        <b-badge variant="light-info">
+                        <b-badge :variant="orderStatusVariant(orderStatus)">
                             {{ orderStatus }}
                         </b-badge>
                     </b-form-group>
@@ -255,29 +267,28 @@
                     >
                         <b-col
                             md="12"
-                            class="mb-2"
                         >
-                            <b-row :class="messageItem.role === 'user' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                 <small class="text-black">
                                     {{ messageItem.name }}
                                 </small>
                             </b-row>
-                            <b-row :class="messageItem.role === 'user' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                <div :class="messageItem.role === 'user' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
-                                    <p :class="messageItem.role === 'user' ? 'text-white' : 'text-black'">
+                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
+                                    <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'">
                                         {{ messageItem.message}}
                                     </p>
                                 </div>
                             </b-row>
-                            <b-row :class="messageItem.role === 'user' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
+                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
                                 <small class="text-black">
-                                    {{ messageItem.time }}
+                                    {{ messageItem.date_created }}
                                 </small>
                             </b-row>
 
                             <!-- File -->
                             <div
-                                v-if="messageItem.file !== undefined"
+                                v-if="messageItem.file !== null"
                             >
                                 <b-row class="justify-content-end mb-50">
                                     <b-img :src="messageItem.file.path" width="160px" />

@@ -560,9 +560,9 @@
                     </span>
                 </template>
     
-                <template #cell(ekspedisi)="dataEkspedisi">
+                <template #cell(shipping)="dataShipping">
                     <span class="text-black font-medium">
-                        {{ dataEkspedisi.value }}
+                        {{ dataShipping.item.shipping }}
                     </span>
                 </template>
     
@@ -572,9 +572,9 @@
                     </span>
                 </template>
     
-                <template #cell(jenis_ticket)="dataJenisticket">
+                <template #cell(name)="dataJenisticket">
                     <span class="text-black font-medium">
-                        {{ dataJenisticket.value }}
+                        {{ dataJenisticket.value}}
                     </span>
                 </template>
     
@@ -588,29 +588,7 @@
                     </span>
                     <span
                         v-if="dataStatusTicket.value === 'Belum diproses'"
-                        class="font-medium"
-                        style="color: #E31A1A"
-                    >
-                        {{ dataStatusTicket.value }}
-                    </span>
-                    <span
-                        v-if="dataStatusTicket.value === 'Sedang diproses'"
-                        class="font-medium"
-                        style="color: #FBA63C"
-                    >
-                        {{ dataStatusTicket.value }}
-                    </span>
-                    <span
-                        v-if="dataStatusTicket.value === 'Selesai'"
-                        class="font-medium"
-                        style="color: #34A770"
-                    >
-                        {{ dataStatusTicket.value }}
-                    </span>
-                    <span
-                        v-if="dataStatusTicket.value === 'Dibatalkan'"
-                        class="font-medium"
-                        style="color: #828282"
+                        :class="statusTicketClass(dataStatusTicket.value)"
                     >
                         {{ dataStatusTicket.value }}
                     </span>

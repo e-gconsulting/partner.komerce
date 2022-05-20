@@ -1,28 +1,31 @@
 /* eslint-disable import/no-unresolved */
 import firebase from '@/fire'
-import { getMessaging, getToken } from 'firebase/messaging'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { getMessaging, getToken, onMessage } from 'firebase/messaging'
+
+const messaging = getMessaging()
+getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
+  if (currentToken) {
+    console.log(currentToken)
+    this.receiveMessage()
+    this.$toast({
+      component: ToastificationContent,
+      props: {
+        title: 'Message',
+        icon: 'AlertCircleIcon',
+        text: 'You have a message',
+        variant: 'danger',
+      },
+    }, 2000)
+  } else {
+    console.log('No registration token available. Request permission to generate one.')
+  }
+}).catch(err => {
+  console.log('An error occurred while retrieving token. ', err)
+})
 
 export default {
   components: {},
-  created() {
-    // Get registration token. Initially this makes a network call, once retrieved
-    // subsequent calls to getToken will return from cache.
-    const messaging = getMessaging()
-    getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
-      if (currentToken) {
-        // Send the token to your server and update the UI if necessary
-        // ...
-        console.log(currentToken)
-      } else {
-        // Show permission request UI
-        console.log('No registration token available. Request permission to generate one.')
-        // ...
-      }
-    }).catch(err => {
-      console.log('An error occurred while retrieving token. ', err)
-      // ...
-    })
-  },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
@@ -40,27 +43,22 @@ export default {
       files: [],
 
       // Chat
-      messages: [
-        {
-          role: 'user',
-          name: 'candra bangor',
-          message: 'Jenis Tiket : Jadwal Ulang Pengiriman, Deskripsi : Mohon untuk diantarkan ulang',
-          time: '10 April 2022 | 13.40',
-        },
-        {
-          role: 'mitra',
-          name: 'candra maung',
-          message: 'Akan dieskalasi ke cabang terkait',
-          time: '10 April 2022 | 13.40',
-        },
-      ],
+      messages: [],
       chatItem: '',
     }
   },
-
+  watch: {
+    messages(newMessage, oldMessage) {
+      if (newMessage.length !== oldMessage.length) {
+        this.receiveMessage()
+      }
+    },
+  },
+  created() {
+    this.receiveMessage()
+  },
   mounted() {
     this.fetchDetailTicket()
-    console.log(firebase)
   },
   methods: {
     fetchDetailTicket() {
@@ -78,6 +76,7 @@ export default {
           this.ekspedisi = data.shipping
           this.noResi = data.no_resi
           this.files = data.file
+          this.messages = data.history_ticket
           this.loadingDataDetail = false
         })
         .catch(err => {
@@ -92,18 +91,60 @@ export default {
       this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
         .then(response => {
           console.log(response)
+          this.fetchDetailTicket()
         }).catch(err => {
           console.log(err)
         })
     },
     receiveMessage() {
-      try {
-        firebase.messaging().onMessage(payload => {
-          console.log('payload ', payload)
-        })
-      } catch (e) {
-        console.log(e)
+      onMessage(messaging, payload => {
+        console.log('Message received. ', payload)
+        // ..
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Message',
+            icon: 'AlertCircleIcon',
+            text: 'You have a message Pak',
+            variant: 'danger',
+          },
+        }, 2000)
+      })
+    },
+    statusTicketVariant(data) {
+      let resultVariant = ''
+      if (data === 'Belum diproses') {
+        resultVariant = 'light-primary'
+      } else if (data === 'Sedang diproses') {
+        resultVariant = 'light-warning'
+      } else if (data === 'Selesai') {
+        resultVariant = 'light-success'
+      } else if (data === 'Dikirim') {
+        resultVariant = 'light-info'
+      } else if (data === 'Dibatalkan') {
+        resultVariant = 'light-secondary'
       }
+      return resultVariant
+    },
+    orderStatusVariant(data) {
+      let result = ''
+      if (data === 'Diajukan') {
+        result = 'light-primary'
+      } else if (data === 'Dipacking') {
+        result = 'light-info'
+      } else if (data === 'Dikirim') {
+        result = 'light-warning'
+      } else if (data === 'Diterima') {
+        result = 'light-success'
+      } else if (data === 'Retur') {
+        result = 'light-danger'
+      } else if (data === 'Batal') {
+        result = 'light-dark'
+      }
+      return result
+    },
+    fetchDataFirebase() {
+
     },
   },
 }
