@@ -1,3 +1,5 @@
+/* eslint-disable import/order */
+/* eslint-disable import/first */
 import Vue from 'vue'
 import {
   ToastPlugin, ModalPlugin, PopoverPlugin, BootstrapVue, IconsPlugin,
@@ -15,6 +17,10 @@ import './index.css'
 // Global Components
 import './global-components'
 
+// Initialize Firebase
+import firebaseMessaging from './fire'
+// fiebase configs end
+
 // 3rd party plugins
 import '@axios'
 import '@helpers'
@@ -30,6 +36,8 @@ import '@/libs/geocoder'
 import '@/libs/filters'
 // Axios Mock Adapter
 // import '@/@fake-db/db'
+
+Vue.prototype.$messaging = firebaseMessaging
 
 // BSV Plugin Registration
 Vue.use(ToastPlugin)

@@ -1,6 +1,6 @@
-import * as firebase from 'firebase/app'
-import { getMessaging } from 'firebase/messaging'
-import 'firebase/firestore'
+/* eslint-disable no-undef */
+importScripts('https://www.gstatic.com/firebasejs/8.2.7/firebase-app.js')
+importScripts('https://www.gstatic.com/firebasejs/8.2.7/firebase-messaging.js')
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
@@ -11,10 +11,4 @@ const firebaseConfig = {
   appId: '1:669211426801:web:55bca3d2dac7238b298e50',
 }
 
-console.log(firebase)
-console.log('messeging')
-
 const app = firebase.initializeApp(firebaseConfig)
-const messaging = getMessaging(app)
-
-export default messaging

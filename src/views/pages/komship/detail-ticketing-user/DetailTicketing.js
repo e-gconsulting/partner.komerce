@@ -1,7 +1,28 @@
-import fire from '@/fire'
+/* eslint-disable import/no-unresolved */
+import firebase from '@/fire'
+import { getMessaging, getToken } from 'firebase/messaging'
 
 export default {
   components: {},
+  created() {
+    // Get registration token. Initially this makes a network call, once retrieved
+    // subsequent calls to getToken will return from cache.
+    const messaging = getMessaging()
+    getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
+      if (currentToken) {
+        // Send the token to your server and update the UI if necessary
+        // ...
+        console.log(currentToken)
+      } else {
+        // Show permission request UI
+        console.log('No registration token available. Request permission to generate one.')
+        // ...
+      }
+    }).catch(err => {
+      console.log('An error occurred while retrieving token. ', err)
+      // ...
+    })
+  },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
@@ -39,7 +60,7 @@ export default {
 
   mounted() {
     this.fetchDetailTicket()
-    console.log(fire)
+    console.log(firebase)
   },
   methods: {
     fetchDetailTicket() {
@@ -74,6 +95,15 @@ export default {
         }).catch(err => {
           console.log(err)
         })
+    },
+    receiveMessage() {
+      try {
+        firebase.messaging().onMessage(payload => {
+          console.log('payload ', payload)
+        })
+      } catch (e) {
+        console.log(e)
+      }
     },
   },
 }
