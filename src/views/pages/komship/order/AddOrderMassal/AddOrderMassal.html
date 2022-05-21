@@ -12,5 +12,21 @@
         </b-button>
         <h3 class="font-bold my-auto ml-1">Tambah Order Massal</h3>
     </b-row>
-    <div id="spreadsheet"></div>
+    <div id="spreadsheet" class="d-flex" style="max-width: 100%;"></div>
+    <div class="d-flex mt-1">
+        <b-button variant="outline-dark" size="sm">
+            <b-icon-trash></b-icon-trash>
+        </b-button>
+        <b-input-group class="ml-1" style="max-width: 195px;">
+            <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>
+            <b-input-group-append>
+              <b-button variant="outline-dark">Tambah Baris</b-button>
+            </b-input-group-append>
+        </b-input-group>
+        <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" />
+        <img src="@/assets/images/icons/redo.svg" class="ml-1" style="cursor: pointer;" />
+        <b-button variant="outline-dark" size="sm" class="ml-1">Simpan Draft</b-button>
+        <i class="text-info text-sm my-auto ml-1">Tersimpan pada pukul 15:00</i>
+        <b-button variant="primary" class="ml-auto" >Submit</b-button>
+    </div>
 </b-card>
