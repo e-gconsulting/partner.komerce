@@ -77,6 +77,12 @@ export default {
             type: 'numeric', title: 'Nilai Pembayaran', mask: 'Rp #.##,00', decimal: ',',
           },
         ],
+        onchange(instance, cell, col, row, val) {
+          if (col === '6') {
+            const columnName = jspreadsheet.getColumnNameFromId(['7', row])
+            instance.jexcel.setValue(columnName, '')
+          }
+        },
       })
     },
   },
