@@ -123,4 +123,14 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/add-order-massal',
+    name: 'add-order-massal',
+    component: () => import('@/views/pages/komship/order/AddOrderMassal'),
+    meta: {
+      navActiveLink: 'add-order-massal',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
 ]
