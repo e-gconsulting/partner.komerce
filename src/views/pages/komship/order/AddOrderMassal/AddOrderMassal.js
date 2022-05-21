@@ -17,6 +17,7 @@ export default {
       filterVariant: null,
       table: null,
       jumlahBaris: 200,
+      selectedTable: null,
     }
   },
   mounted() {
@@ -51,6 +52,9 @@ export default {
         .catch(err => console.log(err))
     },
     getTable() {
+      const getSelectedTable = data => {
+        this.selectedTable = data
+      }
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
@@ -108,6 +112,12 @@ export default {
               alert('Kuantitas harus angka')
             }
           }
+        },
+        onselection(instance, col, row, cell, val) {
+          const data = {
+            instance, cell, col, row, val,
+          }
+          getSelectedTable(data)
         },
       })
     },
