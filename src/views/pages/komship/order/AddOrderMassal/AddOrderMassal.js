@@ -1,15 +1,27 @@
+/* eslint-disable no-plusplus */
 import jspreadsheet from 'jspreadsheet-ce'
+import axios from 'axios'
 
 export default {
   data() {
     return {
       dataSheets: [],
+      sourceAddress: null,
     }
   },
   mounted() {
-    this.getTable()
+    this.getDataSheets()
   },
   methods: {
+    getDataSheets() {
+      axios.get('https://3ac4-36-73-34-130.ap.ngrok.io/api/v1/order/sheet/drop-down')
+        .then(res => {
+          const { data } = JSON.parse(JSON.stringify(res.data))
+          this.sourceAddress = data.addresses
+          this.getTable()
+        })
+        .catch(err => console.log(err))
+    },
     getTable() {
       jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
@@ -20,7 +32,7 @@ export default {
         columns: [
           { type: 'calendar', title: 'Tanggal Order' },
           {
-            type: 'dropdown', title: 'Kirim Dari',
+            type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
           { type: 'text', title: 'Nama Pembeli' },
           { type: 'numeric', title: 'Nomor HP' },
