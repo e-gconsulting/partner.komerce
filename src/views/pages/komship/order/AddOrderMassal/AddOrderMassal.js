@@ -2,6 +2,7 @@
 /* eslint-disable no-plusplus */
 import jspreadsheet from 'jspreadsheet-ce'
 import axios from 'axios'
+import { toInteger } from 'lodash'
 
 const regexNumber = /^\d+$/
 
@@ -14,6 +15,8 @@ export default {
       sourceProduct: null,
       sourceVariant: null,
       filterVariant: null,
+      table: null,
+      jumlahBaris: 200,
     }
   },
   mounted() {
@@ -48,7 +51,7 @@ export default {
         .catch(err => console.log(err))
     },
     getTable() {
-      jspreadsheet(document.getElementById('spreadsheet'), {
+      this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
         tableHeight: '440px',
@@ -107,6 +110,10 @@ export default {
           }
         },
       })
+    },
+    addRows() {
+      const rows = toInteger(this.jumlahBaris)
+      this.table.insertRow(rows)
     },
   },
 }

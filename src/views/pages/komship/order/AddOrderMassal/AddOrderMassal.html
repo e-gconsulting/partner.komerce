@@ -20,7 +20,7 @@
         <b-input-group class="ml-1" style="max-width: 195px;">
             <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>
             <b-input-group-append>
-              <b-button variant="outline-dark">Tambah Baris</b-button>
+              <b-button variant="outline-dark" @click="addRows()">Tambah Baris</b-button>
             </b-input-group-append>
         </b-input-group>
         <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" />
