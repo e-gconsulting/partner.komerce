@@ -25,31 +25,33 @@ export default {
   },
   methods: {
     getDataSheets() {
-      axios.get('https://3ac4-36-73-34-130.ap.ngrok.io/api/v1/order/sheet/drop-down')
-        .then(res => {
-          const { data } = JSON.parse(JSON.stringify(res.data))
-          this.sourceAddress = data.addresses
-          this.sourcePayment = data.payment_method
-          this.sourceProduct = data.products
-          const { variant } = data
-          this.sourceVariant = ['-']
-          if (variant) {
-            const dataVariant = variant.filter(item => item.variant !== '-')
-            for (let x = 0; x < dataVariant.length; x++) {
-              this.sourceVariant.push(...dataVariant[x].variant)
+      setTimeout(async () => {
+        await axios.get('https://3ac4-36-73-34-130.ap.ngrok.io/api/v1/order/sheet/drop-down')
+          .then(res => {
+            const { data } = JSON.parse(JSON.stringify(res.data))
+            this.sourceAddress = data.addresses
+            this.sourcePayment = data.payment_method
+            this.sourceProduct = data.products
+            const { variant } = data
+            this.sourceVariant = ['-']
+            if (variant) {
+              const dataVariant = variant.filter(item => item.variant !== '-')
+              for (let x = 0; x < dataVariant.length; x++) {
+                this.sourceVariant.push(...dataVariant[x].variant)
+              }
             }
-          }
-          this.filterVariant = (instance, cell, c, r, source) => {
-            const value = instance.jexcel.getValueFromCoords(c - 1, r)
-            const dataVariant = variant.find(item => item.product_name === value)
-            if (dataVariant) {
-              return dataVariant.variant
+            this.filterVariant = (instance, cell, c, r, source) => {
+              const value = instance.jexcel.getValueFromCoords(c - 1, r)
+              const dataVariant = variant.find(item => item.product_name === value)
+              if (dataVariant) {
+                return dataVariant.variant
+              }
+              return source
             }
-            return source
-          }
-          this.getTable()
-        })
-        .catch(err => console.log(err))
+            this.getTable()
+          })
+          .catch(err => console.log(err))
+      }, 800)
     },
     getTable() {
       const getSelectedTable = data => {
