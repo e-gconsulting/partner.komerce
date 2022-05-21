@@ -1,6 +1,9 @@
+/* eslint-disable no-alert */
 /* eslint-disable no-plusplus */
 import jspreadsheet from 'jspreadsheet-ce'
 import axios from 'axios'
+
+const regexNumber = /^\d+$/
 
 export default {
   data() {
@@ -81,6 +84,12 @@ export default {
           if (col === '6') {
             const columnName = jspreadsheet.getColumnNameFromId(['7', row])
             instance.jexcel.setValue(columnName, '')
+          } else if (col === '3') {
+            if (!regexNumber.test(val)) {
+              const columnName = jspreadsheet.getColumnNameFromId(['3', row])
+              instance.jexcel.setValue(columnName, '')
+              alert('Nomor HP harus angka')
+            }
           }
         },
       })
