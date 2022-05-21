@@ -98,6 +98,12 @@ export default {
             } else if (val.length !== 5) {
               alert('Kode Pos harus benar')
             }
+          } else if (col === '8') {
+            if (!regexNumber.test(val)) {
+              const columnName = jspreadsheet.getColumnNameFromId(['8', row])
+              instance.jexcel.setValue(columnName, '')
+              alert('Kuantitas harus angka')
+            }
           }
         },
       })
