@@ -23,6 +23,7 @@ export default [
     meta: {
       navActiveLink: 'data-order',
       editOrder: 'edit-order',
+      routeToDataOrder: 'data-order',
       name: 'detail-order',
       resource: 'Order',
       action: 'manage',
