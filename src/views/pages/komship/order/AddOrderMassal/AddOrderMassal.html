@@ -25,7 +25,7 @@
         </b-input-group>
         <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" @click="table.undo()" />
         <img src="@/assets/images/icons/redo.svg" class="ml-1" style="cursor: pointer;" @click="table.redo()" />
-        <b-button variant="outline-dark" size="sm" class="ml-1">Simpan Draft</b-button>
+        <b-button variant="outline-dark" size="sm" class="ml-1" @click="submitSheets('save')">Simpan Draft</b-button>
         <i class="text-info text-sm my-auto ml-1">Tersimpan pada pukul 15:00</i>
         <b-button variant="primary" class="ml-auto" >Submit</b-button>
     </div>

@@ -129,5 +129,11 @@ export default {
       const totalSelect = this.selectedTable.val - this.selectedTable.row + 1
       this.table.deleteRow(this.selectedTable.row, totalSelect)
     },
+    submitSheets(method) {
+      const data = this.table.getJson()
+      if (method === 'save') {
+        console.log(data)
+      }
+    },
   },
 }
