@@ -90,6 +90,14 @@ export default {
               instance.jexcel.setValue(columnName, '')
               alert('Nomor HP harus angka')
             }
+          } else if (col === '4') {
+            if (!regexNumber.test(val)) {
+              const columnName = jspreadsheet.getColumnNameFromId(['4', row])
+              instance.jexcel.setValue(columnName, '')
+              alert('Kode Pos harus angka')
+            } else if (val.length !== 5) {
+              alert('Kode Pos harus benar')
+            }
           }
         },
       })
