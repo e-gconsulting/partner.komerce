@@ -7,6 +7,7 @@ export default {
     return {
       dataSheets: [],
       sourceAddress: null,
+      sourcePayment: null,
     }
   },
   mounted() {
@@ -18,6 +19,7 @@ export default {
         .then(res => {
           const { data } = JSON.parse(JSON.stringify(res.data))
           this.sourceAddress = data.addresses
+          this.sourcePayment = data.payment_method
           this.getTable()
         })
         .catch(err => console.log(err))
@@ -46,7 +48,7 @@ export default {
           },
           { type: 'text', title: 'Kuantitas' },
           {
-            type: 'dropdown', title: 'Metode pembayaran', width: 200,
+            type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
           {
             type: 'dropdown', title: 'Ekspedisi',
