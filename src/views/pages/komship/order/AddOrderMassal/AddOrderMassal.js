@@ -125,5 +125,9 @@ export default {
       const rows = toInteger(this.jumlahBaris)
       this.table.insertRow(rows)
     },
+    removeRows() {
+      const totalSelect = this.selectedTable.val - this.selectedTable.row + 1
+      this.table.deleteRow(this.selectedTable.row, totalSelect)
+    },
   },
 }
