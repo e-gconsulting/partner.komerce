@@ -9,6 +9,7 @@ export default {
       sourceAddress: null,
       sourcePayment: null,
       sourceProduct: null,
+      sourceVariant: null,
     }
   },
   mounted() {
@@ -22,6 +23,14 @@ export default {
           this.sourceAddress = data.addresses
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
+          const { variant } = data
+          this.sourceVariant = ['-']
+          if (variant) {
+            const dataVariant = variant.filter(item => item.variant !== '-')
+            for (let x = 0; x < dataVariant.length; x++) {
+              this.sourceVariant.push(...dataVariant[x].variant)
+            }
+          }
           this.getTable()
         })
         .catch(err => console.log(err))
@@ -46,7 +55,7 @@ export default {
             type: 'dropdown', title: 'Produk', width: 200, source: this.sourceProduct,
           },
           {
-            type: 'dropdown', title: 'Variasi Spesifik', width: 300,
+            type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant,
           },
           { type: 'text', title: 'Kuantitas' },
           {
