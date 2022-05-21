@@ -10,6 +10,7 @@ export default {
       sourcePayment: null,
       sourceProduct: null,
       sourceVariant: null,
+      filterVariant: null,
     }
   },
   mounted() {
@@ -30,6 +31,14 @@ export default {
             for (let x = 0; x < dataVariant.length; x++) {
               this.sourceVariant.push(...dataVariant[x].variant)
             }
+          }
+          this.filterVariant = (instance, cell, c, r, source) => {
+            const value = instance.jexcel.getValueFromCoords(c - 1, r)
+            const dataVariant = variant.find(item => item.product_name === value)
+            if (dataVariant) {
+              return dataVariant.variant
+            }
+            return source
           }
           this.getTable()
         })
@@ -55,7 +64,7 @@ export default {
             type: 'dropdown', title: 'Produk', width: 200, source: this.sourceProduct,
           },
           {
-            type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant,
+            type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
           },
           { type: 'text', title: 'Kuantitas' },
           {
