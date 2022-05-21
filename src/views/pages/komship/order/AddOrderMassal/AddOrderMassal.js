@@ -8,6 +8,7 @@ export default {
       dataSheets: [],
       sourceAddress: null,
       sourcePayment: null,
+      sourceProduct: null,
     }
   },
   mounted() {
@@ -20,6 +21,7 @@ export default {
           const { data } = JSON.parse(JSON.stringify(res.data))
           this.sourceAddress = data.addresses
           this.sourcePayment = data.payment_method
+          this.sourceProduct = data.products
           this.getTable()
         })
         .catch(err => console.log(err))
@@ -41,7 +43,7 @@ export default {
           { type: 'text', title: 'Kode Pos' },
           { type: 'text', title: 'Alamat Detail', width: 250 },
           {
-            type: 'dropdown', title: 'Produk', width: 200,
+            type: 'dropdown', title: 'Produk', width: 200, source: this.sourceProduct,
           },
           {
             type: 'dropdown', title: 'Variasi Spesifik', width: 300,
