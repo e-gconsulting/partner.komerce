@@ -351,9 +351,7 @@ export default {
     },
   },
   mounted() {
-    this.fetchData().catch(error => {
-      console.error(error)
-    })
+    this.fetchData()
   },
   created() {
     window.addEventListener('click', async e => {
