@@ -21,38 +21,39 @@ export default {
     }
   },
   mounted() {
-    this.getDataSheets()
+    // this.getDataSheets()
+    this.getTable()
   },
   methods: {
-    getDataSheets() {
-      setTimeout(async () => {
-        await axios.get('https://3ac4-36-73-34-130.ap.ngrok.io/api/v1/order/sheet/drop-down')
-          .then(res => {
-            const { data } = JSON.parse(JSON.stringify(res.data))
-            this.sourceAddress = data.addresses
-            this.sourcePayment = data.payment_method
-            this.sourceProduct = data.products
-            const { variant } = data
-            this.sourceVariant = ['-']
-            if (variant) {
-              const dataVariant = variant.filter(item => item.variant !== '-')
-              for (let x = 0; x < dataVariant.length; x++) {
-                this.sourceVariant.push(...dataVariant[x].variant)
-              }
-            }
-            this.filterVariant = (instance, cell, c, r, source) => {
-              const value = instance.jexcel.getValueFromCoords(c - 1, r)
-              const dataVariant = variant.find(item => item.product_name === value)
-              if (dataVariant) {
-                return dataVariant.variant
-              }
-              return source
-            }
-            this.getTable()
-          })
-          .catch(err => console.log(err))
-      }, 800)
-    },
+    // getDataSheets() {
+    //   setTimeout(async () => {
+    //     await axios.get('https://3ac4-36-73-34-130.ap.ngrok.io/api/v1/order/sheet/drop-down')
+    //       .then(res => {
+    //         const { data } = JSON.parse(JSON.stringify(res.data))
+    //         this.sourceAddress = data.addresses
+    //         this.sourcePayment = data.payment_method
+    //         this.sourceProduct = data.products
+    //         const { variant } = data
+    //         this.sourceVariant = ['-']
+    //         if (variant) {
+    //           const dataVariant = variant.filter(item => item.variant !== '-')
+    //           for (let x = 0; x < dataVariant.length; x++) {
+    //             this.sourceVariant.push(...dataVariant[x].variant)
+    //           }
+    //         }
+    //         this.filterVariant = (instance, cell, c, r, source) => {
+    //           const value = instance.jexcel.getValueFromCoords(c - 1, r)
+    //           const dataVariant = variant.find(item => item.product_name === value)
+    //           if (dataVariant) {
+    //             return dataVariant.variant
+    //           }
+    //           return source
+    //         }
+    //         this.getTable()
+    //       })
+    //       .catch(err => console.log(err))
+    //   }, 800)
+    // },
     getTable() {
       const getSelectedTable = data => {
         this.selectedTable = data
@@ -132,23 +133,37 @@ export default {
       this.table.deleteRow(this.selectedTable.row, totalSelect)
     },
     submitSheets(method) {
-      const data = this.table.getJson()
+      const json = this.table.getJson()
+      const data = json.map(items => ({
+        order_date: items[0] === '' ? null : items[0],
+        address: items[1] === '' ? null : items[1],
+        customer_name: items[2] === '' ? null : items[2],
+        customer_phone_number: items[3] === '' ? null : items[3],
+        zip_code: items[4] === '' ? null : items[4],
+        customer_address: items[5] === '' ? null : items[5],
+        product: items[6] === '' ? null : items[6],
+        variant: items[7] === '' ? null : items[7],
+        qty: items[8] === '' ? null : items[8],
+        payment_method: items[9] === '' ? null : items[9],
+        expedition: items[10] === '' ? null : items[10],
+        grandtotal: items[11] === '' ? null : items[11],
+      }))
       if (method === 'save') {
         console.log(data)
       } else if (method === 'submit') {
         const dataSubmit = data.filter(
-          items => items[0]
-        || items[1]
-        || items[2]
-        || items[3]
-        || items[4]
-        || items[5]
-        || items[6]
-        || items[7]
-        || items[8]
-        || items[9]
-        || items[10]
-        || items[11] !== '',
+          items => items.order_date
+        || items.address
+        || items.customer_name
+        || items.customer_phone_number
+        || items.zip_code
+        || items.customer_address
+        || items.product
+        || items.variant
+        || items.qty
+        || items.payment_method
+        || items.expedition
+        || items.grandtotal !== null,
         )
         console.log(dataSubmit)
       }
