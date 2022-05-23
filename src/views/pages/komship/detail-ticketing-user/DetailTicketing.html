@@ -308,7 +308,71 @@
     </b-row>
 
     <b-row class="mx-50">
-        <b-col cols="12">
+        <b-col
+            v-if="chatFileMode"
+            cols="12"
+        >
+            <div
+                class="p-50"
+                style="border: 2px solid #E2E2E2;
+                border-radius: 20px;"
+            >
+                <b-row>
+                    <b-col cols="10">
+                        <a :href="imageFileChat" target="_blank">
+                            <b-img
+                                class="class__file__chat m-1"
+                                :src="imageFileChat"
+                            />
+                        </a>
+                        <div class="pb-1">
+                            <span class="text-black ml-1">
+                                {{ imageInitialFile }}
+                            </span>
+                        </div>
+                    </b-col>
+                    <b-col cols="2">
+                        <b-row class="justify-content-end">
+                            <label
+                                for="fileChat"
+                                class="btn btn-flat-dark btn-icon"
+                                size="sm"
+                                style="
+                                    border-right: 1px solid #C2C2C2;
+                                    border-top-right-radius: 0px;
+                                    border-bottom-right-radius: 0px;
+                                    padding: 5px 10px!important;
+                                "
+                            >
+                                <feather-icon
+                                    icon="Link2Icon"
+                                    size="25"
+                                />
+                            </label>
+                            <b-form-file
+                                id="fileChat"
+                                class="d-none"
+                                @change="putFileChat"
+                            />
+                            <b-button
+                                variant="flat-dark"
+                                class="btn-icon mr-1"
+                                size="sm"
+                                @click="storeChat"
+                            >
+                                <b-img 
+                                    src="@/assets/images/icons/send-chat.svg"
+                                />
+                            </b-button>
+                        </b-row>
+                    </b-col>
+                </b-row>
+            </div>
+        </b-col>
+        <b-col
+            v-if="chatFileMode === false"
+            cols="12"
+        >
                 <b-input-group
                     class="p-50"
                     style="border: 2px solid #E2E2E2;
@@ -317,21 +381,27 @@
                     <template #append>
                         <div class="d-flex align-items-top">
                             <div>
-                                <b-button
-                                    variant="flat-dark"
-                                    class="btn-icon"
+                                <label
+                                    for="fileChat"
+                                    class="btn btn-flat-dark btn-icon"
                                     size="sm"
                                     style="
                                         border-right: 1px solid #C2C2C2;
                                         border-top-right-radius: 0px;
                                         border-bottom-right-radius: 0px;
+                                        padding: 5px 10px!important;
                                     "
                                 >
                                     <feather-icon
                                         icon="Link2Icon"
                                         size="25"
                                     />
-                                </b-button>
+                                </label>
+                                <b-form-file
+                                    id="fileChat"
+                                    class="d-none"
+                                    @change="putFileChat"
+                                />
                                 <b-button
                                     variant="flat-dark"
                                     class="btn-icon"
@@ -353,6 +423,7 @@
                     />
                 </b-input-group>
                 
-        </b-col>
+        </b-col>    
+    </b-col>
     </b-row>
  </b-card>

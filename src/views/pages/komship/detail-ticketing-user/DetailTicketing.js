@@ -1,9 +1,25 @@
 /* eslint-disable import/no-unresolved */
-// import firebase from '@/fire'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { getMessaging, getToken, onMessage } from 'firebase/messaging'
+import { initializeApp } from 'firebase/app'
+import * as firebase from 'firebase/app'
 
+const firebaseConfig = {
+  apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
+  authDomain: 'komship-ticketing.firebaseapp.com',
+  projectId: 'komship-ticketing',
+  storageBucket: 'komship-ticketing.appspot.com',
+  messagingSenderId: '669211426801',
+  appId: '1:669211426801:web:55bca3d2dac7238b298e50',
+}
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+console.log(firebase)
+
+// Initialize Firebase Cloud Messaging and get a reference to the service
 const messaging = getMessaging()
+console.log(messaging)
 
 export default {
   components: {},
@@ -27,12 +43,17 @@ export default {
       messages: [],
       chatItem: '',
       fcmToken: '',
+      fileChat: null,
+      chatFileMode: false,
+      imageFileChat: null,
+      imageInitialFile: null,
     }
   },
   created() {
-    this.fetchDataFirebase()
+    this.receiveMessage()
   },
   mounted() {
+    this.fetchDataFirebase()
     this.fetchDetailTicket()
   },
   methods: {
@@ -59,43 +80,48 @@ export default {
         })
     },
     storeChat() {
-      const formData = new FormData()
-      formData.append('message', this.chatItem)
-      formData.append('ticket_id', Number(this.ticketId))
-      const message = {
+      const messageNotification = {
+        data: {
+          score: '850',
+          time: '2:45',
+        },
         token: this.fcmToken,
       }
-      this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+      getMessaging().send(messageNotification)
         .then(response => {
-          // Send a message to the device corresponding to the provided
-          // registration token.
-          messaging.send(message)
-            .then(res => {
-              // Response is a message ID string.
-              this.fetchDetailTicket()
-              console.log('Successfully sent message:', res)
-            })
-            .catch(error => {
-              console.log('Error sending message:', error)
-            })
-        }).catch(err => {
-          console.log(err)
+          // Response is a message ID string.
+          console.log('Successfully sent message:', response)
         })
-    },
-    receiveMessage() {
-      onMessage(messaging, payload => {
-        console.log('Message received. ', payload)
-        // ..
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Message',
-            icon: 'AlertCircleIcon',
-            text: 'You have a message Pak',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+        .catch(error => {
+          console.log('Error sending message:', error)
+        })
+      // const formData = new FormData()
+      // formData.append('message', this.chatItem)
+      // formData.append('ticket_id', Number(this.ticketId))
+      // const message = {
+      //   token: this.fcmToken,
+      // }
+      // formData.append('token', this.fcmToken)
+      // this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+      //   .then(response => {
+      //     const messageNotification = {
+      //       data: {
+      //         score: '850',
+      //         time: '2:45',
+      //       },
+      //       token: this.fcmToken,
+      //     }
+      //     getMessaging().send(message)
+      //       .then(response => {
+      //         // Response is a message ID string.
+      //         console.log('Successfully sent message:', response)
+      //       })
+      //       .catch(error => {
+      //         console.log('Error sending message:', error)
+      //       })
+      //   }).catch(err => {
+      //     console.log(err)
+      //   })
     },
     statusTicketVariant(data) {
       let resultVariant = ''
@@ -132,23 +158,43 @@ export default {
     fetchDataFirebase() {
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
-          console.log(currentToken)
+          console.log('token', currentToken)
           this.fcmToken = currentToken
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Message',
-              icon: 'AlertCircleIcon',
-              text: 'You have a message',
-              variant: 'danger',
-            },
-          }, 2000)
         } else {
           console.log('No registration token available. Request permission to generate one.')
         }
       }).catch(err => {
         console.log('An error occurred while retrieving token. ', err)
       })
+    },
+    putFileChat(event) {
+      console.log(event)
+      this.fileChat = event.target.files
+      this.imageInitialFile = event.target.files[0].name
+      this.chatFileMode = true
+      const file = event.target.files[0]
+      this.imageFileChat = URL.createObjectURL(file)
+    },
+    fileUrl: file => (file ? URL.createObjectURL(file) : null),
+    receiveMessage() {
+      try {
+        this.fetchDetailTicket()
+        onMessage(messaging, payload => {
+          console.log('Message received. ', payload)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Message',
+              icon: 'AlertCircleIcon',
+              text: 'You have a message',
+              variant: 'Warning',
+            },
+          }, 2000)
+          this.fetchDataFirebase()
+        })
+      } catch (err) {
+        console.log('err receive', err)
+      }
     },
   },
 }
