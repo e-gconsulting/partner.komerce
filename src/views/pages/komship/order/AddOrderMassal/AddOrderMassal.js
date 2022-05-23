@@ -115,10 +115,15 @@ export default {
               alert('Kode Pos harus benar')
             }
           } else if (col === '8') {
-            if (!regexNumber.test(val)) {
+            if (!regexNumber.test(val) || val.length < 1 || val.length > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId(['8', row])
               instance.jexcel.setValue(columnName, '')
-              alert('Kuantitas harus angka')
+              popup({
+                title: 'Upss., belum tepat nih..',
+                text: 'Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..',
+                confirmButtonText: 'Oke',
+                confirmButtonClass: 'btn btn-primary',
+              })
             }
           } else if (col === '2') {
             if (val.length < 3 || val.length > 30) {
