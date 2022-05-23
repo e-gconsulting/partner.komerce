@@ -58,6 +58,7 @@ export default {
       const getSelectedTable = data => {
         this.selectedTable = data
       }
+      const popup = this.$swal
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
@@ -113,6 +114,17 @@ export default {
               const columnName = jspreadsheet.getColumnNameFromId(['8', row])
               instance.jexcel.setValue(columnName, '')
               alert('Kuantitas harus angka')
+            }
+          } else if (col === '2') {
+            if (val.length < 3 || val.length > 30) {
+              const columnName = jspreadsheet.getColumnNameFromId(['2', row])
+              instance.jexcel.setValue(columnName, '')
+              popup({
+                title: 'Upss., belum tepat nih..',
+                text: 'Masukkan Nama pembeli dengan benar yaa..',
+                confirmButtonText: 'Oke',
+                confirmButtonClass: 'btn btn-primary',
+              })
             }
           }
         },
