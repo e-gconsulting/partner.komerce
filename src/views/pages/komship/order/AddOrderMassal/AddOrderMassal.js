@@ -131,6 +131,17 @@ export default {
                 confirmButtonClass: 'btn btn-primary',
               })
             }
+          } else if (col === '5') {
+            if (val.length < 11 || val.length > 85) {
+              const columnName = jspreadsheet.getColumnNameFromId(['5', row])
+              instance.jexcel.setValue(columnName, '')
+              popup({
+                title: 'Upss., belum tepat nih..',
+                text: 'Alamat pembelinya diisi dengan detail dan jelas yaa..',
+                confirmButtonText: 'Oke',
+                confirmButtonClass: 'btn btn-primary',
+              })
+            }
           }
         },
         onselection(instance, col, row, cell, val) {
