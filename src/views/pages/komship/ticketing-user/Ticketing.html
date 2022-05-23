@@ -190,6 +190,10 @@
                             variant="primary"
                             @click="submitTicket"
                         >
+                            <b-spinner
+                                v-if="loadingSubmitTicket"
+                                small
+                            />
                             Buat Tiket
                         </b-button>
                     </b-row>
@@ -335,7 +339,11 @@
             <b-input-group-prepend is-text>
               <feather-icon icon="SearchIcon" />
             </b-input-group-prepend>
-            <b-form-input placeholder="Search" />
+            <b-form-input
+                v-model="search"
+                placeholder="Search"
+                @input="searchTicket"
+            />
           </b-input-group>
         </b-col>
 
@@ -350,7 +358,7 @@
                 border-radius: 8px;"
             >
                 <b-row class="align-items-center justify-content-between">
-                    {{ searchType }}
+                    {{ searchType.label }}
                     <div class="ml-3">
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
@@ -408,8 +416,9 @@
                     :key="index+1"
                 >
                     <b-form-checkbox
-                        v-model="item.id"
+                        v-model="item.onCheck"
                         class="custom-control-primary mb-1"
+                        @change="filterByTicketType(item)"
                     >
                         <span class="text-black">
                             {{ item.name }}
@@ -496,7 +505,7 @@
         >
             <date-range-picker
                 ref="picker"
-                v-model="dateRange"
+                v-model="dateRangeUpdate"
                 :locale-data="locale"
                 :ranges="ranges"
                 :opens="'left'"
@@ -523,6 +532,7 @@
             <b-button
                 variant="outline-primary"
                 class="btn-icon mr-1"
+                @click="clearFilter"
             >
                 Hapus Filter
             </b-button>

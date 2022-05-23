@@ -123,19 +123,22 @@ export default
       belumDiProses: 0,
       perluTindakLanjut: 0,
       sedangDiProses: 0,
-      searchType: 'Nomor Tiket',
+      searchType: {
+        label: 'Nomor Tiket',
+        value: 'ticket_no',
+      },
       searchItems: [
         {
           label: 'Nomor Tiket',
-          value: 0,
+          value: 'ticket_no',
         },
         {
           label: 'Nomor Resi',
-          value: 1,
+          value: 'no_resi',
         },
         {
           label: 'Nama Customer',
-          value: 2,
+          value: 'customer_name',
         },
       ],
 
@@ -143,6 +146,7 @@ export default
       required,
 
       // Store
+      loadingSubmitTicket: false,
       itemsNoResi: null,
       noResi: null,
       customerName: '',
@@ -184,12 +188,29 @@ export default
       fontClassTicketStatus: {
         color: 'salmon',
       },
+      search: '',
+      filterTicketType: [],
+      dateRange: {
+        startDate: last30,
+        endDate: today,
+      },
+      dateRangeUpdate: {
+        startDate: last30,
+        endDate: today,
+      },
     }
   },
-  computed: {
-    ...mapFields('penghasilan', [
-      'dateRange',
-    ]),
+  watch: {
+    dateRange: {
+      handler() {
+        this.fetchTicket()
+      },
+    },
+    dateRangeUpdate: {
+      handler() {
+        this.fetchTicket()
+      },
+    },
   },
   mounted() {
     this.fetchTicket()
@@ -200,12 +221,22 @@ export default
     fetchTicket() {
       this.loadingDataTable = true
       const params = {}
+      if (this.dateRange) {
+        Object.assign(params, { start_date: this.formatDateParams(this.dateRange.startDate) })
+        Object.assign(params, { end_date: this.formatDateParams(this.dateRange.endDate) })
+      }
+      if (this.dateRangeUpdate) {
+        Object.assign(params, { update_start_date: this.formatDateParams(this.dateRangeUpdate.startDate) })
+        Object.assign(params, { update_end_date: this.formatDateParams(this.dateRangeUpdate.endDate) })
+      }
       if (this.ticketStatus) Object.assign(params, { ticket_status: this.ticketStatus.join() })
+      if (this.search) Object.assign(params, { search: this.search })
+      if (this.searchType) Object.assign(params, { search_type: this.searchType.value })
+      if (this.filterTicketType) Object.assign(params, { ticket_type: this.filterTicketType.join() })
       this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
         .then(response => {
-          console.log(response)
           const { data } = response.data
           this.itemsTicket = data
           this.loadingDataTable = false
@@ -217,7 +248,7 @@ export default
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err.response.data.message,
+              text: err,
               variant: 'danger',
             },
           }, 2000)
@@ -232,11 +263,10 @@ export default
           this.perluTindakLanjut = data.perlu_tindak_lanjut
           this.sedangDiProses = data.sedang_diproses
         }).catch(err => {
-          console.log(err.response)
+          console.log(err)
         })
     },
     fetchDataResi() {
-      console.log(this.noResi)
       this.customerName = this.itemsNoResi.customer_name
       this.noResi = this.itemsNoResi.no_resi
     },
@@ -244,14 +274,9 @@ export default
       console.log(this.ticketType)
     },
     submitTicket() {
+      this.loadingSubmitTicket = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
-          console.log(this.noResi)
-          console.log(this.customerName)
-          console.log(this.ticketType)
-          console.log(this.itemsImageInitialFile)
-          console.log(this.description)
-
           const formData = new FormData()
           formData.append('no_resi', this.noResi)
           formData.append('customer_name', this.customerName)
@@ -268,8 +293,23 @@ export default
 
           this.$http_komship.post('/v1/ticket-partner/store', formData)
             .then(response => {
-              console.log(response)
+              this.loadingSubmitTicket = false
+              this.$refs['popup-success-create-ticket'].show()
             })
+            .catch(err => {
+              this.loadingSubmitTicket = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+        } else {
+          this.loadingSubmitTicket = false
         }
       })
       // this.$refs['popup-success-create-ticket'].show()
@@ -294,20 +334,20 @@ export default
         .then(response => {
           const { data } = response.data
           this.itemsResi = data
-          console.log(this.itemsResi)
         }).catch(err => {
           console.log(err)
         })
     },
     handleChangeDatePicker() {
-
+      console.log(this.dateRange)
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
     },
+    formatDateParams(d) {
+      return moment(d).format('YYYY-MM-DD')
+    },
     onChangeFile(event) {
-      console.log('event', event)
-      console.log('imageFile', this.imageFile)
       event.target.files.forEach(this.myFile)
     },
     myFile(data) {
@@ -315,13 +355,12 @@ export default
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
     deleteFile(data) {
-      console.log(data)
       const findIndexObj = this.itemsImageInitialFile.findIndex(items => items.name === data.name)
-      console.log('findObject', findIndexObj)
       this.itemsImageInitialFile.splice(findIndexObj, 1)
     },
     setSearchType(data) {
-      this.searchType = data.label
+      this.searchType = data
+      this.fetchTicket()
       this.$root.$emit('bv::hide::popover', 'popover-search-type')
     },
     filterTicketByStatus(data) {
@@ -334,11 +373,25 @@ export default
       }
       this.fetchTicket()
     },
+    filterByTicketType(data) {
+      const findIndexObj = this.ticketTypeItems.findIndex(items => items.id === data.id)
+      const findObj = this.filterTicketType.findIndex(items => items === data.id)
+      if (this.ticketTypeItems[findIndexObj].onCheck === true) {
+        this.filterTicketType.push(data.id)
+      } else {
+        this.filterTicketType.splice(findObj, 1)
+      }
+      this.fetchTicket()
+    },
     fetchTicketType() {
       this.$http_komship.get('/v1/ticket-partner/ticket-type/list')
         .then(response => {
           const { data } = response.data
           this.ticketTypeItems = data
+          // eslint-disable-next-line no-plusplus
+          for (let x = 0; x < this.ticketTypeItems.length; x++) {
+            Object.assign(this.ticketTypeItems[x], { onCheck: false })
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -357,6 +410,34 @@ export default
         resultVariant = 'font-medium text-secondary'
       }
       return resultVariant
+    },
+    searchTicket() {
+      this.fetchTicket()
+    },
+    clearFilter() {
+      this.loadingDataTable = true
+      const params = {}
+      this.$http_komship.get('/v1/ticket-partner/list', {
+        params,
+      })
+        .then(response => {
+          const { data } = response.data
+          this.itemsTicket = data
+          this.loadingDataTable = false
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
     },
   },
 }
