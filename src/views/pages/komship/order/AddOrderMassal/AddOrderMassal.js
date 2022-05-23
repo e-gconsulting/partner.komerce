@@ -65,7 +65,7 @@ export default {
         tableOverflow: true,
         defaultColWidth: 150,
         columns: [
-          { type: 'calendar', title: 'Tanggal Order' },
+          { type: 'calendar', title: 'Tanggal Order', options: { format: 'YYYY-MM-DD' } },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
