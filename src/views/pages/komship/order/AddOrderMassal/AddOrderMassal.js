@@ -107,12 +107,15 @@ export default {
               })
             }
           } else if (col === '4') {
-            if (!regexNumber.test(val)) {
+            if (!regexNumber.test(val) || val < 22311 || val > 80362) {
               const columnName = jspreadsheet.getColumnNameFromId(['4', row])
               instance.jexcel.setValue(columnName, '')
-              alert('Kode Pos harus angka')
-            } else if (val.length !== 5) {
-              alert('Kode Pos harus benar')
+              popup({
+                title: 'Upss., belum tepat nih..',
+                text: 'Masukkan Kode Pos alamat pembeli dengan benar yaa..',
+                confirmButtonText: 'Oke',
+                confirmButtonClass: 'btn btn-primary',
+              })
             }
           } else if (col === '8') {
             if (!regexNumber.test(val) || val.length < 1 || val.length > 1000) {
