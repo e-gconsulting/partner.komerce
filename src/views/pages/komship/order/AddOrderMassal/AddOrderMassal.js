@@ -96,10 +96,15 @@ export default {
             const columnName = jspreadsheet.getColumnNameFromId(['7', row])
             instance.jexcel.setValue(columnName, '')
           } else if (col === '3') {
-            if (!regexNumber.test(val)) {
+            if (!regexNumber.test(val) || val.length < 10 || val.length > 13) {
               const columnName = jspreadsheet.getColumnNameFromId(['3', row])
               instance.jexcel.setValue(columnName, '')
-              alert('Nomor HP harus angka')
+              popup({
+                title: 'Upss., belum tepat nih..',
+                text: 'Masukkan Nomor HP pembeli dengan benar yaa..',
+                confirmButtonText: 'Oke',
+                confirmButtonClass: 'btn btn-primary',
+              })
             }
           } else if (col === '4') {
             if (!regexNumber.test(val)) {
