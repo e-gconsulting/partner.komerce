@@ -58,7 +58,12 @@ export default {
       const getSelectedTable = data => {
         this.selectedTable = data
       }
-      const popup = this.$swal
+      const popup = message => this.$swal({
+        title: 'Upss., belum tepat nih..',
+        text: message,
+        confirmButtonText: 'Oke',
+        confirmButtonClass: 'btn btn-primary',
+      })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
@@ -99,56 +104,31 @@ export default {
             if (!regexNumber.test(val) || val.length < 10 || val.length > 13) {
               const columnName = jspreadsheet.getColumnNameFromId(['3', row])
               instance.jexcel.setValue(columnName, '')
-              popup({
-                title: 'Upss., belum tepat nih..',
-                text: 'Masukkan Nomor HP pembeli dengan benar yaa..',
-                confirmButtonText: 'Oke',
-                confirmButtonClass: 'btn btn-primary',
-              })
+              popup('Masukkan Nomor HP pembeli dengan benar yaa..')
             }
           } else if (col === '4') {
             if (!regexNumber.test(val) || val < 22311 || val > 80362) {
               const columnName = jspreadsheet.getColumnNameFromId(['4', row])
               instance.jexcel.setValue(columnName, '')
-              popup({
-                title: 'Upss., belum tepat nih..',
-                text: 'Masukkan Kode Pos alamat pembeli dengan benar yaa..',
-                confirmButtonText: 'Oke',
-                confirmButtonClass: 'btn btn-primary',
-              })
+              popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
             }
           } else if (col === '8') {
             if (!regexNumber.test(val) || val.length < 1 || val.length > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId(['8', row])
               instance.jexcel.setValue(columnName, '')
-              popup({
-                title: 'Upss., belum tepat nih..',
-                text: 'Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..',
-                confirmButtonText: 'Oke',
-                confirmButtonClass: 'btn btn-primary',
-              })
+              popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
             }
           } else if (col === '2') {
             if (val.length < 3 || val.length > 30) {
               const columnName = jspreadsheet.getColumnNameFromId(['2', row])
               instance.jexcel.setValue(columnName, '')
-              popup({
-                title: 'Upss., belum tepat nih..',
-                text: 'Masukkan Nama pembeli dengan benar yaa..',
-                confirmButtonText: 'Oke',
-                confirmButtonClass: 'btn btn-primary',
-              })
+              popup('Masukkan Nama pembeli dengan benar yaa..')
             }
           } else if (col === '5') {
             if (val.length < 11 || val.length > 85) {
               const columnName = jspreadsheet.getColumnNameFromId(['5', row])
               instance.jexcel.setValue(columnName, '')
-              popup({
-                title: 'Upss., belum tepat nih..',
-                text: 'Alamat pembelinya diisi dengan detail dan jelas yaa..',
-                confirmButtonText: 'Oke',
-                confirmButtonClass: 'btn btn-primary',
-              })
+              popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
             }
           }
         },
