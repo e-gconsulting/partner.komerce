@@ -20,11 +20,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
-console.log(firebase)
 
 // Initialize Firebase Cloud Messaging and get a reference to the service
 const messaging = getMessaging()
-console.log(messaging)
 
 export default {
   components: {},
@@ -86,34 +84,50 @@ export default {
         })
     },
     storeChat() {
-      this.fetchDataFirebase()
-      // const formData = new FormData()
-      // formData.append('message', this.chatItem)
-      // formData.append('ticket_id', Number(this.ticketId))
-      // const message = {
-      //   token: this.fcmToken,
-      // }
-      // formData.append('token', this.fcmToken)
-      // this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
-      //   .then(response => {
-      //     const messageNotification = {
-      //       data: {
-      //         score: '850',
-      //         time: '2:45',
-      //       },
-      //       token: this.fcmToken,
-      //     }
-      //     getMessaging().send(message)
-      //       .then(response => {
-      //         // Response is a message ID string.
-      //         console.log('Successfully sent message:', response)
-      //       })
-      //       .catch(error => {
-      //         console.log('Error sending message:', error)
-      //       })
-      //   }).catch(err => {
-      //     console.log(err)
-      //   })
+      this.loadingDataChat = true
+      const formData = new FormData()
+      formData.append('message', this.chatItem)
+      formData.append('ticket_id', Number(this.ticketId))
+      this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+        .then(() => {
+          fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'key=AAAAm9Ab__E:APA91bF7K9M9Adw_2DbHcySgjESrZjV_i6QCURNX4TaHwo8ah3VX1j3e_DJb3CV7cdEtgIXkfTAHrNqvuAwMElQMnflI6z0_E1BcAX9OPfIVCZ4ewiOq1N2dhHWYcsBQ7Nu4nFFQF8-2',
+            },
+            body: JSON.stringify({
+              to: this.fcmToken,
+            }),
+          })
+            .then(() => {
+              this.loadingDataChat = false
+            })
+            .catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+              this.loadingDataChat = false
+            })
+        }).catch(err => {
+          console.log(err)
+          this.loadingDataChat = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
     },
     statusTicketVariant(data) {
       let resultVariant = ''
@@ -152,7 +166,6 @@ export default {
         if (currentToken) {
           console.log('token', currentToken)
           this.fcmToken = currentToken
-          console.log(getToken)
         } else {
           console.log('No registration token available. Request permission to generate one.')
         }
@@ -161,7 +174,6 @@ export default {
       })
     },
     putFileChat(event) {
-      console.log(event)
       this.fileChat = event.target.files
       this.imageInitialFile = event.target.files[0].name
       this.chatFileMode = true
@@ -185,11 +197,15 @@ export default {
           }, 2000)
           this.fetchDataFirebase()
           this.fetchDetailTicket()
-          this.loadingDataChat = false
+          setTimeout(() => {
+            this.loadingDataChat = false
+          }, 300)
         })
       } catch (err) {
         console.log('err receive', err)
-        this.loadingDataChat = false
+        setTimeout(() => {
+          this.loadingDataChat = false
+        }, 300)
       }
     },
   },
