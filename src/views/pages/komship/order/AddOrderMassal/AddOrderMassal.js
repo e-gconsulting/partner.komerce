@@ -171,18 +171,18 @@ export default {
     submitSheets(method) {
       const json = this.table.getJson()
       const data = json.map(items => ({
-        order_date: items[0] === '' ? null : items[0],
-        address: items[1] === '' ? null : items[1],
-        customer_name: items[2] === '' ? null : items[2],
-        customer_phone_number: items[3] === '' ? null : items[3],
-        zip_code: items[4] === '' ? null : items[4],
-        customer_address: items[5] === '' ? null : items[5],
-        product: items[6] === '' ? null : items[6],
-        variant: items[7] === '' ? null : items[7],
-        qty: items[8] === '' ? null : items[8],
-        payment_method: items[9] === '' ? null : items[9],
-        expedition: items[10] === '' ? null : items[10],
-        grandtotal: items[11] === '' ? null : items[11],
+        order_date: items[0],
+        address: items[1],
+        customer_name: items[2],
+        customer_phone_number: items[3],
+        zip_code: items[4],
+        customer_address: items[5],
+        product: items[6],
+        variant: items[7],
+        qty: items[8],
+        payment_method: items[9],
+        expedition: items[10],
+        grandtotal: items[11],
       }))
       if (method === 'save') {
         console.log(data)
@@ -199,7 +199,7 @@ export default {
         || items.qty
         || items.payment_method
         || items.expedition
-        || items.grandtotal !== null,
+        || items.grandtotal !== '',
         )
         console.log(dataSubmit)
       }
