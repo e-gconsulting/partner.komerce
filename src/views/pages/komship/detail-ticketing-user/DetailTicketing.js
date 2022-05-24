@@ -1,5 +1,4 @@
 /* eslint-disable import/no-unresolved */
-import axios from 'axios'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   getMessaging,
@@ -7,7 +6,26 @@ import {
   onMessage,
 } from 'firebase/messaging'
 import { initializeApp } from 'firebase/app'
-import * as firebase from 'firebase/app'
+
+window.onload = () => {
+  const theElement = document.getElementById('chatFocusing')
+  const scrollToBottom = node => {
+    // eslint-disable-next-line no-param-reassign
+    node.scrollTop = node.scrollHeight
+  }
+  scrollToBottom(theElement)
+}
+
+window.onscroll = e => {
+  const theElement = document.getElementById('chatFocusing')
+  if (theElement !== null) {
+    const scrollToBottom = node => {
+      // eslint-disable-next-line no-param-reassign
+      node.scrollTop = node.scrollHeight
+    }
+    scrollToBottom(theElement)
+  }
+}
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
@@ -51,6 +69,8 @@ export default {
       chatFileMode: false,
       imageFileChat: null,
       imageInitialFile: null,
+      imageFile: null,
+      itemsImageInitialFile: [],
 
       // cancel ticket
       loadingCancelTicket: false,
@@ -80,6 +100,14 @@ export default {
           this.files = data.file
           this.messages = data.history_ticket
           this.loadingDataDetail = false
+          setTimeout(() => {
+            const theElement = document.getElementById('chatFocusing')
+            const scrollToBottom = node => {
+              // eslint-disable-next-line no-param-reassign
+              node.scrollTop = node.scrollHeight
+            }
+            scrollToBottom(theElement)
+          }, 500)
         })
         .catch(err => {
           console.log(err)
@@ -89,8 +117,16 @@ export default {
     storeChat() {
       this.loadingDataChat = true
       const formData = new FormData()
-      formData.append('message', this.chatItem)
+      if (this.chatItem) formData.append('message', this.chatItem)
       formData.append('ticket_id', Number(this.ticketId))
+      if (this.itemsImageInitialFile.length > 1) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < this.itemsImageInitialFile.length; i++) {
+          formData.append('file[]', this.itemsImageInitialFile[i])
+        }
+      } else {
+        formData.append('file[]', this.itemsImageInitialFile[0])
+      }
       this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
         .then(() => {
           fetch('https://fcm.googleapis.com/fcm/send', {
@@ -104,7 +140,10 @@ export default {
             }),
           })
             .then(() => {
+              this.chatItem = ''
+              this.itemsImageInitialFile = []
               this.loadingDataChat = false
+              this.chatFileMode = false
             })
             .catch(err => {
               this.$toast({
@@ -134,15 +173,13 @@ export default {
     },
     statusTicketVariant(data) {
       let resultVariant = ''
-      if (data === 'Belum diproses') {
+      if (data === 1) {
         resultVariant = 'light-primary'
-      } else if (data === 'Sedang diproses') {
+      } else if (data === 2) {
         resultVariant = 'light-warning'
-      } else if (data === 'Selesai') {
+      } else if (data === 3) {
         resultVariant = 'light-success'
-      } else if (data === 'Dikirim') {
-        resultVariant = 'light-info'
-      } else if (data === 'Batal') {
+      } else if (data === 4) {
         resultVariant = 'light-secondary'
       }
       return resultVariant
@@ -164,6 +201,21 @@ export default {
       }
       return result
     },
+    convertTicketStatus(data) {
+      let result = ''
+      if (data === 0) {
+        result = 'Perlu Tindak Lanjut'
+      } else if (data === 1) {
+        result = 'Belum Diproses'
+      } else if (data === 2) {
+        result = 'Sedang Diproses'
+      } else if (data === 3) {
+        result = 'Selesai'
+      } else if (data === 4) {
+        result = 'Batal'
+      }
+      return result
+    },
     fetchDataFirebase() {
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
@@ -176,30 +228,14 @@ export default {
         console.log('An error occurred while retrieving token. ', err)
       })
     },
-    putFileChat(event) {
-      this.fileChat = event.target.files
-      this.imageInitialFile = event.target.files[0].name
-      this.chatFileMode = true
-      const file = event.target.files[0]
-      this.imageFileChat = URL.createObjectURL(file)
-    },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
     receiveMessage() {
       try {
         onMessage(messaging, payload => {
           this.loadingDataChat = true
           console.log('Message received. ', payload)
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Message',
-              icon: 'AlertCircleIcon',
-              text: 'You have a message maung',
-              variant: 'danger',
-            },
-          }, 2000)
-          this.fetchDataFirebase()
           this.fetchDetailTicket()
+          this.fetchDataFirebase()
           setTimeout(() => {
             this.loadingDataChat = false
           }, 300)
@@ -242,6 +278,27 @@ export default {
           variant: 'warning',
         },
       }, 1000)
+    },
+    onChangeFile(event) {
+      event.target.files.forEach(this.myFile)
+    },
+    myFile(data) {
+      this.itemsImageInitialFile.push(data)
+    },
+    putFileChat(event) {
+      event.target.files.forEach(this.myFile)
+      this.chatFileMode = true
+      console.log(this.itemsImageInitialFile)
+    },
+    addFileChat(event) {
+      event.target.files.forEach(this.myFile)
+    },
+    removeFileChat(data) {
+      const findIndexObj = this.itemsImageInitialFile.findIndex(items => items.name === data.name)
+      this.itemsImageInitialFile.splice(findIndexObj, 1)
+      if (this.itemsImageInitialFile.length === 0) {
+        this.chatFileMode = false
+      }
     },
   },
 }

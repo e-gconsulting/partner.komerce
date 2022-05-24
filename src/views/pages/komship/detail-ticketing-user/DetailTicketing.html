@@ -49,7 +49,7 @@
                         <b-badge
                             :variant="statusTicketVariant(ticketStatus)"
                         >
-                            {{ ticketStatus }}
+                            {{ convertTicketStatus(ticketStatus) }}
                         </b-badge>
                         <b-badge
                             v-if="ticketStatus === 'Perlu tindak lanjut'"
@@ -58,7 +58,7 @@
                                 color: #AB2900;
                             "
                         >
-                            {{ ticketStatus }}
+                            Perlu Tindak Lanjut
                         </b-badge>
                     </b-form-group>
                 </b-col>
@@ -245,8 +245,9 @@
                     </b-form-group>
                     <b-row class="justify-content-end">
                         <b-button
-                                variant="outline-primary"
+                                :variant="ticketStatus === 'Batal' ? 'outline-dark' : 'outline-primary'"
                                 class="btn-icon mr-1"
+                                :disabled="ticketStatus === 'Batal' ? true : false"
                                 @click="cancelTicket"
                             >
                                 Batalkan Tiket
@@ -286,6 +287,7 @@
                     "
                 >
                     <div
+                        id="chatFocusing"
                         class="overflow-auto"
                         style="height: 521px;"
                     >
@@ -295,41 +297,50 @@
                             :key="index+1"
                         >
                             <b-col
+                                :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''"
                                 md="12"
                             >
-                                <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                    <small class="text-black">
-                                        {{ messageItem.name }}
-                                    </small>
-                                </b-row>
-                                <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                    <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
-                                        <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'">
-                                            {{ messageItem.message}}
-                                        </p>
-                                    </div>
-                                </b-row>
-                                <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
-                                    <small class="text-black">
-                                        {{ messageItem.date_created }}
-                                    </small>
-                                </b-row>
+                                <div v-if="messageItem.message !== null && messageItem.message !== ''">
+                                    <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                        <small class="text-black">
+                                            {{ messageItem.name }}
+                                        </small>
+                                    </b-row>
+                                    <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                        <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
+                                            <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'">
+                                                {{ messageItem.message }}
+                                            </p>
+                                        </div>
+                                    </b-row>
+                                    <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
+                                        <small class="text-black">
+                                            {{ messageItem.date_created }}
+                                        </small>
+                                    </b-row>
+                                </div>
 
                                 <!-- File -->
                                 <div
                                     v-if="messageItem.file !== null"
                                 >
-                                    <b-row class="justify-content-end mb-50">
-                                        <b-img :src="messageItem.file.path" width="160px" />
-                                    </b-row>
-                                    <b-row :class="messageItem.role === 'user' ? 'justify-content-end' : 'justify-content-start'">
-                                        <small class="text-black">
-                                            {{ messageItem.file.time }}
-                                        </small>
-                                    </b-row>
+                                    <div
+                                        v-for="(fileItem, indexFile) in messageItem.file"
+                                        :key="indexFile+1"
+                                    >
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                            <a :href="fileItem.path" target="_blank">
+                                                <b-img :src="fileItem.path" width="160px" />
+                                            </a>
+                                        </b-row>
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
+                                            <small class="text-black">
+                                                {{ messageItem.date_created }}
+                                            </small>
+                                        </b-row>
+                                    </div>
                                 </div>
                             </b-col>
-
                         </b-row>
                     </div>
                 </div>
@@ -349,17 +360,39 @@
             >
                 <b-row>
                     <b-col cols="10">
-                        <a :href="imageFileChat" target="_blank">
-                            <b-img
-                                class="class__file__chat m-1"
-                                :src="imageFileChat"
-                            />
-                        </a>
-                        <div class="pb-1">
-                            <span class="text-black ml-1">
-                                {{ imageInitialFile }}
-                            </span>
-                        </div>
+                        <b-row
+                            v-for="(itemFile, index) in itemsImageInitialFile"
+                            :key="index+1"
+                        >
+                            <b-col md="auto">
+                                <b-row class="align-items-top">
+                                    <a :href="fileUrl(itemFile)" target="_blank" class="ml-1">
+                                        <b-img
+                                        class="class__file__chat m-1"
+                                        :src="fileUrl(itemFile)"
+                                        />
+                                    </a>
+                                    <div>
+                                        <b-button
+                                            class="btn-icon"
+                                            variant="flat-dark"
+                                            size="sm"
+                                            style="border: 1px solid #222222; border-radius: 50%; padding: 2px;"
+                                            @click="removeFileChat(itemFile)"
+                                        >
+                                            <feather-icon
+                                                icon="XIcon"
+                                            />
+                                        </b-button>
+                                    </div>
+                                </b-row>
+                                <div class="pb-1">
+                                    <span class="text-black ml-1">
+                                        {{ itemFile.name }}
+                                    </span>
+                                </div>
+                            </b-col>
+                        </b-row>
                     </b-col>
                     <b-col cols="2">
                         <b-row class="justify-content-end">
@@ -381,19 +414,33 @@
                             </label>
                             <b-form-file
                                 id="fileChat"
+                                v-model="imageFile"
                                 class="d-none"
-                                @change="putFileChat"
+                                multiple
+                                @change="addFileChat"
                             />
                             <b-button
-                                variant="flat-dark"
-                                class="btn-icon mr-1"
-                                size="sm"
-                                @click="storeChat"
-                            >
-                                <b-img 
-                                    src="@/assets/images/icons/send-chat.svg"
-                                />
-                            </b-button>
+                                    v-if="itemsImageInitialFile.length > 0"
+                                    variant="flat-dark"
+                                    class="btn-icon mr-1"
+                                    size="sm"
+                                    @click="storeChat"
+                                >
+                                    <b-img
+                                        src="@/assets/images/icons/send-chat-active.svg"
+                                    />
+                                </b-button>
+                                <b-button
+                                    v-else
+                                    variant="flat-dark"
+                                    class="btn-icon mr-1"
+                                    size="sm"
+                                    :disabled="true"
+                                >
+                                    <b-img
+                                        src="@/assets/images/icons/send-chat.svg"
+                                    />
+                                </b-button>
                         </b-row>
                     </b-col>
                 </b-row>
@@ -409,7 +456,7 @@
                     border-radius: 20px;"
                 >
                     <template #append>
-                        <div class="d-flex align-items-top">
+                        <b-row class="align-items-top">
                             <div>
                                 <label
                                     for="fileChat"
@@ -430,25 +477,41 @@
                                 <b-form-file
                                     id="fileChat"
                                     class="d-none"
+                                    multiple
                                     @change="putFileChat"
                                 />
+                            </div>
+                            <div>
                                 <b-button
+                                    v-if="chatItem"
                                     variant="flat-dark"
-                                    class="btn-icon"
+                                    class="btn-icon mr-1"
                                     size="sm"
                                     @click="storeChat"
                                 >
-                                    <b-img 
+                                    <b-img
+                                        v-if="chatItem"
+                                        src="@/assets/images/icons/send-chat-active.svg"
+                                    />
+                                </b-button>
+                                <b-button
+                                    v-else
+                                    variant="flat-dark"
+                                    class="btn-icon mr-1"
+                                    size="sm"
+                                    :disabled="true"
+                                >
+                                    <b-img
                                         src="@/assets/images/icons/send-chat.svg"
                                     />
                                 </b-button>
                             </div>
-                        </div>
+                        </b-row>
                     </template>
                     <b-form-textarea
                         v-model="chatItem"
                         no-resize
-                        class="border-0"
+                        class="border-0 mr-50"
                         placeholder="Tulis pesan untuk menanggapi"
                     />
                 </b-input-group>

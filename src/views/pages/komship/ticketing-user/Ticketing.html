@@ -182,18 +182,15 @@
                         <b-button
                             variant="outline-primary"
                             class="btn-icon mr-1"
+                            @click="clearFieldTicket"
                         >
                             Batalkan
                         </b-button>
                         <b-button
                             class="btn-icon"
                             variant="primary"
-                            @click="submitTicket"
+                            @click="alertSubmitTicket"
                         >
-                            <b-spinner
-                                v-if="loadingSubmitTicket"
-                                small
-                            />
                             Buat Tiket
                         </b-button>
                     </b-row>
@@ -592,12 +589,12 @@
                         class="font-medium"
                         style="color: #AB2900" 
                     >
-                        {{ dataStatusTicket.value }}
+                        Perlu Tindak Lanjut
                     </span>
                     <span
                         :class="statusTicketClass(dataStatusTicket.value)"
                     >
-                        {{ dataStatusTicket.value }}
+                        {{ convertTicketStatus(dataStatusTicket.value) }}
                     </span>
                 </template>
     
@@ -620,6 +617,8 @@
     <b-modal
         ref="popup-success-create-ticket"
         variant="primary"
+        no-close-on-backdrop
+        no-close-on-esc
         centered
         hide-header
         hide-footer
@@ -649,10 +648,12 @@
         </b-row>
     </b-modal>
 
-    <!-- Alert edit ticket -->
+    <!-- Alert validate ticket -->
     <b-modal
-        ref="alert-edit-ticket"
+        ref="alert-validate-ticket"
         variant="primary"
+        no-close-on-backdrop
+        no-close-on-esc
         centered
         hide-header
         hide-footer
@@ -677,6 +678,7 @@
                 <b-button
                         variant="outline-primary"
                         block
+                        @click="closeAlertSubmitTicket"
                     >
                         Cek Lagi
                 </b-button>
@@ -688,7 +690,12 @@
                 <b-button
                         variant="primary"
                         block
+                        @click="submitTicket"
                     >
+                        <b-spinner
+                            v-if="loadingSubmitTicket"
+                            small
+                        />
                         lanjutkan
                 </b-button>
             </b-col>

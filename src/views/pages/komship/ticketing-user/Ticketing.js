@@ -1,4 +1,10 @@
 import {
+  getMessaging,
+  getToken,
+  onMessage,
+} from 'firebase/messaging'
+import { initializeApp } from 'firebase/app'
+import {
   BRow,
   BCol,
   BCard,
@@ -10,7 +16,6 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import Ripple from 'vue-ripple-directive'
-import { mapFields } from 'vuex-map-fields'
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
   required,
@@ -23,6 +28,21 @@ import {
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
+  authDomain: 'komship-ticketing.firebaseapp.com',
+  projectId: 'komship-ticketing',
+  storageBucket: 'komship-ticketing.appspot.com',
+  messagingSenderId: '669211426801',
+  appId: '1:669211426801:web:55bca3d2dac7238b298e50',
+}
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+
+// Initialize Firebase Cloud Messaging and get a reference to the service
+const messaging = getMessaging()
 
 export default
 {
@@ -198,6 +218,7 @@ export default
         startDate: last30,
         endDate: today,
       },
+      fcmToken: '',
     }
   },
   watch: {
@@ -212,10 +233,14 @@ export default
       },
     },
   },
+  created() {
+    this.receiveMessage()
+  },
   mounted() {
     this.fetchTicket()
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
+    this.fetchDataFirebase()
     // this.$refs['alert-edit-ticket'].show()
   },
   methods: {
@@ -282,7 +307,20 @@ export default
     fetchJenisTicket() {
       console.log(this.ticketType)
     },
+    alertSubmitTicket() {
+      this.$refs.formRules.validate().then(success => {
+        if (success) {
+          this.$refs['alert-validate-ticket'].show()
+        } else {
+          this.loadingSubmitTicket = false
+        }
+      })
+    },
+    closeAlertSubmitTicket() {
+      this.$refs['alert-validate-ticket'].hide()
+    },
     submitTicket() {
+      this.$refs['alert-validate-ticket'].hide()
       this.loadingSubmitTicket = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -321,9 +359,9 @@ export default
           this.loadingSubmitTicket = false
         }
       })
-      // this.$refs['popup-success-create-ticket'].show()
     },
     closeSuccessCreateTicket() {
+      this.fetchTicket()
       this.$refs['popup-success-create-ticket'].hide()
     },
     onRowSelected(data) {
@@ -420,15 +458,13 @@ export default
     },
     statusTicketClass(data) {
       let resultVariant = ''
-      if (data === 'Belum diproses') {
+      if (data === 1) {
         resultVariant = 'font-medium text-primary'
-      } else if (data === 'Sedang diproses') {
+      } else if (data === 2) {
         resultVariant = 'font-medium text-warning'
-      } else if (data === 'Selesai') {
+      } else if (data === 3) {
         resultVariant = 'font-medium text-success'
-      } else if (data === 'Dikirim') {
-        resultVariant = 'font-medium text-info'
-      } else if (data === 'Batal') {
+      } else if (data === 4) {
         resultVariant = 'font-medium text-secondary'
       }
       return resultVariant
@@ -460,6 +496,53 @@ export default
           }, 2000)
           this.loadingDataTable = false
         })
+    },
+    receiveMessage() {
+      try {
+        onMessage(messaging, payload => {
+          console.log('Message received. ', payload)
+          this.fetchTicket()
+          this.fetchTicketPartnerCount()
+          this.fetchTicketType()
+          this.fetchDataFirebase()
+        })
+      } catch (err) {
+        console.log('err receive', err)
+      }
+    },
+    fetchDataFirebase() {
+      getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
+        if (currentToken) {
+          console.log('token', currentToken)
+          this.fcmToken = currentToken
+        } else {
+          console.log('No registration token available. Request permission to generate one.')
+        }
+      }).catch(err => {
+        console.log('An error occurred while retrieving token. ', err)
+      })
+    },
+    convertTicketStatus(data) {
+      let result = ''
+      if (data === 0) {
+        result = 'Perlu Tindak Lanjut'
+      } else if (data === 1) {
+        result = 'Belum Diproses'
+      } else if (data === 2) {
+        result = 'Sedang Diproses'
+      } else if (data === 3) {
+        result = 'Selesai'
+      } else if (data === 4) {
+        result = 'Batal'
+      }
+      return result
+    },
+    clearFieldTicket() {
+      this.noResi = null
+      this.customerName = ''
+      this.ticketType = null
+      this.description = ''
+      this.itemsImageInitialFile = []
     },
   },
 }

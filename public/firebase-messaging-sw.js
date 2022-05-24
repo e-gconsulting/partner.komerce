@@ -13,7 +13,7 @@ try {
   }
 
   const app = firebase.initializeApp(firebaseConfig)
-  console.log(firebase)
+  console.log('firebase', firebase)
 
   const messaging = firebase.messaging(app)
 
