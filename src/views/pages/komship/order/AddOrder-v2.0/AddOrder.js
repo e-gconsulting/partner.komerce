@@ -896,26 +896,51 @@ export default {
           })
           .catch(err => {
             this.dataErrSubmit = err.response.data
-            this.$swal({
-              title: this.dataErrSubmit.message === 'Please Topup to continue your store Order.'
-                ? '<span class="font-weight-bold h4">Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.</span>'
-                : '<span class="font-weight-bold h4">Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu</span>',
-              imageUrl: require('@/assets/images/icons/fail.svg'),
-              showCancelButton: true,
-              confirmButtonText: this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order' ? 'Cek Produk' : 'Cek Saldo',
-              confirmButtonClass: 'btn btn-primary',
-              cancelButtonText: 'Oke',
-              cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
-            }).then(result => {
-              if (result.isConfirmed) {
-                if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
-                  this.$router.push('/dashboard-komship')
-                }
-                if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
-                  this.$router.push('/produk')
-                }
+            if (this.dataErrSubmit.message !== 'Server Error Please Try Again.') {
+              let nameButton = ''
+              let titleAlert = ''
+              if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+                nameButton = 'Cek Saldo'
+                titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
+              } else if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+                nameButton = 'Cek Saldo'
+                titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
+              } else if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                nameButton = 'Cek Produk'
+                titleAlert = 'Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu'
               }
-            })
+              this.$swal({
+                title: `<span class="font-weight-bold h4">${titleAlert}</span>`,
+                imageUrl: require('@/assets/images/icons/fail.svg'),
+                showCancelButton: true,
+                confirmButtonText: nameButton,
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonText: 'Oke',
+                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+                    this.$router.push('/dashboard-komship')
+                  }
+                  if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+                    this.$router.push('/dashboard-komship')
+                  }
+                  if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                    this.$router.push('/produk')
+                  }
+                }
+              })
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: this.dataErrSubmit.message,
+                  variant: 'danger',
+                },
+              })
+            }
           })
       } else {
         this.$swal({
