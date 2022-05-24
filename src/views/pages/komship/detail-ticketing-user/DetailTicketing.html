@@ -246,66 +246,74 @@
         </h3>
     </b-row>
 
-    <b-row class="mb-2">
-        <b-col cols="12">
-            <div
-                class="p-1 mx-2"
-                style="
-                    border: 2px solid #E2E2E2;
-                    border-radius: 20px;
-                    background-color: #E2E2E2;
-                "
-            >
+    <b-overlay
+        :show="loadingDataChat"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+    >
+        <b-row class="mb-2">
+            <b-col cols="12">
                 <div
-                    class="overflow-auto"
-                    style="height: 521px;"
+                    class="p-1 mx-2"
+                    style="
+                        border: 2px solid #E2E2E2;
+                        border-radius: 20px;
+                        background-color: #E2E2E2;
+                    "
                 >
-                    <b-row
-                        class="mx-50"
-                        v-for="(messageItem, index) in messages"
-                        :key="index+1"
+                    <div
+                        class="overflow-auto"
+                        style="height: 521px;"
                     >
-                        <b-col
-                            md="12"
+                        <b-row
+                            class="mx-50"
+                            v-for="(messageItem, index) in messages"
+                            :key="index+1"
                         >
-                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                <small class="text-black">
-                                    {{ messageItem.name }}
-                                </small>
-                            </b-row>
-                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
-                                    <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'">
-                                        {{ messageItem.message}}
-                                    </p>
-                                </div>
-                            </b-row>
-                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
-                                <small class="text-black">
-                                    {{ messageItem.date_created }}
-                                </small>
-                            </b-row>
-
-                            <!-- File -->
-                            <div
-                                v-if="messageItem.file !== null"
+                            <b-col
+                                md="12"
                             >
-                                <b-row class="justify-content-end mb-50">
-                                    <b-img :src="messageItem.file.path" width="160px" />
-                                </b-row>
-                                <b-row :class="messageItem.role === 'user' ? 'justify-content-end' : 'justify-content-start'">
+                                <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                     <small class="text-black">
-                                        {{ messageItem.file.time }}
+                                        {{ messageItem.name }}
                                     </small>
                                 </b-row>
-                            </div>
-                        </b-col>
+                                <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                    <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
+                                        <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'">
+                                            {{ messageItem.message}}
+                                        </p>
+                                    </div>
+                                </b-row>
+                                <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
+                                    <small class="text-black">
+                                        {{ messageItem.date_created }}
+                                    </small>
+                                </b-row>
 
-                    </b-row>
+                                <!-- File -->
+                                <div
+                                    v-if="messageItem.file !== null"
+                                >
+                                    <b-row class="justify-content-end mb-50">
+                                        <b-img :src="messageItem.file.path" width="160px" />
+                                    </b-row>
+                                    <b-row :class="messageItem.role === 'user' ? 'justify-content-end' : 'justify-content-start'">
+                                        <small class="text-black">
+                                            {{ messageItem.file.time }}
+                                        </small>
+                                    </b-row>
+                                </div>
+                            </b-col>
+
+                        </b-row>
+                    </div>
                 </div>
-            </div>
-        </b-col>
-    </b-row>
+            </b-col>
+        </b-row>
+    </b-overlay>
 
     <b-row class="mx-50">
         <b-col

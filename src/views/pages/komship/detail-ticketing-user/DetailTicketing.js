@@ -1,6 +1,11 @@
 /* eslint-disable import/no-unresolved */
+import axios from 'axios'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { getMessaging, getToken, onMessage } from 'firebase/messaging'
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+} from 'firebase/messaging'
 import { initializeApp } from 'firebase/app'
 import * as firebase from 'firebase/app'
 
@@ -40,6 +45,7 @@ export default {
       files: [],
 
       // Chat
+      loadingDataChat: false,
       messages: [],
       chatItem: '',
       fcmToken: '',
@@ -80,21 +86,7 @@ export default {
         })
     },
     storeChat() {
-      const messageNotification = {
-        data: {
-          score: '850',
-          time: '2:45',
-        },
-        token: this.fcmToken,
-      }
-      getMessaging().send(messageNotification)
-        .then(response => {
-          // Response is a message ID string.
-          console.log('Successfully sent message:', response)
-        })
-        .catch(error => {
-          console.log('Error sending message:', error)
-        })
+      this.fetchDataFirebase()
       // const formData = new FormData()
       // formData.append('message', this.chatItem)
       // formData.append('ticket_id', Number(this.ticketId))
@@ -160,6 +152,7 @@ export default {
         if (currentToken) {
           console.log('token', currentToken)
           this.fcmToken = currentToken
+          console.log(getToken)
         } else {
           console.log('No registration token available. Request permission to generate one.')
         }
@@ -178,22 +171,25 @@ export default {
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
     receiveMessage() {
       try {
-        this.fetchDetailTicket()
         onMessage(messaging, payload => {
+          this.loadingDataChat = true
           console.log('Message received. ', payload)
           this.$toast({
             component: ToastificationContent,
             props: {
               title: 'Message',
               icon: 'AlertCircleIcon',
-              text: 'You have a message',
-              variant: 'Warning',
+              text: 'You have a message maung',
+              variant: 'danger',
             },
           }, 2000)
           this.fetchDataFirebase()
+          this.fetchDetailTicket()
+          this.loadingDataChat = false
         })
       } catch (err) {
         console.log('err receive', err)
+        this.loadingDataChat = false
       }
     },
   },
