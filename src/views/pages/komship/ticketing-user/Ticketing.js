@@ -216,6 +216,7 @@ export default
     this.fetchTicket()
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
+    // this.$refs['alert-edit-ticket'].show()
   },
   methods: {
     fetchTicket() {
@@ -248,7 +249,7 @@ export default
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err,
+              text: err.response.data.message,
               variant: 'danger',
             },
           }, 2000)
@@ -263,7 +264,15 @@ export default
           this.perluTindakLanjut = data.perlu_tindak_lanjut
           this.sedangDiProses = data.sedang_diproses
         }).catch(err => {
-          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
     fetchDataResi() {
@@ -292,7 +301,7 @@ export default
           }
 
           this.$http_komship.post('/v1/ticket-partner/store', formData)
-            .then(response => {
+            .then(() => {
               this.loadingSubmitTicket = false
               this.$refs['popup-success-create-ticket'].show()
             })
@@ -335,11 +344,16 @@ export default
           const { data } = response.data
           this.itemsResi = data
         }).catch(err => {
-          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
         })
-    },
-    handleChangeDatePicker() {
-      console.log(this.dateRange)
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
@@ -393,7 +407,15 @@ export default
             Object.assign(this.ticketTypeItems[x], { onCheck: false })
           }
         }).catch(err => {
-          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
     statusTicketClass(data) {
@@ -406,14 +428,14 @@ export default
         resultVariant = 'font-medium text-success'
       } else if (data === 'Dikirim') {
         resultVariant = 'font-medium text-info'
-      } else if (data === 'Dibatalkan') {
+      } else if (data === 'Batal') {
         resultVariant = 'font-medium text-secondary'
       }
       return resultVariant
     },
-    searchTicket() {
+    searchTicket: _.debounce(function () {
       this.fetchTicket()
-    },
+    }, 1000),
     clearFilter() {
       this.loadingDataTable = true
       const params = {}

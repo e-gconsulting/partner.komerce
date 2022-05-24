@@ -51,6 +51,9 @@ export default {
       chatFileMode: false,
       imageFileChat: null,
       imageInitialFile: null,
+
+      // cancel ticket
+      loadingCancelTicket: false,
     }
   },
   created() {
@@ -139,7 +142,7 @@ export default {
         resultVariant = 'light-success'
       } else if (data === 'Dikirim') {
         resultVariant = 'light-info'
-      } else if (data === 'Dibatalkan') {
+      } else if (data === 'Batal') {
         resultVariant = 'light-secondary'
       }
       return resultVariant
@@ -207,6 +210,38 @@ export default {
           this.loadingDataChat = false
         }, 300)
       }
+    },
+    handleCloseAlertCancel() {
+      this.$refs['alert-cancel-ticket'].hide()
+    },
+    cancelTicket() {
+      this.$refs['alert-cancel-ticket'].show()
+    },
+    submitCancelTicket() {
+      this.loadingCancelTicket = true
+      this.$http_komship.delete(`/v1/ticket-partner/cancel/${this.ticketId}`)
+        .then(() => {
+          this.fetchDetailTicket()
+          this.loadingCancelTicket = false
+          this.$refs['alert-cancel-ticket'].hide()
+        }).catch(err => {
+          console.log(err)
+          this.loadingCancelTicket = false
+        })
+    },
+    copyTicket(data) {
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(data)
+
+      /* Alert the copied text */
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: `Copied the text ${data}`,
+          icon: 'AlertCircleIcon',
+          variant: 'warning',
+        },
+      }, 1000)
     },
   },
 }
