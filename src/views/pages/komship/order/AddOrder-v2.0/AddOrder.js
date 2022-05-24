@@ -231,7 +231,7 @@ export default {
         }
       })
     },
-    async getCustomer(e) {
+    getCustomer: _.debounce(function (e) {
       const event = e.key ? 'input' : 'list'
       if (event === 'list') {
         return this.customerList.forEach(item => {
@@ -242,7 +242,7 @@ export default {
           }
         })
       }
-      await this.$http_komship.get('v1/customer', {
+      this.$http_komship.get('v1/customer', {
         params: { search: this.customerName },
       })
         .then(response => {
@@ -250,7 +250,7 @@ export default {
           this.customerList = data
         })
       return this.customerList
-    },
+    }, 1000),
     onSearchDestination(search, loading) {
       if (search.length) {
         this.loadingSearchDestination = true
@@ -658,84 +658,82 @@ export default {
         this.calculate(true)
       }
     },
-    async calculate(getAdditional) {
-      setTimeout(async () => {
-        if (this.shipping && this.cartId.length > 0) {
-          this.loadingCalculate = true
-          let grandTotalNew
-          if (this.biayaLain && this.jenisBiayaLain === '1') {
-            this.additionalCost = this.sesuaiNominal
-          } else if (this.biayaLain && this.jenisBiayaLain === '0') {
-            this.additionalCost = this.bebankanCustomer
-          } else {
-            this.additionalCost = 0
-          }
-          if (!this.potonganSaldo) {
-            this.discount = 0
-          }
-          if (this.profile.partner_is_allowed_edit) {
-            if (getAdditional) {
-              grandTotalNew = null
-            } else {
-              grandTotalNew = this.newGrandTotal
-            }
-          } else {
-            grandTotalNew = null
-          }
-          await this.$http_komship.get('v2/calculate', {
-            params: {
-              tariff_code: this.destination.value,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-              cart: this.cartId.toString(),
-              discount: this.discount,
-              additional_cost: this.additionalCost,
-              grandtotal: grandTotalNew,
-            },
-          }).then(async res => {
-            const { data } = res.data
-            const result = data.find(items => items.value === this.shipping.value)
-            if (getAdditional) {
-              this.sesuaiNominal = Math.round(result.service_fee)
-              this.bebankanCustomer = Math.round(result.service_fee)
-              this.newGrandTotal = result.grandtotal
-              this.oldGrandTotal = result.grandtotal
-              if (this.paymentMethod === 'COD') {
-                this.jenisBiayaLain = '0'
-              } else {
-                this.jenisBiayaLain = '1'
-              }
-            }
-            if (this.newGrandTotal === null) {
-              this.newGrandTotal = result.grandtotal
-            }
-            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
-              this.subTotal = result.subtotal
-              this.shippingCost = result.shipping_cost
-              this.netProfit = result.net_profit
-              this.serviceFee = Math.round(result.service_fee)
-              this.serviceFeePercentage = result.service_fee_percentage
-              this.weight = result.weight.toFixed(2)
-              this.grandTotal = result.grandtotal
-              this.cashback = result.cashback
-              this.cashbackPercentage = result.cashback_percentage
-              this.additionalCost = result.additional_cost
-              this.isCalculate = true
-              this.loadingCalculate = false
-            }
-            this.loadingCalculate = false
-          }).catch(async err => {
-            this.calculate(getAdditional)
-            this.loadingWrapperOtherCost = false
-            this.loadingCalculate = false
-          })
+    calculate: _.debounce(function (getAdditional) {
+      if (this.shipping && this.cartId.length > 0) {
+        this.loadingCalculate = true
+        let grandTotalNew
+        if (this.biayaLain && this.jenisBiayaLain === '1') {
+          this.additionalCost = this.sesuaiNominal
+        } else if (this.biayaLain && this.jenisBiayaLain === '0') {
+          this.additionalCost = this.bebankanCustomer
         } else {
-          this.isCalculate = false
-          this.loadingWrapperOtherCost = false
+          this.additionalCost = 0
         }
-      }, 800)
-    },
+        if (!this.potonganSaldo) {
+          this.discount = 0
+        }
+        if (this.profile.partner_is_allowed_edit) {
+          if (getAdditional) {
+            grandTotalNew = null
+          } else {
+            grandTotalNew = this.newGrandTotal
+          }
+        } else {
+          grandTotalNew = null
+        }
+        this.$http_komship.get('v2/calculate', {
+          params: {
+            tariff_code: this.destination.value,
+            payment_method: this.paymentMethod,
+            partner_id: this.profile.partner_id,
+            partner_address_id: this.address.address_id,
+            cart: this.cartId.toString(),
+            discount: this.discount,
+            additional_cost: this.additionalCost,
+            grandtotal: grandTotalNew,
+          },
+        }).then(async res => {
+          const { data } = res.data
+          const result = data.find(items => items.value === this.shipping.value)
+          if (getAdditional) {
+            this.sesuaiNominal = Math.round(result.service_fee)
+            this.bebankanCustomer = Math.round(result.service_fee)
+            this.newGrandTotal = result.grandtotal
+            this.oldGrandTotal = result.grandtotal
+            if (this.paymentMethod === 'COD') {
+              this.jenisBiayaLain = '0'
+            } else {
+              this.jenisBiayaLain = '1'
+            }
+          }
+          if (this.newGrandTotal === null) {
+            this.newGrandTotal = result.grandtotal
+          }
+          if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
+            this.subTotal = result.subtotal
+            this.shippingCost = result.shipping_cost
+            this.netProfit = result.net_profit
+            this.serviceFee = Math.round(result.service_fee)
+            this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight.toFixed(2)
+            this.grandTotal = result.grandtotal
+            this.cashback = result.cashback
+            this.cashbackPercentage = result.cashback_percentage
+            this.additionalCost = result.additional_cost
+            this.isCalculate = true
+            this.loadingCalculate = false
+          }
+          this.loadingCalculate = false
+        }).catch(async err => {
+          this.calculate(getAdditional)
+          this.loadingWrapperOtherCost = false
+          this.loadingCalculate = false
+        })
+      } else {
+        this.isCalculate = false
+        this.loadingWrapperOtherCost = false
+      }
+    }, 1000),
     async calculateOnExpedition(getAdditional) {
       this.loadingWrapperOtherCost = true
       setTimeout(async () => {
