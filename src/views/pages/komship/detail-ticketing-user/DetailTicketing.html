@@ -47,12 +47,13 @@
                             </span>
                         </template>
                         <b-badge
+                            v-if="ticketStatus !== 0"
                             :variant="statusTicketVariant(ticketStatus)"
                         >
                             {{ convertTicketStatus(ticketStatus) }}
                         </b-badge>
                         <b-badge
-                            v-if="ticketStatus === 'Perlu tindak lanjut'"
+                            v-if="ticketStatus === 0"
                             style="
                                 background: #FCD4BE;
                                 color: #AB2900;
@@ -245,9 +246,9 @@
                     </b-form-group>
                     <b-row class="justify-content-end">
                         <b-button
-                                :variant="ticketStatus === 'Batal' ? 'outline-dark' : 'outline-primary'"
+                                :variant="ticketStatus === 3 || ticketStatus === 4 ? 'outline-dark' : 'outline-primary'"
                                 class="btn-icon mr-1"
-                                :disabled="ticketStatus === 'Batal' ? true : false"
+                                :disabled="disableButtonCancel(ticketStatus)"
                                 @click="cancelTicket"
                             >
                                 Batalkan Tiket
@@ -348,7 +349,10 @@
         </b-row>
     </b-overlay>
 
-    <b-row class="mx-50">
+    <b-row
+        v-if="ticketStatus !== 3 && ticketStatus !== 4"
+        class="mx-50"
+    >
         <b-col
             v-if="chatFileMode"
             cols="12"
@@ -514,10 +518,8 @@
                         class="border-0 mr-50"
                         placeholder="Tulis pesan untuk menanggapi"
                     />
-                </b-input-group>
-                
+                </b-input-group>     
         </b-col>    
-    </b-col>
     </b-row>
 
     <!-- Alert edit ticket -->

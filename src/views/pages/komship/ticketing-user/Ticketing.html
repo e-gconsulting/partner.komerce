@@ -182,7 +182,7 @@
                         <b-button
                             variant="outline-primary"
                             class="btn-icon mr-1"
-                            @click="clearFieldTicket"
+                            @click="clearFieldTicket()"
                         >
                             Batalkan
                         </b-button>
@@ -585,13 +585,14 @@
     
                 <template #cell(ticket_status)="dataStatusTicket">
                     <span
-                        v-if="dataStatusTicket.value === 'Perlu tindak lanjut'"
+                        v-if="dataStatusTicket.value === 0"
                         class="font-medium"
                         style="color: #AB2900" 
                     >
                         Perlu Tindak Lanjut
                     </span>
                     <span
+                        v-if="dataStatusTicket.value !== 0"
                         :class="statusTicketClass(dataStatusTicket.value)"
                     >
                         {{ convertTicketStatus(dataStatusTicket.value) }}

@@ -493,7 +493,7 @@ export default
         params,
       })
         .then(response => {
-          const { data } = response.data
+          const { data } = response.data.data
           this.itemsTicket = data
           this.loadingDataTable = false
         })
@@ -553,6 +553,7 @@ export default
     },
     clearFieldTicket() {
       this.noResi = null
+      this.itemsNoResi = null
       this.customerName = ''
       this.ticketType = null
       this.description = ''

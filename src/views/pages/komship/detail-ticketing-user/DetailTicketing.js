@@ -49,7 +49,7 @@ export default {
       ticketId: this.$route.params.ticket_id,
       loadingDataDetail: true,
 
-      ticketStatus: '',
+      ticketStatus: 0,
       orderStatus: '',
       ticketNo: '',
       noResi: '',
@@ -299,6 +299,16 @@ export default {
       if (this.itemsImageInitialFile.length === 0) {
         this.chatFileMode = false
       }
+    },
+    disableButtonCancel(data) {
+      console.log(data)
+      let result = false
+      if (data === 3) {
+        result = true
+      } else if (data === 4) {
+        result = true
+      }
+      return result
     },
   },
 }
