@@ -219,6 +219,12 @@ export default
         endDate: today,
       },
       fcmToken: '',
+
+      // Pagination
+      currentPage: 1,
+      totalRows: 0,
+      optionsPage: [250, 500],
+      totalPerPage: 250,
     }
   },
   watch: {
@@ -228,6 +234,11 @@ export default
       },
     },
     dateRangeUpdate: {
+      handler() {
+        this.fetchTicket()
+      },
+    },
+    currentPage: {
       handler() {
         this.fetchTicket()
       },
@@ -259,12 +270,15 @@ export default
       if (this.search) Object.assign(params, { search: this.search })
       if (this.searchType) Object.assign(params, { search_type: this.searchType.value })
       if (this.filterTicketType) Object.assign(params, { ticket_type: this.filterTicketType.join() })
+      Object.assign(params, { total_per_page: this.totalPerPage })
+      Object.assign(params, { page: this.currentPage })
       this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
         .then(response => {
-          const { data } = response.data
+          const { data } = response.data.data
           this.itemsTicket = data
+          this.totalRows = response.data.data.total
           this.loadingDataTable = false
         })
         .catch(err => {
@@ -543,6 +557,10 @@ export default
       this.ticketType = null
       this.description = ''
       this.itemsImageInitialFile = []
+    },
+    setPerPage(page) {
+      this.totalPerPage = page
+      this.fetchTicket()
     },
   },
 }
