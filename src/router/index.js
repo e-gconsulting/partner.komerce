@@ -47,6 +47,7 @@ import pengaturanKomplace from './routes/komplace/pengaturan/index'
 //
 
 import cetaklabel from './routes/cetak-label'
+import tiket from './routes/tiket/index'
 
 Vue.use(VueRouter)
 
@@ -93,6 +94,7 @@ const router = new VueRouter({
     ...wishlist,
     ...jobRoleSetting,
     ...cetaklabel,
+    ...tiket,
     {
       path: '*',
       redirect: 'error-404',
