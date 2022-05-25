@@ -1,13 +1,6 @@
-<template>
-  <div>hola</div>
-</template>
-
-<script>
-export default {
-
-}
-</script>
-
-<style>
-
-</style>
+<template src="./Tiket.html" />
+<script src="./Tiket.js" />
+<style
+    lang
+    src="./Tiket.scss"
+/>
