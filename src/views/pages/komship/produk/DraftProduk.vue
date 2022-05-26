@@ -943,7 +943,7 @@ export default {
     this.getProduct()
   },
   methods: {
-    getProduct() {
+    getProduct: _.debounce(function () {
       this.loading = true
       const params = {
         status: 0,
@@ -974,7 +974,7 @@ export default {
           },
         })
       })
-    },
+    }, 1000),
     showConfirmDelete(id) {
       this.idDelete = id
       this.$refs['modal-confirm-delete-product'].show()
