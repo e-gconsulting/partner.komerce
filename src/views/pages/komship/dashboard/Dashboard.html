@@ -240,7 +240,7 @@
                   </p>
                   <popover-info
                     classprops="dashboardpartner__popoverinfo"
-                    text="Orderan retur selama 7 hari terkahir."
+                    text="Orderan retur selama 7 hari terakhir."
                   />
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
@@ -684,7 +684,7 @@
               invalid-feedback="Rekening tujuan is required"
               :state="rekTujuanState"
             >
-              <b-form-select
+              <v-select
                 v-model="selectedRekTujuan"
                 class="h-text-sm h-text-dark"
                 label="text"
@@ -694,7 +694,7 @@
                 <span v-if="rekTujuanOptions.length === 0" slot="no-options">
                   Anda belum menambahkan rekening bank
                 </span>
-              </b-form-select>
+              </v-select>
             </b-form-group>
             <div class="col-12 text-right mt-3">
               <button

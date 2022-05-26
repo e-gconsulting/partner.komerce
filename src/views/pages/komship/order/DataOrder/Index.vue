@@ -36,31 +36,43 @@
       >
         <all />
       </b-tab>
-      <b-tab
-        lazy
-      >
+      <b-tab lazy>
         <template slot="title">
           <b-badge
             class="mr-1"
             variant="primary"
             pill
           >
-            {{ totalSent }}
+            {{ totalAjukan }}
           </b-badge>
           Order Dibuat
         </template>
         <created />
       </b-tab>
-      <b-tab
-        title="Dipacking"
-        lazy
-      >
+      <b-tab lazy>
+        <template slot="title">
+          <b-badge
+            class="mr-1"
+            variant="primary"
+            pill
+          >
+            {{ totalPacking }}
+          </b-badge>
+          Dipacking
+        </template>
         <packing />
       </b-tab>
-      <b-tab
-        title="Dikirim"
-        lazy
-      >
+      <b-tab lazy>
+        <template slot="title">
+          <b-badge
+            class="mr-1"
+            variant="primary"
+            pill
+          >
+            {{ totalKirim }}
+          </b-badge>
+          Dikirim
+        </template>
         <send />
       </b-tab>
       <b-tab
@@ -82,6 +94,7 @@
 import {
   BCard, BTabs, BTab, BDropdown, BDropdownItem, BButton, BBadge,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import All from './List/All.vue'
 import Created from './List/Created.vue'
 import Packing from './List/Packing.vue'
@@ -98,8 +111,10 @@ export default {
     return {
       tabIndex: tabs.indexOf(this.$route.query.tab),
       tabs,
-      profile: null,
-      totalSent: null,
+      profile: JSON.parse(localStorage.userData),
+      totalAjukan: null,
+      totalPacking: null,
+      totalKirim: null,
     }
   },
   watch: {
@@ -108,25 +123,59 @@ export default {
       this.$router.replace({ query: { tab } }).catch(() => {})
     },
   },
-  mounted() {
+  created() {
     this.fetchData()
   },
   methods: {
-    async fetchData() {
-      const profile = await this.$http_komship.post('v1/my-profile')
-      const dataProfile = await profile.data.data
-      this.profile = await dataProfile
-      await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+    fetchData() {
+      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
         params: { order_status: 'Diajukan' },
+      }).then(res => {
+        const { data } = res.data
+        this.totalAjukan = data.total
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        })
       })
-        .then(res => {
-          const { data } = res.data
-          this.totalSent = data.total
-          return this.totalSent
+      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
+        params: { order_status: 'Dipacking' },
+      }).then(res => {
+        const { data } = res.data
+        this.totalPacking = data.total
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
         })
-        .catch(err => {
-          console.log(err)
+      })
+      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
+        params: { order_status: 'Dikirim' },
+      }).then(res => {
+        const { data } = res.data
+        this.totalKirim = data.total
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
         })
+      })
     },
   },
 }

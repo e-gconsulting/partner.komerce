@@ -121,6 +121,41 @@
         </b-col>
       </b-row>
     </b-card>
+
+    <!-- Modal cek address pickup -->
+    <b-modal
+      ref="alert-validate-address"
+      hide-footer
+      hide-header
+      no-close-on-backdrop
+      no-close-on-esc
+      centered
+      @hidden="onHidden"
+    >
+      <b-row class="pt-2 mb-2 justify-content-center">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="mb-2 text-center justify-content-center">
+        <b-col
+          cols="10"
+        >
+          <span class="text-black">
+            Untuk dapat mengaktifkan ekspedisi ini, Kamu harus melengkapi bagian Kelurahan/Kecamatan pada Alamat Pickup
+          </span>
+        </b-col>
+      </b-row>
+      <b-row class="pb-2 justify-content-center">
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          tag="router-link"
+          :to="{ name: $route.meta.routeToAddressSetting }"
+        >
+          Lengkapi Alamat Pickup
+        </b-button>
+      </b-row>
+    </b-modal>
+
   </b-overlay>
 
 </template>
@@ -135,6 +170,7 @@ import {
   BOverlay,
   BImg,
   BFormCheckbox,
+  BModal,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -148,6 +184,7 @@ export default {
     BOverlay,
     BImg,
     BFormCheckbox,
+    BModal,
   },
   directives: {
     'b-modal': VBModal,
@@ -159,10 +196,13 @@ export default {
       partnerId: JSON.parse(localStorage.getItem('userData')),
 
       itemsExpedition: [],
+      addressNoValid: false,
+      setEkspedisi: '',
     }
   },
   mounted() {
     this.getExpedition()
+    this.getAddress()
   },
   methods: {
     getExpedition() {
@@ -188,7 +228,71 @@ export default {
       })
     },
     switchStatusEkspedisi(data) {
-      if (data.is_active === 1) {
+      if (data.id === 3 || data.id === 2) {
+        if (this.addressNoValid) {
+          this.$refs['alert-validate-address'].show()
+        }
+        if (this.addressNoValid === false) {
+          if (data.is_active === 1) {
+            httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
+              shipping_name: data.shipping_name,
+              is_komship: 1,
+              partner_id: this.partnerId.partner_detail.id,
+              is_active: 0,
+            }).then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success update setting ekspedisi',
+                  variant: 'success',
+                },
+              }, 2000)
+              this.getExpedition()
+            }).catch(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+          } else if (data.is_active === 0) {
+            httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
+              shipping_name: data.shipping_name,
+              is_komship: 1,
+              partner_id: this.partnerId.partner_detail.id,
+              is_active: 1,
+            }).then(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success update setting ekspedisi',
+                  variant: 'success',
+                },
+              }, 2000)
+              this.getExpedition()
+            }).catch(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal update setting ekspedisi, silahkan coba lagi',
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+          }
+        }
+      }
+      if (data.is_active === 1 && data.id !== 3 && data.id !== 2) {
         httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
           shipping_name: data.shipping_name,
           is_komship: 1,
@@ -216,7 +320,7 @@ export default {
             },
           }, 2000)
         })
-      } else if (data.is_active === 0) {
+      } else if (data.is_active === 0 && data.id !== 3 && data.id !== 2) {
         httpKomship.put(`/v1/partner/shipment/update/${data.id}`, {
           shipping_name: data.shipping_name,
           is_komship: 1,
@@ -245,6 +349,30 @@ export default {
           }, 2000)
         })
       }
+    },
+    getAddress() {
+      this.$http_komship.get('/v1/address').then(response => {
+        const { data } = response.data
+        const nullAddress = data.find(items => items.destination_id === null || items.destination_id === 0 || items.zip_code === null || items.zip_code === 0)
+        if (nullAddress !== undefined) {
+          this.addressNoValid = true
+        } else {
+          this.addressNoValid = false
+        }
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan coba lagi',
+            variant: 'danger',
+          },
+        }, 2000)
+      })
+    },
+    onHidden() {
+      this.setEkspedisiSicepat = true
     },
   },
 }

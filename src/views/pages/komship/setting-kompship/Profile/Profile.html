@@ -286,8 +286,21 @@
                   v-model="nameBusiness"
                   :state="errors.length > 0 ? false:null"
                   placeholder="Nama Bisnis"
+                  :formatter="formatBusinessName"
+                  @keypress="validateInputBusinessName"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-row class="justify-content-between">
+                  <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                  <small class="mr-1 mt-50">
+                    <small
+                      v-if="messageErrorLengthNameBusiness"
+                      class="text-primary"
+                    >
+                      *hindari menggunakan simbol (/) (=) (:) (;)
+                    </small>
+                    {{ nameBusiness.length }}/30
+                  </small>
+                </b-row>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -315,8 +328,22 @@
                   v-model="phoneBusiness"
                   :state="errors.length > 0 ? false:null"
                   placeholder="No HP Bisnis"
+                  type="number"
+                  @input="formatPhoneProfile"
+                  @keypress="validateInputPhoneProfile"
+                  @keydown="handleArrowInput"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-row class="justify-content-between">
+                  <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                  <small class="mr-1 mt-50">
+                    <small
+                      v-if="messageErrorPhone"
+                      class="text-primary"
+                    >
+                      *minimal 9 digit dan hanya berupa angka.
+                    </small>
+                  </small>
+                </b-row>
               </validation-provider>
             </b-form-group>
           </b-col>

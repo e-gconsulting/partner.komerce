@@ -88,6 +88,9 @@ export default {
       // Validation
       required,
       email,
+
+      messageErrorLengthNameBusiness: false,
+      messageErrorPhone: false,
     }
   },
   mounted() {
@@ -314,6 +317,39 @@ export default {
       this.typeBusiness = ''
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
+    formatBusinessName(e) {
+      return String(e).substring(0, 30)
+    },
+    formatPhoneProfile(e) {
+      if (this.phoneBusiness.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    validateInputBusinessName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthNameBusiness = true
+      } else {
+        this.messageErrorLengthNameBusiness = false
+      }
+    },
+    validateInputPhoneProfile(e) {
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 101 || e.keyCode === 44) {
+        e.preventDefault()
+      }
+      if (this.phoneBusiness.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    handleArrowInput(e) {
+      if (e.which === 38 || e.which === 40) {
+        e.preventDefault()
+      }
+    },
   },
 
 }

@@ -11,6 +11,7 @@ import {
   BSpinner,
 } from 'bootstrap-vue'
 import { mapState, mapGetters } from 'vuex'
+import vSelect from 'vue-select'
 import DateRangePicker from 'vue2-daterange-picker'
 import CodeInput from 'vue-verification-code-input'
 
@@ -38,6 +39,7 @@ export default {
     BButton,
     CodeInput,
     BSpinner,
+    vSelect,
   },
   data() {
     return {

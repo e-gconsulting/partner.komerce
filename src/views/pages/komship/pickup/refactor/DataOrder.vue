@@ -1,143 +1,178 @@
 <template>
-  <div>
-    <b-overlay
-      variant="light"
-      :show="loading"
-      spinner-variant="primary"
-      blur="0"
-      opacity=".5"
-      rounded="sm"
-    >
-      <section :class="'view-data-order-table-wrapper'">
-        <b-row class="justify-content-center mb-3">
-          <h3 class="text-black">
-            <strong>
-              Pilih orderan
-            </strong>
-          </h3>
-        </b-row>
-        <b-row class="justify-content-center">
-          <b-table
-            ref="tableRefName"
-            show-empty
-            :items="tableData.items"
-            :fields="tableData.header"
-            :per-page="perPage"
-            class="view-data-order-table"
-            empty-text="Tidak ada data untuk ditampilkan."
-            responsive
-          >
-
-            <template
-              #head(order_date)="data"
+  <b-modal
+    id="popupOrder"
+    ref="popup-order"
+    modal-class="modal-primary"
+    scrollable
+    size="xl"
+  >
+    <div>
+      <b-overlay
+        variant="light"
+        :show="loading"
+        spinner-variant="primary"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
+        <section :class="'view-data-order-table-wrapper'">
+          <b-row class="justify-content-center mb-3">
+            <h3 class="text-black">
+              <strong>
+                Pilih orderan
+              </strong>
+            </h3>
+          </b-row>
+          <b-row class="justify-content-center">
+            <b-table
+              ref="tableRefName"
+              show-empty
+              :items="tableData.items"
+              :fields="tableData.header"
+              :per-page="perPage"
+              class="view-data-order-table"
+              empty-text="Tidak ada data untuk ditampilkan."
+              responsive
             >
-              <div class="all-check-data-order">
-                <b-icon-check-circle-fill
-                  v-if="isCheckedAll"
-                  class="data-order-button-check"
-                  aria-hidden="true"
-                  @click="() => handleSelectOrder({}, false, true)"
-                />
-                <b-icon-circle
-                  v-else
-                  class="data-order-button-uncheck"
-                  aria-hidden="true"
-                  @click="() => handleSelectOrder({}, true, true)"
-                />
-                <span>{{ data.label }}</span>
-              </div>
-            </template>
 
-            <template #cell(order_date)="dateData">
-              <div
-                class="all-check-data-order-item"
+              <template
+                #head(order_date)="data"
               >
-                <b-icon-check-circle-fill
-                  v-if="dateData.item.isChecked"
-                  class="data-order-button-check"
-                  aria-hidden="true"
-                  @click="() => handleSelectOrder(dateData.item, false, false)"
-                />
-                <b-icon-circle
-                  v-else
-                  class="data-order-button-uncheck"
-                  aria-hidden="true"
-                  @click="() => handleSelectOrder(dateData.item, true, false)"
-                />
-              </div>
-              <div class="all-check-data-order-date-text">
-                <div class="date-wrapper">
-                  {{ getDate(dateData.value) }}
+                <div class="all-check-data-order">
+                  <b-icon-check-circle-fill
+                    v-if="isCheckedAll"
+                    class="data-order-button-check ml-3"
+                    aria-hidden="true"
+                    @click="() => handleSelectOrder({}, false, true)"
+                  />
+                  <b-icon-circle
+                    v-else
+                    class="data-order-button-uncheck ml-3"
+                    aria-hidden="true"
+                    @click="() => handleSelectOrder({}, true, true)"
+                  />
+                  <span>{{ data.label }}</span>
                 </div>
-                <div class="time-wrapper grey-text">
-                  {{ getTime(dateData.value) }}
-                </div>
-              </div>
-            </template>
+              </template>
 
-            <template #cell(customer_name)="nameCustomer">
-              <div class="name-wrapper">
-                {{ nameCustomer.value }}
-              </div>
-              <b-row
-                v-if="nameCustomer.item.shipping === 'JNE'"
-                class="align-items-center"
-              >
-                <b-img
-                  src="@/assets/images/expedisi/logo-jne.png"
-                  width="40"
-                  class="ml-1"
-                />
-                <span class="text-black ml-50">
-                  <strong>
-                    Reguler
-                  </strong>
-                </span>
-              </b-row>
-              <b-row
-                v-if="nameCustomer.item.shipping === 'SICEPAT'"
-                class="align-items-center"
-              >
-                <b-img
-                  src="@/@core/assets/image/icons/logo__sicepat.svg"
-                  width="60"
-                  class="ml-1"
-                />
-                <span class="text-black ml-50">
-                  <strong>
-                    {{ nameCustomer.item.shipping_type }}
-                  </strong>
-                </span>
-              </b-row>
-              <b-row
-                v-if="nameCustomer.item.shipping === 'IDEXPRESS'"
-                class="align-items-center"
-              >
-                <b-img
-                  src="@/@core/assets/image/icons/logo-idexpress.svg"
-                  width="40"
-                  class="ml-1"
-                />
-                <span class="text-black ml-50">
-                  <strong>
-                    {{ nameCustomer.item.shipping_type }}
-                  </strong>
-                </span>
-              </b-row>
-            </template>
-
-            <template #cell(product)="productData">
-              <div v-if="productData.value.length > 1">
+              <template #cell(order_date)="dateData">
                 <div
-                  v-for="(prodItem, prodIndex) in productData.value"
-                  :key="prodIndex+'prodItem'"
-                  class="product-item-wrapper"
+                  class="all-check-data-order-item"
                 >
-                  <div v-if="prodIndex !== 0">
-                    <b-collapse
-                      :id="`collapse${productData.index}`"
-                      class="mt-2"
-                    >
+                  <b-icon-check-circle-fill
+                    v-if="dateData.item.isChecked"
+                    class="data-order-button-check ml-3"
+                    aria-hidden="true"
+                    @click="() => handleSelectOrder(dateData.item, false, false)"
+                  />
+                  <b-icon-circle
+                    v-else
+                    class="data-order-button-uncheck ml-3"
+                    aria-hidden="true"
+                    @click="() => handleSelectOrder(dateData.item, true, false)"
+                  />
+                </div>
+                <div class="all-check-data-order-date-text">
+                  <div class="date-wrapper">
+                    {{ getDate(dateData.value) }}
+                  </div>
+                  <div class="time-wrapper grey-text">
+                    {{ getTime(dateData.value) }}
+                  </div>
+                </div>
+              </template>
+
+              <template #cell(customer_name)="nameCustomer">
+                <div class="name-wrapper">
+                  {{ nameCustomer.value }}
+                </div>
+                <b-row
+                  v-if="nameCustomer.item.shipping === 'JNE'"
+                  class="align-items-center"
+                >
+                  <b-img
+                    src="@/assets/images/expedisi/logo-jne.png"
+                    width="40"
+                    class="ml-1"
+                  />
+                  <span class="text-black ml-50">
+                    <strong>
+                      Reguler
+                    </strong>
+                  </span>
+                </b-row>
+                <b-row
+                  v-if="nameCustomer.item.shipping === 'SICEPAT'"
+                  class="align-items-center"
+                >
+                  <b-img
+                    src="@/@core/assets/image/icons/logo__sicepat.svg"
+                    width="60"
+                    class="ml-1"
+                  />
+                  <span class="text-black ml-50">
+                    <strong>
+                      {{ nameCustomer.item.shipping_type }}
+                    </strong>
+                  </span>
+                </b-row>
+                <b-row
+                  v-if="nameCustomer.item.shipping === 'IDEXPRESS'"
+                  class="align-items-center"
+                >
+                  <b-img
+                    src="@/@core/assets/image/icons/logo-idexpress.svg"
+                    width="40"
+                    class="ml-1"
+                  />
+                  <span class="text-black ml-50">
+                    <strong>
+                      {{ nameCustomer.item.shipping_type }}
+                    </strong>
+                  </span>
+                </b-row>
+              </template>
+
+              <template #cell(product)="productData">
+                <div v-if="productData.value.length > 1">
+                  <div
+                    v-for="(prodItem, prodIndex) in productData.value"
+                    :key="prodIndex+'prodItem'"
+                    class="product-item-wrapper"
+                  >
+                    <div v-if="prodIndex !== 0">
+                      <b-collapse
+                        :id="`collapse${productData.index}`"
+                        class="mt-2"
+                      >
+                        <div class="product-name-img-wrapper">
+                          <img :src="prodItem.product_image">
+                        </div>
+                        <div class="product-name-wrapper">
+                          <div class="product-name-content">
+                            <div class="product-name-text">
+                              {{ prodItem.product_name }}
+                            </div>
+                            <div v-if="prodItem.variant_name !== '0' || prodItem.variant_name !== ''">
+                              <div class="product-name-variant-wrapper org-text">
+                                {{ prodItem.variant_name.replace(' -', ',') }}
+                              </div>
+                            </div>
+                            <div v-else>
+                              <span class="text-primary">
+                                <strong>
+                                  Tidak ada variasi
+                                </strong>
+                              </span>
+                            </div>
+                          </div>
+                          <div class="product-name-qty">
+                            {{ `x${prodItem.qty}` }}
+                          </div>
+                        </div>
+                      </b-collapse>
+                    </div>
+                    <div v-else>
                       <div class="product-name-img-wrapper">
                         <img :src="prodItem.product_image">
                       </div>
@@ -146,7 +181,7 @@
                           <div class="product-name-text">
                             {{ prodItem.product_name }}
                           </div>
-                          <div v-if="prodItem.variant_name !== '0' || prodItem.variant_name !== ''">
+                          <div v-if="prodItem.variant_name !== '0' && prodItem.variant_name !== ''">
                             <div class="product-name-variant-wrapper org-text">
                               {{ prodItem.variant_name.replace(' -', ',') }}
                             </div>
@@ -163,9 +198,16 @@
                           {{ `x${prodItem.qty}` }}
                         </div>
                       </div>
-                    </b-collapse>
+                    </div>
                   </div>
-                  <div v-else>
+                </div>
+
+                <div v-else>
+                  <div
+                    v-for="(prodItem, prodIndex) in productData.value"
+                    :key="prodIndex+'prodItem'"
+                    class="product-item-wrapper"
+                  >
                     <div class="product-name-img-wrapper">
                       <img :src="prodItem.product_image">
                     </div>
@@ -193,182 +235,14 @@
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div v-else>
                 <div
-                  v-for="(prodItem, prodIndex) in productData.value"
-                  :key="prodIndex+'prodItem'"
-                  class="product-item-wrapper"
+                  v-if="productData.value.length > 1"
+                  class="minmax-button-wrapper"
+                  @click="() => handleSetCollapseContent(productData.value.isClose, productData.index)"
                 >
-                  <div class="product-name-img-wrapper">
-                    <img :src="prodItem.product_image">
-                  </div>
-                  <div class="product-name-wrapper">
-                    <div class="product-name-content">
-                      <div class="product-name-text">
-                        {{ prodItem.product_name }}
-                      </div>
-                      <div v-if="prodItem.variant_name !== '0' && prodItem.variant_name !== ''">
-                        <div class="product-name-variant-wrapper org-text">
-                          {{ prodItem.variant_name.replace(' -', ',') }}
-                        </div>
-                      </div>
-                      <div v-else>
-                        <span class="text-primary">
-                          <strong>
-                            Tidak ada variasi
-                          </strong>
-                        </span>
-                      </div>
-                    </div>
-                    <div class="product-name-qty">
-                      {{ `x${prodItem.qty}` }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                v-if="productData.value.length > 1"
-                class="minmax-button-wrapper"
-                @click="() => handleSetCollapseContent(productData.value.isClose, productData.index)"
-              >
-                <div v-if="!productData.value.isClose">
-                  {{ `${(productData.value.length - 1)} Produk lainnya` }}
-                  <b-icon-chevron-down
-                    aria-hidden="true"
-                  />
-                </div>
-                <div v-else>
-                  Tutup
-                  <b-icon-chevron-up
-                    aria-hidden="true"
-                  />
-                </div>
-              </div>
-            </template>
-
-            <template #cell(grand_total)="totalData">
-              <div class="price-wrapper">
-                {{ `Rp ${numberWithCommas(totalData.value)}` }}
-              </div>
-              <div
-                v-if="totalData.item.payment_method === 'COD'"
-                class="label-wrapper"
-              >
-                {{ totalData.item.payment_method }}
-              </div>
-              <div
-                v-else
-                class="label-wrapper"
-              >
-                Transfer
-              </div>
-              <div
-                v-if="totalData.item.payment_method !== 'COD'"
-                :id="`popoverTable${totalData.item.order_id}`"
-                class="tooltip-wrapper"
-                @click="() => handleShowPopOver(`popoverTable${totalData.item.order_id}`)"
-              >
-                <b-icon-info-circle />
-              </div>
-              <b-popover
-                v-if="totalData.item.payment_method !== 'COD'"
-                :id="`popoverTable${totalData.item.order_id}`"
-                :ref="`popoverTable${totalData.item.order_id}`"
-                :target="`popoverTable${totalData.item.order_id}`"
-                triggers="click"
-              >
-                <div class="data-order-table-pop-over">
-                  <b-form-group
-                    label="Nama Bank:"
-                    :label-for="`labelName-${totalData.item.order_id}`"
-                  >
-                    <div
-                      v-if="totalData && totalData.item && totalData.item.bank"
-                      :id="`labelName-${totalData.item.order_id}`"
-                    >
-                      {{ totalData.item.bank }}
-                    </div>
-                  </b-form-group>
-                  <b-form-group
-                    label="No Rekening:"
-                    :label-for="`norek-${totalData.item.order_id}`"
-                  >
-                    <div
-                      v-if="totalData && totalData.item && totalData.item.bank_account_no"
-                      :id="`norek-${totalData.item.order_id}`"
-                    >
-                      {{ totalData.item.bank_account_no }}
-                    </div>
-                  </b-form-group>
-                  <b-form-group
-                    label="Pemilik Rekening"
-                    :label-for="`ownerRek-${totalData.item.order_id}`"
-                  >
-                    <div
-                      v-if="totalData && totalData.item && totalData.item.bank_account_name"
-                      :id="`ownerRek-${totalData.item.order_id}`"
-                    >
-                      {{ totalData.item.bank_account_name }}
-                    </div>
-                  </b-form-group>
-                </div>
-              </b-popover>
-            </template>
-
-            <template #cell(district)="addressData">
-              <div class="address-wrapper">
-                {{ addressData.value }}
-              </div>
-              <div
-                v-if="isUseDetailAddress"
-                class="address-details-wrapper"
-              >
-                {{ addressData.item.detail_address }}
-              </div>
-            </template>
-
-            <template #cell(airway_bill)="resiData">
-              <div class="resi-wrapper">
-                <div class="resi-content">
-                  {{ resiData.value }}
-                </div>
-                <div
-                  v-if="resiData.value"
-                  class="resi-content-icon"
-                  @click="() => handleCopy(resiData.value)"
-                >
-                  <b-icon-front />
-                </div>
-              </div>
-            </template>
-
-            <template #cell(acc_date)="accDateData">
-              <div class="date-wrapper">
-                {{ getDate(accDateData.item.order_date) }}
-              </div>
-            </template>
-
-            <template #cell(address)="data">
-              <b-row>
-                <span class="text-black">
-                  <strong>
-                    {{ data.item.district }}
-                  </strong>
-                </span>, <span class="text-black"><strong>{{ data.item.detail_address }}</strong></span>
-              </b-row>
-              <b-row class="wrapper__expand__product__mobile">
-                <b-button
-                  v-if="data.item.product.length > 1"
-                  variant="flat-dark"
-                  class="btn-icon"
-                  size="sm"
-                  @click="() => handleSetCollapseContent(data.item.product.isClose, data.index)"
-                >
-                  <div v-if="!data.item.product.isClose">
-                    {{ `${(data.item.product.length - 1)} Produk lainnya` }}
+                  <div v-if="!productData.value.isClose">
+                    {{ `${(productData.value.length - 1)} Produk lainnya` }}
                     <b-icon-chevron-down
                       aria-hidden="true"
                     />
@@ -379,63 +253,198 @@
                       aria-hidden="true"
                     />
                   </div>
-                </b-button>
-              </b-row>
-            </template>
+                </div>
+              </template>
 
-            <template #cell(details)="detailsData">
-              <div class="details-wrapper">
-                <b-button
-                  class="detail-button"
-                  variant="outline-primary"
-                  @click="() => handleShowDetail(detailsData.item)"
+              <template #cell(grand_total)="totalData">
+                <div class="price-wrapper">
+                  {{ `Rp ${numberWithCommas(totalData.value)}` }}
+                </div>
+                <div
+                  v-if="totalData.item.payment_method === 'COD'"
+                  class="label-wrapper"
                 >
-                  Lihat Detail
-                </b-button>
-              </div>
-            </template>
+                  {{ totalData.item.payment_method }}
+                </div>
+                <div
+                  v-else
+                  class="label-wrapper"
+                >
+                  Transfer
+                </div>
+                <div
+                  v-if="totalData.item.payment_method !== 'COD'"
+                  :id="`popoverTable${totalData.item.order_id}`"
+                  class="tooltip-wrapper"
+                  @click="() => handleShowPopOver(`popoverTable${totalData.item.order_id}`)"
+                >
+                  <b-icon-info-circle />
+                </div>
+                <b-popover
+                  v-if="totalData.item.payment_method !== 'COD'"
+                  :id="`popoverTable${totalData.item.order_id}`"
+                  :ref="`popoverTable${totalData.item.order_id}`"
+                  :target="`popoverTable${totalData.item.order_id}`"
+                  triggers="click"
+                >
+                  <div class="data-order-table-pop-over">
+                    <b-form-group
+                      label="Nama Bank:"
+                      :label-for="`labelName-${totalData.item.order_id}`"
+                    >
+                      <div
+                        v-if="totalData && totalData.item && totalData.item.bank"
+                        :id="`labelName-${totalData.item.order_id}`"
+                      >
+                        {{ totalData.item.bank }}
+                      </div>
+                    </b-form-group>
+                    <b-form-group
+                      label="No Rekening:"
+                      :label-for="`norek-${totalData.item.order_id}`"
+                    >
+                      <div
+                        v-if="totalData && totalData.item && totalData.item.bank_account_no"
+                        :id="`norek-${totalData.item.order_id}`"
+                      >
+                        {{ totalData.item.bank_account_no }}
+                      </div>
+                    </b-form-group>
+                    <b-form-group
+                      label="Pemilik Rekening"
+                      :label-for="`ownerRek-${totalData.item.order_id}`"
+                    >
+                      <div
+                        v-if="totalData && totalData.item && totalData.item.bank_account_name"
+                        :id="`ownerRek-${totalData.item.order_id}`"
+                      >
+                        {{ totalData.item.bank_account_name }}
+                      </div>
+                    </b-form-group>
+                  </div>
+                </b-popover>
+              </template>
 
-          </b-table>
-        </b-row>
+              <template #cell(district)="addressData">
+                <div class="address-wrapper">
+                  {{ addressData.value }}
+                </div>
+                <div
+                  v-if="isUseDetailAddress"
+                  class="address-details-wrapper"
+                >
+                  {{ addressData.item.detail_address }}
+                </div>
+              </template>
 
-        <b-row class="justify-content-between mt-5 mx-50 mb-2">
-          <div>
-            <span class="text-black mr-1">
-              <strong>
-                List per halaman:
-              </strong>
-            </span>
-            <b-button
-              v-for="(itemsPage, index) in valuePerpage"
-              :key="index+1"
-              :variant="valuePerpageIsActive === itemsPage.value ? 'primary' : 'flat-dark'"
-              class="btn-icon mr-1"
-              size="sm"
-              @click="changePerpage(itemsPage)"
-            >
-              {{ itemsPage.value }}
-            </b-button>
-          </div>
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="totalItems"
-            :per-page="perPage"
-            first-number
-            last-number
-          />
-        </b-row>
+              <template #cell(airway_bill)="resiData">
+                <div class="resi-wrapper">
+                  <div class="resi-content">
+                    {{ resiData.value }}
+                  </div>
+                  <div
+                    v-if="resiData.value"
+                    class="resi-content-icon"
+                    @click="() => handleCopy(resiData.value)"
+                  >
+                    <b-icon-front />
+                  </div>
+                </div>
+              </template>
 
-        <b-row class="justify-content-end pb-50 mr-50">
-          <b-button
-            variant="primary"
-            @click="getSelectedOrder"
-          >
-            Simpan
-          </b-button>
-        </b-row>
-      </section>
-    </b-overlay>
-  </div>
+              <template #cell(acc_date)="accDateData">
+                <div class="date-wrapper">
+                  {{ getDate(accDateData.item.order_date) }}
+                </div>
+              </template>
+
+              <template #cell(address)="data">
+                <b-row>
+                  <span class="text-black">
+                    <strong>
+                      {{ data.item.district }}
+                    </strong>
+                  </span>, <span class="text-black"><strong>{{ data.item.detail_address }}</strong></span>
+                </b-row>
+                <b-row class="wrapper__expand__product__mobile">
+                  <b-button
+                    v-if="data.item.product.length > 1"
+                    variant="flat-dark"
+                    class="btn-icon"
+                    size="sm"
+                    @click="() => handleSetCollapseContent(data.item.product.isClose, data.index)"
+                  >
+                    <div v-if="!data.item.product.isClose">
+                      {{ `${(data.item.product.length - 1)} Produk lainnya` }}
+                      <b-icon-chevron-down
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div v-else>
+                      Tutup
+                      <b-icon-chevron-up
+                        aria-hidden="true"
+                      />
+                    </div>
+                  </b-button>
+                </b-row>
+              </template>
+
+              <template #cell(details)="detailsData">
+                <div class="details-wrapper">
+                  <b-button
+                    class="detail-button"
+                    variant="outline-primary"
+                    @click="() => handleShowDetail(detailsData.item)"
+                  >
+                    Lihat Detail
+                  </b-button>
+                </div>
+              </template>
+
+            </b-table>
+          </b-row>
+
+          <b-row class="justify-content-between mt-5 mx-50 mb-2">
+            <div>
+              <span class="text-black mr-1">
+                <strong>
+                  List per halaman:
+                </strong>
+              </span>
+              <b-button
+                v-for="(itemsPage, index) in valuePerpage"
+                :key="index+1"
+                :variant="valuePerpageIsActive === itemsPage.value ? 'primary' : 'flat-dark'"
+                class="btn-icon mr-1"
+                size="sm"
+                @click="changePerpage(itemsPage)"
+              >
+                {{ itemsPage.value }}
+              </b-button>
+            </div>
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="totalItems"
+              :per-page="perPage"
+              first-number
+              last-number
+            />
+          </b-row>
+        </section>
+      </b-overlay>
+    </div>
+    <template #modal-footer>
+      <b-row class="justify-content-end pb-50 mr-50">
+        <b-button
+          variant="primary"
+          @click="getSelectedOrder"
+        >
+          Simpan {{ selectedOrder.length > 0 ? `(${selectedOrder.length})` : '' }}
+        </b-button>
+      </b-row>
+    </template>
+  </b-modal>
 </template>
 
 <script>
@@ -482,8 +491,8 @@ export default {
   },
   props: {
     passAddressId: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -571,8 +580,15 @@ export default {
         })
       },
     },
+    passAddressId: {
+      handler() {
+        this.reload().catch(error => {
+          console.error(error)
+        })
+      },
+    },
   },
-  async mounted() {
+  created() {
     this.reload()
   },
   methods: {
@@ -946,4 +962,5 @@ export default {
       display: none!important;
     }
   }
+
 </style>

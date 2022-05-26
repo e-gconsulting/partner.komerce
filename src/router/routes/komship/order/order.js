@@ -17,10 +17,13 @@ export default [
     },
   },
   {
-    path: '/detail-order/:order_id',
+    path: '/data-order/detail-order/:order_id',
     name: 'detail-order',
     component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
     meta: {
+      navActiveLink: 'data-order',
+      editOrder: 'edit-order',
+      routeToDataOrder: 'data-order',
       name: 'detail-order',
       resource: 'Order',
       action: 'manage',
@@ -41,6 +44,7 @@ export default [
       resource: 'Order',
       routeToAddressPickup: 'kompship-pickup',
       routeToAddProduct: 'add-produk',
+      routeToAddressSetting: 'kompship-pickup',
       routeDetail: 'detail-add-order',
       action: 'manage',
       breadcrumb: [
@@ -97,6 +101,16 @@ export default [
           active: true,
         },
       ],
+    },
+  },
+  {
+    path: '/data-order/detail-order/edit/:order_id',
+    name: 'edit-order',
+    component: () => import('@/views/pages/komship/order/EditOrder/EditOrder.vue'),
+    meta: {
+      navActiveLink: 'data-order',
+      resource: 'Order',
+      action: 'manage',
     },
   },
 ]

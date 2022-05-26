@@ -401,7 +401,6 @@ export default {
       }
     },
     onFiltered(filteredItems) {
-      console.log(filteredItems)
       // Trigger pagination to update the number of buttons/pages due to filtering
       this.totalRows = filteredItems.length
       this.currentPage = 1

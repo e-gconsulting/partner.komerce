@@ -945,7 +945,7 @@ export default {
     this.getProduct()
   },
   methods: {
-    getProduct() {
+    getProduct: _.debounce(function () {
       this.loading = true
       const params = {
         status: 1,
@@ -976,7 +976,7 @@ export default {
           },
         })
       })
-    },
+    }, 1000),
     showConfirmDelete(id) {
       this.idDelete = id
       this.$refs['modal-confirm-delete-product'].show()
@@ -1048,6 +1048,14 @@ export default {
     [dir] .table-list-product-mobile {
         display: none;
     }
+}
+
+[dir] .when-closed {
+  display: inline-block;
+}
+
+[dir] .when-opened {
+  display: inline-block;
 }
 
 .collapsed > .when-opened,
