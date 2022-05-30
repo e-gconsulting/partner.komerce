@@ -15,6 +15,7 @@ export default {
       sourcePayment: null,
       sourceProduct: null,
       sourceVariant: null,
+      sourceShipment: null,
       filterVariant: null,
       table: null,
       jumlahBaris: 200,
@@ -24,7 +25,6 @@ export default {
   },
   mounted() {
     this.getDataSheets()
-    // this.getTable()
   },
   methods: {
     getDataSheets() {
@@ -35,6 +35,7 @@ export default {
             this.sourceAddress = data.addresses
             this.sourcePayment = data.payment_method
             this.sourceProduct = data.products
+            this.sourceShipment = data.shipments
             const { variant } = data
             this.sourceVariant = ['-']
             if (variant) {
@@ -92,7 +93,7 @@ export default {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
           {
-            type: 'dropdown', title: 'Ekspedisi',
+            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment,
           },
           {
             type: 'numeric', title: 'Nilai Pembayaran', mask: 'Rp #.##,00', decimal: ',',
