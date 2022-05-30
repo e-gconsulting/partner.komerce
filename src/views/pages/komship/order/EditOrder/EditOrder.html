@@ -296,12 +296,7 @@
           >
             {{ data.item.variant_name }}
           </span>
-          <span
-            v-if="data.item.variantSubmit"
-            class="d-flex text-primary justify-center font-bold"
-          >{{ data.item.variant_name }}</span>
           <div
-            v-if="!data.item.variantSubmit"
             class="d-flex justify-center"
           >
             <b-button
@@ -318,20 +313,61 @@
           class="d-flex text-center"
         >Tidak Ada Variasi</span>
         <b-modal
-          :id="`modalVariation${data.index}`"
-          hide-footer
-        >
-        {{ data.item }}
-          <section class="mt-2 d-flex justify-end">
-            <b-button
-              variant="primary"
-              :disabled="!data.item.variantButton"
-              @click="submitVariant(data.index, data.item.product_id)"
+            :id="`modalVariation${data.index}`"
+            hide-footer
+          >
+            <section v-if="data.item.variantSelected[0]">
+              <h4 class="font-bold mb-1">
+                {{ data.item.variantSelected[0].variant_name }}
+              </h4>
+              <b-button
+                v-for="item in data.item.variantSelected[0].variant_option"
+                :key="item.id"
+                style="font-weight:500;margin-right:5px;padding:8px"
+                :variant="item.is_active ? 'primary':'outline-primary'"
+                @click="selectVariant(data.index, 0, item.option_id)"
+              >{{ item.option_name }}</b-button>
+            </section>
+            <section
+              v-if="data.item.variantSelected[1]"
+              class="mt-2"
             >
-              Pilih
-            </b-button>
-          </section>
-        </b-modal>
+              <h4 class="font-bold mb-1">
+                {{ data.item.variantSelected[1].variant_name }}
+              </h4>
+              <b-button
+                v-for="item in data.item.variantSelected[1].variant_option"
+                :key="item.id"
+                style="font-weight:500;margin-right:5px;padding:8px"
+                :variant="item.is_active ? 'primary':'outline-primary'"
+                @click="selectVariant(data.index, 1, item.option_id)"
+              >{{ item.option_name }}</b-button>
+            </section>
+            <section
+              v-if="data.item.variantSelected[2]"
+              class="mt-2"
+            >
+              <h4 class="font-bold mb-1">
+                {{ data.item.variantSelected[2].variant_name }}
+              </h4>
+              <b-button
+                v-for="item in data.item.variantSelected[2].variant_option"
+                :key="item.id"
+                style="font-weight:500;margin-right:5px;padding:8px"
+                :variant="item.is_active ? 'primary':'outline-primary'"
+                @click="selectVariant(data.index, 2, item.option_id)"
+              >{{ item.option_name }}</b-button>
+            </section>
+            <section class="mt-2 d-flex justify-end">
+              <b-button
+                variant="primary"
+                :disabled="!data.item.variantButton"
+                @click="submitVariant(data.index, data.item.product_id)"
+              >
+                Pilih
+              </b-button>
+            </section>
+          </b-modal>
       </template>
       <template #cell(price)="data">
         <span
@@ -339,35 +375,35 @@
         >Rp {{ formatNumber(data.item.price) }}</span>
       </template>
       <template #cell(amount)="data">
-        <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
-          <div class="d-flex justify-center">
-            <b-button
-              variant="outline-primary"
-              class="p-0"
-              style="border-radius:50%;width:25px;height:25px"
-              size="sm"
-              :disabled="data.item.quantity <= 1"
-              @click="setQuantity('minus',data.index)"
-            >
-              <span class="font-bold text-lg">-</span>
-            </b-button>
-            <span
-              class="text-lg"
-              style="margin: 0 10px"
-            >{{ data.item.quantity }}</span>
-            <b-button
-              variant="outline-primary"
-              class="p-0"
-              style="border-radius:50%;width:25px;height:25px"
-              size="sm"
-              :disabled="data.item.quantity >= 10 || data.item.stock === 0"
-              @click="setQuantity('plus',data.index)"
-            >
-              <span class="font-bold text-lg">+</span>
-            </b-button>
+          <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
+            <div class="d-flex justify-center">
+              <b-button
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.quantity <= 1"
+                @click="setQuantity('minus',data.index)"
+              >
+                <span class="font-bold text-lg">-</span>
+              </b-button>
+              <span
+                class="text-lg"
+                style="margin: 0 10px"
+              >{{ data.item.quantity }}</span>
+              <b-button
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
+                @click="setQuantity('plus',data.index)"
+              >
+                <span class="font-bold text-lg">+</span>
+              </b-button>
+            </div>
+            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
           </div>
-          <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
-        </div>
         <div
           v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
           class="d-flex justify-center text-primary text-lg"

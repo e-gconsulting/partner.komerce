@@ -109,6 +109,11 @@ export default {
 
       itemsCustomLabel: [],
       customLabel: null,
+
+      // Edit order
+      editMode: false,
+      orderId: null,
+      orderDetails: [],
     }
   },
   created() {
@@ -313,10 +318,14 @@ export default {
       this.$root.$emit('bv::show::modal', `modalVariation${index}`)
     },
     selectVariant(indexProduct, variantType, optionId) {
+      console.log('indexProduct', indexProduct)
+      console.log('variantType', variantType)
+      console.log('optionId', optionId)
       if (variantType === 0) {
         const indexVariantActive = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
           (item => item.is_active === true),
         )
+        console.log('indexVariantActive', indexVariantActive)
         if (this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive]) {
           this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive].is_active = false
           if (this.productSelected[indexProduct].variantSelected[2]) {
@@ -496,11 +505,11 @@ export default {
             const cart = this.productSelected.map(items => ({
               product_id: items.product_id,
               product_name: items.product_name,
-              variant_id: items.product_variant_id,
+              variant_id: items.variant_id,
               variant_name: items.variant_name,
               product_price: items.price,
-              qty: items.qty,
-              subtotal: items.qty * items.price,
+              qty: items.quantity,
+              subtotal: items.subtotal,
             }))
             console.log('productSelected', this.productSelected)
             console.log('cart', cart)
@@ -566,6 +575,7 @@ export default {
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         setTimeout(async () => {
+          console.log('destination', this.destination.value)
           await this.$http_komship.get('v2/calculate', {
             params: {
               tariff_code: this.destination.value,
@@ -798,6 +808,21 @@ export default {
       } else {
         this.isValidate = false
       }
+
+      const cartDetailOrder = this.productSelected.map(items => ({
+        id: 0,
+        product_id: items.product_id,
+        detail_order_id: this.orderId,
+        product_name: items.product_name,
+        variant_id: items.variant_id,
+        variant_name: items.variant_name,
+        product_price: items.price,
+        qty: items.quantity,
+        subtotal: items.subtotal,
+        is_deleted: 1,
+      }))
+      console.log('detailOrders', cartDetailOrder)
+
       this.formData = {
         date: this.dateOrder,
         tariff_code: this.destination.value,
@@ -828,6 +853,7 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
         custom_label_id: this.customLabel,
+        order_details: this.orderDetails,
       }
     },
     handleCustomLabel(items) {
@@ -836,10 +862,10 @@ export default {
     async submit(order) {
       this.checkValidation()
       if (this.isValidate) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, this.formData)
+        await this.$http_komship.put(`v1/order/${this.profile.partner_id}/update-detail/${this.orderId}`, this.formData)
           .then(() => {
             this.$swal({
-              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+              title: '<span class="font-weight-bold h4">Berhasil Update Order</span>',
               imageUrl: require('@/assets/images/icons/success.svg'),
               confirmButtonText: 'Oke',
               confirmButtonClass: 'btn btn-primary',
@@ -961,11 +987,75 @@ export default {
           this.customerName = data.customer_name
           this.customerPhone = data.customer_phone
           this.destination = data.destination_name
+          this.orderId = data.order_id
+          this.$http_komship.get('v1/destination', {
+            params: {
+              search: this.destination,
+            },
+          }).then(res => {
+            this.destination = res.data.data.data[0]
+            console.log('destination', this.destination)
+          }).catch(err => {
+            console.log(err)
+          })
           this.customerAddress = data.customer_address
-          this.productSelected = data.product
-          const findObj = this.productList.filter(item => this.productSelected.includes(item.product_id))
-          console.log('findObj', findObj)
+          data.product.forEach(item => {
+            console.log('product from detail', item)
+            const findObj = this.productList.find(list => list.product_id === item.product_id)
+            const findVariant = findObj.product_variant.find(listVariant => listVariant.options_id === item.product_variant_id)
+            let variantSelected
+            if (findObj.is_variant === '1') {
+              const variantOption = findObj.variant[0].variant_option.map(items => ({
+                option_id: items.option_id,
+                option_name: items.option_name,
+                option_parent: items.option_parent,
+                variant_id: items.variant_id,
+                is_active: false,
+                is_disabled: false,
+              }))
+              variantSelected = [{
+                id: findObj.variant[0].id,
+                variant_id: findObj.variant[0].variant_id,
+                variant_name: findObj.variant[0].variant_name,
+                variant_option: variantOption,
+              }]
+            } else {
+              variantSelected = []
+            }
+            this.productSelected.push({
+              product_id: findObj.product_id,
+              product_image: findObj.product_image,
+              product_name: findObj.product_name,
+              is_variant: findObj.is_variant,
+              variant_id: item.product_variant_id,
+              variant_name: item.variant_name,
+              variant: findObj.variant,
+              variantProduct: findObj.product_variant,
+              variantSelected,
+              variantButton: false,
+              variantSubmit: true,
+              quantity: 1,
+              price: findVariant.price,
+              subtotal: findVariant.price * item.qty,
+              stock: findVariant.stock - 1,
+              stockAvailable: findVariant.stock,
+            })
+          })
           this.addToCart()
+          const cartDetailOrder = this.productSelected.map(items => ({
+            id: 0,
+            product_id: items.product_id,
+            detail_order_id: this.orderId,
+            product_name: items.product_name,
+            variant_id: items.variant_id,
+            variant_name: items.variant_name,
+            product_price: items.price,
+            qty: items.quantity,
+            subtotal: items.subtotal,
+            is_deleted: 1,
+          }))
+          console.log('productSelected', this.productSelected)
+          console.log('cartDetailOrder', cartDetailOrder)
         })
     },
   },
