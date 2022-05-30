@@ -89,7 +89,7 @@
   <b-row class="justify-end mb-2">
     <b-col md="auto" class="pr-0">
       <b-button
-        id="popoverStatusTicket"
+        id="popoverEkspedisiTicket"
         v-ripple.400="'rgba(113, 102, 240, 0.15)'"
         variant="flat-dark"
         style="border: 1px solid #C2C2C2;border-radius: 8px;"
@@ -102,19 +102,19 @@
         </b-row>
       </b-button>
       <b-popover
-        target="popoverStatusTicket"
+        target="popoverEkspedisiTicket"
         triggers="focus"
         placement="bottom"
       >
         <div
           class="p-50"
-          v-for="(items, index) in ticketStatusItems"
+          v-for="(items, index) in tiketEkspedisi"
           :key="index+1"
         >
           <b-form-checkbox
             v-model="items.onCheck"
             class="custom-control-primary mb-1"
-            @change="filterTicketByStatus(items)"
+            @change="filterTicketByEkspedisi(items)"
           >
             <span class="text-black">
               {{ items.label }}

@@ -202,6 +202,23 @@ export default {
           onCheck: false,
         },
       ],
+      tiketEkspedisi: [
+        {
+          label: 'JNE',
+          value: 1,
+          onCheck: false,
+        },
+        {
+          label: 'SICEPAT',
+          value: 2,
+          onCheck: false,
+        },
+        {
+          label: 'IDEXPRESS',
+          value: 3,
+          onCheck: false,
+        },
+      ],
       fontClassTicketStatus: {
         color: 'salmon',
       },
@@ -368,6 +385,18 @@ export default {
       )
       const findObj = this.ticketStatus.findIndex(items => items === data.value)
       if (this.ticketStatusItems[findIndexObj].onCheck === true) {
+        this.ticketStatus.push(data.value)
+      } else {
+        this.ticketStatus.splice(findObj, 1)
+      }
+      this.fetchTicket()
+    },
+    filterTicketByEkspedisi(data) {
+      const findIndexObj = this.tiketEkspedisi.findIndex(
+        items => items.value === data.value,
+      )
+      const findObj = this.ticketStatus.findIndex(items => items === data.value)
+      if (this.tiketEkspedisi[findIndexObj].onCheck === true) {
         this.ticketStatus.push(data.value)
       } else {
         this.ticketStatus.splice(findObj, 1)
