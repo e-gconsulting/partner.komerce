@@ -185,7 +185,14 @@ export default {
         grandtotal: items[11],
       }))
       if (method === 'save') {
-        console.log(data)
+        setTimeout(async () => {
+          await this.$http_komship.post('/v1/order/sheet/save-submit', {
+            options: 'save',
+            data,
+          })
+            .then(this.getLastUpdated)
+            .catch(err => console.log(err))
+        }, 800)
       } else if (method === 'submit') {
         const dataSubmit = data.filter(
           items => items.order_date
