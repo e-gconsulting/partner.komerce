@@ -107,7 +107,7 @@ export default {
             type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment,
           },
           {
-            type: 'numeric', title: 'Nilai Pembayaran', mask: 'Rp #.##,00', decimal: ',',
+            type: 'numeric', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
           },
         ],
         onchange(instance, cell, col, row, val) {
@@ -194,7 +194,7 @@ export default {
         qty: items[8] || items.qty || '',
         payment_method: items[9] || items.payment_method || '',
         expedition: items[10] || items.expedition || '',
-        grandtotal: items[11] || items.grandtotal || '',
+        grandtotal: toInteger(items[11]?.replace(/[^\d]/g, '')) || toInteger(items.grandtotal?.replace(/[^\d]/g, '')) || '',
       }))
       if (method === 'save') {
         setTimeout(async () => {
