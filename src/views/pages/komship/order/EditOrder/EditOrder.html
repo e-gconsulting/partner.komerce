@@ -288,7 +288,7 @@
       </template>
       <template #cell(variant_name)="data">
         <div
-          v-if="data.item.variant_name !== ''"
+          v-if="data.item.is_variant === '1'"
           class="justify-center"
         >
           <span

@@ -1002,44 +1002,48 @@ export default {
           data.product.forEach(item => {
             console.log('product from detail', item)
             const findObj = this.productList.find(list => list.product_id === item.product_id)
-            const findVariant = findObj.product_variant.find(listVariant => listVariant.options_id === item.product_variant_id)
-            let variantSelected
-            if (findObj.is_variant === '1') {
-              const variantOption = findObj.variant[0].variant_option.map(items => ({
-                option_id: items.option_id,
-                option_name: items.option_name,
-                option_parent: items.option_parent,
-                variant_id: items.variant_id,
-                is_active: false,
-                is_disabled: false,
-              }))
-              variantSelected = [{
-                id: findObj.variant[0].id,
-                variant_id: findObj.variant[0].variant_id,
-                variant_name: findObj.variant[0].variant_name,
-                variant_option: variantOption,
-              }]
-            } else {
-              variantSelected = []
+            console.log('findObj', findObj)
+            if (findObj !== undefined) {
+              const findVariant = findObj.product_variant.find(listVariant => listVariant.options_id === item.product_variant_id)
+              console.log('findVariant', findVariant)
+              let variantSelected
+              if (findObj.is_variant === '1') {
+                const variantOption = findObj.variant[0].variant_option.map(items => ({
+                  option_id: items.option_id,
+                  option_name: items.option_name,
+                  option_parent: items.option_parent,
+                  variant_id: items.variant_id,
+                  is_active: false,
+                  is_disabled: false,
+                }))
+                variantSelected = [{
+                  id: findObj.variant[0].id,
+                  variant_id: findObj.variant[0].variant_id,
+                  variant_name: findObj.variant[0].variant_name,
+                  variant_option: variantOption,
+                }]
+              } else {
+                variantSelected = []
+              }
+              this.productSelected.push({
+                product_id: findObj.product_id,
+                product_image: findObj.product_image,
+                product_name: findObj.product_name,
+                is_variant: findObj.is_variant,
+                variant_id: item.product_variant_id,
+                variant_name: findObj.is_variant === '1' ? item.variant_name : '',
+                variant: findObj.variant,
+                variantProduct: findObj.product_variant,
+                variantSelected,
+                variantButton: false,
+                variantSubmit: true,
+                quantity: 1,
+                price: findVariant !== undefined ? findVariant.price : findObj.price,
+                subtotal: findVariant !== undefined ? findVariant.price * item.qty : findObj.price,
+                stock: findVariant !== undefined ? findVariant.stock - 1 : findObj.stock - 1,
+                stockAvailable: findVariant !== undefined ? findVariant.stock : findObj.stock,
+              })
             }
-            this.productSelected.push({
-              product_id: findObj.product_id,
-              product_image: findObj.product_image,
-              product_name: findObj.product_name,
-              is_variant: findObj.is_variant,
-              variant_id: item.product_variant_id,
-              variant_name: item.variant_name,
-              variant: findObj.variant,
-              variantProduct: findObj.product_variant,
-              variantSelected,
-              variantButton: false,
-              variantSubmit: true,
-              quantity: 1,
-              price: findVariant.price,
-              subtotal: findVariant.price * item.qty,
-              stock: findVariant.stock - 1,
-              stockAvailable: findVariant.stock,
-            })
           })
           this.addToCart()
           const cartDetailOrder = this.productSelected.map(items => ({
