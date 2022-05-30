@@ -3,6 +3,7 @@
 import jspreadsheet from 'jspreadsheet-ce'
 import axios from 'axios'
 import { toInteger } from 'lodash'
+import moment from 'moment'
 
 const regexNumber = /^\d+$/
 
@@ -18,6 +19,7 @@ export default {
       table: null,
       jumlahBaris: 200,
       selectedTable: null,
+      lastUpdated: null,
     }
   },
   mounted() {
@@ -147,6 +149,24 @@ export default {
     removeRows() {
       const totalSelect = this.selectedTable.val - this.selectedTable.row + 1
       this.table.deleteRow(this.selectedTable.row, totalSelect)
+    },
+    async getLastUpdated() {
+      setTimeout(async () => {
+        await this.$http_komship.get('/v1/order/sheet/last-update')
+          .then(res => {
+            const { link } = res.data
+            const date = moment(link.updated_at).format('YYYY-MM-DD')
+            if (date === moment().format('YYYY-MM-DD')) {
+              const time = moment(link.updated_at).format('HH:mm')
+              this.lastUpdated = `pada pukul ${time}`
+            } else {
+              const date1 = new Date(link.updated_at)
+              const date2 = new Date()
+              const diffDays = date2.getDate() - date1.getDate()
+              this.lastUpdated = `${diffDays} hari yang lalu`
+            }
+          })
+      }, 800)
     },
     submitSheets(method) {
       const json = this.table.getJson()
