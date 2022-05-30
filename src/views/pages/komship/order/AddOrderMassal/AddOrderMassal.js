@@ -1,7 +1,6 @@
 /* eslint-disable no-alert */
 /* eslint-disable no-plusplus */
 import jspreadsheet from 'jspreadsheet-ce'
-import axios from 'axios'
 import { toInteger } from 'lodash'
 import moment from 'moment'
 
@@ -34,9 +33,7 @@ export default {
             const { data } = res.data
             this.dataSheets = data
             this.getDropdownSheet()
-            if (data !== []) {
-              this.getLastUpdated()
-            }
+            this.getLastUpdated()
           })
           .catch(err => console.log(err))
       }, 800)
@@ -186,18 +183,18 @@ export default {
     submitSheets(method) {
       const json = this.table.getJson()
       const data = json.map(items => ({
-        order_date: items[0],
-        address: items[1],
-        customer_name: items[2],
-        customer_phone_number: items[3],
-        zip_code: items[4],
-        customer_address: items[5],
-        product: items[6],
-        variant: items[7],
-        qty: items[8],
-        payment_method: items[9],
-        expedition: items[10],
-        grandtotal: items[11],
+        order_date: items[0] || items.order_date || '',
+        address: items[1] || items.address || '',
+        customer_name: items[2] || items.customer_name || '',
+        customer_phone_number: items[3] || items.customer_phone_number || '',
+        zip_code: items[4] || items.zip_code || '',
+        customer_address: items[5] || items.customer_address || '',
+        product: items[6] || items.product || '',
+        variant: items[7] || items.variant || '',
+        qty: items[8] || items.qty || '',
+        payment_method: items[9] || items.payment_method || '',
+        expedition: items[10] || items.expedition || '',
+        grandtotal: items[11] || items.grandtotal || '',
       }))
       if (method === 'save') {
         setTimeout(async () => {
