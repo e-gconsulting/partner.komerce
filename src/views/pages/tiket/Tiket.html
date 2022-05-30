@@ -1,286 +1,255 @@
 <b-card>
-    <b-row class="pl-2">
-        <h3 class="text-black">
-            <strong>
-                Tiket
-            </strong>
-        </h3>
-    </b-row>
-    <div
-        class="py-1 px-2"
-        style="
-            border: 1px solid #E2E2E2;
-            border-radius: 16px;
-        "
-    >
-        <validation-observer
-            ref="formRules"
-        >
-        <p class="title mb-2 mt-1">Rata - rata waktu respon tiket</p>
-            <b-row>
-                <b-col md="4" v-for="(item, index) in dataTiket" :key="index">
-                    <div class="cardShipping">
-                        <p>{{ item.shipping_name }}</p>
-                        <div class="cardShipping-indicatior">
-                            <b-icon-arrow-up v-if="item.idicator"></b-icon-arrow-up>
-                            <b-icon-arrow-down v-else="item.idicator"></b-icon-arrow-down>
-                            <div class="cardShipping-indicatior-time">
-                                <div class="cardShipping-indicatior-time-top">17 Meni</div>
-                                17 Meni
-                            </div>
-                        </div>
-                    </div>
-                </b-col>            
-            </b-row>
-        </validation-observer>
+  <b-row class="pl-2">
+    <h3 class="text-black">
+      <strong>
+        Tiket
+      </strong>
+    </h3>
+  </b-row>
+  <div class="card">
+    <div class="card__item">
+      <div class="card__item-title">
+
+      </div>
     </div>
-        <b-row class="justify-end mb-1 mt-2">
-            <b-col
-                md="4"
-                class="pr-0"
-            >
-              <b-input-group class="input-group-merge">
-                <b-input-group-prepend is-text>
-                  <feather-icon icon="SearchIcon" />
-                </b-input-group-prepend>
-                <b-form-input
-                    v-model="search"
-                    placeholder="Search"
-                    @input="searchTicket"
-                />
-              </b-input-group>
-            </b-col>
-    
-            <b-col
-                md="auto"
-            >
-          
-                <b-button
-                    id="popoverStatus"
-                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                    variant="flat-dark"
-                    style="border: 1px solid #C2C2C2;
-                    border-radius: 8px;"
-                >
-                    <b-row class="align-items-center justify-content-between">
-                        {{ searchType.label }}
-                        <div class="ml-3">
-                            <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                        </div>
-                    </b-row>
-                </b-button>
-                <b-popover
-                    id="popover-search-type"
-                    target="popoverStatus"
-                    triggers="focus"
-                    placement="bottom"
-                >
-                    <div
-                        v-for="(items, index) in searchItems"
-                        :key="index+1"
-                    >
-                        <b-button
-                            v-model="items.value"
-                            variant="flat-dark"
-                            @click="setSearchType(items)"
-                        >
-                            {{ items.label }}
-                        </b-button>
-                    </div>
-                </b-popover>
-            </b-col>
-        </b-row>
-    
-        <b-row class="justify-end mb-2">
-
-            <b-col
-                md="auto"
-                class="pr-0"
-            >
-                <b-button
-                    id="popoverStatusTicket"
-                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                    variant="flat-dark"
-                    style="border: 1px solid #C2C2C2;
-                    border-radius: 8px;"
-                >
-                    <b-row class="align-items-center justify-content-between">
-                        Ekspedisi
-                        <div class="ml-3">
-                            <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                        </div>
-                    </b-row>
-                </b-button>
-                <b-popover
-                    target="popoverStatusTicket"
-                    triggers="focus"
-                    placement="bottom"
-                >
-                    <div
-                        class="p-50"
-                        v-for="(items, index) in ticketStatusItems"
-                        :key="index+1"
-                    >
-                        <b-form-checkbox
-                            v-model="items.onCheck"
-                            class="custom-control-primary mb-1"
-                            @change="filterTicketByStatus(items)"
-                        >
-                            <span class="text-black">
-                                {{ items.label }}
-                            </span>
-                        </b-form-checkbox>
-                    </div>
-                </b-popover>
-            </b-col>
-
-            <b-col
-                md="auto"
-                class="pr-0"
-            >
-                <b-button
-                    id="popoverJenisTicket"
-                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                    variant="flat-dark"
-                    style="border: 1px solid #C2C2C2;
-                    border-radius: 8px;"
-                >
-                    <b-row class="align-items-center justify-content-between">
-                        Jenis Tiket
-                        <div class="ml-3">
-                            <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                        </div>
-                    </b-row>
-                </b-button>
-                <b-popover
-                    target="popoverJenisTicket"
-                    triggers="focus"
-                    placement="bottom"
-                >
-                    <div
-                        class="p-50"
-                        v-for="(item, index) in ticketTypeItems"
-                        :key="index+1"
-                    >
-                        <b-form-checkbox
-                            v-model="item.onCheck"
-                            class="custom-control-primary mb-1"
-                            @change="filterByTicketType(item)"
-                        >
-                            <span class="text-black">
-                                {{ item.name }}
-                            </span>
-                        </b-form-checkbox>
-                    </div>
-                </b-popover>
-            </b-col>
-    
-            <b-col
-                md="auto"
-                class="pr-0"
-            >
-                <b-button
-                    id="popoverStatusTicket"
-                    v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                    variant="flat-dark"
-                    style="border: 1px solid #C2C2C2;
-                    border-radius: 8px;"
-                >
-                    <b-row class="align-items-center justify-content-between">
-                        Status Tiket
-                        <div class="ml-3">
-                            <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                        </div>
-                    </b-row>
-                </b-button>
-                <b-popover
-                    target="popoverStatusTicket"
-                    triggers="focus"
-                    placement="bottom"
-                >
-                    <div
-                        class="p-50"
-                        v-for="(items, index) in ticketStatusItems"
-                        :key="index+1"
-                    >
-                        <b-form-checkbox
-                            v-model="items.onCheck"
-                            class="custom-control-primary mb-1"
-                            @change="filterTicketByStatus(items)"
-                        >
-                            <span class="text-black">
-                                {{ items.label }}
-                            </span>
-                        </b-form-checkbox>
-                    </div>
-                </b-popover>
-            </b-col>
-    
-            <b-col
-                class="pr-0"
-                md="2"
-            >
-                <date-range-picker
-                  ref="picker"
-                  v-model="dateRange"
-                  :locale-data="locale"
-                  :ranges="ranges"
-                  :opens="'left'"
-                  class="w-100"
-                >
-                  <template
-                    v-slot:input="picker"
-                    style="min-width: 350px"
-                  >
-                    <div
-                      class="d-flex justify-content-between align-items-center w-100"
-                    >
-                        <span class="text-black mt-0.5">Waktu Dibuat</span>
-                    </div>
-                  </template>
-                </date-range-picker>
-            </b-col>
-    
-            <b-col
-                md="2"
-            >
-                <date-range-picker
-                    ref="picker"
-                    v-model="dateRangeUpdate"
-                    :locale-data="locale"
-                    :ranges="ranges"
-                    :opens="'left'"
-                    class="w-100"
-                >
-                    <template
-                        v-slot:input="picker"
-                        style="min-width: 350px"
-                    >
-                        <div
-                            class="d-flex justify-content-between align-items-center w-100"
-                        >
-                            <span class="text-black">Waktu Diupdate</span>
-                            <div class="">
-                                <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                            </div>
-                        </div>
-                    </template>
-                </date-range-picker>
-            </b-col>
-    
-            <div>
-                <b-button
-                    variant="outline-primary"
-                    class="btn-icon mr-1"
-                    @click="clearFilter"
-                >
-                    Hapus Filter
-                </b-button>
+  </div>
+  <div
+    class="py-1 px-2"
+    style="border: 1px solid #E2E2E2; border-radius: 16px;"
+  >
+    <validation-observer ref="formRules">
+      <p class="title mb-2 mt-1">Rata - rata waktu respon tiket</p>
+      <b-row>
+        <b-col md="4" v-for="(data, index) in timeResponse" :key="index+1">
+          <div class="cardShipping">
+            <p>{{ data.name }}</p>
+            <div class="cardShipping-indicatior">
+              <b-icon-arrow-up v-if="data.progres === 2"></b-icon-arrow-up>
+              <b-icon-arrow-down v-else="data.progres === 1 && data.progres === 0 "></b-icon-arrow-down>
+              <div class="cardShipping-indicatior-time">
+                <div class="cardShipping-indicatior-time-top">
+                  {{data.now === null ? '0 Menit' : data.now}}
+                </div>
+                {{data.last_week === null ? '0 Menit' : data.last_week}}
+              </div>
             </div>
-        </b-row>
+          </div>
+        </b-col>
+      </b-row>
+    </validation-observer>
+  </div>
+  <b-row class="justify-end mb-1 mt-2">
+    <b-col md="4" class="pr-0">
+      <b-input-group class="input-group-merge">
+        <b-input-group-prepend is-text>
+          <feather-icon icon="SearchIcon" />
+        </b-input-group-prepend>
+        <b-form-input
+          v-model="search"
+          placeholder="Search"
+          @input="searchTicket"
+        />
+      </b-input-group>
+    </b-col>
 
-    <!-- Data table -->
-    <b-overlay
+    <b-col md="auto">
+      <b-button
+        id="popoverStatus"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="flat-dark"
+        style="border: 1px solid #C2C2C2;
+                    border-radius: 8px;"
+      >
+        <b-row class="align-items-center justify-content-between">
+          {{ searchType.label }}
+          <div class="ml-3">
+            <b-img src="@/assets/images/icons/arrow-filter.svg" />
+          </div>
+        </b-row>
+      </b-button>
+      <b-popover
+        id="popover-search-type"
+        target="popoverStatus"
+        triggers="focus"
+        placement="bottom"
+      >
+        <div v-for="(items, index) in searchItems" :key="index+1">
+          <b-button
+            v-model="items.value"
+            variant="flat-dark"
+            @click="setSearchType(items)"
+          >
+            {{ items.label }}
+          </b-button>
+        </div>
+      </b-popover>
+    </b-col>
+  </b-row>
+
+  <b-row class="justify-end mb-2">
+    <b-col md="auto" class="pr-0">
+      <b-button
+        id="popoverStatusTicket"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="flat-dark"
+        style="border: 1px solid #C2C2C2;border-radius: 8px;"
+      >
+        <b-row class="align-items-center justify-content-between">
+          Ekspedisi
+          <div class="ml-3">
+            <b-img src="@/assets/images/icons/arrow-filter.svg" />
+          </div>
+        </b-row>
+      </b-button>
+      <b-popover
+        target="popoverStatusTicket"
+        triggers="focus"
+        placement="bottom"
+      >
+        <div
+          class="p-50"
+          v-for="(items, index) in ticketStatusItems"
+          :key="index+1"
+        >
+          <b-form-checkbox
+            v-model="items.onCheck"
+            class="custom-control-primary mb-1"
+            @change="filterTicketByStatus(items)"
+          >
+            <span class="text-black">
+              {{ items.label }}
+            </span>
+          </b-form-checkbox>
+        </div>
+      </b-popover>
+    </b-col>
+
+    <b-col md="auto" class="pr-0">
+      <b-button
+        id="popoverJenisTicket"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="flat-dark"
+        style="border: 1px solid #C2C2C2;
+                    border-radius: 8px;"
+      >
+        <b-row class="align-items-center justify-content-between">
+          Jenis Tiket
+          <div class="ml-3">
+            <b-img src="@/assets/images/icons/arrow-filter.svg" />
+          </div>
+        </b-row>
+      </b-button>
+      <b-popover
+        target="popoverJenisTicket"
+        triggers="focus"
+        placement="bottom"
+      >
+        <div
+          class="p-50"
+          v-for="(item, index) in ticketTypeItems"
+          :key="index+1"
+        >
+          <b-form-checkbox
+            v-model="item.onCheck"
+            class="custom-control-primary mb-1"
+            @change="filterByTicketType(item)"
+          >
+            <span class="text-black">
+              {{ item.name }}
+            </span>
+          </b-form-checkbox>
+        </div>
+      </b-popover>
+    </b-col>
+
+    <b-col md="auto" class="pr-0">
+      <b-button
+        id="popoverStatusTicket"
+        v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        variant="flat-dark"
+        style="border: 1px solid #C2C2C2;
+                    border-radius: 8px;"
+      >
+        <b-row class="align-items-center justify-content-between">
+          Status Tiket
+          <div class="ml-3">
+            <b-img src="@/assets/images/icons/arrow-filter.svg" />
+          </div>
+        </b-row>
+      </b-button>
+      <b-popover
+        target="popoverStatusTicket"
+        triggers="focus"
+        placement="bottom"
+      >
+        <div
+          class="p-50"
+          v-for="(items, index) in ticketStatusItems"
+          :key="index+1"
+        >
+          <b-form-checkbox
+            v-model="items.onCheck"
+            class="custom-control-primary mb-1"
+            @change="filterTicketByStatus(items)"
+          >
+            <span class="text-black">
+              {{ items.label }}
+            </span>
+          </b-form-checkbox>
+        </div>
+      </b-popover>
+    </b-col>
+
+    <b-col class="pr-0" md="2">
+      <date-range-picker
+        ref="picker"
+        v-model="dateRange"
+        :locale-data="locale"
+        :ranges="ranges"
+        :opens="'left'"
+        class="w-100"
+      >
+        <template v-slot:input="picker" style="min-width: 350px">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <span class="text-black mt-0.5">Waktu Dibuat</span>
+          </div>
+        </template>
+      </date-range-picker>
+    </b-col>
+
+    <b-col md="2">
+      <date-range-picker
+        ref="picker"
+        v-model="dateRangeUpdate"
+        :locale-data="locale"
+        :ranges="ranges"
+        :opens="'left'"
+        class="w-100"
+      >
+        <template v-slot:input="picker" style="min-width: 350px">
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <span class="text-black">Waktu Diupdate</span>
+            <div class="">
+              <b-img src="@/assets/images/icons/arrow-filter.svg" />
+            </div>
+          </div>
+        </template>
+      </date-range-picker>
+    </b-col>
+
+    <div>
+      <b-button
+        variant="outline-primary"
+        class="btn-icon mr-1"
+        @click="clearFilter"
+      >
+        Hapus Filter
+      </b-button>
+    </div>
+  </b-row>
+
+  <!-- Data table -->
+  <b-overlay
         :show="loadingDataTable"
         spinner-variant="primary"
         variant="light"
@@ -297,12 +266,8 @@
                 responsive
                 selectable
                 @row-selected="onRowSelected"
+                :select-mode="selectMode"
             >
-                <!-- <template #cell(shipping)="dataShipping">
-                    <span class="text-black font-medium">
-                        {{ dataShipping.item.shipping }}
-                    </span>
-                </template>
                 <template #cell(ticket_no)="dataNoTicket">
                     <span class="text-primary font-medium">
                         {{ dataNoTicket.value }}
@@ -312,6 +277,12 @@
                 <template #cell(no_resi)="dataNomorResi">
                     <span class="text-black font-medium">
                         {{ dataNomorResi.value }}
+                    </span>
+                </template>
+    
+                <template #cell(shipping)="dataShipping">
+                    <span class="text-black font-medium">
+                        {{ dataShipping.item.shipping }}
                     </span>
                 </template>
     
@@ -329,13 +300,14 @@
     
                 <template #cell(ticket_status)="dataStatusTicket">
                     <span
-                        v-if="dataStatusTicket.value === 'Perlu tindak lanjut'"
+                        v-if="dataStatusTicket.value === 0"
                         class="font-medium"
                         style="color: #AB2900" 
                     >
                         Perlu Tindak Lanjut
                     </span>
                     <span
+                        v-if="dataStatusTicket.value !== 0"
                         :class="statusTicketClass(dataStatusTicket.value)"
                     >
                         {{ convertTicketStatus(dataStatusTicket.value) }}
@@ -344,15 +316,15 @@
     
                 <template #cell(date_created)="dataWaktuDibuat">
                     <span class="text-black font-medium">
-                        {{ dataWaktuDibuat.value }}
+                        {{ formatDate(dataWaktuDibuat.value) }}
                     </span>
                 </template>
     
                 <template #cell(date_updated)="dataWaktuDiupdate">
                     <span class="text-black font-medium">
-                        {{ dataWaktuDiupdate.value }}
+                        {{ formatDate(dataWaktuDiupdate.value) }}
                     </span>
-                </template> -->
+                </template>
             </b-table>
         </b-row>
 
@@ -403,93 +375,4 @@
             </b-col>
         </b-row>
     </b-overlay>
-
-    <!-- Popup success create ticket -->
-    <b-modal
-        ref="popup-success-create-ticket"
-        variant="primary"
-        no-close-on-backdrop
-        no-close-on-esc
-        centered
-        hide-header
-        hide-footer
-    >
-        <b-row class="justify-content-center mb-2 pt-2">
-            <b-img src="@/assets/images/icons/success.svg" />
-        </b-row>
-
-        <b-row class="justify-content-center mb-2">
-            <span class="text-black text-center">
-                <strong>
-                    Tiket kendala berhasil dibuat
-                </strong>
-            </span>
-        </b-row>
-
-        <b-row class="justify-content-center pb-2">
-            <b-col md="4">
-                <b-button
-                        variant="primary"
-                        block
-                        @click="closeSuccessCreateTicket"
-                    >
-                        Oke
-                    </b-button>
-            </b-col>
-        </b-row>
-    </b-modal>
-
-    <!-- Alert validate ticket -->
-    <b-modal
-        ref="alert-validate-ticket"
-        variant="primary"
-        no-close-on-backdrop
-        no-close-on-esc
-        centered
-        hide-header
-        hide-footer
-    >
-        <b-row class="justify-content-center mb-2 pt-2">
-            <b-img src="@/assets/images/icons/warning.svg" />
-        </b-row>
-
-        <b-row class="justify-content-center mb-2">
-            <span class="text-black text-center">
-                <strong>
-                    Kamu tidak bisa mengedit tiket ini setelah dikirim. Pastikan Informasi yang kamu masukkan sudah sesuai
-                </strong>
-            </span>
-        </b-row>
-
-        <b-row class="justify-content-center pb-2">
-            <b-col
-                md="4"
-                class="pr-0 mr-1"
-            >
-                <b-button
-                        variant="outline-primary"
-                        block
-                        @click="closeAlertSubmitTicket"
-                    >
-                        Cek Lagi
-                </b-button>
-            </b-col>
-            <b-col
-                md="4"
-                class="pl-0"
-            >
-                <b-button
-                        variant="primary"
-                        block
-                        @click="submitTicket"
-                    >
-                        <b-spinner
-                            v-if="loadingSubmitTicket"
-                            small
-                        />
-                        lanjutkan
-                </b-button>
-            </b-col>
-        </b-row>
-    </b-modal>
 </b-card>
