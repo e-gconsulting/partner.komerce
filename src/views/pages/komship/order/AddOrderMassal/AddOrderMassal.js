@@ -24,10 +24,24 @@ export default {
     }
   },
   mounted() {
-    this.getDataSheets()
+    this.getDataSheet()
   },
   methods: {
-    getDataSheets() {
+    getDataSheet() {
+      setTimeout(async () => {
+        await this.$http_komship.get('/v1/order/sheet/data')
+          .then(res => {
+            const { data } = res.data
+            this.dataSheets = data
+            this.getDropdownSheet()
+            if (data !== []) {
+              this.getLastUpdated()
+            }
+          })
+          .catch(err => console.log(err))
+      }, 800)
+    },
+    getDropdownSheet() {
       setTimeout(async () => {
         await this.$http_komship.get('/v1/order/sheet/drop-down')
           .then(res => {
