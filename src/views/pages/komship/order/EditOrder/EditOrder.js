@@ -114,6 +114,7 @@ export default {
       editMode: false,
       orderId: null,
       orderDetails: [],
+      shippingFromDetailEdit: {},
     }
   },
   created() {
@@ -483,12 +484,14 @@ export default {
         this.productSelected[index].stock -= 1
         this.productSelected[index].subtotal = this.productSelected[index].price * this.productSelected[index].quantity
         this.productHistory = false
+        this.getShippingList()
         this.addToCart()
       } else if (status === 'minus') {
         this.productSelected[index].quantity -= 1
         this.productSelected[index].stock += 1
         this.productSelected[index].subtotal = this.productSelected[index].price * this.productSelected[index].quantity
         this.productHistory = false
+        this.getShippingList()
         this.addToCart()
       }
     },
@@ -575,7 +578,6 @@ export default {
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         setTimeout(async () => {
-          console.log('destination', this.destination.value)
           await this.$http_komship.get('v2/calculate', {
             params: {
               tariff_code: this.destination.value,
@@ -597,6 +599,12 @@ export default {
             this.listShipping = result
             this.isShipping = true
             this.loadingOptionExpedition = false
+            if (this.shipping !== null) {
+              const findShipping = this.listShipping.find(items => items.shipment_name === this.shipping.shipment_name)
+              this.shipping = findShipping
+            }
+            console.log('shipping', this.shipping)
+            console.log('listShipping', this.listShipping)
           }).catch(err => {
             if (err.response.data.message === 'Please Complete Your Address.') {
               this.$refs['modal-check-address-pickup'].show()
@@ -648,6 +656,16 @@ export default {
         } else {
           grandTotalNew = null
         }
+        console.log('paramsToCalculate', {
+          tariff_code: this.destination.value,
+          payment_method: this.paymentMethod,
+          partner_id: this.profile.partner_id,
+          partner_address_id: this.address.address_id,
+          cart: this.cartId.toString(),
+          discount: this.discount,
+          additional_cost: this.additionalCost,
+          grandtotal: grandTotalNew,
+        })
         this.$http_komship.get('v2/calculate', {
           params: {
             tariff_code: this.destination.value,
@@ -661,7 +679,10 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
+          console.log('data on result', data)
           const result = data.find(items => items.value === this.shipping.value)
+          console.log('result', result)
+          console.log('shipping on result', this.shipping)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)
@@ -692,7 +713,7 @@ export default {
           }
           this.loadingCalculate = false
         }).catch(async err => {
-          this.calculate(getAdditional)
+          console.log('err calculate', err)
           this.loadingWrapperOtherCost = false
           this.loadingCalculate = false
         })
@@ -770,10 +791,10 @@ export default {
             }
             this.loadingWrapperOtherCost = false
             this.loadingCalculate = false
-          }).catch(async () => {
+          }).catch(async err => {
             this.loadingWrapperOtherCost = false
             this.loadingCalculate = false
-            this.calculateOnExpedition(getAdditional)
+            console.log('err calculate on expedistion', err)
           })
         } else {
           this.isCalculateOnExpedition = false
@@ -988,6 +1009,17 @@ export default {
           this.customerPhone = data.customer_phone
           this.destination = data.destination_name
           this.orderId = data.order_id
+          this.paymentMethod = data.payment_method
+          Object.assign(this.shippingFromDetailEdit, {
+            label: `${data.shipping} - ${this.shippingTypeLabel(data.shipping_type)} - Rp${this.formatNumber(data.shipping_cost)}`,
+            value: `${data.shipping}-${data.shipping_type}-${data.shipping_cost}`,
+            image_path: data.shipment_image_path,
+            shipment_name: data.shipping,
+            label_shipping_type: this.shippingTypeLabel(data.shipping_type),
+            shipping_type: data.shipping_type,
+            shipping_cost: data.shipping_cost,
+          })
+          console.log('shippingFromDetail', this.shippingFromDetailEdit)
           this.$http_komship.get('v1/destination', {
             params: {
               search: this.destination,
@@ -995,6 +1027,7 @@ export default {
           }).then(res => {
             this.destination = res.data.data.data[0]
             console.log('destination', this.destination)
+            this.getShippingList()
           }).catch(err => {
             console.log(err)
           })
@@ -1045,7 +1078,6 @@ export default {
               })
             }
           })
-          this.addToCart()
           const cartDetailOrder = this.productSelected.map(items => ({
             id: 0,
             product_id: items.product_id,
@@ -1058,6 +1090,9 @@ export default {
             subtotal: items.subtotal,
             is_deleted: 1,
           }))
+          this.addToCart()
+          this.shipping = this.shippingFromDetailEdit
+          this.calculateOnExpedition(true)
           console.log('productSelected', this.productSelected)
           console.log('cartDetailOrder', cartDetailOrder)
         })
