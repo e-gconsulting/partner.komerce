@@ -115,6 +115,7 @@ export default {
       orderId: null,
       orderDetails: [],
       shippingFromDetailEdit: {},
+      loadingEditOrder: false,
     }
   },
   created() {
@@ -1010,6 +1011,7 @@ export default {
       this.$emit('changeValueEditMode')
     },
     fetchDataDetailOrder() {
+      this.loadingEditOrder = true
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
         .then(response => {
           const { data } = response.data
@@ -1044,6 +1046,7 @@ export default {
                 variant: 'danger',
               },
             })
+            this.loadingEditOrder = false
           })
           this.customerAddress = data.customer_address
           data.product.forEach(item => {
@@ -1104,6 +1107,7 @@ export default {
           this.addToCart()
           this.shipping = this.shippingFromDetailEdit
           this.calculateOnExpedition(true)
+          this.loadingEditOrder = false
         })
     },
   },
