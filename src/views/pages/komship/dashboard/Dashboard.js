@@ -163,14 +163,13 @@ export default {
     this.$http_komship.post('v1/my-profile', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
     }).then(response => {
-      console.log(response)
       const { data } = response.data
       if (data) {
         if (!data.is_onboarding) {
           this.$bvModal.show('modal-onboarding')
         } else {
           this.loadingOnboarding = false
-          this.$bvModal.show('modal-onboarding')
+          // this.$bvModal.show('modal-onboarding')
         }
       }
     })
