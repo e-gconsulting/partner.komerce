@@ -187,35 +187,4 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.status{
-  border: 1px solid #FCD4BE;
-  background: #FCD4BE;
-  color: #AB2900;
-  border-radius: 8px;
-  width: 200px;
-  text-align: center;
-  font-weight: 600;
-}
-.font-bold{
-  color: #626262;
-}
-.send{
-  color: #08A0F7;
-}
-.input{
-  border-radius: 12px;
-  border-color: #E2E2E2;
-  background-color: white;
-}
-.download{
-  color: #08A0F7;
-}
-.input-group-text{
-  cursor: pointer;
-}
-.text-xl{
-  color:#222222;
-}
-</style>
+<style lang src="./DetailTiket.scss" />

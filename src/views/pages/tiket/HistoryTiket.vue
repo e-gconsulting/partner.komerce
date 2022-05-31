@@ -7,28 +7,24 @@
       <div
         v-for="(historyTikcet, idx) in data.history_ticket"
         :key="idx"
-        class="history-left"
+        v-bind="historyTikcet.type === 'Partner' ? { class: 'history-left' } : { class: 'history-right' }"
       >
-        {{ data.shipping }}
-        <div class="history-left-card">
-          <div>Jenis Tiket : {{ data.ticket_type }}</div>
-          <span>Deskripsi : {{ historyTikcet.message }}</span>
+        {{ historyTikcet.type === 'Partner' ? data.shipping : historyTikcet.name }}
+        <div
+          v-bind="historyTikcet.type === 'Partner' ? { class: 'history-left-card' } : { class: 'history-right-card' }"
+        >
+          <div v-if="historyTikcet.type === 'Partner'">
+            Jenis Tiket : {{ data.ticket_type }}
+          </div>
+          <div v-if="historyTikcet.type === 'Partner'">
+            Deskripsi : {{ data.description }}
+          </div>
+          {{ historyTikcet.type !== 'Partner' && historyTikcet.message }}
         </div>
         <div class="time">
           {{ formatDate(historyTikcet.date_created) }}
         </div>
       </div>
-
-      <!-- <div class="history-right">
-        Interco
-        <div class="history-right-card">
-          <div>SIlahkan hubungi nomor 092210892532</div>
-          <span>Mohon segera dihubungi dan diantarkan</span>
-        </div>
-        <div class="time">
-          {{ formatDate(historytiket.date_created) }}
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -52,47 +48,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.title{
-  color: #222222;
-  font-weight: bold;
-  font-size: 17.5px;
-}
-.history{
-  padding: 2em;
-  background: #F8F8F8;
-  border: 2px solid #E2E2E2;
-  border-radius: 10px;
-  max-height: 50vh;
-  overflow: auto;
-  /* position: absolute; */
-}
-/* .history::-webkit-scrollbar{
-  display: none;
-} */
-.history-right{
-  float: right;
-  margin-bottom: 1.5em;
-}
-.history-left{
-  margin-bottom: 1.5em;
-}
-.history-left-card{
-  background: #FCD4BE;
-  border-radius: 0px 8px 8px 8px;
-  padding: 1em;
-  width: 40%;
-  color: #222222;
-}
-.history-right-card{
-  background: #FF6A3A;
-  border-radius: 8px 0px 8px 8px;
-  padding: 1em;
-  color:white;
-  text-align: c;
-}
-.time{
-  color: #222222;
-  font-size: 12px;
-}
-</style>
+<style lang src="./HistoryTiket.scss"/>

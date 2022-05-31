@@ -1,0 +1,35 @@
+.status {
+  border: 1px solid #fcd4be;
+  background: #fcd4be;
+  color: #ab2900;
+  border-radius: 8px;
+  width: 200px;
+  text-align: center;
+  font-weight: 600;
+}
+.font-bold {
+  color: #626262;
+}
+.send {
+  color: #08a0f7;
+}
+.input {
+  border-radius: 12px;
+  border-color: #e2e2e2;
+  background-color: white;
+}
+.download {
+  color: #08a0f7;
+}
+.input-group-text {
+  cursor: pointer;
+}
+.text-xl {
+  color: #222222;
+}
+@media screen and(min-width: 320px) and (max-width: 768px) {
+  .btn {
+    position: relative;
+    margin: 1em 0 0 2em;
+  }
+}
