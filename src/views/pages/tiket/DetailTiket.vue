@@ -13,7 +13,10 @@
           <p class="font-bold">
             Status Tiket
           </p>
-          <div class="status">
+          <div
+            class="status"
+            v-bind="dataDetailTiket.ticket_status === 'Batal' ? {class: 'cancel'} : dataDetailTiket.ticket_status === 'Selesai' ? {class: 'finish'} : dataDetailTiket.ticket_status === 'Belum diproses' ? {class:'onProsess'} : {class:'needProsess'}"
+          >
             {{ dataDetailTiket.ticket_status }}
           </div>
         </b-col>
@@ -34,7 +37,6 @@
           <b-input-group>
             <b-form-input
               ref="copyClipboard"
-              class="input"
               disabled="true"
               :value="dataDetailTiket.ticket_no"
               @focus="$event.target.select()"
@@ -54,7 +56,6 @@
           <b-input-group>
             <b-form-input
               ref="copyClipboard"
-              class="input"
               disabled="true"
               :value="dataDetailTiket.no_resi"
               @focus="$event.target.select()"
@@ -76,7 +77,6 @@
             Seller
           </p>
           <b-form-input
-            class="input"
             disabled="true"
             :value="dataDetailTiket.partner_name"
           />
@@ -86,7 +86,6 @@
             Buyer
           </p>
           <b-form-input
-            class="input"
             disabled="true"
             :value="dataDetailTiket.customer_name"
           />
@@ -98,7 +97,6 @@
             Jenis Tiket
           </p>
           <b-form-input
-            class="input"
             disabled="true"
             :value="dataDetailTiket.ticket_type"
           />
@@ -125,7 +123,6 @@
             Deskripsi
           </p>
           <b-form-textarea
-            class="input"
             disabled="true"
             :value="dataDetailTiket.description"
           />
