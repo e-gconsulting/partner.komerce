@@ -1,251 +1,67 @@
-<b-card>
-  <b-row class="align-items-center px-1 mb-2 font-bold">
-    <b-button
-          variant="primary"
-          class="rounded-lg mr-1"
+<b-overlay
+  variant="light"
+  :show="loadingEditOrder"
+  spinner-variant="primary"
+  blur="0"
+  opacity=".5"
+  rounded="sm"
+>
+  <b-card>
+    <b-row class="align-items-center px-1 mb-2 font-bold">
+      <b-button
+            variant="primary"
+            class="rounded-lg mr-1"
+            size="sm"
+            @click="updateEditMode"
+          >
+            <b-icon-chevron-left />
+        </b-button>
+      <h3 class="font-bold mt-50">
+        Edit Order
+      </h3>
+    </b-row>
+    <b-row
+      class="text-lg"
+      style="margin-bottom:8px"
+    >
+      <b-col md="3">
+        Tanggal
+      </b-col>
+      <b-col md="4">
+        {{ formatDate(dateOrder) }}
+        <b-form-datepicker
+          v-model="dateOrder"
+          :min="new Date()"
           size="sm"
-          @click="updateEditMode"
+          locale="id"
+          button-only
+          button-variant="none"
+          label-help=""
         >
-          <b-icon-chevron-left />
-      </b-button>
-    <h3 class="font-bold mt-50">
-      Edit Order
-    </h3>
-  </b-row>
-  <b-row
-    class="text-lg"
-    style="margin-bottom:8px"
-  >
-    <b-col md="3">
-      Tanggal
-    </b-col>
-    <b-col md="4">
-      {{ formatDate(dateOrder) }}
-      <b-form-datepicker
-        v-model="dateOrder"
-        :min="new Date()"
-        size="sm"
-        locale="id"
-        button-only
-        button-variant="none"
-        label-help=""
-      >
-        <template v-slot:button-content>
-          <b-img src="@/assets/images/icons/calendar.png" />
-        </template>
-      </b-form-datepicker>
-    </b-col>
-  </b-row>
-  <b-row class="mb-1">
-    <b-col
-      md="3"
-      class="my-auto"
-    >
-      <span class="text-lg">Kirim Dari</span>
-    </b-col>
-    <b-col md="4">
-      <v-select
-        v-model="address"
-        label="address_name"
-        :options="addressList"
-      >
-        <span
-          v-if="addressLength === 0"
-          slot="no-options"
-        >
-          Belum ada alamat pickup, tambahkan dahulu.
-        </span>
-        <span
-          v-else
-          slot="no-options"
-        >
-          Sedang Memuat ...
-        </span>
-      </v-select>
-    </b-col>
-  </b-row>
-  <b-row
-    v-if="profile.partner_is_custom_label"
-    class="mb-1 align-items-center"
-  >
-    <b-col
-      md="3"
-      class="my-auto"
-    >
-      <b-row>
-        <span class="text-lg ml-1">Kirim Sebagai</span>
-      </b-row>
-      <small>*nama Pengirim akan muncul di Label Resi</small>
-    </b-col>
-    <b-col md="4">
-      <v-select
-        v-model="customLabel"
-        :options="itemsCustomLabel"
-        label="name_label"
-        :reduce="items => items.id"
-        @input="handleCustomLabel"
-      />
-    </b-col>
-  </b-row>
-  <b-row class="mb-1">
-    <b-col
-      md="3"
-      class="my-auto"
-    >
-      <span class="text-lg">Nama Pelanggan</span>
-    </b-col>
-    <b-col md="4">
-      <b-form-input
-        v-model="customerName"
-        list="customerList"
-        placeholder="Masukan nama atau cari dari data pelanggan"
-        autocomplete="off"
-        :formatter="formatCustomerName"
-        @keypress="validateInputCustomerName"
-        @keydown="getCustomer($event)"
-      />
-      <datalist id="customerList">
-        <option
-          v-for="item in customerList"
-          :key="item.customer_id"
-          :value="item.name"
-        >
-          {{ item.name }}, {{ item.phone }}, {{ item.address }}
-        </option>
-      </datalist>
-      <b-row class="justify-content-end">
-        <small class="mr-1 mt-50">
-          <small
-            v-if="messageErrorLengthCustomerName"
-            class="text-primary"
-          >
-            *hindari menggunakan simbol (/) (=) (:) (;)
-          </small>
-          {{ customerName.length }}/30
-        </small>
-      </b-row>
-    </b-col>
-  </b-row>
-  <b-row class="mb-1">
-    <b-col
-      md="3"
-      class="my-auto"
-    >
-      <span class="text-lg">No Telepon</span>
-    </b-col>
-    <b-col
-      md="4"
-      class="pr-3"
-    >
-      <b-input-group>
-        <template #prepend>
-          <b-form-select
-            :options="phoneCodeList"
-            :value="phoneCode"
-          />
-        </template>
-        <b-form-input
-          v-model="customerPhone"
-          type="number"
-          @input="formatPhoneCustomer"
-          @keypress="validateInputPhoneCustomer"
-        />
-        <b-row class="justify-content-end">
-          <div>
-            <small
-              class="mr-1 text-primary ml-1"
-              v-if="messageErrorPhone"
-            >
-              *minimal 9 digit dan hanya berupa angka.
-            </small>
-          </div>
-        </b-row>
-      </b-input-group>
-    </b-col>
-  </b-row>
-  <b-row class="mb-1">
-    <b-col md="3">
-      <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
-    </b-col>
-    <b-col md="4">
-      <v-select
-        ref="selectDestination"
-        v-model="destination"
-        :options="destinationList"
-        placeholder="Masukkan Kelurahan/Kecamatan"
-        :loading="loadingSearchDestination"
-        @search="onSearchDestination"
-        @input="getShippingList()"
-      >
-        <span
-          slot="no-options"
-          @click="$refs.selectDestination.open = false"
-        >
-          Tidak ada data untuk ditampilkan.
-        </span>
-        <template #spinner="{ loading }">
-          <div
-            v-if="loadingSearchDestination"
-            style="border-left-color: #F95031"
-            class="vs__spinner"
-          >
-            The .vs__spinner class will hide the text for me.
-          </div>
-        </template>
-      </v-select>
-    </b-col>
-  </b-row>
-  <b-row class="mb-1">
-    <b-col
-      md="3"
-      class="my-auto"
-    >
-      <span class="text-lg">Alamat Detail</span>
-    </b-col>
-    <b-col md="4">
-      <b-form-textarea
-        v-model="customerAddress"
-        placeholder="Masukkan Alamat Lengkap"
-        :formatter="formatAddressDetail"
-        @keypress="validateInputAddressDetail"
-      />
-      <b-row class="justify-content-end">
-        <small class="mr-1 mt-50">
-          <small
-            v-if="messageErrorAddressDetail"
-            class="text-primary"
-          >
-            *hindari menggunakan simbol (/) (=) (:) (;)
-          </small>
-          {{ customerAddress.length }}/85
-        </small>
-      </b-row>
-    </b-col>
-  </b-row>
-  <section
-    class="p-2"
-    style="border:1px solid #E2E2E2;border-radius:18px"
-  >
+          <template v-slot:button-content>
+            <b-img src="@/assets/images/icons/calendar.png" />
+          </template>
+        </b-form-datepicker>
+      </b-col>
+    </b-row>
     <b-row class="mb-1">
       <b-col
         md="3"
         class="my-auto"
       >
-        <span class="text-lg">Pilih Produk</span>
+        <span class="text-lg">Kirim Dari</span>
       </b-col>
       <b-col md="4">
         <v-select
-          v-model="product"
-          label="product_name"
-          :options="productList"
-          @input="addProduct"
+          v-model="address"
+          label="address_name"
+          :options="addressList"
         >
           <span
-            v-if="productLength === 0"
+            v-if="addressLength === 0"
             slot="no-options"
           >
-
-            Belum ada produk, tambahkan dahulu.
+            Belum ada alamat pickup, tambahkan dahulu.
           </span>
           <span
             v-else
@@ -256,571 +72,681 @@
         </v-select>
       </b-col>
     </b-row>
-    <b-table
-      v-if="productSelected.length > 0"
-      ref="tableProduct"
-      :fields="productFields"
-      :items="productSelected"
-      responsive
+    <b-row
+      v-if="profile.partner_is_custom_label"
+      class="mb-1 align-items-center"
     >
-      <template #cell(no)="data">
-        {{ data.index+1 }}
-      </template>
-      <template #cell(product_name)="data">
-        <div class="d-flex w-60">
-          <b-img
-            v-if="data.item.product_image === ''"
-            :src="require('@/assets/images/avatars/image-null.png')"
-            class="my-auto"
-            style="width:50px!important;height:50px!important;"
-          />
-          <b-img
-            v-else
-            :src="data.item.product_image"
-            class="my-auto"
-            style="width:50px!important;height:50px!important;"
-          />
-          <span
-            class="my-auto text-lg font-bold w-44"
-            style="margin-left:5px;line-height:20px;"
-          >{{ data.item.product_name }}</span>
-        </div>
-      </template>
-      <template #cell(variant_name)="data">
-        <div
-          v-if="data.item.is_variant === '1'"
-          class="justify-center"
-        >
-          <span
-            class="d-flex text-primary justify-center font-bold mb-50"
-          >
-            {{ data.item.variant_name }}
-          </span>
-          <div
-            class="d-flex justify-center"
-          >
-            <b-button
-              variant="outline-primary"
-              size="sm"
-              @click="getVariation(data.index)"
-            >
-              Pilih
-            </b-button>
-          </div>
-        </div>
-        <span
-          v-else
-          class="d-flex text-center"
-        >Tidak Ada Variasi</span>
-        <b-modal
-            :id="`modalVariation${data.index}`"
-            hide-footer
-          >
-            <section v-if="data.item.variantSelected[0]">
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[0].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[0].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 0, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section
-              v-if="data.item.variantSelected[1]"
-              class="mt-2"
-            >
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[1].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[1].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 1, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section
-              v-if="data.item.variantSelected[2]"
-              class="mt-2"
-            >
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[2].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[2].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 2, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section class="mt-2 d-flex justify-end">
-              <b-button
-                variant="primary"
-                :disabled="!data.item.variantButton"
-                @click="submitVariant(data.index, data.item.product_id)"
-              >
-                Pilih
-              </b-button>
-            </section>
-          </b-modal>
-      </template>
-      <template #cell(price)="data">
-        <span
-          class="text-lg"
-        >Rp {{ formatNumber(data.item.price) }}</span>
-      </template>
-      <template #cell(amount)="data">
-          <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
-            <div class="d-flex justify-center">
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity <= 1"
-                @click="setQuantity('minus',data.index)"
-              >
-                <span class="font-bold text-lg">-</span>
-              </b-button>
-              <span
-                class="text-lg"
-                style="margin: 0 10px"
-              >{{ data.item.quantity }}</span>
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
-                @click="setQuantity('plus',data.index)"
-              >
-                <span class="font-bold text-lg">+</span>
-              </b-button>
-            </div>
-            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
-          </div>
-        <div
-          v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
-          class="d-flex justify-center text-primary text-lg"
-        >Stok Habis</div>
-      </template>
-      <template #cell(subtotal)="data">
-        <span
-          v-if="data.item.is_variant < 1 || data.item.variantSubmit"
-          class="text-lg d-flex justify-center"
-        >Rp {{ formatNumber(data.item.subtotal) }}</span>
-      </template>
-      <template #cell(action)="data">
-        <div class="d-flex justify-center">
-          <b-button
-            variant="none"
-            class="p-0"
-            @click="removeProduct(data.index)"
-          >
-            <b-icon-trash />
-          </b-button>
-        </div>
-      </template>
-    </b-table>
-  </section>
-  <section
-    class="p-2 mt-1"
-    style="border:1px solid #E2E2E2;border-radius:18px"
-  >
+      <b-col
+        md="3"
+        class="my-auto"
+      >
+        <b-row>
+          <span class="text-lg ml-1">Kirim Sebagai</span>
+        </b-row>
+        <small>*nama Pengirim akan muncul di Label Resi</small>
+      </b-col>
+      <b-col md="4">
+        <v-select
+          v-model="customLabel"
+          :options="itemsCustomLabel"
+          label="name_label"
+          :reduce="items => items.id"
+          @input="handleCustomLabel"
+        />
+      </b-col>
+    </b-row>
     <b-row class="mb-1">
       <b-col
         md="3"
         class="my-auto"
       >
-        <label class="text-lg">Metode Pembayaran</label>
+        <span class="text-lg">Nama Pelanggan</span>
       </b-col>
       <b-col md="4">
-        <v-select
-          v-model="paymentMethod"
-          :options="listPayment"
-          @input="getShippingList(), validateRekening(), paymentHistory = false"
+        <b-form-input
+          v-model="customerName"
+          list="customerList"
+          placeholder="Masukan nama atau cari dari data pelanggan"
+          autocomplete="off"
+          :formatter="formatCustomerName"
+          @keypress="validateInputCustomerName"
+          @keydown="getCustomer($event)"
         />
+        <datalist id="customerList">
+          <option
+            v-for="item in customerList"
+            :key="item.customer_id"
+            :value="item.name"
+          >
+            {{ item.name }}, {{ item.phone }}, {{ item.address }}
+          </option>
+        </datalist>
+        <b-row class="justify-content-end">
+          <small class="mr-1 mt-50">
+            <small
+              v-if="messageErrorLengthCustomerName"
+              class="text-primary"
+            >
+              *hindari menggunakan simbol (/) (=) (:) (;)
+            </small>
+            {{ customerName.length }}/30
+          </small>
+        </b-row>
+      </b-col>
+    </b-row>
+    <b-row class="mb-1">
+      <b-col
+        md="3"
+        class="my-auto"
+      >
+        <span class="text-lg">No Telepon</span>
       </b-col>
       <b-col
-        v-if="paymentMethod === 'BANK TRANSFER' && profile.partner_is_mutation_bank"
         md="4"
+        class="pr-3"
       >
-        <v-select
-          v-model="rekening"
-          :options="listRekening"
-          label="account_name"
-          placeholder="Pilih Rekening"
-          @input="paymentHistory = false"
-        >
-          <template #option="{ account_name, bank_name, account_no }">
-            <span class="font-bold text-lg">{{ account_name }}</span><br>
-            <em>{{ bank_name }} - {{ account_no }}</em>
+        <b-input-group>
+          <template #prepend>
+            <b-form-select
+              :options="phoneCodeList"
+              :value="phoneCode"
+            />
           </template>
-          <span
-            v-if="totalRekening === 0"
-            slot="no-options"
-          >
-
-            Kamu belum menambahkan Rekening.
-          </span>
-          <span
-            v-else
-            slot="no-options"
-          >
-            Sedang Memuat ...
-          </span>
-        </v-select>
+          <b-form-input
+            v-model="customerPhone"
+            type="number"
+            @input="formatPhoneCustomer"
+            @keypress="validateInputPhoneCustomer"
+          />
+          <b-row class="justify-content-end">
+            <div>
+              <small
+                class="mr-1 text-primary ml-1"
+                v-if="messageErrorPhone"
+              >
+                *minimal 9 digit dan hanya berupa angka.
+              </small>
+            </div>
+          </b-row>
+        </b-input-group>
       </b-col>
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <label class="text-lg">Ekspedisi</label>
+        <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
       </b-col>
-      <b-col
-        md="4"
-        class="font-bold"
-      >
+      <b-col md="4">
         <v-select
-          v-model="shipping"
-          :options="listShipping"
-          placeholder="Opsi Pengiriman"
-          @input="calculateOnExpedition(true)"
-          :loading="loadingOptionExpedition"
-          :disabled="!isShipping"
+          ref="selectDestination"
+          v-model="destination"
+          :options="destinationList"
+          placeholder="Masukkan Kelurahan/Kecamatan"
+          :loading="loadingSearchDestination"
+          @search="onSearchDestination"
+          @input="getShippingList()"
         >
-        <template #spinner="{ loading }">
-          <div
-            v-if="loadingOptionExpedition"
-            style="border-left-color: #F95031"
-            class="vs__spinner"
+          <span
+            slot="no-options"
+            @click="$refs.selectDestination.open = false"
           >
-            The .vs__spinner class will hide the text for me.
-          </div>
-        </template>
-          <template slot="option" slot-scope="option">
-            <div class="d-flex">
-              <img :src="option.image_path" style="height: 30px!important;" />
-              <span class="my-auto" style="margin-left:5px;">{{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}</span>
+            Tidak ada data untuk ditampilkan.
+          </span>
+          <template #spinner="{ loading }">
+            <div
+              v-if="loadingSearchDestination"
+              style="border-left-color: #F95031"
+              class="vs__spinner"
+            >
+              The .vs__spinner class will hide the text for me.
             </div>
           </template>
-      </v-select>
+        </v-select>
       </b-col>
     </b-row>
-  </section>
-
-    <div
-      v-if="loadingWrapperOtherCost"
-      class="p-1 mt-2"
-      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    <b-row class="mb-1">
+      <b-col
+        md="3"
+        class="my-auto"
+      >
+        <span class="text-lg">Alamat Detail</span>
+      </b-col>
+      <b-col md="4">
+        <b-form-textarea
+          v-model="customerAddress"
+          placeholder="Masukkan Alamat Lengkap"
+          :formatter="formatAddressDetail"
+          @keypress="validateInputAddressDetail"
+        />
+        <b-row class="justify-content-end">
+          <small class="mr-1 mt-50">
+            <small
+              v-if="messageErrorAddressDetail"
+              class="text-primary"
+            >
+              *hindari menggunakan simbol (/) (=) (:) (;)
+            </small>
+            {{ customerAddress.length }}/85
+          </small>
+        </b-row>
+      </b-col>
+    </b-row>
+    <section
+      class="p-2"
+      style="border:1px solid #E2E2E2;border-radius:18px"
     >
-      <b-row>
+      <b-row class="mb-1">
         <b-col
-          cols="3"
+          md="3"
+          class="my-auto"
         >
+          <span class="text-lg">Pilih Produk</span>
+        </b-col>
+        <b-col md="4">
+          <v-select
+            v-model="product"
+            label="product_name"
+            :options="productList"
+            @input="addProduct"
+          >
+            <span
+              v-if="productLength === 0"
+              slot="no-options"
+            >
+
+              Belum ada produk, tambahkan dahulu.
+            </span>
+            <span
+              v-else
+              slot="no-options"
+            >
+              Sedang Memuat ...
+            </span>
+          </v-select>
+        </b-col>
+      </b-row>
+      <b-table
+        v-if="productSelected.length > 0"
+        ref="tableProduct"
+        :fields="productFields"
+        :items="productSelected"
+        responsive
+      >
+        <template #cell(no)="data">
+          {{ data.index+1 }}
+        </template>
+        <template #cell(product_name)="data">
+          <div class="d-flex w-60">
+            <b-img
+              v-if="data.item.product_image === ''"
+              :src="require('@/assets/images/avatars/image-null.png')"
+              class="my-auto"
+              style="width:50px!important;height:50px!important;"
+            />
+            <b-img
+              v-else
+              :src="data.item.product_image"
+              class="my-auto"
+              style="width:50px!important;height:50px!important;"
+            />
+            <span
+              class="my-auto text-lg font-bold w-44"
+              style="margin-left:5px;line-height:20px;"
+            >{{ data.item.product_name }}</span>
+          </div>
+        </template>
+        <template #cell(variant_name)="data">
           <div
-            class="mb-50"
-            style="
-            width: 180px;
-            height: 30px;
-            background: linear-gradient(270deg, #FFECE9 -71.11%, #F4F4F4 91.57%);
-          " />
-          <div style="
-            width:    220px;
-            height: 30px;
-            background: linear-gradient(270deg, #FFECE9 8.71%, #F4F4F4 91.57%);
-          "
+            v-if="data.item.is_variant === '1'"
+            class="justify-center"
+          >
+            <span
+              class="d-flex text-primary justify-center font-bold mb-50"
+            >
+              {{ data.item.variant_name }}
+            </span>
+            <div
+              class="d-flex justify-center"
+            >
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                @click="getVariation(data.index)"
+              >
+                Pilih
+              </b-button>
+            </div>
+          </div>
+          <span
+            v-else
+            class="d-flex text-center"
+          >Tidak Ada Variasi</span>
+          <b-modal
+              :id="`modalVariation${data.index}`"
+              hide-footer
+            >
+              <section v-if="data.item.variantSelected[0]">
+                <h4 class="font-bold mb-1">
+                  {{ data.item.variantSelected[0].variant_name }}
+                </h4>
+                <b-button
+                  v-for="item in data.item.variantSelected[0].variant_option"
+                  :key="item.id"
+                  style="font-weight:500;margin-right:5px;padding:8px"
+                  :variant="item.is_active ? 'primary':'outline-primary'"
+                  @click="selectVariant(data.index, 0, item.option_id)"
+                >{{ item.option_name }}</b-button>
+              </section>
+              <section
+                v-if="data.item.variantSelected[1]"
+                class="mt-2"
+              >
+                <h4 class="font-bold mb-1">
+                  {{ data.item.variantSelected[1].variant_name }}
+                </h4>
+                <b-button
+                  v-for="item in data.item.variantSelected[1].variant_option"
+                  :key="item.id"
+                  style="font-weight:500;margin-right:5px;padding:8px"
+                  :variant="item.is_active ? 'primary':'outline-primary'"
+                  @click="selectVariant(data.index, 1, item.option_id)"
+                >{{ item.option_name }}</b-button>
+              </section>
+              <section
+                v-if="data.item.variantSelected[2]"
+                class="mt-2"
+              >
+                <h4 class="font-bold mb-1">
+                  {{ data.item.variantSelected[2].variant_name }}
+                </h4>
+                <b-button
+                  v-for="item in data.item.variantSelected[2].variant_option"
+                  :key="item.id"
+                  style="font-weight:500;margin-right:5px;padding:8px"
+                  :variant="item.is_active ? 'primary':'outline-primary'"
+                  @click="selectVariant(data.index, 2, item.option_id)"
+                >{{ item.option_name }}</b-button>
+              </section>
+              <section class="mt-2 d-flex justify-end">
+                <b-button
+                  variant="primary"
+                  :disabled="!data.item.variantButton"
+                  @click="submitVariant(data.index, data.item.product_id)"
+                >
+                  Pilih
+                </b-button>
+              </section>
+            </b-modal>
+        </template>
+        <template #cell(price)="data">
+          <span
+            class="text-lg"
+          >Rp {{ formatNumber(data.item.price) }}</span>
+        </template>
+        <template #cell(amount)="data">
+            <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
+              <div class="d-flex justify-center">
+                <b-button
+                  variant="outline-primary"
+                  class="p-0"
+                  style="border-radius:50%;width:25px;height:25px"
+                  size="sm"
+                  :disabled="data.item.quantity <= 1"
+                  @click="setQuantity('minus',data.index)"
+                >
+                  <span class="font-bold text-lg">-</span>
+                </b-button>
+                <span
+                  class="text-lg"
+                  style="margin: 0 10px"
+                >{{ data.item.quantity }}</span>
+                <b-button
+                  variant="outline-primary"
+                  class="p-0"
+                  style="border-radius:50%;width:25px;height:25px"
+                  size="sm"
+                  :disabled="data.item.quantity >= 10 || data.item.stock === 0"
+                  @click="setQuantity('plus',data.index)"
+                >
+                  <span class="font-bold text-lg">+</span>
+                </b-button>
+              </div>
+              <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
+            </div>
+          <div
+            v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
+            class="d-flex justify-center text-primary text-lg"
+          >Stok Habis</div>
+        </template>
+        <template #cell(subtotal)="data">
+          <span
+            v-if="data.item.is_variant < 1 || data.item.variantSubmit"
+            class="text-lg d-flex justify-center"
+          >Rp {{ formatNumber(data.item.subtotal) }}</span>
+        </template>
+        <template #cell(action)="data">
+          <div class="d-flex justify-center">
+            <b-button
+              variant="none"
+              class="p-0"
+              @click="removeProduct(data.index)"
+            >
+              <b-icon-trash />
+            </b-button>
+          </div>
+        </template>
+      </b-table>
+    </section>
+    <section
+      class="p-2 mt-1"
+      style="border:1px solid #E2E2E2;border-radius:18px"
+    >
+      <b-row class="mb-1">
+        <b-col
+          md="3"
+          class="my-auto"
+        >
+          <label class="text-lg">Metode Pembayaran</label>
+        </b-col>
+        <b-col md="4">
+          <v-select
+            v-model="paymentMethod"
+            :options="listPayment"
+            @input="getShippingList(), validateRekening(), paymentHistory = false"
           />
         </b-col>
         <b-col
-          cols="9"
+          v-if="paymentMethod === 'BANK TRANSFER' && profile.partner_is_mutation_bank"
+          md="4"
         >
-        <div style="
-          width: 340px;
-          height: 60px;
-          background: #FFECE9;
-        " />
+          <v-select
+            v-model="rekening"
+            :options="listRekening"
+            label="account_name"
+            placeholder="Pilih Rekening"
+            @input="paymentHistory = false"
+          >
+            <template #option="{ account_name, bank_name, account_no }">
+              <span class="font-bold text-lg">{{ account_name }}</span><br>
+              <em>{{ bank_name }} - {{ account_no }}</em>
+            </template>
+            <span
+              v-if="totalRekening === 0"
+              slot="no-options"
+            >
+
+              Kamu belum menambahkan Rekening.
+            </span>
+            <span
+              v-else
+              slot="no-options"
+            >
+              Sedang Memuat ...
+            </span>
+          </v-select>
         </b-col>
       </b-row>
-    </div>
-    <div
-      v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
-      class="p-1 mt-2"
-      style="border: 1px solid #E2E2E2;border-radius:16px;"
-    >
-      <b-row
-        class="mb-1"
-      >
+      <b-row class="mb-1">
         <b-col md="3">
-          <label
-            class="text-lg"
-            style="color:#828282;"
-          >Gunakan Potongan Saldo</label><br>
-          <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
+          <label class="text-lg">Ekspedisi</label>
         </b-col>
         <b-col
           md="4"
           class="font-bold"
         >
-          <b-form-checkbox
-            v-model="potonganSaldo"
-            :value="true"
-            :unchecked-value="false"
-            @change="calculate(true)"
-          />
+          <v-select
+            v-model="shipping"
+            :options="listShipping"
+            placeholder="Opsi Pengiriman"
+            @input="calculateOnExpedition(true)"
+            :loading="loadingOptionExpedition"
+            :disabled="!isShipping"
+          >
+          <template #spinner="{ loading }">
+            <div
+              v-if="loadingOptionExpedition"
+              style="border-left-color: #F95031"
+              class="vs__spinner"
+            >
+              The .vs__spinner class will hide the text for me.
+            </div>
+          </template>
+            <template slot="option" slot-scope="option">
+              <div class="d-flex">
+                <img :src="option.image_path" style="height: 30px!important;" />
+                <span class="my-auto" style="margin-left:5px;">{{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}</span>
+              </div>
+            </template>
+        </v-select>
         </b-col>
       </b-row>
-      <b-collapse
-        v-model="potonganSaldo"
-        class="mt-2"
+    </section>
+
+      <div
+        v-if="loadingWrapperOtherCost"
+        class="p-1 mt-2"
+        style="border: 1px solid #E2E2E2;border-radius:16px;"
       >
-        <b-row class="mb-1">
+        <b-row>
+          <b-col
+            cols="3"
+          >
+            <div
+              class="mb-50"
+              style="
+              width: 180px;
+              height: 30px;
+              background: linear-gradient(270deg, #FFECE9 -71.11%, #F4F4F4 91.57%);
+            " />
+            <div style="
+              width:    220px;
+              height: 30px;
+              background: linear-gradient(270deg, #FFECE9 8.71%, #F4F4F4 91.57%);
+            "
+            />
+          </b-col>
+          <b-col
+            cols="9"
+          >
+          <div style="
+            width: 340px;
+            height: 60px;
+            background: #FFECE9;
+          " />
+          </b-col>
+        </b-row>
+      </div>
+      <div
+        v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
+        class="p-1 mt-2"
+        style="border: 1px solid #E2E2E2;border-radius:16px;"
+      >
+        <b-row
+          class="mb-1"
+        >
           <b-col md="3">
             <label
               class="text-lg"
               style="color:#828282;"
-            >Nominal Potongan</label>
+            >Gunakan Potongan Saldo</label><br>
+            <span class="text-muted text-sm">Total tagihan akan dikurangi untuk biaya ini</span>
           </b-col>
           <b-col
             md="4"
             class="font-bold"
           >
-            <b-form-input
-              v-model="discount"
-              type="number"
-              @keyup="formatDiscount(discount),calculate(true), checkDiscount()"
+            <b-form-checkbox
+              v-model="potonganSaldo"
+              :value="true"
+              :unchecked-value="false"
+              @change="calculate(true)"
             />
           </b-col>
         </b-row>
-      </b-collapse>
-    </div>
-    <div
-      v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
-      class="p-1 mt-2"
-      style="border: 1px solid #E2E2E2;border-radius:16px;"
-    >
-      <b-row
-        class="mb-1"
-      >
-        <b-col md="3">
-          <label
-            class="text-lg"
-            style="color:#828282;"
-          >Biaya Tambahan Lain</label><br>
-          <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
-        </b-col>
-        <b-col
-          md="4"
-          class="font-bold"
+        <b-collapse
+          v-model="potonganSaldo"
+          class="mt-2"
         >
-          <b-form-checkbox
-            v-model="biayaLain"
-            :value="true"
-            :unchecked-value="false"
-            @change="calculate(false)"
-          />
-        </b-col>
-      </b-row>
-      <b-collapse
-        v-model="biayaLain"
-        class="mt-2"
+          <b-row class="mb-1">
+            <b-col md="3">
+              <label
+                class="text-lg"
+                style="color:#828282;"
+              >Nominal Potongan</label>
+            </b-col>
+            <b-col
+              md="4"
+              class="font-bold"
+            >
+              <b-form-input
+                v-model="discount"
+                type="number"
+                @keyup="formatDiscount(discount),calculate(true), checkDiscount()"
+              />
+            </b-col>
+          </b-row>
+        </b-collapse>
+      </div>
+      <div
+        v-if="isCalculateOnExpedition && !profile.partner_is_allowed_edit"
+        class="p-1 mt-2"
+        style="border: 1px solid #E2E2E2;border-radius:16px;"
       >
-        <b-row class="mb-1">
+        <b-row
+          class="mb-1"
+        >
           <b-col md="3">
             <label
               class="text-lg"
               style="color:#828282;"
-            >Jenis Biaya Lain</label>
+            >Biaya Tambahan Lain</label><br>
+            <span class="text-muted text-sm">Total tagihan akan ditambahkan dengan biaya ini</span>
           </b-col>
-          <b-col md="8">
-            <div
-              v-if="paymentMethod === 'COD'"
-              class="d-flex"
-            >
-              <b-form-radio
-                v-model="jenisBiayaLain"
-                value="0"
-                @change="calculate(false)"
-              >
-                Bebankan biaya COD ke customer
-              </b-form-radio>
-              <b-form-input
-                v-if="jenisBiayaLain === '0'"
-                v-model="bebankanCustomer"
-                type="number"
-                class="ml-1"
-                style="width:80px;height:20px;"
-                disabled
-              />
-            </div>
-            <b-form-radio
-              v-model="jenisBiayaLain"
-              class="mt-1"
-              value="1"
+          <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-checkbox
+              v-model="biayaLain"
+              :value="true"
+              :unchecked-value="false"
               @change="calculate(false)"
-            >
-              Sesuai Nominal
-            </b-form-radio>
-            <b-form-input
-              v-if="jenisBiayaLain === '1'"
-              v-model="sesuaiNominal"
-              type="number"
-              class="mt-1"
-              style="width:250px;"
-              @keyup="formatAdditional(sesuaiNominal), calculate(false)"
             />
           </b-col>
         </b-row>
-      </b-collapse>
-    </div>
+        <b-collapse
+          v-model="biayaLain"
+          class="mt-2"
+        >
+          <b-row class="mb-1">
+            <b-col md="3">
+              <label
+                class="text-lg"
+                style="color:#828282;"
+              >Jenis Biaya Lain</label>
+            </b-col>
+            <b-col md="8">
+              <div
+                v-if="paymentMethod === 'COD'"
+                class="d-flex"
+              >
+                <b-form-radio
+                  v-model="jenisBiayaLain"
+                  value="0"
+                  @change="calculate(false)"
+                >
+                  Bebankan biaya COD ke customer
+                </b-form-radio>
+                <b-form-input
+                  v-if="jenisBiayaLain === '0'"
+                  v-model="bebankanCustomer"
+                  type="number"
+                  class="ml-1"
+                  style="width:80px;height:20px;"
+                  disabled
+                />
+              </div>
+              <b-form-radio
+                v-model="jenisBiayaLain"
+                class="mt-1"
+                value="1"
+                @change="calculate(false)"
+              >
+                Sesuai Nominal
+              </b-form-radio>
+              <b-form-input
+                v-if="jenisBiayaLain === '1'"
+                v-model="sesuaiNominal"
+                type="number"
+                class="mt-1"
+                style="width:250px;"
+                @keyup="formatAdditional(sesuaiNominal), calculate(false)"
+              />
+            </b-col>
+          </b-row>
+        </b-collapse>
+      </div>
 
-  <div
-    v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
-    class="p-1 mt-2"
-    style="border: 1px solid #E2E2E2;border-radius:16px;"
-  >
-    <b-row class="mb-1">
-      <b-col md="3">
-        <label
-          class="text-lg"
-          style="color:#828282;"
-        >Nilai Pembayaran</label><br>
-        <span class="text-muted text-sm">Total Pembayaran yang akan dibayarkan oleh Customer kamu.</span>
-      </b-col>
-      <b-col
-          md="4"
-          class="font-bold"
-        >
-          <b-form-input
-            v-model.lazy="newGrandTotal"
-            type="number"
-            @keyup="calculate(false)"
-            @change="checkNewTotal()"
-          />
+    <div
+      v-if="isCalculateOnExpedition && profile.partner_is_allowed_edit"
+      class="p-1 mt-2"
+      style="border: 1px solid #E2E2E2;border-radius:16px;"
+    >
+      <b-row class="mb-1">
+        <b-col md="3">
+          <label
+            class="text-lg"
+            style="color:#828282;"
+          >Nilai Pembayaran</label><br>
+          <span class="text-muted text-sm">Total Pembayaran yang akan dibayarkan oleh Customer kamu.</span>
         </b-col>
-    </b-row>
-  </div>
-  <div
-    v-if="isCalculateOnExpedition"
-    class="mb-3 mt-2"
-  >
-    <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
-      <b-col md="5" />
-      <b-col md="5">
-        Total Harga Produk
-      </b-col>
-      <b-col
-        md="2"
-        class="detail-value text-primary"
-      >
-        Rp {{ formatNumber(subTotal) }}
-      </b-col>
-    </b-row>
-    <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
-      <b-col md="5" />
-      <b-col md="5">
-        Ongkos Kirim ({{ weight }} kg)
-      </b-col>
-      <b-col
-        md="2"
-        class="detail-value text-primary"
-      >
-        Rp {{ formatNumber(shippingCost) }}
-      </b-col>
-    </b-row>
-    <b-row
-      v-if="potonganSaldo"
-      class="mb-1 text-lg"
+        <b-col
+            md="4"
+            class="font-bold"
+          >
+            <b-form-input
+              v-model.lazy="newGrandTotal"
+              type="number"
+              @keyup="calculate(false)"
+              @change="checkNewTotal()"
+            />
+          </b-col>
+      </b-row>
+    </div>
+    <div
+      v-if="isCalculateOnExpedition"
+      class="mb-3 mt-2"
     >
-      <b-col md="5" />
-      <b-col md="5">
-        Potongan Harga
-      </b-col>
-      <b-col
-        md="2"
-        class="detail-value text-primary"
-      >
-        <b-spinner
-          v-if="loadingCalculate"
-          class="mr-1 my-auto"
-          small
-          variant="primary"
-        />
-        <span v-else>- Rp {{ formatNumber(discount) }}</span>
-      </b-col>
-    </b-row>
-    <b-row
-      v-if="biayaLain"
-      class="mb-1 text-lg"
-    >
-      <b-col md="5" />
-      <b-col md="5">
-        Biaya Lain
-      </b-col>
-      <b-col
-        md="2"
-        class="detail-value text-primary"
-      >
-        Rp {{ formatNumber(additionalCost) }}
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col md="5" />
-      <b-col md="7">
-        <hr style="border-top: 1px solid #C2C2C2;"><span />
-      </b-col>
-    </b-row>
-    <b-row class="text-xl font-bold mb-1">
-      <b-col md="5" />
-      <b-col md="5">
-        Total Pembayaran ({{ paymentMethod }})
-      </b-col>
-      <b-col
-        md="2"
-        class="text-primary detail-value"
-      >
-        <b-spinner
-          v-if="loadingCalculate"
-          class="mr-1 my-auto"
-          small
-          variant="primary"
-        />
-        <span v-else>Rp {{ formatNumber(grandTotal) }}</span>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col md="5" />
-      <b-col md="6">
-        <hr style="border-top: 1px solid #C2C2C2;"><span />
-      </b-col>
-      <b-col
-        md="1"
-        class="d-flex justify-content-end pl-0"
-      >
-        <b-button
-          v-b-toggle="'collapse-1'"
-          class="buttonCollapse px-0"
-          style="margin-bottom: 8px;"
-          variant="none"
-          size="sm"
+      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
+        <b-col md="5" />
+        <b-col md="5">
+          Total Harga Produk
+        </b-col>
+        <b-col
+          md="2"
+          class="detail-value text-primary"
         >
-          <span class="when-open">Tutup <b-icon-chevron-up /></span>
-          <span class="when-closed">Buka <b-icon-chevron-down /></span>
-        </b-button>
-      </b-col>
-    </b-row>
-    <b-collapse id="collapse-1">
+          Rp {{ formatNumber(subTotal) }}
+        </b-col>
+      </b-row>
+      <b-row v-if="!profile.partner_is_allowed_edit" class="mb-1 text-lg">
+        <b-col md="5" />
+        <b-col md="5">
+          Ongkos Kirim ({{ weight }} kg)
+        </b-col>
+        <b-col
+          md="2"
+          class="detail-value text-primary"
+        >
+          Rp {{ formatNumber(shippingCost) }}
+        </b-col>
+      </b-row>
       <b-row
-        v-if="paymentMethod === 'COD'"
+        v-if="potonganSaldo"
         class="mb-1 text-lg"
       >
         <b-col md="5" />
         <b-col md="5">
-          Biaya COD ({{ serviceFeePercentage }}% sudah termasuk PPN)
+          Potongan Harga
         </b-col>
         <b-col
           md="2"
@@ -832,17 +758,38 @@
             small
             variant="primary"
           />
-          <span v-else>- Rp {{ formatNumber(serviceFee) }}</span>
+          <span v-else>- Rp {{ formatNumber(discount) }}</span>
         </b-col>
       </b-row>
-      <b-row class="mb-1 text-lg">
+      <b-row
+        v-if="biayaLain"
+        class="mb-1 text-lg"
+      >
         <b-col md="5" />
         <b-col md="5">
-          Ongkos Kirim (dipotong cashback {{ cashbackPercentage }}%)
+          Biaya Lain
         </b-col>
         <b-col
           md="2"
           class="detail-value text-primary"
+        >
+          Rp {{ formatNumber(additionalCost) }}
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col md="5" />
+        <b-col md="7">
+          <hr style="border-top: 1px solid #C2C2C2;"><span />
+        </b-col>
+      </b-row>
+      <b-row class="text-xl font-bold mb-1">
+        <b-col md="5" />
+        <b-col md="5">
+          Total Pembayaran ({{ paymentMethod }})
+        </b-col>
+        <b-col
+          md="2"
+          class="text-primary detail-value"
         >
           <b-spinner
             v-if="loadingCalculate"
@@ -850,95 +797,157 @@
             small
             variant="primary"
           />
-          <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
+          <span v-else>Rp {{ formatNumber(grandTotal) }}</span>
         </b-col>
       </b-row>
-    </b-collapse>
-    <b-row class="mb-1 text-lg font-bold">
-      <b-col md="5" />
-      <b-col md="5">
-        Penghasilan bersih yang kamu dapatkan
-      </b-col>
+      <b-row>
+        <b-col md="5" />
+        <b-col md="6">
+          <hr style="border-top: 1px solid #C2C2C2;"><span />
+        </b-col>
+        <b-col
+          md="1"
+          class="d-flex justify-content-end pl-0"
+        >
+          <b-button
+            v-b-toggle="'collapse-1'"
+            class="buttonCollapse px-0"
+            style="margin-bottom: 8px;"
+            variant="none"
+            size="sm"
+          >
+            <span class="when-open">Tutup <b-icon-chevron-up /></span>
+            <span class="when-closed">Buka <b-icon-chevron-down /></span>
+          </b-button>
+        </b-col>
+      </b-row>
+      <b-collapse id="collapse-1">
+        <b-row
+          v-if="paymentMethod === 'COD'"
+          class="mb-1 text-lg"
+        >
+          <b-col md="5" />
+          <b-col md="5">
+            Biaya COD ({{ serviceFeePercentage }}% sudah termasuk PPN)
+          </b-col>
+          <b-col
+            md="2"
+            class="detail-value text-primary"
+          >
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span v-else>- Rp {{ formatNumber(serviceFee) }}</span>
+          </b-col>
+        </b-row>
+        <b-row class="mb-1 text-lg">
+          <b-col md="5" />
+          <b-col md="5">
+            Ongkos Kirim (dipotong cashback {{ cashbackPercentage }}%)
+          </b-col>
+          <b-col
+            md="2"
+            class="detail-value text-primary"
+          >
+            <b-spinner
+              v-if="loadingCalculate"
+              class="mr-1 my-auto"
+              small
+              variant="primary"
+            />
+            <span v-else>- Rp {{ formatNumber(shippingCost - cashback) }}</span>
+          </b-col>
+        </b-row>
+      </b-collapse>
+      <b-row class="mb-1 text-lg font-bold">
+        <b-col md="5" />
+        <b-col md="5">
+          Penghasilan bersih yang kamu dapatkan
+        </b-col>
+        <b-col
+          md="2"
+          class="detail-value text-success"
+        >
+          <b-spinner
+            v-if="loadingCalculate"
+            class="mr-1 my-auto"
+            small
+            variant="primary"
+          />
+          <span
+            v-else
+            class="text-success"
+          >Rp {{ formatNumber(netProfit) }}</span>
+        </b-col>
+      </b-row>
+    </div>
+    <hr style="border-top: 1px solid #C2C2C2;">
+    <b-row>
       <b-col
-        md="2"
-        class="detail-value text-success"
+        md="6"
+        class="font-bold text-2xl text-center my-auto"
       >
-        <b-spinner
-          v-if="loadingCalculate"
-          class="mr-1 my-auto"
-          small
+        <span v-if="isCalculateOnExpedition">Total Pembayaran:
+          <b-spinner
+            v-if="loadingCalculate"
+            class="ml-1"
+            variant="primary"
+          />
+          <span
+            v-else
+            class="text-primary"
+          > Rp {{ formatNumber(grandTotal) }}</span>
+        </span>
+      </b-col>
+      <b-col md="6" class="d-flex justify-center mt-1">
+        <b-button
+          variant="outline-primary"
+          :disabled="!isCalculateOnExpedition"
+          @click="submit(true)"
+        >
+          Submit & Tambah Order Lagi
+        </b-button>
+        <b-button
           variant="primary"
-        />
-        <span
-          v-else
-          class="text-success"
-        >Rp {{ formatNumber(netProfit) }}</span>
+          class="ml-1"
+          :disabled="!isCalculateOnExpedition"
+          @click="submit(false)"
+        >
+          Submit
+        </b-button>
       </b-col>
     </b-row>
-  </div>
-  <hr style="border-top: 1px solid #C2C2C2;">
-  <b-row>
-    <b-col
-      md="6"
-      class="font-bold text-2xl text-center my-auto"
-    >
-      <span v-if="isCalculateOnExpedition">Total Pembayaran:
-        <b-spinner
-          v-if="loadingCalculate"
-          class="ml-1"
-          variant="primary"
-        />
-        <span
-          v-else
-          class="text-primary"
-        > Rp {{ formatNumber(grandTotal) }}</span>
-      </span>
-    </b-col>
-    <b-col md="6" class="d-flex justify-center mt-1">
-      <b-button
-        variant="outline-primary"
-        :disabled="!isCalculateOnExpedition"
-        @click="submit(true)"
-      >
-        Submit & Tambah Order Lagi
-      </b-button>
-      <b-button
-        variant="primary"
-        class="ml-1"
-        :disabled="!isCalculateOnExpedition"
-        @click="submit(false)"
-      >
-        Submit
-      </b-button>
-    </b-col>
-  </b-row>
 
-  <!-- Modal cek address pickup -->
-  <b-modal
-    ref="modal-check-address-pickup"
-    hide-footer
-    hide-header
-    centered
-  >
-    <b-row class="justify-content-center mb-1 pt-1">
-      <img src="@/assets/images/icons/warning.svg">
-    </b-row>
-    <b-row class="justify-content-center text-center mb-1">
-      <h4 class="text-black px-4">
-        <strong>
-        Mohon maaf, alamat pickup kamu belum lengkap. Silahkan periksa alamat Pickup
-        </strong>
-      </h4>
-    </b-row>
-    <b-row class="justify-content-center pb-1">
-      <b-button
-        class="btn-icon"
-        variant="primary"
-        tag="router-link"
-        :to="{ name: $route.meta.routeToAddressSetting }"
-      >
-        Ke Alamat Pickup
-      </b-button>
-    </b-row>
-  </b-modal>
-</b-card>
+    <!-- Modal cek address pickup -->
+    <b-modal
+      ref="modal-check-address-pickup"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <h4 class="text-black px-4">
+          <strong>
+          Mohon maaf, alamat pickup kamu belum lengkap. Silahkan periksa alamat Pickup
+          </strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          tag="router-link"
+          :to="{ name: $route.meta.routeToAddressSetting }"
+        >
+          Ke Alamat Pickup
+        </b-button>
+      </b-row>
+    </b-modal>
+  </b-card>
+</b-overlay>
