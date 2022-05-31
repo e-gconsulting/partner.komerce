@@ -169,6 +169,7 @@ export default {
           this.$bvModal.show('modal-onboarding')
         } else {
           this.loadingOnboarding = false
+          // this.$bvModal.show('modal-onboarding')
         }
       }
     })
@@ -192,10 +193,10 @@ export default {
       this.disabledOnboardingMulai = true
       this.$http_komship.put('/v1/partner/onboarding/update', {})
         .then(resp => {
-          if ((resp.data.code === 200) && (resp.data.status === 'success')) {
-            this.loadingOnboarding = false
-            this.$bvModal.hide('modal-onboarding')
-          }
+          // if ((resp.data.code === 200) && (resp.data.status === 'success')) {
+          this.loadingOnboarding = false
+          this.$bvModal.show('modal-onboarding')
+          // }
         })
         .catch(err => {
           this.disabledOnboardingMulai = false

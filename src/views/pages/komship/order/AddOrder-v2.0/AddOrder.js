@@ -37,19 +37,33 @@ export default {
       productFields: [
         { key: 'no', label: 'No', thClass: 'align-middle' },
         {
-          key: 'product_name', label: 'Nama Produk', tdClass: 'px-0', thClass: 'align-middle',
+          key: 'product_name',
+          label: 'Nama Produk',
+          tdClass: 'px-0',
+          thClass: 'align-middle',
         },
         {
-          key: 'variant', label: 'Variasi', tdClass: 'px-0', thClass: 'align-middle',
+          key: 'variant',
+          label: 'Variasi',
+          tdClass: 'px-0',
+          thClass: 'align-middle',
         },
         {
-          key: 'price', label: 'Harga Satuan', thClass: 'align-middle',
+          key: 'price',
+          label: 'Harga Satuan',
+          thClass: 'align-middle',
         },
         {
-          key: 'amount', label: 'Jumlah', tdClass: 'px-0', thClass: 'align-middle',
+          key: 'amount',
+          label: 'Jumlah',
+          tdClass: 'px-0',
+          thClass: 'align-middle',
         },
         {
-          key: 'subtotal', label: 'Subtotal', tdClass: 'px-0', thClass: 'align-middle',
+          key: 'subtotal',
+          label: 'Subtotal',
+          tdClass: 'px-0',
+          thClass: 'align-middle',
         },
         { key: 'action', label: 'Hapus Produk', thClass: 'align-middle' },
       ],
@@ -110,10 +124,12 @@ export default {
     }
   },
   created() {
-    httpKomship2.post('v1/my-profile')
+    httpKomship2
+      .post('v1/my-profile')
       .then(res => {
         this.profile = res.data.data
-      }).then(() => {
+      })
+      .then(() => {
         // this.getDestination()
         this.checkExpedition()
         this.getAddress()
@@ -121,7 +137,8 @@ export default {
         this.addToCart()
         this.getRekening()
         this.getCustomLabel()
-      }).catch(() => {
+      })
+      .catch(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -132,9 +149,14 @@ export default {
           },
         })
       })
-    if (localStorage.getItem('productSelected') && localStorage.productHistory) {
+    if (
+      localStorage.getItem('productSelected')
+      && localStorage.productHistory
+    ) {
       try {
-        this.productSelected = JSON.parse(localStorage.getItem('productSelected'))
+        this.productSelected = JSON.parse(
+          localStorage.getItem('productSelected'),
+        )
         this.productHistory = localStorage.productHistory
       } catch (e) {
         localStorage.removeItem('productSelected')
@@ -160,35 +182,53 @@ export default {
   },
   methods: {
     formatDate(date) {
-      const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+      const monthName = [
+        'Januari',
+        'Februari',
+        'Maret',
+        'April',
+        'Mei',
+        'Juni',
+        'Juli',
+        'Agustus',
+        'September',
+        'Oktober',
+        'November',
+        'Desember',
+      ]
       const day = moment(date).format('DD')
       const month = moment(date).format('M')
       const year = moment(date).format('YYYY')
       return `${day} ${monthName[month - 1]} ${year}`
     },
-    formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    formatNumber: value => `${value}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     formatDiscount(value) {
-      this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+      this.discount = `${value}`.replace(/[^\d]+|^0+(?!$)/g, '')
       if (value === '' || value === null) {
         this.discount = 0
       } else {
-        this.discount = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+        this.discount = `${value}`.replace(/[^\d]+|^0+(?!$)/g, '')
       }
     },
     formatAdditional(value) {
       if (value === '' || value === null) {
         this.sesuaiNominal = 0
       } else {
-        this.sesuaiNominal = (`${value}`).replace(/[^\d]+|^0+(?!$)/g, '')
+        this.sesuaiNominal = `${value}`.replace(/[^\d]+|^0+(?!$)/g, '')
       }
     },
     getCustomLabel() {
-      this.$http_komship.get(`/v1/custom-labels/${this.profile.partner_id}`)
+      this.$http_komship
+        .get(`/v1/custom-labels/${this.profile.partner_id}`)
         .then(response => {
           const { data } = response.data
           this.itemsCustomLabel = data
-          const defaultLabel = this.itemsCustomLabel.find(items => items.is_default === 1)
-          const isNotDefaultLabel = this.itemsCustomLabel.find(items => items.name_label === this.profile.partner_name)
+          const defaultLabel = this.itemsCustomLabel.find(
+            items => items.is_default === 1,
+          )
+          const isNotDefaultLabel = this.itemsCustomLabel.find(
+            items => items.name_label === this.profile.partner_name,
+          )
           if (defaultLabel !== undefined) {
             // eslint-disable-next-line no-plusplus
             for (let x = 0; x < this.itemsCustomLabel.length; x++) {
@@ -202,7 +242,8 @@ export default {
           if (isNotDefaultLabel !== undefined && defaultLabel === undefined) {
             this.customLabel = isNotDefaultLabel.id
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           console.log(err)
         })
     },
@@ -220,7 +261,8 @@ export default {
           }
         } else {
           this.$swal({
-            title: '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
+            title:
+              '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
             imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
             confirmButtonText: 'Tambahkan Alamat Pick Up',
             confirmButtonClass: 'btn btn-primary',
@@ -243,9 +285,10 @@ export default {
           }
         })
       }
-      this.$http_komship.get('v1/customer', {
-        params: { search: this.customerName },
-      })
+      this.$http_komship
+        .get('v1/customer', {
+          params: { search: this.customerName },
+        })
         .then(response => {
           const { data } = response.data
           this.customerList = data
@@ -263,9 +306,10 @@ export default {
     }, 500),
     async getDestination(search) {
       setTimeout(() => {
-        this.$http_komship.get('v1/destination', {
-          params: { search },
-        })
+        this.$http_komship
+          .get('v1/destination', {
+            params: { search },
+          })
           .then(res => {
             const { data } = res.data.data
             this.destinationList = data
@@ -277,34 +321,45 @@ export default {
       }, 2000)
     },
     async getProduct() {
-      await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
+      await this.$http_komship
+        .get(`v1/partner-product/${this.profile.partner_id}`)
         .then(response => {
           const { data } = response.data
           this.productList = data
           this.productLength = data.length
-        // if (this.productLength === 0) this.$refs['modal-validate-product'].show()
+          // if (this.productLength === 0) this.$refs['modal-validate-product'].show()
         })
     },
     addProduct(itemSelected) {
       if (itemSelected) {
-        const result = this.productSelected.find(item => item.product_id === itemSelected.product_id)
-        if (result === undefined || result.length === 0 || result.variantSubmit) {
+        const result = this.productSelected.find(
+          item => item.product_id === itemSelected.product_id,
+        )
+        if (
+          result === undefined
+          || result.length === 0
+          || result.variantSubmit
+        ) {
           let variantSelected
           if (itemSelected.is_variant >= 1) {
-            const variantOption = itemSelected.variant[0].variant_option.map(item => ({
-              option_id: item.option_id,
-              option_name: item.option_name,
-              option_parent: item.option_parent,
-              variant_id: item.variant_id,
-              is_active: false,
-              is_disabled: false,
-            }))
-            variantSelected = [{
-              id: itemSelected.variant[0].id,
-              variant_id: itemSelected.variant[0].variant_id,
-              variant_name: itemSelected.variant[0].variant_name,
-              variant_option: variantOption,
-            }]
+            const variantOption = itemSelected.variant[0].variant_option.map(
+              item => ({
+                option_id: item.option_id,
+                option_name: item.option_name,
+                option_parent: item.option_parent,
+                variant_id: item.variant_id,
+                is_active: false,
+                is_disabled: false,
+              }),
+            )
+            variantSelected = [
+              {
+                id: itemSelected.variant[0].id,
+                variant_id: itemSelected.variant[0].variant_id,
+                variant_name: itemSelected.variant[0].variant_name,
+                variant_option: variantOption,
+              },
+            ]
           } else {
             variantSelected = []
           }
@@ -337,27 +392,49 @@ export default {
     },
     selectVariant(indexProduct, variantType, optionId) {
       if (variantType === 0) {
-        const indexVariantActive = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
-          (item => item.is_active === true),
+        const indexVariantActive = this.productSelected[
+          indexProduct
+        ].variantSelected[0].variant_option.findIndex(
+          item => item.is_active === true,
         )
-        if (this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive]) {
-          this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive].is_active = false
+        if (
+          this.productSelected[indexProduct].variantSelected[0].variant_option[
+            indexVariantActive
+          ]
+        ) {
+          this.productSelected[indexProduct].variantSelected[0].variant_option[
+            indexVariantActive
+          ].is_active = false
           if (this.productSelected[indexProduct].variantSelected[2]) {
             this.productSelected[indexProduct].variantSelected.splice(1, 2)
           } else if (this.productSelected[indexProduct].variantSelected[1]) {
             this.productSelected[indexProduct].variantSelected.splice(1, 1)
           }
         }
-        const indexVariant = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
-          (item => item.option_id === optionId),
+        const indexVariant = this.productSelected[
+          indexProduct
+        ].variantSelected[0].variant_option.findIndex(
+          item => item.option_id === optionId,
         )
-        this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].is_active = true
-        this.productVariantId = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_id
-        this.productVariantParent = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_parent
-        this.productVariantName = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_name
-        this.productVariantOption = this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariant].option_name
+        this.productSelected[indexProduct].variantSelected[0].variant_option[
+          indexVariant
+        ].is_active = true
+        this.productVariantId = this.productSelected[
+          indexProduct
+        ].variantSelected[0].variant_option[indexVariant].option_id
+        this.productVariantParent = this.productSelected[
+          indexProduct
+        ].variantSelected[0].variant_option[indexVariant].option_parent
+        this.productVariantName = this.productSelected[
+          indexProduct
+        ].variantSelected[0].variant_option[indexVariant].option_name
+        this.productVariantOption = this.productSelected[
+          indexProduct
+        ].variantSelected[0].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[1]) {
-          const dataVariant = this.productSelected[indexProduct].variant[1].variant_option.filter(
+          const dataVariant = this.productSelected[
+            indexProduct
+          ].variant[1].variant_option.filter(
             items => items.option_parent === this.productVariantId,
           )
           const variantOption = dataVariant.map(item => ({
@@ -370,36 +447,60 @@ export default {
           }))
           const data = {
             id: this.productSelected[indexProduct].variant[1].id,
-            variant_id: this.productSelected[indexProduct].variant[1].variant_id,
-            variant_name: this.productSelected[indexProduct].variant[1].variant_name,
+            variant_id: this.productSelected[indexProduct].variant[1]
+              .variant_id,
+            variant_name: this.productSelected[indexProduct].variant[1]
+              .variant_name,
             variant_option: variantOption,
           }
-          if (this.productSelected[indexProduct].variantSelected[1] === undefined) {
+          if (
+            this.productSelected[indexProduct].variantSelected[1] === undefined
+          ) {
             this.productSelected[indexProduct].variantSelected.push(data)
           }
         } else {
           this.productSelected[indexProduct].variantButton = true
         }
       } else if (variantType === 1) {
-        const indexVariantActive = this.productSelected[indexProduct].variantSelected[1].variant_option.findIndex(
-          (item => item.is_active === true),
+        const indexVariantActive = this.productSelected[
+          indexProduct
+        ].variantSelected[1].variant_option.findIndex(
+          item => item.is_active === true,
         )
-        if (this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariantActive]) {
-          this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariantActive].is_active = false
+        if (
+          this.productSelected[indexProduct].variantSelected[1].variant_option[
+            indexVariantActive
+          ]
+        ) {
+          this.productSelected[indexProduct].variantSelected[1].variant_option[
+            indexVariantActive
+          ].is_active = false
           if (this.productSelected[indexProduct].variantSelected[2]) {
             this.productSelected[indexProduct].variantSelected.splice(2, 1)
           }
         }
-        const indexVariant = this.productSelected[indexProduct].variantSelected[1].variant_option.findIndex(
-          (item => item.option_id === optionId),
+        const indexVariant = this.productSelected[
+          indexProduct
+        ].variantSelected[1].variant_option.findIndex(
+          item => item.option_id === optionId,
         )
-        this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].is_active = true
-        this.productVariantId = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_id
-        this.productVariantParent = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_parent
+        this.productSelected[indexProduct].variantSelected[1].variant_option[
+          indexVariant
+        ].is_active = true
+        this.productVariantId = this.productSelected[
+          indexProduct
+        ].variantSelected[1].variant_option[indexVariant].option_id
+        this.productVariantParent = this.productSelected[
+          indexProduct
+        ].variantSelected[1].variant_option[indexVariant].option_parent
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name}`
-        this.productVariantOption = this.productSelected[indexProduct].variantSelected[1].variant_option[indexVariant].option_name
+        this.productVariantOption = this.productSelected[
+          indexProduct
+        ].variantSelected[1].variant_option[indexVariant].option_name
         if (this.productSelected[indexProduct].variant[2]) {
-          const dataVariant = this.productSelected[indexProduct].variant[2].variant_option.filter(
+          const dataVariant = this.productSelected[
+            indexProduct
+          ].variant[2].variant_option.filter(
             items => items.option_parent === this.productVariantId,
           )
           const variantOption = dataVariant.map(item => ({
@@ -412,8 +513,10 @@ export default {
           }))
           const data = {
             id: this.productSelected[indexProduct].variant[2].id,
-            variant_id: this.productSelected[indexProduct].variant[2].variant_id,
-            variant_name: this.productSelected[indexProduct].variant[2].variant_name,
+            variant_id: this.productSelected[indexProduct].variant[2]
+              .variant_id,
+            variant_name: this.productSelected[indexProduct].variant[2]
+              .variant_name,
             variant_option: variantOption,
           }
           if (this.productSelected[indexProduct].variantSelected[2]) {
@@ -425,60 +528,101 @@ export default {
           this.productSelected[indexProduct].variantButton = true
         }
       } else if (variantType === 2) {
-        const indexVariantActive = this.productSelected[indexProduct].variantSelected[2].variant_option.findIndex(
-          (item => item.is_active === true),
+        const indexVariantActive = this.productSelected[
+          indexProduct
+        ].variantSelected[2].variant_option.findIndex(
+          item => item.is_active === true,
         )
-        if (this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariantActive]) {
-          this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariantActive].is_active = false
+        if (
+          this.productSelected[indexProduct].variantSelected[2].variant_option[
+            indexVariantActive
+          ]
+        ) {
+          this.productSelected[indexProduct].variantSelected[2].variant_option[
+            indexVariantActive
+          ].is_active = false
         }
-        const indexVariant = this.productSelected[indexProduct].variantSelected[2].variant_option.findIndex(
-          (item => item.option_id === optionId),
+        const indexVariant = this.productSelected[
+          indexProduct
+        ].variantSelected[2].variant_option.findIndex(
+          item => item.option_id === optionId,
         )
-        this.productVariantId = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_id
-        this.productVariantParent = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_parent
+        this.productVariantId = this.productSelected[
+          indexProduct
+        ].variantSelected[2].variant_option[indexVariant].option_id
+        this.productVariantParent = this.productSelected[
+          indexProduct
+        ].variantSelected[2].variant_option[indexVariant].option_parent
         this.productVariantName += `, ${this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name}`
-        this.productVariantOption = this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].option_name
-        this.productSelected[indexProduct].variantSelected[2].variant_option[indexVariant].is_active = true
+        this.productVariantOption = this.productSelected[
+          indexProduct
+        ].variantSelected[2].variant_option[indexVariant].option_name
+        this.productSelected[indexProduct].variantSelected[2].variant_option[
+          indexVariant
+        ].is_active = true
         this.productSelected[indexProduct].variantButton = true
       }
     },
     submitVariant(index, productId) {
       const checkVariant = this.productSelected.findIndex(
-        item => item.variant_name === this.productVariantName && item.product_id === productId,
+        item => item.variant_name === this.productVariantName
+          && item.product_id === productId,
       )
       if (checkVariant > -1) {
         this.productSelected.splice(index, 1)
       } else {
         if (this.productSelected[index].variantSelected[2]) {
-          const indexVariantOne = this.productSelected[index].variantSelected[0].variant_option.findIndex(
-            (item => item.is_active === true),
+          const indexVariantOne = this.productSelected[
+            index
+          ].variantSelected[0].variant_option.findIndex(
+            item => item.is_active === true,
           )
-          this.productVariantName = this.productSelected[index].variantSelected[0].variant_option[indexVariantOne].option_name
-          const indexVariantTwo = this.productSelected[index].variantSelected[1].variant_option.findIndex(
-            (item => item.is_active === true),
+          this.productVariantName = this.productSelected[
+            index
+          ].variantSelected[0].variant_option[indexVariantOne].option_name
+          const indexVariantTwo = this.productSelected[
+            index
+          ].variantSelected[1].variant_option.findIndex(
+            item => item.is_active === true,
           )
           this.productVariantName += `, ${this.productSelected[index].variantSelected[1].variant_option[indexVariantTwo].option_name}`
-          const indexVariantThree = this.productSelected[index].variantSelected[2].variant_option.findIndex(
-            (item => item.is_active === true),
+          const indexVariantThree = this.productSelected[
+            index
+          ].variantSelected[2].variant_option.findIndex(
+            item => item.is_active === true,
           )
           this.productVariantName += `, ${this.productSelected[index].variantSelected[2].variant_option[indexVariantThree].option_name}`
         } else if (this.productSelected[index].variantSelected[1]) {
-          const indexVariantOne = this.productSelected[index].variantSelected[0].variant_option.findIndex(
-            (item => item.is_active === true),
+          const indexVariantOne = this.productSelected[
+            index
+          ].variantSelected[0].variant_option.findIndex(
+            item => item.is_active === true,
           )
-          this.productVariantName = this.productSelected[index].variantSelected[0].variant_option[indexVariantOne].option_name
-          const indexVariantTwo = this.productSelected[index].variantSelected[1].variant_option.findIndex(
-            (item => item.is_active === true),
+          this.productVariantName = this.productSelected[
+            index
+          ].variantSelected[0].variant_option[indexVariantOne].option_name
+          const indexVariantTwo = this.productSelected[
+            index
+          ].variantSelected[1].variant_option.findIndex(
+            item => item.is_active === true,
           )
           this.productVariantName += `, ${this.productSelected[index].variantSelected[1].variant_option[indexVariantTwo].option_name}`
         } else {
-          const indexVariantOne = this.productSelected[index].variantSelected[0].variant_option.findIndex(
-            (item => item.is_active === true),
+          const indexVariantOne = this.productSelected[
+            index
+          ].variantSelected[0].variant_option.findIndex(
+            item => item.is_active === true,
           )
-          this.productVariantName = this.productSelected[index].variantSelected[0].variant_option[indexVariantOne].option_name
+          this.productVariantName = this.productSelected[
+            index
+          ].variantSelected[0].variant_option[indexVariantOne].option_name
         }
-        const data = this.productSelected[index].variantProduct.filter(item => item.parent === this.productVariantParent)
-        const dataVariant = data.find(item => item.name === this.productVariantOption)
+        const data = this.productSelected[index].variantProduct.filter(
+          item => item.parent === this.productVariantParent,
+        )
+        const dataVariant = data.find(
+          item => item.name === this.productVariantOption,
+        )
         this.productSelected[index].variant_id = this.productVariantId
         this.productSelected[index].variant_name = this.productVariantName
         this.productSelected[index].stock = dataVariant.stock
@@ -495,13 +639,15 @@ export default {
       if (status === 'plus') {
         this.productSelected[index].quantity += 1
         this.productSelected[index].stock -= 1
-        this.productSelected[index].subtotal = this.productSelected[index].price * this.productSelected[index].quantity
+        this.productSelected[index].subtotal = this.productSelected[index].price
+          * this.productSelected[index].quantity
         this.productHistory = false
         this.addToCart()
       } else if (status === 'minus') {
         this.productSelected[index].quantity -= 1
         this.productSelected[index].stock += 1
-        this.productSelected[index].subtotal = this.productSelected[index].price * this.productSelected[index].quantity
+        this.productSelected[index].subtotal = this.productSelected[index].price
+          * this.productSelected[index].quantity
         this.productHistory = false
         this.addToCart()
       }
@@ -538,7 +684,8 @@ export default {
     async addToCart() {
       if (this.productSelected.length > 0) {
         this.loadingCalculate = true
-        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+        await this.$http_komship
+          .delete(`v1/cart/clear/${this.profile.user_id}`)
           .then(async () => {
             const cart = this.productSelected.map(items => ({
               product_id: items.product_id,
@@ -549,7 +696,8 @@ export default {
               qty: items.quantity,
               subtotal: items.subtotal,
             }))
-            await this.$http_komship.post('v1/cart/bulk-store', cart)
+            await this.$http_komship
+              .post('v1/cart/bulk-store', cart)
               .then(res => {
                 this.cartId = res.data.data.cart_id
                 this.loadingCalculate = false
@@ -563,17 +711,17 @@ export default {
       }
     },
     async getRekening() {
-      await this.$http_komship.get('v1/bank-account')
-        .then(res => {
-          const { data } = res.data
-          this.listRekening = data
-          this.totalRekening = data.length
-        })
+      await this.$http_komship.get('v1/bank-account').then(res => {
+        const { data } = res.data
+        this.listRekening = data
+        this.totalRekening = data.length
+      })
     },
     validateRekening() {
       if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
         this.$swal({
-          title: '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
+          title:
+            '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
           imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
           confirmButtonText: 'Tambah Rekening',
           confirmButtonClass: 'btn btn-primary',
@@ -585,19 +733,22 @@ export default {
       }
     },
     async checkExpedition() {
-      await this.$http_komship.get('/v1/partner/shipment/not-active')
+      await this.$http_komship
+        .get('/v1/partner/shipment/not-active')
         .then(res => {
           const { data } = res.data
           const result = data.filter(items => items.is_active === 1)
           if (result.length < 1) {
             this.$swal({
-              title: '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
+              title:
+                '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
               imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
               showCancelButton: true,
               confirmButtonText: 'Aktifkan Ekspedisi',
               confirmButtonClass: 'btn btn-primary',
               cancelButtonText: 'Oke',
-              cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+              cancelButtonClass:
+                'btn btn-outline-primary bg-white text-primary',
             }).then(then => {
               if (then.isConfirmed) {
                 this.$router.push('/setting-kompship/ekspedisi')
@@ -608,35 +759,49 @@ export default {
     },
     async getShippingList() {
       this.loadingOptionExpedition = true
-      if (this.destination && this.paymentMethod && this.profile && this.address) {
+      if (
+        this.destination
+        && this.paymentMethod
+        && this.profile
+        && this.address
+      ) {
         setTimeout(async () => {
-          await this.$http_komship.get('v2/calculate', {
-            params: {
-              tariff_code: this.destination.value,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-            },
-          }).then(res => {
-            const { data } = res.data
-            const result = data.map(items => ({
-              label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
-              value: items.value,
-              image_path: items.image_path,
-              shipment_name: items.shipment_name,
-              label_shipping_type: this.shippingTypeLabel(items.shipping_type),
-              shipping_type: items.shipping_type,
-              shipping_cost: items.shipping_cost,
-            }))
-            this.listShipping = result
-            this.isShipping = true
-            this.loadingOptionExpedition = false
-          }).catch(err => {
-            if (err.response.data.message === 'Please Complete Your Address.') {
-              this.$refs['modal-check-address-pickup'].show()
-            }
-            this.loadingOptionExpedition = false
-          })
+          await this.$http_komship
+            .get('v2/calculate', {
+              params: {
+                tariff_code: this.destination.value,
+                payment_method: this.paymentMethod,
+                partner_id: this.profile.partner_id,
+                partner_address_id: this.address.address_id,
+              },
+            })
+            .then(res => {
+              const { data } = res.data
+              const result = data.map(items => ({
+                label: `${items.shipment_name} - ${this.shippingTypeLabel(
+                  items.shipping_type,
+                )} - Rp${this.formatNumber(items.shipping_cost)}`,
+                value: items.value,
+                image_path: items.image_path,
+                shipment_name: items.shipment_name,
+                label_shipping_type: this.shippingTypeLabel(
+                  items.shipping_type,
+                ),
+                shipping_type: items.shipping_type,
+                shipping_cost: items.shipping_cost,
+              }))
+              this.listShipping = result
+              this.isShipping = true
+              this.loadingOptionExpedition = false
+            })
+            .catch(err => {
+              if (
+                err.response.data.message === 'Please Complete Your Address.'
+              ) {
+                this.$refs['modal-check-address-pickup'].show()
+              }
+              this.loadingOptionExpedition = false
+            })
         }, 800)
       } else {
         this.shipping = null
@@ -682,54 +847,62 @@ export default {
         } else {
           grandTotalNew = null
         }
-        this.$http_komship.get('v2/calculate', {
-          params: {
-            tariff_code: this.destination.value,
-            payment_method: this.paymentMethod,
-            partner_id: this.profile.partner_id,
-            partner_address_id: this.address.address_id,
-            cart: this.cartId.toString(),
-            discount: this.discount,
-            additional_cost: this.additionalCost,
-            grandtotal: grandTotalNew,
-          },
-        }).then(async res => {
-          const { data } = res.data
-          const result = data.find(items => items.value === this.shipping.value)
-          if (getAdditional) {
-            this.sesuaiNominal = Math.round(result.service_fee)
-            this.bebankanCustomer = Math.round(result.service_fee)
-            this.newGrandTotal = result.grandtotal
-            this.oldGrandTotal = result.grandtotal
-            if (this.paymentMethod === 'COD') {
-              this.jenisBiayaLain = '0'
-            } else {
-              this.jenisBiayaLain = '1'
+        this.$http_komship
+          .get('v2/calculate', {
+            params: {
+              tariff_code: this.destination.value,
+              payment_method: this.paymentMethod,
+              partner_id: this.profile.partner_id,
+              partner_address_id: this.address.address_id,
+              cart: this.cartId.toString(),
+              discount: this.discount,
+              additional_cost: this.additionalCost,
+              grandtotal: grandTotalNew,
+            },
+          })
+          .then(async res => {
+            const { data } = res.data
+            const result = data.find(
+              items => items.value === this.shipping.value,
+            )
+            if (getAdditional) {
+              this.sesuaiNominal = Math.round(result.service_fee)
+              this.bebankanCustomer = Math.round(result.service_fee)
+              this.newGrandTotal = result.grandtotal
+              this.oldGrandTotal = result.grandtotal
+              if (this.paymentMethod === 'COD') {
+                this.jenisBiayaLain = '0'
+              } else {
+                this.jenisBiayaLain = '1'
+              }
             }
-          }
-          if (this.newGrandTotal === null) {
-            this.newGrandTotal = result.grandtotal
-          }
-          if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
-            this.subTotal = result.subtotal
-            this.shippingCost = result.shipping_cost
-            this.netProfit = result.net_profit
-            this.serviceFee = Math.round(result.service_fee)
-            this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight.toFixed(2)
-            this.grandTotal = result.grandtotal
-            this.cashback = result.cashback
-            this.cashbackPercentage = result.cashback_percentage
-            this.additionalCost = result.additional_cost
-            this.isCalculate = true
+            if (this.newGrandTotal === null) {
+              this.newGrandTotal = result.grandtotal
+            }
+            if (
+              !this.profile.partner_is_allowed_edit
+              || this.newGrandTotal === result.grandtotal
+            ) {
+              this.subTotal = result.subtotal
+              this.shippingCost = result.shipping_cost
+              this.netProfit = result.net_profit
+              this.serviceFee = Math.round(result.service_fee)
+              this.serviceFeePercentage = result.service_fee_percentage
+              this.weight = result.weight.toFixed(2)
+              this.grandTotal = result.grandtotal
+              this.cashback = result.cashback
+              this.cashbackPercentage = result.cashback_percentage
+              this.additionalCost = result.additional_cost
+              this.isCalculate = true
+              this.loadingCalculate = false
+            }
             this.loadingCalculate = false
-          }
-          this.loadingCalculate = false
-        }).catch(async err => {
-          this.calculate(getAdditional)
-          this.loadingWrapperOtherCost = false
-          this.loadingCalculate = false
-        })
+          })
+          .catch(async err => {
+            this.calculate(getAdditional)
+            this.loadingWrapperOtherCost = false
+            this.loadingCalculate = false
+          })
       } else {
         this.isCalculate = false
         this.loadingWrapperOtherCost = false
@@ -760,55 +933,63 @@ export default {
           } else {
             grandTotalNew = null
           }
-          await this.$http_komship.get('v2/calculate', {
-            params: {
-              tariff_code: this.destination.value,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-              cart: this.cartId.toString(),
-              discount: this.discount,
-              additional_cost: this.additionalCost,
-              grandtotal: grandTotalNew,
-            },
-          }).then(async res => {
-            const { data } = res.data
-            const result = data.find(items => items.value === this.shipping.value)
-            if (getAdditional) {
-              this.sesuaiNominal = Math.round(result.service_fee)
-              this.bebankanCustomer = Math.round(result.service_fee)
-              this.newGrandTotal = result.grandtotal
-              this.oldGrandTotal = result.grandtotal
-              if (this.paymentMethod === 'COD') {
-                this.jenisBiayaLain = '0'
-              } else {
-                this.jenisBiayaLain = '1'
+          await this.$http_komship
+            .get('v2/calculate', {
+              params: {
+                tariff_code: this.destination.value,
+                payment_method: this.paymentMethod,
+                partner_id: this.profile.partner_id,
+                partner_address_id: this.address.address_id,
+                cart: this.cartId.toString(),
+                discount: this.discount,
+                additional_cost: this.additionalCost,
+                grandtotal: grandTotalNew,
+              },
+            })
+            .then(async res => {
+              const { data } = res.data
+              const result = data.find(
+                items => items.value === this.shipping.value,
+              )
+              if (getAdditional) {
+                this.sesuaiNominal = Math.round(result.service_fee)
+                this.bebankanCustomer = Math.round(result.service_fee)
+                this.newGrandTotal = result.grandtotal
+                this.oldGrandTotal = result.grandtotal
+                if (this.paymentMethod === 'COD') {
+                  this.jenisBiayaLain = '0'
+                } else {
+                  this.jenisBiayaLain = '1'
+                }
               }
-            }
-            if (this.newGrandTotal === null) {
-              this.newGrandTotal = result.grandtotal
-            }
-            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
-              this.subTotal = result.subtotal
-              this.shippingCost = result.shipping_cost
-              this.netProfit = result.net_profit
-              this.serviceFee = Math.round(result.service_fee)
-              this.serviceFeePercentage = result.service_fee_percentage
-              this.weight = result.weight.toFixed(2)
-              this.grandTotal = result.grandtotal
-              this.cashback = result.cashback
-              this.cashbackPercentage = result.cashback_percentage
-              this.additionalCost = result.additional_cost
-              this.isCalculateOnExpedition = true
+              if (this.newGrandTotal === null) {
+                this.newGrandTotal = result.grandtotal
+              }
+              if (
+                !this.profile.partner_is_allowed_edit
+                || this.newGrandTotal === result.grandtotal
+              ) {
+                this.subTotal = result.subtotal
+                this.shippingCost = result.shipping_cost
+                this.netProfit = result.net_profit
+                this.serviceFee = Math.round(result.service_fee)
+                this.serviceFeePercentage = result.service_fee_percentage
+                this.weight = result.weight.toFixed(2)
+                this.grandTotal = result.grandtotal
+                this.cashback = result.cashback
+                this.cashbackPercentage = result.cashback_percentage
+                this.additionalCost = result.additional_cost
+                this.isCalculateOnExpedition = true
+                this.loadingCalculate = false
+              }
+              this.loadingWrapperOtherCost = false
               this.loadingCalculate = false
-            }
-            this.loadingWrapperOtherCost = false
-            this.loadingCalculate = false
-          }).catch(async () => {
-            this.loadingWrapperOtherCost = false
-            this.loadingCalculate = false
-            this.calculateOnExpedition(getAdditional)
-          })
+            })
+            .catch(async () => {
+              this.loadingWrapperOtherCost = false
+              this.loadingCalculate = false
+              this.calculateOnExpedition(getAdditional)
+            })
         } else {
           this.isCalculateOnExpedition = false
           this.loadingWrapperOtherCost = false
@@ -816,15 +997,26 @@ export default {
       }, 800)
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
+      if (
+        value === 'REG19'
+        || value === 'SIUNT'
+        || value === 'STD'
+        || value === 'IDlite'
+        || value === 'CTC19'
+      ) {
         return 'Reguler'
-      } if (value === 'GOKIL') {
+      }
+      if (value === 'GOKIL') {
         return 'Cargo'
       }
       return value
     },
     checkValidation() {
-      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.profile.partner_is_mutation_bank) {
+      if (
+        this.paymentMethod === 'BANK TRANSFER'
+        && this.rekening
+        && this.profile.partner_is_mutation_bank
+      ) {
         this.bankName = this.rekening.bank_name
         this.bankAccountName = this.rekening.account_name
         this.bankAccountNo = this.rekening.account_no
@@ -833,11 +1025,28 @@ export default {
         this.bankAccountName = 0
         this.bankAccountNo = 0
       }
-      if (this.paymentMethod === 'BANK TRANSFER' && this.rekening && this.customerName && this.customerPhone && this.customerAddress) {
+      if (
+        this.paymentMethod === 'BANK TRANSFER'
+        && this.rekening
+        && this.customerName
+        && this.customerPhone
+        && this.customerAddress
+      ) {
         this.isValidate = true
-      } else if (this.paymentMethod === 'BANK TRANSFER' && !this.profile.partner_is_mutation_bank && this.customerName && this.customerPhone && this.customerAddress) {
+      } else if (
+        this.paymentMethod === 'BANK TRANSFER'
+        && !this.profile.partner_is_mutation_bank
+        && this.customerName
+        && this.customerPhone
+        && this.customerAddress
+      ) {
         this.isValidate = true
-      } else if (this.paymentMethod === 'COD' && this.customerName && this.customerPhone && this.customerAddress) {
+      } else if (
+        this.paymentMethod === 'COD'
+        && this.customerName
+        && this.customerPhone
+        && this.customerAddress
+      ) {
         this.isValidate = true
       } else {
         this.isValidate = false
@@ -880,10 +1089,12 @@ export default {
     async submit(order) {
       this.checkValidation()
       if (this.isValidate) {
-        await this.$http_komship.post(`v1/order/${this.profile.partner_id}/store`, this.formData)
+        await this.$http_komship
+          .post(`v1/order/${this.profile.partner_id}/store`, this.formData)
           .then(() => {
             this.$swal({
-              title: '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
+              title:
+                '<span class="font-weight-bold h4">Berhasil Tambah Order</span>',
               imageUrl: require('@/assets/images/icons/success.svg'),
               confirmButtonText: 'Oke',
               confirmButtonClass: 'btn btn-primary',
@@ -897,16 +1108,27 @@ export default {
           })
           .catch(err => {
             this.dataErrSubmit = err.response.data
-            if (this.dataErrSubmit.message !== 'Server Error Please Try Again.') {
+            if (
+              this.dataErrSubmit.message !== 'Server Error Please Try Again.'
+            ) {
               let nameButton = ''
               let titleAlert = ''
-              if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+              if (
+                this.dataErrSubmit.message
+                === 'Please Topup to continue your store Order.'
+              ) {
                 nameButton = 'Cek Saldo'
                 titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
-              } else if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+              } else if (
+                this.dataErrSubmit.message
+                === 'Sorry, your balance is not enough to make a postage payment'
+              ) {
                 nameButton = 'Cek Saldo'
                 titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
-              } else if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+              } else if (
+                this.dataErrSubmit.message
+                === 'Sorry, there is not enough stock to continue the order'
+              ) {
                 nameButton = 'Cek Produk'
                 titleAlert = 'Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu'
               }
@@ -914,19 +1136,29 @@ export default {
                 title: `<span class="font-weight-bold h4">${titleAlert}</span>`,
                 imageUrl: require('@/assets/images/icons/fail.svg'),
                 showCancelButton: true,
-                confirmButtonText: nameButton,
+                confirmButtonText: 'Oke',
                 confirmButtonClass: 'btn btn-primary',
-                cancelButtonText: 'Oke',
-                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+                cancelButtonText: nameButton,
+                cancelButtonClass:
+                  'btn btn-outline-primary bg-white text-primary',
               }).then(result => {
                 if (result.isConfirmed) {
-                  if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Please Topup to continue your store Order.'
+                  ) {
                     this.$router.push('/dashboard-komship')
                   }
-                  if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Sorry, your balance is not enough to make a postage payment'
+                  ) {
                     this.$router.push('/dashboard-komship')
                   }
-                  if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Sorry, there is not enough stock to continue the order'
+                  ) {
                     this.$router.push('/produk')
                   }
                 }
@@ -945,7 +1177,8 @@ export default {
           })
       } else {
         this.$swal({
-          title: '<span class="font-weight-bold h4">Tidak Boleh Ada Field Yang Kosong!</span>',
+          title:
+            '<span class="font-weight-bold h4">Tidak Boleh Ada Field Yang Kosong!</span>',
           imageUrl: require('@/assets/images/icons/fail.svg'),
           confirmButtonText: 'Oke',
           confirmButtonClass: 'btn btn-primary',
@@ -966,7 +1199,12 @@ export default {
       }
     },
     validateInputCustomerName(e) {
-      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+      if (
+        e.keyCode === 47
+        || e.keyCode === 61
+        || e.keyCode === 58
+        || e.keyCode === 59
+      ) {
         e.preventDefault()
         this.messageErrorLengthCustomerName = true
       } else {
@@ -974,7 +1212,12 @@ export default {
       }
     },
     validateInputAddressDetail(e) {
-      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+      if (
+        e.keyCode === 47
+        || e.keyCode === 61
+        || e.keyCode === 58
+        || e.keyCode === 59
+      ) {
         e.preventDefault()
         this.messageErrorAddressDetail = true
       } else {
