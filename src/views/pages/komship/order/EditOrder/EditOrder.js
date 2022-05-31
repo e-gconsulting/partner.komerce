@@ -185,7 +185,15 @@ export default {
             this.customLabel = isNotDefaultLabel.id
           }
         }).catch(err => {
-          console.log(err)
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
         })
     },
     getAddress() {
@@ -254,6 +262,15 @@ export default {
             this.loadingSearchDestination = false
           })
           .catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
             this.loadingSearchDestination = false
           })
       }, 2000)
@@ -319,14 +336,10 @@ export default {
       this.$root.$emit('bv::show::modal', `modalVariation${index}`)
     },
     selectVariant(indexProduct, variantType, optionId) {
-      console.log('indexProduct', indexProduct)
-      console.log('variantType', variantType)
-      console.log('optionId', optionId)
       if (variantType === 0) {
         const indexVariantActive = this.productSelected[indexProduct].variantSelected[0].variant_option.findIndex(
           (item => item.is_active === true),
         )
-        console.log('indexVariantActive', indexVariantActive)
         if (this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive]) {
           this.productSelected[indexProduct].variantSelected[0].variant_option[indexVariantActive].is_active = false
           if (this.productSelected[indexProduct].variantSelected[2]) {
@@ -514,11 +527,8 @@ export default {
               qty: items.quantity,
               subtotal: items.subtotal,
             }))
-            console.log('productSelected', this.productSelected)
-            console.log('cart', cart)
             await this.$http_komship.post('v1/cart/bulk-store', cart)
               .then(res => {
-                console.log('res cart', res)
                 this.cartId = res.data.data.cart_id
                 this.loadingCalculate = false
                 this.calculate(true)
@@ -603,8 +613,6 @@ export default {
               const findShipping = this.listShipping.find(items => items.shipment_name === this.shipping.shipment_name)
               this.shipping = findShipping
             }
-            console.log('shipping', this.shipping)
-            console.log('listShipping', this.listShipping)
           }).catch(err => {
             if (err.response.data.message === 'Please Complete Your Address.') {
               this.$refs['modal-check-address-pickup'].show()
@@ -656,16 +664,6 @@ export default {
         } else {
           grandTotalNew = null
         }
-        console.log('paramsToCalculate', {
-          tariff_code: this.destination.value,
-          payment_method: this.paymentMethod,
-          partner_id: this.profile.partner_id,
-          partner_address_id: this.address.address_id,
-          cart: this.cartId.toString(),
-          discount: this.discount,
-          additional_cost: this.additionalCost,
-          grandtotal: grandTotalNew,
-        })
         this.$http_komship.get('v2/calculate', {
           params: {
             tariff_code: this.destination.value,
@@ -679,10 +677,7 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          console.log('data on result', data)
           const result = data.find(items => items.value === this.shipping.value)
-          console.log('result', result)
-          console.log('shipping on result', this.shipping)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)
@@ -713,9 +708,17 @@ export default {
           }
           this.loadingCalculate = false
         }).catch(async err => {
-          console.log('err calculate', err)
           this.loadingWrapperOtherCost = false
           this.loadingCalculate = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
         })
       } else {
         this.isCalculate = false
@@ -794,7 +797,15 @@ export default {
           }).catch(async err => {
             this.loadingWrapperOtherCost = false
             this.loadingCalculate = false
-            console.log('err calculate on expedistion', err)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
           })
         } else {
           this.isCalculateOnExpedition = false
@@ -842,7 +853,6 @@ export default {
         subtotal: items.subtotal,
         is_deleted: 1,
       }))
-      console.log('detailOrders', cartDetailOrder)
 
       this.formData = {
         date: this.dateOrder,
@@ -1003,8 +1013,6 @@ export default {
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
         .then(response => {
           const { data } = response.data
-          console.log('response data detail', response)
-          console.log('list product', this.productList)
           this.customerName = data.customer_name
           this.customerPhone = data.customer_phone
           this.destination = data.destination_name
@@ -1019,26 +1027,29 @@ export default {
             shipping_type: data.shipping_type,
             shipping_cost: data.shipping_cost,
           })
-          console.log('shippingFromDetail', this.shippingFromDetailEdit)
           this.$http_komship.get('v1/destination', {
             params: {
               search: this.destination,
             },
           }).then(res => {
             this.destination = res.data.data.data[0]
-            console.log('destination', this.destination)
             this.getShippingList()
           }).catch(err => {
-            console.log(err)
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
           })
           this.customerAddress = data.customer_address
           data.product.forEach(item => {
-            console.log('product from detail', item)
             const findObj = this.productList.find(list => list.product_id === item.product_id)
-            console.log('findObj', findObj)
             if (findObj !== undefined) {
               const findVariant = findObj.product_variant.find(listVariant => listVariant.options_id === item.product_variant_id)
-              console.log('findVariant', findVariant)
               let variantSelected
               if (findObj.is_variant === '1') {
                 const variantOption = findObj.variant[0].variant_option.map(items => ({
@@ -1093,8 +1104,6 @@ export default {
           this.addToCart()
           this.shipping = this.shippingFromDetailEdit
           this.calculateOnExpedition(true)
-          console.log('productSelected', this.productSelected)
-          console.log('cartDetailOrder', cartDetailOrder)
         })
     },
   },
