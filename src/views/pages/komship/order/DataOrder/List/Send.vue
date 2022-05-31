@@ -12,7 +12,7 @@
           v-model="formSearch"
           type="search"
           class="form-search"
-          placeholder="Masukkan Nama Pelanggan"
+          placeholder="Cari Pelanggan atau Resi"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
@@ -389,7 +389,7 @@ export default {
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
         params: {
           order_status: 'Dikirim',
-          customer_name: search || this.customerName,
+          search,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
           end_date: this.endDate,

@@ -12,7 +12,7 @@
           v-model="formSearch"
           type="search"
           class="form-search"
-          placeholder="Masukkan Nama Pelanggan"
+          placeholder="Cari Pelanggan"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
