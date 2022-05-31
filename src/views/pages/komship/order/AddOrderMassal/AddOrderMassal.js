@@ -194,7 +194,7 @@ export default {
         qty: items[8] || items.qty || '',
         payment_method: items[9] || items.payment_method || '',
         expedition: items[10] || items.expedition || '',
-        grandtotal: toInteger(items[11]?.replace(/[^\d]/g, '')) || toInteger(items.grandtotal?.replace(/[^\d]/g, '')) || '',
+        grandtotal: items[11]?.replace(/[^\d]/g, '') || items.grandtotal?.replace(/[^\d]/g, '') || '',
       }))
       if (method === 'save') {
         setTimeout(async () => {
@@ -206,7 +206,7 @@ export default {
             .catch(err => console.log(err))
         }, 800)
       } else if (method === 'submit') {
-        const dataSubmit = data.filter(
+        const dataFilter = data.filter(
           items => items.order_date
         || items.address
         || items.customer_name
@@ -220,7 +220,32 @@ export default {
         || items.expedition
         || items.grandtotal !== '',
         )
-        console.log(dataSubmit)
+        const dataSubmit = dataFilter.map(items => ({
+          order_date: moment(items.order_date).format('YYYY-MM-DD'),
+          address: items.address,
+          customer_name: items.customer_name,
+          customer_phone_number: toInteger(items.customer_phone_number),
+          zip_code: toInteger(items.zip_code),
+          customer_address: items.customer_address,
+          product: items.product,
+          variant: items.variant,
+          qty: toInteger(items.qty),
+          payment_method: items.payment_method,
+          expedition: items.expedition,
+          grandtotal: toInteger(items.grandtotal),
+        }))
+        setTimeout(async () => {
+          await this.$http_komship.post('/v1/order/sheet/save-submit', {
+            options: 'submit',
+            data: dataSubmit,
+          })
+            .then(res => {
+              console.log(res)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        }, 800)
       }
     },
   },
