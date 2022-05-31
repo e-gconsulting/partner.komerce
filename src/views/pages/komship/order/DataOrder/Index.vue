@@ -472,6 +472,8 @@ export default {
       chcekedSiCepat: false,
       chcekedIDExpress: false,
       locale: {
+        applyLabel: 'Pilih',
+        cancelLabel: 'Batal',
         format: 'dd/mm/yyyy',
         daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
