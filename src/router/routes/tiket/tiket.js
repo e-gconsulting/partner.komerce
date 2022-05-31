@@ -19,4 +19,14 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/tiket/detail/order/:id',
+    name: 'tiket-detail',
+    component: () => import('@/views/pages/tiket/DetailOrder.vue'),
+    meta: {
+      name: 'TiketDetail',
+      resource: 'Tiket',
+      action: 'manage',
+    },
+  },
 ]

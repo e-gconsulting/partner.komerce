@@ -27,6 +27,7 @@
 }
 .font-bold {
   color: #626262;
+  font-weight: bold;
 }
 .send {
   color: #08a0f7;
@@ -48,9 +49,31 @@
 .form-control[readonly] {
   background: white;
 }
+.btn{
+  float: right;
+    margin-top: 4em;
+}
 @media screen and(min-width: 320px) and (max-width: 768px) {
   .btn {
-    position: relative;
-    margin: 1em 0 0 2em;
+    float: none;
+    margin: 1em 0 0 0;
+  }
+}
+.container{
+  &-title{
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+    &-t{
+      font-size: 17.5px;
+      font-weight: bold;
+      color: #222222;
+      margin-left: 1em;
+    }
+  }
+  &-border{
+    border: 2px solid #E2E2E2;
+    border-radius: 8px;
+    border-color: #E2E2E2;
   }
 }

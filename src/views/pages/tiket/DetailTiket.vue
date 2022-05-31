@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <div class="flex items-center">
+    <div class="container-title">
       <img src="@/assets/images/icons/back.svg">
-      <div class="text-xl ml-1 font-bold ">
+      <div class="container-title-t">
         Detail Tiket
       </div>
 
     </div>
-    <div class="ring-2 rounded-xl ring-gray-300 mt-8 p-2">
+    <div class="ring-2 rounded-xl ring-gray-300 mt-8 p-2 container-border">
       <b-row class="mb-1">
         <b-col md="6">
           <p class="font-bold">
@@ -128,10 +128,10 @@
           />
         </b-col>
         <b-col md="6">
-
           <b-button
             variant="outline-primary"
             class="text-red-400 absolute bottom-0 right-8"
+            @click="handleDetailOrder()"
           >
             Detail Order
           </b-button>
@@ -173,6 +173,9 @@ export default {
           2000,
         )
       })
+    // this.$http_komship.get('/v1/ticket-admin/order/detail/31')
+    //   .then(res => this.setDataDetailTiket(res.data.data))
+    //   .catch(err => console.log(err))
   },
   methods: {
     setDataDetailTiket(data) {
@@ -181,7 +184,12 @@ export default {
     copy() {
       this.$refs.copyClipboard.focus()
     },
+    handleDetailOrder() {
+      this.$router.push({
+        path: `/tiket/detail/order/${this.dataDetailTiket.order_id}`,
+      })
+    },
   },
 }
 </script>
-<style lang src="./DetailTiket.scss" />
+<style scoped lang src="./DetailTiket.scss" />
