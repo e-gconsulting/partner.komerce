@@ -185,12 +185,14 @@ export default {
             const date = moment(link.updated_at).format('YYYY-MM-DD')
             if (date === moment().format('YYYY-MM-DD')) {
               const time = moment(link.updated_at).format('HH:mm')
-              this.lastUpdated = `pada pukul ${time}`
+              this.lastUpdated = `pada pukul ${time}, hari ini`
             } else {
-              const date1 = new Date(link.updated_at)
-              const date2 = new Date()
-              const diffDays = date2.getDate() - date1.getDate()
-              this.lastUpdated = `${diffDays} hari yang lalu`
+              const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+              const day = moment(link.updated_at).format('DD')
+              const month = moment(link.updated_at).format('M')
+              const year = moment(link.updated_at).format('YYYY')
+              const time = moment(link.updated_at).format('HH.mm')
+              this.lastUpdated = `pada pukul ${time}, ${day} ${monthName[month - 1]} ${year}`
             }
           })
       }, 800)
