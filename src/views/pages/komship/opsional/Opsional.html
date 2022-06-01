@@ -2,8 +2,8 @@
     <h3 class="font-bold mb-2 text-black">Fitur Pendukung</h3>
     <div class="p-1 mb-2" style="border:1px solid #E2E2E2;border-radius:16px">
         <h4 class="m-1 mb-1 font-bold text-black">Order</h4>
-        <b-row>
-            <b-col v-if="isGetting" md="4">
+        <b-row v-if="isGetting">
+            <b-col md="4">
                 <b-card img-src="@/assets/images/banner/input-cepat.svg" style="border:1px solid #E2E2E2;border-radius:20px;" img-alt="Input Cepat" img-top>
                     <b-card-title class="d-flex justify-between">
                         <span class="font-bold text-primary">Input Cepat</span>
@@ -18,7 +18,7 @@
                     </b-card-text>
                 </b-card>
             </b-col>
-            <b-col v-if="isGetting" md="4">
+            <b-col md="4">
                 <b-card img-src="@/assets/images/banner/mutasi-rekening.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Mutasi Rekening" img-top>
                     <b-card-title class="d-flex justify-between">
                         <span class="font-bold text-primary">Mutasi Rekening</span>
@@ -38,7 +38,9 @@
                     <b-card-title class="d-flex justify-between">
                         <span class="font-bold text-primary">Order Massal</span>
                         <b-form-checkbox
+                            v-model="orderMassal"
                             switch
+                            @input="setOrderMassal()"
                         />
                     </b-card-title>
                     <b-card-text style="padding-bottom: 50px;">
