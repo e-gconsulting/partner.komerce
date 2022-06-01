@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 /* eslint-disable no-alert */
 /* eslint-disable no-plusplus */
 import jspreadsheet from 'jspreadsheet-ce'
@@ -31,7 +32,21 @@ export default {
         await this.$http_komship.get('/v1/order/sheet/data')
           .then(res => {
             const { data } = res.data
-            this.dataSheets = data
+            const map = data.map(items => ({
+              order_date: items.order_date,
+              address: items.address,
+              customer_name: items.customer_name,
+              customer_phone_number: items.customer_phone_number,
+              zip_code: `${items.zip_code}`,
+              customer_address: items.customer_address,
+              product: items.product,
+              variant: items.variant,
+              qty: `${items.qty}`,
+              payment_method: items.payment_method,
+              expedition: items.expedition,
+              grandtotal: `${items.grandtotal}`,
+            }))
+            this.dataSheets = map
             this.getDropdownSheet()
             this.getLastUpdated()
           })
@@ -90,7 +105,7 @@ export default {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
           { type: 'text', title: 'Nama Pembeli' },
-          { type: 'numeric', title: 'Nomor HP' },
+          { type: 'text', title: 'Nomor HP' },
           { type: 'text', title: 'Kode Pos' },
           { type: 'text', title: 'Alamat Detail', width: 250 },
           {
@@ -107,7 +122,7 @@ export default {
             type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment,
           },
           {
-            type: 'numeric', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
+            type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
           },
         ],
         onchange(instance, cell, col, row, val) {
@@ -183,7 +198,7 @@ export default {
     submitSheets(method) {
       const json = this.table.getJson()
       const data = json.map(items => ({
-        order_date: items[0] || items.order_date || '',
+        order_date: items[0]?.replace('Invalid date', '') || items.order_date?.replace('Invalid date', '') || '',
         address: items[1] || items.address || '',
         customer_name: items[2] || items.customer_name || '',
         customer_phone_number: items[3] || items.customer_phone_number || '',
@@ -221,10 +236,10 @@ export default {
         || items.grandtotal !== '',
         )
         const dataSubmit = dataFilter.map(items => ({
-          order_date: moment(items.order_date).format('YYYY-MM-DD'),
+          order_date: items.order_date ? moment(items.order_date).format('YYYY-MM-DD') : '',
           address: items.address,
           customer_name: items.customer_name,
-          customer_phone_number: toInteger(items.customer_phone_number),
+          customer_phone_number: items.customer_phone_number,
           zip_code: toInteger(items.zip_code),
           customer_address: items.customer_address,
           product: items.product,
@@ -240,10 +255,33 @@ export default {
             data: dataSubmit,
           })
             .then(res => {
-              console.log(res)
+              const count = res.data.data
+              this.$swal({
+                title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
+                imageUrl: require('@/assets/images/icons/success.svg'),
+                confirmButtonText: 'Lihat Data Order',
+                confirmButtonClass: 'btn btn-primary',
+              }).then(response => {
+                if (response.isConfirmed) {
+                  this.$router.push('data-order')
+                }
+              })
             })
             .catch(err => {
-              console.log(err)
+              const response = err.response.data
+              const popup = message => this.$swal({
+                html: message,
+                imageUrl: require('@/assets/images/icons/warning.svg'),
+                confirmButtonText: 'Perbaiki',
+                confirmButtonClass: 'btn btn-primary',
+              })
+              if (response.message === "There's error in your input") {
+                const rows = `${response.validation_error}`
+                popup(`<ul style="list-style-type: unset;"><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
+              } else if (response.message === "There's error in shipping") {
+                const rows = `${response.cod_error}`
+                popup(`<ul style="list-style-type: unset;"><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
+              }
             })
         }, 800)
       }
