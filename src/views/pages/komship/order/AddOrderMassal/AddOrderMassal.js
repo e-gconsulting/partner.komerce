@@ -162,6 +162,32 @@ export default {
           }
         },
         onselection(instance, col, row, cell, val) {
+          if (col === 1) {
+            const columnName = jspreadsheet.getColumnNameFromId(['1', row])
+            const cuk = instance.jexcel.getCell(columnName)
+            instance.jexcel.openEditor(cuk)
+            cuk.children[0].dropdown.close(true)
+          } else if (col === 6) {
+            const columnName = jspreadsheet.getColumnNameFromId(['6', row])
+            const cuk = instance.jexcel.getCell(columnName)
+            instance.jexcel.openEditor(cuk)
+            cuk.children[0].dropdown.close(true)
+          } else if (col === 7) {
+            const columnName = jspreadsheet.getColumnNameFromId(['7', row])
+            const cuk = instance.jexcel.getCell(columnName)
+            instance.jexcel.openEditor(cuk)
+            cuk.children[0].dropdown.close(true)
+          } else if (col === 9) {
+            const columnName = jspreadsheet.getColumnNameFromId(['9', row])
+            const cuk = instance.jexcel.getCell(columnName)
+            instance.jexcel.openEditor(cuk)
+            cuk.children[0].dropdown.close(true)
+          } else if (col === 10) {
+            const columnName = jspreadsheet.getColumnNameFromId(['10', row])
+            const cuk = instance.jexcel.getCell(columnName)
+            instance.jexcel.openEditor(cuk)
+            cuk.children[0].dropdown.close(true)
+          }
           const data = {
             instance, cell, col, row, val,
           }
@@ -279,10 +305,10 @@ export default {
               })
               if (response.message === "There's error in your input") {
                 const rows = `${response.validation_error}`
-                popup(`<ul style="list-style-type: unset;"><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
+                popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
               } else if (response.message === "There's error in shipping") {
                 const rows = `${response.cod_error}`
-                popup(`<ul style="list-style-type: unset;"><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
+                popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
               }
             })
         }, 800)
