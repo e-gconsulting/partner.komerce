@@ -653,6 +653,10 @@ export default {
         .daterangepicker.show-calendar .drp-buttons, .daterangepicker.show-calendar .drp-calendar {
             display: flex !important;
         }
+        .calendars {
+            display: flex;
+            width: 100% !important;
+        }
     }
     .form-control, .reportrange-text{
         height: auto !important;
