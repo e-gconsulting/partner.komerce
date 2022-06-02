@@ -24,11 +24,11 @@ try {
     // const notification = JSON.parse(payload)
     // console.log('notification', notification)
     const notificationOption = {
-      body: payload.data.message,
-      icon: payload.data.username,
+      body: 'You have a message',
+      icon: 'Message',
     }
     // eslint-disable-next-line no-restricted-globals
-    return self.registration.showNotification(payload.data.username, notificationOption)
+    return self.registration.showNotification('Message', notificationOption)
   })
 } catch (err) {
   console.log('err', err)
