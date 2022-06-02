@@ -344,23 +344,30 @@
                                                     width="320"
                                                     height="240"
                                                 />
-                                                <div
-                                                    v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'"
-                                                    class="ml-1 mr-1"
-                                                    style="
-                                                        display: flex;
-                                                        justify-content: center;
-                                                        align-items: center;
-                                                        width: 132px;
-                                                        height: 62px;
-                                                        background: #E8E8E8;
-                                                        border-radius: 12px;
-                                                    "
-                                                >
-                                                        <b-img
-                                                            src="@/assets/images/icons/icon-prev-file.svg"
-                                                        />
-                                                </div>
+                                                <b-row>
+                                                    <b-col cols="12" class="d-flex justify-content-end">
+                                                        <div
+                                                            v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'"
+                                                            class="ml-1 mr-1"
+                                                            style="
+                                                                display: flex;
+                                                                justify-content: center;
+                                                                align-items: center;
+                                                                width: 132px;
+                                                                height: 62px;
+                                                                background: #E8E8E8;
+                                                                border-radius: 12px;
+                                                            "
+                                                        >
+                                                                <b-img
+                                                                    src="@/assets/images/icons/icon-prev-file.svg"
+                                                                />
+                                                        </div>
+                                                    </b-col>
+                                                    <b-col v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'" class="d-flex justify-content-end">
+                                                        <small>{{ fileItem.path }}</small>
+                                                    </b-col>
+                                                </b-row>
                                             </a>
                                         </b-row>
                                         <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
