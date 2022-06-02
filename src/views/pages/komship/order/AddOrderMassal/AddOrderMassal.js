@@ -162,7 +162,12 @@ export default {
           }
         },
         onselection(instance, col, row, cell, val) {
-          if (col === 1) {
+          if (col === 0) {
+            const columnName = jspreadsheet.getColumnNameFromId(['0', row])
+            const cuk = instance.jexcel.getCell(columnName)
+            instance.jexcel.openEditor(cuk)
+            cuk.children[0].dropdown.close(true)
+          } else if (col === 1) {
             const columnName = jspreadsheet.getColumnNameFromId(['1', row])
             const cuk = instance.jexcel.getCell(columnName)
             instance.jexcel.openEditor(cuk)
