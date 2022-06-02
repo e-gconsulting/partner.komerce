@@ -518,8 +518,10 @@ export default {
         this.paymentMethod = null
         this.shipping = null
         this.listShipping = []
+        this.addToCart()
+      } else {
+        this.getShippingList().then(this.addToCart())
       }
-      this.addToCart()
     },
     async addToCart() {
       if (this.productSelected.length > 0) {
@@ -686,6 +688,9 @@ export default {
         }).then(async res => {
           const { data } = res.data
           const result = data.find(items => items.value === this.shipping.value)
+          console.log('data on cal', data)
+          console.log('result on cal', result)
+          console.log('shipping on cal', this.shipping)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)
