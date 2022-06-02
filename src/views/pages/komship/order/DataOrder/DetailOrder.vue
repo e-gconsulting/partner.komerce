@@ -610,16 +610,28 @@ export default {
       return date
     },
     async fetchData() {
-      this.loadingDetailOrder = true
-      this.$refs['popup-success-cancel-pickup'].hide()
-      const order = await httpKomship2.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
-      const { data } = await order.data
-      this.orderData = await data
-      console.log(this.orderData)
-      this.statusNetProfit = data.net_profit.toString().charAt(0)
-      this.itemOrder = await data.product
-      this.statusOrder = await this.setAlert(data.order_status)
-      this.loadingDetailOrder = false
+      try {
+        this.loadingDetailOrder = true
+        this.$refs['popup-success-cancel-pickup'].hide()
+        const order = await httpKomship2.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
+        const { data } = await order.data
+        this.orderData = await data
+        this.statusNetProfit = data.net_profit.toString().charAt(0)
+        this.itemOrder = await data.product
+        this.statusOrder = await this.setAlert(data.order_status)
+        this.loadingDetailOrder = false
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+        this.loadingDetailOrder = false
+      }
     },
     async getHistoryPackage() {
       const body = {
