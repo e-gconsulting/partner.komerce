@@ -1,7 +1,11 @@
 <template>
   <div class="container">
     <div class="container-title">
-      <img src="@/assets/images/icons/back.svg">
+      <img
+        src="@/assets/images/icons/back.svg"
+        style="cursor: pointer;"
+        @click="handleRouterBack"
+      >
       <div class="container-title-t">
         Detail Tiket
       </div>
@@ -188,6 +192,9 @@ export default {
       this.$router.push({
         path: `/tiket/detail/order/${this.dataDetailTiket.order_id}`,
       })
+    },
+    handleRouterBack() {
+      this.$router.back()
     },
   },
 }

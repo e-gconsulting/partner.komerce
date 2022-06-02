@@ -5,7 +5,7 @@
         variant="primary"
         class="rounded-lg"
         size="sm"
-        to="/data-order"
+        @click="handleRouterBack"
       >
         <b-icon-chevron-left />
       </b-button>
@@ -562,6 +562,9 @@ export default {
     this.fetchData()
   },
   methods: {
+    handleRouterBack() {
+      this.$router.back()
+    },
     lacakresi() {
       this.isLoading = true
       const modal = new Promise((resolve, reject) => {
@@ -593,7 +596,6 @@ export default {
       return date
     },
     async fetchData() {
-      console.log(this.$route)
       this.loadingDetailOrder = true
       this.$refs['popup-success-cancel-pickup'].hide()
       const order = await this.$http_komship.get(`/v1/ticket-admin/order/detail/${this.$route.params.id}`)
@@ -608,7 +610,7 @@ export default {
       const body = {
         data: this.orderData.airway_bill,
       }
-      await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
+      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
         const { data } = res.data
         this.itemAwb = data.history
         this.isLoading = false
