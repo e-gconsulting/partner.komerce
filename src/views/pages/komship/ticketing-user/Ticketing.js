@@ -164,6 +164,7 @@ export default
 
       // Validation
       required,
+      disableButton: false,
 
       // Store
       loadingSubmitTicket: false,
@@ -252,7 +253,6 @@ export default
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
     this.fetchDataFirebase()
-    // this.$refs['alert-edit-ticket'].show()
   },
   methods: {
     fetchTicket() {
@@ -318,9 +318,6 @@ export default
       this.customerName = this.itemsNoResi.customer_name
       this.noResi = this.itemsNoResi.no_resi
     },
-    fetchJenisTicket() {
-      console.log(this.ticketType)
-    },
     alertSubmitTicket() {
       this.$refs.formRules.validate().then(success => {
         if (success) {
@@ -355,6 +352,13 @@ export default
           this.$http_komship.post('/v1/ticket-partner/store', formData)
             .then(() => {
               this.loadingSubmitTicket = false
+              this.noResi = null
+              this.itemsNoResi = null
+              this.customerName = ''
+              this.ticketType = null
+              this.description = ''
+              this.itemsImageInitialFile = []
+              this.$refs.formRules.reset()
               this.$refs['popup-success-create-ticket'].show()
             })
             .catch(err => {
@@ -395,6 +399,8 @@ export default
         .then(response => {
           const { data } = response.data
           this.itemsResi = data
+          console.log('itemsResi', this.itemsResi)
+          console.log('itemsTicket', this.itemsTicket)
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -488,6 +494,14 @@ export default
     }, 1000),
     clearFilter() {
       this.loadingDataTable = true
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.ticketTypeItems.length; x++) {
+        this.ticketTypeItems[x].onCheck = false
+      }
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.ticketStatusItems.length; x++) {
+        this.ticketStatusItems[x].onCheck = false
+      }
       const params = {}
       this.$http_komship.get('/v1/ticket-partner/list', {
         params,
@@ -514,26 +528,48 @@ export default
     receiveMessage() {
       try {
         onMessage(messaging, payload => {
-          console.log('Message received. ', payload)
           this.fetchTicket()
           this.fetchTicketPartnerCount()
           this.fetchTicketType()
           this.fetchDataFirebase()
         })
       } catch (err) {
-        console.log('err receive', err)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
       }
     },
     fetchDataFirebase() {
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
-          console.log('token', currentToken)
           this.fcmToken = currentToken
         } else {
-          console.log('No registration token available. Request permission to generate one.')
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'No registration token available. Request permission to generate one.',
+              variant: 'danger',
+            },
+          }, 2000)
         }
       }).catch(err => {
-        console.log('An error occurred while retrieving token. ', err)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: `An error occurred while retrieving token. ${err}`,
+            variant: 'danger',
+          },
+        }, 2000)
       })
     },
     convertTicketStatus(data) {
@@ -553,15 +589,31 @@ export default
     },
     clearFieldTicket() {
       this.noResi = null
+      this.itemsResi = []
       this.itemsNoResi = null
       this.customerName = ''
       this.ticketType = null
       this.description = ''
       this.itemsImageInitialFile = []
+      this.$refs.formRules.reset()
     },
     setPerPage(page) {
       this.totalPerPage = page
       this.fetchTicket()
+    },
+    checkVariantClear() {
+      let result = 'outline-primary'
+      if (this.itemsNoResi !== null || this.ticketType !== null || this.itemsImageInitialFile !== [] || this.description !== '') {
+        result = 'outline-dark'
+      }
+      return result
+    },
+    checkDisableClear() {
+      let result = true
+      if (this.itemsNoResi !== null || this.ticketType !== null || this.itemsImageInitialFile !== [] || this.description !== '') {
+        result = false
+      }
+      return result
     },
   },
 }

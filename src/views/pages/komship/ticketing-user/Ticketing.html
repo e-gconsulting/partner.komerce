@@ -16,6 +16,7 @@
 
         <validation-observer
             ref="formRules"
+            #default="{invalid}"
         >
             <b-form>
                 <b-row>
@@ -65,7 +66,6 @@
                                 v-model="ticketType"
                                 :options="jenisTicketItems"
                                 :state="errors.length > 0 ? false:null"
-                                @input="fetchJenisTicket"
                             />
                             <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
@@ -180,6 +180,7 @@
                 >
                     <b-row class="justify-content-end mr-50">
                         <b-button
+                            v-if="itemsNoResi !== null || ticketType !== null || itemsImageInitialFile[0] !== undefined || description !== ''"
                             variant="outline-primary"
                             class="btn-icon mr-1"
                             @click="clearFieldTicket()"
@@ -187,8 +188,18 @@
                             Batalkan
                         </b-button>
                         <b-button
+                            v-else
+                            variant="outline-dark"
+                            class="btn-icon mr-1"
+                            disabled
+                            @click="clearFieldTicket()"
+                        >
+                            Batalkan
+                        </b-button>
+                        <b-button
                             class="btn-icon"
-                            variant="primary"
+                            :variant="invalid ? 'dark' : 'primary'"
+                            :disabled="invalid"
                             @click="alertSubmitTicket"
                         >
                             Buat Tiket
@@ -710,7 +721,7 @@
             <b-img src="@/assets/images/icons/warning.svg" />
         </b-row>
 
-        <b-row class="justify-content-center mb-2">
+        <b-row class="justify-content-center mb-2 px-2">
             <span class="text-black text-center">
                 <strong>
                     Kamu tidak bisa mengedit tiket ini setelah dikirim. Pastikan Informasi yang kamu masukkan sudah sesuai
