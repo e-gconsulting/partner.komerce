@@ -1,0 +1,32 @@
+<b-card>
+    <link rel="stylesheet" href="https://bossanova.uk/jspreadsheet/v4/jexcel.css" type="text/css" />
+    <link rel="stylesheet" href="https://jsuites.net/v4/jsuites.css" type="text/css" />
+    <b-row class="mb-1">
+        <b-button
+            variant="primary"
+            class="rounded-lg font-bold ml-1"
+            size="sm"
+            to="/method-order"
+        >
+            <b-icon-chevron-left />
+        </b-button>
+        <h3 class="font-bold my-auto ml-1">Tambah Order Massal</h3>
+    </b-row>
+    <div id="spreadsheet" class="d-flex" style="max-width: 100%;"></div>
+    <div class="d-flex mt-1">
+        <b-button variant="outline-dark" size="sm" :disabled="!selectedTable" @click="removeRows()">
+            <b-icon-trash></b-icon-trash>
+        </b-button>
+        <b-input-group class="ml-1" style="max-width: 195px;">
+            <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>
+            <b-input-group-append>
+              <b-button variant="outline-dark" @click="addRows()">Tambah Baris</b-button>
+            </b-input-group-append>
+        </b-input-group>
+        <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" @click="table.undo()" />
+        <img src="@/assets/images/icons/redo.svg" class="ml-1" style="cursor: pointer;" @click="table.redo()" />
+        <b-button variant="outline-dark" size="sm" class="ml-1" @click="submitSheets('save')">Simpan Draft</b-button>
+        <i v-if="lastUpdated" class="text-info text-sm my-auto ml-1">Tersimpan {{ lastUpdated }}</i>
+        <b-button variant="primary" class="ml-auto" @click="submitSheets('submit')">Submit</b-button>
+    </div>
+</b-card>

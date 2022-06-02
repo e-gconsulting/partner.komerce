@@ -419,6 +419,7 @@ import {
   BCard, BSpinner, BTabs, BTab, BButton, BBadge, BCol, BRow, BContainer, BIconXCircle,
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import DateRangePicker from 'vue2-daterange-picker'
 import moment from 'moment'
 import All from './List/All.vue'
@@ -427,7 +428,7 @@ import Packing from './List/Packing.vue'
 import Send from './List/Send.vue'
 import Received from './List/Received.vue'
 import Retur from './List/Retur.vue'
-import '../../../../../index.css'
+// import '../../../../../index.css'
 
 export default {
   components: {
@@ -455,8 +456,8 @@ export default {
       tabIndex: tabs.indexOf(this.$route.query.tab),
       tabs,
       date: {
-        end: null,
-        start: null,
+        end: this.$moment(today).startOf('day').format('YYYY-MM-DD'),
+        start: this.$moment(today).startOf('day').format('YYYY-MM-DD'),
       },
       profile: JSON.parse(localStorage.userData),
       totalAjukan: null,
@@ -572,7 +573,8 @@ export default {
     },
     downloadCsv() {
       const formData = {
-        order_date: `${this.date.start.toString()} - ${this.date.end.toString()}`,
+        start_date: `${this.date.start.toString()}`,
+        end_date: `${this.date.end.toString()}`,
         payment_method: this.paymentMethod.toString(),
         order_status: this.orderStatus.toString(),
         shipping: this.shipping.toString(),
@@ -594,7 +596,7 @@ export default {
         const fileURL = URL.createObjectURL(file)
         const link = document.createElement('a')
         link.href = fileURL
-        const fileName = `${+new Date()}.csv`// whatever your file name .
+        const fileName = `${+new Date()}.xlsx`// whatever your file name .
         link.setAttribute('download', fileName)
         document.body.appendChild(link)
         link.click()
@@ -621,6 +623,49 @@ export default {
 }
 .text-black {
   color: #000;
+}
+
+.daterangepicker td.active,.daterangepicker td.active:hover{
+    background-color: #FF6A3A !important;
+    color: white !important;
+  }
+
+  .daterangepicker td.in-range {
+    background-color: #FFECE9 !important;
+    border-color: transparent;
+    color: #000;
+    border-radius: 0;
+}
+ .daterangepicker td.active{
+    border-color: transparent;
+    color: #000;
+    border-radius: 0;
+    background-color: #FF6A3A !important;
+}
+.daterangepicker .ranges li.active{
+    background-color: #FF6A3A !important;
+}
+.daterangepicker .btn-primary, .daterangepicker .btn-success {
+    background-color: #FF6A3A !important;
+    border-color: #FF6A3A !important;
+}
+    @media screen and (max-width: 767px) {
+        .daterangepicker.show-calendar .drp-buttons, .daterangepicker.show-calendar .drp-calendar {
+            display: flex !important;
+        }
+    }
+    .form-control, .reportrange-text{
+        height: auto !important;
+      }
+
+.calendars{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap !important;
+        flex-wrap: wrap !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
 }
 
 </style>

@@ -37,6 +37,7 @@
     "flatpickr": "^4.6.9",
     "form-data": "^4.0.0",
     "jsonwebtoken": "8.5.1",
+    "jspreadsheet-ce": "^4.11.1",
     "leaflet": "1.6.0",
     "lodash": "^4.17.21",
     "lottie-vuejs": "^0.4.0",
@@ -104,15 +105,12 @@
     "@vue/cli-service": "~4.5.9",
     "@vue/eslint-config-airbnb": "^5.3.0",
     "@vuepress/plugin-medium-zoom": "^1.7.1",
-    "autoprefixer": "^9.8.8",
     "babel-eslint": "^10.0.3",
     "eslint": "6.8.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-vue": "6.2.2",
-    "postcss": "^7.0.39",
     "sass": "^1.30.0",
     "sass-loader": "^10.1.0",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
     "vue-template-compiler": "^2.6.11"
   }
 }
