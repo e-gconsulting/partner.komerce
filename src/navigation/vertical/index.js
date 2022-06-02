@@ -62,6 +62,7 @@ import dashboardKomplace from './dashboard-komplace'
 import monitoring from './monitoring-komplace'
 import pengaturanKomplace from './pengaturanKomplace'
 import manajemenAdmin from './manajemenAdmin'
+import tiket from './tiket'
 
 // Array of sections
 export default [
@@ -89,6 +90,7 @@ export default [
   ...monitoring,
   ...pengaturanKomplace,
   ...manajemenAdmin,
+  ...tiket,
 
   ...talentPool,
   // ...wishlist,

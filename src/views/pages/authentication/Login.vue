@@ -383,6 +383,7 @@ export default {
                 { action: 'manage', subject: 'Invoice' },
                 { action: 'manage', subject: 'Assignment' },
                 { action: 'manage', subject: 'JobRoleSetting' },
+                { action: 'manage', subject: 'Tiket' },
 
                 // Komship
                 { action: 'manage', subject: 'Komship' },
