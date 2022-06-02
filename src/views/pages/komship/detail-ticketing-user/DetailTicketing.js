@@ -6,6 +6,7 @@ import {
   onMessage,
 } from 'firebase/messaging'
 import { initializeApp } from 'firebase/app'
+import moment from 'moment'
 
 window.onload = () => {
   const theElement = document.getElementById('chatFocusing')
@@ -14,17 +15,6 @@ window.onload = () => {
     node.scrollTop = node.scrollHeight
   }
   scrollToBottom(theElement)
-}
-
-window.onscroll = e => {
-  const theElement = document.getElementById('chatFocusing')
-  if (theElement !== null) {
-    const scrollToBottom = node => {
-      // eslint-disable-next-line no-param-reassign
-      node.scrollTop = node.scrollHeight
-    }
-    scrollToBottom(theElement)
-  }
 }
 
 const firebaseConfig = {
@@ -74,6 +64,7 @@ export default {
 
       // cancel ticket
       loadingCancelTicket: false,
+      moment,
     }
   },
   created() {
@@ -82,6 +73,14 @@ export default {
   mounted() {
     this.fetchDataFirebase()
     this.fetchDetailTicket()
+    const theElement = document.getElementById('chatFocusing')
+    if (theElement !== null) {
+      const scrollToBottom = node => {
+      // eslint-disable-next-line no-param-reassign
+        node.scrollTop = node.scrollHeight
+      }
+      scrollToBottom(theElement)
+    }
   },
   methods: {
     fetchDetailTicket() {
@@ -219,7 +218,6 @@ export default {
     fetchDataFirebase() {
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
-          console.log('token', currentToken)
           this.fcmToken = currentToken
         } else {
           console.log('No registration token available. Request permission to generate one.')
@@ -233,7 +231,6 @@ export default {
       try {
         onMessage(messaging, payload => {
           this.loadingDataChat = true
-          console.log('Message received. ', payload)
           this.fetchDetailTicket()
           this.fetchDataFirebase()
           setTimeout(() => {
@@ -288,7 +285,6 @@ export default {
     putFileChat(event) {
       event.target.files.forEach(this.myFile)
       this.chatFileMode = true
-      console.log(this.itemsImageInitialFile)
     },
     addFileChat(event) {
       event.target.files.forEach(this.myFile)
@@ -301,7 +297,6 @@ export default {
       }
     },
     disableButtonCancel(data) {
-      console.log(data)
       let result = false
       if (data === 3) {
         result = true

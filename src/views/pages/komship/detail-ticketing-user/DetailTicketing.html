@@ -316,7 +316,7 @@
                                     </b-row>
                                     <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
                                         <small class="text-black">
-                                            {{ messageItem.date_created }}
+                                            {{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}
                                         </small>
                                     </b-row>
                                 </div>
@@ -331,12 +331,24 @@
                                     >
                                         <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                             <a :href="fileItem.path" target="_blank">
-                                                <b-img :src="fileItem.path" width="160px" />
+                                                <b-img
+                                                    v-if="fileItem.path.slice(fileItem.path.length - 3) !== 'mp4'"
+                                                    :src="fileItem.path"
+                                                    width="160px"
+                                                />
+                                                <video
+                                                    v-if="fileItem.path.slice(fileItem.path.length - 3) === 'mp4'"
+                                                    id="video-preview"
+                                                    controls v-show="fileItem.path"
+                                                    :src="fileItem.path"
+                                                    width="320"
+                                                    height="240"
+                                                />
                                             </a>
                                         </b-row>
                                         <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
                                             <small class="text-black">
-                                                {{ messageItem.date_created }}
+                                                {{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}
                                             </small>
                                         </b-row>
                                     </div>
@@ -372,8 +384,18 @@
                                 <b-row class="align-items-top">
                                     <a :href="fileUrl(itemFile)" target="_blank" class="ml-1">
                                         <b-img
-                                        class="class__file__chat m-1"
-                                        :src="fileUrl(itemFile)"
+                                            v-if="itemFile.name.slice(itemFile.name.length - 3) !== 'mp4'"
+                                            class="class__file__chat m-1"
+                                            :src="fileUrl(itemFile)"
+                                        />
+                                        <video
+                                            v-if="itemFile.name.slice(itemFile.name.length - 3) === 'mp4'"
+                                            id="video-preview"
+                                            controls v-show="itemFile.name"
+                                            :src="fileUrl(itemFile)"
+                                            width="320"
+                                            height="240"
+                                            class="m-1"
                                         />
                                     </a>
                                     <div>
@@ -446,6 +468,14 @@
                                     />
                                 </b-button>
                         </b-row>
+                    </b-col>
+                    <b-col cols="12">
+                        <b-form-textarea
+                            v-model="chatItem"
+                            no-resize
+                            class="border-0 mr-50"
+                            placeholder="Tulis pesan untuk menanggapi"
+                        />
                     </b-col>
                 </b-row>
             </div>
