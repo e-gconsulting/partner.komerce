@@ -7,6 +7,7 @@
       />
       <b-col
         md="4"
+        class="align-items-center d-flex"
       >
         <b-form-input
           v-model="formSearch"
