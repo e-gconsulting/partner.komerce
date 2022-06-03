@@ -21,10 +21,13 @@ export default {
       jumlahBaris: 200,
       selectedTable: null,
       lastUpdated: null,
+      loadingDraft: false,
+      loadingSubmit: false,
     }
   },
   mounted() {
     this.getDataSheet()
+    this.$refs.loadingPage.show()
   },
   methods: {
     getDataSheet() {
@@ -96,7 +99,7 @@ export default {
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
-        tableHeight: '440px',
+        tableHeight: '80vh',
         tableOverflow: true,
         defaultColWidth: 150,
         columns: [
@@ -199,6 +202,7 @@ export default {
           getSelectedTable(data)
         },
       })
+      this.$refs.loadingPage.hide()
     },
     addRows() {
       const rows = toInteger(this.jumlahBaris)
@@ -225,7 +229,9 @@ export default {
               const time = moment(link.updated_at).format('HH.mm')
               this.lastUpdated = `pada pukul ${time}, ${day} ${monthName[month - 1]} ${year}`
             }
+            this.loadingDraft = false
           })
+          .catch(this.loadingDraft = false)
       }, 800)
     },
     submitSheets(method) {
@@ -245,15 +251,17 @@ export default {
         grandtotal: items[11]?.replace(/[^\d]/g, '') || items.grandtotal?.replace(/[^\d]/g, '') || '',
       }))
       if (method === 'save') {
+        this.loadingDraft = true
         setTimeout(async () => {
           await this.$http_komship.post('/v1/order/sheet/save-submit', {
             options: 'save',
             data,
           })
             .then(this.getLastUpdated)
-            .catch(err => console.log(err))
+            .catch(this.loadingDraft = false)
         }, 800)
       } else if (method === 'submit') {
+        this.loadingSubmit = true
         const dataFilter = data.filter(
           items => items.order_date
         || items.address
@@ -299,6 +307,7 @@ export default {
                   this.$router.push('data-order')
                 }
               })
+              this.loadingSubmit = false
             })
             .catch(err => {
               const response = err.response.data
@@ -315,6 +324,7 @@ export default {
                 const rows = `${response.cod_error}`
                 popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
               }
+              this.loadingSubmit = false
             })
         }, 800)
       }
