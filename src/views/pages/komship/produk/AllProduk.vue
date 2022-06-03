@@ -945,7 +945,7 @@ export default {
     this.getProduct()
   },
   methods: {
-    getProduct: _.debounce(() => {
+    getProduct: _.debounce(function () {
       this.loading = true
       const params = {
         status: 1,

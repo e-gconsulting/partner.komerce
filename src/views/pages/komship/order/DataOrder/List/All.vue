@@ -7,12 +7,13 @@
       />
       <b-col
         md="4"
+        class="align-items-center d-flex"
       >
         <b-form-input
           v-model="formSearch"
           type="search"
           class="form-search"
-          placeholder="Masukkan Nama Pelanggan"
+          placeholder="Cari Pelanggan atau Resi"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
@@ -378,7 +379,7 @@ export default {
       this.loadTable = true
       this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
         params: {
-          customer_name: search,
+          search,
           product_name: this.productName,
           payment_method: this.paymentMethod,
           start_date: this.startDate,

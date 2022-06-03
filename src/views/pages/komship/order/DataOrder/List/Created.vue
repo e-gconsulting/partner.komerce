@@ -7,12 +7,13 @@
       />
       <b-col
         md="4"
+        class="align-items-center d-flex"
       >
         <b-form-input
           v-model="formSearch"
           type="search"
           class="form-search"
-          placeholder="Masukkan Nama Pelanggan"
+          placeholder="Cari Pelanggan"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
