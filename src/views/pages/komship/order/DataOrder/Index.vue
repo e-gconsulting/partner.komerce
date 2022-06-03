@@ -286,7 +286,7 @@
                 md="3"
               >
                 <b-row class="border-b-2 pb-1  mt-2 mt-md-0 font-weight-bold">
-                  Expedisi
+                  Ekspedisi
                 </b-row>
                 <b-row>
                   <div class="my-1">
@@ -466,9 +466,9 @@ export default {
       dateRange: { startDate, endDate },
       orderDate: '',
       loading: false,
-      paymentMethod: [],
-      orderStatus: [],
-      shipping: [],
+      paymentMethod: ['COD', 'BANK TRANSFER'],
+      orderStatus: ['Dibuat', 'Dipacking', 'Dikirim', 'Diterima', 'Retur'],
+      shipping: ['JNE', 'SICEPAT', 'IDEXPRESS'],
       chcekedJNE: false,
       chcekedSiCepat: false,
       chcekedIDExpress: false,
