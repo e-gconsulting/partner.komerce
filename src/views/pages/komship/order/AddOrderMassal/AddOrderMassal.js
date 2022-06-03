@@ -96,7 +96,7 @@ export default {
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
-        tableHeight: '440px',
+        tableHeight: '70vh',
         tableOverflow: true,
         defaultColWidth: 150,
         columns: [
