@@ -1,3 +1,4 @@
-import Dashboard from './Dashboard.vue'
+// import Dashboard from './Dashboard.vue'
+import ModalOnBoarding from './ModalOnBoarding.vue'
 
-export default Dashboard
+export default ModalOnBoarding
