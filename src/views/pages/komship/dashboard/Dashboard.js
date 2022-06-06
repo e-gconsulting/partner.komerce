@@ -185,11 +185,11 @@ export default {
             this.$bvModal.show('ModalOnBoarding')
           } else {
             this.loadingOnboarding = false
+            this.$bvModal.show('ModalOnBoarding')
           }
         }
       })
   },
-  template: 'hola',
   beforeMount() {
     this.$store.dispatch('dashboard/init')
     this.$store.dispatch('saldo/getBankAccount')
