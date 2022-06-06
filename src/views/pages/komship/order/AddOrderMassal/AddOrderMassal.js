@@ -103,7 +103,19 @@ export default {
         tableOverflow: true,
         defaultColWidth: 150,
         columns: [
-          { type: 'calendar', title: 'Tanggal Order', options: { format: 'YYYY-MM-DD' } },
+          {
+            type: 'calendar',
+            title: 'Tanggal Order',
+            options: {
+              format: 'YYYY-MM-DD',
+              months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+              weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+              weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
+              textDone: 'SELESAI',
+              textReset: 'HAPUS',
+              textUpdate: 'OK',
+            },
+          },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
@@ -165,37 +177,6 @@ export default {
           }
         },
         onselection(instance, col, row, cell, val) {
-          if (col === 0) {
-            const columnName = jspreadsheet.getColumnNameFromId(['0', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 1) {
-            const columnName = jspreadsheet.getColumnNameFromId(['1', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 6) {
-            const columnName = jspreadsheet.getColumnNameFromId(['6', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 7) {
-            const columnName = jspreadsheet.getColumnNameFromId(['7', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 9) {
-            const columnName = jspreadsheet.getColumnNameFromId(['9', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 10) {
-            const columnName = jspreadsheet.getColumnNameFromId(['10', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          }
           const data = {
             instance, cell, col, row, val,
           }
