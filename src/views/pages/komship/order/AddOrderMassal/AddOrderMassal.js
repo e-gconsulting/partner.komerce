@@ -103,7 +103,19 @@ export default {
         tableOverflow: true,
         defaultColWidth: 150,
         columns: [
-          { type: 'calendar', title: 'Tanggal Order', options: { format: 'YYYY-MM-DD' } },
+          {
+            type: 'calendar',
+            title: 'Tanggal Order',
+            options: {
+              format: 'YYYY-MM-DD',
+              months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+              weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+              weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
+              textDone: 'SELESAI',
+              textReset: 'HAPUS',
+              textUpdate: 'OK',
+            },
+          },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
