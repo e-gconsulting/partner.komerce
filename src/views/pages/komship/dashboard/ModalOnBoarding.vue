@@ -1,7 +1,7 @@
 <template>
   <b-modal
-    id="modal-onboarding"
-    ref="modal-onboarding"
+    id="ModalOnBoarding"
+    ref="ModalOnBoarding"
     no-close-on-esc
     no-close-on-backdrop
     hide-header-close
@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import useJwt from '@/auth/jwt/useJwt'
 import Welcome from './componentStepModal/Welcome.vue'
 import Stepper from './componentStepModal/Stepper.vue'
 
@@ -38,23 +37,6 @@ export default {
       dataSteps: 1,
       disabledOnboardingMulai: false,
     }
-  },
-  mounted() {
-    this.$http_komship
-      .post('v1/my-profile', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      })
-      .then(response => {
-        const { data } = response.data
-        if (data) {
-          if (!data.is_onboarding) {
-            this.$bvModal.show('modal-onboarding')
-          } else {
-            this.loadingOnboarding = false
-            this.$bvModal.show('modal-onboarding')
-          }
-        }
-      })
   },
   methods: {
     handleStepOnboard(params) {
@@ -82,7 +64,6 @@ export default {
         })
     },
   },
-
 }
 </script>
 <style lang scoped src='./ModalOnBoarding.scss'/>
