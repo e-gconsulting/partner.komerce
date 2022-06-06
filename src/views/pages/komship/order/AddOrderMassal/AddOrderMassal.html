@@ -13,20 +13,74 @@
         <h3 class="font-bold my-auto ml-1">Tambah Order Massal</h3>
     </b-row>
     <div id="spreadsheet" class="d-flex" style="max-width: 100%;"></div>
-    <div class="d-flex mt-1">
-        <b-button variant="outline-dark" size="sm" :disabled="!selectedTable" @click="removeRows()">
-            <b-icon-trash></b-icon-trash>
-        </b-button>
-        <b-input-group class="ml-1" style="max-width: 195px;">
-            <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>
-            <b-input-group-append>
-              <b-button variant="outline-dark" @click="addRows()">Tambah Baris</b-button>
-            </b-input-group-append>
-        </b-input-group>
-        <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" @click="table.undo()" />
-        <img src="@/assets/images/icons/redo.svg" class="ml-1" style="cursor: pointer;" @click="table.redo()" />
-        <b-button variant="outline-dark" size="sm" class="ml-1" @click="submitSheets('save')">Simpan Draft</b-button>
-        <i v-if="lastUpdated" class="text-info text-sm my-auto ml-1">Tersimpan {{ lastUpdated }}</i>
-        <b-button variant="primary" class="ml-auto" @click="submitSheets('submit')">Submit</b-button>
-    </div>
+    <b-row class="mt-1">
+        <b-col lg="10" class="d-flex">
+            <b-button variant="outline-dark" size="sm" :disabled="!selectedTable" @click="removeRows()">
+                <b-icon-trash></b-icon-trash>
+            </b-button>
+            <b-input-group class="ml-1" style="max-width: 195px;">
+                <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>
+                <b-input-group-append>
+                  <b-button variant="outline-dark" @click="addRows()">Tambah Baris</b-button>
+                </b-input-group-append>
+            </b-input-group>
+            <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" @click="table.undo()" />
+            <img src="@/assets/images/icons/redo.svg" class="ml-1" style="cursor: pointer;" @click="table.redo()" />
+            <b-button variant="outline-dark" size="sm" class="ml-1" :disabled="loadingDraft" @click="submitSheets('save')">
+                Simpan Draft
+                <b-spinner
+                    v-if="loadingDraft"
+                    class="my-auto"
+                    style="margin-left: 5px;"
+                    small
+                    variant="outline-dark"
+                />
+            </b-button>
+            <i v-if="lastUpdated && !loadingDraft" class="text-info text-sm my-auto ml-1">Tersimpan {{ lastUpdated }}</i>
+        </b-col>
+        <b-col lg="2" class="d-flex justify-end">
+            <b-button variant="primary" class="ml-auto" @click="submitSheets('submit')">
+                Submit
+            </b-button>
+        </b-col>
+    </b-row>
+    <b-modal ref="loadingPage" hide-header hide-footer no-close-on-backdrop>
+        <div class="sk-circle">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>
+        <div style="font-size: 18px;text-align: center;" class="mb-2">
+            <span class="font-bold">Membuka File Order Massal Kamu</span>
+            <br>Tunggu beberapa saat sampai file terbuka dengan sempurna
+        </div>
+    </b-modal>
+    <b-modal ref="loadingSubmit" hide-header hide-footer no-close-on-backdrop>
+        <div class="sk-circle">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>
+        <div style="font-size: 18px;text-align: center;" class="mb-2">
+            <span class="font-bold">Memproses penambahan order</span>
+        </div>
+    </b-modal>
 </b-card>

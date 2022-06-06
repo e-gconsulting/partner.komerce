@@ -51,7 +51,10 @@
         hide-header
       >
         <template>
-          <b-container class="text-center col">
+          <b-container
+            class="text-center col"
+            style="color: #222222;"
+          >
             <b-row class="justify-content-end">
               <b-icon-x-circle
                 style="width: 1.5rem; height: 1.5rem; cursor: pointer; "
@@ -61,14 +64,20 @@
               />
             </b-row>
             <b-row class="mt-2 justify-content-center">
-              <h3>
+              <h3
+                class="font-weight-bold"
+                style="font-size: 24px;"
+              >
                 Download Data Order
               </h3>
             </b-row>
-            <b-row class="justify-content-center">
+            <b-row
+              class="justify-content-center"
+              style="font-size: 18px; font-weight: 500;"
+            >
               Kustomisasi data order yang ingin kamu download
             </b-row>
-            <b-row class="mt-2">
+            <b-row class="mt-3">
               <b-col
                 sm="12"
                 md="3"
@@ -286,7 +295,7 @@
                 md="3"
               >
                 <b-row class="border-b-2 pb-1  mt-2 mt-md-0 font-weight-bold">
-                  Expedisi
+                  Ekspedisi
                 </b-row>
                 <b-row>
                   <div class="my-1">
@@ -466,9 +475,9 @@ export default {
       dateRange: { startDate, endDate },
       orderDate: '',
       loading: false,
-      paymentMethod: [],
-      orderStatus: [],
-      shipping: [],
+      paymentMethod: ['COD', 'BANK TRANSFER'],
+      orderStatus: ['Dibuat', 'Dipacking', 'Dikirim', 'Diterima', 'Retur'],
+      shipping: ['JNE', 'SICEPAT', 'IDEXPRESS'],
       chcekedJNE: false,
       chcekedSiCepat: false,
       chcekedIDExpress: false,
