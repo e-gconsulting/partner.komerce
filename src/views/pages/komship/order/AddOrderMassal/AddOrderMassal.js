@@ -237,7 +237,7 @@ export default {
     submitSheets(method) {
       const json = this.table.getJson()
       const data = json.map(items => ({
-        order_date: items[0]?.replace('Invalid date', '') || items.order_date?.replace('Invalid date', '') || '',
+        order_date: items[0] || items.order_date || '',
         address: items[1] || items.address || '',
         customer_name: items[2] || items.customer_name || '',
         customer_phone_number: items[3] || items.customer_phone_number || '',
@@ -248,7 +248,7 @@ export default {
         qty: items[8] || items.qty || '',
         payment_method: items[9] || items.payment_method || '',
         expedition: items[10] || items.expedition || '',
-        grandtotal: items[11]?.replace(/[^\d]/g, '') || items.grandtotal?.replace(/[^\d]/g, '') || '',
+        grandtotal: items[11] || items.grandtotal || '',
       }))
       if (method === 'save') {
         this.loadingDraft = true
@@ -287,18 +287,18 @@ export default {
             || items.grandtotal !== '',
             )
             const dataSubmit = dataFilter.map(items => ({
-              order_date: items.order_date ? moment(items.order_date).format('YYYY-MM-DD') : '',
+              order_date: items.order_date !== '' ? moment(items.order_date).format('YYYY-MM-DD') : '',
               address: items.address,
               customer_name: items.customer_name,
               customer_phone_number: items.customer_phone_number,
-              zip_code: toInteger(items.zip_code),
+              zip_code: items.zip_code !== '' ? toInteger(items.zip_code) : '',
               customer_address: items.customer_address,
               product: items.product,
               variant: items.variant,
-              qty: toInteger(items.qty),
+              qty: items.qty ? toInteger(items.qty) : '',
               payment_method: items.payment_method,
               expedition: items.expedition,
-              grandtotal: toInteger(items.grandtotal),
+              grandtotal: items.grandtotal !== '' ? toInteger(items.grandtotal) : '',
             }))
             setTimeout(async () => {
               await this.$http_komship.post('/v1/order/sheet/save-submit', {
