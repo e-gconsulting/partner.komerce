@@ -43,7 +43,6 @@
       >
         <StepOne :data="data" />
         <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle />
           <b-icon-arrow-right-circle @click="data = 2" />
         </div>
       </v-stepper-content>
@@ -54,7 +53,7 @@
       >
         <StepTwo />
         <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle />
+          <b-icon-arrow-left-circle @click="data = 1" />
           <b-icon-arrow-right-circle @click="data = 3" />
         </div>
       </v-stepper-content>
@@ -65,7 +64,7 @@
       >
         <StepThree />
         <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle />
+          <b-icon-arrow-left-circle @click="data = 2" />
           <b-icon-arrow-right-circle @click="data = 4" />
         </div>
       </v-stepper-content>
@@ -76,7 +75,7 @@
       >
         <StepFour />
         <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle />
+          <b-icon-arrow-left-circle @click="data = 3" />
           <b-icon-arrow-right-circle @click="data = 5" />
         </div>
       </v-stepper-content>
@@ -87,8 +86,8 @@
       >
         <StepFive />
         <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle />
-          <b-icon-arrow-right-circle @click="data = 1" />
+          <b-icon-arrow-left-circle @click="data = 4" />
+          <b-icon-arrow-right-circle @click="handle('endsteponboarding')" />
         </div>
       </v-stepper-content>
     </v-stepper-items>
@@ -110,6 +109,10 @@ export default {
   props: {
     data: {
       type: Number,
+      required: true,
+    },
+    handle: {
+      type: Function,
       required: true,
     },
   },

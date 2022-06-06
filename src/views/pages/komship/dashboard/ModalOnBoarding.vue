@@ -16,6 +16,7 @@
     <Stepper
       v-if="stepped !== 1"
       :data="dataSteps"
+      :handle="handleStepOnboard"
     />
   </b-modal>
 </template>
@@ -35,6 +36,7 @@ export default {
     return {
       stepped: 1,
       dataSteps: 1,
+      disabledOnboardingMulai: false,
     }
   },
   mounted() {
@@ -72,8 +74,11 @@ export default {
         .then(resp => {
           if (resp.data.code === 200 && resp.data.status === 'success') {
             this.loadingOnboarding = false
-            this.$bvModal.show('modal-onboarding')
+            this.$bvModal.hide('modal-onboarding')
           }
+        })
+        .catch(() => {
+          this.disabledOnboardingMulai = false
         })
     },
   },
