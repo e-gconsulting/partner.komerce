@@ -142,6 +142,19 @@ export default {
       })
   },
   methods: {
+    fetchDataOrder() {
+      this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
+        .then(response => {
+          const { data } = response.data
+          this.itemsEditOrder = data
+          this.customerName = this.itemsEditOrder.customer_name
+          this.customerPhone = this.itemsEditOrder.customer_phone
+          this.customerAddress = this.itemsEditOrder.customer_address
+          this.product = this.itemsEditOrder.product.forEach(this.addProduct)
+          this.paymentMethod = this.itemsEditOrder.payment_method
+          this.shipping = this.itemsEditOrder.shipping
+        })
+    },
     formatDate(date) {
       const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
       const day = moment(date).format('DD')
@@ -1015,7 +1028,6 @@ export default {
         e.preventDefault()
       }
     },
-
     // Edit Order
     updateEditMode() {
       this.$emit('changeValueEditMode')

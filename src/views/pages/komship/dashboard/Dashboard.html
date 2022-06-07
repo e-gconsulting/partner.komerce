@@ -188,7 +188,7 @@
       <div class="col-12 col-md-6 mt-2">
         <div class="card">
           <div class="row my-24 mx-16">
-            <div class="col-6">
+            <div class="col-4">
               <div
                 class="
                   border-gray
@@ -222,7 +222,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-6">
+            <div class="col-4">
               <div
                 class="
                   border-gray
@@ -253,6 +253,40 @@
                     size="sm"
                     tag="router-link"
                     :to="{ name: $route.meta.routeToOrder, query: { tab: 'retur' } }"
+                  >
+                    <img
+                      src="@/assets/images/icons/arrow-right-2.svg"
+                      alt="Arrow Right"
+                    />
+                  </b-button>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div
+                class="
+                  border-gray
+                  d-flex
+                  flex-column
+                  justify-content-between
+                  rounded-16
+                  p-12
+                  h-100
+                "
+              >
+                <p class="mb-0 order-head-text">
+                  Perlu Tindak Lanjut
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <p class="mb-0 order-body-text">
+                    1
+                  </p>
+                  <b-button
+                    class="btn-icon"
+                    variant="flat-dark"
+                    size="sm"
+                    tag="router-link"
+                    :to="{ name: $route.meta.routeToTicket }"
                   >
                     <img
                       src="@/assets/images/icons/arrow-right-2.svg"
