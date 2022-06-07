@@ -305,5 +305,8 @@ export default {
       }
       return result
     },
+    getValueFile(value) {
+      return value.replaceAll('/', '/ ')
+    },
   },
 }

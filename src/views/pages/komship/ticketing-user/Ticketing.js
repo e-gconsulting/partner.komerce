@@ -226,6 +226,8 @@ export default
       totalRows: 0,
       optionsPage: [250, 500],
       totalPerPage: 250,
+
+      finished: 0,
     }
   },
   watch: {
@@ -243,6 +245,21 @@ export default
       handler() {
         this.fetchTicket()
       },
+    },
+  },
+  computed: {
+    computedClassFilter() {
+      let result = '12'
+      if (window.screen.width >= 600) {
+        result = 'auto'
+      }
+      return result
+    },
+    computedClassTypeSearch() {
+      return window.screen.width >= 600 ? 'pr-0' : 'pr-0 mb-1'
+    },
+    computedClassAnyFilter() {
+      return window.screen.width >= 600 ? 'auto' : '12 mb-1'
     },
   },
   created() {
