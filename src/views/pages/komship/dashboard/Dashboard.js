@@ -12,6 +12,8 @@ import ChartPenghasilan from '@/views/components/chart/ChartPenghasilan.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import ModalOnBoarding from './ModalOnBoarding.vue'
+import 'vuetify/dist/vuetify.min.css'
+import './ModalOnBoarding.scss'
 
 export default {
   components: {
@@ -185,6 +187,7 @@ export default {
             this.$bvModal.show('ModalOnBoarding')
           } else {
             this.loadingOnboarding = false
+            this.$bvModal.show('ModalOnBoarding')
           }
         }
       })

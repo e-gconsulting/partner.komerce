@@ -19,7 +19,6 @@ import App from './App.vue'
 import './index.css'
 // Global Components
 import './global-components'
-import 'vuetify/dist/vuetify.min.css'
 
 // 3rd party plugins
 import '@axios'
