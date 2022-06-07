@@ -345,7 +345,7 @@
                                                     height="240"
                                                 />
                                                 <b-row>
-                                                    <b-col cols="12" class="d-flex justify-content-end">
+                                                    <b-col cols="12" :class="messageItem.type === 'Partner' ? 'd-flex justify-content-end' : 'd-flex justify-content-start'">
                                                         <div
                                                             v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'"
                                                             class="ml-1 mr-1"
@@ -364,7 +364,7 @@
                                                                 />
                                                         </div>
                                                     </b-col>
-                                                    <b-col v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'" class="d-flex justify-content-end">
+                                                    <b-col v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'" :class="messageItem.type === 'Partner' ? 'd-flex justify-content-end' : 'd-flex justify-content-start'">
                                                         <small>{{ fileItem.path }}</small>
                                                     </b-col>
                                                 </b-row>

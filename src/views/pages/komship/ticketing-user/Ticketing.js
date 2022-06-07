@@ -302,6 +302,7 @@ export default
           this.belumDiProses = data.belum_diproses
           this.perluTindakLanjut = data.perlu_tindak_lanjut
           this.sedangDiProses = data.sedang_diproses
+          this.finished = data.selesai
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -399,8 +400,6 @@ export default
         .then(response => {
           const { data } = response.data
           this.itemsResi = data
-          console.log('itemsResi', this.itemsResi)
-          console.log('itemsTicket', this.itemsTicket)
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,

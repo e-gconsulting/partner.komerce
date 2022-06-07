@@ -321,7 +321,6 @@ export default {
     getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
       if (currentToken) {
         this.fcmToken = currentToken
-        console.log(this.fcmToken)
       } else {
         console.log('No registration token available. Request permission to generate one.')
       }

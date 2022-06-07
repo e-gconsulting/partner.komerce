@@ -143,7 +143,6 @@ export default {
         .then(response => {
           const { data } = response.data
           this.itemsEditOrder = data
-          console.log(this.itemsEditOrder)
           this.customerName = this.itemsEditOrder.customer_name
           this.customerPhone = this.itemsEditOrder.customer_phone
           this.customerAddress = this.itemsEditOrder.customer_address

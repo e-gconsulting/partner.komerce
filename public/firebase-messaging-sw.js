@@ -13,16 +13,10 @@ try {
   }
 
   const app = firebase.initializeApp(firebaseConfig)
-  console.log('firebase', firebase)
 
   const messaging = firebase.messaging(app)
 
-  console.log('service worker', messaging)
-
   messaging.setBackgroundMessageHandler(payload => {
-    console.log(payload)
-    // const notification = JSON.parse(payload)
-    // console.log('notification', notification)
     const notificationOption = {
       body: 'You have a message',
       icon: 'Message',
