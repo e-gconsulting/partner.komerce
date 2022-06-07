@@ -7,12 +7,13 @@
       />
       <b-col
         md="4"
+        class="align-items-center d-flex"
       >
         <b-form-input
           v-model="formSearch"
           type="search"
           class="form-search"
-          placeholder="Masukkan Nama Pelanggan"
+          placeholder="Cari Pelanggan"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
@@ -293,6 +294,7 @@ import moment from 'moment'
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css'
 import flatPickr from 'vue-flatpickr-component'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 
 export default {
@@ -302,9 +304,15 @@ export default {
   directives: {
     'b-toggle': VBToggle,
   },
+  props: {
+    profileItem: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
-      profile: {},
+      profile: JSON.parse(localStorage.userData),
       items: [],
       fields: [
         {
@@ -342,9 +350,7 @@ export default {
   watch: {
     currentPage: {
       handler(value) {
-        this.fetchData().catch(error => {
-          console.error(error)
-        })
+        this.fetchData()
       },
     },
   },
@@ -376,10 +382,7 @@ export default {
     },
     async fetchData(search) {
       this.loadTable = true
-      const profile = await this.$http_komship.post('v1/my-profile')
-      const dataProfile = await profile.data.data
-      this.profile = await dataProfile
-      this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
+      this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
         params: {
           order_status: 'Diajukan',
           customer_name: search,
@@ -398,6 +401,18 @@ export default {
           return data.data
         })
         .then(items => items)
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
+          this.loadTable = false
+        })
     },
     resetFilter() {
       this.startDate = null
@@ -406,13 +421,22 @@ export default {
       this.paymentMethod = null
       return this.fetchData()
     },
-    async getProduct() {
-      const profile = await this.$http_komship.post('v1/my-profile')
-      const dataProfile = await profile.data.data
-      this.profile = await dataProfile
-      const product = await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
-      const { data } = await product.data
-      this.productList = data
+    getProduct() {
+      this.$http_komship.get(`v1/partner-product/${this.profile.partner_detail.id}`)
+        .then(response => {
+          const { data } = response.data
+          this.productList = data
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
+        })
     },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {

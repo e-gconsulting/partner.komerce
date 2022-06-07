@@ -1,16 +1,22 @@
-<b-card>
-    <b-row class="mb-2 px-1">
+<b-overlay
+  variant="light"
+  :show="loadingEditOrder"
+  spinner-variant="primary"
+  blur="0"
+  opacity=".5"
+  rounded="sm"
+>
+  <b-card>
+    <b-row class="align-items-center px-1 mb-2 font-bold">
       <b-button
-        variant="primary"
-        class="rounded-lg"
-        size="sm"
-        @click="handleEditMode"
-      >
-        <b-icon-chevron-left />
-      </b-button>
-    </b-row>
-    <b-row class="d-flex justify-between px-1 mb-2 font-bold">
-      <h3 class="font-bold text-black">
+            variant="primary"
+            class="rounded-lg mr-1"
+            size="sm"
+            @click="updateEditMode"
+          >
+            <b-icon-chevron-left />
+        </b-button>
+      <h3 class="font-bold mt-50">
         Edit Order
       </h3>
     </b-row>
@@ -66,7 +72,7 @@
         </v-select>
       </b-col>
     </b-row>
-    <!-- <b-row
+    <b-row
       v-if="profile.partner_is_custom_label"
       class="mb-1 align-items-center"
     >
@@ -85,9 +91,10 @@
           :options="itemsCustomLabel"
           label="name_label"
           :reduce="items => items.id"
+          @input="handleCustomLabel"
         />
       </b-col>
-    </b-row> -->
+    </b-row>
     <b-row class="mb-1">
       <b-col
         md="3"
@@ -166,7 +173,7 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <span class="text-lg">Tujuan</span>
+        <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
       </b-col>
       <b-col md="4">
         <v-select
@@ -258,7 +265,7 @@
         </b-col>
       </b-row>
       <b-table
-        v-if="productSelected.length >= 1"
+        v-if="productSelected.length > 0"
         ref="tableProduct"
         :fields="productFields"
         :items="productSelected"
@@ -287,17 +294,17 @@
             >{{ data.item.product_name }}</span>
           </div>
         </template>
-        <template #cell(variant)="data">
+        <template #cell(variant_name)="data">
           <div
-            v-if="data.item.is_variant >= 1"
+            v-if="data.item.is_variant === '1'"
             class="justify-center"
           >
             <span
-              v-if="data.item.variantSubmit"
-              class="d-flex text-primary justify-center font-bold"
-            >{{ data.item.variant_name }}</span>
+              class="d-flex text-primary justify-center font-bold mb-50"
+            >
+              {{ data.item.variant_name }}
+            </span>
             <div
-              v-if="!data.item.variantSubmit"
               class="d-flex justify-center"
             >
               <b-button
@@ -314,131 +321,97 @@
             class="d-flex text-center"
           >Tidak Ada Variasi</span>
           <b-modal
-            :id="`modalVariation${data.index}`"
-            hide-footer
-          >
-            <section v-if="data.item.variantSelected[0]">
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[0].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[0].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 0, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section
-              v-if="data.item.variantSelected[1]"
-              class="mt-2"
+              :id="`modalVariation${data.index}`"
+              hide-footer
             >
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[1].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[1].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 1, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section
-              v-if="data.item.variantSelected[2]"
-              class="mt-2"
-            >
-              <h4 class="font-bold mb-1">
-                {{ data.item.variantSelected[2].variant_name }}
-              </h4>
-              <b-button
-                v-for="item in data.item.variantSelected[2].variant_option"
-                :key="item.id"
-                style="font-weight:500;margin-right:5px;padding:8px"
-                :variant="item.is_active ? 'primary':'outline-primary'"
-                @click="selectVariant(data.index, 2, item.option_id)"
-              >{{ item.option_name }}</b-button>
-            </section>
-            <section class="mt-2 d-flex justify-end">
-              <b-button
-                variant="primary"
-                :disabled="!data.item.variantButton"
-                @click="submitVariant(data.index, data.item.product_id)"
+              <section v-if="data.item.variantSelected[0]">
+                <h4 class="font-bold mb-1">
+                  {{ data.item.variantSelected[0].variant_name }}
+                </h4>
+                <b-button
+                  v-for="item in data.item.variantSelected[0].variant_option"
+                  :key="item.id"
+                  style="font-weight:500;margin-right:5px;padding:8px"
+                  :variant="item.is_active ? 'primary':'outline-primary'"
+                  @click="selectVariant(data.index, 0, item.option_id)"
+                >{{ item.option_name }}</b-button>
+              </section>
+              <section
+                v-if="data.item.variantSelected[1]"
+                class="mt-2"
               >
-                Pilih
-              </b-button>
-            </section>
-          </b-modal>
+                <h4 class="font-bold mb-1">
+                  {{ data.item.variantSelected[1].variant_name }}
+                </h4>
+                <b-button
+                  v-for="item in data.item.variantSelected[1].variant_option"
+                  :key="item.id"
+                  style="font-weight:500;margin-right:5px;padding:8px"
+                  :variant="item.is_active ? 'primary':'outline-primary'"
+                  @click="selectVariant(data.index, 1, item.option_id)"
+                >{{ item.option_name }}</b-button>
+              </section>
+              <section
+                v-if="data.item.variantSelected[2]"
+                class="mt-2"
+              >
+                <h4 class="font-bold mb-1">
+                  {{ data.item.variantSelected[2].variant_name }}
+                </h4>
+                <b-button
+                  v-for="item in data.item.variantSelected[2].variant_option"
+                  :key="item.id"
+                  style="font-weight:500;margin-right:5px;padding:8px"
+                  :variant="item.is_active ? 'primary':'outline-primary'"
+                  @click="selectVariant(data.index, 2, item.option_id)"
+                >{{ item.option_name }}</b-button>
+              </section>
+              <section class="mt-2 d-flex justify-end">
+                <b-button
+                  variant="primary"
+                  :disabled="!data.item.variantButton"
+                  @click="submitVariant(data.index, data.item.product_id)"
+                >
+                  Pilih
+                </b-button>
+              </section>
+            </b-modal>
         </template>
         <template #cell(price)="data">
           <span
-            v-if="data.item.is_variant < 1 || data.item.variantSubmit"
-            class="text-lg"
-          >Rp {{ formatNumber(data.item.price) }}</span>
-          <span
-            v-else
             class="text-lg"
           >Rp {{ formatNumber(data.item.price) }}</span>
         </template>
         <template #cell(amount)="data">
-          <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
-            <div class="d-flex justify-center">
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity <= 1"
-                @click="setQuantity('minus',data.index)"
-              >
-                <span class="font-bold text-lg">-</span>
-              </b-button>
-              <span
-                class="text-lg"
-                style="margin: 0 10px"
-              >{{ data.item.quantity }}</span>
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
-                @click="setQuantity('plus',data.index)"
-              >
-                <span class="font-bold text-lg">+</span>
-              </b-button>
+            <div v-if="data.item.is_variant < 1 && data.item.stockAvailable > 0 || data.item.variantSubmit && data.item.stockAvailable > 0">
+              <div class="d-flex justify-center">
+                <b-button
+                  variant="outline-primary"
+                  class="p-0"
+                  style="border-radius:50%;width:25px;height:25px"
+                  size="sm"
+                  :disabled="data.item.quantity <= 1"
+                  @click="setQuantity('minus',data.index)"
+                >
+                  <span class="font-bold text-lg">-</span>
+                </b-button>
+                <span
+                  class="text-lg"
+                  style="margin: 0 10px"
+                >{{ data.item.quantity }}</span>
+                <b-button
+                  variant="outline-primary"
+                  class="p-0"
+                  style="border-radius:50%;width:25px;height:25px"
+                  size="sm"
+                  :disabled="data.item.quantity >= 10 || data.item.stock === 0"
+                  @click="setQuantity('plus',data.index)"
+                >
+                  <span class="font-bold text-lg">+</span>
+                </b-button>
+              </div>
+              <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
             </div>
-            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia:</span>
-          </div>
-          <div v-else>
-            <div class="d-flex justify-center">
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity <= 1"
-                @click="setQuantity('minus',data.index)"
-              >
-                <span class="font-bold text-lg">-</span>
-              </b-button>
-              <span
-                class="text-lg"
-                style="margin: 0 10px"
-              >{{ data.item.quantity }}</span>
-              <b-button
-                variant="outline-primary"
-                class="p-0"
-                style="border-radius:50%;width:25px;height:25px"
-                size="sm"
-                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
-                @click="setQuantity('plus',data.index)"
-              >
-                <span class="font-bold text-lg">+</span>
-              </b-button>
-            </div>
-            <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
-          </div>
           <div
             v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
             class="d-flex justify-center text-primary text-lg"
@@ -447,10 +420,6 @@
         <template #cell(subtotal)="data">
           <span
             v-if="data.item.is_variant < 1 || data.item.variantSubmit"
-            class="text-lg d-flex justify-center"
-          >Rp {{ formatNumber(data.item.subtotal) }}</span>
-          <span
-            v-else
             class="text-lg d-flex justify-center"
           >Rp {{ formatNumber(data.item.subtotal) }}</span>
         </template>
@@ -980,4 +949,5 @@
         </b-button>
       </b-row>
     </b-modal>
-</b-card>
+  </b-card>
+</b-overlay>
