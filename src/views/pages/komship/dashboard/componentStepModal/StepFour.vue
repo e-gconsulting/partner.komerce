@@ -1,22 +1,17 @@
 <template>
   <div class="modalOnboarding">
-    <h4>Ajukan Pickup</h4>
     <img
       src="@/assets/images/svg/imgstep5.svg"
       alt="imgstep2"
     >
     <div class="step2-text">
-      <h5>
-        Tahap terakhir agar paketmu dapat dijemput ekspedisi adalah mengajukan
-        pickup.
+      <h5 style="margin-bottom: 1em;">
+        Ajukan Pickup
       </h5>
-      <br>
       <p>
-        Setelah Kamu sukses melakukan pengajuan pickup label pengiriman
-        Komship bisa kamu dapat di menu riwayat pickup ya...
+        Setelah berhasil input semua <strong>orderan yang mau dikirim</strong>, saatnya <strong>ajukan pickup.</strong> Kakak tinggal pickup orderan dari <strong>gudang-gudang yang kakak pilih.</strong> Setelah ajukan pickup berhasil, nomor <strong>resi akan keluar otomatis</strong> dan untuk pengajuan pertama kali biasanya akan ada kurir ekspedisi akan mengontak nomor HP yang kakak cantumkan pada pengaturan <strong>penanggung jawab gudang.</strong>
       </p>
-      <br>
-      <p>Jangan lupa pastikan paket orderanmu telah siap untuk dikirim.</p>
+      <p>Label pengiriman untuk dicetak ada pada menu <strong>riwayat pickup.</strong></p>
     </div>
   </div>
 </template>

@@ -66,4 +66,3 @@ export default {
   },
 }
 </script>
-<style lang scoped src='./ModalOnBoarding.scss'/>
