@@ -1,9 +1,10 @@
 .method-order .card {
     border:1px solid #E2E2E2;
     border-radius:20px;
+    height: 350px;
 }
 .method-order .card .card-text {
-    min-height: 42px;
+    height: 60px;
     display: flex;
     justify-content: center;
 }
