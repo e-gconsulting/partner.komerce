@@ -319,18 +319,38 @@ export default {
                 .catch(err => {
                   const response = err.response.data
                   this.$refs.loadingSubmit.hide()
-                  const popup = message => this.$swal({
-                    html: message,
-                    imageUrl: require('@/assets/images/icons/warning.svg'),
-                    confirmButtonText: 'Perbaiki',
-                    confirmButtonClass: 'btn btn-primary',
-                  })
-                  if (response.message === "There's error in your input") {
-                    const rows = `${response.validation_error}`
-                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
-                  } else if (response.message === "There's error in shipping") {
-                    const rows = `${response.cod_error}`
-                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
+                  if (response.message === "There's error in your input" && response.validation_error !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.validation_error}" tidak sesuai format</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/warning.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
+                  }
+                  if (response.message === "There's error in your input" && response.cod_error !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/non-cod.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
+                  }
+                  if (response.message === "There's error in shipping" && response.error_data !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" diluar jangkauan Ekspedisi yang dipilih</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/non-shipping.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
                   }
                 })
             }, 800)
