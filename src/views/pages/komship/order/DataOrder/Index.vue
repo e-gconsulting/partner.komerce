@@ -251,7 +251,7 @@
                         name="checkedOrderPacked"
                         value="Dipacking"
                       >
-                        Dipacking 2x
+                        Dipacking
                       </b-form-checkbox>
                     </div>
                     <div class="my-1">
