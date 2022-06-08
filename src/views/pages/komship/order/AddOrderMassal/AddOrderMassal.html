@@ -15,8 +15,8 @@
     <div id="spreadsheet" class="d-flex" style="max-width: 100%;"></div>
     <b-row class="mt-1">
         <b-col lg="10" class="d-flex">
-            <b-button variant="outline-dark" size="sm" :disabled="!selectedTable" @click="removeRows()">
-                <b-icon-trash></b-icon-trash>
+            <b-button variant="primary" class="d-flex" style="background-color: #E31A1A!important;" size="sm" @click="resetTable()">
+                <img src="@/assets/images/icons/refresh.svg" class="my-auto"><span class="my-auto" style="font-size: 14px;margin-left:5px">Reset</span>
             </b-button>
             <b-input-group class="ml-1" style="max-width: 195px;">
                 <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>

@@ -189,9 +189,20 @@ export default {
       const rows = toInteger(this.jumlahBaris)
       this.table.insertRow(rows)
     },
-    removeRows() {
-      const totalSelect = this.selectedTable.val - this.selectedTable.row + 1
-      this.table.deleteRow(this.selectedTable.row, totalSelect)
+    resetTable() {
+      this.$swal({
+        title: '<span class="font-weight-bold h4">Yakin mau menghapus semua data di Speredsheet kamu?</span>',
+        imageUrl: require('@/assets/images/icons/warning.svg'),
+        showCancelButton: true,
+        confirmButtonText: 'Reset',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonText: 'Batal',
+        cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.table.setData([])
+        }
+      })
     },
     async getLastUpdated() {
       setTimeout(async () => {
