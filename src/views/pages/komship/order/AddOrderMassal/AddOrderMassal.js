@@ -157,7 +157,7 @@ export default {
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
             }
           } else if (col === '8') {
-            if (!regexNumber.test(val) || val.length < 1 || val.length > 1000) {
+            if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId(['8', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
