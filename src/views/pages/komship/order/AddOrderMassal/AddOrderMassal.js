@@ -106,6 +106,7 @@ export default {
         minDimensions: [11, 200],
         tableHeight: '60vh',
         tableOverflow: true,
+        autoIncrement: false,
         defaultColWidth: 150,
         columns: [
           {

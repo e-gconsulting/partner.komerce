@@ -87,6 +87,18 @@
             </b-row>
             <b-row class="mb-1">
               <b-col cols="6">
+                Gudang
+              </b-col>
+              <b-col
+                v-if="orderData.address_partner"
+                cols="6"
+                class="font-bold"
+              >
+                {{ orderData.address_partner[0].name }}
+              </b-col>
+            </b-row>
+            <b-row class="mb-1">
+              <b-col cols="6">
                 Metode Pembayaran
               </b-col>
               <b-col
