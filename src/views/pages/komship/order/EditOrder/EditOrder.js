@@ -116,29 +116,23 @@ export default {
       orderDetails: [],
       shippingFromDetailEdit: {},
       loadingEditOrder: false,
+      cartProductId: [],
+      idCartDelete: [],
     }
   },
   async created() {
     await httpKomship2.post('v1/my-profile')
-      .then(res => {
+      .then(async res => {
         this.profile = res.data.data
+        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+          .then(async () => {
+          })
       }).then(async () => {
         await this.checkExpedition()
         await this.getAddress()
         await this.getProduct()
-        await this.addToCart()
         await this.getRekening()
         await this.getCustomLabel()
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        })
       })
   },
   methods: {
@@ -326,8 +320,8 @@ export default {
             stockAvailable: itemSelected.stock,
           })
           this.productHistory = false
-          await this.getShippingList()
           await this.addToCart()
+          await this.getShippingList()
         }
         this.product = []
       }
@@ -507,10 +501,14 @@ export default {
       }
     },
     applyChangeQty: _.debounce(async function () {
-      await this.getShippingList()
       await this.addToCart()
+      await this.getShippingList()
     }, 1000),
-    async removeProduct(index) {
+    async removeProduct(data, index) {
+      this.idCartDelete = this.cartProductId
+      console.log('data item product', data)
+      const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id)
+      console.log('cart to remove', findCartProduct)
       this.productSelected.splice(index, 1)
       this.productHistory = false
       if (this.productSelected.length === 0) {
@@ -519,45 +517,51 @@ export default {
         this.listShipping = []
         await this.addToCart()
       } else {
-        await this.getShippingList()
-        await this.addToCart()
+        await this.$http_komship.delete('/v1/cart/delete', {
+          params: {
+            cart_id: [findCartProduct.cart_id],
+          },
+        })
+          .then(async () => {
+            await this.addToCart()
+            await this.getShippingList()
+          })
       }
+    },
+    getCartId(cart, productId) {
+      console.log('productId find cart', productId)
+      let result = 0
+      if (cart[0] !== undefined) {
+        const findCart = cart.find(item => item.product_id === productId.product_id)
+        result = findCart.cart_id
+      }
+      return result
     },
     async addToCart() {
       if (this.productSelected.length > 0) {
+        console.log(this.cartProductId)
         this.loadingCalculate = true
-        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {
-            const cart = this.productSelected.map(items => ({
-              product_id: items.product_id,
-              product_name: items.product_name,
-              variant_id: items.variant_id,
-              variant_name: items.variant_name,
-              product_price: items.price,
-              qty: items.quantity,
-              subtotal: items.subtotal,
-            }))
-            await this.$http_komship.post('v1/cart/bulk-store', cart)
-              .then(res => {
-                this.cartId = res.data.data.cart_id
-                this.loadingCalculate = false
-                this.calculate(true)
-              })
+        const cart = await this.productSelected.map(items => ({
+          id: this.getCartId(this.cartProductId, items),
+          product_id: items.product_id,
+          product_name: items.product_name,
+          variant_id: items.variant_id,
+          variant_name: items.variant_name,
+          product_price: items.price,
+          qty: items.quantity,
+          subtotal: items.subtotal,
+        }))
+        console.log('cart', cart)
+        await this.$http_komship.post('/v2/cart/bulk-store-web', cart)
+          .then(async res => {
+            this.cartId = []
+            this.cartProductId = res.data.data.cart_id
+            this.cartProductId.forEach(items => this.cartId.push(items.cart_id))
+            console.log('response bulk store cart', this.cartId)
+            this.loadingCalculate = false
+            await this.calculate(true)
           })
       } else {
-        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {
-          }).catch(err => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: err,
-                variant: 'danger',
-              },
-            })
-          })
         this.isCalculate = false
         this.isCalculateOnExpedition = false
         this.loadingCalculate = false
@@ -612,7 +616,8 @@ export default {
       if (this.destination && this.paymentMethod && this.profile && this.address) {
         this.$http_komship.get('v2/calculate', {
           params: {
-            tariff_code: this.destination.value,
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
             partner_address_id: this.address.address_id,
@@ -695,13 +700,14 @@ export default {
         } else {
           grandTotalNew = null
         }
+        console.log('calculate', this.cartId.toString())
         this.$http_komship.get('v2/calculate', {
           params: {
-            tariff_code: this.destination.value,
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
             partner_address_id: this.address.address_id,
-            cart: this.cartId.toString(),
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
@@ -819,13 +825,14 @@ export default {
         } else {
           grandTotalNew = null
         }
+        console.log('calculate on ex', this.cartId)
         this.$http_komship.get('v2/calculate', {
           params: {
-            tariff_code: this.destination.value,
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
             partner_address_id: this.address.address_id,
-            cart: this.cartId.toString(),
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
@@ -927,7 +934,7 @@ export default {
 
       this.formData = {
         date: this.dateOrder,
-        tariff_code: this.destination.value,
+        receiver_destination: this.destination.id,
         subdistrict_name: this.destination.subdistrict_name,
         zip_code: this.destination.zip_code,
         district_name: this.destination.district_name,
@@ -1083,7 +1090,7 @@ export default {
     fetchDataDetailOrder() {
       this.loadingEditOrder = true
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
-        .then(response => {
+        .then(async response => {
           const { data } = response.data
           this.customerName = data.customer_name
           this.customerPhone = data.customer_phone
@@ -1155,13 +1162,16 @@ export default {
             shipping_type: data.shipping_type,
             shipping_cost: data.shipping_cost,
           })
-          this.$http_komship.get('v1/destination', {
+          await this.$http_komship.get('v1/destination', {
             params: {
               search: this.destination,
             },
-          }).then(res => {
+          }).then(async res => {
             this.destination = res.data.data.data[0]
-            this.getShippingList()
+            await this.addToCart()
+            this.shipping = this.shippingFromDetailEdit
+            await this.calculateOnExpedition(true)
+            await this.getShippingList()
           }).catch(err => {
             this.$toast({
               component: ToastificationContent,
@@ -1174,9 +1184,6 @@ export default {
             })
             this.loadingEditOrder = false
           })
-          this.addToCart()
-          this.shipping = this.shippingFromDetailEdit
-          this.calculateOnExpedition(true)
           this.loadingEditOrder = false
         }).catch(err => {
           this.$toast({
