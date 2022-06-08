@@ -91,10 +91,15 @@ export default {
         this.selectedTable = data
       }
       const popup = message => this.$swal({
-        title: 'Upss., belum tepat nih..',
-        text: message,
+        // title: 'Upss., belum tepat nih..',
+        // text: message,
+        html: `<span style="font-weight:600;font-size:20px">Upss., belum tepat nih..</span><br><span style="font-size:14px">${message}</span>`,
         confirmButtonText: 'Oke',
-        confirmButtonClass: 'btn btn-primary',
+        confirmButtonClass: 'btn btn-primary rounded-lg',
+        customClass: {
+          actions: 'd-flex p-0 justify-content-end',
+          content: 'text-left p-0',
+        },
       })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
