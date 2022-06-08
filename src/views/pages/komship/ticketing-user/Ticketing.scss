@@ -1,0 +1,15 @@
+@import '~@core/scss/vue/libs/vue-select.scss';
+
+[dir] .wrapper__filter__ticket__mobile {
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    [dir] .wrapper__filter__ticket__mobile {
+        display: inline-block;
+    }
+
+    [dir] .wrapper__filter__ticket {
+        display: none;
+    }
+}

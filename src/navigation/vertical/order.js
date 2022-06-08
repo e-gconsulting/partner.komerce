@@ -1,14 +1,3 @@
-import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
-
-const orderMassal = async () => {
-  await httpKomship.post('/v1/my-profile')
-    .then(res => {
-      const { data } = res.data
-      return data.partner_is_mass_order
-    })
-    .catch(err => console.log(err))
-}
-
 export default [
   {
     title: 'Orderku',
@@ -28,7 +17,7 @@ export default [
         title: 'Tambah Order',
         icon: 'None',
         resource: 'Tambah Order',
-        route: orderMassal ? 'method-order' : 'add-order',
+        route: 'order',
         action: 'manage',
       },
       {

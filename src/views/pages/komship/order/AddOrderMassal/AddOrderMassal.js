@@ -21,10 +21,13 @@ export default {
       jumlahBaris: 200,
       selectedTable: null,
       lastUpdated: null,
+      loadingDraft: false,
+      loadingSubmit: false,
     }
   },
   mounted() {
     this.getDataSheet()
+    this.$refs.loadingPage.show()
   },
   methods: {
     getDataSheet() {
@@ -100,7 +103,19 @@ export default {
         tableOverflow: true,
         defaultColWidth: 150,
         columns: [
-          { type: 'calendar', title: 'Tanggal Order', options: { format: 'YYYY-MM-DD' } },
+          {
+            type: 'calendar',
+            title: 'Tanggal Order',
+            options: {
+              format: 'YYYY-MM-DD',
+              months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+              weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+              weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
+              textDone: 'SELESAI',
+              textReset: 'HAPUS',
+              textUpdate: 'OK',
+            },
+          },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
@@ -168,6 +183,7 @@ export default {
           getSelectedTable(data)
         },
       })
+      this.$refs.loadingPage.hide()
     },
     addRows() {
       const rows = toInteger(this.jumlahBaris)
@@ -194,13 +210,15 @@ export default {
               const time = moment(link.updated_at).format('HH.mm')
               this.lastUpdated = `pada pukul ${time}, ${day} ${monthName[month - 1]} ${year}`
             }
+            this.loadingDraft = false
           })
+          .catch(this.loadingDraft = false)
       }, 800)
     },
     submitSheets(method) {
       const json = this.table.getJson()
       const data = json.map(items => ({
-        order_date: items[0]?.replace('Invalid date', '') || items.order_date?.replace('Invalid date', '') || '',
+        order_date: items[0] || items.order_date || '',
         address: items[1] || items.address || '',
         customer_name: items[2] || items.customer_name || '',
         customer_phone_number: items[3] || items.customer_phone_number || '',
@@ -211,81 +229,97 @@ export default {
         qty: items[8] || items.qty || '',
         payment_method: items[9] || items.payment_method || '',
         expedition: items[10] || items.expedition || '',
-        grandtotal: items[11]?.replace(/[^\d]/g, '') || items.grandtotal?.replace(/[^\d]/g, '') || '',
+        grandtotal: items[11] || items.grandtotal || '',
       }))
       if (method === 'save') {
+        this.loadingDraft = true
         setTimeout(async () => {
           await this.$http_komship.post('/v1/order/sheet/save-submit', {
             options: 'save',
             data,
           })
             .then(this.getLastUpdated)
-            .catch(err => console.log(err))
+            .catch(this.loadingDraft = false)
         }, 800)
       } else if (method === 'submit') {
-        const dataFilter = data.filter(
-          items => items.order_date
-        || items.address
-        || items.customer_name
-        || items.customer_phone_number
-        || items.zip_code
-        || items.customer_address
-        || items.product
-        || items.variant
-        || items.qty
-        || items.payment_method
-        || items.expedition
-        || items.grandtotal !== '',
-        )
-        const dataSubmit = dataFilter.map(items => ({
-          order_date: items.order_date ? moment(items.order_date).format('YYYY-MM-DD') : '',
-          address: items.address,
-          customer_name: items.customer_name,
-          customer_phone_number: items.customer_phone_number,
-          zip_code: toInteger(items.zip_code),
-          customer_address: items.customer_address,
-          product: items.product,
-          variant: items.variant,
-          qty: toInteger(items.qty),
-          payment_method: items.payment_method,
-          expedition: items.expedition,
-          grandtotal: toInteger(items.grandtotal),
-        }))
-        setTimeout(async () => {
-          await this.$http_komship.post('/v1/order/sheet/save-submit', {
-            options: 'submit',
-            data: dataSubmit,
-          })
-            .then(res => {
-              const count = res.data.data
-              this.$swal({
-                title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
-                imageUrl: require('@/assets/images/icons/success.svg'),
-                confirmButtonText: 'Lihat Data Order',
-                confirmButtonClass: 'btn btn-primary',
-              }).then(response => {
-                if (response.isConfirmed) {
-                  this.$router.push('data-order')
-                }
+        this.$swal({
+          title: '<span class="font-weight-bold h4">Semua data yang kamu masukan di Speadsheet akan menjadi Order</span>',
+          imageUrl: require('@/assets/images/icons/warning.svg'),
+          showCancelButton: true,
+          confirmButtonText: 'Submit',
+          confirmButtonClass: 'btn btn-primary',
+          cancelButtonText: 'Batal',
+          cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.$refs.loadingSubmit.show()
+            const dataFilter = data.filter(
+              items => items.order_date
+            || items.address
+            || items.customer_name
+            || items.customer_phone_number
+            || items.zip_code
+            || items.customer_address
+            || items.product
+            || items.variant
+            || items.qty
+            || items.payment_method
+            || items.expedition
+            || items.grandtotal !== '',
+            )
+            const dataSubmit = dataFilter.map(items => ({
+              order_date: items.order_date !== '' ? moment(items.order_date).format('YYYY-MM-DD') : '',
+              address: items.address,
+              customer_name: items.customer_name,
+              customer_phone_number: items.customer_phone_number,
+              zip_code: items.zip_code !== '' ? toInteger(items.zip_code) : '',
+              customer_address: items.customer_address,
+              product: items.product,
+              variant: items.variant,
+              qty: items.qty ? toInteger(items.qty) : '',
+              payment_method: items.payment_method,
+              expedition: items.expedition,
+              grandtotal: items.grandtotal !== '' ? toInteger(items.grandtotal) : '',
+            }))
+            setTimeout(async () => {
+              await this.$http_komship.post('/v1/order/sheet/save-submit', {
+                options: 'submit',
+                data: dataSubmit,
               })
-            })
-            .catch(err => {
-              const response = err.response.data
-              const popup = message => this.$swal({
-                html: message,
-                imageUrl: require('@/assets/images/icons/warning.svg'),
-                confirmButtonText: 'Perbaiki',
-                confirmButtonClass: 'btn btn-primary',
-              })
-              if (response.message === "There's error in your input") {
-                const rows = `${response.validation_error}`
-                popup(`<ul style="list-style-type: unset;"><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
-              } else if (response.message === "There's error in shipping") {
-                const rows = `${response.cod_error}`
-                popup(`<ul style="list-style-type: unset;"><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
-              }
-            })
-        }, 800)
+                .then(res => {
+                  const count = res.data.data
+                  this.$refs.loadingSubmit.hide()
+                  this.$swal({
+                    title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
+                    imageUrl: require('@/assets/images/icons/success.svg'),
+                    confirmButtonText: 'Lihat Data Order',
+                    confirmButtonClass: 'btn btn-primary',
+                  }).then(response => {
+                    if (response.isConfirmed) {
+                      this.$router.push('data-order')
+                    }
+                  })
+                })
+                .catch(err => {
+                  const response = err.response.data
+                  this.$refs.loadingSubmit.hide()
+                  const popup = message => this.$swal({
+                    html: message,
+                    imageUrl: require('@/assets/images/icons/warning.svg'),
+                    confirmButtonText: 'Perbaiki',
+                    confirmButtonClass: 'btn btn-primary',
+                  })
+                  if (response.message === "There's error in your input") {
+                    const rows = `${response.validation_error}`
+                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
+                  } else if (response.message === "There's error in shipping") {
+                    const rows = `${response.cod_error}`
+                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
+                  }
+                })
+            }, 800)
+          }
+        })
       }
     },
   },

@@ -9,6 +9,7 @@ export default [
       routeToTopCustomer: 'info-customer',
       routeToDataProduct: 'data-produk',
       routeToRincianSaldo: 'saldo-detail',
+      routeToTicket: 'ticketing-user',
       resource: 'Dashboard Komship',
       action: 'read',
       breadcrumb: [

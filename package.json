@@ -34,6 +34,7 @@
     "core-js": "3.8.1",
     "dateformat": "^4.6.3",
     "echarts": "4.8.0",
+    "firebase": "^9.8.1",
     "flatpickr": "^4.6.9",
     "form-data": "^4.0.0",
     "jsonwebtoken": "8.5.1",
@@ -93,6 +94,7 @@
     "vue2-google-maps": "^0.10.7",
     "vue2-leaflet": "2.5.2",
     "vuedraggable": "2.24.3",
+    "vuetify": "^2.6.6",
     "vuex": "3.6.0",
     "vuex-map-fields": "^1.4.1",
     "vuex-persistedstate": "^4.1.0"

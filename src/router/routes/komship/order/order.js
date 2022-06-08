@@ -133,4 +133,13 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/order',
+    name: 'order',
+    component: () => import('@/views/pages/komship/order/index.vue'),
+    meta: {
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
 ]

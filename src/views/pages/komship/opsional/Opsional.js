@@ -104,7 +104,7 @@ export default {
               props: {
                 title: 'Success',
                 icon: 'CheckIcon',
-                text: `Input Cepat Berhasil ${this.orderMassal ? 'Diaktifkan' : 'Dinonaktifkan'}`,
+                text: `Order Massal Berhasil ${this.orderMassal ? 'Diaktifkan' : 'Dinonaktifkan'}`,
                 variant: 'success',
               },
             }, 2000)

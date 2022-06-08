@@ -1189,7 +1189,7 @@ export default {
       return String(e).substring(0, 30)
     },
     formatAddressDetail(e) {
-      return String(e).substring(0, 85)
+      return String(e).substring(0, 185)
     },
     formatPhoneCustomer() {
       if (this.customerPhone.length < 9) {
