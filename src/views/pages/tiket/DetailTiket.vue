@@ -106,18 +106,52 @@
           />
         </b-col>
         <b-col
-          v-if="!dataDetailTiket.file"
+          v-if="dataDetailTiket.file.length > 0"
           md="6"
         >
           <p class="font-bold">
             File
           </p>
+          <!-- <div
+            v-for="(item, index) in dataDetailTiket.file"
+            :key="index"
+          >
+            <video
+              v-if="handelRegexVideo(item.path)"
+              width="320"
+              height="240"
+              controls
+              style="margin-top: 10px;"
+            >
+              <source
+                :src="item.path"
+                type="video/mp4"
+              >
+            </video>
+            <img
+              width="220"
+              height="140"
+              :src="item.path"
+              style="margin-top: 10px;"
+            >
+            <a
+              v-if="handleRegexDoc(item.path)"
+              :href="item.path"
+              download
+              style="margin-top: 10px; margin-bottom: 10px; display: block;"
+            >
+              {{ handleCutUrl(item.path) }}
+            </a>
+          </div> -->
+
           <a
-            href="/example.pdf"
-            download="my-download.pdf"
+            v-for="(item, index) in dataDetailTiket.file"
+            :key="index"
+            target="_blank"
+            :href="item.path"
             class="download"
           >
-            {{ dataDetailTiket.file }}
+            {{ handleCutUrl(item.path) }}
           </a>
         </b-col>
       </b-row>
@@ -142,12 +176,23 @@
         </b-col>
       </b-row>
     </div>
-    <HistoryTiket :data="dataDetailTiket" />
+
+    <HistoryTiket
+      v-if="dataDetailTiket.history_ticket.length > 0"
+      :data="dataDetailTiket"
+      :handleregeximage="handleRegexImage"
+      :handleregexdoc="handleRegexDoc"
+      :handelregexvideo="handelRegexVideo"
+      :formatdate="formatDate"
+      :handleextension="handleExtension"
+      :handlecuturl="handleCutUrl"
+    />
   </div>
 </template>
 
 <script>
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import moment from 'moment'
 import HistoryTiket from './HistoryTiket.vue'
 
 export default {
@@ -177,9 +222,6 @@ export default {
           2000,
         )
       })
-    // this.$http_komship.get('/v1/ticket-admin/order/detail/31')
-    //   .then(res => this.setDataDetailTiket(res.data.data))
-    //   .catch(err => console.log(err))
   },
   methods: {
     setDataDetailTiket(data) {
@@ -195,6 +237,24 @@ export default {
     },
     handleRouterBack() {
       this.$router.back()
+    },
+    handleCutUrl(value) {
+      return value.substring(value.lastIndexOf('/') + 1, value.length)
+    },
+    handleRegexImage(filename) {
+      return /\.(png|svg|jpg|jpeg|gif)$/i.test(filename)
+    },
+    handleRegexDoc(filename) {
+      return /\.(xlsx|xls|doc|docx|pdf)$/i.test(filename)
+    },
+    handelRegexVideo(filename) {
+      return /\.(mp4)$/i.test(filename)
+    },
+    formatDate(value) {
+      return moment(value).format('D MMM YYYY | HH:mm')
+    },
+    handleExtension(value) {
+      return value.split('.').pop()
     },
   },
 }
