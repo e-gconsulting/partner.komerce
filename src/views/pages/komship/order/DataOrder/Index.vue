@@ -235,11 +235,11 @@
                 <b-row>
                   <div class="my-1">
                     <b-form-checkbox
-                      id="checkedOrderDibuat"
+                      id="checkedOrderDiajukan"
                       v-model="orderStatus"
-                      name="checkedOrderDibuat"
+                      name="checkedOrderDiajukan"
                       class="text-left"
-                      value="Dibuat"
+                      value="Diajukan"
                     >
                       Order Dibuat
                     </b-form-checkbox>
@@ -476,7 +476,7 @@ export default {
       orderDate: '',
       loading: false,
       paymentMethod: ['COD', 'BANK TRANSFER'],
-      orderStatus: ['Dibuat', 'Dipacking', 'Dikirim', 'Diterima', 'Retur'],
+      orderStatus: ['Diajukan', 'Dipacking', 'Dikirim', 'Diterima', 'Retur'],
       shipping: ['JNE', 'SICEPAT', 'IDEXPRESS'],
       chcekedJNE: false,
       chcekedSiCepat: false,
