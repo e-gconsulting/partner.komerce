@@ -34,6 +34,7 @@
 }
 .download {
   color: #08a0f7;
+  display: block;
 }
 .input-group-text {
   cursor: pointer;
@@ -57,9 +58,12 @@
   .btn {
     float: none;
     margin: 1em 0 0 0;
+    display: contents;
   }
 }
 .container{
+  background: #FFFFFF;
+  padding: 2em;
   &-title{
     display: flex;
     align-items: center;

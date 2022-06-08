@@ -65,7 +65,7 @@ export default {
         },
         {
           key: 'customer_name',
-          label: 'Customer',
+          label: 'Seller',
           trClass: 'border-top-0',
           class: 'bg-white',
         },
@@ -78,6 +78,12 @@ export default {
         {
           key: 'ticket_status',
           label: 'Status Tiket',
+          trClass: 'border-top-0',
+          class: 'bg-white',
+        },
+        {
+          key: 'delay_action',
+          label: 'Delay Action',
           trClass: 'border-top-0',
           class: 'bg-white',
         },
@@ -180,6 +186,7 @@ export default {
 
       // Filter
       ticketStatus: [],
+      ticketEkspedisi: [],
       ticketStatusItems: [
         {
           label: 'Menunggu Tindak Lanjut',
@@ -202,20 +209,20 @@ export default {
           onCheck: false,
         },
       ],
-      tiketEkspedisi: [
+      ticketEkspedisiItems: [
         {
-          label: 'JNE',
-          value: 1,
+          label: 0,
+          value: 'JNE',
           onCheck: false,
         },
         {
-          label: 'SICEPAT',
-          value: 2,
+          label: 1,
+          value: 'SICEPAT',
           onCheck: false,
         },
         {
-          label: 'IDEXPRESS',
-          value: 3,
+          label: 2,
+          value: 'IDEXPRESS',
           onCheck: false,
         },
       ],
@@ -263,7 +270,6 @@ export default {
     this.fetchTicketType()
     this.fetchTimeResponse()
     this.formatDate()
-    // console.log(moment('2022-01-01').utc().fromNow())
   },
   methods: {
     fetchTimeResponse() {
@@ -312,6 +318,9 @@ export default {
       if (this.ticketStatus) {
         Object.assign(params, { ticket_status: this.ticketStatus.join() })
       }
+      if (this.ticketEkspedisi) {
+        Object.assign(params, { shipping: this.ticketEkspedisi.join() })
+      }
       if (this.search) Object.assign(params, { search: this.search })
       if (this.searchType) {
         Object.assign(params, { search_type: this.searchType.value })
@@ -326,12 +335,14 @@ export default {
           params,
         })
         .then(response => {
+          console.log(response.data.data)
           const { data } = response.data.data
           this.itemsTicket = data
           this.totalRows = response.data.data.total
           this.loadingDataTable = false
         })
         .catch(err => {
+          console.log(err)
           this.itemsTicket = []
           this.$toast(
             {
@@ -347,75 +358,6 @@ export default {
           )
           this.loadingDataTable = false
         })
-    },
-    onRowSelected(data) {
-      this.selected = data
-      this.$router.push({
-        path: `/tiket/detail/${data[0].id}`,
-        params: { data_tiket: data },
-      })
-    },
-    formatDate(d) {
-      return moment(d).format('HH:mm D/MM/YYYY')
-    },
-    formatDateParams(d) {
-      return moment(d).format('YYYY-MM-DD')
-    },
-    onChangeFile(event) {
-      event.target.files.forEach(this.myFile)
-    },
-    myFile(data) {
-      this.itemsImageInitialFile.push(data)
-    },
-    fileUrl: file => (file ? URL.createObjectURL(file) : null),
-    deleteFile(data) {
-      const findIndexObj = this.itemsImageInitialFile.findIndex(
-        items => items.name === data.name,
-      )
-      this.itemsImageInitialFile.splice(findIndexObj, 1)
-    },
-    setSearchType(data) {
-      this.searchType = data
-      this.fetchTicket()
-      this.$root.$emit('bv::hide::popover', 'popover-search-type')
-    },
-    filterTicketByStatus(data) {
-      const findIndexObj = this.ticketStatusItems.findIndex(
-        items => items.value === data.value,
-      )
-      const findObj = this.ticketStatus.findIndex(items => items === data.value)
-      if (this.ticketStatusItems[findIndexObj].onCheck === true) {
-        this.ticketStatus.push(data.value)
-      } else {
-        this.ticketStatus.splice(findObj, 1)
-      }
-      this.fetchTicket()
-    },
-    filterTicketByEkspedisi(data) {
-      const findIndexObj = this.tiketEkspedisi.findIndex(
-        items => items.value === data.value,
-      )
-      const findObj = this.ticketStatus.findIndex(items => items === data.value)
-      if (this.tiketEkspedisi[findIndexObj].onCheck === true) {
-        this.ticketStatus.push(data.value)
-      } else {
-        this.ticketStatus.splice(findObj, 1)
-      }
-      this.fetchTicket()
-    },
-    filterByTicketType(data) {
-      const findIndexObj = this.ticketTypeItems.findIndex(
-        items => items.id === data.id,
-      )
-      const findObj = this.filterTicketType.findIndex(
-        items => items === data.id,
-      )
-      if (this.ticketTypeItems[findIndexObj].onCheck === true) {
-        this.filterTicketType.push(data.id)
-      } else {
-        this.filterTicketType.splice(findObj, 1)
-      }
-      this.fetchTicket()
     },
     fetchTicketType() {
       this.$http_komship
@@ -442,6 +384,65 @@ export default {
           )
         })
     },
+    onRowSelected(data) {
+      this.selected = data
+      this.$router.push({
+        path: `/tiket/detail/${data[0].id}`,
+        params: { data_tiket: data },
+      })
+    },
+    formatDate(d) {
+      return moment(d).format('HH:mm D/MM/YYYY')
+    },
+    formatDateParams(d) {
+      return moment(d).format('YYYY-MM-DD')
+    },
+    setSearchType(data) {
+      console.log(data)
+      this.searchType = data
+      this.fetchTicket()
+      this.$root.$emit('bv::hide::popover', 'popover-search-type')
+    },
+    filterTicketByStatus(data) {
+      const findIndexObj = this.ticketStatusItems.findIndex(
+        items => items.value === data.value,
+      )
+      const findObj = this.ticketStatus.findIndex(items => items === data.value)
+      if (this.ticketStatusItems[findIndexObj].onCheck === true) {
+        this.ticketStatus.push(data.value)
+      } else {
+        this.ticketStatus.splice(findObj, 1)
+      }
+      this.fetchTicket()
+    },
+    filterTicketByEkspedisi(data) {
+      const findIndexObj = this.ticketEkspedisiItems.findIndex(
+        items => items.value === data.value,
+      )
+      const findObj = this.ticketEkspedisi.findIndex(
+        items => items === data.value,
+      )
+      if (this.ticketEkspedisiItems[findIndexObj].onCheck === true) {
+        this.ticketEkspedisi.push(data.value)
+      } else {
+        this.ticketEkspedisi.splice(findObj, 1)
+      }
+      this.fetchTicket()
+    },
+    filterByTicketType(data) {
+      const findIndexObj = this.ticketTypeItems.findIndex(
+        items => items.id === data.id,
+      )
+      const findObj = this.filterTicketType.findIndex(
+        items => items === data.id,
+      )
+      if (this.ticketTypeItems[findIndexObj].onCheck === true) {
+        this.filterTicketType.push(data.id)
+      } else {
+        this.filterTicketType.splice(findObj, 1)
+      }
+      this.fetchTicket()
+    },
 
     statusTicketClass(data) {
       let resultVariant = ''
@@ -456,11 +457,20 @@ export default {
       }
       return resultVariant
     },
-    searchTicket: _.debounce(() => {
+    searchTicket: _.debounce(function search() {
       this.fetchTicket()
     }, 1000),
     clearFilter() {
       this.loadingDataTable = true
+      for (let x = 0; x < this.ticketTypeItems.length; x += 1) {
+        this.ticketTypeItems[x].onCheck = false
+      }
+      for (let x = 0; x < this.ticketStatusItems.length; x += 1) {
+        this.ticketStatusItems[x].onCheck = false
+      }
+      for (let x = 0; x < this.ticketEkspedisiItems.length; x += 1) {
+        this.ticketEkspedisiItems[x].onCheck = false
+      }
       const params = {}
       this.$http_komship
         .get('/v1/ticket-admin/list', {
@@ -500,6 +510,17 @@ export default {
         result = 'Selesai'
       } else if (data === 4) {
         result = 'Batal'
+      }
+      return result
+    },
+    convertTicketEkspedisi(data) {
+      let result = ''
+      if (data === 0) {
+        result = 'JNE'
+      } else if (data === 1) {
+        result = 'SICEPAT'
+      } else if (data === 2) {
+        result = 'IDEXPRESS'
       }
       return result
     },

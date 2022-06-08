@@ -91,10 +91,15 @@ export default {
         this.selectedTable = data
       }
       const popup = message => this.$swal({
-        title: 'Upss., belum tepat nih..',
-        text: message,
+        // title: 'Upss., belum tepat nih..',
+        // text: message,
+        html: `<span style="font-weight:600;font-size:20px">Upss., belum tepat nih..</span><br><span style="font-size:14px">${message}</span>`,
         confirmButtonText: 'Oke',
-        confirmButtonClass: 'btn btn-primary',
+        confirmButtonClass: 'btn btn-primary rounded-lg',
+        customClass: {
+          actions: 'd-flex p-0 justify-content-end',
+          content: 'text-left p-0',
+        },
       })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
@@ -157,7 +162,7 @@ export default {
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
             }
           } else if (col === '8') {
-            if (!regexNumber.test(val) || val.length < 1 || val.length > 1000) {
+            if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId(['8', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
@@ -189,9 +194,20 @@ export default {
       const rows = toInteger(this.jumlahBaris)
       this.table.insertRow(rows)
     },
-    removeRows() {
-      const totalSelect = this.selectedTable.val - this.selectedTable.row + 1
-      this.table.deleteRow(this.selectedTable.row, totalSelect)
+    resetTable() {
+      this.$swal({
+        title: '<span class="font-weight-bold h4">Yakin mau menghapus semua data di Speredsheet kamu?</span>',
+        imageUrl: require('@/assets/images/icons/warning.svg'),
+        showCancelButton: true,
+        confirmButtonText: 'Reset',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonText: 'Batal',
+        cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.table.setData([])
+        }
+      })
     },
     async getLastUpdated() {
       setTimeout(async () => {
@@ -303,18 +319,38 @@ export default {
                 .catch(err => {
                   const response = err.response.data
                   this.$refs.loadingSubmit.hide()
-                  const popup = message => this.$swal({
-                    html: message,
-                    imageUrl: require('@/assets/images/icons/warning.svg'),
-                    confirmButtonText: 'Perbaiki',
-                    confirmButtonClass: 'btn btn-primary',
-                  })
-                  if (response.message === "There's error in your input") {
-                    const rows = `${response.validation_error}`
-                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
-                  } else if (response.message === "There's error in shipping") {
-                    const rows = `${response.cod_error}`
-                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
+                  if (response.message === "There's error in your input" && response.validation_error !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.validation_error}" tidak sesuai format</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/warning.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
+                  }
+                  if (response.message === "There's error in your input" && response.cod_error !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/non-cod.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
+                  }
+                  if (response.message === "There's error in shipping" && response.error_data !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" diluar jangkauan Ekspedisi yang dipilih</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/non-shipping.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
                   }
                 })
             }, 800)
