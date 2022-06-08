@@ -5,15 +5,16 @@
 }
 .history {
   padding: 2em;
-  background: #f8f8f8;
+  background: #FFFFFF;
   border: 2px solid #e2e2e2;
   border-radius: 10px;
   max-height: 70vh;
   overflow: auto;
 
   &-right {
-    float: right;
-    margin-top: 6em;
+    // float: right;
+    margin-top: 1em;
+    margin-left: 57em;
     &-card {
       background: #ff6a3a;
       border-radius: 8px 0px 8px 8px;
@@ -44,7 +45,17 @@
     width: auto;
   }
   .history-right {
-    float: none;
-    margin-top: 0;
+    margin-top: 1em;
+    margin-left: 0;
+  }
+}
+
+@media screen and(min-width: 789px) and (max-width: 1024px) {
+  .history-left-card {
+    width: 50%;
+  }
+  .history-right {
+    margin-top: 1em;
+    margin-left: 30em;
   }
 }

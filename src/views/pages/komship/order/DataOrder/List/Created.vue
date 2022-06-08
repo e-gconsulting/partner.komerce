@@ -478,13 +478,6 @@ export default {
 }
 </script>
 <style>
-.icon-search{
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  top: 12px;
-  left: 26px;
-}
 .form-search {
   padding-left: 40px;
   height: 45px;

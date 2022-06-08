@@ -1,18 +1,17 @@
 <template>
   <div class="modalOnboarding">
-    <h4>Tambah Order</h4>
     <img
       src="@/assets/images/svg/imgstep4.svg"
       alt="imgstep2"
     >
     <div class="step2-text">
-      <h5>Ketika ada orderan masuk, kamu hanya perlu ke menu ini</h5>
-      <br>
+      <h5 style="margin-bottom: 10px;">
+        Tambah Order
+      </h5>
       <p>
-        Tidak perlu repot input detail produk, Kamu hanya tinggal pilih produk
-        mana yang akan di order.
+        Saatnya mulai masuk-masukin <strong>data order</strong> nih ke Komship. Data yang dimasukin standar aja seperti nama customer, alamat, belinya apa, dikirim dari mana, jumlahnya berapa, COD atau bukan, dll.
       </p>
-      <br>
+      <p>Untuk <strong>orderan jenis COD</strong> kamu bisa mempercepat proses input dengan mengaktifkan fitur pendukung <strong>"input cepat"</strong> agar dapat cukup masukin <strong>nilai COD/nilai transaksi</strong> aja.</p>
     </div>
   </div>
 </template>

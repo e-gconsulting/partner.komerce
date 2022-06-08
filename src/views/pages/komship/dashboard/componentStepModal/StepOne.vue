@@ -8,11 +8,8 @@
     <div class="step2-text">
       <h5>Pengaturan</h5>
       <br>
-      <span>Menu Pengaturan</span>
       <p>
-        dapat kamu gunakan untuk mempersonalisasikan akun Komshipmu. Melakukan
-        pengaturan di awal akan memudahkanmu ketika melakukan tahapan
-        selanjutnya seperti tambah order dan penarikan penghasilan di Komship.
+        kamu bisa langsung lengkapi data-data di menu pengaturan seperti <strong>data profile, alamat pickup, aktifkan ekspedisi, rekening bank</strong> dll data tersebut <strong> wajib diisi</strong> serta merta agar proses seperti menambahkan order atau <strong>menarik penghasilan</strong> lancar kedepannya.
       </p>
     </div>
   </div>
