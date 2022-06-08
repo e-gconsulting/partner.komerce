@@ -28,9 +28,9 @@
               <b-icon-arrow-down v-else="data.progres === 1 && data.progres === 0 "></b-icon-arrow-down>
               <div class="cardShipping-indicatior-time">
                 <div class="cardShipping-indicatior-time-top">
-                  {{data.now === null ? '0 Menit' : data.now}}
+                  {{data.now === null ? '0 Menit yang lalu' : data.now + ` yang lalu`}}
                 </div>
-                {{data.last_week === null ? '0 Menit' : data.last_week}}
+                {{data.last_week === null ? '0 Menit Minggu yang lalu' : data.last_week + ` Minggu yang lalu`}}
               </div>
             </div>
           </div>
@@ -108,7 +108,7 @@
       >
         <div
           class="p-50"
-          v-for="(items, index) in tiketEkspedisi"
+          v-for="(items, index) in ticketEkspedisiItems"
           :key="index+1"
         >
           <b-form-checkbox
@@ -117,7 +117,7 @@
             @change="filterTicketByEkspedisi(items)"
           >
             <span class="text-black">
-              {{ items.label }}
+              {{ items.value }}
             </span>
           </b-form-checkbox>
         </div>

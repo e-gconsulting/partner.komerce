@@ -5,24 +5,64 @@
     </div>
     <div class="history">
       <div
-        v-for="(historyTikcet, idx) in data.history_ticket"
+        v-for="(item, idx) in data.history_ticket"
         :key="idx"
-        v-bind="historyTikcet.type === 'Partner' ? { class: 'history-left' } : { class: 'history-right' }"
+        :class="item.type === 'Partner'
+          ? 'history-left'
+          : 'history-right'
+        "
       >
-        {{ historyTikcet.type === 'Partner' ? data.shipping : historyTikcet.name }}
+        {{ item.name }}
         <div
-          v-bind="historyTikcet.type === 'Partner' ? { class: 'history-left-card' } : { class: 'history-right-card' }"
+          :class=" item.type === 'Partner'
+            ? 'history-left-card'
+            : 'history-right-card'
+          "
         >
-          <div v-if="historyTikcet.type === 'Partner'">
+          <div v-if="item.type === 'Partner'">
             Jenis Tiket : {{ data.ticket_type }}
           </div>
-          <div v-if="historyTikcet.type === 'Partner'">
-            Deskripsi : {{ data.description }}
+          <div v-if="item.type === 'Partner'">
+            Deskripsi : {{ item.message }}
           </div>
-          {{ historyTikcet.type !== 'Partner' && historyTikcet.message }}
+          <div v-if="item.type === 'Mitra'">
+            {{ item.message }}
+          </div>
+        </div>
+        <div
+          v-for="(file, index) in item.file"
+          :key="index"
+        >
+          <video
+            v-if="handelregexvideo(file.path)"
+            width="320"
+            height="240"
+            controls
+            style="margin-top: 10px;"
+          >
+            <source
+              :src="item.path"
+              type="video/mp4"
+            >
+          </video>
+          <img
+            v-if="handleregeximage(file.path)"
+            width="220"
+            height="140"
+            :src="file.path"
+            style="margin-top: 10px;"
+          >
+          <a
+            v-if="handleregexdoc(file.path)"
+            :href="file.path"
+            download
+            style="margin-top: 10px; margin-bottom: 10px; display: block;"
+          >
+            {{ handlecuturl(file.path) }}
+          </a>
         </div>
         <div class="time">
-          {{ formatDate(historyTikcet.date_created) }}
+          {{ formatdate(item.date_created) }}
         </div>
       </div>
     </div>
@@ -30,8 +70,6 @@
 </template>
 
 <script>
-import moment from 'moment'
-
 export default {
   name: 'HistoryTiket',
   props: {
@@ -39,13 +77,32 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  methods: {
-    formatDate(d) {
-      return moment(d).format('D MMM YYYY | HH:mm')
+    handleregeximage: {
+      type: Function,
+      required: true,
+    },
+    handleregexdoc: {
+      type: Function,
+      required: true,
+    },
+    handelregexvideo: {
+      type: Function,
+      required: true,
+    },
+    formatdate: {
+      type: Function,
+      required: true,
+    },
+    handleextension: {
+      type: Function,
+      required: true,
+    },
+    handlecuturl: {
+      type: Function,
+      required: true,
     },
   },
 }
 </script>
 
-<style lang src="./HistoryTiket.scss"/>
+<style lang src="./HistoryTiket.scss" />
