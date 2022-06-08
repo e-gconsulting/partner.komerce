@@ -241,7 +241,7 @@
                       class="text-left"
                       value="Diajukan"
                     >
-                      Order Dibuats
+                      Order Dibuatk
                     </b-form-checkbox>
                     <div class="my-1">
                       <b-form-checkbox
