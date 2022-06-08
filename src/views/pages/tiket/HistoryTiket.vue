@@ -41,7 +41,7 @@
             style="margin-top: 10px;"
           >
             <source
-              :src="item.path"
+              :src="file.path"
               type="video/mp4"
             >
           </video>
