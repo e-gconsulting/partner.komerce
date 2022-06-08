@@ -57,6 +57,18 @@
               />
             </b-col>
           </b-row>
+          <label class="mt-1">Gudang</label>
+          <v-select
+            v-model="addressId"
+            :options="addressList"
+            :reduce="(option) => option.address_id"
+            label="address_name"
+          >
+            <span
+              slot="no-options"
+              @click="$refs.select.open = false"
+            />
+          </v-select>
           <label class="mt-1">Produk</label>
           <v-select
             v-model="productName"
@@ -343,6 +355,8 @@ export default {
       perPage: 50,
       pageOptions: [50, 100, 200],
       totalItems: 0,
+      addressId: null,
+      addressList: [],
     }
   },
   watch: {
@@ -354,6 +368,8 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.getProduct()
+    this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -386,6 +402,7 @@ export default {
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
+          partner_address_id: this.addressId,
         },
       })
         .then(res => {
@@ -393,7 +410,6 @@ export default {
           this.totalItems = res.data.data.total
           this.loadTable = false
           this.items = data
-          this.getProduct()
           this.loadTable = false
         }).catch(err => {
           this.$toast({
@@ -431,6 +447,15 @@ export default {
             },
           })
         })
+    },
+    async getAddress() {
+      setTimeout(async () => {
+        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
+          .then(res => {
+            const { data } = res.data
+            this.addressList = data
+          })
+      }, 800)
     },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
