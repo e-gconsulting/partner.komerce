@@ -424,20 +424,25 @@ export default {
     setDataPerformance(data) {
       this.dataPerformance = data
     },
-    formatDateParams(d) {
-      return moment(d).format('YYYY-MM-DD HH:mm:ss')
+    formatStartMonth(d) {
+      return moment(d)
+        .startOf('month')
+        .format('YYYY-MM-DD')
+        .valueOf()
+    },
+    formatEndMonth(d) {
+      return moment(d)
+        .endOf('month')
+        .format('YYYY-MM-DD')
+        .valueOf()
     },
     getDataPerformance() {
       const params = {}
       Object.assign(params, {
-        start_date: this.formatDateParams(
-          this.filterPerformance.bulan,
-        ),
+        start_date: this.formatStartMonth(this.filterPerformance.bulan),
       })
       Object.assign(params, {
-        end_data: this.formatDateParams(
-          this.filterPerformance.bulan,
-        ),
+        end_date: this.formatEndMonth(this.filterPerformance.bulan),
       })
       this.$http_komship
         .get('/v1/admin/dashboard/users-growth-performance', {
