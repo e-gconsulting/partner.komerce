@@ -515,7 +515,14 @@ export default {
         this.paymentMethod = null
         this.shipping = null
         this.listShipping = []
-        await this.addToCart()
+        await this.$http_komship.delete('/v1/cart/delete', {
+          params: {
+            cart_id: [findCartProduct.cart_id],
+          },
+        })
+          .then(async () => {
+            await this.addToCart()
+          })
       } else {
         await this.$http_komship.delete('/v1/cart/delete', {
           params: {
@@ -529,11 +536,13 @@ export default {
       }
     },
     getCartId(cart, productId) {
-      console.log('productId find cart', productId)
+      console.log('productId find cart', cart)
       let result = 0
       if (cart[0] !== undefined) {
         const findCart = cart.find(item => item.product_id === productId.product_id)
-        result = findCart.cart_id
+        if (findCart !== undefined) {
+          result = findCart.cart_id
+        }
       }
       return result
     },
