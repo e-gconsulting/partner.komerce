@@ -157,7 +157,7 @@ export default {
               popup('Masukkan Nomor HP pembeli dengan benar yaa..')
             }
           } else if (col === '4') {
-            if (!regexNumber.test(val) || val < 22311 || val > 80362) {
+            if (!regexNumber.test(val) || val < 22311 || val > 99999) {
               const columnName = jspreadsheet.getColumnNameFromId(['4', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
@@ -335,7 +335,7 @@ export default {
                     this.$swal({
                       html: `<ul><li class="text-primary">
                       <span style="color: black">Beberapa data order kurang tepat<br>
-                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" alamat tujuannya diluar jangkauan ekspedisi yang dipilih, mohon pilih ekspedisi lainnya</span>
                       </span></li></ul>`,
                       imageUrl: require('@/assets/images/icons/non-cod.svg'),
                       confirmButtonText: 'Perbaiki',
