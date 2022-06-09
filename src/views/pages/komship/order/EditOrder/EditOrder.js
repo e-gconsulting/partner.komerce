@@ -118,6 +118,8 @@ export default {
       loadingEditOrder: false,
       cartProductId: [],
       idCartDelete: [],
+
+      itemsCartToStore: [],
     }
   },
   async created() {
@@ -320,8 +322,10 @@ export default {
             stockAvailable: itemSelected.stock,
           })
           this.productHistory = false
-          await this.addToCart()
-          await this.getShippingList()
+          if (itemSelected.is_variant !== '1') {
+            await this.addToCart()
+            await this.getShippingList()
+          }
         }
         this.product = []
       }
@@ -537,11 +541,15 @@ export default {
     },
     getCartId(cart, productId) {
       console.log('productId find cart', cart)
+      console.log('product', productId)
       let result = 0
       if (cart[0] !== undefined) {
-        const findCart = cart.find(item => item.product_id === productId.product_id)
+        const findCart = cart.find(item => item.variant_id === productId.variant_id && item.product_id === productId.product_id)
         if (findCart !== undefined) {
-          result = findCart.cart_id
+          this.itemsCartToStore.push(findCart)
+          if (findCart.variant_id === productId.variant_id) {
+            result = findCart.cart_id
+          }
         }
       }
       return result
@@ -560,15 +568,41 @@ export default {
           qty: items.quantity,
           subtotal: items.subtotal,
         }))
+        const cartToDelete = await this.productSelected.map(items => ({
+          id: this.getCartId(this.cartProductId, items),
+        }))
         console.log('cart', cart)
         await this.$http_komship.post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
             this.cartId = []
             this.cartProductId = res.data.data.cart_id
-            this.cartProductId.forEach(items => this.cartId.push(items.cart_id))
-            console.log('response bulk store cart', this.cartId)
-            this.loadingCalculate = false
-            await this.calculate(true)
+            await this.cartProductId.forEach(items => {
+              this.cartId.push(items.cart_id)
+            })
+            if (this.cartId.length !== cart.length) {
+              let cartDelete = null
+              await this.cartId.forEach(async item => {
+                cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
+              })
+              console.log('cartProductId', this.cartProductId)
+              console.log('cartId', this.cartId)
+              console.log('cart delete', cartDelete)
+              this.$http_komship.delete('/v1/cart/delete', {
+                params: {
+                  cart_id: [cartDelete.cart_id],
+                },
+              }).then(() => {
+                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete)
+                this.cartId.splice(findIndexCartToDelete, 1)
+                console.log(this.cartI)
+                this.loadingCalculate = false
+                console.log('response bulk store cart', this.cartProductId)
+                this.calculate(true)
+              })
+            } else {
+              this.loadingCalculate = false
+              await this.calculate(true)
+            }
           })
       } else {
         this.isCalculate = false
@@ -978,6 +1012,7 @@ export default {
       this.customLabel = items
     },
     async submit(order) {
+      console.log('cart to submit', this.cartId)
       this.checkValidation()
       if (this.isValidate) {
         await this.$http_komship.put(`v1/order/${this.profile.partner_id}/update-detail/${this.orderId}`, this.formData)

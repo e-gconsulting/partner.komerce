@@ -124,6 +124,7 @@ export default {
 
       cartProductId: [],
       idCartDelete: [],
+      checkSameCart: {},
     }
   },
   created() {
@@ -724,9 +725,10 @@ export default {
     },
     getCartId(cart, productId) {
       console.log('productId find cart', cart)
+      console.log('product', productId)
       let result = 0
       if (cart[0] !== undefined) {
-        const findCart = cart.find(item => item.product_id === productId.product_id)
+        const findCart = cart.find(item => item.variant_id !== productId.variant_id && item.product_id === productId.product_id)
         if (findCart !== undefined) {
           result = findCart.cart_id
         }
@@ -746,6 +748,7 @@ export default {
           qty: items.quantity,
           subtotal: items.subtotal,
         }))
+        console.log('payload cart', cart)
         await this.$http_komship
           .post('/v2/cart/bulk-store-web', cart)
           .then(res => {
