@@ -335,7 +335,6 @@ export default {
           params,
         })
         .then(response => {
-          console.log(response.data.data)
           const { data } = response.data.data
           this.itemsTicket = data
           this.totalRows = response.data.data.total
