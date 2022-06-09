@@ -646,4 +646,32 @@
             </b-col>
         </b-row>
     </b-modal>
+
+    <!-- Alert Notification -->
+    <b-modal
+      ref="modal-alert-notification"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <h4 class="text-black px-4">
+          <strong>
+          Example alert
+          </strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          @click="requestPermissionNotification"
+        >
+          Oke
+        </b-button>
+      </b-row>
+    </b-modal>
  </b-card>

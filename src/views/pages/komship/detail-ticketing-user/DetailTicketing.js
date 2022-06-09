@@ -219,11 +219,12 @@ export default {
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
           this.fcmToken = currentToken
+          console.log(currentToken)
         } else {
           console.log('No registration token available. Request permission to generate one.')
         }
       }).catch(err => {
-        console.log('An error occurred while retrieving token. ', err)
+        this.$refs['modal-alert-notification'].show()
       })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
@@ -307,6 +308,9 @@ export default {
     },
     getValueFile(value) {
       return value.replaceAll('/', '/ ')
+    },
+    requestPermissionNotification() {
+      Notification.requestPermission().then(permission => { console.log('permiss', permission) })
     },
   },
 }
