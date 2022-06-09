@@ -327,7 +327,7 @@
               <b-col
                 lg="5"
               >
-                Ongkos Kirim
+                Ongkos Kirim ({{ orderData.total_weight }} Kg)
               </b-col>
               <b-col
                 lg="3"
