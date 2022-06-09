@@ -40,7 +40,7 @@ import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 import money from 'v-money'
 import Dropdown from 'vue-simple-search-dropdown'
-import Vuetify from 'vuetify'
+// import Vuetify from 'vuetify'
 import router from './router'
 import store from './store'
 import App from './App.vue'
@@ -79,7 +79,7 @@ Vue.use(VueLodash, { lodash })
 Vue.use(money, { precision: 0 })
 // Lottie Animation
 Vue.use(LottieAnimation) // add lottie-animation to your global scope
-Vue.use(Vuetify)
+// Vue.use(Vuetify)
 
 // Feather font icon - For form-wizard
 // * Shall remove it if not using font-icons of feather-icons - For form-wizard

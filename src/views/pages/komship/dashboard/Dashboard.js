@@ -11,6 +11,7 @@ import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import ChartPenghasilan from '@/views/components/chart/ChartPenghasilan.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import ModalOnBoarding from './ModalOnBoarding.vue'
 import 'vuetify/dist/vuetify.min.css'
 import './ModalOnBoarding.scss'
@@ -147,6 +148,8 @@ export default {
       stepped: 1,
       maxStepOnboard: 5,
       dataProfile: true,
+
+      perluTindakLanjut: 0,
     }
   },
   computed: {
@@ -182,6 +185,7 @@ export default {
       })
       .then(response => {
         const { data } = response.data
+        this.fetchTicketPartnerCount()
         if (data) {
           if (!data.is_onboarding) {
             this.$bvModal.show('ModalOnBoarding')
@@ -196,6 +200,23 @@ export default {
     this.$store.dispatch('saldo/getBankAccount')
   },
   methods: {
+    fetchTicketPartnerCount() {
+      this.$http_komship.get('/v1/ticket-partner/count')
+        .then(response => {
+          const { data } = response.data
+          this.perluTindakLanjut = data.perlu_tindak_lanjut
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
     setDataProfile(data) {
       this.dataProfile = data
     },
