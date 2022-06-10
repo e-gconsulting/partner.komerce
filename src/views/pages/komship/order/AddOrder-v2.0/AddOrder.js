@@ -387,8 +387,10 @@ export default {
             stockAvailable: itemSelected.stock,
           })
           this.productHistory = false
-          await this.addToCart()
-          await this.getShippingList()
+          if (itemSelected.is_variant !== '1') {
+            await this.addToCart()
+            await this.getShippingList()
+          }
         }
         this.product = []
       }
@@ -679,21 +681,22 @@ export default {
           },
         })
           .then(async () => {
-            const findIndexCart = await this.cartProductId.findIndex(item => item.cart_id === findCartProduct.cart_id)
-            console.log('findCart', findIndexCart)
-            this.cartProductId.splice(findIndexCart, 1)
             await this.addToCart()
           })
       } else {
+        let cartDelete = null
+        await this.cartId.forEach(async item => {
+          cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
+        })
+        console.log('cartProductId', this.cartProductId)
+        console.log('cartId', this.cartId)
+        console.log('cart delete', cartDelete)
         await this.$http_komship.delete('/v1/cart/delete', {
           params: {
-            cart_id: [findCartProduct.cart_id],
+            cart_id: [cartDelete.cart_id],
           },
         })
           .then(async () => {
-            const findIndexCart = await this.cartProductId.findIndex(item => item.cart_id === findCartProduct.cart_id)
-            console.log('findCart', findIndexCart)
-            this.cartProductId.splice(findIndexCart, 1)
             await this.addToCart()
             await this.getShippingList()
           })
@@ -728,9 +731,11 @@ export default {
       console.log('product', productId)
       let result = 0
       if (cart[0] !== undefined) {
-        const findCart = cart.find(item => item.variant_id !== productId.variant_id && item.product_id === productId.product_id)
+        const findCart = cart.find(item => item.variant_id === productId.variant_id && item.product_id === productId.product_id)
         if (findCart !== undefined) {
-          result = findCart.cart_id
+          if (findCart.variant_id === productId.variant_id) {
+            result = findCart.cart_id
+          }
         }
       }
       return result
@@ -751,12 +756,37 @@ export default {
         console.log('payload cart', cart)
         await this.$http_komship
           .post('/v2/cart/bulk-store-web', cart)
-          .then(res => {
+          .then(async res => {
             this.cartId = []
             this.cartProductId = res.data.data.cart_id
-            this.cartProductId.forEach(items => this.cartId.push(items.cart_id))
-            this.loadingCalculate = false
-            this.calculate(true)
+            await this.cartProductId.forEach(items => {
+              this.cartId.push(items.cart_id)
+            })
+            if (this.cartId.length !== cart.length) {
+              let cartDelete = null
+              await this.cartId.forEach(async item => {
+                cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
+              })
+              console.log('cartProductId', this.cartProductId)
+              console.log('cartId', this.cartId)
+              console.log('cart delete', cartDelete)
+              this.$http_komship.delete('/v1/cart/delete', {
+                params: {
+                  cart_id: [cartDelete.cart_id],
+                },
+              }).then(() => {
+                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
+                this.cartId.splice(findIndexCartToDelete, 1)
+                console.log(findIndexCartToDelete)
+                console.log(this.cartId)
+                this.loadingCalculate = false
+                console.log('response bulk store cart', this.cartProductId)
+                this.calculate(true)
+              })
+            } else {
+              this.loadingCalculate = false
+              await this.calculate(true)
+            }
           })
       } else {
         this.isCalculate = false

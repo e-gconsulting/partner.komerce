@@ -118,8 +118,6 @@ export default {
       loadingEditOrder: false,
       cartProductId: [],
       idCartDelete: [],
-
-      itemsCartToStore: [],
     }
   },
   async created() {
@@ -528,9 +526,16 @@ export default {
             await this.addToCart()
           })
       } else {
+        let cartDelete = null
+        await this.cartId.forEach(async item => {
+          cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
+        })
+        console.log('cartProductId', this.cartProductId)
+        console.log('cartId', this.cartId)
+        console.log('cart delete', cartDelete)
         await this.$http_komship.delete('/v1/cart/delete', {
           params: {
-            cart_id: [findCartProduct.cart_id],
+            cart_id: [cartDelete.cart_id],
           },
         })
           .then(async () => {
@@ -546,7 +551,6 @@ export default {
       if (cart[0] !== undefined) {
         const findCart = cart.find(item => item.variant_id === productId.variant_id && item.product_id === productId.product_id)
         if (findCart !== undefined) {
-          this.itemsCartToStore.push(findCart)
           if (findCart.variant_id === productId.variant_id) {
             result = findCart.cart_id
           }
@@ -592,9 +596,10 @@ export default {
                   cart_id: [cartDelete.cart_id],
                 },
               }).then(() => {
-                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete)
+                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
                 this.cartId.splice(findIndexCartToDelete, 1)
-                console.log(this.cartI)
+                console.log(findIndexCartToDelete)
+                console.log(this.cartId)
                 this.loadingCalculate = false
                 console.log('response bulk store cart', this.cartProductId)
                 this.calculate(true)
