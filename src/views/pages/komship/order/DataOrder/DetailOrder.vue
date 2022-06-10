@@ -28,6 +28,7 @@
             Batal
           </b-button>
           <b-button
+            v-if="orderData.order_status === 'Diajukan'"
             variant="primary"
             size="sm"
             class="btn-icon mr-50"
