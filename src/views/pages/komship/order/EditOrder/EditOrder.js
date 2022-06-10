@@ -508,9 +508,7 @@ export default {
     }, 1000),
     async removeProduct(data, index) {
       this.idCartDelete = this.cartProductId
-      console.log('data item product', data)
       const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id)
-      console.log('cart to remove', findCartProduct)
       this.productSelected.splice(index, 1)
       this.productHistory = false
       if (this.productSelected.length === 0) {
@@ -530,9 +528,6 @@ export default {
         await this.cartId.forEach(async item => {
           cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
         })
-        console.log('cartProductId', this.cartProductId)
-        console.log('cartId', this.cartId)
-        console.log('cart delete', cartDelete)
         await this.$http_komship.delete('/v1/cart/delete', {
           params: {
             cart_id: [cartDelete.cart_id],
@@ -545,8 +540,6 @@ export default {
       }
     },
     getCartId(cart, productId) {
-      console.log('productId find cart', cart)
-      console.log('product', productId)
       let result = 0
       if (cart[0] !== undefined) {
         const findCart = cart.find(item => item.variant_id === productId.variant_id && item.product_id === productId.product_id)
@@ -560,7 +553,6 @@ export default {
     },
     async addToCart() {
       if (this.productSelected.length > 0) {
-        console.log(this.cartProductId)
         this.loadingCalculate = true
         const cart = await this.productSelected.map(items => ({
           id: this.getCartId(this.cartProductId, items),
@@ -572,7 +564,6 @@ export default {
           qty: items.quantity,
           subtotal: items.subtotal,
         }))
-        console.log('cart', cart)
         await this.$http_komship.post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
             this.cartId = []
@@ -585,9 +576,6 @@ export default {
               await this.cartId.forEach(async item => {
                 cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
               })
-              console.log('cartProductId', this.cartProductId)
-              console.log('cartId', this.cartId)
-              console.log('cart delete', cartDelete)
               this.$http_komship.delete('/v1/cart/delete', {
                 params: {
                   cart_id: [cartDelete.cart_id],
@@ -595,10 +583,7 @@ export default {
               }).then(() => {
                 const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
                 this.cartId.splice(findIndexCartToDelete, 1)
-                console.log(findIndexCartToDelete)
-                console.log(this.cartId)
                 this.loadingCalculate = false
-                console.log('response bulk store cart', this.cartProductId)
                 this.calculate(true)
               })
             } else {
@@ -679,20 +664,14 @@ export default {
             shipping_cost: items.shipping_cost,
           }))
           this.listShipping = result
-          console.log('listShipping', this.listShipping)
           this.isShipping = true
           this.loadingOptionExpedition = false
           if (this.shipping !== null) {
             const findShipping = this.listShipping.find(items => items.shipment_name === this.shipping.shipment_name)
             if (findShipping !== undefined) {
               this.shipping = findShipping
-              console.log(findShipping)
-              console.log(true)
-              console.log('shipping on getShipping', this.shipping)
-              console.log('listShipping above', this.listShipping)
             } else {
               this.shipping = null
-              console.log(false)
             }
           }
         }).catch(err => {
@@ -745,7 +724,6 @@ export default {
         } else {
           grandTotalNew = null
         }
-        console.log('calculate', this.cartId.toString())
         this.$http_komship.get('v2/calculate', {
           params: {
             cart: this.cartId.toString(),
@@ -762,9 +740,6 @@ export default {
           const result = data.find(items => items.value === this.shipping.value)
           const resultDefault = data.find(items => items.shipment_name === this.shipping.shipment_name)
           if (result !== undefined) {
-            console.log('data on cal true', data)
-            console.log('result on cal true', result)
-            console.log('shipping on cal true', this.shipping)
             if (getAdditional) {
               this.sesuaiNominal = Math.round(result.service_fee)
               this.bebankanCustomer = Math.round(result.service_fee)
@@ -795,9 +770,6 @@ export default {
             }
             this.loadingCalculate = false
           } else {
-            console.log('data on cal false', data)
-            console.log('result on cal false', resultDefault)
-            console.log('shipping on cal false', this.shipping)
             if (getAdditional) {
               this.sesuaiNominal = Math.round(resultDefault.service_fee)
               this.bebankanCustomer = Math.round(resultDefault.service_fee)
@@ -870,7 +842,6 @@ export default {
         } else {
           grandTotalNew = null
         }
-        console.log('calculate on ex', this.cartId)
         this.$http_komship.get('v2/calculate', {
           params: {
             cart: this.cartId.toString(),
@@ -885,9 +856,6 @@ export default {
         }).then(async res => {
           const { data } = res.data
           const result = data.find(items => items.value === this.shipping.value)
-          console.log('result on ex', result)
-          console.log('data on ex', data)
-          console.log('shipping on ex', this.shipping)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)
