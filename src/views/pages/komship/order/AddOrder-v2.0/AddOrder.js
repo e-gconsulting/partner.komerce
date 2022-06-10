@@ -1190,7 +1190,9 @@ export default {
           .catch(err => {
             this.dataErrSubmit = err.response.data
             if (
-              this.dataErrSubmit.message !== 'Server Error Please Try Again.'
+              this.dataErrSubmit.message === 'Please Topup to continue your store Order.'
+              || this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment'
+              || this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order'
             ) {
               let nameButton = ''
               let titleAlert = ''
@@ -1245,15 +1247,7 @@ export default {
                 }
               })
             } else {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failure',
-                  icon: 'AlertCircleIcon',
-                  text: this.dataErrSubmit.message,
-                  variant: 'danger',
-                },
-              })
+              this.$refs['modal-error-store-order'].show()
             }
           })
       } else {

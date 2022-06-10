@@ -1037,16 +1037,30 @@ export default {
           })
           .catch(err => {
             this.dataErrSubmit = err.response.data
-            if (this.dataErrSubmit.message !== 'Server Error Please Try Again.') {
+            this.dataErrSubmit = err.response.data
+            if (
+              this.dataErrSubmit.message === 'Please Topup to continue your store Order.'
+              || this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment'
+              || this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order'
+            ) {
               let nameButton = ''
               let titleAlert = ''
-              if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+              if (
+                this.dataErrSubmit.message
+                === 'Please Topup to continue your store Order.'
+              ) {
                 nameButton = 'Cek Saldo'
                 titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
-              } else if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+              } else if (
+                this.dataErrSubmit.message
+                === 'Sorry, your balance is not enough to make a postage payment'
+              ) {
                 nameButton = 'Cek Saldo'
                 titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
-              } else if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+              } else if (
+                this.dataErrSubmit.message
+                === 'Sorry, there is not enough stock to continue the order'
+              ) {
                 nameButton = 'Cek Produk'
                 titleAlert = 'Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu'
               }
@@ -1054,33 +1068,35 @@ export default {
                 title: `<span class="font-weight-bold h4">${titleAlert}</span>`,
                 imageUrl: require('@/assets/images/icons/fail.svg'),
                 showCancelButton: true,
-                confirmButtonText: nameButton,
+                confirmButtonText: 'Oke',
                 confirmButtonClass: 'btn btn-primary',
-                cancelButtonText: 'Oke',
-                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+                cancelButtonText: nameButton,
+                cancelButtonClass:
+                  'btn btn-outline-primary bg-white text-primary',
               }).then(result => {
                 if (result.isConfirmed) {
-                  if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Please Topup to continue your store Order.'
+                  ) {
                     this.$router.push('/dashboard-komship')
                   }
-                  if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Sorry, your balance is not enough to make a postage payment'
+                  ) {
                     this.$router.push('/dashboard-komship')
                   }
-                  if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Sorry, there is not enough stock to continue the order'
+                  ) {
                     this.$router.push('/produk')
                   }
                 }
               })
             } else {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failure',
-                  icon: 'AlertCircleIcon',
-                  text: this.dataErrSubmit.message,
-                  variant: 'danger',
-                },
-              })
+              this.$refs['modal-error-store-order'].show()
             }
           })
       } else {
