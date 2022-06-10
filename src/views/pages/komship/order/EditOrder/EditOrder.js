@@ -572,9 +572,6 @@ export default {
           qty: items.quantity,
           subtotal: items.subtotal,
         }))
-        const cartToDelete = await this.productSelected.map(items => ({
-          id: this.getCartId(this.cartProductId, items),
-        }))
         console.log('cart', cart)
         await this.$http_komship.post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
@@ -1262,6 +1259,9 @@ export default {
           })
           this.loadingEditOrder = false
         })
+    },
+    refreshPage() {
+
     },
   },
 }

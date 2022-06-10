@@ -841,51 +841,51 @@ export default {
           }
         })
     },
-    async getShippingList() {
+    getShippingList() {
       this.loadingOptionExpedition = true
-      if (
-        this.destination
-        && this.paymentMethod
-        && this.profile
-        && this.address
-      ) {
-        await this.$http_komship
-          .get('v2/calculate', {
-            params: {
-              cart: this.cartId.toString(),
-              receiver_destination: this.destination.id,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-            },
-          })
-          .then(res => {
-            const { data } = res.data
-            const result = data.map(items => ({
-              label: `${items.shipment_name} - ${this.shippingTypeLabel(
-                items.shipping_type,
-              )} - Rp${this.formatNumber(items.shipping_cost)}`,
-              value: items.value,
-              image_path: items.image_path,
-              shipment_name: items.shipment_name,
-              label_shipping_type: this.shippingTypeLabel(
-                items.shipping_type,
-              ),
-              shipping_type: items.shipping_type,
-              shipping_cost: items.shipping_cost,
-            }))
-            this.listShipping = result
-            this.isShipping = true
-            this.loadingOptionExpedition = false
-          })
-          .catch(err => {
-            if (
-              err.response.data.message === 'Please Complete Your Address.'
-            ) {
-              this.$refs['modal-check-address-pickup'].show()
+      if (this.destination && this.paymentMethod && this.profile && this.address) {
+        this.$http_komship.get('v2/calculate', {
+          params: {
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
+            payment_method: this.paymentMethod,
+            partner_id: this.profile.partner_id,
+            partner_address_id: this.address.address_id,
+          },
+        }).then(async res => {
+          const { data } = res.data
+          const result = await data.map(items => ({
+            label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
+            value: items.value,
+            image_path: items.image_path,
+            shipment_name: items.shipment_name,
+            label_shipping_type: this.shippingTypeLabel(items.shipping_type),
+            shipping_type: items.shipping_type,
+            shipping_cost: items.shipping_cost,
+          }))
+          this.listShipping = result
+          console.log('listShipping', this.listShipping)
+          this.isShipping = true
+          this.loadingOptionExpedition = false
+          if (this.shipping !== null) {
+            const findShipping = this.listShipping.find(items => items.shipment_name === this.shipping.shipment_name)
+            if (findShipping !== undefined) {
+              this.shipping = findShipping
+              console.log(findShipping)
+              console.log(true)
+              console.log('shipping on getShipping', this.shipping)
+              console.log('listShipping above', this.listShipping)
+            } else {
+              this.shipping = null
+              console.log(false)
             }
-            this.loadingOptionExpedition = false
-          })
+          }
+        }).catch(err => {
+          if (err.response.data.message === 'Please Complete Your Address.') {
+            this.$refs['modal-check-address-pickup'].show()
+          }
+          this.loadingOptionExpedition = false
+        })
       } else {
         this.shipping = null
         this.listShipping = []
@@ -930,24 +930,26 @@ export default {
         } else {
           grandTotalNew = null
         }
-        this.$http_komship
-          .get('v2/calculate', {
-            params: {
-              receiver_destination: this.destination.id,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-              cart: this.cartId.toString(),
-              discount: this.discount,
-              additional_cost: this.additionalCost,
-              grandtotal: grandTotalNew,
-            },
-          })
-          .then(async res => {
-            const { data } = res.data
-            const result = data.find(
-              items => items.value === this.shipping.value,
-            )
+        console.log('calculate', this.cartId.toString())
+        this.$http_komship.get('v2/calculate', {
+          params: {
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
+            payment_method: this.paymentMethod,
+            partner_id: this.profile.partner_id,
+            partner_address_id: this.address.address_id,
+            discount: this.discount,
+            additional_cost: this.additionalCost,
+            grandtotal: grandTotalNew,
+          },
+        }).then(async res => {
+          const { data } = res.data
+          const result = data.find(items => items.value === this.shipping.value)
+          const resultDefault = data.find(items => items.shipment_name === this.shipping.shipment_name)
+          if (result !== undefined) {
+            console.log('data on cal true', data)
+            console.log('result on cal true', result)
+            console.log('shipping on cal true', this.shipping)
             if (getAdditional) {
               this.sesuaiNominal = Math.round(result.service_fee)
               this.bebankanCustomer = Math.round(result.service_fee)
@@ -962,10 +964,7 @@ export default {
             if (this.newGrandTotal === null) {
               this.newGrandTotal = result.grandtotal
             }
-            if (
-              !this.profile.partner_is_allowed_edit
-              || this.newGrandTotal === result.grandtotal
-            ) {
+            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
               this.subTotal = result.subtotal
               this.shippingCost = result.shipping_cost
               this.netProfit = result.net_profit
@@ -980,18 +979,59 @@ export default {
               this.loadingCalculate = false
             }
             this.loadingCalculate = false
-          })
-          .catch(async err => {
-            this.calculate(getAdditional)
-            this.loadingWrapperOtherCost = false
+          } else {
+            console.log('data on cal false', data)
+            console.log('result on cal false', resultDefault)
+            console.log('shipping on cal false', this.shipping)
+            if (getAdditional) {
+              this.sesuaiNominal = Math.round(resultDefault.service_fee)
+              this.bebankanCustomer = Math.round(resultDefault.service_fee)
+              this.newGrandTotal = resultDefault.grandtotal
+              this.oldGrandTotal = resultDefault.grandtotal
+              if (this.paymentMethod === 'COD') {
+                this.jenisBiayaLain = '0'
+              } else {
+                this.jenisBiayaLain = '1'
+              }
+            }
+            if (this.newGrandTotal === null) {
+              this.newGrandTotal = resultDefault.grandtotal
+            }
+            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === resultDefault.grandtotal) {
+              this.subTotal = resultDefault.subtotal
+              this.shippingCost = resultDefault.shipping_cost
+              this.netProfit = resultDefault.net_profit
+              this.serviceFee = Math.round(resultDefault.service_fee)
+              this.serviceFeePercentage = resultDefault.service_fee_percentage
+              this.weight = resultDefault.weight.toFixed(2)
+              this.grandTotal = resultDefault.grandtotal
+              this.cashback = resultDefault.cashback
+              this.cashbackPercentage = resultDefault.cashback_percentage
+              this.additionalCost = resultDefault.additional_cost
+              this.isCalculate = true
+              this.loadingCalculate = false
+            }
             this.loadingCalculate = false
+          }
+        }).catch(async err => {
+          this.loadingWrapperOtherCost = false
+          this.loadingCalculate = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
           })
+        })
       } else {
         this.isCalculate = false
         this.loadingWrapperOtherCost = false
       }
     }, 1000),
-    async calculateOnExpedition(getAdditional) {
+    calculateOnExpedition: _.debounce(function (getAdditional) {
       this.loadingWrapperOtherCost = true
       if (this.shipping && this.cartId.length > 0) {
         this.loadingCalculate = true
@@ -1015,68 +1055,72 @@ export default {
         } else {
           grandTotalNew = null
         }
-        await this.$http_komship
-          .get('v2/calculate', {
-            params: {
-              receiver_destination: this.destination.id,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-              cart: this.cartId.toString(),
-              discount: this.discount,
-              additional_cost: this.additionalCost,
-              grandtotal: grandTotalNew,
+        console.log('calculate on ex', this.cartId)
+        this.$http_komship.get('v2/calculate', {
+          params: {
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
+            payment_method: this.paymentMethod,
+            partner_id: this.profile.partner_id,
+            partner_address_id: this.address.address_id,
+            discount: this.discount,
+            additional_cost: this.additionalCost,
+            grandtotal: grandTotalNew,
+          },
+        }).then(async res => {
+          const { data } = res.data
+          const result = data.find(items => items.value === this.shipping.value)
+          console.log('result on ex', result)
+          console.log('data on ex', data)
+          console.log('shipping on ex', this.shipping)
+          if (getAdditional) {
+            this.sesuaiNominal = Math.round(result.service_fee)
+            this.bebankanCustomer = Math.round(result.service_fee)
+            this.newGrandTotal = result.grandtotal
+            this.oldGrandTotal = result.grandtotal
+            if (this.paymentMethod === 'COD') {
+              this.jenisBiayaLain = '0'
+            } else {
+              this.jenisBiayaLain = '1'
+            }
+          }
+          if (this.newGrandTotal === null) {
+            this.newGrandTotal = result.grandtotal
+          }
+          if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
+            this.subTotal = result.subtotal
+            this.shippingCost = result.shipping_cost
+            this.netProfit = result.net_profit
+            this.serviceFee = Math.round(result.service_fee)
+            this.serviceFeePercentage = result.service_fee_percentage
+            this.weight = result.weight.toFixed(2)
+            this.grandTotal = result.grandtotal
+            this.cashback = result.cashback
+            this.cashbackPercentage = result.cashback_percentage
+            this.additionalCost = result.additional_cost
+            this.isCalculateOnExpedition = true
+            this.loadingCalculate = false
+          }
+          this.loadingWrapperOtherCost = false
+          this.loadingCalculate = false
+        }).catch(async err => {
+          this.loadingWrapperOtherCost = false
+          this.loadingCalculate = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
             },
           })
-          .then(async res => {
-            const { data } = res.data
-            const result = data.find(
-              items => items.value === this.shipping.value,
-            )
-            if (getAdditional) {
-              this.sesuaiNominal = Math.round(result.service_fee)
-              this.bebankanCustomer = Math.round(result.service_fee)
-              this.newGrandTotal = result.grandtotal
-              this.oldGrandTotal = result.grandtotal
-              if (this.paymentMethod === 'COD') {
-                this.jenisBiayaLain = '0'
-              } else {
-                this.jenisBiayaLain = '1'
-              }
-            }
-            if (this.newGrandTotal === null) {
-              this.newGrandTotal = result.grandtotal
-            }
-            if (
-              !this.profile.partner_is_allowed_edit
-              || this.newGrandTotal === result.grandtotal
-            ) {
-              this.subTotal = result.subtotal
-              this.shippingCost = result.shipping_cost
-              this.netProfit = result.net_profit
-              this.serviceFee = Math.round(result.service_fee)
-              this.serviceFeePercentage = result.service_fee_percentage
-              this.weight = result.weight.toFixed(2)
-              this.grandTotal = result.grandtotal
-              this.cashback = result.cashback
-              this.cashbackPercentage = result.cashback_percentage
-              this.additionalCost = result.additional_cost
-              this.isCalculateOnExpedition = true
-              this.loadingCalculate = false
-            }
-            this.loadingWrapperOtherCost = false
-            this.loadingCalculate = false
-          })
-          .catch(async () => {
-            this.loadingWrapperOtherCost = false
-            this.loadingCalculate = false
-            this.calculateOnExpedition(getAdditional)
-          })
+        })
       } else {
         this.isCalculateOnExpedition = false
         this.loadingWrapperOtherCost = false
       }
-    },
+    }, 1000),
     shippingTypeLabel(value) {
       if (
         value === 'REG19'
@@ -1308,6 +1352,9 @@ export default {
       if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
         e.preventDefault()
       }
+    },
+    refreshPage() {
+
     },
   },
 }
