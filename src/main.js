@@ -22,9 +22,7 @@ navigator.serviceWorker.register('firebase-messaging-sw.js', {
   .then(registration => {
     const messaging = getMessaging()
     messaging.useServiceWorker(registration)
-  }).catch(err => {
-    console.log('err main', err)
-  })
+  }).catch(() => {})
 
 import Vue from 'vue'
 import {

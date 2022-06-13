@@ -65,6 +65,8 @@ export default {
       // cancel ticket
       loadingCancelTicket: false,
       moment,
+
+      userId: JSON.parse(localStorage.userData),
     }
   },
   created() {
@@ -216,10 +218,29 @@ export default {
       return result
     },
     fetchDataFirebase() {
+      Notification.requestPermission().then(permission => {
+        if (!('permission' in Notification)) {
+          Notification.permission = permission
+        }
+        // you got permission !
+      }, rejection => {
+        // handle rejection here.
+      })
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
           this.fcmToken = currentToken
           console.log(currentToken)
+          Notification.requestPermission().then(permission => {
+            console.log('permiss', permission)
+            if (permission === 'denied' || permission === 'default') {
+              this.$refs['modal-alert-notification'].show()
+            }
+          })
+          this.$http
+            .post('/user/update-fcm-token', {
+              user_id: this.userId.id,
+              fcm_token: currentToken,
+            })
         } else {
           console.log('No registration token available. Request permission to generate one.')
         }
