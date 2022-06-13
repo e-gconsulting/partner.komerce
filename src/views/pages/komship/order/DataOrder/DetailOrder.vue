@@ -389,7 +389,7 @@
               </b-col>
             </b-row>
             <b-row
-              v-if="orderData.grandtotal !== orderData.old_grandtotal"
+              v-if="orderData.grandtotal !== orderData.old_grandtotal || orderData.is_mass_order === 1"
               class="mt-1"
             >
               <b-col lg="3" />
@@ -628,6 +628,7 @@ export default {
         const order = await httpKomship2.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
         const { data } = await order.data
         this.orderData = await data
+        console.log(data)
         this.statusNetProfit = data.net_profit.toString().charAt(0)
         this.itemOrder = await data.product
         this.statusOrder = await this.setAlert(data.order_status)
