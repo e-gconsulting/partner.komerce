@@ -342,7 +342,6 @@ export default {
               username_email: this.usernameEmail,
               password: this.password,
               login_from: 'website',
-              fcm_token: this.fcmToken,
             })
             .then(response => {
               const { data } = response

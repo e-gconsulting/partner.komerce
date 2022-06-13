@@ -228,6 +228,7 @@ export default
       totalPerPage: 250,
 
       finished: 0,
+      userId: JSON.parse(localStorage.userData),
     }
   },
   watch: {
@@ -562,9 +563,28 @@ export default
       }
     },
     fetchDataFirebase() {
+      Notification.requestPermission().then(permission => {
+        if (!('permission' in Notification)) {
+          Notification.permission = permission
+        }
+        // you got permission !
+      }, rejection => {
+        // handle rejection here.
+      })
       getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
         if (currentToken) {
           this.fcmToken = currentToken
+          this.$http
+            .post('/user/update-fcm-token', {
+              user_id: this.userId.id,
+              fcm_token: currentToken,
+            })
+          Notification.requestPermission().then(permission => {
+            console.log('permiss', permission)
+            if (permission === 'denied' || permission === 'default') {
+              this.$refs['modal-alert-notification'].show()
+            }
+          })
         } else {
           this.$toast({
             component: ToastificationContent,
@@ -576,16 +596,8 @@ export default
             },
           }, 2000)
         }
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: `An error occurred while retrieving token. ${err}`,
-            variant: 'danger',
-          },
-        }, 2000)
+      }).catch(() => {
+        this.$refs['modal-alert-notification'].show()
       })
     },
     convertTicketStatus(data) {
