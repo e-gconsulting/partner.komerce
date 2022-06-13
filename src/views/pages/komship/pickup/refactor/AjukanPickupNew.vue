@@ -949,7 +949,7 @@ export default {
       setTimeout(async () => {
         await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
           params: {
-            order_status: 'Dipacking',
+            order_status: 'Diajukan',
             page: this.currentPage,
             total_per_page: this.perPage,
           },
