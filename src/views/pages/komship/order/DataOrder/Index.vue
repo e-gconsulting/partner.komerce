@@ -405,6 +405,18 @@
             {{ totalKirim }}
           </b-badge>
           Dikirim
+          <b-badge
+            v-if="totalProblem > 0"
+            variant="danger"
+            class="ml-1 my-auto"
+            style="padding: 3px 5px!important;"
+          >
+            <span class="text-sm">{{ totalProblem }}</span>
+            <b-icon-info-circle
+              class="mr-0 my-auto"
+              style="margin-left: 3px;"
+            />
+          </b-badge>
         </template>
         <send />
       </b-tab>
@@ -472,6 +484,7 @@ export default {
       totalAjukan: null,
       totalPacking: null,
       totalKirim: null,
+      totalProblem: null,
       dateRange: { startDate, endDate },
       orderDate: '',
       loading: false,
@@ -528,54 +541,24 @@ export default {
       return moment(d).format('D MMM YYYY')
     },
     fetchData() {
-      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
-        params: { order_status: 'Diajukan' },
-      }).then(res => {
-        const { data } = res.data
-        this.totalAjukan = data.total
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
+      this.$http_komship.get(`v1/order/count/order-problem/${this.profile.partner_detail.id}`)
+        .then(res => {
+          const { data } = res.data
+          this.totalAjukan = data.diajukan
+          this.totalPacking = data.dipacking
+          this.totalKirim = data.dikirim
+          this.totalProblem = data.order_problem
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
         })
-      })
-      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
-        params: { order_status: 'Dipacking' },
-      }).then(res => {
-        const { data } = res.data
-        this.totalPacking = data.total
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        })
-      })
-      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
-        params: { order_status: 'Dikirim' },
-      }).then(res => {
-        const { data } = res.data
-        this.totalKirim = data.total
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        })
-      })
     },
     handleClosePopUp() {
       this.$root.$emit('bv::hide::modal', 'modalExport')
