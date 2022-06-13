@@ -258,6 +258,14 @@
               @click.prevent="copyResi(data.item.airway_bill)"
             >
           </div>
+          <b-button
+            v-if="data.item.is_problem === 1"
+            variant="danger"
+            style="padding: 5px;font-size: 12px;"
+            @click="openTicketing(data.item.ticket_id)"
+          >
+            Kendala <b-icon-info-circle />
+          </b-button>
         </template>
         <template #cell(details)="data">
           <b-button
@@ -500,6 +508,11 @@ export default {
     async setPage(totalPage) {
       this.perPage = totalPage
       this.fetchData()
+    },
+    openTicketing(value) {
+      if (value !== null) {
+        this.$router.push(`/ticketing/detail/${value}`)
+      }
     },
   },
 }
