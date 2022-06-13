@@ -408,14 +408,14 @@
           <b-badge
             v-if="totalProblem > 0"
             variant="danger"
-            class="ml-1 my-auto"
+            class="ml-1 my-auto d-flex"
             style="padding: 3px 5px!important;"
           >
             <span class="text-sm">{{ totalProblem }}</span>
-            <b-icon-info-circle
-              class="mr-0 my-auto"
-              style="margin-left: 3px;"
-            />
+            <img
+              src="@/assets/images/icons/info-circle-white.svg"
+              style="margin-left:3px"
+            >
           </b-badge>
         </template>
         <send />
