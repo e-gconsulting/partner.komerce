@@ -305,9 +305,16 @@
             :fields="fieldsOrder"
             :items="itemsOrder"
           >
+            <template #head(action)>
+              <b-form-checkbox
+                v-model="checkAllOrder"
+                @input="checkOrder(true)"
+              />
+            </template>
             <template #cell(action)="data">
               <b-form-checkbox
                 v-model="order"
+                name="checkboxOrder"
                 :value="data.item"
               />
             </template>
@@ -752,7 +759,6 @@
           <b-button
             variant="outline-primary"
             class="mr-1"
-            @click="handleCloseAlertSubmit"
           >
             Batal
           </b-button>
@@ -869,6 +875,7 @@ export default {
       ],
       itemsDataOrder: [],
       loadingPickupError: false,
+      checkAllOrder: null,
     }
   },
   watch: {
@@ -1035,6 +1042,13 @@ export default {
     submitNewPickup() {
       this.$refs['modal-alert-submit-pickup'].hide()
       this.submitPickup()
+    },
+    checkOrder() {
+      if (this.checkAllOrder) {
+        this.order = this.itemsOrder
+      } else {
+        this.order = []
+      }
     },
   },
 }
