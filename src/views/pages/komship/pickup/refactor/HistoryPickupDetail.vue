@@ -2646,16 +2646,20 @@ export default {
     },
     onSubmitOptionPrint(values) {
       if (values === 1) {
-        this.$refs.html2Pdf.generatePdf()
+        this.paramsBase64 = 'page_1'
+        this.getPrintLabelBase64(values)
       } else if (values === 2) {
-        this.$refs.html2Pdf.generatePdf()
+        this.paramsBase64 = 'page_2'
+        this.getPrintLabelBase64(values)
       } else if (values === 4) {
         this.paramsBase64 = 'page_4'
         this.getPrintLabelBase64(values)
       } else if (values === 100) {
-        this.$refs.html2PdfThermalSquare.generatePdf()
+        this.paramsBase64 = 'page_5'
+        this.getPrintLabelBase64(values)
       } else {
-        this.$refs.html2PdfThermal.generatePdf()
+        this.paramsBase64 = 'page_6'
+        this.getPrintLabelBase64(values)
       }
       this.handlePreviewModalPrint = true
       this.valuesOption = values
