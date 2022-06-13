@@ -425,7 +425,6 @@ export default {
           const { data } = res.data
           this.totalItems = data.total
           this.loadTable = false
-          console.log(data)
           return data.data
         })
         .then(items => items)
