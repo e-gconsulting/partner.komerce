@@ -318,6 +318,17 @@
                 :value="data.item"
               />
             </template>
+            <template #cell(customer_name)="data">
+              <span class="font-bold">{{ data.item.customer_name }}</span><br>
+              <div
+                class="d-flex"
+              >
+                <img
+                  :src="data.item.shipment_image_path"
+                  style="width:45px"
+                ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
+              </div>
+            </template>
             <template #cell(product)="data">
               <div v-if="data.item.product[0]">
                 <div class="d-flex">
@@ -1049,6 +1060,14 @@ export default {
       } else {
         this.order = []
       }
+    },
+    shippingTypeLabel(value) {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
+        return 'Reguler'
+      } if (value === 'GOKIL') {
+        return 'Cargo'
+      }
+      return value
     },
   },
 }
