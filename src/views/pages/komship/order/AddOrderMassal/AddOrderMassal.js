@@ -338,7 +338,7 @@ export default {
                     this.$swal({
                       html: `<ul><li class="text-primary">
                       <span style="color: black">Beberapa data order kurang tepat<br>
-                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" alamat tujuannya diluar jangkauan ekspedisi yang dipilih, mohon pilih ekspedisi lainnya</span>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
                       </span></li></ul>`,
                       imageUrl: require('@/assets/images/icons/non-cod.svg'),
                       confirmButtonText: 'Perbaiki',
@@ -349,7 +349,7 @@ export default {
                     this.$swal({
                       html: `<ul><li class="text-primary">
                       <span style="color: black">Beberapa data order kurang tepat<br>
-                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" diluar jangkauan Ekspedisi yang dipilih</span>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" alamat tujuannya diluar jangkauan ekspedisi yang dipilih, mohon pilih ekspedisi lainnya</span>
                       </span></li></ul>`,
                       imageUrl: require('@/assets/images/icons/non-shipping.svg'),
                       confirmButtonText: 'Perbaiki',
