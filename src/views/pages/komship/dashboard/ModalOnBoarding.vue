@@ -50,13 +50,13 @@ export default {
       }
     },
     updateProfileOnBoarding() {
-      this.disabledOnboardingMulai = true
+      this.disabledOnboardingMulai = false
       this.$http_komship
         .put('/v1/partner/onboarding/update', {})
         .then(resp => {
           if (resp.data.code === 200 && resp.data.status === 'success') {
             this.loadingOnboarding = false
-            this.$bvModal.hide('modal-onboarding')
+            this.$bvModal.hide('ModalOnBoarding')
           }
         })
         .catch(() => {
@@ -66,4 +66,4 @@ export default {
   },
 }
 </script>
-<style lang scoped src='./ModalOnBoarding.scss'/>
+<!-- <style lang="css" src="vuetify/dist/vuetify.min.css" scoped/> -->

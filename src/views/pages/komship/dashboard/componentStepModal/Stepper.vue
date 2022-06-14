@@ -100,6 +100,7 @@ import StepTwo from './StepTwo.vue'
 import StepThree from './StepThree.vue'
 import StepFour from './StepFour.vue'
 import StepFive from './StepFive.vue'
+import 'vuetify/dist/vuetify.min.css'
 
 export default {
   name: 'Stepper',
@@ -118,3 +119,4 @@ export default {
   },
 }
 </script>
+<style lang="css" src="vuetify/dist/vuetify.min.css" scoped/>

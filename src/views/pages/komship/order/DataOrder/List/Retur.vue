@@ -57,6 +57,18 @@
               />
             </b-col>
           </b-row>
+          <label class="mt-1">Gudang</label>
+          <v-select
+            v-model="addressId"
+            :options="addressList"
+            :reduce="(option) => option.address_id"
+            label="address_name"
+          >
+            <span
+              slot="no-options"
+              @click="$refs.select.open = false"
+            />
+          </v-select>
           <label class="mt-1">Produk</label>
           <v-select
             v-model="productFilter"
@@ -340,6 +352,8 @@ export default {
       perPage: 50,
       pageOptions: [50, 100, 200],
       totalItems: 0,
+      addressId: null,
+      addressList: [],
     }
   },
   watch: {
@@ -353,6 +367,8 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.getProduct()
+    this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -431,6 +447,15 @@ export default {
           })
         })
     },
+    async getAddress() {
+      setTimeout(async () => {
+        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
+          .then(res => {
+            const { data } = res.data
+            this.addressList = data
+          })
+      }, 800)
+    },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
@@ -447,13 +472,6 @@ export default {
 }
 </script>
 <style>
-.icon-search{
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  top: 12px;
-  left: 26px;
-}
 .form-search {
   padding-left: 40px;
   height: 45px;

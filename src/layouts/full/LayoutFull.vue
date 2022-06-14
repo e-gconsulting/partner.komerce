@@ -12,5 +12,8 @@ export default {
   components: {
     LayoutFull,
   },
+  mounted() {
+    this.$router.listen(newLocation => { console.log(newLocation) })
+  },
 }
 </script>

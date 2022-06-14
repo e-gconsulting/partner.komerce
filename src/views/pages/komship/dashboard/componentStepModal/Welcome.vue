@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="stepped === 1"
-    class="modalOnboarding step1"
+    class="modalOnboarding welcome step1"
   >
     <div class="modalOnboarding__step1--greeting">
       <h5 class="modalOnboarding__step1--title my-0 text-black">
@@ -54,4 +54,4 @@ export default {
 }
 </script>
 
-<style lang src='../ModalOnBoarding.scss'>
+<style lang src='../ModalOnBoarding.scss'/>

@@ -225,8 +225,29 @@ import { required, email } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import store from '@/store/index'
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+} from 'firebase/messaging'
+import { initializeApp } from 'firebase/app'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
+  authDomain: 'komship-ticketing.firebaseapp.com',
+  projectId: 'komship-ticketing',
+  storageBucket: 'komship-ticketing.appspot.com',
+  messagingSenderId: '669211426801',
+  appId: '1:669211426801:web:55bca3d2dac7238b298e50',
+}
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+
+// Initialize Firebase Cloud Messaging and get a reference to the service
+const messaging = getMessaging()
 
 export default {
   directives: {
@@ -277,6 +298,8 @@ export default {
       // Mode Page
       modeVerificationEmail: false,
       modeLogin: true,
+
+      fcmToken: '',
     }
   },
   setup() {
@@ -293,6 +316,17 @@ export default {
     passwordToggleIcon() {
       return this.passwordFieldType === 'password' ? 'EyeIcon' : 'EyeOffIcon'
     },
+  },
+  created() {
+    getToken(messaging, { vapidKey: 'BLZr38POWZ6vwjTUx4v2vlPHK-3fiI-DMPY18tAbu1dpchDiAYMyR7l2PE3WbH5hOM55X2zBR_C-5BLrpUA1-ZM' }).then(currentToken => {
+      if (currentToken) {
+        this.fcmToken = currentToken
+      } else {
+        console.log('No registration token available. Request permission to generate one.')
+      }
+    }).catch(err => {
+      console.log('An error occurred while retrieving token. ', err)
+    })
   },
   methods: {
     login() {

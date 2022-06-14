@@ -8,6 +8,7 @@ import dashboard from './app/dashboard'
 import penghasilan from './app/penghasilan'
 import saldo from './app/saldo'
 import saldoPenarikan from './app/saldo_penarikan'
+import tiket from './app/tiket'
 import saldoDetail from './app/saldo_detail'
 import appConfig from './app-config'
 import verticalMenu from './vertical-menu'
@@ -31,6 +32,7 @@ export default new Vuex.Store({
     saldoDetail,
     menuaccess,
     pencairan,
+    tiket,
   },
   plugins: [createPersistedState({
     key: 'vuex-store',

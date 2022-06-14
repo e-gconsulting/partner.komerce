@@ -14,6 +14,7 @@ export default {
     const { contentWidth } = useAppConfig()
     return { contentWidth }
   },
+
 }
 </script>
 

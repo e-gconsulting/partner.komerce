@@ -91,19 +91,37 @@ export default {
         this.selectedTable = data
       }
       const popup = message => this.$swal({
-        title: 'Upss., belum tepat nih..',
-        text: message,
+        // title: 'Upss., belum tepat nih..',
+        // text: message,
+        html: `<span style="font-weight:600;font-size:20px">Upss., belum tepat nih..</span><br><span style="font-size:14px">${message}</span>`,
         confirmButtonText: 'Oke',
-        confirmButtonClass: 'btn btn-primary',
+        confirmButtonClass: 'btn btn-primary rounded-lg',
+        customClass: {
+          actions: 'd-flex p-0 justify-content-end',
+          content: 'text-left p-0',
+        },
       })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
         minDimensions: [11, 200],
         tableHeight: '60vh',
         tableOverflow: true,
+        autoIncrement: false,
         defaultColWidth: 150,
         columns: [
-          { type: 'calendar', title: 'Tanggal Order', options: { format: 'YYYY-MM-DD' } },
+          {
+            type: 'calendar',
+            title: 'Tanggal Order',
+            options: {
+              format: 'YYYY-MM-DD',
+              months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
+              weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+              weekdays_short: ['M', 'S', 'S', 'R', 'K', 'J', 'S'],
+              textDone: 'SELESAI',
+              textReset: 'HAPUS',
+              textUpdate: 'OK',
+            },
+          },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
           },
@@ -139,13 +157,13 @@ export default {
               popup('Masukkan Nomor HP pembeli dengan benar yaa..')
             }
           } else if (col === '4') {
-            if (!regexNumber.test(val) || val < 22311 || val > 80362) {
+            if (!regexNumber.test(val) || val < 22311 || val > 99999) {
               const columnName = jspreadsheet.getColumnNameFromId(['4', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
             }
           } else if (col === '8') {
-            if (!regexNumber.test(val) || val.length < 1 || val.length > 1000) {
+            if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId(['8', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
@@ -165,37 +183,6 @@ export default {
           }
         },
         onselection(instance, col, row, cell, val) {
-          if (col === 0) {
-            const columnName = jspreadsheet.getColumnNameFromId(['0', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 1) {
-            const columnName = jspreadsheet.getColumnNameFromId(['1', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 6) {
-            const columnName = jspreadsheet.getColumnNameFromId(['6', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 7) {
-            const columnName = jspreadsheet.getColumnNameFromId(['7', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 9) {
-            const columnName = jspreadsheet.getColumnNameFromId(['9', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          } else if (col === 10) {
-            const columnName = jspreadsheet.getColumnNameFromId(['10', row])
-            const cuk = instance.jexcel.getCell(columnName)
-            instance.jexcel.openEditor(cuk)
-            cuk.children[0].dropdown.close(true)
-          }
           const data = {
             instance, cell, col, row, val,
           }
@@ -208,9 +195,20 @@ export default {
       const rows = toInteger(this.jumlahBaris)
       this.table.insertRow(rows)
     },
-    removeRows() {
-      const totalSelect = this.selectedTable.val - this.selectedTable.row + 1
-      this.table.deleteRow(this.selectedTable.row, totalSelect)
+    resetTable() {
+      this.$swal({
+        title: '<span class="font-weight-bold h4">Yakin mau menghapus semua data di Speredsheet kamu?</span>',
+        imageUrl: require('@/assets/images/icons/warning.svg'),
+        showCancelButton: true,
+        confirmButtonText: 'Reset',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonText: 'Batal',
+        cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.table.setData([])
+        }
+      })
     },
     async getLastUpdated() {
       setTimeout(async () => {
@@ -236,6 +234,7 @@ export default {
     },
     submitSheets(method) {
       const json = this.table.getJson()
+      let number = 1
       const data = json.map(items => ({
         order_date: items[0] || items.order_date || '',
         address: items[1] || items.address || '',
@@ -249,6 +248,7 @@ export default {
         payment_method: items[9] || items.payment_method || '',
         expedition: items[10] || items.expedition || '',
         grandtotal: items[11] || items.grandtotal || '',
+        row: number++,
       }))
       if (method === 'save') {
         this.loadingDraft = true
@@ -299,6 +299,7 @@ export default {
               payment_method: items.payment_method,
               expedition: items.expedition,
               grandtotal: items.grandtotal !== '' ? toInteger(items.grandtotal) : '',
+              row: items.row,
             }))
             setTimeout(async () => {
               await this.$http_komship.post('/v1/order/sheet/save-submit', {
@@ -322,18 +323,38 @@ export default {
                 .catch(err => {
                   const response = err.response.data
                   this.$refs.loadingSubmit.hide()
-                  const popup = message => this.$swal({
-                    html: message,
-                    imageUrl: require('@/assets/images/icons/warning.svg'),
-                    confirmButtonText: 'Perbaiki',
-                    confirmButtonClass: 'btn btn-primary',
-                  })
-                  if (response.message === "There's error in your input") {
-                    const rows = `${response.validation_error}`
-                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" tidak sesuai format</span></span></li></ul>`)
-                  } else if (response.message === "There's error in shipping") {
-                    const rows = `${response.cod_error}`
-                    popup(`<ul><li class="text-primary" style=""><span style="color: black">Beberapa data order kurang tepat<br><span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${rows}" diluar jangkauan Ekspedisi yang dipilih</span></span></li></ul>`)
+                  if (response.message === "There's error in your input" && response.validation_error.length >= 1) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.validation_error}" tidak sesuai format</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/warning.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
+                  }
+                  if (response.message === "There's error in your input" && response.cod_error.length >= 1) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/non-cod.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
+                  }
+                  if (response.message === "There's error in shipping" && response.error_data !== []) {
+                    this.$swal({
+                      html: `<ul><li class="text-primary">
+                      <span style="color: black">Beberapa data order kurang tepat<br>
+                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" alamat tujuannya diluar jangkauan ekspedisi yang dipilih, mohon pilih ekspedisi lainnya</span>
+                      </span></li></ul>`,
+                      imageUrl: require('@/assets/images/icons/non-shipping.svg'),
+                      confirmButtonText: 'Perbaiki',
+                      confirmButtonClass: 'btn btn-primary',
+                    })
                   }
                 })
             }, 800)

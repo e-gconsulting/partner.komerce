@@ -11,9 +11,14 @@
     > h5 {
       color: #000000;
       font-weight: bold;
+      font-size: 24px;
     }
     > span {
       font-weight: 600;
+    }
+    p {
+      font-size: 16px;
+      text-align: justify;
     }
   }
 }
@@ -23,6 +28,21 @@
   img {
     margin: auto;
     margin-bottom: 2em;
+  }
+  &-text {
+    text-align: start;
+    color: #000000;
+    > h5 {
+      color: #000000;
+      font-weight: bold;
+      font-size: 24px;
+    }
+    > span {
+      font-size: 16px;
+    }
+    p {
+      font-size: 16px;
+    }
   }
 }
 .step4 {
@@ -68,7 +88,11 @@
     }
   }
 }
+.welcome {
+  margin: 0 !important;
+}
 .modalOnboarding {
+  margin-top: 1em;
   text-align: center;
   > h4 {
     color: #000000;
@@ -83,7 +107,7 @@
     }
     &--title {
       font-weight: bold !important;
-      font-size: 24px !important;
+      font-size: 32px !important;
       line-height: 150% !important;
       letter-spacing: 0.5px !important;
     }
@@ -140,7 +164,15 @@
   height: 0;
   position: relative;
   z-index: 1;
+  width: 70%;
+  margin: auto;
 }
+@media screen and(min-width: 320px) and (max-width: 768px) {
+  .v-stepper__header {
+    width: auto;
+  }
+}
+
 .v-stepper__step--active {
   span {
     -webkit-box-align: center;
