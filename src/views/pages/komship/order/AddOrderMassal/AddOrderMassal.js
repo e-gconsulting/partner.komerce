@@ -23,14 +23,25 @@ export default {
       lastUpdated: null,
       loadingDraft: false,
       loadingSubmit: false,
+      saldo: null,
     }
   },
   mounted() {
     this.checkExpedition()
     this.getDataSheet()
     this.$refs.loadingPage.show()
+    this.checkSaldo()
   },
   methods: {
+    checkSaldo() {
+      setTimeout(async () => {
+        await this.$http_komship.get('v1/dashboard/partner/balanceSummary')
+          .then(res => {
+            const { data } = res.data
+            this.saldo = data.balance
+          })
+      }, 800)
+    },
     getDataSheet() {
       setTimeout(async () => {
         await this.$http_komship.get('/v1/order/sheet/data')
@@ -70,14 +81,25 @@ export default {
             this.sourceVariant = ['-']
             if (data.addresses === []) {
               this.$swal({
-                title:
-              '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
+                title: '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
                 imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
                 confirmButtonText: 'Tambahkan Alamat Pick Up',
                 confirmButtonClass: 'btn btn-primary',
               }).then(response => {
                 if (response.isConfirmed) {
                   this.$router.push('setting-kompship/pickup')
+                }
+              })
+            }
+            if (data.product === []) {
+              this.$swal({
+                title: '<span class="font-weight-bold h4">Sebelum lanjut membuat order, tambahkan produk yang akan kamu jual dahulu ya,</span>',
+                imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+                confirmButtonText: 'Tambahkan Produk',
+                confirmButtonClass: 'btn btn-primary',
+              }).then(response => {
+                if (response.isConfirmed) {
+                  this.$router.push('add-product')
                 }
               })
             }
@@ -112,6 +134,21 @@ export default {
           actions: 'd-flex p-0 justify-content-end',
           content: 'text-left p-0',
         },
+      })
+      const { saldo } = this
+      const popupSaldo = () => this.$swal({
+        html: '<span style="font-weight:600;font-size:20px">Kamu harus mengisi saldo dulu ya, sebelum membuat order dengan metode Transfer Bank</span>',
+        imageUrl: require('@/assets/images/icons/warning.svg'),
+        confirmButtonText: 'Top up Saldo',
+        confirmButtonClass: 'btn btn-primary rounded-lg',
+        showCancelButton: true,
+        cancelButtonText: 'Kembali',
+        cancelButtonColor: '#FFFFFF',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(response => {
+        if (response.isConfirmed) {
+          this.$router.push('dashboard-komship')
+        }
       })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
         data: this.dataSheets,
@@ -191,6 +228,12 @@ export default {
               const columnName = jspreadsheet.getColumnNameFromId(['5', row])
               instance.jexcel.setValue(columnName, '')
               popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
+            }
+          } else if (col === '9') {
+            if (val === 'BANK TRANSFER' && saldo <= 0) {
+              popupSaldo()
+              const columnName = jspreadsheet.getColumnNameFromId(['9', row])
+              instance.jexcel.setValue(columnName, '')
             }
           }
         },
