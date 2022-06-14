@@ -419,6 +419,7 @@ export default {
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
+          partner_address_id: this.addressId,
         },
       })
         .then(res => {
