@@ -175,7 +175,7 @@ export default {
               popup('Masukkan Nama pembeli dengan benar yaa..')
             }
           } else if (col === '5') {
-            if (val.length < 11 || val.length > 85) {
+            if (val.length < 11 || val.length > 185) {
               const columnName = jspreadsheet.getColumnNameFromId(['5', row])
               instance.jexcel.setValue(columnName, '')
               popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
