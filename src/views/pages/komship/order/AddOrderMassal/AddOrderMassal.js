@@ -81,14 +81,25 @@ export default {
             this.sourceVariant = ['-']
             if (data.addresses === []) {
               this.$swal({
-                title:
-              '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
+                title: '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
                 imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
                 confirmButtonText: 'Tambahkan Alamat Pick Up',
                 confirmButtonClass: 'btn btn-primary',
               }).then(response => {
                 if (response.isConfirmed) {
                   this.$router.push('setting-kompship/pickup')
+                }
+              })
+            }
+            if (data.product === []) {
+              this.$swal({
+                title: '<span class="font-weight-bold h4">Sebelum lanjut membuat order, tambahkan produk yang akan kamu jual dahulu ya,</span>',
+                imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+                confirmButtonText: 'Tambahkan Produk',
+                confirmButtonClass: 'btn btn-primary',
+              }).then(response => {
+                if (response.isConfirmed) {
+                  this.$router.push('add-product')
                 }
               })
             }
