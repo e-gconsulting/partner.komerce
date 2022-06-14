@@ -80,7 +80,7 @@
                         v-if="messageErrorIsActive"
                         class="text-primary"
                       >
-                        *hindari menggunakan simbol (/) (=) (:) (;)
+                        *hindari menggunakan simbol (/) (=) (:) (;) (&)
                       </small>
                       {{ productName.length }}/60
                     </small>
@@ -3267,7 +3267,7 @@ export default {
       return String(e).substring(0, 60)
     },
     validateInputProductName(e) {
-      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 38) {
         e.preventDefault()
         this.messageErrorIsActive = true
       } else {

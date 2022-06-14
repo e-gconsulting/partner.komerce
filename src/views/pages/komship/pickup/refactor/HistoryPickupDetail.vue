@@ -637,7 +637,7 @@
             v-model="printDateItem"
             class="custom-control-primary mr-2"
           >
-            Tambahkan tanggal cetal di label
+            Tambahkan tanggal cetak di label
           </b-form-checkbox>
           <b-button
             variant="primary"

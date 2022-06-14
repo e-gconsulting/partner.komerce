@@ -52,6 +52,7 @@ export default {
       errorNumber: false,
       errorNumberEdit: false,
       messageErrorLengthSenderName: false,
+      messageErrorLengthSenderNameEdit: false,
       senderIdentity1Name: null,
       senderIdentity1NoHp: null,
       indexIdentity: 1,
@@ -388,6 +389,14 @@ export default {
         this.messageErrorLengthSenderName = true
       } else {
         this.messageErrorLengthSenderName = false
+      }
+    },
+    validateInputNameSenderEdit(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorLengthSenderNameEdit = true
+      } else {
+        this.messageErrorLengthSenderNameEdit = false
       }
     },
   },
