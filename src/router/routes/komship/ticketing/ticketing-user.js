@@ -12,11 +12,12 @@ export default [
   },
   {
     path: '/ticketing/detail/:ticket_id',
-    name: 'detail-ticketing-user',
+    name: 'detail-ticketing-detail-order',
     component: () => import('@/views/pages/komship/detail-ticketing-user/DetailTicketing.vue'),
     meta: {
       name: 'detail-ticketing-user',
       routeTicket: 'ticketing-user',
+      routeToDetailOrder: 'detail-ticketing-detail-order',
       navActiveLink: 'ticketing-user',
       resource: 'Produk',
       action: 'manage',

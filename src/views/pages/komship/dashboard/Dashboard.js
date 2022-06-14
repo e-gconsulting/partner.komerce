@@ -238,7 +238,11 @@ export default {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
-        window.open(response.data.data.invoice_xendit_url, '_blank').focus()
+        try {
+          window.open(response.data.data.invoice_xendit_url, '_blank').focus()
+        } catch (e) {
+          alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
+        }
         this.$refs['modal-after-topup'].show()
         this.loadingSubmitTopUp = false
       } catch (e) {
