@@ -118,3 +118,4 @@ export default {
   },
 }
 </script>
+<style lang="css" src="vuetify/dist/vuetify.min.css" scoped />

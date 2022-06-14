@@ -29,3 +29,4 @@ export default {
 <style>
 
 </style>
+<style lang="css" src="vuetify/dist/vuetify.min.css" scoped />
