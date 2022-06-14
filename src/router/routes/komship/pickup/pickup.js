@@ -2,7 +2,7 @@ export default [
   {
     path: '/ajukan-pickup',
     name: 'ajukan-pickup',
-    component: () => import('@/views/pages/komship/pickup/refactor/AjukanPickupNew.vue'),
+    component: () => import('@/views/pages/komship/pickup/refactor/AjukanPickup.vue'),
     meta: {
       name: 'ajukan-pickup',
       routeDetailBefore: 'detail-orderan-pickup-before',
