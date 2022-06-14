@@ -141,6 +141,16 @@ export default [
   },
 
   {
+    path: '/kompack-register-berhasil',
+    name: 'kompack-register-validate',
+    component: () => import('@/views/pages/authentication/RegisterValidateKompack'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
+
+  {
     path: '/mitragudang-forgot-password',
     name: 'auth-Mitragudang-lupapassword',
     component: () => import('@/views/pages/authentication/Mitragudang/forgotpassword'),
