@@ -181,15 +181,6 @@ export default {
             }
           }
         },
-        onevent(event, a, b, c, d, e, f) {
-          console.log(event)
-        },
-        onchangenestedcell(worksheet, x, y, properties) {
-          console.log('worksheet', worksheet)
-          console.log('x', x)
-          console.log('y', y)
-          console.log('properties', properties)
-        },
         onselection(instance, col, row, cell, val) {
           const data = {
             instance, cell, col, row, val,
