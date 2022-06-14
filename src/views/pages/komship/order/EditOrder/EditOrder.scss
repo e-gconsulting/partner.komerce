@@ -2,6 +2,12 @@
 .not-collapsed > .when-closed {
   display: none;
 }
+.v-select.vs--single .vs__selected {
+  white-space: nowrap!important;
+}
+.vs--single .vs__dropdown-toggle {
+  overflow-x: hidden;
+}
 .detail-value {
   display: flex;
   justify-content: end;

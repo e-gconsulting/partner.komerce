@@ -995,7 +995,6 @@ export default {
       this.customLabel = items
     },
     async submit(order) {
-      console.log('cart to submit', this.cartId)
       this.checkValidation()
       if (this.isValidate) {
         await this.$http_komship.put(`v1/order/${this.profile.partner_id}/update-detail/${this.orderId}`, this.formData)
@@ -1134,6 +1133,9 @@ export default {
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
         .then(async response => {
           const { data } = response.data
+          if (data.is_mass_order === 1) {
+            this.$bvModal.show('modalCheckMassOrder')
+          }
           this.customerName = data.customer_name
           this.customerPhone = data.customer_phone
           this.destination = data.destination_name
