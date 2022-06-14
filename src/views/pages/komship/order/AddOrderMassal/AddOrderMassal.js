@@ -157,7 +157,7 @@ export default {
               popup('Masukkan Nomor HP pembeli dengan benar yaa..')
             }
           } else if (col === '4') {
-            if (!regexNumber.test(val) || val < 22311 || val > 99999) {
+            if (!regexNumber.test(val) || val < 10110 || val > 99974) {
               const columnName = jspreadsheet.getColumnNameFromId(['4', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
