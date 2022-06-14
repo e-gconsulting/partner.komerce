@@ -68,6 +68,19 @@ export default {
             this.sourceShipment = data.shipments
             const { variant } = data
             this.sourceVariant = ['-']
+            if (data.addresses === []) {
+              this.$swal({
+                title:
+              '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
+                imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+                confirmButtonText: 'Tambahkan Alamat Pick Up',
+                confirmButtonClass: 'btn btn-primary',
+              }).then(response => {
+                if (response.isConfirmed) {
+                  this.$router.push('setting-kompship/pickup')
+                }
+              })
+            }
             if (variant) {
               const dataVariant = variant.filter(item => item.variant !== '-')
               for (let x = 0; x < dataVariant.length; x++) {
@@ -92,8 +105,6 @@ export default {
         this.selectedTable = data
       }
       const popup = message => this.$swal({
-        // title: 'Upss., belum tepat nih..',
-        // text: message,
         html: `<span style="font-weight:600;font-size:20px">Upss., belum tepat nih..</span><br><span style="font-size:14px">${message}</span>`,
         confirmButtonText: 'Oke',
         confirmButtonClass: 'btn btn-primary rounded-lg',
