@@ -118,6 +118,7 @@ export default {
       loadingEditOrder: false,
       cartProductId: [],
       idCartDelete: [],
+      isMassOrder: null,
     }
   },
   async created() {
@@ -994,6 +995,13 @@ export default {
     handleCustomLabel(items) {
       this.customLabel = items
     },
+    checkSubmit() {
+      if (this.isMassOrder === 1) {
+        this.$bvModal.show('modalCheckMassOrder')
+      } else {
+        this.submit(false)
+      }
+    },
     async submit(order) {
       this.checkValidation()
       if (this.isValidate) {
@@ -1133,9 +1141,7 @@ export default {
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
         .then(async response => {
           const { data } = response.data
-          if (data.is_mass_order === 1) {
-            this.$bvModal.show('modalCheckMassOrder')
-          }
+          this.isMassOrder = data.is_mass_order
           this.customerName = data.customer_name
           this.customerPhone = data.customer_phone
           this.destination = data.destination_name
