@@ -379,7 +379,7 @@
               />
               <span class="text-black ml-50">
                 <strong>
-                  {{ data.item.shipping_type }}
+                  {{ getService(data.item.shipping_type) }}
                 </strong>
               </span>
             </b-row>
@@ -394,7 +394,7 @@
               />
               <span class="text-black ml-50">
                 <strong>
-                  {{ data.item.shipping_type }}
+                  {{ getService(data.item.shipping_type) }}
                 </strong>
               </span>
             </b-row>
@@ -2799,15 +2799,12 @@ export default {
       this.$refs.tableOrder.refresh()
     },
     getService(data) {
-      let result = ''
-      if (data === 'REG19' || data === 'CTC') {
-        result = 'Reguler'
-      } else if (data === 'GOKIL' || data === 'SIUNTUNG') {
-        result = data
-      } else {
-        result = data
+      if (data === 'REG19' || data === 'SIUNT' || data === 'STD' || data === 'IDlite' || data === 'CTC19') {
+        return 'Reguler'
+      } if (data === 'GOKIL') {
+        return 'Cargo'
       }
-      return result
+      return data
     },
     getWeightProduct(data) {
       if (data[1] === undefined) {
