@@ -26,6 +26,7 @@ export default {
     }
   },
   mounted() {
+    this.checkExpedition()
     this.getDataSheet()
     this.$refs.loadingPage.show()
   },
@@ -361,6 +362,31 @@ export default {
           }
         })
       }
+    },
+    async checkExpedition() {
+      await this.$http_komship
+        .get('/v1/partner/shipment/not-active')
+        .then(res => {
+          const { data } = res.data
+          const result = data.filter(items => items.is_active === 1)
+          if (result.length < 1) {
+            this.$swal({
+              title:
+                '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
+              imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+              showCancelButton: true,
+              confirmButtonText: 'Aktifkan Ekspedisi',
+              confirmButtonClass: 'btn btn-primary',
+              cancelButtonText: 'Oke',
+              cancelButtonClass:
+                'btn btn-outline-primary bg-white text-primary',
+            }).then(then => {
+              if (then.isConfirmed) {
+                this.$router.push('/setting-kompship/ekspedisi')
+              }
+            })
+          }
+        })
     },
   },
 }
