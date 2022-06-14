@@ -26,6 +26,7 @@ export default {
     }
   },
   mounted() {
+    this.checkExpedition()
     this.getDataSheet()
     this.$refs.loadingPage.show()
   },
@@ -67,6 +68,19 @@ export default {
             this.sourceShipment = data.shipments
             const { variant } = data
             this.sourceVariant = ['-']
+            if (data.addresses === []) {
+              this.$swal({
+                title:
+              '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
+                imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+                confirmButtonText: 'Tambahkan Alamat Pick Up',
+                confirmButtonClass: 'btn btn-primary',
+              }).then(response => {
+                if (response.isConfirmed) {
+                  this.$router.push('setting-kompship/pickup')
+                }
+              })
+            }
             if (variant) {
               const dataVariant = variant.filter(item => item.variant !== '-')
               for (let x = 0; x < dataVariant.length; x++) {
@@ -91,8 +105,6 @@ export default {
         this.selectedTable = data
       }
       const popup = message => this.$swal({
-        // title: 'Upss., belum tepat nih..',
-        // text: message,
         html: `<span style="font-weight:600;font-size:20px">Upss., belum tepat nih..</span><br><span style="font-size:14px">${message}</span>`,
         confirmButtonText: 'Oke',
         confirmButtonClass: 'btn btn-primary rounded-lg',
@@ -157,7 +169,7 @@ export default {
               popup('Masukkan Nomor HP pembeli dengan benar yaa..')
             }
           } else if (col === '4') {
-            if (!regexNumber.test(val) || val < 22311 || val > 99999) {
+            if (!regexNumber.test(val) || val < 10110 || val > 99974) {
               const columnName = jspreadsheet.getColumnNameFromId(['4', row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
@@ -175,7 +187,7 @@ export default {
               popup('Masukkan Nama pembeli dengan benar yaa..')
             }
           } else if (col === '5') {
-            if (val.length < 11 || val.length > 85) {
+            if (val.length < 11 || val.length > 185) {
               const columnName = jspreadsheet.getColumnNameFromId(['5', row])
               instance.jexcel.setValue(columnName, '')
               popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
@@ -361,6 +373,31 @@ export default {
           }
         })
       }
+    },
+    async checkExpedition() {
+      await this.$http_komship
+        .get('/v1/partner/shipment/not-active')
+        .then(res => {
+          const { data } = res.data
+          const result = data.filter(items => items.is_active === 1)
+          if (result.length < 1) {
+            this.$swal({
+              title:
+                '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
+              imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+              showCancelButton: true,
+              confirmButtonText: 'Aktifkan Ekspedisi',
+              confirmButtonClass: 'btn btn-primary',
+              cancelButtonText: 'Oke',
+              cancelButtonClass:
+                'btn btn-outline-primary bg-white text-primary',
+            }).then(then => {
+              if (then.isConfirmed) {
+                this.$router.push('/setting-kompship/ekspedisi')
+              }
+            })
+          }
+        })
     },
   },
 }
