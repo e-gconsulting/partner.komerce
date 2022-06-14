@@ -632,7 +632,13 @@
           />
         </section>
 
-        <b-row class="justify-content-end pb-2 wrapper__handle__print__label">
+        <b-row class="justify-content-end align-items-center pb-2 wrapper__handle__print__label">
+          <b-form-checkbox
+            v-model="printDateItem"
+            class="custom-control-primary mr-2"
+          >
+            Tambahkan tanggal cetal di label
+          </b-form-checkbox>
           <b-button
             variant="primary"
             class="mr-3 py-1 px-3"
@@ -2458,6 +2464,7 @@ export default {
       shipmentValue: 'Semua Ekspedisi',
       shippingName: '',
       paramsBase64: '',
+      printDateItem: false,
     }
   },
   computed: {
@@ -2603,11 +2610,13 @@ export default {
     },
     getPrintLabelBase64(values) {
       this.loadingButtonPrintLabel = true
+      const params = {
+        order_id: this.orderIdBase64.join(),
+        page: this.paramsBase64,
+      }
+      if (this.printDateItem) Object.assign(params, { print_date: 1 })
       this.$http_komship.get('v1/generate/print-label', {
-        params: {
-          order_id: this.orderIdBase64.join(),
-          page: this.paramsBase64,
-        },
+        params,
       }).then(response => {
         this.base64Label = response.data
         const binary = atob(this.base64Label.replace(/\s/g, ''))
@@ -2620,7 +2629,11 @@ export default {
         }
         const file = new Blob([view], { type: 'application/pdf' })
         const fileURL = URL.createObjectURL(file)
-        window.open(fileURL)
+        try {
+          window.open(fileURL)
+        } catch (e) {
+          alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
+        }
         this.loadingButtonPrintLabel = false
       }).catch(() => {
         this.loadingButtonPrintLabel = false
