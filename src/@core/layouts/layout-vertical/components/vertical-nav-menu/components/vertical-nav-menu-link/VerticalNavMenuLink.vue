@@ -33,6 +33,14 @@
         {{ followup }}
       </b-badge>
       <b-badge
+        v-if="item.title === 'Kendala' && followUp!==0"
+        pill
+        :variant="'primary'"
+        class="mr-1 ml-auto"
+      >
+        {{ followUp }}
+      </b-badge>
+      <b-badge
         v-if="item.tag"
         pill
         :variant="item.tagVariant || 'primary'"
@@ -65,7 +73,7 @@ export default {
   },
   data() {
     return {
-      followup: 0,
+      followUp: 0,
     }
   },
   setup(props) {
@@ -88,9 +96,16 @@ export default {
     }
   },
   watch: {
-    async  $route(to, from) {
-      const response = await this.$http_komship.get('/v1/ticket-partner/count/need-followup')
-      this.followup = response.data.data.need_followup
+    $route: {
+      handler(to, from) {
+        if (to?.name !== from?.name && this.item.title === 'Kendala') {
+          this.$http_komship.get('/v1/ticket-partner/count/need-followup').then(response => {
+            this.followUp = response.data.data.need_followup ?? 0
+          })
+        }
+      },
+      immediate: true,
+      deep: true,
     },
   },
 }

@@ -915,7 +915,6 @@ export default {
             this.vehicleMotor = !!data.vehicle.find(items => items === 'MOTOR')
             this.vehicleCar = !!data.vehicle.find(items => items === 'MOBIL')
             this.vehicleTruck = !!data.vehicle.find(items => items === 'TRUCK')
-            this.getDataOrder()
           })
       })
     },
@@ -929,6 +928,7 @@ export default {
             if (defaultAddress) {
               this.address = defaultAddress
             }
+            this.getDataOrder()
           })
       })
     },
@@ -950,6 +950,7 @@ export default {
         await this.$http_komship.get(`v1/order/${this.profile.partner_id}`, {
           params: {
             order_status: 'Diajukan',
+            partner_address_id: this.address.address_id,
             page: this.currentPage,
             total_per_page: this.perPage,
           },
@@ -969,6 +970,7 @@ export default {
     },
     onSelectAddress(data) {
       this.address = data
+      this.getDataOrder()
       this.$bvModal.hide('modalSelectAddress')
     },
     onSelectVehicle(data) {

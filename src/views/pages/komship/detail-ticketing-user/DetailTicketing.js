@@ -7,6 +7,7 @@ import {
 } from 'firebase/messaging'
 import { initializeApp } from 'firebase/app'
 import moment from 'moment'
+import DetailOrder from './DetailOrder/DetailOrder.vue'
 
 window.onload = () => {
   const theElement = document.getElementById('chatFocusing')
@@ -33,7 +34,7 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 
 export default {
-  components: {},
+  components: { DetailOrder },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
@@ -67,6 +68,8 @@ export default {
       moment,
 
       userId: JSON.parse(localStorage.userData),
+      detailOrderMode: false,
+      orderId: 0,
     }
   },
   created() {
@@ -100,6 +103,7 @@ export default {
           this.noResi = data.no_resi
           this.files = data.file
           this.messages = data.history_ticket
+          this.orderId = data.order_id
           this.loadingDataDetail = false
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
@@ -332,6 +336,12 @@ export default {
     },
     requestPermissionNotification() {
       Notification.requestPermission().then(permission => { console.log('permiss', permission) })
+    },
+    handleDetailOrder() {
+      this.detailOrderMode = true
+    },
+    updateDetailOrderMode() {
+      this.detailOrderMode = false
     },
   },
 }

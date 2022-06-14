@@ -7,3 +7,4 @@
 }
 </style>
 <style lang="scss" src="./Dashboard.scss" scoped />
+<style lang="css" src="vuetify/dist/vuetify.min.css" scoped/>

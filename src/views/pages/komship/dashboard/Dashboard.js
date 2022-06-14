@@ -13,7 +13,7 @@ import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import ModalOnBoarding from './ModalOnBoarding.vue'
-import 'vuetify/dist/vuetify.min.css'
+// import 'vuetify/dist/vuetify.min.css'
 import './ModalOnBoarding.scss'
 
 export default {
@@ -238,7 +238,11 @@ export default {
         const response = await this.$store.dispatch('saldo/topUpSaldo')
         this.closeModal()
         if (!response.data.status) throw response.data
-        window.open(response.data.data.invoice_xendit_url, '_blank').focus()
+        try {
+          window.open(response.data.data.invoice_xendit_url, '_blank').focus()
+        } catch (e) {
+          alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
+        }
         this.$refs['modal-after-topup'].show()
         this.loadingSubmitTopUp = false
       } catch (e) {
