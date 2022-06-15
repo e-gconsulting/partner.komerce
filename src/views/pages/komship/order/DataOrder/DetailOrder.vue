@@ -143,7 +143,10 @@
                   >
                   <div class="ml-1 my-auto">
                     <span class="font-bold">{{ orderData.customer_name }}</span><br>
-                    <span>{{ orderData.customer_phone }}</span>
+                    <span v-if="orderData.customer_phone && `${orderData.customer_phone}`.charAt(0) !== '0'">
+                      0{{ orderData.customer_phone }}
+                    </span>
+                    <span v-else>{{ orderData.customer_phone }}</span>
                   </div>
                 </div>
               </b-col>
