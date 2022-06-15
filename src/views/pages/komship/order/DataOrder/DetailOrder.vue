@@ -636,7 +636,6 @@ export default {
         const order = await httpKomship2.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
         const { data } = await order.data
         this.orderData = await data
-        console.log(data)
         this.editBy = data.user_name_edited
         this.editDate = data.order_edited_date
         this.statusNetProfit = data.net_profit.toString().charAt(0)

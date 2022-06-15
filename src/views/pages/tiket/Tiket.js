@@ -341,7 +341,6 @@ export default {
           this.loadingDataTable = false
         })
         .catch(err => {
-          console.log(err)
           this.itemsTicket = []
           this.$toast(
             {
@@ -397,7 +396,6 @@ export default {
       return moment(d).format('YYYY-MM-DD')
     },
     setSearchType(data) {
-      console.log(data)
       this.searchType = data
       this.fetchTicket()
       this.$root.$emit('bv::hide::popover', 'popover-search-type')
