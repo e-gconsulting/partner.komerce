@@ -113,4 +113,33 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/method-order',
+    name: 'method-order',
+    component: () => import('@/views/pages/komship/order/MethodOrder'),
+    meta: {
+      navActiveLink: 'add-order',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/add-order-massal',
+    name: 'add-order-massal',
+    component: () => import('@/views/pages/komship/order/AddOrderMassal'),
+    meta: {
+      navActiveLink: 'add-order-massal',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: () => import('@/views/pages/komship/order/index.vue'),
+    meta: {
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
 ]

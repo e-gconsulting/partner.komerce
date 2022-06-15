@@ -1,0 +1,83 @@
+.status {
+  border: 1px solid;
+  border-radius: 8px;
+  width: 200px;
+  text-align: center;
+  font-weight: 600;
+}
+.onProsess {
+  color: #FBA63C;
+  background: #fff2e2;
+  border-color: #fff2e2;
+}
+.finish {
+  color: #28c76f;
+  background: #dcf3eb;
+  border-color: #dcf3eb;
+}
+.cancel {
+  color: #82868b;
+  background: white;
+  border-color: white;
+}
+.needProsess {
+  color: #e31a1a;
+  background: #ffeded;
+  border-color: #ffeded;
+}
+.font-bold {
+  color: #626262;
+  font-weight: bold;
+}
+.send {
+  color: #08a0f7;
+}
+.download {
+  color: #08a0f7;
+  display: block;
+}
+.input-group-text {
+  cursor: pointer;
+}
+.text-xl {
+  color: #222222;
+}
+.input-group > .form-control:not(:last-child),
+.input-group > .custom-select:not(:last-child) {
+  background: white;
+}
+.form-control:disabled,
+.form-control[readonly] {
+  background: white;
+}
+.btn{
+  float: right;
+    margin-top: 4em;
+}
+@media screen and(min-width: 320px) and (max-width: 768px) {
+  .btn {
+    float: none;
+    margin: 1em 0 0 0;
+    display: contents;
+  }
+}
+.container{
+  background: #FFFFFF;
+  padding: 2em;
+  &-title{
+    display: flex;
+    align-items: center;
+    margin-bottom: 1em;
+    &-t{
+      font-size: 17.5px;
+      font-weight: bold;
+      color: #222222;
+      margin-left: 1em;
+    }
+  }
+  &-border{
+    // border: 2px solid #E2E2E2;
+    border-radius: 8px;
+    border-color: #E2E2E2;
+  }
+}

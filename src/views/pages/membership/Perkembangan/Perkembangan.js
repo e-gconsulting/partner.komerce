@@ -408,7 +408,6 @@ export default {
     sortingChanged(ctx) {
       const field = ctx.sortBy
       const isDesc = ctx.sortDesc ? 'desc' : 'asc'
-      // console.log(field, isDesc)
       this.paramsCallAPI = {
         ...this.paramsCallAPI,
         sort_by: isDesc,

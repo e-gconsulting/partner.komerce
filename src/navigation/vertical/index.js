@@ -52,6 +52,7 @@ import customer from './customer'
 import settingKompship from './setting-kompship'
 import keuangan from './keuangan'
 import opsional from './opsional'
+import ticketingUser from './ticketing-user'
 // import hiring from './hiring'
 
 // Komship Admin
@@ -62,6 +63,7 @@ import dashboardKomplace from './dashboard-komplace'
 import monitoring from './monitoring-komplace'
 import pengaturanKomplace from './pengaturanKomplace'
 import manajemenAdmin from './manajemenAdmin'
+import tiket from './tiket'
 
 // Array of sections
 export default [
@@ -83,12 +85,14 @@ export default [
   ...keuangan,
   ...settingKompship,
   ...opsional,
+  ...ticketingUser,
   // ...hiring,
 
   ...dashboardKomplace,
   ...monitoring,
   ...pengaturanKomplace,
   ...manajemenAdmin,
+  ...tiket,
 
   ...talentPool,
   // ...wishlist,

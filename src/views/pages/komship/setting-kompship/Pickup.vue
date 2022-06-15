@@ -76,36 +76,36 @@
                 >
                   <b-row>
                     <b-col
-                      cols="4"
+                      cols="9"
                     >
-                      <label>
-                        <h4 class="text-black">
-                          Nama Tempat<span class="text-primary">*</span>
-                        </h4>
-                      </label>
-                    </b-col>
-                    <b-col
-                      cols="7"
-                    >
-                      <validation-provider
-                        #default="{errors}"
-                        name="Nama Alamat"
-                        rules="required"
+                      <b-form-group
+                        label-cols-md="4"
                       >
-                        <div v-if="editMode === true && editIdAddress === data.address_id">
-                          <b-form-input
-                            v-model="addressName"
-                            :state="errors.length > 0 ? false:null"
-                          />
-                        </div>
-                        <div v-else>
-                          <b-form-input
-                            v-model="data.address_name"
-                            disabled
-                          />
-                        </div>
-                        <small class="text-danger">{{ errors[0] }}</small>
-                      </validation-provider>
+                        <template #label>
+                          <h4 class="text-black">
+                            Nama Tempat<span class="text-primary">*</span>
+                          </h4>
+                        </template>
+                        <validation-provider
+                          #default="{errors}"
+                          name="Nama Alamat"
+                          rules="required"
+                        >
+                          <div v-if="editMode === true && editIdAddress === data.address_id">
+                            <b-form-input
+                              v-model="addressName"
+                              :state="errors.length > 0 ? false:null"
+                            />
+                          </div>
+                          <div v-else>
+                            <b-form-input
+                              v-model="data.address_name"
+                              disabled
+                            />
+                          </div>
+                          <small class="text-danger">{{ errors[0] }}</small>
+                        </validation-provider>
+                      </b-form-group>
                     </b-col>
                   </b-row>
                 </b-col>
@@ -116,62 +116,62 @@
                 >
                   <b-row>
                     <b-col
-                      cols="4"
+                      cols="9"
                     >
-                      <label>
-                        <h4 class="text-black">
-                          Kelurahan/Kecamatan<span class="text-primary">*</span>
-                        </h4>
-                      </label>
-                    </b-col>
-                    <b-col
-                      cols="7"
-                    >
-                      <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <validation-provider
-                          #default="{errors}"
-                          name="Kelurahan/Kecamatan"
-                          rules="required"
-                        >
-                          <div
-                            v-for="(dataOrigin, indexOrigin) in tes"
-                            :key="indexOrigin+1"
+                      <b-form-group
+                        label-cols-md="4"
+                      >
+                        <template #label>
+                          <h4 class="text-black">
+                            Kelurahan/Kecamatan<span class="text-primary">*</span>
+                          </h4>
+                        </template>
+                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                          <validation-provider
+                            #default="{errors}"
+                            name="Kelurahan/Kecamatan"
+                            rules="required"
                           >
+                            <div
+                              v-for="(dataOrigin, indexOrigin) in tes"
+                              :key="indexOrigin+1"
+                            >
+                              <v-select
+                                v-if="dataOrigin.id === data.destination_id"
+                                v-model="originValue"
+                                :options="itemsOriginEdit"
+                                label="label"
+                                :state="errors.length > 0 ? false:null"
+                                @search="onSearchOrigin"
+                              />
+                            </div>
                             <v-select
-                              v-if="dataOrigin.id === data.destination_id"
+                              v-if="handleOldOrigin === true"
                               v-model="originValue"
                               :options="itemsOriginEdit"
                               label="label"
                               :state="errors.length > 0 ? false:null"
                               @search="onSearchOrigin"
                             />
-                          </div>
-                          <v-select
-                            v-if="handleOldOrigin === true"
-                            v-model="originValue"
-                            :options="itemsOriginEdit"
-                            label="label"
-                            :state="errors.length > 0 ? false:null"
-                            @search="onSearchOrigin"
-                          />
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </div>
-                      <div v-else>
-                        <div
-                          v-for="(dataOrigin, indexOrigin) in tes"
-                          :key="indexOrigin+1"
-                        >
-                          <div v-if="dataOrigin.id !== undefined">
-                            <v-select
-                              v-if="dataOrigin.id === data.destination_id"
-                              v-model="dataOrigin.label"
-                              label="label"
-                              disabled
-                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </div>
+                        <div v-else>
+                          <div
+                            v-for="(dataOrigin, indexOrigin) in tes"
+                            :key="indexOrigin+1"
+                          >
+                            <div v-if="dataOrigin.id !== undefined">
+                              <v-select
+                                v-if="dataOrigin.id === data.destination_id"
+                                v-model="dataOrigin.label"
+                                label="label"
+                                disabled
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </b-form-group>
                     </b-col>
                   </b-row>
                 </b-col>
@@ -182,56 +182,56 @@
                 >
                   <b-row>
                     <b-col
-                      cols="4"
+                      cols="9"
                     >
-                      <label>
-                        <h4 class="text-black">
-                          Alamat Detail<span class="text-primary">*</span>
-                        </h4>
-                        <small>
-                          Alamat ini akan jadi petunjuk kurir saat mau jemput barang. Pastikan kamu isi dengan detail ya.
-                        </small>
-                      </label>
-                    </b-col>
-                    <b-col
-                      cols="7"
-                    >
-                      <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <validation-provider
-                          #default="{errors}"
-                          name="Alamat Detail"
-                          rules="required"
-                        >
-                          <b-form-textarea
-                            v-model="addressDetail"
-                            placeholder="Alamat Detail"
-                            rows="3"
-                            :state="errors.length > 0 ? false:null"
-                            :formatter="formatDetailAddress"
-                            @keypress="validateInputDetail"
-                          />
-                          <b-row class="justify-content-between">
-                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
-                            <small class="mr-1 mt-50">
-                              <small
-                                v-if="messageErrorLengthAddress"
-                                class="text-primary"
-                              >
-                                *hindari menggunakan simbol (/) (=) (:) (;)
+                      <b-form-group
+                        label-cols-md="4"
+                      >
+                        <template #label>
+                          <h4 class="text-black">
+                            Alamat Detail<span class="text-primary">*</span>
+                          </h4>
+                          <small>
+                            Alamat ini akan jadi petunjuk kurir saat mau jemput barang. Pastikan kamu isi dengan detail ya.
+                          </small>
+                        </template>
+                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                          <validation-provider
+                            #default="{errors}"
+                            name="Alamat Detail"
+                            rules="required"
+                          >
+                            <b-form-textarea
+                              v-model="addressDetail"
+                              placeholder="Alamat Detail"
+                              rows="3"
+                              :state="errors.length > 0 ? false:null"
+                              :formatter="formatDetailAddress"
+                              @keypress="validateInputDetail"
+                            />
+                            <b-row class="justify-content-between">
+                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorLengthAddress"
+                                  class="text-primary"
+                                >
+                                  *hindari menggunakan simbol (/) (=) (:) (;)
+                                </small>
+                                {{ addressDetail.length }}/85
                               </small>
-                              {{ addressDetail.length }}/85
-                            </small>
-                          </b-row>
-                        </validation-provider>
-                      </div>
-                      <div v-else>
-                        <b-form-textarea
-                          v-model="data.address_detail"
-                          placeholder="Alamat Detail"
-                          disabled
-                          rows="3"
-                        />
-                      </div>
+                            </b-row>
+                          </validation-provider>
+                        </div>
+                        <div v-else>
+                          <b-form-textarea
+                            v-model="data.address_detail"
+                            placeholder="Alamat Detail"
+                            disabled
+                            rows="3"
+                          />
+                        </div>
+                      </b-form-group>
                     </b-col>
                   </b-row>
                 </b-col>
@@ -253,41 +253,41 @@
                 >
                   <b-row>
                     <b-col
-                      cols="4"
+                      cols="9"
                     >
-                      <label for="name-product">
-                        <h4 class="text-black">
-                          Nama
-                        </h4>
-                      </label>
-                    </b-col>
-                    <b-col
-                      cols="7"
-                    >
-                      <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <b-form-input
-                          v-model="picName"
-                          :formatter="formatName"
-                          @keypress="validateInputName"
-                        />
-                        <b-row class="justify-content-end">
-                          <small class="mr-1 mt-50">
-                            <small
-                              v-if="messageErrorLengthName"
-                              class="text-primary"
-                            >
-                              *hindari menggunakan simbol (/) (=) (:) (;)
+                      <b-form-group
+                        label-cols-md="4"
+                      >
+                        <template #label>
+                          <h4 class="text-black">
+                            Nama
+                          </h4>
+                        </template>
+                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                          <b-form-input
+                            v-model="picName"
+                            :formatter="formatName"
+                            @keypress="validateInputName"
+                          />
+                          <b-row class="justify-content-end">
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorLengthName"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
+                              {{ picName.length }}/30
                             </small>
-                            {{ picName.length }}/30
-                          </small>
-                        </b-row>
-                      </div>
-                      <div v-else>
-                        <b-form-input
-                          v-model="data.pic"
-                          disabled
-                        />
-                      </div>
+                          </b-row>
+                        </div>
+                        <div v-else>
+                          <b-form-input
+                            v-model="data.pic"
+                            disabled
+                          />
+                        </div>
+                      </b-form-group>
                     </b-col>
                   </b-row>
                 </b-col>
@@ -298,52 +298,52 @@
                 >
                   <b-row>
                     <b-col
-                      cols="4"
+                      cols="9"
                     >
-                      <label for="name-product">
-                        <h4 class="text-black">
-                          No. HP<span class="text-primary">*</span>
-                        </h4>
-                        <small>
-                          Kurir yang jemput akan menghubungi nomor ini
-                        </small>
-                      </label>
-                    </b-col>
-                    <b-col
-                      cols="7"
-                    >
-                      <div v-if="editMode === true && editIdAddress === data.address_id">
-                        <validation-provider
-                          #default="{errors}"
-                          name="No. HP"
-                          rules="required"
-                        >
-                          <b-form-input
-                            v-model="phoneUser"
-                            :state="errors.length > 0 ? false:null"
-                            type="number"
-                            @input="formatEditPhoneUser"
-                            @keypress="validateEditInputPhone"
-                          />
-                          <b-row class="justify-content-between">
-                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
-                            <small class="mr-1 mt-50">
-                              <small
-                                v-if="messageErrorPhone"
-                                class="text-primary"
-                              >
-                                *minimal 9 digit dan hanya berupa angka.
+                      <b-form-group
+                        label-cols-md="4"
+                      >
+                        <template #label>
+                          <h4 class="text-black">
+                            No. HP<span class="text-primary">*</span>
+                          </h4>
+                          <small>
+                            Kurir yang jemput akan menghubungi nomor ini
+                          </small>
+                        </template>
+                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                          <validation-provider
+                            #default="{errors}"
+                            name="No. HP"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="phoneUser"
+                              :state="errors.length > 0 ? false:null"
+                              type="number"
+                              @input="formatEditPhoneUser"
+                              @keypress="validateEditInputPhone"
+                            />
+                            <b-row class="justify-content-between">
+                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorPhone"
+                                  class="text-primary"
+                                >
+                                  *minimal 9 digit dan hanya berupa angka.
+                                </small>
                               </small>
-                            </small>
-                          </b-row>
-                        </validation-provider>
-                      </div>
-                      <div v-else>
-                        <b-form-input
-                          v-model="data.phone"
-                          disabled
-                        />
-                      </div>
+                            </b-row>
+                          </validation-provider>
+                        </div>
+                        <div v-else>
+                          <b-form-input
+                            v-model="data.phone"
+                            disabled
+                          />
+                        </div>
+                      </b-form-group>
                     </b-col>
                   </b-row>
                 </b-col>
@@ -436,29 +436,29 @@
                   >
                     <b-row>
                       <b-col
-                        cols="4"
+                        cols="9"
                       >
-                        <label>
-                          <h4 class="text-black">
-                            Nama Tempat<span class="text-primary">*</span>
-                          </h4>
-                        </label>
-                      </b-col>
-                      <b-col
-                        cols="7"
-                      >
-                        <validation-provider
-                          #default="{errors}"
-                          name="Nama Alamat"
-                          rules="required"
+                        <b-form-group
+                          label-cols-md="4"
                         >
-                          <b-form-input
-                            v-model="fieldAddAddressName"
-                            placeholder="Contoh: Gudang Jawa Barat"
-                            :state="errors.length > 0 ? false:null"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
+                          <template #label>
+                            <h4 class="text-black">
+                              Nama Tempat<span class="text-primary">*</span>
+                            </h4>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="Nama Alamat"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="fieldAddAddressName"
+                              placeholder="Contoh: Gudang Jawa Barat"
+                              :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
                       </b-col>
                     </b-row>
                   </b-col>
@@ -468,34 +468,34 @@
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
-                      <b-col
-                        cols="4"
+                      <b-form-group
+                        label-cols-md="4"
                       >
-                        <label>
+                        <template #label>
                           <h4 class="text-black">
                             Kelurahan/Kecamatan<span class="text-primary">*</span>
                           </h4>
-                        </label>
-                      </b-col>
-                      <b-col
-                        cols="7"
-                      >
-                        <validation-provider
-                          #default="{errors}"
-                          name="Kelurahan/Kecamatan"
-                          rules="required"
+                        </template>
+                        <b-col
+                          cols="9"
                         >
-                          <v-select
-                            v-model="fieldAddOrigin"
-                            :options="itemsOriginEdit"
-                            label="label"
-                            :state="errors.length > 0 ? false:null"
-                            placeholder="Masukkan Kelurahan/Kecamatan"
-                            @search="onSearchOrigin"
-                          />
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-col>
+                          <validation-provider
+                            #default="{errors}"
+                            name="Kelurahan/Kecamatan"
+                            rules="required"
+                          >
+                            <v-select
+                              v-model="fieldAddOrigin"
+                              :options="itemsOriginEdit"
+                              label="label"
+                              :state="errors.length > 0 ? false:null"
+                              placeholder="Masukkan Kelurahan/Kecamatan"
+                              @search="onSearchOrigin"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-col>
+                      </b-form-group>
                     </b-row>
                   </b-col>
 
@@ -505,46 +505,46 @@
                   >
                     <b-row>
                       <b-col
-                        cols="4"
+                        cols="9"
                       >
-                        <label>
-                          <h4 class="text-black">
-                            Alamat Detail<span class="text-primary">*</span>
-                          </h4>
-                          <small>
-                            Alamat ini akan jadi petunjuk kurir saat mau jemput barang. Pastikan kamu isi dengan detail ya.
-                          </small>
-                        </label>
-                      </b-col>
-                      <b-col
-                        cols="7"
-                      >
-                        <validation-provider
-                          #default="{errors}"
-                          name="Alamat Detail"
-                          rules="required"
+                        <b-form-group
+                          label-cols-md="4"
                         >
-                          <b-form-textarea
-                            v-model="fieldAddAddressDetail"
-                            placeholder="Contoh: Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355"
-                            rows="3"
-                            :state="errors.length > 0 ? false:null"
-                            :formatter="formatDetailAddress"
-                            @keypress="validateInputDetail"
-                          />
-                          <b-row class="justify-content-between">
-                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
-                            <small class="mr-1 mt-50">
-                              <small
-                                v-if="messageErrorLengthAddress"
-                                class="text-primary"
-                              >
-                                *hindari menggunakan simbol (/) (=) (:) (;)
-                              </small>
-                              {{ fieldAddAddressDetail.length }}/85
+                          <template #label>
+                            <h4 class="text-black">
+                              Alamat Detail<span class="text-primary">*</span>
+                            </h4>
+                            <small>
+                              Alamat ini akan jadi petunjuk kurir saat mau jemput barang. Pastikan kamu isi dengan detail ya.
                             </small>
-                          </b-row>
-                        </validation-provider>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="Alamat Detail"
+                            rules="required"
+                          >
+                            <b-form-textarea
+                              v-model="fieldAddAddressDetail"
+                              placeholder="Contoh: Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355"
+                              rows="3"
+                              :state="errors.length > 0 ? false:null"
+                              :formatter="formatDetailAddress"
+                              @keypress="validateInputDetail"
+                            />
+                            <b-row class="justify-content-between">
+                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorLengthAddress"
+                                  class="text-primary"
+                                >
+                                  *hindari menggunakan simbol (/) (=) (:) (;)
+                                </small>
+                                {{ fieldAddAddressDetail.length }}/85
+                              </small>
+                            </b-row>
+                          </validation-provider>
+                        </b-form-group>
                       </b-col>
                     </b-row>
                   </b-col>
@@ -566,34 +566,34 @@
                   >
                     <b-row>
                       <b-col
-                        cols="4"
+                        cols="9"
                       >
-                        <label for="name-product">
-                          <h4 class="text-black">
-                            Nama
-                          </h4>
-                        </label>
-                      </b-col>
-                      <b-col
-                        cols="7"
-                      >
-                        <b-form-input
-                          v-model="fieldAddPicName"
-                          placeholder="Masukkan Nama Penanggung Jawab Gudang"
-                          :formatter="formatName"
-                          @keypress="validateInputName"
-                        />
-                        <b-row class="justify-content-end">
-                          <small class="mr-1 mt-50">
-                            <small
-                              v-if="messageErrorLengthName"
-                              class="text-primary"
-                            >
-                              *hindari menggunakan simbol (/) (=) (:) (;)
+                        <b-form-group
+                          label-cols-md="4"
+                        >
+                          <template #label>
+                            <h4 class="text-black">
+                              Nama
+                            </h4>
+                          </template>
+                          <b-form-input
+                            v-model="fieldAddPicName"
+                            placeholder="Masukkan Nama Penanggung Jawab Gudang"
+                            :formatter="formatName"
+                            @keypress="validateInputName"
+                          />
+                          <b-row class="justify-content-end">
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorLengthName"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
+                              {{ fieldAddPicName.length }}/30
                             </small>
-                            {{ fieldAddPicName.length }}/30
-                          </small>
-                        </b-row>
+                          </b-row>
+                        </b-form-group>
                       </b-col>
                     </b-row>
                   </b-col>
@@ -604,45 +604,45 @@
                   >
                     <b-row>
                       <b-col
-                        cols="4"
+                        cols="9"
                       >
-                        <label for="name-product">
-                          <h4 class="text-black">
-                            No. HP<span class="text-primary">*</span>
-                          </h4>
-                          <small>
-                            Kurir yang jemput akan menghubungi nomor ini
-                          </small>
-                        </label>
-                      </b-col>
-                      <b-col
-                        cols="7"
-                      >
-                        <validation-provider
-                          #default="{errors}"
-                          name="No. HP"
-                          rules="required"
+                        <b-from-group
+                          label-cols-md="4"
                         >
-                          <b-form-input
-                            v-model="fieldAddPhoneUser"
-                            placeholder="Masukkan Nomor HP Penanggung Jawab Gudang"
-                            type="number"
-                            :state="errors.length > 0 ? false:null"
-                            @input="formatPhoneUser"
-                            @keypress="validateInputPhone"
-                          />
-                          <b-row class="justify-content-between">
-                            <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
-                            <small class="mr-1 mt-50">
-                              <small
-                                v-if="messageErrorPhone"
-                                class="text-primary"
-                              >
-                                *minimal 9 digit dan hanya berupa angka.
-                              </small>
+                          <template #label>
+                            <h4 class="text-black">
+                              No. HP<span class="text-primary">*</span>
+                            </h4>
+                            <small>
+                              Kurir yang jemput akan menghubungi nomor ini
                             </small>
-                          </b-row>
-                        </validation-provider>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="No. HP"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="fieldAddPhoneUser"
+                              placeholder="Masukkan Nomor HP Penanggung Jawab Gudang"
+                              type="number"
+                              :state="errors.length > 0 ? false:null"
+                              @input="formatPhoneUser"
+                              @keypress="validateInputPhone"
+                            />
+                            <b-row class="justify-content-between">
+                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorPhone"
+                                  class="text-primary"
+                                >
+                                  *minimal 9 digit dan hanya berupa angka.
+                                </small>
+                              </small>
+                            </b-row>
+                          </validation-provider>
+                        </b-from-group>
                       </b-col>
                     </b-row>
                   </b-col>

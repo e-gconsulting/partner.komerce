@@ -164,7 +164,8 @@
     </b-row>
     <b-row class="mb-1">
       <b-col md="3">
-        <span class="text-lg">Masukkan Kelurahan/ Kecamatan</span>
+        <span class="text-lg">Alamat Tujuan</span>
+        <div class="text-lg" style="color: #828282; font-size: 12px;">*contoh: Nambangan, Selogiri, Wonogiri (Setelah koma ada spasi)</div>
       </b-col>
       <b-col md="4">
         <v-select
@@ -204,9 +205,10 @@
       <b-col md="4">
         <b-form-textarea
           v-model="customerAddress"
-          placeholder="Masukkan Alamat Lengkap"
+          placeholder="Agar kurir mudah menemukan lokasi, masukan nama jalan, RT/RW atau patokan bangunan dengan lengkap ya"
           :formatter="formatAddressDetail"
           @keypress="validateInputAddressDetail"
+          style="height: 155px !important;"
         />
         <b-row class="justify-content-end">
           <small class="mr-1 mt-50">
@@ -216,7 +218,7 @@
             >
               *hindari menggunakan simbol (/) (=) (:) (;)
             </small>
-            {{ customerAddress.length }}/85
+            {{ customerAddress.length }}/185
           </small>
         </b-row>
       </b-col>
@@ -345,6 +347,8 @@
           <b-modal
             :id="`modalVariation${data.index}`"
             hide-footer
+            class="p-5"
+            centered
           >
             <section v-if="data.item.variantSelected[0]">
               <h4 class="font-bold mb-1">
@@ -451,7 +455,7 @@
             <b-button
               variant="none"
               class="p-0"
-              @click="removeProduct(data.index)"
+              @click="removeProduct(data, data.index)"
             >
               <b-icon-trash />
             </b-button>
@@ -998,6 +1002,32 @@
           :to="{ name: $route.meta.routeToAddressSetting }"
         >
           Ke Alamat Pickup
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- popup error store -->
+    <b-modal
+      ref="modal-error-store-order"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black px-4">
+          Maaf ada sedikit kendala koneksi. Silahkan untuk refresh halaman
+        </span>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          @click="refreshPage"
+        >
+          Refresh
         </b-button>
       </b-row>
     </b-modal>

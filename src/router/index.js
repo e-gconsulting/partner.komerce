@@ -38,6 +38,7 @@ import settingKompship from './routes/komship/setting-kompship/index'
 import keuangan from './routes/komship/keuangan/index'
 import hiring from './routes/komship/hiring/index'
 import opsional from './routes/komship/opsional/index'
+import ticketing from './routes/komship/ticketing/index'
 
 // Komplace
 import dashboardKomplace from './routes/komplace/dashboard/index'
@@ -47,6 +48,7 @@ import pengaturanKomplace from './routes/komplace/pengaturan/index'
 //
 
 import cetaklabel from './routes/cetak-label'
+import tiket from './routes/tiket/index'
 
 Vue.use(VueRouter)
 
@@ -82,6 +84,7 @@ const router = new VueRouter({
     ...keuangan,
     ...hiring,
     ...opsional,
+    ...ticketing,
 
     ...dashboardKomplace,
     ...monitoring,
@@ -93,6 +96,7 @@ const router = new VueRouter({
     ...wishlist,
     ...jobRoleSetting,
     ...cetaklabel,
+    ...tiket,
     {
       path: '*',
       redirect: 'error-404',
