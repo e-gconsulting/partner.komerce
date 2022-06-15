@@ -101,6 +101,7 @@ export default {
             password_confirmation: this.confirmPassword,
           }).then(response => {
             const { data } = response
+            console.log(data)
             if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
               this.emailTaken = 'The email has already been taken.'
               this.loading = false
@@ -129,6 +130,8 @@ export default {
             if (data.message === 'Akun Kamu Terdaftar Sebagai Management, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
             if (data.message === 'Akun Kamu Terdaftar Sebagai Talent, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
             if (data.message === 'Akun Kamu Terdaftar Sebagai Talent Partner Komship, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+            if (data.data.role_id === 3) this.$refs['modal-validate-existing-manajemen'].show()
+            if (data.data.role_id === 5) this.$refs['modal-validate-existing-manajemen'].show()
             this.loading = false
           }).catch(() => {
             this.$toast({
