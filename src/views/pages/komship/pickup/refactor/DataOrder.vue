@@ -72,7 +72,7 @@
                     @click="() => handleSelectOrder(dateData.item, true, false)"
                   />
                 </div>
-                <div class="all-check-data-order-date-text">
+                <div class="all-check-data-order-date-text ml-3">
                   <div class="date-wrapper">
                     {{ getDate(dateData.value) }}
                   </div>
