@@ -67,7 +67,7 @@ export default {
       modeNewUser: true,
       modeExistingUser: false,
       serviceTitle: '',
-      serviceIsKompack: false,
+      serviceIs_Kompack: false,
 
       messageValidateNo: '',
     }
@@ -91,7 +91,7 @@ export default {
           this.error = ''
           this.$refs.inputkirimemail_email.value = this.userEmail
           this.$refs.inputkirimemail_full_name.value = this.fullname
-          httpKompack.post('api/kompack/v1/register', {
+          httpKompack.post('/api/kompack/v1/register', {
             full_name: this.fullname,
             no_hp: this.nomorHandphone,
             email: this.userEmail,
@@ -119,9 +119,9 @@ export default {
             }
 
             if (data.code !== 400) {
-              // this.loading = false
-              // const routeData = this.$router.resolve({ name: 'komship-register-validate' })
-              // window.open(routeData.href, '_blank')
+              this.loading = false
+              const routeData = this.$router.resolve({ name: 'kompack-register-validate' })
+              window.open(routeData.href, '_blank')
               this.$refs.submitformkirimemail.click()
             }
             this.loading = false
@@ -173,11 +173,11 @@ export default {
       this.loading = true
       this.$refs.loginFormExisting.validate().then(success => {
         if (success) {
-          this.$http.put('api/kompack/register/existing', {
+          this.$http.put('/api/kompack/register/existing', {
             email: this.userEmailExisting,
           }).then(response => {
             this.loading = false
-            this.$router.push({ name: 'verifiedemailkompack' })
+            this.$router.push({ name: 'verified-kompack' })
           }).catch(() => {
             this.loading = false
             this.$toast({

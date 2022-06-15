@@ -131,6 +131,16 @@ export default [
   },
 
   {
+    path: '/kompack-register-berhasil',
+    name: 'kompack-register-validate',
+    component: () => import('@/views/pages/authentication/RegisterValidateKompack'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
+
+  {
     path: '/kompack-register',
     name: 'kompack-daftar',
     component: () => import('@/views/pages/authentication/RegisterKompack'),
