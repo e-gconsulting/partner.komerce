@@ -188,7 +188,7 @@ export default
         {
           label: 'Perlu Tindak Lanjut',
           value: 0,
-          onCheck: true,
+          onCheck: false,
         },
         {
           label: 'Belum Diproses',
@@ -267,7 +267,9 @@ export default
     this.receiveMessage()
   },
   async mounted() {
-    const findStatusDefault = await this.ticketStatusItems.find(item => item.onCheck === true)
+    const findIndexStatusDefault = await this.ticketStatusItems.findIndex(item => item.value === 0)
+    const findStatusDefault = await this.ticketStatusItems.find(item => item.value === 0)
+    this.ticketStatusItems[findIndexStatusDefault].onCheck = true
     await this.ticketStatus.push(findStatusDefault.value)
     this.fetchTicket()
     this.fetchTicketPartnerCount()
@@ -512,6 +514,7 @@ export default
       this.fetchTicket()
     }, 1000),
     async clearFilter() {
+      this.ticketStatus = []
       this.loadingDataTable = true
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.ticketTypeItems.length; x++) {
