@@ -982,31 +982,7 @@
           <span class="font-bold my-auto d-flex justify-content-end" style="font-size:16px">Desa, Kecamatan</span>
         </b-col>
         <b-col md="7">
-          <v-select
-            id="destinationModal"
-            v-model="destination"
-            :options="destinationList"
-            placeholder="Masukkan Kelurahan/Kecamatan"
-            :loading="loadingSearchDestination"
-            @search="onSearchDestination"
-            @input="getShippingList()"
-          >
-            <span
-              slot="no-options"
-              @click="$refs.selectDestination.open = false"
-            >
-              Tidak ada data untuk ditampilkan.
-            </span>
-            <template #spinner="{ loading }">
-              <div
-                v-if="loadingSearchDestination"
-                style="border-left-color: #F95031"
-                class="vs__spinner"
-              >
-                The .vs__spinner class will hide the text for me.
-              </div>
-            </template>
-          </v-select>
+          <b-form-input :value="destinationPreview" disabled />
         </b-col>
       </b-row>
       <b-row class="justify-content-center mt-1">

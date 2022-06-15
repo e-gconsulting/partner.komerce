@@ -119,6 +119,7 @@ export default {
       cartProductId: [],
       idCartDelete: [],
       isMassOrder: null,
+      destinationPreview: null,
     }
   },
   async created() {
@@ -997,6 +998,8 @@ export default {
     },
     checkSubmit() {
       if (this.isMassOrder === 1) {
+        const text = `${this.destination.subdistrict_name}, ${this.destination.district_name}`
+        this.destinationPreview = text
         this.$bvModal.show('modalCheckMassOrder')
       } else {
         this.submit(false)
