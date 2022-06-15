@@ -129,7 +129,10 @@
               </b-col>
             </b-row>
             <span class="d-flex mt-20">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
-            <span class="d-flex mb-1">Telah diedit oleh ‘{{ editBy }}’ pada {{ postDate(editDate) }} WIB</span>
+            <span
+              v-if="editBy !== null || editDate !== null"
+              class="d-flex mb-1"
+            >Telah diedit oleh ‘{{ editBy }}’ pada {{ postDate(editDate) }} WIB</span>
           </div>
           <h4 class="font-bold mt-2 mb-1">
             Informasi Pengiriman
