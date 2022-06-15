@@ -261,42 +261,86 @@
 
     <!-- Print label pengiriman -->
     <div v-else>
-      <b-row class="justify-content-between">
-        <b-button
-          variant="primary"
-          class="ml-3"
-          @click="handleBackHistoryPickup"
-        >
-          <feather-icon
-            icon="ChevronLeftIcon"
-          />
-        </b-button>
-        <h4 class="mr-3">
-          <strong>
-            Detail orderan pickup
-          </strong>
-        </h4>
-      </b-row>
-      <b-row class="justify-content-end mr-3 mt-2 mb-5">
-        <b-col cols="3">
-          <v-select
-            v-model="shipmentValue"
-            :options="itemsShipment"
-            label="shipping_name"
+      <div class="wrapper__print__label__desktop">
+        <b-row class="justify-content-between">
+          <b-button
+            variant="primary"
+            class="ml-3"
+            @click="handleBackHistoryPickup"
+          >
+            <feather-icon
+              icon="ChevronLeftIcon"
+            />
+          </b-button>
+          <h4 class="mr-3">
+            <strong>
+              Detail orderan pickup
+            </strong>
+          </h4>
+        </b-row>
+        <b-row class="justify-content-end mr-3 mt-2 mb-5">
+          <b-col cols="3">
+            <v-select
+              v-model="shipmentValue"
+              :options="itemsShipment"
+              label="shipping_name"
+              class="mr-1"
+              :reduce="items => items.shipping_name"
+              @input="filterPickup"
+            />
+          </b-col>
+          <b-button
+            :variant="disableButtonPrint === true ? 'dark' : 'primary'"
+            :disabled="disableButtonPrint"
+            :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
+            @click="onShowModalPrint"
+          >
+            {{ totalLabel === 0 ? 'Print Label' : `Print Label (${totalLabel})` }}
+          </b-button>
+        </b-row>
+      </div>
+      <div class="wrapper__print__label__mobile">
+        <b-row class="justify-content-between mb-1">
+          <b-button
+            variant="primary"
+            class="ml-1 mb-1"
+            @click="handleBackHistoryPickup"
+          >
+            <feather-icon
+              icon="ChevronLeftIcon"
+            />
+          </b-button>
+          <h4 class="ml-1">
+            <strong>
+              Detail orderan pickup
+            </strong>
+          </h4>
+        </b-row>
+        <b-row class="justify-content-end">
+          <b-col
+            cols="12"
+            class="mb-1"
+          >
+            <v-select
+              v-model="shipmentValue"
+              :options="itemsShipment"
+              label="shipping_name"
+              class="mr-1"
+              :reduce="items => items.shipping_name"
+              @input="filterPickup"
+            />
+          </b-col>
+          <b-button
+            :variant="disableButtonPrint === true ? 'dark' : 'primary'"
+            :disabled="disableButtonPrint"
+            :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
             class="mr-1"
-            :reduce="items => items.shipping_name"
-            @input="filterPickup"
-          />
-        </b-col>
-        <b-button
-          :variant="disableButtonPrint === true ? 'dark' : 'primary'"
-          :disabled="disableButtonPrint"
-          :style="disableButtonPrint === true ? 'cursor: no-drop' : ''"
-          @click="onShowModalPrint"
-        >
-          {{ totalLabel === 0 ? 'Print Label' : `Print Label (${totalLabel})` }}
-        </b-button>
-      </b-row>
+            @click="onShowModalPrint"
+          >
+            {{ totalLabel === 0 ? 'Print Label' : `Print Label (${totalLabel})` }}
+          </b-button>
+        </b-row>
+      </div>
 
       <b-overlay
         variant="light"
@@ -2856,6 +2900,10 @@ export default {
       display: none!important;
   }
 
+  [dir] .wrapper__print__label__mobile {
+      display: none!important;
+    }
+
   @media only screen and (max-width: 922px) {
 
     /* History Pickup */
@@ -2879,6 +2927,12 @@ export default {
   @media only screen and (max-width: 578px) {
     [dir] .wrapper__pagination__print {
         display: none!important;
+    }
+    [dir] .wrapper__print__label__desktop {
+      display: none!important;
+    }
+    [dir] .wrapper__print__label__mobile {
+      display: inline-block!important;
     }
   }
 </style>
