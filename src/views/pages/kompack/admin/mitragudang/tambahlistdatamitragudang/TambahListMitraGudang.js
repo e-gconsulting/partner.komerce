@@ -63,8 +63,8 @@ export default {
         { text: 'Penuh', value: 1 },
       ],
       optionsGender: [
-        { text: 'L', value: 1 },
-        { text: 'P', value: 0 },
+        { text: 'Laki-laki', value: 1 },
+        { text: 'Perempuan', value: 0 },
       ],
       optionBuildingType: [
         {
@@ -255,7 +255,7 @@ export default {
           formData.append('ownership', this.dataProperti.ownership)
 
           // calling API untuk tambah mitra gudang
-          this.$http_kompack.post('/kompack/tambah-mitra-gudang', formData, {
+          this.$http_kompack.post('kompack/tambah-mitra-gudang', formData, {
             headers: {
               'content-type': 'multipart/form-data',
             },
