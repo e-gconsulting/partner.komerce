@@ -233,6 +233,8 @@
                             placeholder="Nama"
                             v-model="editNameSender"
                             :state="errors.length > 0 ? false:null"
+                            :formatter="formatNameSender"
+                            @keypress="validateInputNameSenderEdit"
                           />
                           <b-form-input
                             v-else
@@ -240,7 +242,18 @@
                             disabled
                             v-model="items.name_label"
                           />
-                          <small class="text-primary">{{ errors[0] }}</small>
+                          <b-row class="justify-content-between">
+                            <small class="text-primary ml-1">{{ errors[0] }}</small>
+                            <small class="mr-1">
+                              {{ editNameSender.length }}/30
+                            </small>
+                          </b-row>
+                          <small
+                                v-if="messageErrorLengthSenderNameEdit"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
                         </validation-provider>
                       </b-form-group>
                     </b-col>

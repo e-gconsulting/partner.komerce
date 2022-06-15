@@ -128,7 +128,8 @@
                 </b-alert>
               </b-col>
             </b-row>
-            <span class="d-flex mt-20 mb-1">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
+            <span class="d-flex mt-20">Telah ditambahkan oleh ‘{{ profile.user_fullname }}’ pada {{ postDate(orderData.order_date) }} WIB</span>
+            <span class="d-flex mb-1">Telah diedit oleh ‘{{ editBy }}’ pada {{ postDate(editDate) }} WIB</span>
           </div>
           <h4 class="font-bold mt-2 mb-1">
             Informasi Pengiriman
@@ -583,6 +584,9 @@ export default {
 
       // Edit data order
       editMode: false,
+
+      editBy: null,
+      editDate: null,
     }
   },
   async created() {
@@ -633,6 +637,8 @@ export default {
         const { data } = await order.data
         this.orderData = await data
         console.log(data)
+        this.editBy = data.user_name_edited
+        this.editDate = data.order_edited_date
         this.statusNetProfit = data.net_profit.toString().charAt(0)
         this.itemOrder = await data.product
         this.statusOrder = await this.setAlert(data.order_status)
