@@ -2,10 +2,10 @@
   <h1 class="mb-2 h-text-xl">
     Informasi Penghasilan
   </h1>
-  <div class="d-flex justify-content-between">
-    <div
-      class="d-block"
-      style="width: 29.5%"
+  <b-row class="justify-content-between">
+    <b-col
+      md="3"
+      class="mb-1"
     >
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
@@ -24,10 +24,10 @@
           </p>
         </div>
       </div>
-    </div>
-    <div
-      class="d-block"
-      style="width: 21.5%"
+    </b-col>
+    <b-col
+      md="3"
+      class="mb-1"
     >
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
@@ -49,10 +49,10 @@
           {{ formatRupiah(penghasilan7Hari) }}
         </div>
       </div>
-    </div>
-    <div
-      class="d-block"
-      style="width: 21.5%"
+    </b-col>
+    <b-col
+      md="3"
+      class="mb-1"
     >
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
@@ -74,10 +74,10 @@
           {{ formatRupiah(penghasilan30Hari) }}
         </div>
       </div>
-    </div>
-    <div
-      class="d-block"
-      style="width: 21.5%"
+    </b-col>
+    <b-col
+      md="3"
+      class="mb-1"
     >
       <div class="card h-100">
         <div class="card-header mb-8 pb-0">
@@ -99,8 +99,8 @@
           {{ formatRupiah(penghasilanTotal) }}
         </div>
       </div>
-    </div>
-  </div>
+    </b-col>
+  </b-row>
   <div class="row mt-2">
     <div class="col-12">
       <div class="card">
@@ -108,39 +108,78 @@
           <div class="h-text-lg">
             Rincian Penghasilan
           </div>
-          <div class="d-flex justify-content-end w-50">
-            <b-form-group class="w-25 mb-0 mr-1">
-              <v-select
-                v-model="selectedPenghasilan"
-                label="Komship"
-                dir="ltr"
-                :options="optionsPenghasilan"
-                :clearable="false"
+
+            <div class="d-flex justify-content-end w-50 wrapper__rincian__penghasilan__desktop">
+              <b-form-group class="w-25 mb-0 mr-1">
+                <v-select
+                  v-model="selectedPenghasilan"
+                  label="Komship"
+                  dir="ltr"
+                  :options="optionsPenghasilan"
+                  :clearable="false"
+                  @input="handleChangePenghasilan"
+                />
+              </b-form-group>
+              <date-range-picker
+                ref="picker"
+                v-model="dateRange"
+                :locale-data="locale"
+                :ranges="ranges"
+                :opens="'left'"
+                class="w-50"
                 @input="handleChangePenghasilan"
-              />
-            </b-form-group>
-            <date-range-picker
-              ref="picker"
-              v-model="dateRange"
-              :locale-data="locale"
-              :ranges="ranges"
-              :opens="'left'"
-              class="w-50"
-              @input="handleChangePenghasilan"
-            >
-              <template
-                v-slot:input="picker"
-                style="min-width: 350px"
               >
-                <div
-                  class="d-flex justify-content-between align-items-center"
+                <template
+                  v-slot:input="picker"
+                  style="min-width: 350px"
                 >
-                  <span>{{ formatDate(picker.startDate) }} -
-                    {{ formatDate(picker.endDate) }}</span>
-                </div>
-              </template>
-            </date-range-picker>
-          </div>
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{{ formatDate(picker.startDate) }} -
+                      {{ formatDate(picker.endDate) }}</span>
+                  </div>
+                </template>
+              </date-range-picker>
+            </div>
+        </div>
+        <div class="wrapper__rincian__penghasilan__mobile text-right">
+          <b-row class="justify-content-end wrapper__rincian__penghasilan__mobile mr-50">
+            <b-col md="12">
+              <b-form-group>
+                <v-select
+                  v-model="selectedPenghasilan"
+                  label="Komship"
+                  dir="ltr"
+                  :options="optionsPenghasilan"
+                  :clearable="false"
+                  @input="handleChangePenghasilan"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col md="12" class="text-right">
+              <date-range-picker
+                ref="picker"
+                v-model="dateRange"
+                :locale-data="locale"
+                :ranges="ranges"
+                :opens="'left'"
+                @input="handleChangePenghasilan"
+              >
+                <template
+                  v-slot:input="picker"
+                  style="min-width: 350px"
+                >
+                  <div
+                    class="d-flex justify-content-between align-items-center"
+                  >
+                    <span>{{ formatDate(picker.startDate) }} -
+                      {{ formatDate(picker.endDate) }}</span>
+                  </div>
+                </template>
+              </date-range-picker>
+            </b-col>
+          </b-row>
         </div>
         <div class="card-body">
           <div class="row">
