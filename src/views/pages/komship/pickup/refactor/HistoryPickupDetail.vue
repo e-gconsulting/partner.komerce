@@ -2618,19 +2618,8 @@ export default {
       this.$http_komship.get('v1/generate/print-label', {
         params,
       }).then(response => {
-        this.base64Label = response.data
-        const binary = atob(this.base64Label.replace(/\s/g, ''))
-        const len = binary.length
-        const buffer = new ArrayBuffer(len)
-        const view = new Uint8Array(buffer)
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < len; i++) {
-          view[i] = binary.charCodeAt(i)
-        }
-        const file = new Blob([view], { type: 'application/pdf' })
-        const fileURL = URL.createObjectURL(file)
         try {
-          window.open(fileURL)
+          window.open(response.data)
         } catch (e) {
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
         }

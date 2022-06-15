@@ -591,7 +591,6 @@ export default
               fcm_token: currentToken,
             })
           Notification.requestPermission().then(permission => {
-            console.log('permiss', permission)
             if (permission === 'denied' || permission === 'default') {
               this.$refs['modal-alert-notification'].show()
             }

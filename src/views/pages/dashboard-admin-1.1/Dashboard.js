@@ -214,20 +214,8 @@ export default {
           custom: ({
             series, seriesIndex, dataPointIndex, w,
           }) => {
-            // console.log('ini series', series)
-            // console.log('ini series index', seriesIndex)
-            // console.log('ini W', w)
-            // w.globals.collapsedSeriesIndices: Array number
-            // w.globals.collapsedSeries: Array Object
-            /*
-              {data: Array(7) [ 200, 400, 450, … ]
-              index: 3
-              type: "area"}
-            */
-
             let htmlRender = ''
             const arrayData = [...w.globals.series]
-            // console.log('w.globals ', w.globals)
             arrayData.forEach((x, idx) => {
               if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
                 htmlRender += ''

@@ -101,7 +101,6 @@ export default {
             password_confirmation: this.confirmPassword,
           }).then(response => {
             const { data } = response
-            console.log(data)
             if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
               this.emailTaken = 'The email has already been taken.'
               this.loading = false

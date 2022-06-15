@@ -617,7 +617,6 @@ export default {
         const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.idOrder}`)
         const { data } = await order.data
         this.orderData = await data
-        console.log(data)
         this.statusNetProfit = data.net_profit.toString().charAt(0)
         this.itemOrder = await data.product
         this.statusOrder = await this.setAlert(data.order_status)
