@@ -212,7 +212,7 @@
                     variant="flat-dark"
                     size="sm"
                     tag="router-link"
-                    :to="{ name: $route.meta.routeToOrder, query: { tab: 'perlu-dikirim' } }"
+                    :to="{ name: $route.meta.routeToOrder, query: { tab: 'order-dibuat' } }"
                   >
                     <img
                       src="@/assets/images/icons/arrow-right-2.svg"
@@ -391,11 +391,17 @@
                   >
                     <div class="d-flex align-items-center">
                       <img
-                        width="35"
+                        v-if="produkTerlaris.photo !== null || produkTerlaris.photo !== ''"
+                        width="50px"
                         class="img-fluid"
                         :src="produkTerlaris.photo"
                         alt="Photo"
                       />
+                      <img
+                        v-else
+                        :src="require('@/assets/images/avatars/image-null.png')"
+                        class="image-product"
+                      >
                       <div>
                         <p class="list-text-1 h-text-dark ml-2 mb-0">
                           {{ produkTerlaris.name }}
