@@ -185,7 +185,6 @@ export default {
       .then(response => {
         const { data } = response.data
         this.fetchTicketPartnerCount()
-        this.$bvModal.show('ModalOnBoarding')
         if (data) {
           if (!data.is_onboarding) {
             this.$bvModal.show('ModalOnBoarding')
