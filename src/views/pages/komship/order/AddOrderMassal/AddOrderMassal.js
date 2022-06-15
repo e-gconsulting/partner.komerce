@@ -1,6 +1,7 @@
 /* eslint-disable global-require */
 /* eslint-disable no-alert */
 /* eslint-disable no-plusplus */
+import { controllers } from 'chart.js'
 import jspreadsheet from 'jspreadsheet-ce'
 import { toInteger } from 'lodash'
 import moment from 'moment'
@@ -79,10 +80,11 @@ export default {
             this.sourceShipment = data.shipments
             const { variant } = data
             this.sourceVariant = ['-']
-            if (data.addresses === []) {
+            if (data.addresses.length === 0) {
               this.$swal({
                 title: '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
                 imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+                allowOutsideClick: false,
                 confirmButtonText: 'Tambahkan Alamat Pick Up',
                 confirmButtonClass: 'btn btn-primary',
               }).then(response => {
@@ -91,15 +93,16 @@ export default {
                 }
               })
             }
-            if (data.product === []) {
+            if (data.products.length === 0) {
               this.$swal({
                 title: '<span class="font-weight-bold h4">Sebelum lanjut membuat order, tambahkan produk yang akan kamu jual dahulu ya,</span>',
                 imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+                allowOutsideClick: false,
                 confirmButtonText: 'Tambahkan Produk',
                 confirmButtonClass: 'btn btn-primary',
               }).then(response => {
                 if (response.isConfirmed) {
-                  this.$router.push('add-product')
+                  this.$router.push('add-produk')
                 }
               })
             }
@@ -137,7 +140,7 @@ export default {
       })
       const { saldo } = this
       const popupSaldo = () => this.$swal({
-        html: '<span style="font-weight:600;font-size:20px">Kamu harus mengisi saldo dulu ya, sebelum membuat order dengan metode Transfer Bank</span>',
+        html: '<span style="font-size:22px;font-weight:800">Saldo Belum Mencukupi</span><br><span style="font-size:16px">Kamu harus mengisi saldo dulu ya, sebelum membuat order dengan metode Transfer Bank</span>',
         imageUrl: require('@/assets/images/icons/warning.svg'),
         confirmButtonText: 'Top up Saldo',
         confirmButtonClass: 'btn btn-primary rounded-lg',
@@ -147,7 +150,7 @@ export default {
         cancelButtonClass: 'btn btn-outline-primary text-primary',
       }).then(response => {
         if (response.isConfirmed) {
-          this.$router.push('dashboard-komship')
+          this.submitSheets('save', 'dashboard-komship')
         }
       })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
@@ -287,7 +290,7 @@ export default {
           .catch(this.loadingDraft = false)
       }, 800)
     },
-    submitSheets(method) {
+    submitSheets(method, redirect) {
       const json = this.table.getJson()
       let number = 1
       const data = json.map(items => ({
@@ -312,7 +315,12 @@ export default {
             options: 'save',
             data,
           })
-            .then(this.getLastUpdated)
+            .then(() => {
+              if (redirect === 'dashboard-komship') {
+                this.$router.push('dashboard-komship')
+              }
+              this.getLastUpdated()
+            })
             .catch(this.loadingDraft = false)
         }, 800)
       } else if (method === 'submit') {
@@ -400,6 +408,22 @@ export default {
                       confirmButtonClass: 'btn btn-primary',
                     })
                   }
+                  if (response.message === 'Your balance is not enough') {
+                    this.$swal({
+                      html: '<span style="font-size:22px;font-weight:800">Saldo Belum Mencukupi</span><br><span style="font-size:16px">Kamu harus mengisi saldo dulu ya, sebelum membuat order dengan metode Transfer Bank</span>',
+                      imageUrl: require('@/assets/images/icons/warning.svg'),
+                      confirmButtonText: 'Top up Saldo',
+                      confirmButtonClass: 'btn btn-primary rounded-lg',
+                      showCancelButton: true,
+                      cancelButtonText: 'Kembali',
+                      cancelButtonColor: '#FFFFFF',
+                      cancelButtonClass: 'btn btn-outline-primary text-primary',
+                    }).then(uy => {
+                      if (uy.isConfirmed) {
+                        this.submitSheets('save', 'dashboard-komship')
+                      }
+                    })
+                  }
                   if (response.message === "There's error in shipping" && response.error_data !== []) {
                     this.$swal({
                       html: `<ul><li class="text-primary">
@@ -428,12 +452,9 @@ export default {
               title:
                 '<span class="font-weight-bold h4">Mohon Maaf, Ekspedisi Belum Diaktifkan.</span>',
               imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
-              showCancelButton: true,
+              allowOutsideClick: false,
               confirmButtonText: 'Aktifkan Ekspedisi',
               confirmButtonClass: 'btn btn-primary',
-              cancelButtonText: 'Oke',
-              cancelButtonClass:
-                'btn btn-outline-primary bg-white text-primary',
             }).then(then => {
               if (then.isConfirmed) {
                 this.$router.push('/setting-kompship/ekspedisi')
