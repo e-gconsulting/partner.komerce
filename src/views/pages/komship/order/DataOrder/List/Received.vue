@@ -146,33 +146,30 @@
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
-            <div class="d-flex">
-              <div v-if="data.item.product[0].product_image === null">
-                <img
-                  style="width:50px;height:50px;"
-                  :src="require('@/assets/images/avatars/image-null.png')"
-                >
-              </div>
-              <div v-else>
-                <img
-                  style="width:50px;height:50px;"
-                  :src="data.item.product[0].product_image"
-                  :alt="data.item.product[0].product_image"
-                >
-              </div>
-              <div
-                class="ml-1"
-                style="width:70%;"
+            <div
+              class="d-flex"
+              style="min-width:160px!important"
+            >
+              <img
+                v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                class="image-product"
+                :src="require('@/assets/images/avatars/image-null.png')"
               >
-                <span class="font-bold">{{ data.item.product[0].product_name }}</span><br>
+              <img
+                v-else
+                class="image-product"
+                :src="data.item.product[0].product_image"
+                :alt="data.item.product[0].product_image"
+              >
+              <div style="margin-left:5px;">
+                <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
                 <span
                   v-if="data.item.product[0].variant_name !== '0'"
                   class="text-primary"
                 >{{ data.item.product[0].variant_name }}</span>
               </div>
               <div
-                class="ml-1 font-bold"
-                style="10%"
+                class="font-bold ml-auto"
               >
                 x{{ data.item.product[0].qty }}
               </div>
@@ -183,32 +180,30 @@
                   v-for="item in data.item.product.slice(1)"
                   :key="item.order_id"
                   class="d-flex mt-1"
+                  style="min-width:160px!important"
                 >
-                  <div v-if="item.product_image === null">
-                    <img
-                      style="width:50px;height:50px;"
-                      :src="require('@/assets/images/avatars/image-null.png')"
-                    >
-                  </div>
-                  <div v-else>
-                    <img
-                      style="width:50px;height:50px;"
-                      :src="item.product_image"
-                      :alt="item.product_image"
-                    >
+                  <img
+                    v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                    class="image-product"
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                  >
+                  <img
+                    v-else
+                    class="image-product"
+                    :src="data.item.product[0].product_image"
+                    :alt="data.item.product[0].product_image"
+                  >
+                  <div style="margin-left:5px;">
+                    <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                    <span
+                      v-if="data.item.product[0].variant_name !== '0'"
+                      class="text-primary"
+                    >{{ data.item.product[0].variant_name }}</span>
                   </div>
                   <div
-                    class="ml-1"
-                    style="width:70%;"
+                    class="font-bold ml-auto"
                   >
-                    <span class="font-bold">{{ item.product_name }}</span><br>
-                    <span class="text-primary">{{ item.variant_name }}</span>
-                  </div>
-                  <div
-                    class="ml-1 font-bold"
-                    style="10%"
-                  >
-                    x{{ item.qty }}
+                    x{{ data.item.product[0].qty }}
                   </div>
                 </div>
               </b-collapse>
@@ -505,5 +500,11 @@ export default {
 .btnPage {
   padding: 4px 7px;
   margin-right: 5px;
+}
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 </style>
