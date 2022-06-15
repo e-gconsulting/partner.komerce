@@ -539,7 +539,7 @@
                     :key="index+1"
                 >
                     <b-form-checkbox
-                        :checked="items.onCheck"
+                        v-model="items.onCheck"
                         class="custom-control-primary mb-1"
                         @change="filterTicketByStatus(items)"
                     >
