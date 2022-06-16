@@ -1282,7 +1282,7 @@ export default {
         })
     },
     refreshPage() {
-
+      window.location.reload()
     },
   },
 }
