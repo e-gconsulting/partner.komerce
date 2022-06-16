@@ -662,5 +662,8 @@ export default
       }
       return result
     },
+    handleCloseAlert() {
+      this.$refs['modal-alert-notification'].hide()
+    },
   },
 }
