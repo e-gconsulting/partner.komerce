@@ -180,7 +180,7 @@ export default {
             email: this.userEmailExisting,
           }).then(response => {
             this.loading = false
-            this.$router.push({ name: 'kompack-register-validate' })
+            this.$router.push({ name: 'komship-register-validate' })
           }).catch(() => {
             this.loading = false
             this.$toast({
