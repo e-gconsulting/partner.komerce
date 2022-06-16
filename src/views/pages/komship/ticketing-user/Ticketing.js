@@ -298,7 +298,7 @@ export default
         params,
       })
         .then(response => {
-         if (response.data.code !== 400) {
+          if (response.data.code !== 400) {
             const { data } = response.data.data
             this.itemsTicket = data
             this.totalRows = response.data.data.total
@@ -425,8 +425,12 @@ export default
     loadResi(search) {
       return this.$http_komship.get(`/v1/ticket-partner/check-resi/${search}`)
         .then(response => {
-          const { data } = response.data
-          this.itemsResi = data
+          if (response.data.code !== 400) {
+            const { data } = response.data
+            this.itemsResi = data
+          } else {
+            this.itemsResi = []
+          }
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,

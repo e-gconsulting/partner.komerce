@@ -314,20 +314,18 @@
                         class="d-flex"
                       >
                         <div>
-                          <b-avatar
+                          <img
                             v-if="itemsData.product_image[0] !== undefined"
                             variant="light-primary"
                             square
-                            size="50px"
+                            width="50px"
                             :src="itemsData.product_image[0].images_path"
-                          />
-                          <b-avatar
+                          >
+                          <img
                             v-else
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="imageFileProduct"
-                          />
+                            :src="require('@/assets/images/avatars/image-null.png')"
+                            width="50px"
+                          >
                         </div>
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
@@ -582,19 +580,18 @@
                   class="d-flex"
                 >
                   <div v-if="data.item.product_image[0] !== undefined">
-                    <b-avatar
+                    <img
                       variant="light-primary"
                       square
-                      size="50px"
+                      width="50px"
                       :src="data.item.product_image[0].images_path"
-                    />
+                    >
                   </div>
                   <div v-else>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                    />
+                    <img
+                      :src="require('@/assets/images/avatars/image-null.png')"
+                      width="50px"
+                    >
                   </div>
                   <div class="ml-1">
                     <p><strong>{{ data.item.product_name }}</strong></p>
@@ -864,7 +861,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    BAvatar,
     BForm,
     BOverlay,
     BModal,
