@@ -147,6 +147,8 @@
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
             <div
+              v-for="(itemProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
               class="d-flex"
               style="min-width:160px!important"
             >
@@ -162,22 +164,22 @@
                 :alt="data.item.product[0].product_image"
               >
               <div style="margin-left:5px;">
-                <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                <span class="d-flex font-bold">{{ itemProduct.product_name }}</span>
                 <span
-                  v-if="data.item.product[0].variant_name !== '0'"
+                  v-if="itemProduct.variant_name !== '0'"
                   class="text-primary"
-                >{{ data.item.product[0].variant_name }}</span>
+                >{{ itemProduct.variant_name }}</span>
               </div>
               <div
                 class="font-bold ml-auto"
               >
-                x{{ data.item.product[0].qty }}
+                x{{ itemProduct.qty }}
               </div>
             </div>
             <div v-if="data.item.product.length > 1">
               <b-collapse :id="'collapse-'+data.item.order_id">
                 <div
-                  v-for="item in data.item.product.slice(1)"
+                  v-for="item in data.item.product.slice(1, data.item.product.length)"
                   :key="item.order_id"
                   class="d-flex mt-1"
                   style="min-width:160px!important"
@@ -196,14 +198,14 @@
                   <div style="margin-left:5px;">
                     <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
                     <span
-                      v-if="data.item.product[0].variant_name !== '0'"
+                      v-if="item.variant_name !== '0'"
                       class="text-primary"
-                    >{{ data.item.product[0].variant_name }}</span>
+                    >{{ item.variant_name }}</span>
                   </div>
                   <div
                     class="font-bold ml-auto"
                   >
-                    x{{ data.item.product[0].qty }}
+                    x{{ item.qty }}
                   </div>
                 </div>
               </b-collapse>
