@@ -537,6 +537,19 @@ export default {
         })
           .then(async () => {
             await this.addToCart()
+            this.paymentMethod = null
+            this.shipping = null
+            this.listShipping = []
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
           })
       } else {
         let cartDelete = null
@@ -551,6 +564,16 @@ export default {
           .then(async () => {
             await this.addToCart()
             await this.getShippingList()
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
           })
       }
     },
@@ -583,13 +606,15 @@ export default {
           .then(async res => {
             this.cartId = []
             this.cartProductId = res.data.data.cart_id
+            const itemCartDelete = []
             await this.cartProductId.forEach(items => {
               this.cartId.push(items.cart_id)
+              itemCartDelete.push(items)
             })
             if (this.cartId.length !== cart.length) {
               let cartDelete = null
               await this.cartId.forEach(async item => {
-                cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
+                cartDelete = await this.cartProductId.find(items => item === items.cart_id)
               })
               this.$http_komship.delete('/v1/cart/delete', {
                 params: {

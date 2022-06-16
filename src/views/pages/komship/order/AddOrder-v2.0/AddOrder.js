@@ -679,6 +679,18 @@ export default {
         })
           .then(async () => {
             await this.addToCart()
+            this.shipping = null
+            this.listShipping = []
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
           })
       } else {
         let cartDelete = null
@@ -693,6 +705,16 @@ export default {
           .then(async () => {
             await this.addToCart()
             await this.getShippingList()
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
           })
       }
     },
