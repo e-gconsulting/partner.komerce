@@ -318,13 +318,13 @@
                             v-if="itemsData.product_image[0] !== undefined"
                             variant="light-primary"
                             square
-                            width="50px"
+                            class="image-product"
                             :src="itemsData.product_image[0].images_path"
                           >
                           <img
                             v-else
                             :src="require('@/assets/images/avatars/image-null.png')"
-                            width="50px"
+                            class="image-product"
                           >
                         </div>
                         <div class="ml-1">
@@ -583,14 +583,14 @@
                     <img
                       variant="light-primary"
                       square
-                      width="50px"
+                      class="image-product"
                       :src="data.item.product_image[0].images_path"
                     >
                   </div>
                   <div v-else>
                     <img
                       :src="require('@/assets/images/avatars/image-null.png')"
-                      width="50px"
+                      class="image-product"
                     >
                   </div>
                   <div class="ml-1">
@@ -1062,6 +1062,13 @@ export default {
   [dir] .wrapper__form__filter__data__product__mobile {
     width: 270px!important;
   }
+}
+
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 
 </style>
