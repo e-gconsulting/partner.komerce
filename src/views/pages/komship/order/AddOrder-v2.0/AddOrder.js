@@ -665,57 +665,64 @@ export default {
     }, 1000),
     async removeProduct(data, index) {
       this.idCartDelete = this.cartProductId
-      const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id)
+      const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
+      const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       this.productSelected.splice(index, 1)
       this.productHistory = false
       if (this.productSelected.length === 0) {
         this.paymentMethod = null
         this.shipping = null
         this.listShipping = []
-        await this.$http_komship.delete('/v1/cart/delete', {
-          params: {
-            cart_id: [findCartProduct.cart_id],
-          },
-        })
-          .then(async () => {
-            await this.addToCart()
-            this.shipping = null
-            this.listShipping = []
-          }).catch(err => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: err,
-                variant: 'danger',
-              },
-            })
+        if (findCartProduct !== undefined) {
+          await this.$http_komship.delete('/v1/cart/delete', {
+            params: {
+              cart_id: [findCartProduct.cart_id],
+            },
           })
+            .then(async () => {
+              await this.addToCart()
+              this.shipping = null
+              this.listShipping = []
+              this.cartId = []
+              this.cartProductId = []
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure top',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              })
+            })
+        }
       } else {
         let cartDelete = null
-        await this.cartId.forEach(async item => {
-          cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
-        })
-        await this.$http_komship.delete('/v1/cart/delete', {
-          params: {
-            cart_id: [cartDelete.cart_id],
-          },
-        })
-          .then(async () => {
-            await this.addToCart()
-            await this.getShippingList()
-          }).catch(err => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: err,
-                variant: 'danger',
-              },
-            })
+        cartDelete = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
+        if (cartDelete !== undefined) {
+          await this.$http_komship.delete('/v1/cart/delete', {
+            params: {
+              cart_id: [cartDelete.cart_id],
+            },
           })
+            .then(async () => {
+              await this.cartProductId.splice(findIndexCartProduct, 1)
+              await this.cartId.splice(findIndexCartProduct, 1)
+              await this.addToCart()
+              await this.getShippingList()
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure bot',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              })
+            })
+        }
       }
     },
     saveProductHistory() {
