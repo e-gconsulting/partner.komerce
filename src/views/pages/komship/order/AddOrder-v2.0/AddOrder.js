@@ -570,7 +570,7 @@ export default {
         this.productSelected[indexProduct].variantButton = true
       }
     },
-    submitVariant(index, productId) {
+    async submitVariant(index, productId) {
       const checkVariant = this.productSelected.findIndex(
         item => item.variant_name === this.productVariantName
           && item.product_id === productId,
@@ -638,7 +638,8 @@ export default {
         this.productSelected[index].subtotal = dataVariant.price
         this.productSelected[index].variantSubmit = true
         this.productHistory = false
-        this.addToCart()
+        await this.addToCart()
+        await this.getShippingList()
       }
       this.$root.$emit('bv::hide::modal', `modalVariation${index}`)
     },
