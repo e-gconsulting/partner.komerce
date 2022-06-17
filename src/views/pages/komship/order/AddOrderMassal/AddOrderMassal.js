@@ -1,7 +1,6 @@
 /* eslint-disable global-require */
 /* eslint-disable no-alert */
 /* eslint-disable no-plusplus */
-import { controllers } from 'chart.js'
 import jspreadsheet from 'jspreadsheet-ce'
 import { toInteger } from 'lodash'
 import moment from 'moment'
@@ -203,10 +202,36 @@ export default {
             const columnName = jspreadsheet.getColumnNameFromId(['7', row])
             instance.jexcel.setValue(columnName, '')
           } else if (col === '3') {
-            if (!regexNumber.test(val) || val.length < 10 || val.length > 13) {
-              const columnName = jspreadsheet.getColumnNameFromId(['3', row])
-              instance.jexcel.setValue(columnName, '')
+            // if (!regexNumber.test(val) || val.length < 10 || val.length > 13) {
+            //   const columnName = jspreadsheet.getColumnNameFromId(['3', row])
+            //   instance.jexcel.setValue(columnName, '')
+            //   popup('Masukkan Nomor HP pembeli dengan benar yaa..')
+            // } else {
+            //   let valid
+            //   const value = `${val}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
+            //   const char1 = value.charAt(0)
+            //   const char2 = value.charAt(1)
+            //   const columnName = jspreadsheet.getColumnNameFromId(['3', row])
+            //   if (char1 === '6' && char2 === '2') {
+            //     const subs = value.substring(2)
+            //     valid = `0${subs}`
+            //   } else if (char1 === '8') {
+            //     valid = `0${value}`
+            //   }
+            //   instance.jexcel.setValue(columnName, valid)
+            // }
+            const columnName = jspreadsheet.getColumnNameFromId(['3', row])
+            let phoneNumber = val.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
+            if (phoneNumber.charAt(0) === '6' && phoneNumber.charAt(1) === '2') {
+              phoneNumber = `0${phoneNumber.substring(2)}`
+            } else if (phoneNumber.charAt(0) !== '0') {
+              phoneNumber = `0${phoneNumber}`
+            }
+            if (phoneNumber.length < 10 || phoneNumber.length > 13) {
               popup('Masukkan Nomor HP pembeli dengan benar yaa..')
+              instance.jexcel.setValue(columnName, '')
+            } else {
+              instance.jexcel.setValue(columnName, phoneNumber)
             }
           } else if (col === '4') {
             if (!regexNumber.test(val) || val < 10110 || val > 99974) {
