@@ -6,12 +6,15 @@
 /* eslint-disable prefer-destructuring */
 import moment from 'moment'
 import vSelect from 'vue-select'
+import {
+  BFormTextarea,
+} from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship2 from '../../setting-kompship/http_komship2'
 import '@core/scss/vue/libs/vue-select.scss'
 
 export default {
-  components: { vSelect },
+  components: { vSelect, BFormTextarea },
   data() {
     return {
       profile: [],
@@ -125,6 +128,9 @@ export default {
       cartProductId: [],
       idCartDelete: [],
       checkSameCart: {},
+
+      customerPhonePaste: '',
+      customerPhonePasteMode: false,
     }
   },
   created() {
@@ -1314,6 +1320,14 @@ export default {
       } else {
         this.messageErrorPhone = false
       }
+      if (this.customerPhonePasteMode === true) {
+        if (this.customerPhonePaste.charAt(0) === '0') {
+          this.customerPhone = this.customerPhonePaste.substr(1, this.customerPhonePaste.length)
+        } else {
+          this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
+        }
+      }
+      this.customerPhonePasteMode = false
     },
     validateInputCustomerName(e) {
       if (
@@ -1353,6 +1367,19 @@ export default {
     },
     refreshPage() {
       window.location.reload()
+    },
+    formatterPhone(e) {
+      this.customerPhonePasteMode = true
+      this.customerPhone = ''
+      this.customerPhonePaste = ''
+      this.customerPhonePaste = e.clipboardData.getData('text').replace(/\D/g, '')
+    },
+    valueFormatPhone(e) {
+      if (e.target.value.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
     },
   },
 }

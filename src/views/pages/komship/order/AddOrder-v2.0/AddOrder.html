@@ -130,7 +130,7 @@
         md="3"
         class="my-auto"
       >
-        <span class="text-lg">No Telepon</span>
+        <span class="text-lg">No HP.</span>
       </b-col>
       <b-col
         md="4"
@@ -144,10 +144,13 @@
             />
           </template>
           <b-form-input
+            id="inputBox"
             v-model="customerPhone"
             type="number"
-            @input="formatPhoneCustomer"
             @keypress="validateInputPhoneCustomer"
+            @paste="formatterPhone"
+            @input="formatPhoneCustomer"
+            @keyup="valueFormatPhone"
           />
           <b-row class="justify-content-end">
             <div>
@@ -172,6 +175,7 @@
           ref="selectDestination"
           v-model="destination"
           :options="destinationList"
+          class="style-chooser"
           placeholder="Masukkan Kelurahan/Kecamatan"
           :loading="loadingSearchDestination"
           @search="onSearchDestination"
@@ -208,7 +212,7 @@
           placeholder="Agar kurir mudah menemukan lokasi, masukan nama jalan, RT/RW atau patokan bangunan dengan lengkap ya"
           :formatter="formatAddressDetail"
           @keypress="validateInputAddressDetail"
-          style="height: 155px !important;"
+          rows="4"
         />
         <b-row class="justify-content-end">
           <small class="mr-1 mt-50">

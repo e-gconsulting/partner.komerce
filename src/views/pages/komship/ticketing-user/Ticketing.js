@@ -188,22 +188,22 @@ export default
         {
           label: 'Perlu Tindak Lanjut',
           value: 0,
-          onCheck: false,
+          onCheck: true,
         },
         {
           label: 'Belum Diproses',
           value: 1,
-          onCheck: false,
+          onCheck: true,
         },
         {
           label: 'Sedang Diproses',
           value: 2,
-          onCheck: false,
+          onCheck: true,
         },
         {
           label: 'Selesai',
           value: 3,
-          onCheck: false,
+          onCheck: true,
         },
       ],
       fontClassTicketStatus: {
@@ -267,10 +267,9 @@ export default
     this.receiveMessage()
   },
   async mounted() {
-    const findIndexStatusDefault = await this.ticketStatusItems.findIndex(item => item.value === 0)
-    const findStatusDefault = await this.ticketStatusItems.find(item => item.value === 0)
-    this.ticketStatusItems[findIndexStatusDefault].onCheck = true
-    await this.ticketStatus.push(findStatusDefault.value)
+    await this.ticketStatusItems.forEach(item => {
+      this.ticketStatus.push(item.value)
+    })
     this.fetchTicket()
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
@@ -531,12 +530,11 @@ export default
       }
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.ticketStatusItems.length; x++) {
-        this.ticketStatusItems[x].onCheck = false
+        this.ticketStatusItems[x].onCheck = true
       }
-      const findIndexStatusDefault = await this.ticketStatusItems.findIndex(item => item.value === 0)
-      this.ticketStatusItems[findIndexStatusDefault].onCheck = true
-      const findStatusDefault = await this.ticketStatusItems.find(item => item.onCheck === true)
-      await this.ticketStatus.push(findStatusDefault.value)
+      await this.ticketStatusItems.forEach(item => {
+        this.ticketStatus.push(item.value)
+      })
       const params = {
         ticket_status: this.ticketStatus.join(),
       }
