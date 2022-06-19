@@ -202,24 +202,6 @@ export default {
             const columnName = jspreadsheet.getColumnNameFromId(['7', row])
             instance.jexcel.setValue(columnName, '')
           } else if (col === '3') {
-            // if (!regexNumber.test(val) || val.length < 10 || val.length > 13) {
-            //   const columnName = jspreadsheet.getColumnNameFromId(['3', row])
-            //   instance.jexcel.setValue(columnName, '')
-            //   popup('Masukkan Nomor HP pembeli dengan benar yaa..')
-            // } else {
-            //   let valid
-            //   const value = `${val}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
-            //   const char1 = value.charAt(0)
-            //   const char2 = value.charAt(1)
-            //   const columnName = jspreadsheet.getColumnNameFromId(['3', row])
-            //   if (char1 === '6' && char2 === '2') {
-            //     const subs = value.substring(2)
-            //     valid = `0${subs}`
-            //   } else if (char1 === '8') {
-            //     valid = `0${value}`
-            //   }
-            //   instance.jexcel.setValue(columnName, valid)
-            // }
             const columnName = jspreadsheet.getColumnNameFromId(['3', row])
             let phoneNumber = val.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
             if (phoneNumber.charAt(0) === '6' && phoneNumber.charAt(1) === '2') {
@@ -270,6 +252,35 @@ export default {
             instance, cell, col, row, val,
           }
           getSelectedTable(data)
+        },
+        onbeforepaste(instance, val, col, row, cell) {
+          let pasteData = ''
+          const rowSplit = val.split('\n')
+          for (let index = 0; index < rowSplit.length; index++) {
+            const columnSplit = rowSplit[index].split('\t')
+            const getRow = toInteger(row) + index
+            for (let i = 0; i < columnSplit.length; i++) {
+              let valueColumn
+              const getCol = toInteger(col) + i
+              if (getCol === 3) {
+                let phoneNumber = columnSplit[i].replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
+                if (phoneNumber.charAt(0) === '6' && phoneNumber.charAt(1) === '2') {
+                  phoneNumber = `0${phoneNumber.substring(2)}`
+                } else if (phoneNumber.charAt(0) !== '0' && phoneNumber !== '') {
+                  phoneNumber = `0${phoneNumber}`
+                }
+                valueColumn = phoneNumber
+              } else {
+                valueColumn = columnSplit[i]
+              }
+              if (i === columnSplit.length - 1) {
+                pasteData += `${valueColumn}\n`
+              } else {
+                pasteData += `${valueColumn}\t`
+              }
+            }
+          }
+          return pasteData
         },
       })
       this.$refs.loadingPage.hide()
