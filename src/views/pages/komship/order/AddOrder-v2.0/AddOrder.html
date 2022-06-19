@@ -134,7 +134,6 @@
       </b-col>
       <b-col
         md="4"
-        class="pr-3"
       >
         <b-input-group>
           <template #prepend>
@@ -152,17 +151,17 @@
             @input="formatPhoneCustomer"
             @keyup="valueFormatPhone"
           />
-          <b-row class="justify-content-end">
-            <div>
-              <small
-                class="mr-1 text-primary ml-1"
-                v-if="messageErrorPhone"
-              >
-                *minimal 9 digit dan hanya berupa angka.
-              </small>
-            </div>
-          </b-row>
         </b-input-group>
+        <b-row class="justify-content-start">
+          <div>
+            <small
+              class="mr-1 text-primary ml-1"
+              v-if="messageErrorPhone"
+            >
+              *minimal 9 digit dan hanya berupa angka.
+            </small>
+          </div>
+        </b-row>
       </b-col>
     </b-row>
     <b-row class="mb-1">

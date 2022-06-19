@@ -1326,6 +1326,11 @@ export default {
         } else {
           this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
         }
+        if (this.customerPhonePaste.charAt(0) === '6') {
+          this.customerPhone = this.customerPhonePaste.substr(2, this.customerPhonePaste.length)
+        } else {
+          this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
+        }
       }
       this.customerPhonePasteMode = false
     },
