@@ -611,22 +611,29 @@ export default {
           .then(async res => {
             this.cartId = []
             this.cartProductId = res.data.data.cart_id
-            const itemCartDelete = []
+            const getVariantFromCart = []
+            const getVariantFromBulk = []
+            cart.forEach(item => {
+              getVariantFromCart.push(item.variant_id)
+            })
+            this.cartProductId.forEach(item => {
+              getVariantFromBulk.push(item.variant_id)
+            })
             await this.cartProductId.forEach(items => {
               this.cartId.push(items.cart_id)
-              itemCartDelete.push(items)
             })
             if (this.cartId.length !== cart.length) {
-              let cartDelete = null
-              await this.cartId.forEach(async item => {
-                cartDelete = await this.cartProductId.find(items => item === items.cart_id)
+              const difference = getVariantFromBulk.filter(x => getVariantFromCart.indexOf(x) === -1)
+              let itemsCartToDelete = null
+              difference.forEach(item => {
+                itemsCartToDelete = this.cartProductId.find(items => items.variant_id === item)
               })
               this.$http_komship.delete('/v1/cart/delete', {
                 params: {
-                  cart_id: [cartDelete.cart_id],
+                  cart_id: [itemsCartToDelete.cart_id],
                 },
               }).then(() => {
-                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
+                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === itemsCartToDelete.cart_id)
                 this.cartId.splice(findIndexCartToDelete, 1)
                 this.loadingCalculate = false
                 this.calculate(true)
@@ -1250,7 +1257,12 @@ export default {
               search: this.destination,
             },
           }).then(async res => {
-            this.destination = res.data.data.data[0]
+            console.log(res)
+            if (res.data.data.data === undefined) {
+              this.destination = null
+            } else {
+              this.destination = res.data.data.data[0]
+            }
             await this.addToCart()
             this.shipping = this.shippingFromDetailEdit
             await this.calculateOnExpedition(true)
@@ -1268,6 +1280,7 @@ export default {
             this.loadingEditOrder = false
           })
           this.loadingEditOrder = false
+          console.log(this.productSelected)
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,

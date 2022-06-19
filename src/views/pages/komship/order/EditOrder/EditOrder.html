@@ -415,7 +415,7 @@
               <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
             </div>
           <div
-            v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
+            v-if="data.item.is_variant < 1 && data.item.stockAvailable < 1 || data.item.variantSubmit && data.item.stockAvailable < 1"
             class="d-flex justify-center text-primary text-lg"
           >Stok Habis</div>
         </template>
