@@ -6,12 +6,15 @@
 /* eslint-disable prefer-destructuring */
 import moment from 'moment'
 import vSelect from 'vue-select'
+import {
+  BFormTextarea,
+} from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import httpKomship2 from '../../setting-kompship/http_komship2'
 import '@core/scss/vue/libs/vue-select.scss'
 
 export default {
-  components: { vSelect },
+  components: { vSelect, BFormTextarea },
   data() {
     return {
       profile: [],
@@ -125,6 +128,9 @@ export default {
       cartProductId: [],
       idCartDelete: [],
       checkSameCart: {},
+
+      customerPhonePaste: '',
+      customerPhonePasteMode: false,
     }
   },
   created() {
@@ -570,7 +576,7 @@ export default {
         this.productSelected[indexProduct].variantButton = true
       }
     },
-    submitVariant(index, productId) {
+    async submitVariant(index, productId) {
       const checkVariant = this.productSelected.findIndex(
         item => item.variant_name === this.productVariantName
           && item.product_id === productId,
@@ -638,7 +644,8 @@ export default {
         this.productSelected[index].subtotal = dataVariant.price
         this.productSelected[index].variantSubmit = true
         this.productHistory = false
-        this.addToCart()
+        await this.addToCart()
+        await this.getShippingList()
       }
       this.$root.$emit('bv::hide::modal', `modalVariation${index}`)
     },
@@ -665,35 +672,64 @@ export default {
     }, 1000),
     async removeProduct(data, index) {
       this.idCartDelete = this.cartProductId
-      const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id)
+      const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
+      const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       this.productSelected.splice(index, 1)
       this.productHistory = false
       if (this.productSelected.length === 0) {
         this.paymentMethod = null
         this.shipping = null
         this.listShipping = []
-        await this.$http_komship.delete('/v1/cart/delete', {
-          params: {
-            cart_id: [findCartProduct.cart_id],
-          },
-        })
-          .then(async () => {
-            await this.addToCart()
+        if (findCartProduct !== undefined) {
+          await this.$http_komship.delete('/v1/cart/delete', {
+            params: {
+              cart_id: [findCartProduct.cart_id],
+            },
           })
+            .then(async () => {
+              await this.addToCart()
+              this.shipping = null
+              this.listShipping = []
+              this.cartId = []
+              this.cartProductId = []
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure top',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              })
+            })
+        }
       } else {
         let cartDelete = null
-        await this.cartId.forEach(async item => {
-          cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
-        })
-        await this.$http_komship.delete('/v1/cart/delete', {
-          params: {
-            cart_id: [cartDelete.cart_id],
-          },
-        })
-          .then(async () => {
-            await this.addToCart()
-            await this.getShippingList()
+        cartDelete = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
+        if (cartDelete !== undefined) {
+          await this.$http_komship.delete('/v1/cart/delete', {
+            params: {
+              cart_id: [cartDelete.cart_id],
+            },
           })
+            .then(async () => {
+              await this.cartProductId.splice(findIndexCartProduct, 1)
+              await this.cartId.splice(findIndexCartProduct, 1)
+              await this.addToCart()
+              await this.getShippingList()
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure bot',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              })
+            })
+        }
       }
     },
     saveProductHistory() {
@@ -1284,6 +1320,19 @@ export default {
       } else {
         this.messageErrorPhone = false
       }
+      if (this.customerPhonePasteMode === true) {
+        if (this.customerPhonePaste.charAt(0) === '0') {
+          this.customerPhone = this.customerPhonePaste.substr(1, this.customerPhonePaste.length)
+        } else {
+          this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
+        }
+        if (this.customerPhonePaste.charAt(0) === '6') {
+          this.customerPhone = this.customerPhonePaste.substr(2, this.customerPhonePaste.length)
+        } else {
+          this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
+        }
+      }
+      this.customerPhonePasteMode = false
     },
     validateInputCustomerName(e) {
       if (
@@ -1322,7 +1371,20 @@ export default {
       }
     },
     refreshPage() {
-
+      window.location.reload()
+    },
+    formatterPhone(e) {
+      this.customerPhonePasteMode = true
+      this.customerPhone = ''
+      this.customerPhonePaste = ''
+      this.customerPhonePaste = e.clipboardData.getData('text').replace(/\D/g, '')
+    },
+    valueFormatPhone(e) {
+      if (e.target.value.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
     },
   },
 }

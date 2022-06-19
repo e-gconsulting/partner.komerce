@@ -492,3 +492,10 @@ input.vue-pincode-input {
 .topAdminOrder {
   height: 66%;
 }
+
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
+}
