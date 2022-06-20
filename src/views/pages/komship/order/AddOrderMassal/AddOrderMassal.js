@@ -40,7 +40,7 @@ export default {
             const { data } = res.data
             this.saldo = data.balance
           })
-      }, 800)
+      }, 80000)
     },
     getDataSheet() {
       setTimeout(async () => {
@@ -66,7 +66,7 @@ export default {
             this.getLastUpdated()
           })
           .catch(err => console.log(err))
-      }, 800)
+      }, 80000)
     },
     getDropdownSheet() {
       setTimeout(async () => {
@@ -122,7 +122,7 @@ export default {
             this.getTable()
           })
           .catch(err => console.log(err))
-      }, 800)
+      }, 80000)
     },
     getTable() {
       const getSelectedTable = data => {
@@ -324,7 +324,7 @@ export default {
             this.loadingDraft = false
           })
           .catch(this.loadingDraft = false)
-      }, 800)
+      }, 80000)
     },
     submitSheets(method, redirect) {
       const json = this.table.getJson()
@@ -358,7 +358,7 @@ export default {
               this.getLastUpdated()
             })
             .catch(this.loadingDraft = false)
-        }, 800)
+        }, 80000)
       } else if (method === 'submit') {
         this.$swal({
           title: '<span class="font-weight-bold h4">Semua data yang kamu masukan di Speadsheet akan menjadi Order</span>',
@@ -472,7 +472,7 @@ export default {
                     })
                   }
                 })
-            }, 800)
+            }, 80000)
           }
         })
       }
