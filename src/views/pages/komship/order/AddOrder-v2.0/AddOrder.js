@@ -1321,16 +1321,7 @@ export default {
         this.messageErrorPhone = false
       }
       if (this.customerPhonePasteMode === true) {
-        if (this.customerPhonePaste.charAt(0) === '0') {
-          this.customerPhone = this.customerPhonePaste.substr(1, this.customerPhonePaste.length)
-        } else {
-          this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
-        }
-        if (this.customerPhonePaste.charAt(0) === '6') {
-          this.customerPhone = this.customerPhonePaste.substr(2, this.customerPhonePaste.length)
-        } else {
-          this.customerPhone = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
-        }
+        this.customerPhone = this.customerPhonePaste
       }
       this.customerPhonePasteMode = false
     },
@@ -1378,6 +1369,16 @@ export default {
       this.customerPhone = ''
       this.customerPhonePaste = ''
       this.customerPhonePaste = e.clipboardData.getData('text').replace(/\D/g, '')
+      if (this.customerPhonePaste.charAt(0) === '0') {
+        this.customerPhonePaste = this.customerPhonePaste.substr(1, this.customerPhonePaste.length)
+      } else {
+        this.customerPhonePaste = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
+      }
+      if (this.customerPhonePaste.charAt(0) === '6') {
+        this.customerPhonePaste = this.customerPhonePaste.substr(2, this.customerPhonePaste.length)
+      } else {
+        this.customerPhonePaste = this.customerPhonePaste.substr(0, this.customerPhonePaste.length)
+      }
     },
     valueFormatPhone(e) {
       if (e.target.value.length < 9) {
