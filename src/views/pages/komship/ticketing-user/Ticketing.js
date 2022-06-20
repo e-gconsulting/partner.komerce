@@ -542,9 +542,14 @@ export default
         params,
       })
         .then(response => {
-          const { data } = response.data.data
-          this.itemsTicket = data
-          this.loadingDataTable = false
+          if (response.data.code !== 400) {
+            const { data } = response.data.data
+            this.itemsTicket = data
+            this.loadingDataTable = false
+          } else {
+            this.itemsTicket = []
+            this.loadingDataTable = false
+          }
         })
         .catch(err => {
           this.itemsTicket = []
