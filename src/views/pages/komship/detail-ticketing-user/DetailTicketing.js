@@ -233,9 +233,11 @@ export default {
         if (currentToken) {
           this.fcmToken = currentToken
           Notification.requestPermission().then(permission => {
-            console.log('permiss', permission)
             if (permission === 'denied' || permission === 'default') {
               this.$refs['modal-alert-notification'].show()
+            }
+            if (!('permission' in Notification)) {
+              Notification.permission = permission
             }
           })
           this.$http
@@ -337,6 +339,9 @@ export default {
     },
     updateDetailOrderMode() {
       this.detailOrderMode = false
+    },
+    handleCloseAlert() {
+      this.$refs['modal-alert-notification'].hide()
     },
   },
 }
