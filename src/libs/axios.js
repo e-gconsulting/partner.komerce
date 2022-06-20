@@ -17,7 +17,7 @@ const axiosIns = axios.create({
 })
 
 const axiosAuthKompack = axios.create({
-  baseURL: process.env.VUE_APP_BASE_URL_KOMPACK_ADMIN,
+  baseURL: process.env.VUE_APP_BASE_URL,
   timeout: 14000,
   headers: {
     'Application-Name': 'Web Komerce',

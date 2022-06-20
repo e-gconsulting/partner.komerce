@@ -113,7 +113,8 @@ export default {
     fetchData() {
       this.$http_kompack.get('/kompack/warehouse')
         .then(({ data }) => {
-          this.items = data.data.sort((x, y) => y.id - x.id)
+          // .sort((x, y) => y.id - x.id)
+          this.items = data.data
           this.$nextTick(() => {
             this.isLoadTable = false
           })
