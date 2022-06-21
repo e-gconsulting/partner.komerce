@@ -11,6 +11,7 @@ export default {
   data() {
     return {
       dataSheets: [],
+      dataSubmit: [],
       sourceAddress: null,
       sourcePayment: null,
       sourceProduct: null,
@@ -24,106 +25,102 @@ export default {
       loadingDraft: false,
       loadingSubmit: false,
       saldo: null,
+      submitProgress: 0,
+      submitProgressStatus: true,
     }
   },
   mounted() {
     this.checkExpedition()
-    this.getDataSheet()
+    this.getDraft()
     this.$refs.loadingPage.show()
     this.checkSaldo()
   },
   methods: {
     formatCurrency: value => `${value}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-    checkSaldo() {
-      setTimeout(async () => {
-        await this.$http_komship.get('v1/dashboard/partner/balanceSummary')
-          .then(res => {
-            const { data } = res.data
-            this.saldo = data.balance
-          })
-      }, 80000)
+    async checkSaldo() {
+      await this.$http_komship.get('v1/dashboard/partner/balanceSummary')
+        .then(res => {
+          const { data } = res.data
+          this.saldo = data.balance
+        })
     },
-    getDataSheet() {
-      setTimeout(async () => {
-        await this.$http_komship.get('/v1/order/sheet/data')
-          .then(res => {
-            const { data } = res.data
-            const map = data.map(items => ({
-              order_date: items.order_date,
-              address: items.address,
-              customer_name: items.customer_name,
-              customer_phone_number: items.customer_phone_number,
-              zip_code: `${items.zip_code}`,
-              customer_address: items.customer_address,
-              product: items.product,
-              variant: items.variant,
-              qty: `${items.qty}`,
-              payment_method: items.payment_method,
-              expedition: items.expedition,
-              grandtotal: `${items.grandtotal}`,
-            }))
-            this.dataSheets = map
-            this.getDropdownSheet()
-            this.getLastUpdated()
-          })
-          .catch(err => console.log(err))
-      }, 80000)
+    async getDraft() {
+      await this.$http_komship.get('/v1/order/sheet/data')
+        .then(res => {
+          const { data } = res.data
+          const map = data.map(items => ({
+            order_date: items.order_date,
+            address: items.address,
+            customer_name: items.customer_name,
+            customer_phone_number: items.customer_phone_number,
+            zip_code: `${items.zip_code}`,
+            customer_address: items.customer_address,
+            product: items.product,
+            variant: items.variant,
+            qty: `${items.qty}`,
+            payment_method: items.payment_method,
+            expedition: items.expedition,
+            grandtotal: `${items.grandtotal}`,
+          }))
+          this.dataSheets = map
+          this.getDropdownSheet()
+          this.getLastUpdated()
+        })
+        .catch(err => console.log(err))
     },
-    getDropdownSheet() {
-      setTimeout(async () => {
-        await this.$http_komship.get('/v1/order/sheet/drop-down')
-          .then(res => {
-            const { data } = JSON.parse(JSON.stringify(res.data))
-            this.sourceAddress = data.addresses
-            this.sourcePayment = data.payment_method
-            this.sourceProduct = data.products
-            this.sourceShipment = data.shipments
-            const { variant } = data
-            this.sourceVariant = ['-']
-            if (data.addresses.length === 0) {
-              this.$swal({
-                title: '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
-                imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
-                allowOutsideClick: false,
-                confirmButtonText: 'Tambahkan Alamat Pick Up',
-                confirmButtonClass: 'btn btn-primary',
-              }).then(response => {
-                if (response.isConfirmed) {
-                  this.$router.push('setting-kompship/pickup')
-                }
-              })
-            }
-            if (data.products.length === 0) {
-              this.$swal({
-                title: '<span class="font-weight-bold h4">Sebelum lanjut membuat order, tambahkan produk yang akan kamu jual dahulu ya,</span>',
-                imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
-                allowOutsideClick: false,
-                confirmButtonText: 'Tambahkan Produk',
-                confirmButtonClass: 'btn btn-primary',
-              }).then(response => {
-                if (response.isConfirmed) {
-                  this.$router.push('add-produk')
-                }
-              })
-            }
-            if (variant) {
-              const dataVariant = variant.filter(item => item.variant !== '-')
-              for (let x = 0; x < dataVariant.length; x++) {
-                this.sourceVariant.push(...dataVariant[x].variant)
+    async getDropdownSheet() {
+      await this.$http_komship.get('/v1/order/sheet/drop-down')
+        .then(res => {
+          const { data } = JSON.parse(JSON.stringify(res.data))
+          this.sourceAddress = data.addresses
+          this.sourcePayment = data.payment_method
+          this.sourceProduct = data.products
+          this.sourceShipment = data.shipments
+          const { variant } = data
+          this.sourceVariant = ['-']
+          if (data.addresses.length === 0) {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Tambahkan alamat Pick Up untuk melanjutan kegiatan tambah order.</span>',
+              imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+              allowOutsideClick: false,
+              confirmButtonText: 'Tambahkan Alamat Pick Up',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(response => {
+              if (response.isConfirmed) {
+                this.$router.push('setting-kompship/pickup')
               }
-            }
-            this.filterVariant = (instance, cell, c, r, source) => {
-              const value = instance.jexcel.getValueFromCoords(c - 1, r)
-              const dataVariant = variant.find(item => item.product_name === value)
-              if (dataVariant) {
-                return dataVariant.variant
+            })
+          }
+          if (data.products.length === 0) {
+            this.$swal({
+              title: '<span class="font-weight-bold h4">Sebelum lanjut membuat order, tambahkan produk yang akan kamu jual dahulu ya,</span>',
+              imageUrl: require('@/@core/assets/image/icon-popup-warning.png'),
+              allowOutsideClick: false,
+              confirmButtonText: 'Tambahkan Produk',
+              confirmButtonClass: 'btn btn-primary',
+            }).then(response => {
+              if (response.isConfirmed) {
+                this.$router.push('add-produk')
               }
-              return source
+            })
+          }
+          if (variant) {
+            const dataVariant = variant.filter(item => item.variant !== '-')
+            for (let x = 0; x < dataVariant.length; x++) {
+              this.sourceVariant.push(...dataVariant[x].variant)
             }
-            this.getTable()
-          })
-          .catch(err => console.log(err))
-      }, 80000)
+          }
+          this.filterVariant = (instance, cell, c, r, source) => {
+            const value = instance.jexcel.getValueFromCoords(c - 1, r)
+            const dataVariant = variant.find(item => item.product_name === value)
+            if (dataVariant) {
+              return dataVariant.variant
+            }
+            return source
+          }
+          this.getTable()
+        })
+        .catch(err => console.log(err))
     },
     getTable() {
       const getSelectedTable = data => {
@@ -306,31 +303,29 @@ export default {
       })
     },
     async getLastUpdated() {
-      setTimeout(async () => {
-        await this.$http_komship.get('/v1/order/sheet/last-update')
-          .then(res => {
-            const { link } = res.data
-            const date = moment(link.updated_at).format('YYYY-MM-DD')
-            if (date === moment().format('YYYY-MM-DD')) {
-              const time = moment(link.updated_at).format('HH:mm')
-              this.lastUpdated = `pada pukul ${time}, hari ini`
-            } else {
-              const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-              const day = moment(link.updated_at).format('DD')
-              const month = moment(link.updated_at).format('M')
-              const year = moment(link.updated_at).format('YYYY')
-              const time = moment(link.updated_at).format('HH.mm')
-              this.lastUpdated = `pada pukul ${time}, ${day} ${monthName[month - 1]} ${year}`
-            }
-            this.loadingDraft = false
-          })
-          .catch(this.loadingDraft = false)
-      }, 80000)
+      await this.$http_komship.get('/v1/order/sheet/last-update')
+        .then(res => {
+          const { link } = res.data
+          const date = moment(link.updated_at).format('YYYY-MM-DD')
+          if (date === moment().format('YYYY-MM-DD')) {
+            const time = moment(link.updated_at).format('HH:mm')
+            this.lastUpdated = `pada pukul ${time}, hari ini`
+          } else {
+            const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+            const day = moment(link.updated_at).format('DD')
+            const month = moment(link.updated_at).format('M')
+            const year = moment(link.updated_at).format('YYYY')
+            const time = moment(link.updated_at).format('HH.mm')
+            this.lastUpdated = `pada pukul ${time}, ${day} ${monthName[month - 1]} ${year}`
+          }
+          this.loadingDraft = false
+        })
+        .catch(this.loadingDraft = false)
     },
-    submitSheets(method, redirect) {
-      const json = this.table.getJson()
+    getSheetsData() {
+      const sheets = this.table.getJson()
       let number = 1
-      const data = json.map(items => ({
+      this.dataSheets = sheets.map(items => ({
         order_date: items[0] || items.order_date || '',
         address: items[1] || items.address || '',
         customer_name: items[2] || items.customer_name || '',
@@ -345,138 +340,171 @@ export default {
         grandtotal: items[11] || items.grandtotal || '',
         row: number++,
       }))
-      if (method === 'save') {
-        this.loadingDraft = true
-        setTimeout(async () => {
-          await this.$http_komship.post('/v1/order/sheet/save-submit', {
-            options: 'save',
-            data,
+    },
+    async saveSheets() {
+      this.loadingDraft = true
+      this.getSheetsData()
+      await this.$http_komship.post('/v1/order/sheet/save-submit', {
+        options: 'save',
+        data: this.dataSheets,
+      })
+        .then(() => {
+          this.loadingDraft = false
+          this.getLastUpdated()
+        })
+        .catch(this.loadingDraft = false)
+    },
+    handleSubmitError(response) {
+      const popup = (html, imageUrl, confirmButtonText, showCancelButton, redirect) => this.$swal({
+        html,
+        imageUrl,
+        confirmButtonText,
+        showCancelButton,
+        confirmButtonClass: 'btn btn-primary rounded-lg',
+        cancelButtonText: 'Kembali',
+        cancelButtonColor: '#FFFFFF',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(result => {
+        if (result.isConfirmed && redirect) {
+          this.submitSheets('save', 'dashboard-komship')
+          this.$router.push('dashboard-komship')
+        }
+      })
+      if (response.message === "There's error in your input" && response.validation_error.length >= 1) {
+        const html = `<ul><li class="text-primary">
+        <span style="color: black">Beberapa data order kurang tepat<br>
+        <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.validation_error}" tidak sesuai format</span>
+        </span></li></ul>`
+        const imageUrl = require('@/assets/images/icons/warning.svg')
+        const confirmButtonText = 'Perbaiki'
+        const showCancelButton = false
+        const redirect = false
+        popup(html, imageUrl, confirmButtonText, showCancelButton, redirect)
+      } else if (response.message === "There's error in your input" && response.cod_error.length >= 1) {
+        const html = `<ul><li class="text-primary">
+        <span style="color: black">Beberapa data order kurang tepat<br>
+        <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
+        </span></li></ul>`
+        const imageUrl = require('@/assets/images/icons/non-cod.svg')
+        const confirmButtonText = 'Perbaiki'
+        const showCancelButton = false
+        const redirect = false
+        popup(html, imageUrl, confirmButtonText, showCancelButton, redirect)
+      } else if (response.message === 'Your balance is not enough') {
+        const html = `<span style="font-size:22px;font-weight:800">Upps.. Saldo Belum Mencukupi</span><br>
+          <span style="font-size:16px">Kamu harus mempunyai saldo lebih dari **Rp. ${this.formatCurrency(response.data)}** ya, sesuai dengan nilai total ongkir atas orderan yang diinput.</span>`
+        const imageUrl = require('@/assets/images/icons/warning.svg')
+        const confirmButtonText = 'Top up Saldo'
+        const showCancelButton = true
+        const redirect = true
+        popup(html, imageUrl, confirmButtonText, showCancelButton, redirect)
+      } else if (response.message === "There's error in shipping" && response.error_data !== []) {
+        const html = `<ul><li class="text-primary">
+        <span style="color: black">Beberapa data order kurang tepat<br>
+        <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" alamat tujuannya diluar jangkauan ekspedisi yang dipilih, mohon pilih ekspedisi lainnya</span>
+        </span></li></ul>`
+        const imageUrl = require('@/assets/images/icons/non-shipping.svg')
+        const confirmButtonText = 'Perbaiki'
+        const showCancelButton = false
+        const redirect = false
+        popup(html, imageUrl, confirmButtonText, showCancelButton, redirect)
+      } else {
+        const html = `<span style="font-size:16px">Maaf ada kesalahan teknis pada line ${response.line}. Harap cek kembali orderan anda</span>`
+        const imageUrl = require('@/assets/images/icons/warning.svg')
+        const confirmButtonText = 'Cek'
+        const showCancelButton = false
+        const redirect = false
+        popup(html, imageUrl, confirmButtonText, showCancelButton, redirect)
+      }
+    },
+    getDataSubmit() {
+      const dataFilter = this.dataSheets.filter(
+        items => items.order_date
+        || items.address
+        || items.customer_name
+        || items.customer_phone_number
+        || items.zip_code
+        || items.customer_address
+        || items.product
+        || items.variant
+        || items.qty
+        || items.payment_method
+        || items.expedition
+        || items.grandtotal !== '',
+      )
+      this.dataSubmit = dataFilter.map(items => ({
+        order_date: items.order_date !== '' ? moment(items.order_date).format('YYYY-MM-DD') : '',
+        address: items.address,
+        customer_name: items.customer_name,
+        customer_phone_number: items.customer_phone_number,
+        zip_code: items.zip_code !== '' ? toInteger(items.zip_code) : '',
+        customer_address: items.customer_address,
+        product: items.product,
+        variant: items.variant,
+        qty: items.qty ? toInteger(items.qty) : '',
+        payment_method: items.payment_method,
+        expedition: items.expedition,
+        grandtotal: items.grandtotal !== '' ? toInteger(items.grandtotal) : '',
+        row: items.row,
+      }))
+    },
+    onSubmitSheets() {
+      this.$swal({
+        title: '<span class="font-weight-bold h4">Semua data yang kamu masukan di Speadsheet akan menjadi Order</span>',
+        imageUrl: require('@/assets/images/icons/warning.svg'),
+        showCancelButton: true,
+        confirmButtonText: 'Submit',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonText: 'Batal',
+        cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+      }).then(async result => {
+        if (result.isConfirmed) {
+          this.$refs.loadingSubmit.show()
+          this.submitSheets()
+        }
+      })
+    },
+    async submitSheets() {
+      this.getSheetsData()
+      this.getDataSubmit()
+      this.submitProgress = 0
+      this.submitProgressStatus = true
+      const config = {
+        onUploadProgress: progressEvent => {
+          const { loaded, total } = progressEvent
+          this.submitProgress = Math.floor((loaded * 100) / total)
+        },
+      }
+      await this.$http_komship.post('/v1/order/sheet/save-submit', {
+        options: 'submit',
+        data: this.dataSubmit,
+      }, config)
+        .then(res => {
+          const count = res.data.data
+          this.$refs.loadingSubmit.hide()
+          this.$swal({
+            title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
+            imageUrl: require('@/assets/images/icons/success.svg'),
+            confirmButtonText: 'Lihat Data Order',
+            confirmButtonClass: 'btn btn-primary',
+          }).then(response => {
+            if (response.isConfirmed) {
+              this.$router.push('data-order')
+            } else {
+              this.table.setData([])
+            }
           })
-            .then(() => {
-              if (redirect === 'dashboard-komship') {
-                this.$router.push('dashboard-komship')
-              }
-              this.getLastUpdated()
-            })
-            .catch(this.loadingDraft = false)
-        }, 80000)
-      } else if (method === 'submit') {
-        this.$swal({
-          title: '<span class="font-weight-bold h4">Semua data yang kamu masukan di Speadsheet akan menjadi Order</span>',
-          imageUrl: require('@/assets/images/icons/warning.svg'),
-          showCancelButton: true,
-          confirmButtonText: 'Submit',
-          confirmButtonClass: 'btn btn-primary',
-          cancelButtonText: 'Batal',
-          cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
-        }).then(result => {
-          if (result.isConfirmed) {
-            this.$refs.loadingSubmit.show()
-            const dataFilter = data.filter(
-              items => items.order_date
-            || items.address
-            || items.customer_name
-            || items.customer_phone_number
-            || items.zip_code
-            || items.customer_address
-            || items.product
-            || items.variant
-            || items.qty
-            || items.payment_method
-            || items.expedition
-            || items.grandtotal !== '',
-            )
-            const dataSubmit = dataFilter.map(items => ({
-              order_date: items.order_date !== '' ? moment(items.order_date).format('YYYY-MM-DD') : '',
-              address: items.address,
-              customer_name: items.customer_name,
-              customer_phone_number: items.customer_phone_number,
-              zip_code: items.zip_code !== '' ? toInteger(items.zip_code) : '',
-              customer_address: items.customer_address,
-              product: items.product,
-              variant: items.variant,
-              qty: items.qty ? toInteger(items.qty) : '',
-              payment_method: items.payment_method,
-              expedition: items.expedition,
-              grandtotal: items.grandtotal !== '' ? toInteger(items.grandtotal) : '',
-              row: items.row,
-            }))
-            setTimeout(async () => {
-              await this.$http_komship.post('/v1/order/sheet/save-submit', {
-                options: 'submit',
-                data: dataSubmit,
-              })
-                .then(res => {
-                  const count = res.data.data
-                  this.$refs.loadingSubmit.hide()
-                  this.$swal({
-                    title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
-                    imageUrl: require('@/assets/images/icons/success.svg'),
-                    confirmButtonText: 'Lihat Data Order',
-                    confirmButtonClass: 'btn btn-primary',
-                  }).then(response => {
-                    if (response.isConfirmed) {
-                      this.$router.push('data-order')
-                    }
-                  })
-                })
-                .catch(err => {
-                  const response = err.response.data
-                  this.$refs.loadingSubmit.hide()
-                  if (response.message === "There's error in your input" && response.validation_error.length >= 1) {
-                    this.$swal({
-                      html: `<ul><li class="text-primary">
-                      <span style="color: black">Beberapa data order kurang tepat<br>
-                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.validation_error}" tidak sesuai format</span>
-                      </span></li></ul>`,
-                      imageUrl: require('@/assets/images/icons/warning.svg'),
-                      confirmButtonText: 'Perbaiki',
-                      confirmButtonClass: 'btn btn-primary',
-                    })
-                  }
-                  if (response.message === "There's error in your input" && response.cod_error.length >= 1) {
-                    this.$swal({
-                      html: `<ul><li class="text-primary">
-                      <span style="color: black">Beberapa data order kurang tepat<br>
-                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
-                      </span></li></ul>`,
-                      imageUrl: require('@/assets/images/icons/non-cod.svg'),
-                      confirmButtonText: 'Perbaiki',
-                      confirmButtonClass: 'btn btn-primary',
-                    })
-                  }
-                  if (response.message === 'Your balance is not enough') {
-                    this.$swal({
-                      html: `<span style="font-size:22px;font-weight:800">Upps.. Saldo Belum Mencukupi</span><br><span style="font-size:16px">Kamu harus mempunyai saldo lebih dari **Rp. ${this.formatCurrency(response.data)}** ya, sesuai dengan nilai total ongkir atas orderan yang diinput.</span>`,
-                      imageUrl: require('@/assets/images/icons/warning.svg'),
-                      confirmButtonText: 'Top up Saldo',
-                      confirmButtonClass: 'btn btn-primary rounded-lg',
-                      showCancelButton: true,
-                      cancelButtonText: 'Kembali',
-                      cancelButtonColor: '#FFFFFF',
-                      cancelButtonClass: 'btn btn-outline-primary text-primary',
-                    }).then(uy => {
-                      if (uy.isConfirmed) {
-                        this.submitSheets('save', 'dashboard-komship')
-                      }
-                    })
-                  }
-                  if (response.message === "There's error in shipping" && response.error_data !== []) {
-                    this.$swal({
-                      html: `<ul><li class="text-primary">
-                      <span style="color: black">Beberapa data order kurang tepat<br>
-                      <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.error_data}" alamat tujuannya diluar jangkauan ekspedisi yang dipilih, mohon pilih ekspedisi lainnya</span>
-                      </span></li></ul>`,
-                      imageUrl: require('@/assets/images/icons/non-shipping.svg'),
-                      confirmButtonText: 'Perbaiki',
-                      confirmButtonClass: 'btn btn-primary',
-                    })
-                  }
-                })
-            }, 80000)
+        })
+        .catch(err => {
+          if (!err.response) {
+            this.submitProgress = 100
+            this.submitProgressStatus = false
+          } else {
+            this.$refs.loadingSubmit.hide()
+            const response = err.response.data
+            this.handleSubmitError(response)
           }
         })
-      }
     },
     async checkExpedition() {
       await this.$http_komship
