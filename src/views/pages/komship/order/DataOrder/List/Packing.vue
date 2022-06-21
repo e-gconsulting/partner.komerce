@@ -1,27 +1,18 @@
 <template>
   <div>
-    <b-row class="mb-1">
+    <b-row class="mb-1 justify-content-end align-items-center">
       <b-col
-        lg="7"
-        md="6"
-      />
-      <b-col
-        md="4"
-        class="align-items-center d-flex"
+        md="5"
+        class="d-flex"
       >
         <b-form-input
           v-model="formSearch"
           type="search"
-          class="form-search"
+          class="form-search mr-2"
           placeholder="Cari Pelanggan atau Resi"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
-      </b-col>
-      <b-col
-        lg="1"
-        sm="2"
-      >
         <b-button
           id="buttonFilter"
           variant="primary"
@@ -71,7 +62,7 @@
           </v-select>
           <label class="mt-1">Produk</label>
           <v-select
-            v-model="customerName"
+            v-model="productName"
             :options="productList"
             :reduce="(option) => option.product_name"
             label="product_name"
@@ -279,8 +270,8 @@
           </div>
         </template>
       </b-table>
-      <div class="d-flex justify-between align-middle">
-        <div>
+      <div class="d-flex justify-between align-middle flex-wrap">
+        <div class="mb-2">
           <span class="mr-1">List per halaman</span>
           <b-button
             v-for="page in pageOptions"

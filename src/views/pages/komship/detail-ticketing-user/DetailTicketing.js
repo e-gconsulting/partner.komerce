@@ -75,7 +75,7 @@ export default {
   created() {
     this.receiveMessage()
   },
-  mounted() {
+  async mounted() {
     this.fetchDataFirebase()
     this.fetchDetailTicket()
     const theElement = document.getElementById('chatFocusing')
@@ -342,6 +342,14 @@ export default {
     },
     handleCloseAlert() {
       this.$refs['modal-alert-notification'].hide()
+    },
+    getMessageChat(chat) {
+      const urlify = text => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g
+        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-white">${url}</a>`)
+      }
+      const link = urlify(chat)
+      return link
     },
   },
 }

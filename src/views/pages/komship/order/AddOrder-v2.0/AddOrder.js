@@ -1356,6 +1356,9 @@ export default {
         if (e.keyCode === 48) {
           e.preventDefault()
         }
+        if (e.keyCode !== 56) {
+          e.preventDefault()
+        }
       }
       if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
         e.preventDefault()
