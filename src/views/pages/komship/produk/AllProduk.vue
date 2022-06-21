@@ -315,20 +315,19 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
-                          <img
-                            v-if="itemsData.product_image[0] !== undefined"
-                            variant="light-primary"
-                            square
-                            class="image-product"
-                            :src="itemsData.product_image[0].images_path"
-                          >
-                          <img
-                            v-else
-                            :src="require('@/assets/images/avatars/image-null.png')"
-                            class="image-product"
-                          >
-                        </div>
+                        <b-img
+                          v-if="itemsData.product_image[0] !== undefined"
+                          :src="itemsData.product_image[0].images_path"
+                          fluid
+                          class="image-product"
+                        />
+                        <b-img
+                          v-else
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          fluid
+                          width="50"
+                          class="image-product"
+                        />
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
                           <small>SKU: {{ itemsData.sku }}</small>
@@ -577,29 +576,31 @@
           >
             <template #cell(product_name)="data">
               <b-row class="ml-2">
-                <b-container
-                  fluid
+                <div
                   class="d-flex"
+                  style="min-width: 300px;"
                 >
-                  <div v-if="data.item.product_image[0] !== undefined">
-                    <img
-                      variant="light-primary"
-                      square
-                      class="image-product"
-                      :src="data.item.product_image[0].images_path"
-                    >
-                  </div>
-                  <div v-else>
-                    <img
-                      :src="require('@/assets/images/avatars/image-null.png')"
-                      class="image-product"
-                    >
-                  </div>
+                  <b-img
+                    v-if="data.item.product_image[0] !== undefined"
+                    variant="light-primary"
+                    square
+                    fluid
+                    width="50"
+                    class="image-product"
+                    :src="data.item.product_image[0].images_path"
+                  />
+                  <b-img
+                    v-else
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                    fluid
+                    width="50"
+                    class="image-product"
+                  />
                   <div class="ml-1">
-                    <p><strong>{{ data.item.product_name }}</strong></p>
-                    <small>SKU: {{ data.item.sku }}</small>
+                    <span><strong>{{ data.item.product_name }}</strong></span>
+                    <span>SKU: {{ data.item.sku }}</span>
                   </div>
-                </b-container>
+                </div>
               </b-row>
             </template>
 

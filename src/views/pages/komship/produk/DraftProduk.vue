@@ -313,20 +313,18 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
-                          <img
-                            v-if="itemsData.product_image[0] !== undefined"
-                            variant="light-primary"
-                            square
-                            class="image-product"
-                            :src="itemsData.product_image[0].images_path"
-                          >
-                          <img
-                            v-else
-                            :src="require('@/assets/images/avatars/image-null.png')"
-                            class="image-product"
-                          >
-                        </div>
+                        <img
+                          v-if="itemsData.product_image[0] !== undefined"
+                          variant="light-primary"
+                          square
+                          class="image-product"
+                          :src="itemsData.product_image[0].images_path"
+                        >
+                        <img
+                          v-else
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          class="image-product"
+                        >
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
                           <small>SKU: {{ itemsData.sku }}</small>
@@ -579,20 +577,18 @@
                   fluid
                   class="d-flex"
                 >
-                  <div v-if="data.item.product_image[0] !== undefined">
-                    <img
-                      variant="light-primary"
-                      square
-                      class="image-product"
-                      :src="data.item.product_image[0].images_path"
-                    >
-                  </div>
-                  <div v-else>
-                    <img
-                      :src="require('@/assets/images/avatars/image-null.png')"
-                      class="image-product"
-                    >
-                  </div>
+                  <img
+                    v-if="data.item.product_image[0] !== undefined"
+                    variant="light-primary"
+                    square
+                    class="image-product"
+                    :src="data.item.product_image[0].images_path"
+                  >
+                  <img
+                    v-else
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                    class="image-product"
+                  >
                   <div class="ml-1">
                     <p><strong>{{ data.item.product_name }}</strong></p>
                     <small>SKU: {{ data.item.sku }}</small>
