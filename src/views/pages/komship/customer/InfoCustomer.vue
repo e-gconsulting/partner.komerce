@@ -1,6 +1,6 @@
 <template>
   <b-card>
-    <h4><strong>Customer</strong></h4>
+    <h4><strong>Pelanggan</strong></h4>
     <b-row class="d-flex justify-content-end align-items-center">
       <b-col
         cols="3"
@@ -11,8 +11,8 @@
           </b-input-group-prepend>
           <b-form-input
             v-model="customerName"
-            placeholder="Masukan Nama Customer"
-            @input="datapagination(filterCustomer)"
+            placeholder="Masukan Nama Pelanggan"
+            @input="fetchDataCustomer"
           />
         </b-input-group>
       </b-col>
@@ -163,9 +163,8 @@
 
                   <b-button
                     v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                    type="submit"
                     variant="primary"
-                    @click.prevent="datapagination"
+                    @click="fetchDataCustomer"
                   >
                     Terapkan
                   </b-button>
@@ -187,10 +186,8 @@
     >
       <b-table
         id="pagination"
-        :current-page="currentPage"
         striped
         hover
-        :per-page="0"
         responsive
         class="position-relative mt-2"
         empty-text="Tidak ada data untuk ditampilkan."
@@ -226,14 +223,14 @@
           List Per halaman
         </span>
         <b-button
-          v-for="itemcustomer in halamancustomer"
-          :key="itemcustomer"
-          class="btn-icon mr-50"
+          v-for="(page, index) in pageItems"
+          :key="index+1"
+          class="btn-icon"
+          :variant="page === perPage ? 'primary' : 'flat-primary'"
           size="sm"
-          :variant="itemcustomer === perPage ? 'primary' : 'flat-dark'"
-          @click="halamanpagination(itemcustomer)"
+          @click="setPerPage(page)"
         >
-          {{ itemcustomer }}
+          {{ page }}
         </b-button>
       </div>
       <b-pagination
@@ -241,10 +238,10 @@
         :total-rows="totalRows"
         :per-page="perPage"
         first-number
-        hide-goto-end-buttons
         last-number
         class="pagination-primary"
-      /></b-row>
+      />
+    </b-row>
   </b-card>
 </template>
 <script>
@@ -267,10 +264,8 @@ import {
 } from 'bootstrap-vue'
 
 import Ripple from 'vue-ripple-directive'
-import useJwt from '@/auth/jwt/useJwt'
 import { dateFormat } from '@core/mixins/ui/date'
 import vSelect from 'vue-select'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -299,10 +294,6 @@ export default {
   data() {
     return {
       loading: false,
-      currentPage: 1,
-      perPage: 50,
-      halamancustomer: [50, 100, 200],
-      totalRows: 0,
       selected: 1,
       filterCustomer: null,
       options: [
@@ -311,7 +302,7 @@ export default {
       fields: [
         {
           key: 'customer_name',
-          label: 'Nama Customer',
+          label: 'Nama Pelanggan',
           sortable: true,
         },
         {
@@ -378,62 +369,49 @@ export default {
       url: '/v1/customers',
       loadTable: false,
 
+      pageItems: [50, 100, 200],
+      totalRows: 0,
+      currentPage: 1,
+      perPage: 50,
+
     }
   },
 
   watch: {
     currentPage: {
       handler(value) {
-        this.tableProvider().catch(error => {
-          console.error(error)
-        })
+        this.fetchDataCustomer()
       },
     },
   },
   mounted() {
-    this.tableProvider()
+    this.fetchDataCustomer()
   },
   methods: {
-    halamanpagination(halamantotal) {
-      this.totalPerPage = halamantotal
-      this.tableProvider()
-    },
-    tableProvider() {
+    fetchDataCustomer() {
       this.loading = true
-      return this.$http_komship.get('v1/customers', {
-      }).then(response => {
+      const params = {
+        customer_name: this.customerName,
+        orderFrom: this.orderFrom,
+        orderTo: this.orderTo,
+        area: this.destination,
+        spentFrom: this.spentFrom,
+        spentTo: this.spentTo,
+        pcsFrom: this.pcsFrom,
+        pcsTo: this.pcsTo,
+        page: this.currentPage,
+        limits: this.perPage,
+      }
+      this.$http_komship.get('v1/customers',
+        {
+          params,
+        }).then(response => {
         const { data } = response.data.data
         this.itemsCustomer = data
         this.totalRows = response.data.data.total
         this.loading = false
       })
     },
-    datapagination() {
-      this.loading = true
-      const params = {}
-
-      if (this.customerName) Object.assign(params, { customer_name: this.customerName })
-      if (this.orderFrom) Object.assign(params, { orderFrom: this.orderFrom })
-      if (this.orderTo) Object.assign(params, { orderTo: this.orderTo })
-      if (this.destination) Object.assign(params, { area: this.destination })
-      if (this.spentFrom) Object.assign(params, { spentFrom: this.spentFrom })
-      if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
-      if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
-      if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
-      if (this.currentPage) Object.assign(params, { page: this.currentPage })
-      if (this.totalPerPage) Object.assign(params, { limits: this.totalPerPage })
-      httpKomship.get('/v1/customers', {
-        params,
-      }, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        this.itemsCustomer = data
-        this.loading = false
-        return this.itemsCustomer
-      })
-    },
-
     onSearchDestination(search, loading) {
       if (search.length) {
         this.searchDestination(loading, search, this)
@@ -441,20 +419,26 @@ export default {
     },
     searchDestination: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadDestination(search).finally(() => loading(false))
-    }, 500),
+      that.loadDestination(search)
+      loading(false)
+    }, 1000),
     loadDestination(search) {
-      return httpKomship.get(`/v1/destination?search=${search}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$http_komship.get(`/v1/destination?search=${search}`).then(response => {
         const { data } = response.data.data
         this.itemsDestinations = data
         return this.itemsDestinations
       })
     },
     resetFilter() {
-      this.tableProvider()
-      return this.datapagination()
+      this.customerName = ''
+      this.orderTo = null
+      this.orderTo = null
+      this.destination = ''
+      this.spentFrom = null
+      this.spentTo = null
+      this.pcsFrom = null
+      this.pcsTo = null
+      this.fetchDataCustomer()
     },
     formatPrice(value) {
       const val = value
@@ -465,6 +449,10 @@ export default {
         name: this.$route.meta.routeDetail,
         params: { customer_id: item.customer_id },
       })
+    },
+    setPerPage(page) {
+      this.perPage = page
+      this.fetchDataCustomer()
     },
   },
 }
