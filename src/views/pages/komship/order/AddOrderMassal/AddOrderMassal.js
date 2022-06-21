@@ -33,6 +33,7 @@ export default {
     this.checkSaldo()
   },
   methods: {
+    formatCurrency: value => `${value}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     checkSaldo() {
       setTimeout(async () => {
         await this.$http_komship.get('v1/dashboard/partner/balanceSummary')
@@ -446,7 +447,7 @@ export default {
                   }
                   if (response.message === 'Your balance is not enough') {
                     this.$swal({
-                      html: '<span style="font-size:22px;font-weight:800">Saldo Belum Mencukupi</span><br><span style="font-size:16px">Kamu harus mengisi saldo dulu ya, sebelum membuat order dengan metode Transfer Bank</span>',
+                      html: `<span style="font-size:22px;font-weight:800">Upps.. Saldo Belum Mencukupi</span><br><span style="font-size:16px">Kamu harus mempunyai saldo lebih dari **Rp. ${this.formatCurrency(response.data)}** ya, sesuai dengan nilai total ongkir atas orderan yang diinput.</span>`,
                       imageUrl: require('@/assets/images/icons/warning.svg'),
                       confirmButtonText: 'Top up Saldo',
                       confirmButtonClass: 'btn btn-primary rounded-lg',
