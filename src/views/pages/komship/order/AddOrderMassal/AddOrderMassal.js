@@ -35,7 +35,27 @@ export default {
     this.$refs.loadingPage.show()
     this.checkSaldo()
   },
+  created() {
+    const { beforeWindowUnload } = this
+    window.addEventListener('beforeunload', beforeWindowUnload)
+  },
+  beforeDestroy() {
+    const { beforeWindowUnload } = this
+    window.removeEventListener('beforeunload', beforeWindowUnload)
+  },
   methods: {
+    confirmLeave() {
+      return window.confirm()
+    },
+    confirmStayInDirtyForm() {
+      return !this.confirmLeave()
+    },
+    beforeWindowUnload(e) {
+      if (this.confirmStayInDirtyForm()) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    },
     formatCurrency: value => `${value}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     async checkSaldo() {
       await this.$http_komship.get('v1/dashboard/partner/balanceSummary')
@@ -260,7 +280,15 @@ export default {
             for (let i = 0; i < columnSplit.length; i++) {
               let valueColumn
               const getCol = toInteger(col) + i
-              if (getCol === 3) {
+              if (getCol === 2) {
+                valueColumn = columnSplit[i]
+                if (valueColumn !== '') {
+                  if (valueColumn.length < 3 || valueColumn.length > 30) {
+                    const columnName = jspreadsheet.getColumnNameFromId([`${getCol}`, `${getRow}`])
+                    instance.jexcel.setComments(columnName, 'Nama pembeli belum benar, masukkan minimal 3 - 30 karakter ya')
+                  }
+                }
+              } else if (getCol === 3) {
                 let phoneNumber = columnSplit[i].replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
                 if (phoneNumber.charAt(0) === '6' && phoneNumber.charAt(1) === '2') {
                   phoneNumber = `0${phoneNumber.substring(2)}`
@@ -268,6 +296,36 @@ export default {
                   phoneNumber = `0${phoneNumber}`
                 }
                 valueColumn = phoneNumber
+                if (valueColumn !== '') {
+                  if (valueColumn.length < 10 || valueColumn.length > 13) {
+                    const columnName = jspreadsheet.getColumnNameFromId([`${getCol}`, `${getRow}`])
+                    instance.jexcel.setComments(columnName, 'Masukkan Nomor HP pembeli dengan benar yaa.. (hanya angka)')
+                  }
+                }
+              } else if (getCol === 4) {
+                valueColumn = columnSplit[i].replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
+                if (valueColumn !== '') {
+                  if (toInteger(valueColumn) < 10110 || toInteger(valueColumn) > 99974) {
+                    const columnName = jspreadsheet.getColumnNameFromId([`${getCol}`, `${getRow}`])
+                    instance.jexcel.setComments(columnName, 'Kode Pos belum tepat nih, masukkan kode Pos antara 10110 sampai 99974 ya')
+                  }
+                }
+              } else if (getCol === 5) {
+                valueColumn = columnSplit[i]
+                if (valueColumn !== '') {
+                  if (valueColumn.length < 11 || valueColumn.length > 185) {
+                    const columnName = jspreadsheet.getColumnNameFromId([`${getCol}`, `${getRow}`])
+                    instance.jexcel.setComments(columnName, 'Alamat detail belum tepat, masukkan minimal 11 karakter - 185 karakter ya')
+                  }
+                }
+              } else if (getCol === 8) {
+                valueColumn = columnSplit[i].replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
+                if (valueColumn !== '') {
+                  if (toInteger(valueColumn) < 1 || toInteger(valueColumn) > 1000) {
+                    const columnName = jspreadsheet.getColumnNameFromId([`${getCol}`, `${getRow}`])
+                    instance.jexcel.setComments(columnName, 'Kuantitas belum tepat, masukkan angka antara 1-1000 ya')
+                  }
+                }
               } else {
                 valueColumn = columnSplit[i]
               }
