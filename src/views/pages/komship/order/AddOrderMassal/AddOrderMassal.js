@@ -35,7 +35,27 @@ export default {
     this.$refs.loadingPage.show()
     this.checkSaldo()
   },
+  created() {
+    const { beforeWindowUnload } = this
+    window.addEventListener('beforeunload', beforeWindowUnload)
+  },
+  beforeDestroy() {
+    const { beforeWindowUnload } = this
+    window.removeEventListener('beforeunload', beforeWindowUnload)
+  },
   methods: {
+    confirmLeave() {
+      return window.confirm()
+    },
+    confirmStayInDirtyForm() {
+      return !this.confirmLeave()
+    },
+    beforeWindowUnload(e) {
+      if (this.confirmStayInDirtyForm()) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    },
     formatCurrency: value => `${value}`.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     async checkSaldo() {
       await this.$http_komship.get('v1/dashboard/partner/balanceSummary')
