@@ -181,7 +181,7 @@ export default
       customerName: '',
       jenisTicketItems: [
         {
-          label: 'Alamat penerima / Nomor HP tidak lengkap',
+          label: 'Permintaan Pengiriman Ulang',
           value: 5,
         },
       ],
