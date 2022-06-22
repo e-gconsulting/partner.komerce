@@ -323,8 +323,7 @@
                                         </b-row>
                                         <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                             <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
-                                                <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'">
-                                                    {{ messageItem.message }}
+                                                <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'" v-html="getMessageChat(messageItem.message)">
                                                 </p>
                                             </div>
                                         </b-row>
@@ -671,11 +670,19 @@
         <b-row class="justify-content-center mb-1 mt-3">
             <img src="@/assets/images/alert-fireabase.svg">
         </b-row>
-        <b-row class="justify-content-center text-center mb-3">
+        <b-row class="justify-content-center text-center mb-1">
             <span class="text-black px-4">
                 Untuk pengalaman yang maksimal kamu perlu untuk mengaktifkan notifikasi pada browser 
             </span>
         </b-row>
+        <!-- <b-row class="justify-content-center text-center mb-3">
+            <b-button
+                variant="primary"
+                @click="handleCloseAlert"
+            >
+                Oke
+            </b-button>
+          </b-row> -->
         </b-modal>
     </div>
 

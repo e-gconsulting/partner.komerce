@@ -75,7 +75,7 @@ export default {
   created() {
     this.receiveMessage()
   },
-  mounted() {
+  async mounted() {
     this.fetchDataFirebase()
     this.fetchDetailTicket()
     const theElement = document.getElementById('chatFocusing')
@@ -233,9 +233,11 @@ export default {
         if (currentToken) {
           this.fcmToken = currentToken
           Notification.requestPermission().then(permission => {
-            console.log('permiss', permission)
             if (permission === 'denied' || permission === 'default') {
               this.$refs['modal-alert-notification'].show()
+            }
+            if (!('permission' in Notification)) {
+              Notification.permission = permission
             }
           })
           this.$http
@@ -337,6 +339,17 @@ export default {
     },
     updateDetailOrderMode() {
       this.detailOrderMode = false
+    },
+    handleCloseAlert() {
+      this.$refs['modal-alert-notification'].hide()
+    },
+    getMessageChat(chat) {
+      const urlify = text => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g
+        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-white">${url}</a>`)
+      }
+      const link = urlify(chat)
+      return link
     },
   },
 }

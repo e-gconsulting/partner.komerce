@@ -42,7 +42,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 
 // Initialize Firebase Cloud Messaging and get a reference to the service
-const messaging = getMessaging()
+const messaging = getMessaging(app)
+
+navigator.serviceWorker.register('firebase-messaging-sw.js', {
+  scope:
+  'firebase-cloud-messaging-push-scope',
+})
+  .then(registration => {
+    messaging.useServiceWorker(registration)
+  }).catch(() => {})
 
 export default
 {
@@ -173,7 +181,7 @@ export default
       customerName: '',
       jenisTicketItems: [
         {
-          label: 'Alamat penerima / Nomor HP tidak lengkap',
+          label: 'Permintaan Pengiriman Ulang',
           value: 5,
         },
       ],
@@ -274,6 +282,11 @@ export default
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
     this.fetchDataFirebase()
+    Notification.requestPermission().then(permission => {
+      if (!('permission' in Notification)) {
+        Notification.permission = permission
+      }
+    })
   },
   methods: {
     fetchTicket() {
@@ -605,6 +618,9 @@ export default
           Notification.requestPermission().then(permission => {
             if (permission === 'denied' || permission === 'default') {
               this.$refs['modal-alert-notification'].show()
+            }
+            if (!('permission' in Notification)) {
+              Notification.permission = permission
             }
           })
         } else {
