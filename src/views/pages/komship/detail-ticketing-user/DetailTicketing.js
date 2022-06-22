@@ -120,37 +120,55 @@ export default {
         })
     },
     storeChat() {
-      this.loadingDataChat = true
-      const formData = new FormData()
-      if (this.chatItem) formData.append('message', this.chatItem)
-      formData.append('ticket_id', Number(this.ticketId))
-      if (this.itemsImageInitialFile.length > 1) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.itemsImageInitialFile.length; i++) {
-          formData.append('file[]', this.itemsImageInitialFile[i])
+      Notification.requestPermission().then(permission => {
+        if (!('permission' in Notification)) {
+          Notification.permission = permission
         }
-      } else {
-        formData.append('file[]', this.itemsImageInitialFile[0])
-      }
-      this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
-        .then(() => {
-          fetch('https://fcm.googleapis.com/fcm/send', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'key=AAAAm9Ab__E:APA91bF7K9M9Adw_2DbHcySgjESrZjV_i6QCURNX4TaHwo8ah3VX1j3e_DJb3CV7cdEtgIXkfTAHrNqvuAwMElQMnflI6z0_E1BcAX9OPfIVCZ4ewiOq1N2dhHWYcsBQ7Nu4nFFQF8-2',
-            },
-            body: JSON.stringify({
-              to: this.fcmToken,
-            }),
-          })
+        if (permission === 'granted') {
+          this.loadingDataChat = true
+          const formData = new FormData()
+          if (this.chatItem) formData.append('message', this.chatItem)
+          formData.append('ticket_id', Number(this.ticketId))
+          if (this.itemsImageInitialFile.length > 1) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.itemsImageInitialFile.length; i++) {
+              formData.append('file[]', this.itemsImageInitialFile[i])
+            }
+          } else {
+            formData.append('file[]', this.itemsImageInitialFile[0])
+          }
+          this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
             .then(() => {
-              this.chatItem = ''
-              this.itemsImageInitialFile = []
+              fetch('https://fcm.googleapis.com/fcm/send', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: 'key=AAAAm9Ab__E:APA91bF7K9M9Adw_2DbHcySgjESrZjV_i6QCURNX4TaHwo8ah3VX1j3e_DJb3CV7cdEtgIXkfTAHrNqvuAwMElQMnflI6z0_E1BcAX9OPfIVCZ4ewiOq1N2dhHWYcsBQ7Nu4nFFQF8-2',
+                },
+                body: JSON.stringify({
+                  to: this.fcmToken,
+                }),
+              })
+                .then(() => {
+                  this.chatItem = ''
+                  this.itemsImageInitialFile = []
+                  this.loadingDataChat = false
+                  this.chatFileMode = false
+                })
+                .catch(err => {
+                  this.$toast({
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Failure',
+                      icon: 'AlertCircleIcon',
+                      text: err,
+                      variant: 'danger',
+                    },
+                  }, 2000)
+                  this.loadingDataChat = false
+                })
+            }).catch(err => {
               this.loadingDataChat = false
-              this.chatFileMode = false
-            })
-            .catch(err => {
               this.$toast({
                 component: ToastificationContent,
                 props: {
@@ -160,20 +178,41 @@ export default {
                   variant: 'danger',
                 },
               }, 2000)
-              this.loadingDataChat = false
             })
-        }).catch(err => {
-          this.loadingDataChat = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          }, 2000)
-        })
+        } else {
+          this.loadingDataChat = true
+          const formData = new FormData()
+          if (this.chatItem) formData.append('message', this.chatItem)
+          formData.append('ticket_id', Number(this.ticketId))
+          if (this.itemsImageInitialFile.length > 1) {
+            // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.itemsImageInitialFile.length; i++) {
+              formData.append('file[]', this.itemsImageInitialFile[i])
+            }
+          } else {
+            formData.append('file[]', this.itemsImageInitialFile[0])
+          }
+          this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+            .then(() => {
+              this.chatItem = ''
+              this.itemsImageInitialFile = []
+              this.loadingDataChat = false
+              this.chatFileMode = false
+              this.fetchDetailTicket()
+            }).catch(err => {
+              this.loadingDataChat = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+        }
+      })
     },
     statusTicketVariant(data) {
       let resultVariant = ''
@@ -296,7 +335,21 @@ export default {
       this.$toast({
         component: ToastificationContent,
         props: {
-          title: `Copied the text ${data}`,
+          title: `Nomor Ticket ${data} berhasil dicopy`,
+          icon: 'AlertCircleIcon',
+          variant: 'warning',
+        },
+      }, 1000)
+    },
+    copyResi(data) {
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(data)
+
+      /* Alert the copied text */
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: ` Resi ${data} berhasil dicopy`,
           icon: 'AlertCircleIcon',
           variant: 'warning',
         },
