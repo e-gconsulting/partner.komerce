@@ -335,7 +335,21 @@ export default {
       this.$toast({
         component: ToastificationContent,
         props: {
-          title: `Copied the text ${data}`,
+          title: `Nomor Ticket ${data} berhasil dicopy`,
+          icon: 'AlertCircleIcon',
+          variant: 'warning',
+        },
+      }, 1000)
+    },
+    copyResi(data) {
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(data)
+
+      /* Alert the copied text */
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: ` Resi ${data} berhasil dicopy`,
           icon: 'AlertCircleIcon',
           variant: 'warning',
         },
