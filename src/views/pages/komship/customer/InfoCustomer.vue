@@ -204,10 +204,80 @@
           <span class="capitalizeText">{{ data.label }}</span>
         </template>
         <template #head(total_order)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
+          <b-row class="align-items-center">
+            <span class="capitalizeText mr-50">{{ data.label }}</span>
+            <b-button
+              v-if="sortOrderMode === ''"
+              variant="flat-dark"
+              class="btn-icon d-flex align-items-center"
+              size="sm"
+              @click="sortDataOrderDesc"
+            >
+              <feather-icon
+                icon="CodeIcon"
+              />
+            </b-button>
+            <b-button
+              v-if="sortOrderMode === 'ASC'"
+              variant="flat-dark"
+              class="btn-icon d-flex align-items-center"
+              size="sm"
+              @click="sortDataOrderDesc"
+            >
+              <feather-icon
+                icon="ArrowUpIcon"
+              />
+            </b-button>
+            <b-button
+              v-if="sortOrderMode === 'DESC'"
+              variant="flat-dark"
+              class="btn-icon d-flex align-items-center"
+              size="sm"
+              @click="sortDataOrderAsc"
+            >
+              <feather-icon
+                icon="ArrowDownIcon"
+              />
+            </b-button>
+          </b-row>
         </template>
         <template #head(total_pcs)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
+          <b-row class="align-items-center">
+            <span class="capitalizeText mr-50">{{ data.label }}</span>
+            <b-button
+              v-if="sortPcsMode === ''"
+              variant="flat-dark"
+              class="btn-icon d-flex align-items-center"
+              size="sm"
+              @click="sortDataPcsDesc"
+            >
+              <feather-icon
+                icon="CodeIcon"
+              />
+            </b-button>
+            <b-button
+              v-if="sortPcsMode === 'ASC'"
+              variant="flat-dark"
+              class="btn-icon d-flex align-items-center"
+              size="sm"
+              @click="sortDataPcsDesc"
+            >
+              <feather-icon
+                icon="ArrowUpIcon"
+              />
+            </b-button>
+            <b-button
+              v-if="sortPcsMode === 'DESC'"
+              variant="flat-dark"
+              class="btn-icon d-flex align-items-center"
+              size="sm"
+              @click="sortDataPcsAsc"
+            >
+              <feather-icon
+                icon="ArrowDownIcon"
+              />
+            </b-button>
+          </b-row>
         </template>
         <template #cell(total_spent)="data">
           <span class="capitalizeText">Rp {{ formatPrice(data.item.total_spent) }}</span>
@@ -314,13 +384,11 @@ export default {
           key: 'total_order',
           label: 'Total Order',
           tdClass: 'text-center',
-          sortable: true,
         },
         {
           key: 'total_pcs',
           label: 'Total Pcs',
           tdClass: 'text-center',
-          sortable: true,
         },
         {
           key: 'total_spent',
@@ -366,13 +434,16 @@ export default {
       customerName: '',
 
       endpoint: null,
-      url: '/v1/customers',
+      url: '/v2/customers',
       loadTable: false,
 
       pageItems: [50, 100, 200],
       totalRows: 0,
       currentPage: 1,
       perPage: 50,
+
+      sortOrderMode: '',
+      sortPcsMode: '',
 
     }
   },
@@ -402,7 +473,9 @@ export default {
         page: this.currentPage,
         limits: this.perPage,
       }
-      this.$http_komship.get('v1/customers',
+      if (this.sortOrderMode !== '') Object.assign(params, { sort_order: this.sortOrderMode })
+      if (this.sortPcsMode !== '') Object.assign(params, { sort_pcs: this.sortPcsMode })
+      this.$http_komship.get('v2/customers',
         {
           params,
         }).then(response => {
@@ -452,6 +525,26 @@ export default {
     },
     setPerPage(page) {
       this.perPage = page
+      this.fetchDataCustomer()
+    },
+    sortDataOrderAsc() {
+      this.sortOrderMode = 'ASC'
+      this.sortPcsMode = ''
+      this.fetchDataCustomer()
+    },
+    sortDataOrderDesc() {
+      this.sortOrderMode = 'DESC'
+      this.sortPcsMode = ''
+      this.fetchDataCustomer()
+    },
+    sortDataPcsAsc() {
+      this.sortPcsMode = 'ASC'
+      this.sortOrderMode = ''
+      this.fetchDataCustomer()
+    },
+    sortDataPcsDesc() {
+      this.sortPcsMode = 'DESC'
+      this.sortOrderMode = ''
       this.fetchDataCustomer()
     },
   },
