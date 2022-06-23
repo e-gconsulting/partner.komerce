@@ -1,6 +1,31 @@
 <template>
   <div>
-    <b-row class="mb-1 justify-content-end align-items-center">
+    <b-row class="mb-2 justify-content-end align-items-center">
+      <b-col
+        md="3"
+      >
+        <div
+          class="p-1 font-bold rounded-lg"
+          style="border: 1px solid black;"
+        >
+          Total dalam perjalanan : <span class="text-info">{{ totalKirim }}</span><br>
+          <span
+            class="d-inline-block"
+            style="margin-top: 10px;"
+          >
+            Terkena kendala :<span class="text-danger">{{ totalProblem }}</span>
+            <b-button
+              class="rounded-lg my-auto"
+              variant="danger"
+              style="padding: 2px 6px!important;margin-left: 5px;"
+              @click="filterProblem"
+            >Lihat Kendala</b-button>
+          </span>
+        </div>
+      </b-col>
+      <b-col
+        md="4"
+      />
       <b-col
         md="5"
         class="d-flex align-items-center"
@@ -360,6 +385,9 @@ export default {
       totalItems: 0,
       addressId: null,
       addressList: [],
+      totalKirim: null,
+      totalProblem: null,
+      isProblem: false,
     }
   },
   watch: {
@@ -370,6 +398,7 @@ export default {
     },
   },
   mounted() {
+    this.getTotalOrder()
     this.fetchData().catch(error => {
       console.error(error)
     })
@@ -408,10 +437,12 @@ export default {
           page: this.currentPage,
           total_per_page: this.perPage,
           partner_address_id: this.addressId,
+          is_problem: this.isProblem ? 1 : null,
         },
       })
         .then(res => {
           const { data } = res.data
+          this.isProblem = false
           this.totalItems = data.total
           this.loadTable = false
           return data.data
@@ -429,6 +460,18 @@ export default {
           })
           this.loadTable = false
         })
+    },
+    getTotalOrder() {
+      this.$http_komship.get(`v1/order/count/order-problem/${this.profile.partner_detail.id}`)
+        .then(res => {
+          const { data } = res.data
+          this.totalKirim = data.dikirim
+          this.totalProblem = data.order_problem
+        }).catch(err => console.error(err))
+    },
+    filterProblem() {
+      this.isProblem = true
+      this.fetchData()
     },
     resetFilter() {
       this.startDate = null

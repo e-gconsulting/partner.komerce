@@ -286,7 +286,7 @@
                         v-if="isLoading===false"
                         class="d-block mt-5 mb-5 align-content-center text-center"
                       >
-                        Data riwayat perjalan tidak ditemukan
+                        Data riwayat perjalan tidak ditemukan. <b>Bisa jadi</b> sudah request pickup/dijemput kurir saat pickup namun <b>belum discan</b> QR code untuk memulai perjalanan di kantor cabang. Harap menunggu
                       </div>
                       <div
                         v-if="isLoading===true"
