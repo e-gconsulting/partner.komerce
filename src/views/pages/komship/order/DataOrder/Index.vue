@@ -362,72 +362,77 @@
     <b-tabs
       v-model="tabIndex"
       fill
+      :nav-class="'mb-1 font-bold text-xl'"
+      no-nav-style
     >
       <b-tab
         title="Semua"
+        :title-link-class="linkClass(0)"
         lazy
       >
         <all />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        :title-link-class="linkClass(1)"
+        lazy
+      >
         <template slot="title">
-          <b-badge
-            class="mr-1"
-            variant="primary"
-            pill
-          >
-            {{ totalAjukan }}
-          </b-badge>
-          Order Dibuat
+          <span>{{ totalAjukan }} | Order Dibuat</span>
         </template>
         <created />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        :title-link-class="linkClass(2)"
+        lazy
+      >
         <template slot="title">
-          <b-badge
-            class="mr-1"
-            variant="primary"
-            pill
-          >
-            {{ totalPacking }}
-          </b-badge>
-          Dipacking
+          {{ totalPacking }} | Dipacking
         </template>
         <packing />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        :title-link-class="linkClass(3)"
+        lazy
+      >
         <template slot="title">
-          <b-badge
-            class="mr-1"
-            variant="primary"
-            pill
+          <div
+            class="d-flex justify-center"
+            @click="tabIndex === 3 ? $router.go() : null"
           >
-            {{ totalKirim }}
-          </b-badge>
-          Dikirim
-          <b-badge
-            v-if="totalProblem > 0"
-            variant="danger"
-            class="ml-1 my-auto d-flex"
-            style="padding: 3px 5px!important;"
-          >
-            <span class="text-sm">{{ totalProblem }}</span>
-            <img
-              src="@/assets/images/icons/info-circle-white.svg"
-              style="margin-left:3px"
+            {{ totalKirim }} | Dikirim
+            <div
+              v-if="totalProblem > 0"
+              class="absolute my-auto bg-white rounded-lg"
+              style="padding: 3px;margin-top: -18px!important;margin-left: 15%;"
             >
-          </b-badge>
+              <b-badge
+                variant="danger"
+                class="text-sm rounded-lg"
+                style="padding: 2px 6px!important;font-size: 12px;"
+              >
+                <span class="d-flex text-sm">
+                  {{ totalProblem }}
+                  <img
+                    src="@/assets/images/icons/danger.svg"
+                    style="margin-left:3px"
+                  >
+                </span>
+              </b-badge>
+            </div>
+          </div>
         </template>
         <send />
       </b-tab>
       <b-tab
         title="Diterima"
+        :title-link-class="linkClass(4)"
         lazy
       >
         <received />
       </b-tab>
       <b-tab
         title="Retur"
+        :title-link-class="linkClass(5)"
         lazy
       >
         <retur />
@@ -453,7 +458,7 @@ import Retur from './List/Retur.vue'
 
 export default {
   components: {
-    BCard, BTabs, BTab, All, Created, Packing, Send, Received, Retur, BButton, BBadge, BCol, BContainer, BRow, BIconXCircle, DateRangePicker,
+    BCard, BTabs, BTab, All, Created, Packing, Send, Received, Retur, BButton, BCol, BContainer, BRow, BIconXCircle, DateRangePicker,
   },
   filters: {
     dateCell(value) {
@@ -537,6 +542,12 @@ export default {
     this.fetchData()
   },
   methods: {
+    linkClass(tabs) {
+      if (this.tabIndex === tabs) {
+        return ['bg-primary', 'text-white', 'rounded']
+      }
+      return ['bg-default', 'text-dark']
+    },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
     },
