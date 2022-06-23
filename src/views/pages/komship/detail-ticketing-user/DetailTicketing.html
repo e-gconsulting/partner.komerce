@@ -343,6 +343,11 @@
                                             :key="indexFile+1"
                                         >
                                             <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                                <small class="text-black">
+                                                    {{ messageItem.name }}
+                                                </small>
+                                            </b-row>
+                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                                 <a :href="fileItem.path" target="_blank">
                                                     <b-img
                                                         v-if="fileItem.path.slice(fileItem.path.length - 3) !== 'mp4' && fileItem.path.slice(fileItem.path.length - 4) !== 'xlsx'"
