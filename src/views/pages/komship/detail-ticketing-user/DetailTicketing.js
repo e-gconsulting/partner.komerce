@@ -86,6 +86,7 @@ export default {
       }
       scrollToBottom(theElement)
     }
+    this.readChat()
   },
   methods: {
     fetchDetailTicket() {
@@ -403,6 +404,19 @@ export default {
       }
       const link = urlify(chat)
       return link
+    },
+    readChat() {
+      this.$http_komship.post('/v1/ticket-partner/chat/read-all').then(() => {}).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+      })
     },
   },
 }
