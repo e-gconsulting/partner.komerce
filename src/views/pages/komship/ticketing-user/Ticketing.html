@@ -1,217 +1,4 @@
 <b-card>
-    <div
-        class="py-1 px-2"
-        style="
-            border: 1px solid #E2E2E2;
-            border-radius: 16px;
-        "
-    >
-        <b-row class="mb-1">
-            <h3 class="text-black">
-                <strong>
-                    Buat Tiket
-                </strong>
-            </h3>
-        </b-row>
-
-        <validation-observer
-            ref="formRules"
-            #default="{invalid}"
-        >
-            <b-form>
-                <b-row>
-            
-                <b-col md="6">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Nomor Resi
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Nomor Resi"
-                            rules="required"
-                        >
-                            <v-select
-                                v-model="itemsNoResi"
-                                :options="itemsResi"
-                                label="no_resi"
-                                :state="errors.length > 0 ? false:null"
-                                @input="fetchDataResi"
-                                @search="cekResi"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
-                </b-col>
-
-                <b-col md="6">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Jenis Tiket
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Jenis Tiket"
-                            rules="required"
-                        >
-                            <v-select
-                                v-model="ticketType"
-                                :options="jenisTicketItems"
-                                :state="errors.length > 0 ? false:null"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
-                </b-col>
-
-                <b-col md="6">
-                    <b-form-group>
-                    <template #label>
-                        <span>
-                            Customer
-                        </span>
-                    </template>
-                    <b-form-input
-                        v-model="customerName"
-                        placeholder="Nama Customer"
-                        disabled
-                    />
-                    </b-form-group>
-
-                    <!-- Put File -->
-                    <label
-                        v-if="itemsImageInitialFile[0] === undefined"
-                        for="formFile"
-                        class="text-info btn btn-flat-info p-0"
-                    >
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <feather-icon
-                                    icon="FileIcon"
-                                    size="20"
-                                    class="mr-50 text-info"
-                                />
-                            </div>
-                            Lampirkan File
-                        </div>
-                    </label>
-                    <b-form-file
-                        id="formFile"
-                        v-model="imageFile"
-                        placeholder="Choose a file or drop it here..."
-                        drop-placeholder="Drop file here..."
-                        multiple
-                        class="d-none"
-                        @change="onChangeFile"
-                    />
-
-                    <!-- Preview File -->
-                    <b-row
-                        v-for="(items, index) in itemsImageInitialFile"
-                        :key="index+1"
-                        class="align-items-center"
-                    >
-                        <label
-                            class="text-info btn btn-flat-info p-0 ml-1"
-                        >
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <feather-icon
-                                        icon="FileIcon"
-                                        size="20"
-                                        class="mr-50 text-info"
-                                    />
-                                </div>
-                                <a id="previewImage" :href="fileUrl(items)" target="_blank" class="text-info">
-                                    {{ items.name }}
-                                </a>
-                            </div>
-                        </label>
-                        <b-button
-                            variant="flat-dark"
-                            class="btn-icon"
-                            size="sm"
-                            @click="deleteFile(items)"
-                        >
-                            <feather-icon
-                                icon="Trash2Icon"
-                                size="20"
-                                class="text-black"
-                            />
-                        </b-button>
-                    </b-row>
-                </b-col>
-
-                <b-col md="6">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Deskripsi
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Deskripsi"
-                            rules="required"
-                        >
-                            <b-form-textarea
-                                v-model="description"
-                                rows="3"
-                                :state="errors.length > 0 ? false:null"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
-                </b-col>
-
-                <b-col
-                    md="12"
-                    class="mt-50"
-                >
-                    <b-row class="justify-content-end mr-50">
-                        <b-button
-                            v-if="itemsNoResi !== null || ticketType !== null || itemsImageInitialFile[0] !== undefined || description !== ''"
-                            variant="outline-primary"
-                            class="btn-icon mr-1"
-                            @click="clearFieldTicket()"
-                        >
-                            Batalkan
-                        </b-button>
-                        <b-button
-                            v-else
-                            variant="outline-dark"
-                            class="btn-icon mr-1"
-                            disabled
-                            @click="clearFieldTicket()"
-                        >
-                            Batalkan
-                        </b-button>
-                        <b-button
-                            class="btn-icon"
-                            :variant="invalid ? 'dark' : 'primary'"
-                            :disabled="invalid"
-                            @click="alertSubmitTicket"
-                        >
-                            Buat Tiket
-                        </b-button>
-                    </b-row>
-                </b-col>
-            
-                </b-row>
-            </b-form>
-        </validation-observer>
-    </div>
-
     <b-row class="my-2">
         <h3 class="text-black ml-1">
             <strong>
@@ -375,6 +162,21 @@
     </div>
 
     <b-row class="justify-content-end mb-1">
+        <b-col>
+            <b-button
+                style="background-color: #08A0F7 !important; border: none;"
+                @click="showModalCreateTicket"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    Buat Tiket
+                    <div class="ml-3">
+                        <feather-icon
+                            icon="PlusIcon"
+                        />
+                    </div>
+                </b-row>
+            </b-button>
+        </b-col>
         <b-col
             md="4"
             :class="computedClassTypeSearch"
@@ -431,6 +233,53 @@
     </b-row>
 
     <b-row class="justify-content-end mb-2">
+        <b-col md="auto" class="pr-0">
+            <b-button
+                id="popoverFilterEkspedisi"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-evenly">
+                    <div>
+                        <span>
+                            Ekspedisi
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="filterEkspedisi.length > 0" class="text-primary">
+                            ({{ filterEkspedisi.length }})
+                        </span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                id="popover-filter-ekspedisi"
+                target="popoverFilterEkspedisi"
+                triggers="focus"
+                placement="bottom"
+            >
+            <div
+                class="p-50"
+                v-for="(item, index) in filterEkspedisiItem"
+                :key="index+1"
+            >
+                <b-form-checkbox
+                    v-model="item.onCheck"
+                    class="custom-control-primary mb-1"
+                    @change="filterByEkspedisi(item)"
+                >
+                    <span class="text-black">
+                        {{ item.name }}
+                    </span>
+                </b-form-checkbox>
+            </div>
+            </b-popover>
+        </b-col>
         <b-col
             :md="computedClassAnyFilter"
             class="pr-0"
@@ -443,9 +292,16 @@
                 style="border: 1px solid #C2C2C2;
                 border-radius: 8px;"
             >
-                <b-row class="align-items-center justify-content-between">
-                    Jenis Tiket
-                    <div class="ml-3">
+                <b-row class="align-items-center justify-content-evenly">
+                    <div>
+                        <span>
+                            Jenis Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="filterTicketType.length > 0" class="text-primary">({{ filterTicketType.length }})</span>
+                    </div>
+                    <div>
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
                 </b-row>
@@ -462,8 +318,15 @@
                 block
             >
                 <b-row class="align-items-center justify-content-between">
-                    Jenis Tiket
-                    <div class="ml-3">
+                    <div>
+                        <span>
+                            Jenis Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="filterTicketType.length > 0" class="text-primary">({{ filterTicketType.length }})</span>
+                    </div>
+                    <div>
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
                 </b-row>
@@ -504,8 +367,17 @@
                 border-radius: 8px;"
             >
                 <b-row class="align-items-center justify-content-between">
-                    Status Tiket
-                    <div class="ml-3">
+                    <div>
+                        <span>
+                            Status Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="ticketStatus.length > 0" class="text-primary">
+                            ({{ ticketStatus.length }})
+                        </span>
+                    </div>
+                    <div>
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
                 </b-row>
@@ -568,7 +440,7 @@
                 style="min-width: 350px"
               >
                 <div
-                  class="d-flex justify-content-between align-items-center w-100"
+                  class="d-flex justify-content-between align-items-center w-100 pt-50"
                 >
                     <div>
                         <span class="text-black">Waktu Dibuat</span>
@@ -597,7 +469,7 @@
                     style="min-width: 350px"
                 >
                     <div
-                        class="d-flex justify-content-between align-items-center w-100"
+                        class="d-flex justify-content-between align-items-center w-100 pt-50"
                     >
                         <span class="text-black">Waktu Diupdate</span>
                         <div class="">
@@ -639,61 +511,114 @@
                 @row-selected="onRowSelected"
             >
                 <template #cell(ticket_no)="dataNoTicket">
-                    <span class="text-primary font-medium">
-                        {{ dataNoTicket.value }}
-                    </span>
+                    <b-row class="justify-content-between" style="min-width: 200px !important">
+                        <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined" class="text-primary font-light">
+                            {{ dataNoTicket.value }}
+                        </span>
+                        <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined" class="text-primary font-bold">
+                            {{ dataNoTicket.value }}
+                        </span>
+                        <b-avatar
+                            v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined"
+                            style="background-color: #08A0F7!important"
+                            size="sm"
+                        >
+                            {{ dataNoTicket.item.history_ticket_count_mitra[0].total_unread_chat }}
+                        </b-avatar>
+                        <b-avatar
+                            v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined"
+                            variant="primary"
+                            size="sm"
+                        >
+                            <feather-icon icon="ArrowRightIcon" />
+                        </b-avatar>
+                    </b-row>
                 </template>
     
                 <template #cell(no_resi)="dataNomorResi">
-                    <span class="text-black font-medium">
+                    <span v-if="dataNomorResi.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        {{ dataNomorResi.value }}
+                    </span>
+                    <span v-if="dataNomorResi.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
                         {{ dataNomorResi.value }}
                     </span>
                 </template>
     
                 <template #cell(shipping)="dataShipping">
-                    <span class="text-black font-medium">
-                        {{ dataShipping.item.shipping }}
-                    </span>
+                    <b-img :src="dataShipping.item.shipping_image_path" fluid />
                 </template>
     
                 <template #cell(customer_name)="dataCustomer">
-                    <span class="text-black font-medium">
+                    <span v-if="dataCustomer.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        {{ dataCustomer.value }}
+                    </span>
+                    <span v-if="dataCustomer.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
                         {{ dataCustomer.value }}
                     </span>
                 </template>
     
                 <template #cell(name)="dataJenisticket">
-                    <span class="text-black font-medium">
+                    <span v-if="dataJenisticket.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        {{ dataJenisticket.value}}
+                    </span>
+                    <span v-if="dataJenisticket.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
                         {{ dataJenisticket.value}}
                     </span>
                 </template>
     
                 <template #cell(ticket_status)="dataStatusTicket">
-                    <span
-                        v-if="dataStatusTicket.value === 0"
-                        class="font-medium"
-                        style="color: #AB2900" 
-                    >
-                        Perlu Tindak Lanjut
-                    </span>
-                    <span
-                        v-if="dataStatusTicket.value !== 0"
-                        :class="statusTicketClass(dataStatusTicket.value)"
-                    >
-                        {{ convertTicketStatus(dataStatusTicket.value) }}
-                    </span>
+                    <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] === undefined" class="font-light">
+                        <span
+                            v-if="dataStatusTicket.value === 0"
+                            class="font-light"
+                            style="color: #AB2900" 
+                        >
+                            Perlu Tindak Lanjut
+                        </span>
+                        <span
+                            v-if="dataStatusTicket.value !== 0"
+                            :class="statusTicketClass(dataStatusTicket.value)"
+                        >
+                            {{ convertTicketStatus(dataStatusTicket.value) }}
+                        </span>
+                    </div>
+                    <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] !== undefined" class="font-bold">
+                        <span
+                            v-if="dataStatusTicket.value === 0"
+                            class="font-bold"
+                            style="color: #AB2900" 
+                        >
+                            Perlu Tindak Lanjut
+                        </span>
+                        <span
+                            v-if="dataStatusTicket.value !== 0"
+                            :class="statusTicketClass(dataStatusTicket.value)"
+                        >
+                            {{ convertTicketStatus(dataStatusTicket.value) }}
+                        </span>
+                    </div>
                 </template>
     
                 <template #cell(date_created)="dataWaktuDibuat">
-                    <span class="text-black font-medium">
-                        {{ dataWaktuDibuat.value }}
-                    </span>
+                    <div style="min-width: 200px">
+                        <span v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                            {{ getDateCreate(dataWaktuDibuat.value) }}
+                        </span>
+                        <span v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                            {{ getDateCreate(dataWaktuDibuat.value) }}
+                        </span>
+                    </div>
                 </template>
     
                 <template #cell(date_updated)="dataWaktuDiupdate">
-                    <span class="text-black font-medium">
-                        {{ dataWaktuDiupdate.value }}
-                    </span>
+                    <div style="min-width: 200px">
+                        <span v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                            {{ getDateUpdate(dataWaktuDiupdate.value) }}
+                        </span>
+                        <span v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                            {{ getDateUpdate(dataWaktuDiupdate.value) }}
+                        </span>
+                    </div>
                 </template>
             </b-table>
         </b-row>
@@ -867,5 +792,223 @@
           Oke
         </b-button>
       </b-row>
+    </b-modal>
+
+    <!-- Modal Create Ticket -->
+    <b-modal
+        ref="modal-create-ticket"
+        hide-header
+        hide-footer
+        centered
+    >
+    <div
+        class="py-1 px-2"
+    >
+        <b-row class="mb-1 justify-content-center">
+            <h3 class="text-black">
+                <strong>
+                    Buat Tiket
+                </strong>
+            </h3>
+        </b-row>
+
+        <validation-observer
+            ref="formRules"
+            #default="{invalid}"
+        >
+            <b-form>
+                <b-row>
+            
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Nomor Resi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Nomor Resi"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="itemsNoResi"
+                                :options="itemsResi"
+                                label="no_resi"
+                                :state="errors.length > 0 ? false:null"
+                                @input="fetchDataResi"
+                                @search="cekResi"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Jenis Tiket"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="ticketType"
+                                :options="jenisTicketItems"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12" class="mb-1">
+                    <b-form-group>
+                    <template #label>
+                        <span>
+                            Customer
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="customerName"
+                        placeholder="Nama Customer"
+                        disabled
+                    />
+                    </b-form-group>
+
+                    <!-- Put File -->
+                    <label
+                        v-if="itemsImageInitialFile[0] === undefined"
+                        for="formFile"
+                        class="text-info btn btn-flat-info p-0"
+                    >
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <feather-icon
+                                    icon="FileIcon"
+                                    size="20"
+                                    class="mr-50 text-info"
+                                />
+                            </div>
+                            Lampirkan File
+                        </div>
+                    </label>
+                    <b-form-file
+                        id="formFile"
+                        v-model="imageFile"
+                        placeholder="Choose a file or drop it here..."
+                        drop-placeholder="Drop file here..."
+                        multiple
+                        class="d-none"
+                        @change="onChangeFile"
+                    />
+
+                    <!-- Preview File -->
+                    <b-row
+                        v-for="(items, index) in itemsImageInitialFile"
+                        :key="index+1"
+                        class="align-items-center"
+                    >
+                        <label
+                            class="text-info btn btn-flat-info p-0 ml-1"
+                        >
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <feather-icon
+                                        icon="FileIcon"
+                                        size="20"
+                                        class="mr-50 text-info"
+                                    />
+                                </div>
+                                <a id="previewImage" :href="fileUrl(items)" target="_blank" class="text-info">
+                                    {{ items.name }}
+                                </a>
+                            </div>
+                        </label>
+                        <b-button
+                            variant="flat-dark"
+                            class="btn-icon"
+                            size="sm"
+                            @click="deleteFile(items)"
+                        >
+                            <feather-icon
+                                icon="Trash2Icon"
+                                size="20"
+                                class="text-black"
+                            />
+                        </b-button>
+                    </b-row>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Deskripsi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Deskripsi"
+                            rules="required"
+                        >
+                            <b-form-textarea
+                                v-model="description"
+                                rows="3"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col
+                    md="12"
+                    class="mt-50"
+                >
+                    <b-row class="justify-content-end mr-50">
+                        <b-button
+                            v-if="itemsNoResi !== null || ticketType !== null || itemsImageInitialFile[0] !== undefined || description !== ''"
+                            variant="outline-primary"
+                            class="btn-icon mr-1"
+                            @click="clearFieldTicket()"
+                        >
+                            Batalkan
+                        </b-button>
+                        <b-button
+                            v-else
+                            variant="outline-dark"
+                            class="btn-icon mr-1"
+                            disabled
+                            @click="clearFieldTicket()"
+                        >
+                            Batalkan
+                        </b-button>
+                        <b-button
+                            class="btn-icon"
+                            :variant="invalid ? 'dark' : 'primary'"
+                            :disabled="invalid"
+                            @click="submitTicket"
+                        >
+                            <b-spinner v-if="loadingSubmitTicket" small />
+                            Buat Tiket
+                        </b-button>
+                    </b-row>
+                </b-col>
+            
+                </b-row>
+            </b-form>
+        </validation-observer>
+    </div>
     </b-modal>
 </b-card>

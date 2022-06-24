@@ -32,7 +32,7 @@
             />
             <a
               class="text-white"
-              :href="`https://api.whatsapp.com/send?phone=(+62) ${customerContact}` "
+              :href="`https://api.whatsapp.com/send?phone=0${customerContact}` "
               target="blank"
             >
               <span class="align-middle">
@@ -49,7 +49,7 @@
         >
           <div>
             <h5><strong>{{ customerName }}</strong></h5>
-            <span>{{ formatphone (customerContact) }}</span>
+            <span>0{{ customerContact }}</span>
           </div>
         </b-col>
         <b-col md="5">
@@ -398,6 +398,7 @@ import {
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import Ripple from 'vue-ripple-directive'
+import moment from 'moment'
 import httpKomship from '../setting-kompship/http_komship'
 
 export default {
@@ -486,7 +487,7 @@ export default {
         this.infoCustomer = data
 
         // report
-        this.lastOrder = data.customer_report.last_order
+        this.lastOrder = moment(data.customer_report.last_order).format('DD MMMM YYYY HH:MM:SS')
         this.totalOrder = data.customer_report.total_order
         this.totalPcs = data.customer_report.total_pcs
         if (data.customer_report.customer_product_favorit) this.productFavorit = data.customer_report.customer_product_favorit

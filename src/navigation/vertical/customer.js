@@ -14,7 +14,7 @@ export default [
         action: 'manage',
       },
       {
-        title: 'Wawasan Pelanggan',
+        title: 'Wawasan',
         icon: 'None',
         resource: 'Customer',
         route: 'data-customer',

@@ -213,9 +213,7 @@
               size="sm"
               @click="sortDataOrderDesc"
             >
-              <feather-icon
-                icon="CodeIcon"
-              />
+              <b-img src="@/assets/images/icons/sort-icon-new.svg" />
             </b-button>
             <b-button
               v-if="sortOrderMode === 'ASC'"
@@ -251,9 +249,7 @@
               size="sm"
               @click="sortDataPcsDesc"
             >
-              <feather-icon
-                icon="CodeIcon"
-              />
+              <b-img src="@/assets/images/icons/sort-icon-new.svg" />
             </b-button>
             <b-button
               v-if="sortPcsMode === 'ASC'"
