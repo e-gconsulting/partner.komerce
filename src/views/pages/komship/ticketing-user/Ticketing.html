@@ -545,7 +545,7 @@
                 </template>
     
                 <template #cell(shipping)="dataShipping">
-                    <b-img :src="dataShipping.item.shipping_image_path" fluid />
+                    <b-img :src="dataShipping.item.shipping_image_path" fluid width="60" />
                 </template>
     
                 <template #cell(customer_name)="dataCustomer">
@@ -797,9 +797,9 @@
     <!-- Modal Create Ticket -->
     <b-modal
         ref="modal-create-ticket"
-        hide-header
         hide-footer
         centered
+        modal-class="modal-primary"
     >
     <div
         class="py-1 px-2"
@@ -837,6 +837,7 @@
                                 v-model="itemsNoResi"
                                 :options="itemsResi"
                                 label="no_resi"
+                                placeholder="Ketik atau copas resi kesini ya"
                                 :state="errors.length > 0 ? false:null"
                                 @input="fetchDataResi"
                                 @search="cekResi"
@@ -983,7 +984,7 @@
                             class="btn-icon mr-1"
                             @click="clearFieldTicket()"
                         >
-                            Batalkan
+                            Reset
                         </b-button>
                         <b-button
                             v-else
@@ -992,7 +993,7 @@
                             disabled
                             @click="clearFieldTicket()"
                         >
-                            Batalkan
+                            Reset
                         </b-button>
                         <b-button
                             class="btn-icon"

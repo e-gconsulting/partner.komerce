@@ -406,7 +406,10 @@ export default {
       return link
     },
     readChat() {
-      this.$http_komship.post('/v1/ticket-partner/chat/read-all').then(() => {}).catch(err => {
+      const formData = new FormData()
+      formData.append('ticket_id', this.ticketId)
+      formData.append('user_id', this.userId.partner_detail.id)
+      this.$http_komship.post('/v1/ticket-partner/chat/read-all', formData).then(() => {}).catch(err => {
         this.$toast({
           component: ToastificationContent,
           props: {
