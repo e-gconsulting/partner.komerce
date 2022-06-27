@@ -525,13 +525,15 @@
                         >
                             {{ dataNoTicket.item.history_ticket_count_mitra[0].total_unread_chat }}
                         </b-avatar>
-                        <b-avatar
-                            v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined"
-                            variant="primary"
-                            size="sm"
-                        >
-                            <feather-icon icon="ArrowRightIcon" />
-                        </b-avatar>
+                        <div v-if="dataNoTicket.item.last_chat_partner !== null">
+                            <b-avatar
+                                v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined && dataNoTicket.item.last_chat_partner.type === 'Partner'"
+                                variant="primary"
+                                size="sm"
+                            >
+                                <feather-icon icon="ArrowRightIcon" />
+                            </b-avatar>
+                        </div>
                     </b-row>
                 </template>
     
@@ -545,7 +547,7 @@
                 </template>
     
                 <template #cell(shipping)="dataShipping">
-                    <b-img :src="dataShipping.item.shipping_image_path" fluid />
+                    <img :src="dataShipping.item.shipping_image_path" width="60" class="img-fluid">
                 </template>
     
                 <template #cell(customer_name)="dataCustomer">
@@ -797,9 +799,10 @@
     <!-- Modal Create Ticket -->
     <b-modal
         ref="modal-create-ticket"
-        hide-header
         hide-footer
+        hide-header
         centered
+        modal-class="modal-primary"
     >
     <div
         class="py-1 px-2"
@@ -837,6 +840,7 @@
                                 v-model="itemsNoResi"
                                 :options="itemsResi"
                                 label="no_resi"
+                                placeholder="Ketik atau copas resi kesini ya"
                                 :state="errors.length > 0 ? false:null"
                                 @input="fetchDataResi"
                                 @search="cekResi"
@@ -846,35 +850,11 @@
                     </b-form-group>
                 </b-col>
 
-                <b-col md="12">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Jenis Tiket
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Jenis Tiket"
-                            rules="required"
-                        >
-                            <v-select
-                                v-model="ticketType"
-                                :options="jenisTicketItems"
-                                :state="errors.length > 0 ? false:null"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
-                </b-col>
-
                 <b-col md="12" class="mb-1">
                     <b-form-group>
                     <template #label>
-                        <span>
-                            Customer
+                        <span class="text-black">
+                            <strong>Customer</strong>
                         </span>
                     </template>
                     <b-form-input
@@ -953,6 +933,30 @@
                         <template #label>
                             <span class="text-black">
                                 <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Jenis Tiket"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="ticketType"
+                                :options="jenisTicketItems"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
                                     Deskripsi
                                 </strong>
                             </span>
@@ -978,18 +982,8 @@
                 >
                     <b-row class="justify-content-end mr-50">
                         <b-button
-                            v-if="itemsNoResi !== null || ticketType !== null || itemsImageInitialFile[0] !== undefined || description !== ''"
                             variant="outline-primary"
                             class="btn-icon mr-1"
-                            @click="clearFieldTicket()"
-                        >
-                            Batalkan
-                        </b-button>
-                        <b-button
-                            v-else
-                            variant="outline-dark"
-                            class="btn-icon mr-1"
-                            disabled
                             @click="clearFieldTicket()"
                         >
                             Batalkan
@@ -1000,7 +994,6 @@
                             :disabled="invalid"
                             @click="submitTicket"
                         >
-                            <b-spinner v-if="loadingSubmitTicket" small />
                             Buat Tiket
                         </b-button>
                     </b-row>
@@ -1010,5 +1003,58 @@
             </b-form>
         </validation-observer>
     </div>
+    </b-modal>
+
+    <!-- Popup Loading -->
+    <b-modal ref="loading-create-ticket" centered hide-header hide-footer no-close-on-backdrop no-close-on-esc>
+        <div class="sk-circle pt-5 mt-5">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>
+        <div style="text-align: center;" class="mb-2 pb-1">
+            <h4 class="text-black">Memproses Tiket</h4>
+        </div>
+    </b-modal>
+
+    <!-- Modal Failure -->
+    <b-modal
+        ref="modal-failure-create-ticket"
+        hide-footer
+        hide-header
+        no-close-on-backdrop
+        no-close-on-esc
+        centered
+    >
+        <b-row class="justify-content-center mb-2 pt-2">
+            <b-img src="@/assets/images/icons/fail.svg" />
+        </b-row>
+
+        <b-row class="justify-content-center mb-2">
+            <span class="text-black text-center">
+                Maaf pembuatan tiket kamu gagal, silahkan coba kembali
+            </span>
+        </b-row>
+
+        <b-row class="justify-content-center pb-2">
+            <b-col md="4">
+                <b-button
+                        variant="primary"
+                        block
+                        @click="handlePopupCreateTicket"
+                    >
+                        Buat Tiket
+                    </b-button>
+            </b-col>
+        </b-row>
     </b-modal>
 </b-card>

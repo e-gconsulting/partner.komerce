@@ -119,8 +119,13 @@
               />
             </b-button>
           </div>
-          <div class="card-body h-text-xl pb-0 mb-0">
-            {{ formatRupiah(saldoPending) }}
+          <div class="card-body">
+            <span class="h-text-xl pb-0 mb-0">{{ formatRupiah(saldoPending) }}</span>
+            <b-row v-if="saldoPendingOnProblem !== 0">
+              <div class="ml-1">
+                <span>Dari nilai tersebut, <strong class="text-primary">{{ formatRupiah(saldoPendingOnProblem) }},-</strong> nya perlu dimonitor</span>
+              </div>
+            </b-row>
           </div>
         </div>
       </div>

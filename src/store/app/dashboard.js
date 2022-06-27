@@ -15,6 +15,7 @@ export default {
   state: {
     saldo: 0,
     saldoPending: 0,
+    saldoPendingOnProblem: 0,
     cashback: 0,
     orderanPerluDikirim: 0,
     orderanRetur: 0,
@@ -66,6 +67,7 @@ export default {
     UPDATE_ِِBALANCE_SUMMARY(state, balanceSummary) {
       state.saldo = balanceSummary.balance
       state.saldoPending = balanceSummary.pending_balance
+      state.saldoPendingOnProblem = balanceSummary.pending_balance_on_problem
       state.cashback = balanceSummary.total_earn_cashback
     },
     UPDATE_ORDER_SUMMARY(state, orderSummary) {

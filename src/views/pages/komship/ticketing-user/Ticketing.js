@@ -417,9 +417,10 @@ export default
       this.$refs['alert-validate-ticket'].hide()
     },
     submitTicket() {
-      this.loadingSubmitTicket = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          this.$refs['loading-create-ticket'].show()
+          this.$refs['modal-create-ticket'].hide()
           const formData = new FormData()
           formData.append('no_resi', this.noResi)
           formData.append('customer_name', this.customerName)
@@ -436,7 +437,6 @@ export default
 
           this.$http_komship.post('/v1/ticket-partner/store', formData)
             .then(() => {
-              this.loadingSubmitTicket = false
               this.noResi = null
               this.itemsNoResi = null
               this.customerName = ''
@@ -444,23 +444,13 @@ export default
               this.description = ''
               this.itemsImageInitialFile = []
               this.$refs.formRules.reset()
-              this.$refs['modal-create-ticket'].hide()
+              this.$refs['loading-create-ticket'].hide()
               this.$refs['popup-success-create-ticket'].show()
             })
             .catch(err => {
-              this.loadingSubmitTicket = false
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failure',
-                  icon: 'AlertCircleIcon',
-                  text: err,
-                  variant: 'danger',
-                },
-              }, 2000)
+              this.$refs['loading-create-ticket'].hide()
+              this.$refs['modal-failure-create-ticket'].show()
             })
-        } else {
-          this.loadingSubmitTicket = false
         }
       })
     },
@@ -719,6 +709,7 @@ export default
       this.description = ''
       this.itemsImageInitialFile = []
       this.$refs.formRules.reset()
+      this.$refs['modal-create-ticket'].hide()
     },
     setPerPage(page) {
       this.totalPerPage = page
@@ -755,6 +746,10 @@ export default
       const date = moment(data).format('DD MMMM YYYY')
       const result = `${hours} WIB ${date}`
       return result
+    },
+    handlePopupCreateTicket() {
+      this.$refs['modal-create-ticket'].show()
+      this.$refs['modal-failure-create-ticket'].hide()
     },
   },
 }
