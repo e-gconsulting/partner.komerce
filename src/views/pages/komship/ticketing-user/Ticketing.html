@@ -850,35 +850,11 @@
                     </b-form-group>
                 </b-col>
 
-                <b-col md="12">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Jenis Tiket
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Jenis Tiket"
-                            rules="required"
-                        >
-                            <v-select
-                                v-model="ticketType"
-                                :options="jenisTicketItems"
-                                :state="errors.length > 0 ? false:null"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
-                </b-col>
-
                 <b-col md="12" class="mb-1">
                     <b-form-group>
                     <template #label>
-                        <span>
-                            Customer
+                        <span class="text-black">
+                            <strong>Customer</strong>
                         </span>
                     </template>
                     <b-form-input
@@ -950,6 +926,30 @@
                             />
                         </b-button>
                     </b-row>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Jenis Tiket"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="ticketType"
+                                :options="jenisTicketItems"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
                 </b-col>
 
                 <b-col md="12">
