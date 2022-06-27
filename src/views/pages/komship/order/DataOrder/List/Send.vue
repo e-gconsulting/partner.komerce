@@ -2,11 +2,11 @@
   <div>
     <b-row class="mb-2 justify-content-end align-items-center">
       <b-col
-        md="3"
+        md="7"
       >
         <div
           class="p-1 font-bold rounded-lg"
-          style="border: 1px solid black;"
+          style="border: 1px solid black;max-width: 300px;"
         >
           Total dalam perjalanan : <span class="text-info">{{ totalKirim }}</span><br>
           <span
@@ -23,9 +23,6 @@
           </span>
         </div>
       </b-col>
-      <b-col
-        md="4"
-      />
       <b-col
         md="5"
         class="d-flex align-items-center"
@@ -274,10 +271,16 @@
           <b-button
             v-if="data.item.is_problem === 1"
             variant="danger"
+            class="d-flex"
             style="padding: 5px;font-size: 12px;"
             @click="openTicketing(data.item.ticket_id)"
           >
-            Kendala <b-icon-info-circle />
+            <span class="my-auto">Kendala</span>
+            <img
+              src="@/assets/images/icons/info-circle-white.svg"
+              class="my-auto"
+              style="margin-left: 3px;"
+            >
           </b-button>
         </template>
         <template #cell(details)="data">
