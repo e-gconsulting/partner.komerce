@@ -75,50 +75,42 @@ export default
         {
           key: 'ticket_no',
           label: 'No. Tiket',
-          trClass: 'border-top-0 bg-warning',
-          class: 'bg-white',
+          trClass: 'bg-white',
         },
         {
           key: 'no_resi',
           label: 'Nomor Resi',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'shipping',
           label: 'Ekspedisi',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'customer_name',
           label: 'Customer',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'name',
           label: 'Jenis Tiket',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'ticket_status',
           label: 'Status Tiket',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'date_created',
           label: 'Waktu Dibuat',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'date_updated',
           label: 'Waktu Diupdate',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
       ],
       itemsTicket: [],
@@ -254,6 +246,8 @@ export default
       ],
       filterEkspedisi: [],
       loadingCreateTicket: false,
+
+      stylingTableNoTicket: null,
     }
   },
   watch: {
@@ -443,7 +437,6 @@ export default
               this.ticketType = null
               this.description = ''
               this.itemsImageInitialFile = []
-              this.$refs.formRules.reset()
               this.$refs['loading-create-ticket'].hide()
               this.$refs['popup-success-create-ticket'].show()
             })
@@ -736,20 +729,39 @@ export default
       this.$refs['modal-create-ticket'].show()
     },
     getDateCreate(data) {
-      const hours = moment(data).format('hh.mm')
       const date = moment(data).format('DD MMMM YYYY')
-      const result = `${hours} WIB ${date}`
+      const result = `${date}`
+      return result
+    },
+    getHoursCreate(data) {
+      const hours = moment(data).format('HH.MM')
+      const result = `${hours} WIB`
       return result
     },
     getDateUpdate(data) {
-      const hours = moment(data).format('hh.mm')
       const date = moment(data).format('DD MMMM YYYY')
-      const result = `${hours} WIB ${date}`
+      const result = `${date}`
+      return result
+    },
+    getHoursUpdate(data) {
+      const hours = moment(data).format('HH.MM')
+      const result = `${hours} WIB`
       return result
     },
     handlePopupCreateTicket() {
       this.$refs['modal-create-ticket'].show()
       this.$refs['modal-failure-create-ticket'].hide()
+    },
+    getStyleTicketNo(data) {
+      this.stylingTableNoTicket = data.item.history_ticket_count_mitra[0] === undefined ? 'min-width: 200px !important' : 'min-width: 200px !important;'
+      return data.item.history_ticket_count_mitra[0] === undefined ? 'min-width: 200px !important' : 'min-width: 200px !important;'
+    },
+    getRowClass(item, type) {
+      let result = null
+      if (item) {
+        result = item.history_ticket_count_mitra[0] === undefined ? '' : 'table-secondary'
+      }
+      return result
     },
   },
 }
