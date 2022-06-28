@@ -394,7 +394,16 @@
                 block
             >
                 <b-row class="align-items-center justify-content-between">
-                    Status Tiket
+                    <div>
+                        <span>
+                            Status Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="ticketStatus.length > 0" class="text-primary">
+                            ({{ ticketStatus.length }})
+                        </span>
+                    </div>
                     <div class="ml-3">
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
@@ -508,6 +517,8 @@
                 empty-text="Tidak ada data yang ditampilkan."
                 responsive
                 selectable
+                head-variant="light"
+                :tbody-tr-class="getRowClass"
                 @row-selected="onRowSelected"
             >
                 <template #cell(ticket_no)="dataNoTicket">
@@ -518,13 +529,14 @@
                         <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined" class="text-primary font-bold">
                             {{ dataNoTicket.value }}
                         </span>
-                        <b-avatar
-                            v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined"
-                            style="background-color: #08A0F7!important"
-                            size="sm"
-                        >
-                            {{ dataNoTicket.item.history_ticket_count_mitra[0].total_unread_chat }}
-                        </b-avatar>
+                        <div v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined">
+                            <b-avatar
+                                style="background-color: #08A0F7!important"
+                                size="sm"
+                            >
+                                {{ dataNoTicket.item.history_ticket_count_mitra[0].total_unread_chat }}
+                            </b-avatar>
+                        </div>
                         <div v-if="dataNoTicket.item.last_chat_partner !== null">
                             <b-avatar
                                 v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined && dataNoTicket.item.last_chat_partner.type === 'Partner'"
@@ -602,25 +614,57 @@
                 </template>
     
                 <template #cell(date_created)="dataWaktuDibuat">
-                    <div style="min-width: 200px">
-                        <span v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
-                            {{ getDateCreate(dataWaktuDibuat.value) }}
-                        </span>
-                        <span v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
-                            {{ getDateCreate(dataWaktuDibuat.value) }}
-                        </span>
-                    </div>
+                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
+                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
                 </template>
     
                 <template #cell(date_updated)="dataWaktuDiupdate">
-                    <div style="min-width: 200px">
-                        <span v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
-                            {{ getDateUpdate(dataWaktuDiupdate.value) }}
-                        </span>
-                        <span v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
-                            {{ getDateUpdate(dataWaktuDiupdate.value) }}
-                        </span>
-                    </div>
+                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
+                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
                 </template>
             </b-table>
         </b-row>
@@ -802,6 +846,8 @@
         hide-footer
         hide-header
         centered
+        no-close-on-backdrop
+        no-close-on-esc
         modal-class="modal-primary"
     >
     <div
