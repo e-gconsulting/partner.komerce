@@ -280,33 +280,6 @@
                         style="max-height: 80vh;width: 100%;"
                         v-html="listAwb"
                       />
-                      <!-- <div
-                        v-for="items in itemAwb"
-                        :key="items"
-                      > -->
-                      <!-- <div class="icon-awb d-inline-block">
-                        <img
-                          v-if="items.status === 'Pickup'"
-                          src="@/assets/images/icons/resi-pickup.svg"
-                        >
-                        <img
-                          v-if="items.status === 'Process'"
-                          src="@/assets/images/icons/resi-kirim.svg"
-                        >
-                        <img
-                          v-if="items.status === 'Problem'"
-                          src="@/assets/images/icons/resi-problem.svg"
-                        >
-                        <img
-                          v-if="items.status === 'Delivered'"
-                          src="@/assets/images/icons/resi-terima.svg"
-                        >
-                      </div>
-                      <div style="font-size: 16px;display: inline-block;">
-                        <span>18 Juni 2022 - 08.17</span><br>
-                        <span class="font-bold">{{ items.desc }}</span>
-                      </div><br> -->
-
                     </div>
                     <b-col v-else>
                       <div
@@ -867,9 +840,9 @@ export default {
         this.listAwb += `<span class="font-bold">${items.desc}</span>`
         this.listAwb += '</div><br>'
         if (items.status === 'Pickup') {
-          this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px">'
+          this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
           this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-          this.listAwb += '<span class="my-auto" style="margin-left:5px">Pemberitahuan pemberangkatan telah<br>terkirim ke WA Pelanggan</span>'
+          this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
           this.listAwb += '</div>'
         }
       })
