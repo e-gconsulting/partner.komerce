@@ -1392,13 +1392,15 @@ export default {
       }
     },
     async checkWhatsapp() {
-      try {
-        const res = await this.$http_komship.post(`/v1/check-wa?phone_no=${this.customerPhone}`)
-        const { data } = await res.data.data
-        this.isWhatsapp = data
-      } catch (error) {
-        console.error(error)
-      }
+      await this.$http_komship.post(`/v1/check-wa?phone_no=${this.customerPhone}`)
+        .then(res => {
+          const { data } = res.data
+          this.isWhatsapp = data
+        })
+        .catch(error => {
+          const { data } = error.response.data
+          this.isWhatsapp = data
+        })
     },
   },
 }
