@@ -909,7 +909,57 @@
                         disabled
                     />
                     </b-form-group>
+                </b-col>
 
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Jenis Tiket"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="ticketType"
+                                :options="jenisTicketItems"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Deskripsi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Deskripsi"
+                            rules="required"
+                        >
+                            <b-form-textarea
+                                v-model="description"
+                                rows="3"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
                     <!-- Put File -->
                     <label
                         v-if="itemsImageInitialFile[0] === undefined"
@@ -972,54 +1022,6 @@
                             />
                         </b-button>
                     </b-row>
-                </b-col>
-
-                <b-col md="12">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Jenis Tiket
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Jenis Tiket"
-                            rules="required"
-                        >
-                            <v-select
-                                v-model="ticketType"
-                                :options="jenisTicketItems"
-                                :state="errors.length > 0 ? false:null"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
-                </b-col>
-
-                <b-col md="12">
-                    <b-form-group>
-                        <template #label>
-                            <span class="text-black">
-                                <strong>
-                                    Deskripsi
-                                </strong>
-                            </span>
-                        </template>
-                        <validation-provider
-                            #default="{errors}"
-                            name="Deskripsi"
-                            rules="required"
-                        >
-                            <b-form-textarea
-                                v-model="description"
-                                rows="3"
-                                :state="errors.length > 0 ? false:null"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
-                    </b-form-group>
                 </b-col>
 
                 <b-col
