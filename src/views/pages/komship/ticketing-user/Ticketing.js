@@ -759,7 +759,7 @@ export default
     getRowClass(item, type) {
       let result = null
       if (item) {
-        result = item.history_ticket_count_mitra[0] === undefined ? '' : 'table-secondary'
+        result = item.history_ticket_count_mitra[0] !== undefined ? '' : 'table-secondary'
       }
       return result
     },
