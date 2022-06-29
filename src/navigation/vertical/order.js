@@ -17,7 +17,7 @@ export default [
         title: 'Tambah Order',
         icon: 'None',
         resource: 'Tambah Order',
-        route: 'add-order',
+        route: 'order',
         action: 'manage',
       },
       {

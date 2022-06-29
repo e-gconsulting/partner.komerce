@@ -1,13 +1,17 @@
-.collapsed > .when-open,
-.not-collapsed > .when-closed {
+.collapsed > .when-open, .not-collapsed > .when-closed {
   display: none;
 }
 .detail-value {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 }
 @media (max-width: 767.98px) {
   .detail-value {
     justify-content: start;
   }
+}
+.info-wa {
+  background-color: #BEE6FC!important;
+  font-size: 12px!important;
+  color: #08A0F7!important;
 }

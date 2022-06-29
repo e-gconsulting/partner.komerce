@@ -25,6 +25,14 @@
         :class="{ 'text-black': !Boolean(item.hasParent) }"
       >{{ t(item.title) }}</span>
       <b-badge
+        v-if="item.title === 'Kendala' && followUp!==0"
+        pill
+        :variant="'primary'"
+        class="mr-1 ml-auto"
+      >
+        {{ followUp }}
+      </b-badge>
+      <b-badge
         v-if="item.tag"
         pill
         :variant="item.tagVariant || 'primary'"
@@ -55,6 +63,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      followUp: 0,
+    }
+  },
   setup(props) {
     const { isActive, linkProps, updateIsActive } = useVerticalNavMenuLink(
       props.item,
@@ -73,6 +86,19 @@ export default {
       // i18n
       t,
     }
+  },
+  watch: {
+    $route: {
+      handler(to, from) {
+        if (to?.name !== from?.name && this.item.title === 'Kendala') {
+          this.$http_komship.get('/v1/ticket-partner/count/need-followup').then(response => {
+            this.followUp = response.data.data.need_followup ?? 0
+          })
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
 }
 </script>

@@ -1,0 +1,1108 @@
+<b-card>
+    <b-row class="my-2">
+        <h3 class="text-black ml-1">
+            <strong>
+                Tiket Pengiriman
+            </strong>
+        </h3>
+    </b-row>
+
+    <div
+        class="py-1 px-2 mb-2"
+        style="
+            border: 1px solid #E2E2E2;
+            border-radius: 16px;
+        "
+    >
+        <b-row class="mx-50 my-2 justify-content-center">
+            <div
+                class="d-flex justify-content-center align-items-center mr-2 mb-1"
+                style="
+                    background: #FCD4BE;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 200px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #AB2900;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Perlu Tindak Lanjut
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #AB2900;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        {{ perluTindakLanjut }}
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="d-flex justify-content-center align-items-center mr-2 mb-1"
+                style="
+                    background: #FFEDED;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 200px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #E31A1A;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Belum Diproses
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #E31A1A;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        {{ belumDiProses }}
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="d-flex justify-content-center align-items-center mr-2 mb-1"
+                style="
+                    background: #FCEBBE;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 200px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #FBA63C;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Sedang Diproses
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #FBA63C;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        {{ sedangDiProses }}
+                    </p>
+                </div>
+            </div>
+
+            <div
+                class="d-flex justify-content-center align-items-center mb-1 mr-2"
+                style="
+                    background: #DCF3EB;
+                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                    border-radius: 12px;
+                    width: 200px;
+                    height: 102px;
+                "
+            >
+                <div
+                    class="text-center"
+                >
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #34A770;
+                            font-weight: 500;
+                            font-size: 16px;
+                        "
+                    >
+                        Selesai
+                    </p>
+                    <p
+                        class="mt-1"
+                        style="
+                            color: #34A770;
+                            font-weight: 400;
+                            font-size: 20px;
+                        "
+                    >
+                        {{ finished }}
+                    </p>
+                </div>
+            </div>
+        </b-row>
+    </div>
+
+    <b-row class="justify-content-end mb-1">
+        <b-col>
+            <b-button
+                style="background-color: #08A0F7 !important; border: none;"
+                @click="showModalCreateTicket"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    Buat Tiket
+                    <div class="ml-3">
+                        <feather-icon
+                            icon="PlusIcon"
+                        />
+                    </div>
+                </b-row>
+            </b-button>
+        </b-col>
+        <b-col
+            md="4"
+            :class="computedClassTypeSearch"
+        >
+          <b-input-group class="input-group-merge">
+            <b-input-group-prepend is-text>
+              <feather-icon icon="SearchIcon" />
+            </b-input-group-prepend>
+            <b-form-input
+                v-model="search"
+                placeholder="Search"
+                @input="searchTicket"
+            />
+          </b-input-group>
+        </b-col>
+
+        <b-col
+            :md="computedClassFilter"
+        >
+            <b-button
+                id="popoverStatus"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    {{ searchType.label }}
+                    <div class="ml-3">
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                id="popover-search-type"
+                target="popoverStatus"
+                triggers="focus"
+                placement="bottom"
+            >
+                <div
+                    v-for="(items, index) in searchItems"
+                    :key="index+1"
+                >
+                    <b-button
+                        v-model="items.value"
+                        variant="flat-dark"
+                        @click="setSearchType(items)"
+                    >
+                        {{ items.label }}
+                    </b-button>
+                </div>
+            </b-popover>
+        </b-col>
+    </b-row>
+
+    <b-row class="justify-content-end mb-2">
+        <b-col md="auto" class="pr-0">
+            <b-button
+                id="popoverFilterEkspedisi"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-evenly">
+                    <div>
+                        <span>
+                            Ekspedisi
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="filterEkspedisi.length > 0" class="text-primary">
+                            ({{ filterEkspedisi.length }})
+                        </span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                id="popover-filter-ekspedisi"
+                target="popoverFilterEkspedisi"
+                triggers="focus"
+                placement="bottom"
+            >
+            <div
+                class="p-50"
+                v-for="(item, index) in filterEkspedisiItem"
+                :key="index+1"
+            >
+                <b-form-checkbox
+                    v-model="item.onCheck"
+                    class="custom-control-primary mb-1"
+                    @change="filterByEkspedisi(item)"
+                >
+                    <span class="text-black">
+                        {{ item.name }}
+                    </span>
+                </b-form-checkbox>
+            </div>
+            </b-popover>
+        </b-col>
+        <b-col
+            :md="computedClassAnyFilter"
+            class="pr-0"
+        >
+            <b-button
+                id="popoverJenisTicket"
+                class="wrapper__filter__ticket"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-evenly">
+                    <div>
+                        <span>
+                            Jenis Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="filterTicketType.length > 0" class="text-primary">({{ filterTicketType.length }})</span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+
+            <!-- Mobile -->
+            <b-button
+                id="popoverJenisTicket"
+                class="wrapper__filter__ticket__mobile"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+                block
+            >
+                <b-row class="align-items-center justify-content-between">
+                    <div>
+                        <span>
+                            Jenis Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="filterTicketType.length > 0" class="text-primary">({{ filterTicketType.length }})</span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                target="popoverJenisTicket"
+                triggers="focus"
+                placement="bottom"
+            >
+                <div
+                    class="p-50"
+                    v-for="(item, index) in ticketTypeItems"
+                    :key="index+1"
+                >
+                    <b-form-checkbox
+                        v-model="item.onCheck"
+                        class="custom-control-primary mb-1"
+                        @change="filterByTicketType(item)"
+                    >
+                        <span class="text-black">
+                            {{ item.name }}
+                        </span>
+                    </b-form-checkbox>
+                </div>
+            </b-popover>
+        </b-col>
+
+        <b-col
+            :md="computedClassAnyFilter"
+            class="pr-0"
+        >
+            <b-button
+                id="popoverStatusTicket"
+                class="wrapper__filter__ticket"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+            >
+                <b-row class="align-items-center justify-content-between">
+                    <div>
+                        <span>
+                            Status Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="ticketStatus.length > 0" class="text-primary">
+                            ({{ ticketStatus.length }})
+                        </span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+
+            <!-- Mobile -->
+            <b-button
+                id="popoverStatusTicket"
+                class="wrapper__filter__ticket__mobile"
+                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+                variant="flat-dark"
+                style="border: 1px solid #C2C2C2;
+                border-radius: 8px;"
+                block
+            >
+                <b-row class="align-items-center justify-content-between">
+                    <div>
+                        <span>
+                            Status Tiket
+                        </span>
+                    </div>
+                    <div class="mx-1">
+                        <span v-if="ticketStatus.length > 0" class="text-primary">
+                            ({{ ticketStatus.length }})
+                        </span>
+                    </div>
+                    <div class="ml-3">
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </b-row>
+            </b-button>
+            <b-popover
+                target="popoverStatusTicket"
+                triggers="focus"
+                placement="bottom"
+            >
+                <div
+                    class="p-50"
+                    v-for="(items, index) in ticketStatusItems"
+                    :key="index+1"
+                >
+                    <b-form-checkbox
+                        v-model="items.onCheck"
+                        class="custom-control-primary mb-1"
+                        @change="filterTicketByStatus(items)"
+                    >
+                        <span class="text-black">
+                            {{ items.label }}
+                        </span>
+                    </b-form-checkbox>
+                </div>
+            </b-popover>
+        </b-col>
+
+        <b-col
+            class="pr-0 mb-1"
+            md="2"
+        >
+            <date-range-picker
+              ref="picker"
+              v-model="dateRange"
+              :locale-data="locale"
+              :ranges="ranges"
+              :opens="'left'"
+              class="w-100"
+            >
+              <template
+                v-slot:input="picker"
+                style="min-width: 350px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center w-100 pt-50"
+                >
+                    <div>
+                        <span class="text-black">Waktu Dibuat</span>
+                    </div>
+                    <div>
+                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                    </div>
+                </div>
+              </template>
+            </date-range-picker>
+        </b-col>
+
+        <b-col
+            md="2" class="mb-1"
+        >
+            <date-range-picker
+                ref="picker"
+                v-model="dateRangeUpdate"
+                :locale-data="locale"
+                :ranges="ranges"
+                :opens="'left'"
+                class="w-100"
+            >
+                <template
+                    v-slot:input="picker"
+                    style="min-width: 350px"
+                >
+                    <div
+                        class="d-flex justify-content-between align-items-center w-100 pt-50"
+                    >
+                        <span class="text-black">Waktu Diupdate</span>
+                        <div class="">
+                            <b-img src="@/assets/images/icons/arrow-filter.svg" />
+                        </div>
+                    </div>
+                </template>
+            </date-range-picker>
+        </b-col>
+
+        <div>
+            <b-button
+                variant="outline-primary"
+                class="btn-icon mr-1"
+                @click="clearFilter"
+            >
+                Hapus Filter
+            </b-button>
+        </div>
+    </b-row>
+
+    <!-- Data table -->
+    <b-overlay
+        :show="loadingDataTable"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+    >
+        <b-row>
+            <b-table
+                :items="itemsTicket"
+                :fields="fieldsTicket"
+                show-empty
+                empty-text="Tidak ada data yang ditampilkan."
+                responsive
+                selectable
+                head-variant="light"
+                :tbody-tr-class="getRowClass"
+                @row-selected="onRowSelected"
+            >
+                <template #cell(ticket_no)="dataNoTicket">
+                    <b-row class="justify-content-between" style="min-width: 200px !important">
+                        <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined" class="text-primary font-light">
+                            {{ dataNoTicket.value }}
+                        </span>
+                        <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined" class="text-primary font-bold">
+                            {{ dataNoTicket.value }}
+                        </span>
+                        <div v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined">
+                            <b-avatar
+                                style="background-color: #08A0F7!important"
+                                size="sm"
+                            >
+                                {{ dataNoTicket.item.history_ticket_count_mitra[0].total_unread_chat }}
+                            </b-avatar>
+                        </div>
+                        <div v-if="dataNoTicket.item.last_chat_partner !== null">
+                            <b-avatar
+                                v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined && dataNoTicket.item.last_chat_partner.type === 'Partner'"
+                                variant="primary"
+                                size="sm"
+                            >
+                                <feather-icon icon="ArrowRightIcon" />
+                            </b-avatar>
+                        </div>
+                    </b-row>
+                </template>
+    
+                <template #cell(no_resi)="dataNomorResi">
+                    <span v-if="dataNomorResi.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        {{ dataNomorResi.value }}
+                    </span>
+                    <span v-if="dataNomorResi.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        {{ dataNomorResi.value }}
+                    </span>
+                </template>
+    
+                <template #cell(shipping)="dataShipping">
+                    <img :src="dataShipping.item.shipping_image_path" width="60" class="img-fluid">
+                </template>
+    
+                <template #cell(customer_name)="dataCustomer">
+                    <span v-if="dataCustomer.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        {{ dataCustomer.value }}
+                    </span>
+                    <span v-if="dataCustomer.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        {{ dataCustomer.value }}
+                    </span>
+                </template>
+    
+                <template #cell(name)="dataJenisticket">
+                    <span v-if="dataJenisticket.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        {{ dataJenisticket.value}}
+                    </span>
+                    <span v-if="dataJenisticket.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        {{ dataJenisticket.value}}
+                    </span>
+                </template>
+    
+                <template #cell(ticket_status)="dataStatusTicket">
+                    <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] === undefined" class="font-light">
+                        <span
+                            v-if="dataStatusTicket.value === 0"
+                            class="font-light"
+                            style="color: #AB2900" 
+                        >
+                            Perlu Tindak Lanjut
+                        </span>
+                        <span
+                            v-if="dataStatusTicket.value !== 0"
+                            :class="statusTicketClass(dataStatusTicket.value)"
+                        >
+                            {{ convertTicketStatus(dataStatusTicket.value) }}
+                        </span>
+                    </div>
+                    <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] !== undefined" class="font-bold">
+                        <span
+                            v-if="dataStatusTicket.value === 0"
+                            class="font-bold"
+                            style="color: #AB2900" 
+                        >
+                            Perlu Tindak Lanjut
+                        </span>
+                        <span
+                            v-if="dataStatusTicket.value !== 0"
+                            :class="statusTicketClass(dataStatusTicket.value)"
+                        >
+                            {{ convertTicketStatus(dataStatusTicket.value) }}
+                        </span>
+                    </div>
+                </template>
+    
+                <template #cell(date_created)="dataWaktuDibuat">
+                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
+                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateCreate(dataWaktuDibuat.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
+                </template>
+    
+                <template #cell(date_updated)="dataWaktuDiupdate">
+                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] === undefined" class="text-black font-light">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
+                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] !== undefined" class="text-black font-bold">
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getHoursUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                        <b-col cols="12" style="min-width: 200px">
+                            <span>
+                                {{ getDateUpdate(dataWaktuDiupdate.value) }}
+                            </span>
+                        </b-col>
+                    </b-row>
+                </template>
+            </b-table>
+        </b-row>
+
+        <b-row>
+            <b-col
+                cols="12"
+                class="d-flex justify-content-between"
+            >
+                <div
+                    class="bg-light d-flex justify-content-center align-items-center p-50 rounded"
+                >
+                    <span class="text-black mr-50">
+                        List per halaman:
+                    </span>
+                    <b-button
+                        v-for="page in optionsPage"
+                        :key="page"
+                        class="btn-icon"
+                        size="sm"
+                        :variant="totalPerPage === page ? 'primary' : 'flat-dark'"
+                        @click="setPerPage(page)"
+                    >
+                        {{ page }}
+                    </b-button>
+                </div>
+
+                <b-pagination
+                    v-model="currentPage"
+                    :total-rows="totalRows"
+                    :per-page="totalPerPage"
+                    first-number
+                    last-number
+                    class="pagination-primary"
+                >
+                    <template #prev-text>
+                        <feather-icon
+                            size="18"
+                            icon="ChevronLeftIcon"
+                        />
+                    </template>
+                    <template #next-text>
+                        <feather-icon
+                            size="18"
+                            icon="ChevronRightIcon"
+                        />
+                    </template>
+                </b-pagination>
+            </b-col>
+        </b-row>
+    </b-overlay>
+
+    <!-- Popup success create ticket -->
+    <b-modal
+        ref="popup-success-create-ticket"
+        variant="primary"
+        no-close-on-backdrop
+        no-close-on-esc
+        centered
+        hide-header
+        hide-footer
+    >
+        <b-row class="justify-content-center mb-2 pt-2">
+            <b-img src="@/assets/images/icons/success.svg" />
+        </b-row>
+
+        <b-row class="justify-content-center mb-2">
+            <span class="text-black text-center">
+                <strong>
+                    Tiket kendala berhasil dibuat
+                </strong>
+            </span>
+        </b-row>
+
+        <b-row class="justify-content-center pb-2">
+            <b-col md="4">
+                <b-button
+                        variant="primary"
+                        block
+                        @click="closeSuccessCreateTicket"
+                    >
+                        Oke
+                    </b-button>
+            </b-col>
+        </b-row>
+    </b-modal>
+
+    <!-- Alert validate ticket -->
+    <b-modal
+        ref="alert-validate-ticket"
+        variant="primary"
+        no-close-on-backdrop
+        no-close-on-esc
+        centered
+        hide-header
+        hide-footer
+    >
+        <b-row class="justify-content-center mb-2 pt-2">
+            <b-img src="@/assets/images/icons/warning.svg" />
+        </b-row>
+
+        <b-row class="justify-content-center mb-2 px-2">
+            <span class="text-black text-center">
+                <strong>
+                    Kamu tidak bisa mengedit tiket ini setelah dikirim. Pastikan Informasi yang kamu masukkan sudah sesuai
+                </strong>
+            </span>
+        </b-row>
+
+        <b-row class="justify-content-center pb-2">
+            <b-col
+                md="4"
+                class="pr-0 mr-1"
+            >
+                <b-button
+                        variant="outline-primary"
+                        block
+                        @click="closeAlertSubmitTicket"
+                    >
+                        Cek Lagi
+                </b-button>
+            </b-col>
+            <b-col
+                md="4"
+                class="pl-0"
+            >
+                <b-button
+                        variant="primary"
+                        block
+                        @click="submitTicket"
+                    >
+                        <b-spinner
+                            v-if="loadingSubmitTicket"
+                            small
+                        />
+                        lanjutkan
+                </b-button>
+            </b-col>
+        </b-row>
+    </b-modal>
+
+    <!-- Alert Notification -->
+    <!-- Alert Notification -->
+    <b-modal
+      ref="modal-alert-notification"
+      no-close-on-backdrop
+      no-close-on-esc
+      hide-footer
+      hide-header
+      centered
+    >
+    <b-row class="justify-content-center text-center mb-1 mt-2">
+        <span class="text-black px-4">
+            Untuk informasi/chat dari ekspedisi masuk dengan cepat anda perlu
+            <strong>mengaktifkan notifikasi</strong> pada browser, <strong>klik icon gembok:</strong> 
+        </span>
+    </b-row>
+    <b-row class="justify-content-center mb-1 mt-3">
+      <img src="@/assets/images/alert-fireabase.svg">
+    </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black px-4">
+            Jika sudah di ON-kan, <strong>mohon refresh</strong> ya..
+        </span>
+      </b-row>
+      <b-row class="justify-content-center text-center mb-3">
+          <b-button
+          variant="primary"
+          @click="handleCloseAlert"
+          >
+          Oke
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- Modal Create Ticket -->
+    <b-modal
+        ref="modal-create-ticket"
+        hide-footer
+        hide-header
+        centered
+        no-close-on-backdrop
+        no-close-on-esc
+        modal-class="modal-primary"
+    >
+    <div
+        class="py-1 px-2"
+    >
+        <b-row class="mb-1 justify-content-center">
+            <h3 class="text-black">
+                <strong>
+                    Buat Tiket
+                </strong>
+            </h3>
+        </b-row>
+
+        <validation-observer
+            ref="formRules"
+            #default="{invalid}"
+        >
+            <b-form>
+                <b-row>
+            
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Nomor Resi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Nomor Resi"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="itemsNoResi"
+                                :options="itemsResi"
+                                label="no_resi"
+                                placeholder="Ketik atau copas resi kesini ya"
+                                :state="errors.length > 0 ? false:null"
+                                @input="fetchDataResi"
+                                @search="cekResi"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12" class="mb-1">
+                    <b-form-group>
+                    <template #label>
+                        <span class="text-black">
+                            <strong>Customer</strong>
+                        </span>
+                    </template>
+                    <b-form-input
+                        v-model="customerName"
+                        placeholder="Nama Customer"
+                        disabled
+                    />
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Jenis Tiket"
+                            rules="required"
+                        >
+                            <v-select
+                                v-model="ticketType"
+                                :options="jenisTicketItems"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
+                    <b-form-group>
+                        <template #label>
+                            <span class="text-black">
+                                <strong>
+                                    Deskripsi
+                                </strong>
+                            </span>
+                        </template>
+                        <validation-provider
+                            #default="{errors}"
+                            name="Deskripsi"
+                            rules="required"
+                        >
+                            <b-form-textarea
+                                v-model="description"
+                                rows="3"
+                                :state="errors.length > 0 ? false:null"
+                            />
+                            <small class="text-primary">{{ errors[0] }}</small>
+                        </validation-provider>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="12">
+                    <!-- Put File -->
+                    <label
+                        v-if="itemsImageInitialFile[0] === undefined"
+                        for="formFile"
+                        class="text-info btn btn-flat-info p-0"
+                    >
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <feather-icon
+                                    icon="FileIcon"
+                                    size="20"
+                                    class="mr-50 text-info"
+                                />
+                            </div>
+                            Lampirkan File
+                        </div>
+                    </label>
+                    <b-form-file
+                        id="formFile"
+                        v-model="imageFile"
+                        placeholder="Choose a file or drop it here..."
+                        drop-placeholder="Drop file here..."
+                        multiple
+                        class="d-none"
+                        @change="onChangeFile"
+                    />
+
+                    <!-- Preview File -->
+                    <b-row
+                        v-for="(items, index) in itemsImageInitialFile"
+                        :key="index+1"
+                        class="align-items-center"
+                    >
+                        <label
+                            class="text-info btn btn-flat-info p-0 ml-1"
+                        >
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <feather-icon
+                                        icon="FileIcon"
+                                        size="20"
+                                        class="mr-50 text-info"
+                                    />
+                                </div>
+                                <a id="previewImage" :href="fileUrl(items)" target="_blank" class="text-info">
+                                    {{ items.name }}
+                                </a>
+                            </div>
+                        </label>
+                        <b-button
+                            variant="flat-dark"
+                            class="btn-icon"
+                            size="sm"
+                            @click="deleteFile(items)"
+                        >
+                            <feather-icon
+                                icon="Trash2Icon"
+                                size="20"
+                                class="text-black"
+                            />
+                        </b-button>
+                    </b-row>
+                </b-col>
+
+                <b-col
+                    md="12"
+                    class="mt-50"
+                >
+                    <b-row class="justify-content-end mr-50">
+                        <b-button
+                            variant="outline-primary"
+                            class="btn-icon mr-1"
+                            @click="clearFieldTicket()"
+                        >
+                            Batalkan
+                        </b-button>
+                        <b-button
+                            class="btn-icon"
+                            :variant="invalid ? 'dark' : 'primary'"
+                            :disabled="invalid"
+                            @click="submitTicket"
+                        >
+                            Buat Tiket
+                        </b-button>
+                    </b-row>
+                </b-col>
+            
+                </b-row>
+            </b-form>
+        </validation-observer>
+    </div>
+    </b-modal>
+
+    <!-- Popup Loading -->
+    <b-modal ref="loading-create-ticket" centered hide-header hide-footer no-close-on-backdrop no-close-on-esc>
+        <div class="sk-circle pt-5 mt-5">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>
+        <div style="text-align: center;" class="mb-2 pb-1">
+            <h4 class="text-black">Memproses Tiket</h4>
+        </div>
+    </b-modal>
+
+    <!-- Modal Failure -->
+    <b-modal
+        ref="modal-failure-create-ticket"
+        hide-footer
+        hide-header
+        no-close-on-backdrop
+        no-close-on-esc
+        centered
+    >
+        <b-row class="justify-content-center mb-2 pt-2">
+            <b-img src="@/assets/images/icons/fail.svg" />
+        </b-row>
+
+        <b-row class="justify-content-center mb-2">
+            <span class="text-black text-center">
+                Maaf pembuatan tiket kamu gagal, silahkan coba kembali
+            </span>
+        </b-row>
+
+        <b-row class="justify-content-center pb-2">
+            <b-col md="4">
+                <b-button
+                        variant="primary"
+                        block
+                        @click="handlePopupCreateTicket"
+                    >
+                        Buat Tiket
+                    </b-button>
+            </b-col>
+        </b-row>
+    </b-modal>
+</b-card>

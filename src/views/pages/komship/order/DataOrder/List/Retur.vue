@@ -1,26 +1,18 @@
 <template>
   <div>
-    <b-row class="mb-1">
+    <b-row class="mb-1 justify-content-end align-items-center">
       <b-col
-        lg="7"
-        md="6"
-      />
-      <b-col
-        md="4"
+        md="5"
+        class="d-flex"
       >
         <b-form-input
           v-model="formSearch"
           type="search"
-          class="form-search"
-          placeholder="Masukkan Nama Pelanggan"
+          class="form-search mr-2"
+          placeholder="Cari Pelanggan atau Resi"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
-      </b-col>
-      <b-col
-        lg="1"
-        sm="2"
-      >
         <b-button
           id="buttonFilter"
           variant="primary"
@@ -56,12 +48,24 @@
               />
             </b-col>
           </b-row>
+          <label class="mt-1">Gudang</label>
+          <v-select
+            v-model="addressId"
+            :options="addressList"
+            :reduce="(option) => option.address_id"
+            label="address_name"
+          >
+            <span
+              slot="no-options"
+              @click="$refs.select.open = false"
+            />
+          </v-select>
           <label class="mt-1">Produk</label>
           <v-select
-            v-model="productFilter"
+            v-model="productName"
             :options="productList"
+            :reduce="(option) => option.product_name"
             label="product_name"
-            @input="getProduct()"
           >
             <span
               slot="no-options"
@@ -133,67 +137,64 @@
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
-            <div class="d-flex">
-              <div v-if="data.item.product[0].product_image === null">
-                <img
-                  style="width:50px;height:50px;"
-                  :src="require('@/assets/images/avatars/image-null.png')"
-                >
-              </div>
-              <div v-else>
-                <img
-                  style="width:50px;height:50px;"
-                  :src="data.item.product[0].product_image"
-                  :alt="data.item.product[0].product_image"
-                >
-              </div>
-              <div
-                class="ml-1"
-                style="width:70%;"
+            <div
+              v-for="(itemProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
+              class="d-flex"
+              style="min-width:160px!important"
+            >
+              <img
+                v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                class="image-product"
+                :src="require('@/assets/images/avatars/image-null.png')"
               >
-                <span class="font-bold">{{ data.item.product[0].product_name }}</span><br>
+              <img
+                v-else
+                class="image-product"
+                :src="data.item.product[0].product_image"
+                :alt="data.item.product[0].product_image"
+              >
+              <div style="margin-left:5px;">
+                <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
                 <span
-                  v-if="data.item.product[0].variant_name !== '0'"
+                  v-if="itemProduct.variant_name !== '0'"
                   class="text-primary"
-                >{{ data.item.product[0].variant_name }}</span>
+                >{{ itemProduct.variant_name }}</span>
               </div>
               <div
-                class="ml-1 font-bold"
-                style="10%"
+                class="font-bold ml-auto"
               >
-                x{{ data.item.product[0].qty }}
+                x{{ itemProduct.qty }}
               </div>
             </div>
             <div v-if="data.item.product.length > 1">
               <b-collapse :id="'collapse-'+data.item.order_id">
                 <div
-                  v-for="item in data.item.product.slice(1)"
+                  v-for="item in data.item.product.slice(1, data.item.product.length)"
                   :key="item.order_id"
                   class="d-flex mt-1"
+                  style="min-width:160px!important"
                 >
-                  <div v-if="item.product_image === null">
-                    <img
-                      style="width:50px;height:50px;"
-                      :src="require('@/assets/images/avatars/image-null.png')"
-                    >
-                  </div>
-                  <div v-else>
-                    <img
-                      style="width:50px;height:50px;"
-                      :src="item.product_image"
-                      :alt="item.product_image"
-                    >
-                  </div>
-                  <div
-                    class="ml-1"
-                    style="width:70%;"
+                  <img
+                    v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                    class="image-product"
+                    :src="require('@/assets/images/avatars/image-null.png')"
                   >
-                    <span class="font-bold">{{ item.product_name }}</span><br>
-                    <span class="text-primary">{{ item.variant_name }}</span>
+                  <img
+                    v-else
+                    class="image-product"
+                    :src="data.item.product[0].product_image"
+                    :alt="data.item.product[0].product_image"
+                  >
+                  <div style="margin-left:5px;">
+                    <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                    <span
+                      v-if="item.variant_name !== '0'"
+                      class="text-primary"
+                    >{{ item.variant_name }}</span>
                   </div>
                   <div
-                    class="ml-1 font-bold"
-                    style="10%"
+                    class="font-bold ml-auto"
                   >
                     x{{ item.qty }}
                   </div>
@@ -258,8 +259,8 @@
           </div>
         </template>
       </b-table>
-      <div class="d-flex justify-between align-middle">
-        <div>
+      <div class="d-flex justify-between align-middle flex-wrap">
+        <div class="mb-2">
           <span class="mr-1">List per halaman</span>
           <b-button
             v-for="page in pageOptions"
@@ -339,6 +340,8 @@ export default {
       perPage: 50,
       pageOptions: [50, 100, 200],
       totalItems: 0,
+      addressId: null,
+      addressList: [],
     }
   },
   watch: {
@@ -352,6 +355,8 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.getProduct()
+    this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -378,12 +383,13 @@ export default {
       this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
         params: {
           order_status: 'Retur',
-          customer_name: search || this.customerName,
+          search,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
+          partner_address_id: this.addressId,
         },
       })
         .then(res => {
@@ -430,6 +436,15 @@ export default {
           })
         })
     },
+    async getAddress() {
+      setTimeout(async () => {
+        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
+          .then(res => {
+            const { data } = res.data
+            this.addressList = data
+          })
+      }, 800)
+    },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
@@ -446,13 +461,6 @@ export default {
 }
 </script>
 <style>
-.icon-search{
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  top: 12px;
-  left: 26px;
-}
 .form-search {
   padding-left: 40px;
   height: 45px;
@@ -482,5 +490,11 @@ export default {
 .btnPage {
   padding: 4px 7px;
   margin-right: 5px;
+}
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 </style>
