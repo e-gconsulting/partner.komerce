@@ -7,7 +7,6 @@ import {
 } from 'firebase/messaging'
 import { initializeApp } from 'firebase/app'
 import moment from 'moment'
-import DetailOrder from './DetailOrder/DetailOrder.vue'
 
 window.onload = () => {
   const theElement = document.getElementById('chatFocusing')
@@ -34,7 +33,6 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 
 export default {
-  components: { DetailOrder },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
