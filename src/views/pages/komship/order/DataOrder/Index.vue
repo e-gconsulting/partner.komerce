@@ -337,25 +337,51 @@
           </b-container>
         </template>
         <template #modal-footer>
-          <button
-            class="btn btn-outline-primary m-1"
-            @click="closeModalExport"
-          >
-            Batalkan
-          </button>
-          <button
-            class="btn btn-primary m-1"
-            @click="downloadCsv"
-          >
-            Download
-            <span class="ml-1">
-              <b-spinner
-                v-if="loading"
-                small
-                label="Loading..."
-              />
-            </span>
-          </button>
+          <b-col>
+            <div
+              v-if="showProgress"
+              class="d-flex flex-column"
+            >
+              <div>{{ Math.floor(progressValue) > 100 ? 'Download selesai' : message }}</div>
+              <div class="row w-100 align-items-center">
+                <div class="col">
+                  <b-progress
+                    :value="progressValue"
+                    :max="100"
+                    variant="success"
+                    animated
+                  />
+                </div>
+                <div class="col-auto">
+                  {{ Math.floor(progressValue) > 100 ? 100 :0 }}%
+                </div>
+              </div>
+            </div>
+          </b-col>
+          <b-col>
+            <div class="d-flex flex-row justify-content-end">
+              <button
+                class="btn btn-outline-primary m-1"
+                @click="closeModalExport"
+              >
+                Batalkan
+              </button>
+              <button
+                class="btn btn-primary m-1"
+                @click="downloadCsv"
+              >
+                Download
+                <span class="ml-1">
+                  <b-spinner
+                    v-if="loading"
+                    small
+                    label="Loading..."
+                  />
+                </span>
+              </button>
+            </div>
+          </b-col>
+
         </template>
       </b-modal>
     </b-row>
@@ -442,7 +468,7 @@
 </template>
 <script>
 import {
-  BCard, BSpinner, BTabs, BTab, BButton, BBadge, BCol, BRow, BContainer, BIconXCircle,
+  BCard, BSpinner, BProgressBar, BTabs, BTab, BButton, BBadge, BCol, BRow, BContainer, BIconXCircle,
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
@@ -488,6 +514,9 @@ export default {
       profile: JSON.parse(localStorage.userData),
       totalAjukan: null,
       totalPacking: null,
+      showProgress: false,
+      message: 'Sedang mendownload',
+      progressValue: 0,
       totalKirim: null,
       totalProblem: null,
       dateRange: { startDate, endDate },
@@ -572,6 +601,7 @@ export default {
         })
     },
     handleClosePopUp() {
+      this.showProgress = false
       this.$root.$emit('bv::hide::modal', 'modalExport')
     },
     downloadCsv() {
@@ -583,33 +613,44 @@ export default {
         shipping: this.shipping.toString(),
       }
       this.loading = true
-
+      this.showProgress = true
+      this.progressValue = 0
       this.$http_komship.get(`v1/export/order/${this.profile.partner_detail.id}`, {
         params: formData,
-      }, { responseType: 'blob' }).then(result => {
-        const binary = atob(result.data.replace(/\s/g, ''))
-        const len = binary.length
-        const buffer = new ArrayBuffer(len)
-        const view = new Uint8Array(buffer)
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < len; i++) {
-          view[i] = binary.charCodeAt(i)
-        }
-        const file = new Blob([view], { type: 'application/pdf' })
-        const fileURL = URL.createObjectURL(file)
-        const link = document.createElement('a')
-        link.href = fileURL
-        const fileName = `${+new Date()}.xlsx`// whatever your file name .
-        link.setAttribute('download', fileName)
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        this.loading = false
+        onDownloadProgress: progressEvent => {
+          // eslint-disable-next-line prefer-const
+          let total = progressEvent?.srcElement?.getResponseHeader('content-length') || 0
+          this.progressValue = (progressEvent.loaded / total) * 100
+        },
+        responseType: 'base64',
+      }).then(result => {
+        setTimeout(() => {
+          const binary = atob(result.data.replace(/\s/g, ''))
+          const len = binary.length
+          const buffer = new ArrayBuffer(len)
+          const view = new Uint8Array(buffer)
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < len; i++) {
+            view[i] = binary.charCodeAt(i)
+          }
+          const file = new Blob([view], { type: 'application/pdf' })
+          const fileURL = URL.createObjectURL(file)
+          const link = document.createElement('a')
+          link.href = fileURL
+          const fileName = `${+new Date()}.xlsx`// whatever your file name .
+          link.setAttribute('download', fileName)
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          this.loading = false
+          this.showProgress = false
+        }, 1000)
       }).catch(err => {
         this.loading = false
       })
     },
     closeModalExport() {
+      this.showProgress = false
       this.$refs.modalExport.hide()
     },
   },
