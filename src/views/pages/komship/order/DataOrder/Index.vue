@@ -630,7 +630,6 @@ export default {
         },
         responseType: 'base64',
       }).then(result => {
-        console.log(result)
         setTimeout(() => {
           const binary = atob(result.data.replace(/\s/g, ''))
           const len = binary.length
