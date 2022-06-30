@@ -1,5 +1,4 @@
 <b-card>
-    <div v-if="detailOrderMode === false">
         <b-row class="align-items-center mb-2">
             <b-button
                 variant="primary"
@@ -85,7 +84,7 @@
                                 <b-button
                                     variant="primary"
                                     class="btn-icon mr-1"
-                                    @click="handleDetailOrder"
+                                    :to="{ name: $route.meta.routeDetailOrder, params: { order_id: orderId } }"
                                 >
                                     Detail Order
                                 </b-button>
@@ -696,12 +695,4 @@
         </b-button>
       </b-row>
     </b-modal>
-    </div>
-
-    <div v-else>
-        <detail-order
-            :id-order="orderId"
-            @updateValueDetailOrderMode="updateDetailOrderMode"
-        />
-    </div>
  </b-card>
