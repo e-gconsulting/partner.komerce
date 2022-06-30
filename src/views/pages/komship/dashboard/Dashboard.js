@@ -159,6 +159,7 @@ export default {
     ...mapState('dashboard', [
       'saldo',
       'saldoPending',
+      'saldoPendingOnProblem',
       'cashback',
       'orderanPerluDikirim',
       'orderanRetur',

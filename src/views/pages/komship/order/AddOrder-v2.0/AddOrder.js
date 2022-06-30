@@ -131,6 +131,7 @@ export default {
 
       customerPhonePaste: '',
       customerPhonePasteMode: false,
+      isWhatsapp: null,
     }
   },
   created() {
@@ -1389,6 +1390,17 @@ export default {
       } else {
         this.messageErrorPhone = false
       }
+    },
+    async checkWhatsapp() {
+      await this.$http_komship.post(`/v1/check-wa?phone_no=${this.customerPhone}`)
+        .then(res => {
+          const { data } = res.data
+          this.isWhatsapp = data
+        })
+        .catch(error => {
+          const { data } = error.response.data
+          this.isWhatsapp = data
+        })
     },
   },
 }

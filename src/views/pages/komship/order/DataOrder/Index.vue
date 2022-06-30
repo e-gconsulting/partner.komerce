@@ -337,97 +337,137 @@
           </b-container>
         </template>
         <template #modal-footer>
-          <button
-            class="btn btn-outline-primary m-1"
-            @click="closeModalExport"
-          >
-            Batalkan
-          </button>
-          <button
-            class="btn btn-primary m-1"
-            @click="downloadCsv"
-          >
-            Download
-            <span class="ml-1">
-              <b-spinner
-                v-if="loading"
-                small
-                label="Loading..."
-              />
-            </span>
-          </button>
+          <b-col>
+            <div
+              v-if="showProgress"
+              class="d-flex flex-column"
+            >
+              <div>{{ Math.floor(progressValue) > 100 ? 'Download selesai' : message }}</div>
+              <div class="row w-100 align-items-center">
+                <div class="col">
+                  <b-progress
+                    v-if="Math.floor(progressValue) <= 0 "
+                    :value="100"
+                    :max="100"
+                    variant="success"
+                    :striped="Math.floor(progressValue) <= 0 ? true : false"
+                    :animated="Math.floor(progressValue) <= 0 ? true : false"
+                  />
+                  <b-progress
+                    v-else
+                    :value="progressValue"
+                    :max="100"
+                    variant="success"
+                  />
+                </div>
+                <div class="col-auto">
+                  {{ Math.floor(progressValue) > 100 ? 100 :0 }}%
+                </div>
+              </div>
+            </div>
+          </b-col>
+          <b-col>
+            <div class="d-flex flex-row justify-content-end">
+              <button
+                class="btn btn-outline-primary m-1"
+                @click="closeModalExport"
+              >
+                Batalkan
+              </button>
+              <button
+                :disabled="showProgress"
+                class="btn btn-primary m-1"
+                @click="downloadCsv"
+              >
+                Download
+                <span class="ml-1">
+                  <b-spinner
+                    v-if="loading"
+                    small
+                    label="Loading..."
+                  />
+                </span>
+              </button>
+            </div>
+          </b-col>
+
         </template>
       </b-modal>
     </b-row>
     <b-tabs
       v-model="tabIndex"
       fill
+      :nav-class="'mb-1 font-bold text-xl'"
+      no-nav-style
     >
       <b-tab
         title="Semua"
+        :title-link-class="linkClass(0)"
         lazy
       >
         <all />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        :title-link-class="linkClass(1)"
+        lazy
+      >
         <template slot="title">
-          <b-badge
-            class="mr-1"
-            variant="primary"
-            pill
-          >
-            {{ totalAjukan }}
-          </b-badge>
-          Order Dibuat
+          <span>{{ totalAjukan }} | Order Dibuat</span>
         </template>
         <created />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        :title-link-class="linkClass(2)"
+        lazy
+      >
         <template slot="title">
-          <b-badge
-            class="mr-1"
-            variant="primary"
-            pill
-          >
-            {{ totalPacking }}
-          </b-badge>
-          Dipacking
+          {{ totalPacking }} | Dipacking
         </template>
         <packing />
       </b-tab>
-      <b-tab lazy>
+      <b-tab
+        :title-link-class="linkClass(3)"
+        lazy
+      >
         <template slot="title">
-          <b-badge
-            class="mr-1"
-            variant="primary"
-            pill
+          <div
+            class="d-flex justify-center"
+            @click="tabIndex === 3 ? $router.go() : null"
           >
-            {{ totalKirim }}
-          </b-badge>
-          Dikirim
-          <b-badge
-            v-if="totalProblem > 0"
-            variant="danger"
-            class="ml-1 my-auto d-flex"
-            style="padding: 3px 5px!important;"
-          >
-            <span class="text-sm">{{ totalProblem }}</span>
-            <img
-              src="@/assets/images/icons/info-circle-white.svg"
-              style="margin-left:3px"
+            {{ totalKirim }} | Dikirim
+            <div
+              v-if="totalProblem > 0"
+              class="absolute my-auto bg-white rounded-lg"
+              style="padding: 3px;margin-top: -18px!important;margin-left: 15%;"
             >
-          </b-badge>
+              <b-badge
+                variant="danger"
+                class="text-sm rounded-lg"
+                style="padding: 2px 6px!important;font-size: 12px;"
+              >
+                <span class="d-flex text-sm">
+                  {{ totalProblem }}
+                  <img
+                    src="@/assets/images/icons/danger.svg"
+                    style="margin-left:3px"
+                  >
+                </span>
+              </b-badge>
+            </div>
+          </div>
         </template>
         <send />
       </b-tab>
       <b-tab
         title="Diterima"
+        :title-link-class="linkClass(4)"
         lazy
       >
         <received />
       </b-tab>
       <b-tab
         title="Retur"
+        :title-link-class="linkClass(5)"
         lazy
       >
         <retur />
@@ -437,7 +477,7 @@
 </template>
 <script>
 import {
-  BCard, BSpinner, BTabs, BTab, BButton, BBadge, BCol, BRow, BContainer, BIconXCircle,
+  BCard, BSpinner, BProgressBar, BTabs, BTab, BButton, BBadge, BCol, BRow, BContainer, BIconXCircle,
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
@@ -453,7 +493,7 @@ import Retur from './List/Retur.vue'
 
 export default {
   components: {
-    BCard, BTabs, BTab, All, Created, Packing, Send, Received, Retur, BButton, BBadge, BCol, BContainer, BRow, BIconXCircle, DateRangePicker,
+    BCard, BTabs, BTab, All, Created, Packing, Send, Received, Retur, BButton, BCol, BContainer, BRow, BIconXCircle, DateRangePicker,
   },
   filters: {
     dateCell(value) {
@@ -483,7 +523,11 @@ export default {
       profile: JSON.parse(localStorage.userData),
       totalAjukan: null,
       totalPacking: null,
+      showProgress: false,
+      message: 'Sedang memuat file ...',
+      progressValue: 0,
       totalKirim: null,
+      controller: new AbortController(),
       totalProblem: null,
       dateRange: { startDate, endDate },
       orderDate: '',
@@ -537,6 +581,12 @@ export default {
     this.fetchData()
   },
   methods: {
+    linkClass(tabs) {
+      if (this.tabIndex === tabs) {
+        return ['bg-primary', 'text-white', 'rounded']
+      }
+      return ['bg-default', 'text-dark']
+    },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')
     },
@@ -561,6 +611,9 @@ export default {
         })
     },
     handleClosePopUp() {
+      this.controller.abort()
+      this.showProgress = false
+      this.message = 'Sedang memuat file ...'
       this.$root.$emit('bv::hide::modal', 'modalExport')
     },
     downloadCsv() {
@@ -572,33 +625,49 @@ export default {
         shipping: this.shipping.toString(),
       }
       this.loading = true
-
+      this.showProgress = true
+      this.progressValue = 0
       this.$http_komship.get(`v1/export/order/${this.profile.partner_detail.id}`, {
         params: formData,
-      }, { responseType: 'blob' }).then(result => {
-        const binary = atob(result.data.replace(/\s/g, ''))
-        const len = binary.length
-        const buffer = new ArrayBuffer(len)
-        const view = new Uint8Array(buffer)
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < len; i++) {
-          view[i] = binary.charCodeAt(i)
-        }
-        const file = new Blob([view], { type: 'application/pdf' })
-        const fileURL = URL.createObjectURL(file)
-        const link = document.createElement('a')
-        link.href = fileURL
-        const fileName = `${+new Date()}.xlsx`// whatever your file name .
-        link.setAttribute('download', fileName)
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-        this.loading = false
+        onDownloadProgress: progressEvent => {
+          this.message = 'Sedang mendownload file ...'
+          // eslint-disable-next-line prefer-const
+          let total = progressEvent?.srcElement?.getResponseHeader('content-length') || 0
+          this.progressValue = (progressEvent.loaded / total) * 100
+        },
+        responseType: 'base64',
+        signal: this.controller.signal,
+      }).then(result => {
+        setTimeout(() => {
+          const binary = atob(result.data.replace(/\s/g, ''))
+          const len = binary.length
+          const buffer = new ArrayBuffer(len)
+          const view = new Uint8Array(buffer)
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < len; i++) {
+            view[i] = binary.charCodeAt(i)
+          }
+          const file = new Blob([view], { type: 'application/pdf' })
+          const fileURL = URL.createObjectURL(file)
+          const link = document.createElement('a')
+          link.href = fileURL
+          const fileName = `${+new Date()}.xlsx`// whatever your file name .
+          link.setAttribute('download', fileName)
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          this.loading = false
+          this.showProgress = false
+          this.message = 'Sedang memuat file ...'
+        }, 1000)
       }).catch(err => {
         this.loading = false
       })
     },
     closeModalExport() {
+      this.message = 'Sedang memuat file ...'
+      this.controller.abort()
+      this.showProgress = false
       this.$refs.modalExport.hide()
     },
   },

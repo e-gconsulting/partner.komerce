@@ -91,7 +91,7 @@
                 Gudang
               </b-col>
               <b-col
-                v-if="orderData.address_partner"
+                v-if="orderData.address_partner && orderData.address_partner !== []"
                 cols="6"
                 class="font-bold"
               >
@@ -248,45 +248,45 @@
                 <b-modal
                   id="bv-modal-cek-resi"
                   ref="bv-modal-cek-resi"
+                  size="lg"
+                  hide-header
                   hide-footer
                 >
-                  <template #modal-title>
-                    <div class="d-flex flex-row justify-content-between">
-                      <div class="font-weight-bold bold">
-                        Riwayat Perjalanan
-                      </div>
-                    </div>
-                  </template>
-                  <b-row class="my-8 overflow-auto h-50">
-                    <b-col v-if="itemAwb.length > 0">
-                      <div
-                        class="d-block"
+                  <div
+                    class="d-flex justify-between"
+                  >
+                    <div class="d-flex">
+                      <span
+                        class="font-bold my-auto"
+                        style="font-size: 20px;"
+                      >Riwayat Perjalanan</span>
+                      <img
+                        :src="orderData.shipment_image_path"
+                        style="height: 45px"
                       >
-                        <div
-                          v-for="item in itemAwb"
-                          :key="item.code"
-                          class="steps step-actives"
-                        >
-                          <div>
-                            <div class="circles" />
-                          </div>
-                          <div>
-                            <div class="titles font-weight-bold bold">
-                              {{ item.desc }}
-                            </div>
-                            <div class="captions">
-                              {{ item.date }}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </b-col>
+                    </div>
+                    <img
+                      src="@/assets/images/icons/close-circle.svg"
+                      style="cursor:pointer"
+                      @click="$bvModal.hide('bv-modal-cek-resi')"
+                    >
+                  </div>
+                  <b-row class="my-8 overflow-auto h-50">
+                    <div
+                      v-if="itemAwb.length > 0"
+                    >
+                      <div
+                        class="px-1"
+                        style="max-height: 80vh;width: 100%;"
+                        v-html="listAwb"
+                      />
+                    </div>
                     <b-col v-else>
                       <div
                         v-if="isLoading===false"
                         class="d-block mt-5 mb-5 align-content-center text-center"
                       >
-                        Data riwayat perjalan tidak ditemukan
+                        Data riwayat perjalan tidak ditemukan. <b>Bisa jadi</b> sudah request pickup/dijemput kurir saat pickup namun <b>belum discan</b> QR code untuk memulai perjalanan di kantor cabang. Harap menunggu
                       </div>
                       <div
                         v-if="isLoading===true"
@@ -577,6 +577,7 @@
   </b-card>
 </template>
 <script>
+/* eslint-disable global-require */
 import {
   BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, VBModal, BTable, BCollapse, BBadge, BImg,
 } from 'bootstrap-vue'
@@ -616,6 +617,7 @@ export default {
 
       editBy: null,
       editDate: null,
+      listAwb: '',
     }
   },
   async created() {
@@ -693,6 +695,7 @@ export default {
         const { data } = res.data
         this.itemAwb = data.history
         this.isLoading = false
+        this.getElementAwb()
       }).catch(err => {
         this.isLoading = false
       })
@@ -810,6 +813,41 @@ export default {
     applyUpdateEditMode() {
       this.editMode = false
     },
+    getElementAwb() {
+      const formatDate = date => {
+        const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        const day = moment(date).format('DD')
+        const month = moment(date).format('M')
+        const year = moment(date).format('YYYY')
+        const time = moment(date).format('HH.mm')
+        return `${day} ${monthName[month - 1]} ${year} - ${time}`
+      }
+      this.listAwb = ''
+      this.itemAwb.forEach(items => {
+        this.listAwb += '<div class="icon-awb d-inline-block">'
+        if (items.status === 'Pickup') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-pickup.svg')}">`
+        } else if (items.status === 'Process') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-kirim.svg')}">`
+        } else if (items.status === 'Problem') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
+        } else if (items.status === 'Delivered') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
+        }
+        this.listAwb += '</div>'
+        this.listAwb += '<div style="font-size: 16px;display: inline-block;">'
+        this.listAwb += `<span>${formatDate(items.date)}</span><br>`
+        this.listAwb += `<span class="font-bold">${items.desc}</span>`
+        this.listAwb += '</div><br>'
+        console.log('items', items)
+        if (items.send_wa === 1) {
+          this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
+          this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
+          this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
+          this.listAwb += '</div>'
+        }
+      })
+    },
   },
 }
 </script>
@@ -905,5 +943,31 @@ export default {
         display: inline-block!important;
     }
 }
-
+.icon-awb {
+    position: relative;
+    width: 50px;
+    line-height: 50px;
+    text-align: center;
+    margin-top: 50px;
+    background-color: #fff;
+    z-index: 2;
+}
+.icon-awb:first-child {
+    margin-top: 0;
+}
+.icon-awb:before {
+    position: absolute;
+    border: 1px dashed #FBA63C;
+    width: 0;
+    height: 50px;
+    display: block;
+    content: '';
+    left: 47%;
+    z-index: 1;
+    top: -54px;
+    margin-left: -1px;
+}
+.icon-awb:first-child:before {
+    display: none;
+}
 </style>

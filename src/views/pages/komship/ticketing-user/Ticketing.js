@@ -75,50 +75,42 @@ export default
         {
           key: 'ticket_no',
           label: 'No. Tiket',
-          trClass: 'border-top-0 bg-warning',
-          class: 'bg-white',
+          trClass: 'bg-white',
         },
         {
           key: 'no_resi',
           label: 'Nomor Resi',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'shipping',
           label: 'Ekspedisi',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'customer_name',
           label: 'Customer',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'name',
           label: 'Jenis Tiket',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'ticket_status',
           label: 'Status Tiket',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'date_created',
           label: 'Waktu Dibuat',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
         {
           key: 'date_updated',
           label: 'Waktu Diupdate',
           trClass: 'border-top-0',
-          class: 'bg-white',
         },
       ],
       itemsTicket: [],
@@ -196,22 +188,22 @@ export default
         {
           label: 'Perlu Tindak Lanjut',
           value: 0,
-          onCheck: true,
+          onCheck: false,
         },
         {
           label: 'Belum Diproses',
           value: 1,
-          onCheck: true,
+          onCheck: false,
         },
         {
           label: 'Sedang Diproses',
           value: 2,
-          onCheck: true,
+          onCheck: false,
         },
         {
           label: 'Selesai',
           value: 3,
-          onCheck: true,
+          onCheck: false,
         },
       ],
       fontClassTicketStatus: {
@@ -237,6 +229,25 @@ export default
 
       finished: 0,
       userId: JSON.parse(localStorage.userData),
+
+      filterEkspedisiItem: [
+        {
+          name: 'JNE',
+          onCheck: false,
+        },
+        {
+          name: 'IDEXPRESS',
+          onCheck: false,
+        },
+        {
+          name: 'SICEPAT',
+          onCheck: false,
+        },
+      ],
+      filterEkspedisi: [],
+      loadingCreateTicket: false,
+
+      stylingTableNoTicket: null,
     }
   },
   watch: {
@@ -275,10 +286,7 @@ export default
     this.receiveMessage()
   },
   async mounted() {
-    await this.ticketStatusItems.forEach(item => {
-      this.ticketStatus.push(item.value)
-    })
-    this.fetchTicket()
+    this.fetchTicketAll()
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
     this.fetchDataFirebase()
@@ -289,6 +297,37 @@ export default
     })
   },
   methods: {
+    fetchTicketAll() {
+      this.loadingDataTable = true
+      const params = {}
+      this.$http_komship.get('/v1/ticket-partner/list', {
+        params,
+      })
+        .then(response => {
+          if (response.data.code !== 400) {
+            const { data } = response.data.data
+            this.itemsTicket = data
+            this.totalRows = response.data.data.total
+            this.loadingDataTable = false
+          } else {
+            this.itemsTicket = []
+            this.loadingDataTable = false
+          }
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.data.message,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
+    },
     fetchTicket() {
       this.loadingDataTable = true
       const params = {}
@@ -304,6 +343,7 @@ export default
       if (this.search) Object.assign(params, { search: this.search })
       if (this.searchType) Object.assign(params, { search_type: this.searchType.value })
       if (this.filterTicketType) Object.assign(params, { ticket_type: this.filterTicketType.join() })
+      if (this.filterEkspedisi) Object.assign(params, { shipping: this.filterEkspedisi.join() })
       Object.assign(params, { total_per_page: this.totalPerPage })
       Object.assign(params, { page: this.currentPage })
       this.$http_komship.get('/v1/ticket-partner/list', {
@@ -371,10 +411,10 @@ export default
       this.$refs['alert-validate-ticket'].hide()
     },
     submitTicket() {
-      this.$refs['alert-validate-ticket'].hide()
-      this.loadingSubmitTicket = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
+          this.$refs['loading-create-ticket'].show()
+          this.$refs['modal-create-ticket'].hide()
           const formData = new FormData()
           formData.append('no_resi', this.noResi)
           formData.append('customer_name', this.customerName)
@@ -391,30 +431,19 @@ export default
 
           this.$http_komship.post('/v1/ticket-partner/store', formData)
             .then(() => {
-              this.loadingSubmitTicket = false
               this.noResi = null
               this.itemsNoResi = null
               this.customerName = ''
               this.ticketType = null
               this.description = ''
               this.itemsImageInitialFile = []
-              this.$refs.formRules.reset()
+              this.$refs['loading-create-ticket'].hide()
               this.$refs['popup-success-create-ticket'].show()
             })
             .catch(err => {
-              this.loadingSubmitTicket = false
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failure',
-                  icon: 'AlertCircleIcon',
-                  text: err,
-                  variant: 'danger',
-                },
-              }, 2000)
+              this.$refs['loading-create-ticket'].hide()
+              this.$refs['modal-failure-create-ticket'].show()
             })
-        } else {
-          this.loadingSubmitTicket = false
         }
       })
     },
@@ -497,6 +526,16 @@ export default
       }
       this.fetchTicket()
     },
+    filterByEkspedisi(data) {
+      const findIndexObj = this.filterEkspedisiItem.findIndex(items => items.name === data.name)
+      const findObj = this.filterEkspedisi.findIndex(items => items === data.name)
+      if (this.filterEkspedisiItem[findIndexObj].onCheck === true) {
+        this.filterEkspedisi.push(data.name)
+      } else {
+        this.filterEkspedisi.splice(findObj, 1)
+      }
+      this.fetchTicket()
+    },
     fetchTicketType() {
       this.$http_komship.get('/v1/ticket-partner/ticket-type/list')
         .then(response => {
@@ -536,6 +575,8 @@ export default
     }, 1000),
     async clearFilter() {
       this.ticketStatus = []
+      this.filterTicketType = []
+      this.filterEkspedisi = []
       this.loadingDataTable = true
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.ticketTypeItems.length; x++) {
@@ -543,14 +584,13 @@ export default
       }
       // eslint-disable-next-line no-plusplus
       for (let x = 0; x < this.ticketStatusItems.length; x++) {
-        this.ticketStatusItems[x].onCheck = true
+        this.ticketStatusItems[x].onCheck = false
       }
-      await this.ticketStatusItems.forEach(item => {
-        this.ticketStatus.push(item.value)
-      })
-      const params = {
-        ticket_status: this.ticketStatus.join(),
+      // eslint-disable-next-line no-plusplus
+      for (let x = 0; x < this.filterEkspedisiItem.length; x++) {
+        this.filterEkspedisiItem[x].onCheck = false
       }
+      const params = {}
       this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
@@ -662,6 +702,7 @@ export default
       this.description = ''
       this.itemsImageInitialFile = []
       this.$refs.formRules.reset()
+      this.$refs['modal-create-ticket'].hide()
     },
     setPerPage(page) {
       this.totalPerPage = page
@@ -683,6 +724,44 @@ export default
     },
     handleCloseAlert() {
       this.$refs['modal-alert-notification'].hide()
+    },
+    showModalCreateTicket() {
+      this.$refs['modal-create-ticket'].show()
+    },
+    getDateCreate(data) {
+      const date = moment(data).format('DD MMMM YYYY')
+      const result = `${date}`
+      return result
+    },
+    getHoursCreate(data) {
+      const hours = moment(data).format('HH.MM')
+      const result = `${hours} WIB`
+      return result
+    },
+    getDateUpdate(data) {
+      const date = moment(data).format('DD MMMM YYYY')
+      const result = `${date}`
+      return result
+    },
+    getHoursUpdate(data) {
+      const hours = moment(data).format('HH.MM')
+      const result = `${hours} WIB`
+      return result
+    },
+    handlePopupCreateTicket() {
+      this.$refs['modal-create-ticket'].show()
+      this.$refs['modal-failure-create-ticket'].hide()
+    },
+    getStyleTicketNo(data) {
+      this.stylingTableNoTicket = data.item.history_ticket_count_mitra[0] === undefined ? 'min-width: 200px !important' : 'min-width: 200px !important;'
+      return data.item.history_ticket_count_mitra[0] === undefined ? 'min-width: 200px !important' : 'min-width: 200px !important;'
+    },
+    getRowClass(item, type) {
+      let result = null
+      if (item) {
+        result = item.history_ticket_count_mitra[0] !== undefined ? '' : 'table-secondary'
+      }
+      return result
     },
   },
 }
