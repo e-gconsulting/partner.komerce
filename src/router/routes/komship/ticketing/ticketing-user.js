@@ -18,9 +18,29 @@ export default [
       name: 'detail-ticketing-user',
       routeTicket: 'ticketing-user',
       routeToDetailOrder: 'detail-ticketing-detail-order',
+      routeDetailOrder: 'detail-order',
       navActiveLink: 'ticketing-user',
       resource: 'Produk',
       action: 'manage',
+    },
+  },
+  {
+    path: '/data-order/detail-order/:order_id',
+    name: 'detail-order',
+    component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
+    meta: {
+      navActiveLink: 'data-order',
+      editOrder: 'edit-order',
+      routeToDataOrder: 'data-order',
+      name: 'detail-order',
+      resource: 'Order',
+      action: 'manage',
+      breadcrumb: [
+        {
+          text: 'Detail Order',
+          active: true,
+        },
+      ],
     },
   },
 ]
