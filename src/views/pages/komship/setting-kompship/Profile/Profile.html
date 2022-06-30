@@ -58,12 +58,19 @@
                 name="Username"
                 rules="required"
               >
-                <b-form-input
-                  v-model="username"
-                  placeholder="Username"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-input-group>
+                  <b-form-input
+                    v-model="username"
+                    placeholder="Username"
+                    :state="errors.length > 0 ? false:null"
+                  />
+                  <template #append>
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('username')">
+                      <b-img src="@/assets/images/icons/new-edit-icon.svg" />
+                    </b-button>
+                  </template>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </b-input-group>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -112,13 +119,20 @@
                 name=" No. HP"
                 rules="required"
               >
-                <b-form-input
-                  v-model="noHP"
-                  type="number"
-                  placeholder="Nomer HP"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-input-group>
+                  <b-form-input
+                    v-model="noHP"
+                    type="number"
+                    placeholder="Nomer HP"
+                    :state="errors.length > 0 ? false:null"
+                  />
+                  <template #append>
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('noHP')">
+                      <b-img src="@/assets/images/icons/new-edit-icon.svg" />
+                    </b-button>
+                  </template>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </b-input-group>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -138,12 +152,20 @@
                 name="Email"
                 rules="required|email"
               >
-                <b-form-input
-                  v-model="emailUser"
-                  placeholder="Email"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-input-group>
+                  <b-form-input
+                    v-model="emailUser"
+                    :type="modalEditFormInputType"
+                    placeholder="Email"
+                    :state="errors.length > 0 ? false:null"
+                  />
+                  <template #append>
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('email')">
+                      <b-img src="@/assets/images/icons/new-edit-icon.svg" />
+                    </b-button>
+                  </template>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </b-input-group>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -421,10 +443,19 @@
             md="12"
           >
             <b-button
+              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+              type="reset"
+              variant="outline-primary"
+              class="mr-1"
+              @click.prevent="reset"
+            >
+              Batalkan
+            </b-button>
+            <b-button
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"
               type="submit"
               variant="primary"
-              class="mr-1"
+              class="mr-5"
               @click.prevent="updateProfile"
             >
               <b-spinner
@@ -434,15 +465,6 @@
               />
               Submit
             </b-button>
-            <b-button
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              type="reset"
-              variant="outline-secondary"
-              class="mr-5"
-              @click.prevent="reset"
-            >
-              Reset
-            </b-button>
           </b-col>
         </b-row>
 
@@ -450,4 +472,114 @@
     </validation-observer>
 
   </b-card>
+
+  <!-- Modal Edit -->
+  <b-modal
+    ref="modal-edit"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="pt-2 mb-2 justify-content-center">
+      <h4 class="text-black">{{ modalTitle }}</h4>
+    </b-row>
+
+    <b-row class="mb-2 justify-content-center">
+      <span class="text-black">{{ modalSubtitle }}</span>
+    </b-row>
+
+    <b-row class="justify-content-center mx-2 mb-3">
+      <b-col cols="12">
+        <b-form-group
+              label-cols-md="5"
+            >
+              <template #label>
+                <span class="text-black">
+                  {{ modalFormLabel }}
+                </span>
+              </template>
+              <validation-provider
+                #default="{errors}"
+                name="Nama Lengkap"
+                rules="required"
+              >
+                <b-input-group>
+                  <b-form-input
+                    v-model="formInputEditItem"
+                    :type="modalEditFormInputType"
+                    :state="errors.length > 0 ? false:null"
+                  />
+                  <template
+                    v-if="editMode === 'noHP'"
+                  #append>
+                    <b-button
+                      class="btn-icon"
+                      variant="flat-dark"
+                      @click="changeEyeIcon"
+                    >
+                      <feather-icon :icon="itemEyeIcon" />
+                    </b-button>
+                  </template>
+                </b-input-group>
+                <small class="text-danger">{{ errors[0] }}</small>
+              </validation-provider>
+          </b-form-group>
+        </b-col>
+    </b-row>
+
+    <b-row class="justify-content-end mb-2">
+      <b-button
+        class="mr-50"
+        variant="outline-primary"
+        @click="closeModalEdit"
+      >
+        Batal
+      </b-button>
+      <b-button
+        class="mr-2"
+        variant="primary"
+        @click="submitEdit"
+      >
+        Simpan
+      </b-button>
+    </b-row>
+  </b-modal>
+
+  <!-- Modal Success Edit Username -->
+  <b-modal
+    ref="modal-success-edit-username"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-center mb-2 pt-2">
+        <b-img src="@/assets/images/icons/success.svg" />
+    </b-row>
+
+    <b-row class="justify-content-center mb-50">
+        <h4 class="text-black text-center">
+          <strong>
+            Username Berhasil Diganti
+          </strong>
+        </h4>
+    </b-row>
+  
+    <b-row class="justify-content-center mb-2 mx-3">
+        <span class="text-black text-center">
+          Sekarang Anda dapat masuk dengan menggunakan username terbaru.
+        </span>
+    </b-row>
+
+    <b-row class="justify-content-center pb-2">
+        <b-col md="4">
+            <b-button
+                    variant="primary"
+                    block
+                    @click="closeSuccessEditUsername"
+                >
+                    Oke
+              </b-button>
+        </b-col>
+    </b-row>
+  </b-modal>
 </b-overlay>

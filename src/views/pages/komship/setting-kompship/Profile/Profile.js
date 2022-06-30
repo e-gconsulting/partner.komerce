@@ -91,6 +91,17 @@ export default {
 
       messageErrorLengthNameBusiness: false,
       messageErrorPhone: false,
+
+      // Modal Edit
+      editMode: '',
+      modalTitle: '',
+      modalSubtitle: '',
+      modalFormLabel: '',
+      modalEditFormInputType: '',
+      formInputEditItem: '',
+
+      itemEyeIcon: 'EyeIcon',
+      labelSubmit: '',
     }
   },
   mounted() {
@@ -348,6 +359,49 @@ export default {
     handleArrowInput(e) {
       if (e.which === 38 || e.which === 40) {
         e.preventDefault()
+      }
+    },
+    async openModalEdit(data) {
+      this.editMode = data
+      if (data === 'username') {
+        this.modalTitle = await 'Edit Username'
+        this.modalSubtitle = await 'Kamu hanya dapat mengganti username satu kali'
+        this.modalFormLabel = await 'Username'
+        this.modalEditFormInputType = await 'text'
+        this.labelSubmit = await 'Simpan'
+      } else if (data === 'noHP') {
+        this.modalTitle = await 'Password Komship'
+        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalFormLabel = await 'Masukkan Pasword'
+        this.modalEditFormInputType = await 'text'
+        this.labelSubmit = 'Konfirmasi'
+      } else if (data === 'email') {
+        this.modalTitle = await 'Ganti Email'
+        this.modalSubtitle = await 'Pastikan email yang baru milik Kamu'
+        this.modalFormLabel = await 'Email'
+        this.modalEditFormInputType = await 'email'
+      }
+      console.log(this.modalEditFormInputType)
+      this.$refs['modal-edit'].show()
+    },
+    closeModalEdit() {
+      this.$refs['modal-edit'].hide()
+    },
+    closeSuccessEditUsername() {
+      this.$refs['modal-success-edit-username'].hide()
+    },
+    submitEdit() {
+      if (this.editMode === 'username') {
+        this.$refs['modal-success-edit-username'].show()
+      }
+    },
+    changeEyeIcon() {
+      if (this.itemEyeIcon === 'EyeIcon') {
+        this.itemEyeIcon = 'EyeOffIcon'
+        this.modalEditFormInputType = 'password'
+      } else {
+        this.itemEyeIcon = 'EyeIcon'
+        this.modalEditFormInputType = 'text'
       }
     },
   },
