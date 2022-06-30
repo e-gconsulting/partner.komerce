@@ -395,6 +395,7 @@
         <b-form-radio
           v-model="valueAddressIsActive"
           name="some-radios"
+          class="items-address"
           plain
           style="
             accent-color: #F95031;
@@ -403,21 +404,17 @@
           @change="handleSelectedAddress(items)"
         >
           <div class="d-flex">
-            <h5 class="mr-1">
-              <strong>
-                {{ items.address_name }}
-              </strong>
-            </h5>
+            <span
+              class="font-bold"
+              style="font-size:16px"
+            >{{ items.address_name }}</span>
             <span
               v-if="items.is_default === 1"
-              class="text-primary"
-            >
-              [ Alamat Utama ]
-            </span>
+              class="ml-auto"
+            >[Utama]</span>
           </div>
-          <p>
-            {{ items.address_detail }}
-          </p>
+          <span class="text-primary">{{ items.orders }} </span>
+          <span>Orderan belum dipickup</span>
         </b-form-radio>
       </div>
     </b-modal>
@@ -1291,5 +1288,15 @@ export default {
       margin-left: -30px!important;
     }
   }
+.items-address{
+  padding: 5px 30px;
+  border-radius: 10px;
+}
+.items-address label{
+  width: 100%;
+}
+.items-address:hover{
+    background-color: #FFECE9;
+}
 
 </style>

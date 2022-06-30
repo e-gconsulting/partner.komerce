@@ -124,9 +124,15 @@
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
               <div class="d-flex justify-content-left text-left">
-                <b-link :to="{ name: 'auth-forgot-password' }">
+                <b-button
+                  tag="router-link"
+                  :to="{ name: 'auth-forgot-password' }"
+                  variant="flat-primary"
+                  size="sm"
+                  class="btn-icon"
+                >
                   <small style="margin-right:10px;">Lupa Password?</small>
-                </b-link>
+                </b-button>
               </div>
             </b-form-group>
 
@@ -240,7 +246,7 @@ export default {
     BFormGroup,
     BCard,
     BCardTitle,
-    BLink,
+    // BLink,
     BCardText,
     BInputGroup,
     BInputGroupAppend,
@@ -277,6 +283,8 @@ export default {
       // Mode Page
       modeVerificationEmail: false,
       modeLogin: true,
+
+      fcmToken: '',
     }
   },
   setup() {

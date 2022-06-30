@@ -1,0 +1,698 @@
+<b-card>
+        <b-row class="align-items-center mb-2">
+            <b-button
+                variant="primary"
+                class="btn-icon mr-1 ml-2"
+                size="sm"
+                tag="router-link"
+                :to="{ name: $route.meta.routeTicket }"
+            >
+                <feather-icon
+                    icon="ChevronLeftIcon"
+                    size="20"
+                />
+            </b-button>
+            <h3 class="text-black">
+                <strong>
+                    Detail Tiket
+                </strong>
+            </h3>
+        </b-row>
+        
+        <b-overlay
+            :show="loadingDataDetail"
+            spinner-variant="primary"
+            variant="light"
+            blur="0"
+            opacity=".5"
+        >
+            <b-row>
+                <div
+                    class="p-2 mx-2"
+                    style="
+                        border: 2px solid #E2E2E2;
+                        border-radius: 20px;
+                    "
+                >
+                <b-form>
+                    <b-row>
+                
+                    <b-col md="6">
+                        <b-form-group>
+                            <template #label>
+                                <span>
+                                    <strong>
+                                        Status tiket
+                                    </strong>
+                                </span>
+                            </template>
+                            <b-badge
+                                v-if="ticketStatus !== 0"
+                                :variant="statusTicketVariant(ticketStatus)"
+                            >
+                                {{ convertTicketStatus(ticketStatus) }}
+                            </b-badge>
+                            <b-badge
+                                v-if="ticketStatus === 0"
+                                style="
+                                    background: #FCD4BE;
+                                    color: #AB2900;
+                                "
+                            >
+                                Perlu Tindak Lanjut
+                            </b-badge>
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-row class="justify-content-between">
+                            <div>
+                                <b-form-group class="ml-1">
+                                    <template #label>
+                                        <span>
+                                            <strong>
+                                                Status Order
+                                            </strong>
+                                        </span>
+                                    </template>
+                                    <b-badge :variant="orderStatusVariant(orderStatus)">
+                                        {{ orderStatus }}
+                                    </b-badge>
+                                </b-form-group>
+                            </div>
+                            <div>
+                                <b-button
+                                    variant="primary"
+                                    class="btn-icon mr-1"
+                                    :to="{ name: $route.meta.routeDetailOrder, params: { order_id: orderId } }"
+                                >
+                                    Detail Order
+                                </b-button>
+                            </div>
+                        </b-row>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Nomor Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <b-input-group class="input-group-merge">
+                            <b-form-input
+                                v-model="ticketNo"
+                                disabled
+                            />
+                            <b-input-group-append is-text>
+                            <feather-icon
+                                icon="CopyIcon"
+                                class="cursor-pointer"
+                                size="20"
+                                @click="copyTicket(ticketNo)"
+                            />
+                            </b-input-group-append>
+                        </b-input-group>
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Nomor Resi
+                                </strong>
+                            </span>
+                        </template>
+                        <b-input-group class="input-group-merge">
+                            <b-form-input
+                                v-model="noResi"
+                                disabled
+                            />
+                            <b-input-group-append is-text>
+                            <feather-icon
+                                icon="CopyIcon"
+                                class="cursor-pointer"
+                                size="20"
+                                @click="copyResi(noResi)"
+                            />
+                            </b-input-group-append>
+                        </b-input-group>
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Ekspedisi
+                                </strong>
+                            </span>
+                        </template>
+                        <b-form-input
+                            v-model="ekspedisi"
+                            disabled
+                        />
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Seller
+                                </strong>
+                            </span>
+                        </template>
+                        <b-form-input
+                            v-model="seller"
+                            disabled
+                        />
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Jenis Tiket
+                                </strong>
+                            </span>
+                        </template>
+                        <b-form-input
+                            v-model="ticketType"
+                            disabled
+                        />
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Customer
+                                </strong>
+                            </span>
+                        </template>
+                        <b-form-input
+                            v-model="customerName"
+                            disabled
+                        />
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                <strong>
+                                    Deskripsi
+                                </strong>
+                            </span>
+                        </template>
+                        <b-form-textarea
+                            v-model="description"
+                            rows="3"
+                            disabled
+                        />
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col md="6">
+                        <b-form-group>
+                        <template #label>
+                            <span>
+                                File
+                            </span>
+                        </template>
+
+                        <!-- Put File -->
+                        <b-row
+                            v-for="(itemFile, index) in files"
+                            :key="index+1"
+                        >
+                            <a
+                                :href="itemFile.path"
+                                target="_blank"
+                                class="text-info btn btn-flat-info p-0 mx-1 mb-1"
+                            >
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <feather-icon
+                                            icon="FileIcon"
+                                            size="20"
+                                            class="mr-50 text-info"
+                                        />
+                                    </div>
+                                    <small>{{ getValueFile(itemFile.path) }}</small>
+                                </div>
+                            </a>
+                        </b-row>
+
+                        </b-form-group>
+                        <b-row class="justify-content-end">
+                            <b-button
+                                    :variant="ticketStatus === 3 || ticketStatus === 4 ? 'outline-dark' : 'outline-primary'"
+                                    class="btn-icon mr-1"
+                                    :disabled="disableButtonCancel(ticketStatus)"
+                                    @click="cancelTicket"
+                                >
+                                    Batalkan Tiket
+                            </b-button>
+                        </b-row>
+                    </b-col>
+                
+                    </b-row>
+                </b-form>
+            </div>
+            </b-row>
+        </b-overlay>
+
+        <b-row class="my-2">
+            <h3 class="text-black ml-2">
+                <strong>
+                    Riwayat Tiket
+                </strong>
+            </h3>
+        </b-row>
+
+        <b-overlay
+            :show="loadingDataChat"
+            spinner-variant="primary"
+            variant="light"
+            blur="0"
+            opacity=".5"
+        >
+            <b-row class="mb-2">
+                <b-col cols="12">
+                    <div
+                        class="p-1 mx-2"
+                        style="
+                            border: 2px solid #F8F8F8;
+                            border-radius: 20px;
+                            background-color: #F8F8F8;
+                        "
+                    >
+                        <div
+                            id="chatFocusing"
+                            class="overflow-auto"
+                            style="height: 521px;"
+                        >
+                            <b-row
+                                class="mx-50"
+                                v-for="(messageItem, index) in messages"
+                                :key="index+1"
+                            >
+                                <b-col
+                                    :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''"
+                                    md="12"
+                                >
+                                    <div v-if="messageItem.message !== null && messageItem.message !== ''">
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                            <small class="text-black">
+                                                {{ messageItem.name }}
+                                            </small>
+                                        </b-row>
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                            <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
+                                                <p :class="messageItem.type === 'Partner' ? 'text-white' : 'text-black'" v-html="getMessageChat(messageItem.message)">
+                                                </p>
+                                            </div>
+                                        </b-row>
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
+                                            <small class="text-black">
+                                                {{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}
+                                            </small>
+                                        </b-row>
+                                    </div>
+
+                                    <!-- File -->
+                                    <div
+                                        v-if="messageItem.file !== null"
+                                    >
+                                        <div
+                                            v-for="(fileItem, indexFile) in messageItem.file"
+                                            :key="indexFile+1"
+                                        >
+                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                                <small class="text-black">
+                                                    {{ messageItem.name }}
+                                                </small>
+                                            </b-row>
+                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
+                                                <a :href="fileItem.path" target="_blank">
+                                                    <b-img
+                                                        v-if="fileItem.path.slice(fileItem.path.length - 3) !== 'mp4' && fileItem.path.slice(fileItem.path.length - 4) !== 'xlsx'"
+                                                        :src="fileItem.path"
+                                                        width="160px"
+                                                    />
+                                                    <video
+                                                        v-if="fileItem.path.slice(fileItem.path.length - 3) === 'mp4'"
+                                                        id="video-preview"
+                                                        controls v-show="fileItem.path"
+                                                        :src="fileItem.path"
+                                                        width="320"
+                                                        height="240"
+                                                    />
+                                                    <b-row>
+                                                        <b-col cols="12" :class="messageItem.type === 'Partner' ? 'd-flex justify-content-end' : 'd-flex justify-content-start'">
+                                                            <div
+                                                                v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'"
+                                                                class="ml-1 mr-1"
+                                                                style="
+                                                                    display: flex;
+                                                                    justify-content: center;
+                                                                    align-items: center;
+                                                                    width: 132px;
+                                                                    height: 62px;
+                                                                    background: #E8E8E8;
+                                                                    border-radius: 12px;
+                                                                "
+                                                            >
+                                                                    <b-img
+                                                                        src="@/assets/images/icons/icon-prev-file.svg"
+                                                                    />
+                                                            </div>
+                                                        </b-col>
+                                                        <b-col v-if="fileItem.path.slice(fileItem.path.length - 4) === 'xlsx'" :class="messageItem.type === 'Partner' ? 'd-flex justify-content-end' : 'd-flex justify-content-start'">
+                                                            <small>{{ fileItem.path }}</small>
+                                                        </b-col>
+                                                    </b-row>
+                                                </a>
+                                            </b-row>
+                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-2' : 'justify-content-start mb-2'">
+                                                <small class="text-black">
+                                                    {{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}
+                                                </small>
+                                            </b-row>
+                                        </div>
+                                    </div>
+                                </b-col>
+                            </b-row>
+                        </div>
+                    </div>
+                </b-col>
+            </b-row>
+        </b-overlay>
+
+        <b-row
+            v-if="ticketStatus !== 3 && ticketStatus !== 4"
+            class="mx-50"
+        >
+            <b-col
+                v-if="chatFileMode"
+                cols="12"
+            >
+                <div
+                    class="p-50"
+                    style="border: 2px solid #E2E2E2;
+                    border-radius: 20px;"
+                >
+                    <b-row>
+                        <b-col cols="10">
+                            <b-row
+                                v-for="(itemFile, index) in itemsImageInitialFile"
+                                :key="index+1"
+                            >
+                                <b-col md="auto">
+                                    <b-row class="align-items-top">
+                                        <a :href="fileUrl(itemFile)" target="_blank" class="ml-1">
+                                            <b-img
+                                                v-if="itemFile.name.slice(itemFile.name.length - 3) !== 'mp4' && !itemFile.type.includes('application')"
+                                                class="class__file__chat m-1"
+                                                :src="fileUrl(itemFile)"
+                                            />
+                                            <video
+                                                v-if="itemFile.name.slice(itemFile.name.length - 3) === 'mp4'"
+                                                id="video-preview"
+                                                controls v-show="itemFile.name"
+                                                :src="fileUrl(itemFile)"
+                                                width="320"
+                                                height="240"
+                                                class="m-1"
+                                            />
+                                            <div
+                                                v-if="itemFile.type.includes('application')"
+                                                class="ml-1 mr-1"
+                                                style="
+                                                    display: flex;
+                                                    justify-content: center;
+                                                    align-items: center;
+                                                    width: 132px;
+                                                    height: 62px;
+                                                    background: #E8E8E8;
+                                                    border-radius: 12px;
+                                                "
+                                            >
+                                                    <b-img
+                                                        src="@/assets/images/icons/icon-prev-file.svg"
+                                                    />
+                                            </div>
+                                        </a>
+                                        <div>
+                                            <b-button
+                                                class="btn-icon"
+                                                variant="flat-dark"
+                                                size="sm"
+                                                style="border: 1px solid #222222; border-radius: 50%; padding: 2px;"
+                                                @click="removeFileChat(itemFile)"
+                                            >
+                                                <feather-icon
+                                                    icon="XIcon"
+                                                />
+                                            </b-button>
+                                        </div>
+                                    </b-row>
+                                    <div class="pb-1">
+                                        <span class="text-black ml-1">
+                                            {{ itemFile.name }}
+                                        </span>
+                                    </div>
+                                </b-col>
+                            </b-row>
+                        </b-col>
+                        <b-col cols="2">
+                            <b-row class="justify-content-end">
+                                <label
+                                    for="fileChat"
+                                    class="btn btn-flat-dark btn-icon"
+                                    size="sm"
+                                    style="
+                                        border-right: 1px solid #C2C2C2;
+                                        border-top-right-radius: 0px;
+                                        border-bottom-right-radius: 0px;
+                                        padding: 5px 10px!important;
+                                    "
+                                >
+                                        <b-img
+                                        src="@/assets/images/icons/link-file-icon.svg"
+                                    />
+                                </label>
+                                <b-form-file
+                                    id="fileChat"
+                                    v-model="imageFile"
+                                    class="d-none"
+                                    multiple
+                                    @change="addFileChat"
+                                />
+                                <b-button
+                                        v-if="itemsImageInitialFile.length > 0"
+                                        variant="flat-dark"
+                                        class="btn-icon mr-1"
+                                        size="sm"
+                                        @click="storeChat"
+                                    >
+                                        <b-img
+                                            src="@/assets/images/icons/send-chat-active.svg"
+                                        />
+                                    </b-button>
+                                    <b-button
+                                        v-else
+                                        variant="flat-dark"
+                                        class="btn-icon mr-1"
+                                        size="sm"
+                                        :disabled="true"
+                                    >
+                                        <b-img
+                                            src="@/assets/images/icons/send-chat.svg"
+                                        />
+                                    </b-button>
+                            </b-row>
+                        </b-col>
+                        <b-col cols="12">
+                            <b-form-textarea
+                                v-model="chatItem"
+                                no-resize
+                                class="border-0 mr-50"
+                                placeholder="Tulis pesan untuk menanggapi"
+                            />
+                        </b-col>
+                    </b-row>
+                </div>
+            </b-col>
+            <b-col
+                v-if="chatFileMode === false"
+                cols="12"
+            >
+                    <b-input-group
+                        class="p-50"
+                        style="border: 2px solid #E2E2E2;
+                        border-radius: 20px;"
+                    >
+                        <template #append>
+                            <b-row class="align-items-top">
+                                <div>
+                                    <label
+                                        for="fileChat"
+                                        class="btn btn-flat-dark btn-icon"
+                                        size="sm"
+                                        style="
+                                            border-right: 1px solid #C2C2C2;
+                                            border-top-right-radius: 0px;
+                                            border-bottom-right-radius: 0px;
+                                            padding: 5px 10px!important;
+                                        "
+                                    >
+                                            <b-img
+                                            src="@/assets/images/icons/link-file-icon.svg"
+                                        />
+                                    </label>
+                                    <b-form-file
+                                        id="fileChat"
+                                        class="d-none"
+                                        multiple
+                                        @change="putFileChat"
+                                    />
+                                </div>
+                                <div>
+                                    <b-button
+                                        v-if="chatItem"
+                                        variant="flat-dark"
+                                        class="btn-icon mr-1"
+                                        size="sm"
+                                        @click="storeChat"
+                                    >
+                                        <b-img
+                                            v-if="chatItem"
+                                            src="@/assets/images/icons/send-chat-active.svg"
+                                        />
+                                    </b-button>
+                                    <b-button
+                                        v-else
+                                        variant="flat-dark"
+                                        class="btn-icon mr-1"
+                                        size="sm"
+                                        :disabled="true"
+                                    >
+                                        <b-img
+                                            src="@/assets/images/icons/send-chat.svg"
+                                        />
+                                    </b-button>
+                                </div>
+                            </b-row>
+                        </template>
+                        <b-form-textarea
+                            v-model="chatItem"
+                            no-resize
+                            class="border-0 mr-50"
+                            placeholder="Tulis pesan untuk menanggapi"
+                        />
+                    </b-input-group>     
+            </b-col>    
+        </b-row>
+
+        <!-- Alert edit ticket -->
+        <b-modal
+            ref="alert-cancel-ticket"
+            no-close-on-backdrop
+            no-close-on-esc
+            variant="primary"
+            centered
+            hide-header
+            hide-footer
+        >
+            <b-row class="justify-content-center mb-2 pt-2">
+                <b-img src="@/assets/images/icons/warning.svg" />
+            </b-row>
+
+            <b-row class="justify-content-center mb-2">
+                <span class="text-black text-center">
+                    <strong>
+                        Kamu yakin ingin membatalkan tiket ini?
+                    </strong>
+                </span>
+            </b-row>
+
+            <b-row class="justify-content-center pb-2">
+                <b-col
+                    md="4"
+                    class="pr-0 mr-1"
+                >
+                    <b-button
+                            variant="outline-primary"
+                            block
+                            @click="handleCloseAlertCancel"
+                        >
+                            Kembali
+                    </b-button>
+                </b-col>
+                <b-col
+                    md="4"
+                    class="pl-0"
+                >
+                    <b-button
+                            variant="primary"
+                            block
+                            @click="submitCancelTicket"
+                        >
+                            <b-spinner
+                                v-if="loadingCancelTicket"
+                                small
+                            />
+                            lanjutkan
+                    </b-button>
+                </b-col>
+            </b-row>
+        </b-modal>
+
+        <!-- Alert Notification -->
+    <!-- Alert Notification -->
+    <b-modal
+      ref="modal-alert-notification"
+      no-close-on-backdrop
+      no-close-on-esc
+      hide-footer
+      hide-header
+      centered
+    >
+    <b-row class="justify-content-center text-center mb-1 mt-2">
+        <span class="text-black px-4">
+            Untuk informasi/chat dari ekspedisi masuk dengan cepat anda perlu
+            <strong>mengaktifkan notifikasi</strong> pada browser, <strong>klik icon gembok:</strong> 
+        </span>
+    </b-row>
+    <b-row class="justify-content-center mb-1 mt-3">
+      <img src="@/assets/images/alert-fireabase.svg">
+    </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black px-4">
+            Jika sudah di ON-kan, <strong>mohon refresh</strong> ya..
+        </span>
+      </b-row>
+      <b-row class="justify-content-center text-center mb-3">
+          <b-button
+          variant="primary"
+          @click="handleCloseAlert"
+          >
+          Oke
+        </b-button>
+      </b-row>
+    </b-modal>
+ </b-card>

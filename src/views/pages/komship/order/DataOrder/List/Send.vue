@@ -1,27 +1,40 @@
 <template>
   <div>
-    <b-row class="mb-1">
+    <b-row class="mb-2 justify-content-end align-items-center">
       <b-col
-        lg="7"
-        md="6"
-      />
+        md="7"
+      >
+        <div
+          class="p-1 font-bold rounded-lg"
+          style="border: 1px solid black;max-width: 300px;"
+        >
+          Total dalam perjalanan : <span class="text-info">{{ totalKirim }}</span><br>
+          <span
+            class="d-inline-block"
+            style="margin-top: 10px;"
+          >
+            Terkena kendala :<span class="text-danger">{{ totalProblem }}</span>
+            <b-button
+              class="rounded-lg my-auto"
+              variant="danger"
+              style="padding: 2px 6px!important;margin-left: 5px;"
+              @click="filterProblem"
+            >Lihat Kendala</b-button>
+          </span>
+        </div>
+      </b-col>
       <b-col
-        md="4"
-        class="align-items-center d-flex"
+        md="5"
+        class="d-flex align-items-center"
       >
         <b-form-input
           v-model="formSearch"
           type="search"
-          class="form-search"
+          class="form-search mr-2"
           placeholder="Cari Pelanggan atau Resi"
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
-      </b-col>
-      <b-col
-        lg="1"
-        sm="2"
-      >
         <b-button
           id="buttonFilter"
           variant="primary"
@@ -57,9 +70,21 @@
               />
             </b-col>
           </b-row>
+          <label class="mt-1">Gudang</label>
+          <v-select
+            v-model="addressId"
+            :options="addressList"
+            :reduce="(option) => option.address_id"
+            label="address_name"
+          >
+            <span
+              slot="no-options"
+              @click="$refs.select.open = false"
+            />
+          </v-select>
           <label class="mt-1">Produk</label>
           <v-select
-            v-model="customerName"
+            v-model="productName"
             :options="productList"
             :reduce="(option) => option.product_name"
             label="product_name"
@@ -134,67 +159,64 @@
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
-            <div class="d-flex">
-              <div v-if="data.item.product[0].product_image === null">
-                <img
-                  style="width:50px;height:50px;"
-                  :src="require('@/assets/images/avatars/image-null.png')"
-                >
-              </div>
-              <div v-else>
-                <img
-                  style="width:50px;height:50px;"
-                  :src="data.item.product[0].product_image"
-                  :alt="data.item.product[0].product_image"
-                >
-              </div>
-              <div
-                class="ml-1"
-                style="width:70%;"
+            <div
+              v-for="(itemProduct, index) in data.item.product.slice(0, 1)"
+              :key="index+1"
+              class="d-flex"
+              style="min-width:160px!important"
+            >
+              <img
+                v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                class="image-product"
+                :src="require('@/assets/images/avatars/image-null.png')"
               >
-                <span class="font-bold">{{ data.item.product[0].product_name }}</span><br>
+              <img
+                v-else
+                class="image-product"
+                :src="data.item.product[0].product_image"
+                :alt="data.item.product[0].product_image"
+              >
+              <div style="margin-left:5px;">
+                <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
                 <span
-                  v-if="data.item.product[0].variant_name !== '0'"
+                  v-if="itemProduct.variant_name !== '0'"
                   class="text-primary"
-                >{{ data.item.product[0].variant_name }}</span>
+                >{{ itemProduct.variant_name }}</span>
               </div>
               <div
-                class="ml-1 font-bold"
-                style="10%"
+                class="font-bold ml-auto"
               >
-                x{{ data.item.product[0].qty }}
+                x{{ itemProduct.qty }}
               </div>
             </div>
             <div v-if="data.item.product.length > 1">
               <b-collapse :id="'collapse-'+data.item.order_id">
                 <div
-                  v-for="item in data.item.product.slice(1)"
+                  v-for="item in data.item.product.slice(1, data.item.product.length)"
                   :key="item.order_id"
                   class="d-flex mt-1"
+                  style="min-width:160px!important"
                 >
-                  <div v-if="item.product_image === null">
-                    <img
-                      style="width:50px;height:50px;"
-                      :src="require('@/assets/images/avatars/image-null.png')"
-                    >
-                  </div>
-                  <div v-else>
-                    <img
-                      style="width:50px;height:50px;"
-                      :src="item.product_image"
-                      :alt="item.product_image"
-                    >
-                  </div>
-                  <div
-                    class="ml-1"
-                    style="width:70%;"
+                  <img
+                    v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                    class="image-product"
+                    :src="require('@/assets/images/avatars/image-null.png')"
                   >
-                    <span class="font-bold">{{ item.product_name }}</span><br>
-                    <span class="text-primary">{{ item.variant_name }}</span>
+                  <img
+                    v-else
+                    class="image-product"
+                    :src="data.item.product[0].product_image"
+                    :alt="data.item.product[0].product_image"
+                  >
+                  <div style="margin-left:5px;">
+                    <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                    <span
+                      v-if="item.variant_name !== '0'"
+                      class="text-primary"
+                    >{{ item.variant_name }}</span>
                   </div>
                   <div
-                    class="ml-1 font-bold"
-                    style="10%"
+                    class="font-bold ml-auto"
                   >
                     x{{ item.qty }}
                   </div>
@@ -246,6 +268,20 @@
               @click.prevent="copyResi(data.item.airway_bill)"
             >
           </div>
+          <b-button
+            v-if="data.item.is_problem === 1"
+            variant="danger"
+            class="d-flex"
+            style="padding: 5px;font-size: 12px;"
+            @click="openTicketing(data.item.ticket_id)"
+          >
+            <span class="my-auto">Kendala</span>
+            <img
+              src="@/assets/images/icons/info-circle-white.svg"
+              class="my-auto"
+              style="margin-left: 3px;"
+            >
+          </b-button>
         </template>
         <template #cell(details)="data">
           <b-button
@@ -270,8 +306,8 @@
           </div>
         </template>
       </b-table>
-      <div class="d-flex justify-between align-middle">
-        <div>
+      <div class="d-flex justify-between align-middle flex-wrap">
+        <div class="mb-2">
           <span class="mr-1">List per halaman</span>
           <b-button
             v-for="page in pageOptions"
@@ -350,6 +386,11 @@ export default {
       perPage: 50,
       pageOptions: [50, 100, 200],
       totalItems: 0,
+      addressId: null,
+      addressList: [],
+      totalKirim: null,
+      totalProblem: null,
+      isProblem: false,
     }
   },
   watch: {
@@ -360,10 +401,12 @@ export default {
     },
   },
   mounted() {
+    this.getTotalOrder()
     this.fetchData().catch(error => {
       console.error(error)
     })
     this.getProduct()
+    this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -396,10 +439,13 @@ export default {
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
+          partner_address_id: this.addressId,
+          is_problem: this.isProblem ? 1 : null,
         },
       })
         .then(res => {
           const { data } = res.data
+          this.isProblem = false
           this.totalItems = data.total
           this.loadTable = false
           return data.data
@@ -417,6 +463,18 @@ export default {
           })
           this.loadTable = false
         })
+    },
+    getTotalOrder() {
+      this.$http_komship.get(`v1/order/count/order-problem/${this.profile.partner_detail.id}`)
+        .then(res => {
+          const { data } = res.data
+          this.totalKirim = data.dikirim
+          this.totalProblem = data.order_problem
+        }).catch(err => console.error(err))
+    },
+    filterProblem() {
+      this.isProblem = true
+      this.fetchData()
     },
     resetFilter() {
       this.startDate = null
@@ -441,6 +499,15 @@ export default {
             },
           })
         })
+    },
+    async getAddress() {
+      setTimeout(async () => {
+        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
+          .then(res => {
+            const { data } = res.data
+            this.addressList = data
+          })
+      }, 800)
     },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
@@ -477,17 +544,15 @@ export default {
       this.perPage = totalPage
       this.fetchData()
     },
+    openTicketing(value) {
+      if (value !== null) {
+        this.$router.push(`/ticketing/detail/${value}`)
+      }
+    },
   },
 }
 </script>
 <style>
-.icon-search{
-  position: absolute;
-  height: 20px;
-  width: 20px;
-  top: 12px;
-  left: 26px;
-}
 .form-search {
   padding-left: 40px;
   height: 45px;
@@ -523,5 +588,11 @@ export default {
 .btnPage {
   padding: 4px 7px;
   margin-right: 5px;
+}
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 </style>

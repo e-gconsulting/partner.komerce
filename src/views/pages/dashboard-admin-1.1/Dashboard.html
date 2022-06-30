@@ -3,12 +3,68 @@
     <h2 class="text-black">
       Dashboard
     </h2>
+    <div class="cards">
+      <div class="cards-top">
+        <p>Performa Pertumbuhan User (Partner)</p>
+        <vue-monthly-picker
+          v-model="filterPerformance.bulan"
+          dateFormat="MMM YYYY"
+          placeHolder="Pilih Bulan"
+          :monthLabels="monthlabel"
+          :max="maxDatePicker"
+        />
+      </div>
+      <div class="cards-content">
+        <div class="cards-content-data">
+          <div class="cards-content-data-top">
+            <p>Registrasi</p>
+            <img src="@/assets/images/svg/info-circle.svg" alt="" />
+          </div>
+          <div class="cards-content-data-top-number">
+            {{dataPerformance.Registrasi}}
+          </div>
+        </div>
+        <div class="cards-content-data">
+          <div class="cards-content-data-top">
+            <p>Verifikasi</p>
+            <img src="@/assets/images/svg/info-circle.svg" alt="" />
+          </div>
+          <div class="cards-content-data-top-number">
+            {{dataPerformance.verifikasi}}
+          </div>
+        </div>
+        <div class="cards-content-data">
+          <div class="cards-content-data-top">
+            <p>Potensial</p>
+            <img src="@/assets/images/svg/info-circle.svg" alt="" />
+          </div>
+          <div class="cards-content-data-top-number">
+            {{dataPerformance.potensial}}
+          </div>
+        </div>
+        <div class="cards-content-data">
+          <div class="cards-content-data-top">
+            <p>Aktif</p>
+            <img src="@/assets/images/svg/info-circle.svg" alt="" />
+          </div>
+          <div class="cards-content-data-top-number">
+            {{dataPerformance.aktif}}
+          </div>
+        </div>
+        <div class="cards-content-data">
+          <div class="cards-content-data-top">
+            <p>User Aktif</p>
+            <img src="@/assets/images/svg/info-circle.svg" alt="" />
+          </div>
+          <div class="cards-content-data-top-number">
+            {{dataPerformance.user_aktif}}
+          </div>
+        </div>
+      </div>
+    </div>
   </b-col>
   <b-col lg="6">
-    <b-card
-      no-body
-      class="p-1 card__wrapper"
-    >
+    <b-card no-body class="p-1 card__wrapper">
       <template #default>
         <b-row>
           <b-col cols="12" class="mb-1">
@@ -21,14 +77,12 @@
                 class="button-custom"
                 @click="$router.push('/performa-ekspedisi')"
               >
-                <feather-icon
-                  icon="ChevronRightIcon"
-                />
+                <feather-icon icon="ChevronRightIcon" />
               </b-button>
             </div>
           </b-col>
           <b-col cols="12" class="mb-1">
-            <div class="d-flex justify-content-center">  
+            <div class="d-flex justify-content-center">
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.ekspedisi.chart.selectOpt"
@@ -63,10 +117,7 @@
     </b-card>
   </b-col>
   <b-col lg="6">
-    <b-card
-      no-body
-      class="p-1 card__wrapper"
-    >
+    <b-card no-body class="p-1 card__wrapper">
       <template #default>
         <b-row>
           <b-col cols="12" class="mb-1">
@@ -75,7 +126,7 @@
             </h4>
           </b-col>
           <b-col cols="12">
-            <div class="d-flex justify-content-end">  
+            <div class="d-flex justify-content-end">
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.ekspedisi.toplist.selectOpt"
@@ -102,17 +153,22 @@
             <div
               v-for="(datatopekspedisi, idxtopekspedisi) in datatoplist.ekspedisi"
               :key="idxtopekspedisi"
-              class="d-flex align-items-center justify-content-between mb-1">
+              class="d-flex align-items-center justify-content-between mb-1"
+            >
               <div class="d-flex align-items-center">
                 <img
                   src="@/assets/images/icons/profile-placehold.svg"
                   alt="Photo"
                   class="mr-1"
-                >
-                <h5 class="text-black my-0 text-uppercase">{{ datatopekspedisi.shipping }}</h5>
+                />
+                <h5 class="text-black my-0 text-uppercase">
+                  {{ datatopekspedisi.shipping }}
+                </h5>
               </div>
               <div>
-                <h4 class="text-green-600 my-0">{{ formatCurrency(datatopekspedisi.shipping_cost) }}</h4>
+                <h4 class="text-green-600 my-0">
+                  {{ formatCurrency(datatopekspedisi.shipping_cost) }}
+                </h4>
               </div>
             </div>
           </b-col>
@@ -121,10 +177,7 @@
     </b-card>
   </b-col>
   <b-col lg="6">
-    <b-card
-      no-body
-      class="p-1 card__wrapper"
-    >
+    <b-card no-body class="p-1 card__wrapper">
       <template #default>
         <b-row>
           <b-col cols="12" class="mb-1">
@@ -137,14 +190,12 @@
                 class="button-custom"
                 @click="$router.push('/pendapatan')"
               >
-                <feather-icon
-                  icon="ChevronRightIcon"
-                />
+                <feather-icon icon="ChevronRightIcon" />
               </b-button>
             </div>
           </b-col>
           <b-col cols="12" class="mb-1">
-            <div class="d-flex justify-content-center">  
+            <div class="d-flex justify-content-center">
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.partner.chart.selectOpt"
@@ -181,10 +232,7 @@
     </b-card>
   </b-col>
   <b-col lg="6">
-    <b-card
-      no-body
-      class="p-1 card__wrapper"
-    >
+    <b-card no-body class="p-1 card__wrapper">
       <template #default>
         <b-row>
           <b-col cols="12" class="mb-1">
@@ -193,7 +241,7 @@
             </h4>
           </b-col>
           <b-col cols="12">
-            <div class="d-flex justify-content-end">  
+            <div class="d-flex justify-content-end">
               <b-form-group class="mr-1">
                 <v-select
                   v-model="filterdata.partner.toplist.selectOpt"
@@ -219,17 +267,22 @@
             <div
               v-for="(datatoppartner, idxtoppartner) in datatoplist.partner"
               :key="idxtoppartner"
-              class="d-flex align-items-center justify-content-between mb-1">
+              class="d-flex align-items-center justify-content-between mb-1"
+            >
               <div class="d-flex align-items-center">
                 <img
                   src="@/assets/images/icons/profile-placehold.svg"
                   alt="Photo"
                   class="mr-1"
-                >
-                <h5 class="text-black my-0 text-capitalize">{{ datatoppartner.partner_name }}</h5>
+                />
+                <h5 class="text-black my-0 text-capitalize">
+                  {{ datatoppartner.partner_name }}
+                </h5>
               </div>
               <div>
-                <h4 class="text-green-600 my-0">{{ formatCurrency(datatoppartner.transaction_cod) }}</h4>
+                <h4 class="text-green-600 my-0">
+                  {{ formatCurrency(datatoppartner.transaction_cod) }}
+                </h4>
               </div>
             </div>
           </b-col>

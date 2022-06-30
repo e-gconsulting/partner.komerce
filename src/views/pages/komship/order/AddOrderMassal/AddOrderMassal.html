@@ -10,13 +10,13 @@
         >
             <b-icon-chevron-left />
         </b-button>
-        <h3 class="font-bold my-auto ml-1">Tambah Order Massal</h3>
+        <span class="font-bold my-auto ml-1" style="font-size:22px;">Tambah Order Massal</span>
     </b-row>
     <div id="spreadsheet" class="d-flex" style="max-width: 100%;"></div>
     <b-row class="mt-1">
         <b-col lg="10" class="d-flex">
-            <b-button variant="outline-dark" size="sm" :disabled="!selectedTable" @click="removeRows()">
-                <b-icon-trash></b-icon-trash>
+            <b-button variant="primary" class="d-flex" style="background-color: #E31A1A!important;" size="sm" @click="resetTable()">
+                <img src="@/assets/images/icons/refresh.svg" class="my-auto"><span class="my-auto" style="font-size: 14px;margin-left:5px">Reset</span>
             </b-button>
             <b-input-group class="ml-1" style="max-width: 195px;">
                 <b-form-input v-model="jumlahBaris" type="number" class="border-black"></b-form-input>
@@ -26,7 +26,7 @@
             </b-input-group>
             <img src="@/assets/images/icons/undo.svg" class="ml-1" style="cursor: pointer;" @click="table.undo()" />
             <img src="@/assets/images/icons/redo.svg" class="ml-1" style="cursor: pointer;" @click="table.redo()" />
-            <b-button variant="outline-dark" size="sm" class="ml-1" :disabled="loadingDraft" @click="submitSheets('save')">
+            <b-button variant="outline-dark" size="sm" class="ml-1" :disabled="loadingDraft" @click="saveSheets()">
                 Simpan Draft
                 <b-spinner
                     v-if="loadingDraft"
@@ -39,12 +39,12 @@
             <i v-if="lastUpdated && !loadingDraft" class="text-info text-sm my-auto ml-1">Tersimpan {{ lastUpdated }}</i>
         </b-col>
         <b-col lg="2" class="d-flex justify-end">
-            <b-button variant="primary" class="ml-auto" @click="submitSheets('submit')">
+            <b-button variant="primary" class="ml-auto" @click="onSubmitSheets()">
                 Submit
             </b-button>
         </b-col>
     </b-row>
-    <b-modal ref="loadingPage" hide-header hide-footer no-close-on-backdrop>
+    <b-modal ref="loadingPage" centered hide-header hide-footer no-close-on-backdrop>
         <div class="sk-circle">
             <div class="sk-circle1 sk-child"></div>
             <div class="sk-circle2 sk-child"></div>
@@ -64,23 +64,32 @@
             <br>Tunggu beberapa saat sampai file terbuka dengan sempurna
         </div>
     </b-modal>
-    <b-modal ref="loadingSubmit" hide-header hide-footer no-close-on-backdrop>
-        <div class="sk-circle">
-            <div class="sk-circle1 sk-child"></div>
-            <div class="sk-circle2 sk-child"></div>
-            <div class="sk-circle3 sk-child"></div>
-            <div class="sk-circle4 sk-child"></div>
-            <div class="sk-circle5 sk-child"></div>
-            <div class="sk-circle6 sk-child"></div>
-            <div class="sk-circle7 sk-child"></div>
-            <div class="sk-circle8 sk-child"></div>
-            <div class="sk-circle9 sk-child"></div>
-            <div class="sk-circle10 sk-child"></div>
-            <div class="sk-circle11 sk-child"></div>
-            <div class="sk-circle12 sk-child"></div>
+    <b-modal ref="loadingSubmit" centered hide-header hide-footer :no-close-on-backdrop="submitProgressStatus">
+        <div class="py-1 px-2">
+            <div class="mb-1">
+                <span v-if="submitProgressStatus" style="font-size: 24px;font-weight: 600;">Tunggu beberapa saat</span>
+                <span v-else style="font-size: 24px;font-weight: 600;">Mohon maaf...</span>
+            </div>
+            <div class="mb-1">
+                <span v-if="submitProgressStatus" style="font-size: 14px;">Orderan kamu sedang kami unggah, mohon tunggu sampe progress selesai ya...</span>
+                <span v-else style="font-size: 14px;">Orderan kamu ada kendala saat proses mengunggah, mohon submit ulang, cek kembali <b>koneksi internet</b> atau jika masih gagal harap <b>hubungi CS</b> di live chat. Harap simpan terlebih dahulu untuk mengamankan data orderan.</span>
+            </div>
+            <div class="mb-1">
+                <span v-if="submitProgressStatus" class="d-flex justify-end text-success">{{ submitProgress }}%</span>
+                <span v-else class="d-flex justify-end text-danger">Gagal</span>
+                <div class="d-flex" style="margin-top: 6px;">
+                    <div style="width: 10%;">
+                        <img v-if="submitProgressStatus" src="@/assets/images/icons/export.svg" class="my-auto mr-1">
+                        <img v-else src="@/assets/images/icons/close-square.svg" class="my-auto mr-1">
+                    </div>
+                    <div class="my-auto" style="width: 90%;">
+                        <b-progress height="20px" :variant="submitProgressStatus ? 'success' : 'danger'" :value="submitProgress" />
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="font-size: 18px;text-align: center;" class="mb-2">
-            <span class="font-bold">Memproses penambahan order</span>
-        </div>
+        <b-button v-if="!submitProgressStatus" variant="outline-primary" class="mb-1" block @click="submitSheets()">
+            <img src="@/assets/images/icons/refresh-2.svg" class="m-auto">
+        </b-button>
     </b-modal>
 </b-card>

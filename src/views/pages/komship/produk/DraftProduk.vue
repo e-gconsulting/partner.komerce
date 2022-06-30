@@ -313,22 +313,18 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
-                          <b-avatar
-                            v-if="itemsData.product_image[0] !== undefined"
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="itemsData.product_image[0].images_path"
-                          />
-                          <b-avatar
-                            v-else
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="imageFileProduct"
-                          />
-                        </div>
+                        <img
+                          v-if="itemsData.product_image[0] !== undefined"
+                          variant="light-primary"
+                          square
+                          class="image-product"
+                          :src="itemsData.product_image[0].images_path"
+                        >
+                        <img
+                          v-else
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          class="image-product"
+                        >
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
                           <small>SKU: {{ itemsData.sku }}</small>
@@ -581,21 +577,18 @@
                   fluid
                   class="d-flex"
                 >
-                  <div v-if="data.item.product_image[0] !== undefined">
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="data.item.product_image[0].images_path"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                    />
-                  </div>
+                  <img
+                    v-if="data.item.product_image[0] !== undefined"
+                    variant="light-primary"
+                    square
+                    class="image-product"
+                    :src="data.item.product_image[0].images_path"
+                  >
+                  <img
+                    v-else
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                    class="image-product"
+                  >
                   <div class="ml-1">
                     <p><strong>{{ data.item.product_name }}</strong></p>
                     <small>SKU: {{ data.item.sku }}</small>
@@ -864,7 +857,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    BAvatar,
     BForm,
     BOverlay,
     BModal,
@@ -1066,6 +1058,13 @@ export default {
   [dir] .wrapper__form__filter__data__product__mobile {
     width: 270px!important;
   }
+}
+
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 
 </style>

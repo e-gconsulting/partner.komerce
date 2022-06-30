@@ -119,3 +119,9 @@
               transform: scale(1);
     }
   }
+  .align-items-start {
+    align-items: unset !important;
+  }
+  .progress {
+    background-color: #e9ecef !important;
+  }

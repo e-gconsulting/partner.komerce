@@ -315,22 +315,19 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
-                          <b-avatar
-                            v-if="itemsData.product_image[0] !== undefined"
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="itemsData.product_image[0].images_path"
-                          />
-                          <b-avatar
-                            v-else
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="imageFileProduct"
-                          />
-                        </div>
+                        <b-img
+                          v-if="itemsData.product_image[0] !== undefined"
+                          :src="itemsData.product_image[0].images_path"
+                          fluid
+                          class="image-product"
+                        />
+                        <b-img
+                          v-else
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          fluid
+                          width="50"
+                          class="image-product"
+                        />
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
                           <small>SKU: {{ itemsData.sku }}</small>
@@ -579,30 +576,31 @@
           >
             <template #cell(product_name)="data">
               <b-row class="ml-2">
-                <b-container
-                  fluid
+                <div
                   class="d-flex"
+                  style="min-width: 300px;"
                 >
-                  <div v-if="data.item.product_image[0] !== undefined">
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="data.item.product_image[0].images_path"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                    />
-                  </div>
+                  <b-img
+                    v-if="data.item.product_image[0] !== undefined"
+                    variant="light-primary"
+                    square
+                    fluid
+                    width="50"
+                    class="image-product"
+                    :src="data.item.product_image[0].images_path"
+                  />
+                  <b-img
+                    v-else
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                    fluid
+                    width="50"
+                    class="image-product"
+                  />
                   <div class="ml-1">
-                    <p><strong>{{ data.item.product_name }}</strong></p>
-                    <small>SKU: {{ data.item.sku }}</small>
+                    <span><strong>{{ data.item.product_name }}</strong></span>
+                    <span>SKU: {{ data.item.sku }}</span>
                   </div>
-                </b-container>
+                </div>
               </b-row>
             </template>
 
@@ -866,7 +864,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    BAvatar,
     BForm,
     BOverlay,
     BModal,
@@ -1062,6 +1059,13 @@ export default {
     :not(.collapsed) > .when-closed {
         display: none;
     }
+
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
+}
 
 @media only screen and (min-width: 991px) {
   [dir] .wrapper__filter__data__product__mobile {

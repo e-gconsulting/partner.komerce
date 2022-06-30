@@ -130,11 +130,10 @@
         md="3"
         class="my-auto"
       >
-        <span class="text-lg">No Telepon</span>
+        <span class="text-lg">No HP.</span>
       </b-col>
       <b-col
         md="4"
-        class="pr-3"
       >
         <b-input-group>
           <template #prepend>
@@ -144,22 +143,49 @@
             />
           </template>
           <b-form-input
+            id="inputBox"
             v-model="customerPhone"
             type="number"
-            @input="formatPhoneCustomer"
             @keypress="validateInputPhoneCustomer"
+            @paste="formatterPhone"
+            @input="formatPhoneCustomer"
+            @keyup="valueFormatPhone"
+            @change="checkWhatsapp"
           />
-          <b-row class="justify-content-end">
-            <div>
-              <small
-                class="mr-1 text-primary ml-1"
-                v-if="messageErrorPhone"
-              >
-                *minimal 9 digit dan hanya berupa angka.
-              </small>
-            </div>
-          </b-row>
         </b-input-group>
+        <b-row class="justify-content-start m-0">
+          <div v-if="messageErrorPhone">
+            <small class="mr-1 text-primary">
+              *minimal 9 digit berupa angka & wajib diawali dengan angka 8
+            </small>
+          </div>
+          <div v-if="this.isWhatsapp === 'valid'" class="d-flex text-success" style="margin-top: 5px;">
+            <img src="@/assets/images/icons/whatsapp.svg" class="my-auto">
+            <span class="my-auto" style="margin-left: 0.2vw;font-size:12px">Nomor ini terhubung ke Whatsapp</span>
+            <img id="whatsapp-info" src="@/assets/images/icons/info-circle.svg" class="my-auto" style="margin-left: 1vw">
+            <b-popover
+              triggers="hover"
+              target="whatsapp-info"
+              placement="topright"
+              content="Kurir akan lebih mudah berkoordinasi"
+              custom-class="info-wa"
+              variant="info"
+            />
+          </div>
+          <div v-if="this.isWhatsapp === 'invalid'" class="d-flex text-danger" style="margin-top: 5px;">
+            <img src="@/assets/images/icons/danger-red.svg" class="my-auto">
+            <span class="my-auto" style="margin-left: 0.2vw;font-size:12px">Nomor ini tidak terhubung ke Whatsapp</span>
+            <img id="whatsapp-info" src="@/assets/images/icons/info-circle.svg" class="my-auto" style="margin-left: 1vw">
+            <b-popover
+              triggers="hover"
+              target="whatsapp-info"
+              placement="topright"
+              content="Kurir akan kesulitan dalam berkoordinasi"
+              custom-class="info-wa"
+              variant="info"
+            />
+          </div>
+        </b-row>
       </b-col>
     </b-row>
     <b-row class="mb-1">
@@ -172,6 +198,7 @@
           ref="selectDestination"
           v-model="destination"
           :options="destinationList"
+          class="style-chooser"
           placeholder="Masukkan Kelurahan/Kecamatan"
           :loading="loadingSearchDestination"
           @search="onSearchDestination"
@@ -208,7 +235,7 @@
           placeholder="Agar kurir mudah menemukan lokasi, masukan nama jalan, RT/RW atau patokan bangunan dengan lengkap ya"
           :formatter="formatAddressDetail"
           @keypress="validateInputAddressDetail"
-          style="height: 155px !important;"
+          rows="4"
         />
         <b-row class="justify-content-end">
           <small class="mr-1 mt-50">
@@ -347,6 +374,8 @@
           <b-modal
             :id="`modalVariation${data.index}`"
             hide-footer
+            class="p-5"
+            centered
           >
             <section v-if="data.item.variantSelected[0]">
               <h4 class="font-bold mb-1">
@@ -453,7 +482,7 @@
             <b-button
               variant="none"
               class="p-0"
-              @click="removeProduct(data.index)"
+              @click="removeProduct(data, data.index)"
             >
               <b-icon-trash />
             </b-button>
@@ -1000,6 +1029,32 @@
           :to="{ name: $route.meta.routeToAddressSetting }"
         >
           Ke Alamat Pickup
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- popup error store -->
+    <b-modal
+      ref="modal-error-store-order"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black px-4">
+          Maaf ada sedikit kendala koneksi. Silahkan untuk refresh halaman
+        </span>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          @click="refreshPage"
+        >
+          Refresh
         </b-button>
       </b-row>
     </b-modal>

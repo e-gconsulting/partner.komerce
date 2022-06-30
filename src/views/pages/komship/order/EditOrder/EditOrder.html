@@ -323,6 +323,8 @@
           <b-modal
               :id="`modalVariation${data.index}`"
               hide-footer
+              class="p-5"
+              centered
             >
               <section v-if="data.item.variantSelected[0]">
                 <h4 class="font-bold mb-1">
@@ -413,7 +415,7 @@
               <span class="text-primary text-sm d-flex justify-center">Stok Tersedia: {{ data.item.stock }}</span>
             </div>
           <div
-            v-if="data.item.is_variant < 1 && data.item.stockAvailable === 0 || data.item.variantSubmit && data.item.stockAvailable === 0"
+            v-if="data.item.is_variant < 1 && data.item.stockAvailable < 1 || data.item.variantSubmit && data.item.stockAvailable < 1"
             class="d-flex justify-center text-primary text-lg"
           >Stok Habis</div>
         </template>
@@ -428,7 +430,7 @@
             <b-button
               variant="none"
               class="p-0"
-              @click="removeProduct(data.index)"
+              @click="removeProduct(data, data.index)"
             >
               <b-icon-trash />
             </b-button>
@@ -904,17 +906,10 @@
       </b-col>
       <b-col md="6" class="d-flex justify-center mt-1">
         <b-button
-          variant="outline-primary"
-          :disabled="!isCalculateOnExpedition"
-          @click="submit(true)"
-        >
-          Submit & Tambah Order Lagi
-        </b-button>
-        <b-button
           variant="primary"
           class="ml-1"
           :disabled="!isCalculateOnExpedition"
-          @click="submit(false)"
+          @click="checkSubmit()"
         >
           Submit
         </b-button>
@@ -947,6 +942,54 @@
         >
           Ke Alamat Pickup
         </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- popup error store -->
+    <b-modal
+      ref="modal-error-store-order"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/warning.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black px-4">
+          Maaf ada sedikit kendala koneksi. Silahkan untuk refresh halaman
+        </span>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          @click="refreshPage"
+        >
+          Refresh
+        </b-button>
+      </b-row>
+    </b-modal>
+    <b-modal id="modalCheckMassOrder" hide-header hide-footer>
+      <img src="@/assets/images/icons/warning.svg" class="m-auto">
+      <div class="d-flex justify-content-center mt-1">
+        <span class="font-bold text-center" style="font-size:16px">Desa dan kecamatan terisi otomastis dari 
+          <span class="text-primary">kode pos</span> yang dibuat menggunakan 
+          <span class="text-primary">Tambah Order Massal</span>, 
+          mohon cek kembali apakah sudah benar?
+        </span>
+      </div>
+      <b-row class="mt-1">
+        <b-col md="5">
+          <span class="font-bold my-auto d-flex justify-content-end" style="font-size:16px">Desa, Kecamatan</span>
+        </b-col>
+        <b-col md="7">
+          <b-form-input :value="destinationPreview" disabled />
+        </b-col>
+      </b-row>
+      <b-row class="justify-content-center mt-1">
+        <b-button variant="none" class="text-primary" @click="$bvModal.hide('modalCheckMassOrder')">Edit lagi</b-button>
+        <b-button variant="primary" :disabled="!isCalculateOnExpedition" @click="submit(false)">Simpan</b-button>
       </b-row>
     </b-modal>
   </b-card>

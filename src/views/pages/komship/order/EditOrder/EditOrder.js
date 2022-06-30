@@ -116,32 +116,41 @@ export default {
       orderDetails: [],
       shippingFromDetailEdit: {},
       loadingEditOrder: false,
+      cartProductId: [],
+      idCartDelete: [],
+      isMassOrder: null,
+      destinationPreview: null,
     }
   },
-  created() {
-    httpKomship2.post('v1/my-profile')
-      .then(res => {
+  async created() {
+    await httpKomship2.post('v1/my-profile')
+      .then(async res => {
         this.profile = res.data.data
-      }).then(() => {
-        this.checkExpedition()
-        this.getAddress()
-        this.getProduct()
-        this.addToCart()
-        this.getRekening()
-        this.getCustomLabel()
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        })
+        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
+          .then(async () => {
+          })
+      }).then(async () => {
+        await this.checkExpedition()
+        await this.getAddress()
+        await this.getProduct()
+        await this.getRekening()
+        await this.getCustomLabel()
       })
   },
   methods: {
+    fetchDataOrder() {
+      this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
+        .then(response => {
+          const { data } = response.data
+          this.itemsEditOrder = data
+          this.customerName = this.itemsEditOrder.customer_name
+          this.customerPhone = this.itemsEditOrder.customer_phone
+          this.customerAddress = this.itemsEditOrder.customer_address
+          this.product = this.itemsEditOrder.product.forEach(this.addProduct)
+          this.paymentMethod = this.itemsEditOrder.payment_method
+          this.shipping = this.itemsEditOrder.shipping
+        })
+    },
     formatDate(date) {
       const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
       const day = moment(date).format('DD')
@@ -253,28 +262,26 @@ export default {
       that.getDestination(search).finally(() => {})
     }, 500),
     async getDestination(search) {
-      setTimeout(() => {
-        this.$http_komship.get('v1/destination', {
-          params: { search },
+      await this.$http_komship.get('v1/destination', {
+        params: { search },
+      })
+        .then(res => {
+          const { data } = res.data.data
+          this.destinationList = data
+          this.loadingSearchDestination = false
         })
-          .then(res => {
-            const { data } = res.data.data
-            this.destinationList = data
-            this.loadingSearchDestination = false
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
           })
-          .catch(err => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: err,
-                variant: 'danger',
-              },
-            })
-            this.loadingSearchDestination = false
-          })
-      }, 2000)
+          this.loadingSearchDestination = false
+        })
     },
     async getProduct() {
       await this.$http_komship.get(`v1/partner-product/${this.profile.partner_id}`)
@@ -286,7 +293,7 @@ export default {
         // if (this.productLength === 0) this.$refs['modal-validate-product'].show()
         })
     },
-    addProduct(itemSelected) {
+    async addProduct(itemSelected) {
       if (itemSelected) {
         const result = this.productSelected.find(item => item.product_id === itemSelected.product_id)
         if (result === undefined || result.length === 0 || result.variantSubmit) {
@@ -328,7 +335,10 @@ export default {
             stockAvailable: itemSelected.stock,
           })
           this.productHistory = false
-          this.getShippingList().then(this.addToCart()).then(this.calculateOnExpedition(true))
+          if (itemSelected.is_variant !== '1') {
+            await this.addToCart()
+            await this.getShippingList()
+          }
         }
         this.product = []
       }
@@ -492,57 +502,146 @@ export default {
       }
       this.$root.$emit('bv::hide::modal', `modalVariation${index}`)
     },
-    setQuantity(status, index) {
+    async setQuantity(status, index) {
       if (status === 'plus') {
         this.productSelected[index].quantity += 1
         this.productSelected[index].stock -= 1
         this.productSelected[index].subtotal = this.productSelected[index].price * this.productSelected[index].quantity
         this.productHistory = false
-        setTimeout(() => {
-          this.getShippingList().then(this.addToCart())
-        }, 1000)
+        this.applyChangeQty()
       } else if (status === 'minus') {
         this.productSelected[index].quantity -= 1
         this.productSelected[index].stock += 1
         this.productSelected[index].subtotal = this.productSelected[index].price * this.productSelected[index].quantity
         this.productHistory = false
-        setTimeout(() => {
-          this.getShippingList().then(this.addToCart())
-        }, 1000)
+        this.applyChangeQty()
       }
     },
-    removeProduct(index) {
+    applyChangeQty: _.debounce(async function () {
+      await this.addToCart()
+      await this.getShippingList()
+    }, 1000),
+    async removeProduct(data, index) {
+      this.idCartDelete = this.cartProductId
+      const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
+      const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       this.productSelected.splice(index, 1)
       this.productHistory = false
       if (this.productSelected.length === 0) {
         this.paymentMethod = null
         this.shipping = null
         this.listShipping = []
-        this.addToCart()
+        if (findCartProduct !== undefined) {
+          await this.$http_komship.delete('/v1/cart/delete', {
+            params: {
+              cart_id: [findCartProduct.cart_id],
+            },
+          })
+            .then(async () => {
+              await this.addToCart()
+              this.paymentMethod = null
+              this.shipping = null
+              this.listShipping = []
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              })
+            })
+        }
       } else {
-        this.getShippingList().then(this.addToCart())
+        let cartDelete = null
+        cartDelete = await this.cartProductId.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
+        if (cartDelete !== undefined) {
+          await this.$http_komship.delete('/v1/cart/delete', {
+            params: {
+              cart_id: [cartDelete.cart_id],
+            },
+          })
+            .then(async () => {
+              await this.cartProductId.splice(findIndexCartProduct, 1)
+              await this.cartId.splice(findIndexCartProduct, 1)
+              await this.addToCart()
+              await this.getShippingList()
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              })
+            })
+        }
       }
+    },
+    getCartId(cart, productId) {
+      let result = 0
+      if (cart[0] !== undefined) {
+        const findCart = cart.find(item => item.variant_id === productId.variant_id && item.product_id === productId.product_id)
+        if (findCart !== undefined) {
+          if (findCart.variant_id === productId.variant_id) {
+            result = findCart.cart_id
+          }
+        }
+      }
+      return result
     },
     async addToCart() {
       if (this.productSelected.length > 0) {
         this.loadingCalculate = true
-        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {
-            const cart = this.productSelected.map(items => ({
-              product_id: items.product_id,
-              product_name: items.product_name,
-              variant_id: items.variant_id,
-              variant_name: items.variant_name,
-              product_price: items.price,
-              qty: items.quantity,
-              subtotal: items.subtotal,
-            }))
-            await this.$http_komship.post('v1/cart/bulk-store', cart)
-              .then(res => {
-                this.cartId = res.data.data.cart_id
+        const cart = await this.productSelected.map(items => ({
+          id: this.getCartId(this.cartProductId, items),
+          product_id: items.product_id,
+          product_name: items.product_name,
+          variant_id: items.variant_id,
+          variant_name: items.variant_name,
+          product_price: items.price,
+          qty: items.quantity,
+          subtotal: items.subtotal,
+        }))
+        await this.$http_komship.post('/v2/cart/bulk-store-web', cart)
+          .then(async res => {
+            this.cartId = []
+            this.cartProductId = res.data.data.cart_id
+            const getVariantFromCart = []
+            const getVariantFromBulk = []
+            cart.forEach(item => {
+              getVariantFromCart.push(item.variant_id)
+            })
+            this.cartProductId.forEach(item => {
+              getVariantFromBulk.push(item.variant_id)
+            })
+            await this.cartProductId.forEach(items => {
+              this.cartId.push(items.cart_id)
+            })
+            if (this.cartId.length !== cart.length) {
+              const difference = getVariantFromBulk.filter(x => getVariantFromCart.indexOf(x) === -1)
+              let itemsCartToDelete = null
+              difference.forEach(item => {
+                itemsCartToDelete = this.cartProductId.find(items => items.variant_id === item)
+              })
+              this.$http_komship.delete('/v1/cart/delete', {
+                params: {
+                  cart_id: [itemsCartToDelete.cart_id],
+                },
+              }).then(() => {
+                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === itemsCartToDelete.cart_id)
+                this.cartId.splice(findIndexCartToDelete, 1)
                 this.loadingCalculate = false
                 this.calculate(true)
               })
+            } else {
+              this.loadingCalculate = false
+              await this.calculate(true)
+            }
           })
       } else {
         this.isCalculate = false
@@ -594,42 +693,45 @@ export default {
           }
         })
     },
-    async getShippingList() {
+    getShippingList() {
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
-        setTimeout(async () => {
-          await this.$http_komship.get('v2/calculate', {
-            params: {
-              tariff_code: this.destination.value,
-              payment_method: this.paymentMethod,
-              partner_id: this.profile.partner_id,
-              partner_address_id: this.address.address_id,
-            },
-          }).then(res => {
-            const { data } = res.data
-            const result = data.map(items => ({
-              label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
-              value: items.value,
-              image_path: items.image_path,
-              shipment_name: items.shipment_name,
-              label_shipping_type: this.shippingTypeLabel(items.shipping_type),
-              shipping_type: items.shipping_type,
-              shipping_cost: items.shipping_cost,
-            }))
-            this.listShipping = result
-            this.isShipping = true
-            this.loadingOptionExpedition = false
-            if (this.shipping !== null) {
-              const findShipping = this.listShipping.find(items => items.shipment_name === this.shipping.shipment_name)
+        this.$http_komship.get('v2/calculate', {
+          params: {
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
+            payment_method: this.paymentMethod,
+            partner_id: this.profile.partner_id,
+            partner_address_id: this.address.address_id,
+          },
+        }).then(async res => {
+          const { data } = res.data
+          const result = await data.map(items => ({
+            label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
+            value: items.value,
+            image_path: items.image_path,
+            shipment_name: items.shipment_name,
+            label_shipping_type: this.shippingTypeLabel(items.shipping_type),
+            shipping_type: items.shipping_type,
+            shipping_cost: items.shipping_cost,
+          }))
+          this.listShipping = result
+          this.isShipping = true
+          this.loadingOptionExpedition = false
+          if (this.shipping !== null) {
+            const findShipping = this.listShipping.find(items => items.shipment_name === this.shipping.shipment_name)
+            if (findShipping !== undefined) {
               this.shipping = findShipping
+            } else {
+              this.shipping = null
             }
-          }).catch(err => {
-            if (err.response.data.message === 'Please Complete Your Address.') {
-              this.$refs['modal-check-address-pickup'].show()
-            }
-            this.loadingOptionExpedition = false
-          })
-        }, 800)
+          }
+        }).catch(err => {
+          if (err.response.data.message === 'Please Complete Your Address.') {
+            this.$refs['modal-check-address-pickup'].show()
+          }
+          this.loadingOptionExpedition = false
+        })
       } else {
         this.shipping = null
         this.listShipping = []
@@ -676,11 +778,11 @@ export default {
         }
         this.$http_komship.get('v2/calculate', {
           params: {
-            tariff_code: this.destination.value,
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
             partner_address_id: this.address.address_id,
-            cart: this.cartId.toString(),
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
@@ -688,38 +790,68 @@ export default {
         }).then(async res => {
           const { data } = res.data
           const result = data.find(items => items.value === this.shipping.value)
-          console.log('data on cal', data)
-          console.log('result on cal', result)
-          console.log('shipping on cal', this.shipping)
-          if (getAdditional) {
-            this.sesuaiNominal = Math.round(result.service_fee)
-            this.bebankanCustomer = Math.round(result.service_fee)
-            this.newGrandTotal = result.grandtotal
-            this.oldGrandTotal = result.grandtotal
-            if (this.paymentMethod === 'COD') {
-              this.jenisBiayaLain = '0'
-            } else {
-              this.jenisBiayaLain = '1'
+          const resultDefault = data.find(items => items.shipment_name === this.shipping.shipment_name)
+          if (result !== undefined) {
+            if (getAdditional) {
+              this.sesuaiNominal = Math.round(result.service_fee)
+              this.bebankanCustomer = Math.round(result.service_fee)
+              this.newGrandTotal = result.grandtotal
+              this.oldGrandTotal = result.grandtotal
+              if (this.paymentMethod === 'COD') {
+                this.jenisBiayaLain = '0'
+              } else {
+                this.jenisBiayaLain = '1'
+              }
             }
-          }
-          if (this.newGrandTotal === null) {
-            this.newGrandTotal = result.grandtotal
-          }
-          if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
-            this.subTotal = result.subtotal
-            this.shippingCost = result.shipping_cost
-            this.netProfit = result.net_profit
-            this.serviceFee = Math.round(result.service_fee)
-            this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight.toFixed(2)
-            this.grandTotal = result.grandtotal
-            this.cashback = result.cashback
-            this.cashbackPercentage = result.cashback_percentage
-            this.additionalCost = result.additional_cost
-            this.isCalculate = true
+            if (this.newGrandTotal === null) {
+              this.newGrandTotal = result.grandtotal
+            }
+            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === result.grandtotal) {
+              this.subTotal = result.subtotal
+              this.shippingCost = result.shipping_cost
+              this.netProfit = result.net_profit
+              this.serviceFee = Math.round(result.service_fee)
+              this.serviceFeePercentage = result.service_fee_percentage
+              this.weight = result.weight.toFixed(2)
+              this.grandTotal = result.grandtotal
+              this.cashback = result.cashback
+              this.cashbackPercentage = result.cashback_percentage
+              this.additionalCost = result.additional_cost
+              this.isCalculate = true
+              this.loadingCalculate = false
+            }
+            this.loadingCalculate = false
+          } else {
+            if (getAdditional) {
+              this.sesuaiNominal = Math.round(resultDefault.service_fee)
+              this.bebankanCustomer = Math.round(resultDefault.service_fee)
+              this.newGrandTotal = resultDefault.grandtotal
+              this.oldGrandTotal = resultDefault.grandtotal
+              if (this.paymentMethod === 'COD') {
+                this.jenisBiayaLain = '0'
+              } else {
+                this.jenisBiayaLain = '1'
+              }
+            }
+            if (this.newGrandTotal === null) {
+              this.newGrandTotal = resultDefault.grandtotal
+            }
+            if (!this.profile.partner_is_allowed_edit || this.newGrandTotal === resultDefault.grandtotal) {
+              this.subTotal = resultDefault.subtotal
+              this.shippingCost = resultDefault.shipping_cost
+              this.netProfit = resultDefault.net_profit
+              this.serviceFee = Math.round(resultDefault.service_fee)
+              this.serviceFeePercentage = resultDefault.service_fee_percentage
+              this.weight = resultDefault.weight.toFixed(2)
+              this.grandTotal = resultDefault.grandtotal
+              this.cashback = resultDefault.cashback
+              this.cashbackPercentage = resultDefault.cashback_percentage
+              this.additionalCost = resultDefault.additional_cost
+              this.isCalculate = true
+              this.loadingCalculate = false
+            }
             this.loadingCalculate = false
           }
-          this.loadingCalculate = false
         }).catch(async err => {
           this.loadingWrapperOtherCost = false
           this.loadingCalculate = false
@@ -764,11 +896,11 @@ export default {
         }
         this.$http_komship.get('v2/calculate', {
           params: {
-            tariff_code: this.destination.value,
+            cart: this.cartId.toString(),
+            receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
             partner_address_id: this.address.address_id,
-            cart: this.cartId.toString(),
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
@@ -867,7 +999,7 @@ export default {
 
       this.formData = {
         date: this.dateOrder,
-        tariff_code: this.destination.value,
+        receiver_destination: this.destination.id,
         subdistrict_name: this.destination.subdistrict_name,
         zip_code: this.destination.zip_code,
         district_name: this.destination.district_name,
@@ -901,6 +1033,15 @@ export default {
     handleCustomLabel(items) {
       this.customLabel = items
     },
+    checkSubmit() {
+      if (this.isMassOrder === 1) {
+        const text = `${this.destination.subdistrict_name}, ${this.destination.district_name}`
+        this.destinationPreview = text
+        this.$bvModal.show('modalCheckMassOrder')
+      } else {
+        this.submit(false)
+      }
+    },
     async submit(order) {
       this.checkValidation()
       if (this.isValidate) {
@@ -921,16 +1062,30 @@ export default {
           })
           .catch(err => {
             this.dataErrSubmit = err.response.data
-            if (this.dataErrSubmit.message !== 'Server Error Please Try Again.') {
+            this.dataErrSubmit = err.response.data
+            if (
+              this.dataErrSubmit.message === 'Please Topup to continue your store Order.'
+              || this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment'
+              || this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order'
+            ) {
               let nameButton = ''
               let titleAlert = ''
-              if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+              if (
+                this.dataErrSubmit.message
+                === 'Please Topup to continue your store Order.'
+              ) {
                 nameButton = 'Cek Saldo'
                 titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
-              } else if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+              } else if (
+                this.dataErrSubmit.message
+                === 'Sorry, your balance is not enough to make a postage payment'
+              ) {
                 nameButton = 'Cek Saldo'
                 titleAlert = 'Mohon Maaf, saldo anda tidak mencukupi untuk membuat order. Silahkan cek kembali saldo anda.'
-              } else if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+              } else if (
+                this.dataErrSubmit.message
+                === 'Sorry, there is not enough stock to continue the order'
+              ) {
                 nameButton = 'Cek Produk'
                 titleAlert = 'Mohon maaf, stok produk kamu tidak mencukupi untuk membuat orderan ini. Silahkan tambahkan stok produk terlebih dahulu'
               }
@@ -938,33 +1093,35 @@ export default {
                 title: `<span class="font-weight-bold h4">${titleAlert}</span>`,
                 imageUrl: require('@/assets/images/icons/fail.svg'),
                 showCancelButton: true,
-                confirmButtonText: nameButton,
+                confirmButtonText: 'Oke',
                 confirmButtonClass: 'btn btn-primary',
-                cancelButtonText: 'Oke',
-                cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
+                cancelButtonText: nameButton,
+                cancelButtonClass:
+                  'btn btn-outline-primary bg-white text-primary',
               }).then(result => {
                 if (result.isConfirmed) {
-                  if (this.dataErrSubmit.message === 'Please Topup to continue your store Order.') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Please Topup to continue your store Order.'
+                  ) {
                     this.$router.push('/dashboard-komship')
                   }
-                  if (this.dataErrSubmit.message === 'Sorry, your balance is not enough to make a postage payment') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Sorry, your balance is not enough to make a postage payment'
+                  ) {
                     this.$router.push('/dashboard-komship')
                   }
-                  if (this.dataErrSubmit.message === 'Sorry, there is not enough stock to continue the order') {
+                  if (
+                    this.dataErrSubmit.message
+                    === 'Sorry, there is not enough stock to continue the order'
+                  ) {
                     this.$router.push('/produk')
                   }
                 }
               })
             } else {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failure',
-                  icon: 'AlertCircleIcon',
-                  text: this.dataErrSubmit.message,
-                  variant: 'danger',
-                },
-              })
+              this.$refs['modal-error-store-order'].show()
             }
           })
       } else {
@@ -1015,7 +1172,6 @@ export default {
         e.preventDefault()
       }
     },
-
     // Edit Order
     updateEditMode() {
       this.$emit('changeValueEditMode')
@@ -1023,41 +1179,14 @@ export default {
     fetchDataDetailOrder() {
       this.loadingEditOrder = true
       this.$http_komship.get(`/v1/order/${this.profile.partner_id}/detail/update/${this.idOrder}`)
-        .then(response => {
+        .then(async response => {
           const { data } = response.data
+          this.isMassOrder = data.is_mass_order
           this.customerName = data.customer_name
           this.customerPhone = data.customer_phone
           this.destination = data.destination_name
           this.orderId = data.order_id
           this.paymentMethod = data.payment_method
-          Object.assign(this.shippingFromDetailEdit, {
-            label: `${data.shipping} - ${this.shippingTypeLabel(data.shipping_type)} - Rp${this.formatNumber(data.shipping_cost)}`,
-            value: `${data.shipping}-${data.shipping_type}-${data.shipping_cost}`,
-            image_path: data.shipment_image_path,
-            shipment_name: data.shipping,
-            label_shipping_type: this.shippingTypeLabel(data.shipping_type),
-            shipping_type: data.shipping_type,
-            shipping_cost: data.shipping_cost,
-          })
-          this.$http_komship.get('v1/destination', {
-            params: {
-              search: this.destination,
-            },
-          }).then(res => {
-            this.destination = res.data.data.data[0]
-            this.getShippingList()
-          }).catch(err => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: err,
-                variant: 'danger',
-              },
-            })
-            this.loadingEditOrder = false
-          })
           this.customerAddress = data.customer_address
           data.product.forEach(item => {
             const findObj = this.productList.find(list => list.product_id === item.product_id)
@@ -1114,10 +1243,44 @@ export default {
             subtotal: items.subtotal,
             is_deleted: 1,
           }))
-          this.addToCart()
-          this.shipping = this.shippingFromDetailEdit
-          this.calculateOnExpedition(true)
+          Object.assign(this.shippingFromDetailEdit, {
+            label: `${data.shipping} - ${this.shippingTypeLabel(data.shipping_type)} - Rp${this.formatNumber(data.shipping_cost)}`,
+            value: `${data.shipping}-${data.shipping_type}-${data.shipping_cost}`,
+            image_path: data.shipment_image_path,
+            shipment_name: data.shipping,
+            label_shipping_type: this.shippingTypeLabel(data.shipping_type),
+            shipping_type: data.shipping_type,
+            shipping_cost: data.shipping_cost,
+          })
+          await this.$http_komship.get('v1/destination', {
+            params: {
+              search: this.destination,
+            },
+          }).then(async res => {
+            console.log(res)
+            if (res.data.data.data === undefined) {
+              this.destination = null
+            } else {
+              this.destination = res.data.data.data[0]
+            }
+            await this.addToCart()
+            this.shipping = this.shippingFromDetailEdit
+            await this.calculateOnExpedition(true)
+            await this.getShippingList()
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
+            this.loadingEditOrder = false
+          })
           this.loadingEditOrder = false
+          console.log(this.productSelected)
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -1130,6 +1293,9 @@ export default {
           })
           this.loadingEditOrder = false
         })
+    },
+    refreshPage() {
+      window.location.reload()
     },
   },
 }
