@@ -346,10 +346,18 @@
               <div class="row w-100 align-items-center">
                 <div class="col">
                   <b-progress
+                    v-if="Math.floor(progressValue) <= 0 "
+                    :value="100"
+                    :max="100"
+                    variant="success"
+                    :striped="Math.floor(progressValue) <= 0 ? true : false"
+                    :animated="Math.floor(progressValue) <= 0 ? true : false"
+                  />
+                  <b-progress
+                    v-else
                     :value="progressValue"
                     :max="100"
                     variant="success"
-                    animated
                   />
                 </div>
                 <div class="col-auto">
@@ -367,6 +375,7 @@
                 Batalkan
               </button>
               <button
+                :disabled="showProgress"
                 class="btn btn-primary m-1"
                 @click="downloadCsv"
               >
@@ -498,9 +507,10 @@ export default {
       totalAjukan: null,
       totalPacking: null,
       showProgress: false,
-      message: 'Sedang mendownload',
+      message: 'Sedang memuat file ...',
       progressValue: 0,
       totalKirim: null,
+      controller: new AbortController(),
       dateRange: { startDate, endDate },
       orderDate: '',
       loading: false,
@@ -607,7 +617,9 @@ export default {
       })
     },
     handleClosePopUp() {
+      this.controller.abort()
       this.showProgress = false
+      this.message = 'Sedang memuat file ...'
       this.$root.$emit('bv::hide::modal', 'modalExport')
     },
     downloadCsv() {
@@ -624,11 +636,13 @@ export default {
       this.$http_komship.get(`v1/export/order/${this.profile.partner_detail.id}`, {
         params: formData,
         onDownloadProgress: progressEvent => {
+          this.message = 'Sedang mendownload file ...'
           // eslint-disable-next-line prefer-const
           let total = progressEvent?.srcElement?.getResponseHeader('content-length') || 0
           this.progressValue = (progressEvent.loaded / total) * 100
         },
         responseType: 'base64',
+        signal: this.controller.signal,
       }).then(result => {
         setTimeout(() => {
           const binary = atob(result.data.replace(/\s/g, ''))
@@ -650,12 +664,15 @@ export default {
           link.remove()
           this.loading = false
           this.showProgress = false
+          this.message = 'Sedang memuat file ...'
         }, 1000)
       }).catch(err => {
         this.loading = false
       })
     },
     closeModalExport() {
+      this.message = 'Sedang memuat file ...'
+      this.controller.abort()
       this.showProgress = false
       this.$refs.modalExport.hide()
     },
