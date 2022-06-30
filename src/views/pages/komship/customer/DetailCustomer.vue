@@ -8,11 +8,25 @@
     :show="loading"
   >
     <b-card>
-      <h4><strong>Detail Customer</strong></h4>
+      <h4><strong>Detail Pelanggan</strong></h4>
+      <b-row>
+        <b-button
+          variant="primary"
+          class="btn-icon mt-1 ml-2"
+          size="sm"
+          tag="router-link"
+          to="/info-customer"
+        >
+          <feather-icon
+            icon="ChevronLeftIcon"
+            size="20"
+          />
+        </b-button>
+      </b-row>
       <b-row class="d-flex align-items-center justify-content-between mt-2">
         <b-col>
           <h5 class="ml-2">
-            <strong>Informasi Customer</strong>
+            <strong>Informasi Pelanggan</strong>
           </h5>
         </b-col>
         <b-col
@@ -36,7 +50,7 @@
               target="blank"
             >
               <span class="align-middle">
-                Hubungi Customer</span>
+                Hubungi Pelanggan</span>
             </a>
           </b-button>
         </b-col>
@@ -68,7 +82,7 @@
 
       <b-row class="border ml-2 mr-2 pt-1 pb-1">
         <b-col
-          md="7"
+          md="5"
         >
           <b-row>
             <b-col md="auto">
@@ -95,7 +109,7 @@
             </b-col>
           </b-row>
         </b-col>
-        <b-col md="5">
+        <b-col md="7">
           <b-row>
             <b-col md="auto">
               <div class="mt-1">
@@ -112,8 +126,8 @@
                   class="ml-1 "
                 />
               </div>
-
             </b-col>
+
             <b-col>
               <div class="mt-1">
                 {{ productFavorit }}
