@@ -20,6 +20,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import PincodeInput from 'vue-pincode-input'
 
 export default {
   components: {
@@ -39,6 +40,7 @@ export default {
     ValidationProvider,
     BSpinner,
     BOverlay,
+    PincodeInput,
   },
   directives: {
     Ripple,
@@ -100,8 +102,15 @@ export default {
       modalEditFormInputType: '',
       formInputEditItem: '',
 
-      itemEyeIcon: 'EyeIcon',
+      itemEyeIcon: 'EyeOffIcon',
       labelSubmit: '',
+
+      actionSubmit: '',
+
+      // Validation Edit
+      passwordDummy: '123456',
+      messageErrorPassword: false,
+      successConfirmPassword: false,
     }
   },
   mounted() {
@@ -373,18 +382,20 @@ export default {
         this.modalTitle = await 'Password Komship'
         this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
         this.modalFormLabel = await 'Masukkan Pasword'
-        this.modalEditFormInputType = await 'text'
+        this.modalEditFormInputType = await 'password'
         this.labelSubmit = 'Konfirmasi'
       } else if (data === 'email') {
-        this.modalTitle = await 'Ganti Email'
-        this.modalSubtitle = await 'Pastikan email yang baru milik Kamu'
-        this.modalFormLabel = await 'Email'
-        this.modalEditFormInputType = await 'email'
+        this.modalTitle = await 'Password Komship'
+        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalFormLabel = await 'Masukkan Pasword'
+        this.modalEditFormInputType = await 'password'
+        this.labelSubmit = await 'Konfirmasi'
       }
       console.log(this.modalEditFormInputType)
       this.$refs['modal-edit'].show()
     },
     closeModalEdit() {
+      this.formInputEditItem = ''
       this.$refs['modal-edit'].hide()
     },
     closeSuccessEditUsername() {
@@ -393,16 +404,47 @@ export default {
     submitEdit() {
       if (this.editMode === 'username') {
         this.$refs['modal-success-edit-username'].show()
+      } else if (this.editMode === 'noHP') {
+        if (this.formInputEditItem === this.passwordDummy) {
+          this.modalTitle = 'Edit No HP'
+          this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
+          this.modalFormLabel = 'No HP'
+          this.modalEditFormInputType = 'number'
+          this.formInputEditItem = ''
+          this.successConfirmPassword = true
+          this.messageErrorPassword = false
+        } else {
+          this.successConfirmPassword = false
+          this.messageErrorPassword = true
+        }
       }
     },
+    submitVerification() {
+      console.log('edit mode', this.editMode)
+      if (this.editMode === 'noHP') {
+        this.$refs['modal-edit'].hide()
+        this.$refs['modal-verification-edit'].show()
+      }
+    },
+    sendVerification() {
+      this.$refs['modal-verification-edit'].hide()
+      this.$refs['modal-success-verification'].show()
+    },
+    handleBackEdit() {
+      this.$refs['modal-verification-edit'].hide()
+      this.$refs['modal-edit'].show()
+    },
     changeEyeIcon() {
-      if (this.itemEyeIcon === 'EyeIcon') {
-        this.itemEyeIcon = 'EyeOffIcon'
-        this.modalEditFormInputType = 'password'
-      } else {
+      if (this.itemEyeIcon === 'EyeOffIcon') {
         this.itemEyeIcon = 'EyeIcon'
         this.modalEditFormInputType = 'text'
+      } else {
+        this.itemEyeIcon = 'EyeOffIcon'
+        this.modalEditFormInputType = 'password'
       }
+    },
+    closeSuccessVerification() {
+      this.$refs['modal-success-verification'].hide()
     },
   },
 

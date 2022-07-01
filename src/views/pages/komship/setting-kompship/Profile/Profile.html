@@ -155,7 +155,6 @@
                 <b-input-group>
                   <b-form-input
                     v-model="emailUser"
-                    :type="modalEditFormInputType"
                     placeholder="Email"
                     :state="errors.length > 0 ? false:null"
                   />
@@ -500,17 +499,15 @@
               </template>
               <validation-provider
                 #default="{errors}"
-                name="Nama Lengkap"
                 rules="required"
               >
                 <b-input-group>
                   <b-form-input
                     v-model="formInputEditItem"
                     :type="modalEditFormInputType"
-                    :state="errors.length > 0 ? false:null"
                   />
                   <template
-                    v-if="editMode === 'noHP'"
+                    v-if="modalEditFormInputType === 'password'"
                   #append>
                     <b-button
                       class="btn-icon"
@@ -521,7 +518,12 @@
                     </b-button>
                   </template>
                 </b-input-group>
-                <small class="text-danger">{{ errors[0] }}</small>
+                <small
+                  v-if="messageErrorPassword"
+                  class="text-primary"
+                >
+                  Password salah
+                </small>
               </validation-provider>
           </b-form-group>
         </b-col>
@@ -536,11 +538,23 @@
         Batal
       </b-button>
       <b-button
+        v-if="successConfirmPassword === false"
         class="mr-2"
         variant="primary"
+        :disabled="!formInputEditItem"
         @click="submitEdit"
       >
-        Simpan
+        {{ labelSubmit }}
+      </b-button>
+
+      <b-button
+        v-if="successConfirmPassword"
+        class="mr-2"
+        variant="primary"
+        :disabled="!formInputEditItem"
+        @click="submitVerification"
+      >
+        Lanjutkan Verifikasi
       </b-button>
     </b-row>
   </b-modal>
@@ -581,5 +595,90 @@
               </b-button>
         </b-col>
     </b-row>
+  </b-modal>
+
+  <!-- Modal Verification -->
+  <b-modal
+    ref="modal-verification-edit"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-center mb-1 mt-1">
+        <h4 class="text-black text-center">
+          <strong>
+            Verifikasi Nomor Hp
+          </strong>
+        </h4>
+    </b-row>
+
+    <b-row class="justify-content-center mb-2 mx-3">
+        <span class="text-black text-center">
+          Mohon verifikasi identitas kamu dengan memasukan Kode Verifikasi (OTP) yang dikirimkan via SMS ke Nomor kamu {{ formInputEditItem }}
+        </span>
+    </b-row>
+
+    <b-row class="justify-content-center mb-50">
+      <PincodeInput
+        placeholder="0"
+        length="6"
+        autofocus="true"
+      />
+    </b-row>
+
+    <b-row class="justify-content-center mb-1">
+      <span>
+        Kirim ulang (59)
+      </span>
+    </b-row>
+
+    <b-row class="justify-content-center mb-2">
+      <b-button
+        variant="flat-primary"
+        class="mr-1"
+        @click="handleBackEdit"
+      >
+        Kembail
+      </b-button>
+      <b-button
+        variant="primary"
+        @click="sendVerification"
+      >
+        Konfirmasi
+      </b-button>
+    </b-row>
+  </b-modal>
+
+  <!-- Modal Success Verification -->
+  <b-modal
+    ref="modal-success-verification"
+    hide-footer
+    hide-header
+    centered
+  >
+      <b-row class="justify-content-center mb-1 mt-1">
+          <h4 class="text-black text-center">
+            <strong>
+              Terimakasih
+            </strong>
+          </h4>
+      </b-row>
+
+      <b-row class="justify-content-center mb-1 mx-3">
+          <span class="text-black text-center">
+            Kami telah mengkonfirmasi {{ formInputEditItem }} sebagai 
+nomor HP untuk Akun Komerce Kamu
+          </span>
+      </b-row>
+
+      <b-row class="justify-content-center mb-2">
+        <b-button
+          variant="primary"
+          @click="closeSuccessVerification"
+        >
+          Oke
+        </b-button>
+      </b-row>
+
   </b-modal>
 </b-overlay>
