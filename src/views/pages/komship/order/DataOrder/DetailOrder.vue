@@ -833,13 +833,14 @@ export default {
           this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
         } else if (items.status === 'Delivered') {
           this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
+        } else if (items.status === 'Retur') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
         }
         this.listAwb += '</div>'
         this.listAwb += '<div style="font-size: 16px;display: inline-block;">'
         this.listAwb += `<span>${formatDate(items.date)}</span><br>`
         this.listAwb += `<span class="font-bold">${items.desc}</span>`
         this.listAwb += '</div><br>'
-        console.log('items', items)
         if (items.send_wa === 1) {
           this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
           this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
