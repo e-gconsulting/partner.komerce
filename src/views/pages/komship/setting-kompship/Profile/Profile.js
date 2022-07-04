@@ -101,6 +101,7 @@ export default {
       modalFormLabel: '',
       modalEditFormInputType: '',
       formInputEditItem: '',
+      usernameCheckPasswword: this.$store.state.auth.userData.username,
 
       itemEyeIcon: 'EyeOffIcon',
       labelSubmit: '',
@@ -111,6 +112,13 @@ export default {
       passwordDummy: '123456',
       messageErrorPassword: false,
       successConfirmPassword: false,
+
+      errorOtp: false,
+
+      // Modal Success Verification
+      otpConfirmation: '',
+      successVerificationTitle: '',
+      descriptionSuccessVerification: '',
     }
   },
   mounted() {
@@ -405,11 +413,41 @@ export default {
       if (this.editMode === 'username') {
         this.$refs['modal-success-edit-username'].show()
       } else if (this.editMode === 'noHP') {
+        const formData = new FormData()
+        formData.append('username', this.usernameCheckPasswword)
+        formData.append('password', this.formInputEditItem)
+        this.$http.post('/check-password', formData)
+          .then(response => {
+            this.modalTitle = 'Edit No HP'
+            this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
+            this.modalFormLabel = 'No HP'
+            this.modalEditFormInputType = 'number'
+            this.formInputEditItem = ''
+            this.successConfirmPassword = true
+            this.messageErrorPassword = false
+            console.log('response check password', response)
+          }).catch(err => {
+            if (err.response.data.data.check_password === false) {
+              this.successConfirmPassword = false
+              this.messageErrorPassword = true
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            }
+          })
+      } else if (this.editMode === 'email') {
         if (this.formInputEditItem === this.passwordDummy) {
-          this.modalTitle = 'Edit No HP'
-          this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
-          this.modalFormLabel = 'No HP'
-          this.modalEditFormInputType = 'number'
+          this.modalTitle = 'Ganti Email'
+          this.modalSubtitle = 'Pastikan email yang baru milik Kamu'
+          this.modalFormLabel = 'Email'
+          this.modalEditFormInputType = 'email'
           this.formInputEditItem = ''
           this.successConfirmPassword = true
           this.messageErrorPassword = false
@@ -422,13 +460,86 @@ export default {
     submitVerification() {
       console.log('edit mode', this.editMode)
       if (this.editMode === 'noHP') {
+        // this.successVerificationTitle = 'Terimakasih'
+        // this.descriptionSuccessVerification = `Kami telah mengkonfirmasi ${this.formInputEditItem} sebagai
+        // nomor HP untuk Akun Komerce Kamu`
+        // this.$refs['modal-edit'].hide()
+        // this.$refs['modal-verification-edit'].show()
+        const formData = new FormData()
+        formData.append('phone_number', this.formInputEditItem)
+        this.$http_komship.post('/v1/partner/sms/otp', formData)
+          .then(response => {
+            console.log('response send otp', response)
+            this.$refs['modal-edit'].hide()
+            this.$refs['modal-verification-edit'].show()
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+      }
+      if (this.editMode === 'email') {
+        this.successVerificationTitle = 'Cek Email Kamu'
+        this.descriptionSuccessVerification = 'Klik link konfirmasi yang telah kami kirimkan ke email danirizky@gmail.com untuk mengonfirmasi alamat email yang baru dan membantu mengamankan akun Anda. Link konfirmasi akan hangus dalam 10 menit setelah email dikirimkan'
         this.$refs['modal-edit'].hide()
-        this.$refs['modal-verification-edit'].show()
+        this.$refs['modal-success-verification'].show()
       }
     },
     sendVerification() {
-      this.$refs['modal-verification-edit'].hide()
-      this.$refs['modal-success-verification'].show()
+      const formData = new FormData()
+      formData.append('otp', this.otpConfirmation)
+      this.$http_komship.post('/v1/partner/sms/otp/verification', formData)
+        .then(response => {
+          console.log('response konfirmasi', response)
+          this.submitEditNomer()
+        }).catch(err => {
+          console.log(err.response)
+          if (err.response.data.code === 400) {
+            this.errorOtp = true
+          } else {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          }
+        })
+    },
+    submitEditNomer() {
+      const formData = new FormData()
+      formData.append('no_handphone', this.formInputEditItem)
+      this.$http.post('user/partner/update-profile/no-handphone', formData)
+        .then(response => {
+          console.log('response edit no', response)
+          this.successVerificationTitle = 'Terimakasih'
+          this.descriptionSuccessVerification = `Kami telah mengkonfirmasi ${this.formInputEditItem} sebagai
+          nomor HP untuk Akun Komerce Kamu`
+          this.errorOtp = false
+          this.successConfirmPassword = false
+          this.formInputEditItem = ''
+          this.$refs['modal-verification-edit'].hide()
+          this.$refs['modal-success-verification'].show()
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
     },
     handleBackEdit() {
       this.$refs['modal-verification-edit'].hide()
@@ -444,6 +555,8 @@ export default {
       }
     },
     closeSuccessVerification() {
+      this.successConfirmPassword = false
+      this.formInputEditItem = ''
       this.$refs['modal-success-verification'].hide()
     },
   },

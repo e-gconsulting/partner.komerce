@@ -620,10 +620,15 @@
 
     <b-row class="justify-content-center mb-50">
       <PincodeInput
+        v-model="otpConfirmation"
         placeholder="0"
         length="6"
         autofocus="true"
       />
+    </b-row>
+
+    <b-row v-if="errorOtp === true" class="justify-content-center mb-50">
+      <span class="text-primary">Masukan kode OTP dengan benar</span>
     </b-row>
 
     <b-row class="justify-content-center mb-1">
@@ -659,15 +664,14 @@
       <b-row class="justify-content-center mb-1 mt-1">
           <h4 class="text-black text-center">
             <strong>
-              Terimakasih
+              {{ successVerificationTitle }}
             </strong>
           </h4>
       </b-row>
 
       <b-row class="justify-content-center mb-1 mx-3">
           <span class="text-black text-center">
-            Kami telah mengkonfirmasi {{ formInputEditItem }} sebagai 
-nomor HP untuk Akun Komerce Kamu
+            {{ descriptionSuccessVerification }}
           </span>
       </b-row>
 
