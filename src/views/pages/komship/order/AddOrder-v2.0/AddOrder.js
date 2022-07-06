@@ -1397,10 +1397,12 @@ export default {
         .then(res => {
           const { data } = res.data
           this.isWhatsapp = data
+          this.messageErrorPhone = false
         })
         .catch(error => {
           const { data } = error.response.data
           this.isWhatsapp = data
+          this.messageErrorPhone = false
         })
     },
   },
