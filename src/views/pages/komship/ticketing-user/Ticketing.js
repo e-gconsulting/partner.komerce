@@ -763,5 +763,13 @@ export default
       }
       return result
     },
+    filterStatusFromBox(value) {
+      if (!this.ticketStatus.includes(value)) {
+        this.ticketStatus.push(value)
+      }
+      const findIndexObj = this.ticketStatusItems.findIndex(items => items.value === value)
+      this.ticketStatusItems[findIndexObj].onCheck = true
+      this.fetchTicket()
+    },
   },
 }
