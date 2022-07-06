@@ -1,7 +1,7 @@
 name: cd
 on:
   push:
-    branches: [ production ]
+    branches: [ development ]
   schedule:
     - cron: "0 1 22 03 *"
   workflow_dispatch:
@@ -41,4 +41,4 @@ jobs:
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
           local-dir: ./dist/
-          server-dir: ./partner.komerce/
+          server-dir: ./dev.partner.komerce.id/
