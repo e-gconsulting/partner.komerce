@@ -101,6 +101,8 @@ export default {
       modalFormLabel: '',
       modalEditFormInputType: '',
       formInputEditItem: '',
+      formInputEditItemPaste: '',
+      formInputEditItemPasteMode: false,
       usernameCheckPasswword: this.$store.state.auth.userData.username,
 
       itemEyeIcon: 'EyeOffIcon',
@@ -121,6 +123,8 @@ export default {
       descriptionSuccessVerification: '',
 
       userData: this.$store.state?.auth?.userData,
+
+      errorNoHp: false,
     }
   },
   mounted() {
@@ -583,6 +587,53 @@ export default {
       this.successConfirmPassword = false
       this.formInputEditItem = ''
       this.$refs['modal-success-verification'].hide()
+    },
+    formatPhone: _.debounce(function () {
+      if (this.formInputEditItem.length < 8) {
+        this.errorNoHp = true
+      } else {
+        this.errorNoHp = false
+      }
+      if (this.formInputEditItemPasteMode === true) {
+        this.formInputEditItem = this.formInputEditItemPaste
+      }
+      this.formInputEditItemPasteMode = false
+    }, 1000),
+    validateInputPhone(e) {
+      if (this.formInputEditItem.length === 0) {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        }
+        if (e.keyCode !== 56) {
+          e.preventDefault()
+        }
+      }
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
+        e.preventDefault()
+      }
+    },
+    formatterPhone(e) {
+      this.formInputEditItemPasteMode = true
+      this.formInputEditItem = ''
+      this.formInputEditItemPaste = ''
+      this.formInputEditItemPaste = e.clipboardData.getData('text').replace(/\D/g, '')
+      if (this.formInputEditItemPaste.charAt(0) === '0') {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(1, this.formInputEditItemPaste.length)
+      } else {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(0, this.formInputEditItemPaste.length)
+      }
+      if (this.formInputEditItemPaste.charAt(0) === '6') {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(2, this.formInputEditItemPaste.length)
+      } else {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(0, this.formInputEditItemPaste.length)
+      }
+    },
+    valueFormatPhone(e) {
+      if (e.target.value.length < 8) {
+        this.errorNoHp = true
+      } else {
+        this.errorNoHp = false
+      }
     },
   },
 

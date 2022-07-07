@@ -516,9 +516,24 @@
               >
                 <b-input-group>
                   <b-form-input
+                    v-if="modalEditFormInputType === 'number'"
+                    v-model="formInputEditItem"
+                    :type="modalEditFormInputType"
+                    @keypress="validateInputPhone"
+                    @paste="formatterPhone"
+                    @input="formatPhone"
+                    @keyup="valueFormatPhone"
+                  />
+                  <b-form-input
+                    v-if="modalEditFormInputType !== 'number'"
                     v-model="formInputEditItem"
                     :type="modalEditFormInputType"
                   />
+                  <div v-if="errorNoHp">
+                    <small class="mr-1 text-primary">
+                      *minimal 9 digit berupa angka
+                    </small>
+                  </div>
                   <template
                     v-if="modalEditFormInputType === 'password'"
                   #append>
