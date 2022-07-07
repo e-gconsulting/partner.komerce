@@ -709,5 +709,6 @@ export default {
       const parsed = JSON.stringify(this.notification)
       localStorage.setItem('notifSession', parsed)
     },
+
   },
 }
