@@ -49,6 +49,7 @@ import pengaturanKomplace from './routes/komplace/pengaturan/index'
 
 import cetaklabel from './routes/cetak-label'
 import tiket from './routes/tiket/index'
+import notification from './routes/notification/index'
 
 Vue.use(VueRouter)
 
@@ -97,6 +98,7 @@ const router = new VueRouter({
     ...jobRoleSetting,
     ...cetaklabel,
     ...tiket,
+    ...notification,
     {
       path: '*',
       redirect: 'error-404',

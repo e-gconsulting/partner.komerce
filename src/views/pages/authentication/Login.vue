@@ -392,6 +392,7 @@ export default {
                 { action: 'manage', subject: 'Assignment' },
                 { action: 'manage', subject: 'JobRoleSetting' },
                 { action: 'manage', subject: 'Tiket' },
+                { action: 'manage', subject: 'Notification' },
 
                 // Komship
                 { action: 'manage', subject: 'Komship' },

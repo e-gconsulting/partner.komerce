@@ -64,6 +64,7 @@ import monitoring from './monitoring-komplace'
 import pengaturanKomplace from './pengaturanKomplace'
 import manajemenAdmin from './manajemenAdmin'
 import tiket from './tiket'
+import notification from './notification'
 
 // Array of sections
 export default [
@@ -93,6 +94,7 @@ export default [
   ...pengaturanKomplace,
   ...manajemenAdmin,
   ...tiket,
+  ...notification,
 
   ...talentPool,
   // ...wishlist,
