@@ -119,6 +119,8 @@ export default {
       otpConfirmation: '',
       successVerificationTitle: '',
       descriptionSuccessVerification: '',
+
+      userData: this.$store.state?.auth?.userData,
     }
   },
   mounted() {
@@ -331,18 +333,7 @@ export default {
       }
     },
     reset() {
-      this.fullname = ''
-      this.username = ''
-      this.jenisKelamin = null
-      this.noHP = ''
-      this.emailUser = ''
-      this.address = ''
-      this.imageFile = null
-      this.imageInitialFile = null
-      this.nameBusiness = ''
-      this.location = ''
-      this.sektorBusiness = ''
-      this.typeBusiness = ''
+      this.loadProfile()
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
     formatBusinessName(e) {
@@ -411,7 +402,17 @@ export default {
     },
     submitEdit() {
       if (this.editMode === 'username') {
-        this.$refs['modal-success-edit-username'].show()
+        const formData = new FormData()
+        formData.append('username', this.formInputEditItem)
+        const params = {
+          username: this.formInputEditItem,
+        }
+        this.$http.put('/user/partner/update-profile/username', {
+          username: this.formInputEditItem,
+        })
+          .then(response => {
+            console.log('response success username', response)
+          })
       } else if (this.editMode === 'noHP') {
         const formData = new FormData()
         formData.append('username', this.usernameCheckPasswword)
@@ -443,18 +444,35 @@ export default {
             }
           })
       } else if (this.editMode === 'email') {
-        if (this.formInputEditItem === this.passwordDummy) {
-          this.modalTitle = 'Ganti Email'
-          this.modalSubtitle = 'Pastikan email yang baru milik Kamu'
-          this.modalFormLabel = 'Email'
-          this.modalEditFormInputType = 'email'
-          this.formInputEditItem = ''
-          this.successConfirmPassword = true
-          this.messageErrorPassword = false
-        } else {
-          this.successConfirmPassword = false
-          this.messageErrorPassword = true
-        }
+        const formData = new FormData()
+        formData.append('username', this.usernameCheckPasswword)
+        formData.append('password', this.formInputEditItem)
+        this.$http.post('/check-password', formData)
+          .then(response => {
+            this.modalTitle = 'Ganti Email'
+            this.modalSubtitle = 'Pastikan email yang baru milik Kamu'
+            this.modalFormLabel = 'Email'
+            this.modalEditFormInputType = 'email'
+            this.formInputEditItem = ''
+            this.successConfirmPassword = true
+            this.messageErrorPassword = false
+            console.log('response check password', response)
+          }).catch(err => {
+            if (err.response.data.data.check_password === false) {
+              this.successConfirmPassword = false
+              this.messageErrorPassword = true
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            }
+          })
       }
     },
     submitVerification() {
@@ -485,10 +503,17 @@ export default {
           })
       }
       if (this.editMode === 'email') {
-        this.successVerificationTitle = 'Cek Email Kamu'
-        this.descriptionSuccessVerification = 'Klik link konfirmasi yang telah kami kirimkan ke email danirizky@gmail.com untuk mengonfirmasi alamat email yang baru dan membantu mengamankan akun Anda. Link konfirmasi akan hangus dalam 10 menit setelah email dikirimkan'
-        this.$refs['modal-edit'].hide()
-        this.$refs['modal-success-verification'].show()
+        const formData = new FormData()
+        formData.append('id_user', this.id)
+        formData.append('email', this.formInputEditItem)
+        this.$http.post('/user/partner/update-profile/email', formData)
+          .then(response => {
+            console.log(response)
+            this.successVerificationTitle = 'Cek Email Kamu'
+            this.descriptionSuccessVerification = 'Klik link konfirmasi yang telah kami kirimkan ke email danirizky@gmail.com untuk mengonfirmasi alamat email yang baru dan membantu mengamankan akun Anda. Link konfirmasi akan hangus dalam 10 menit setelah email dikirimkan'
+            this.$refs['modal-edit'].hide()
+            this.$refs['modal-success-verification'].show()
+          })
       }
     },
     sendVerification() {

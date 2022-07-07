@@ -62,11 +62,20 @@
                   <b-form-input
                     v-model="username"
                     placeholder="Username"
+                    :disabled="userData.username_change === false"
                     :state="errors.length > 0 ? false:null"
+                    style="background: white;"
                   />
                   <template #append>
-                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('username')">
-                      <b-img src="@/assets/images/icons/new-edit-icon.svg" />
+                    <b-button variant="flat-dark" class="btn-icon" size="sm" @click="openModalEdit('username')" :disabled="userData.username_change === false">
+                      <b-img
+                        v-if="userData.username_change === true"
+                        src="@/assets/images/icons/new-edit-icon.svg"
+                      />
+                      <b-img
+                        v-if="userData.username_change === false"
+                        src="@/assets/images/icons/disable-edit-icon.svg"
+                      />
                     </b-button>
                   </template>
                   <small class="text-danger">{{ errors[0] }}</small>
@@ -125,6 +134,8 @@
                     type="number"
                     placeholder="Nomer HP"
                     :state="errors.length > 0 ? false:null"
+                    style="background: white;"
+                    disabled
                   />
                   <template #append>
                     <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('noHP')">
@@ -157,6 +168,8 @@
                     v-model="emailUser"
                     placeholder="Email"
                     :state="errors.length > 0 ? false:null"
+                    style="background: white;"
+                    disabled
                   />
                   <template #append>
                     <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('email')">
@@ -462,7 +475,7 @@
                 variant="light"
                 small
               />
-              Submit
+              Simpan
             </b-button>
           </b-col>
         </b-row>
