@@ -149,6 +149,7 @@ export default {
       dataProfile: true,
 
       perluTindakLanjut: 0,
+      notification: null,
     }
   },
   computed: {
@@ -194,6 +195,7 @@ export default {
           }
         }
       })
+    this.checkNotification()
   },
   beforeMount() {
     this.$store.dispatch('dashboard/init')
@@ -658,6 +660,36 @@ export default {
       } else {
         this.visibilityPin = 'password'
       }
+    },
+    setColors(color) {
+      if (color === '#B6FBC9') {
+        return 'alert-success'
+      } if (color === '#FFDF82') {
+        return 'alert-warning'
+      } if (color === '#F86363') {
+        return 'alert-danger'
+      } if (color === '#BEE6FC') {
+        return 'alert-info'
+      }
+      return ''
+    },
+    windowOpen(link) {
+      const url = `https://${link}`
+      window.open(url, '_blank')
+    },
+    async checkNotification() {
+      await this.$http_komship.get('/v1/partner/notification-bar')
+        .then(result => {
+          const { data } = result.data
+          this.notification = data.map(items => ({
+            id: items.id,
+            title: items.title,
+            description: items.description,
+            url_link: items.url_link,
+            color: this.setColors(items.color),
+          }))
+        })
+        .catch(err => console.error(err))
     },
   },
 }
