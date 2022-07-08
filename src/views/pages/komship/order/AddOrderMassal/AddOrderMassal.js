@@ -441,7 +441,7 @@ export default {
       } else if (response.message === "There's error in your input" && response.cod_error.length >= 1) {
         const html = `<ul><li class="text-primary">
         <span style="color: black">Beberapa data order kurang tepat<br>
-        <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD</span>
+        <span class="text-sm">Identifikasi teratas :<br>Data "baris ke ${response.cod_error}" diluar jangkauan wilayah COD atau Kode Pos belum tepat</span>
         </span></li></ul>`
         const imageUrl = require('@/assets/images/icons/non-cod.svg')
         const confirmButtonText = 'Perbaiki'
