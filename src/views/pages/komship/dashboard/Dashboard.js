@@ -179,8 +179,8 @@ export default {
     ]),
     ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
   },
-  mounted() {
-    this.$http_komship
+  async mounted() {
+    await this.$http_komship
       .post('v1/my-profile', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
@@ -195,7 +195,18 @@ export default {
           }
         }
       })
-    this.checkNotification()
+    if (localStorage.getItem('notifSession')) {
+      try {
+        this.notification = JSON.parse(
+          localStorage.getItem('notifSession'),
+        )
+      } catch (e) {
+        localStorage.removeItem('notifSession')
+        this.checkNotification()
+      }
+    } else {
+      await this.checkNotification()
+    }
   },
   beforeMount() {
     this.$store.dispatch('dashboard/init')
@@ -675,9 +686,16 @@ export default {
             description: items.description,
             url_link: items.url_link,
             color: items.color,
+            show: true,
           }))
         })
         .catch(err => console.error(err))
+    },
+    notificationSession(value) {
+      const index = this.notification.findIndex(items => items.id === value.id)
+      this.notification[index].show = false
+      const parsed = JSON.stringify(this.notification)
+      localStorage.setItem('notifSession', parsed)
     },
   },
 }
