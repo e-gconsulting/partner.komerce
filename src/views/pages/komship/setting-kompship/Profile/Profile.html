@@ -67,7 +67,7 @@
                     style="background: white;"
                   />
                   <template #append>
-                    <b-button variant="flat-dark" class="btn-icon" size="sm" @click="openModalEdit('username')" :disabled="userData.username_change === false">
+                   <b-button variant="flat-dark" class="btn-icon" size="sm" @click="openModalEdit('username')" :disabled="userData.username_change === false">
                       <b-img
                         v-if="userData.username_change === true"
                         src="@/assets/images/icons/new-edit-icon.svg"
@@ -492,99 +492,161 @@
     hide-header
     centered
   >
-    <b-row class="pt-2 mb-2 justify-content-center">
-      <h4 class="text-black">{{ modalTitle }}</h4>
-    </b-row>
+    <validation-observer
+      ref="formRulesEdit"
+      #default="{invalid}"
+    >
+      <b-row class="pt-2 mb-2 justify-content-center">
+        <h4 class="text-black">{{ modalTitle }}</h4>
+      </b-row>
 
-    <b-row class="mb-2 justify-content-center">
-      <span class="text-black">{{ modalSubtitle }}</span>
-    </b-row>
+      <b-row class="mb-2 justify-content-center">
+        <span class="text-black">{{ modalSubtitle }}</span>
+      </b-row>
 
-    <b-row class="justify-content-center mx-2 mb-3">
-      <b-col cols="12">
-        <b-form-group
-              label-cols-md="5"
+      <b-row class="justify-content-center mx-2 mb-3">
+        <b-col cols="12">
+            <b-form-group
+                label-cols-md="5"
             >
-              <template #label>
-                <span class="text-black">
-                  {{ modalFormLabel }}
-                </span>
-              </template>
-              <validation-provider
-                #default="{errors}"
-                rules="required"
-              >
-                <b-input-group>
-                  <b-form-input
-                    v-if="modalEditFormInputType === 'number'"
-                    v-model="formInputEditItem"
-                    :type="modalEditFormInputType"
-                    @keypress="validateInputPhone"
-                    @paste="formatterPhone"
-                    @input="formatPhone"
-                    @keyup="valueFormatPhone"
-                  />
-                  <b-form-input
-                    v-if="modalEditFormInputType !== 'number'"
-                    v-model="formInputEditItem"
-                    :type="modalEditFormInputType"
-                  />
+                <template #label>
+                  <span class="text-black">
+                    {{ modalFormLabel }}
+                  </span>
+                </template>
+                <validation-provider
+                  v-if="modalEditFormInputType !== 'email'"
+                  #default="{errors}"
+                  :name="modalEditFormInputType === 'number' ? 'No HP' : modalEditFormInputType"
+                  rules="required"
+                >
+                  <b-input-group>
+                    <b-form-input
+                      v-if="modalEditFormInputType === 'number'"
+                      v-model="formInputEditItem"
+                      :type="modalEditFormInputType"
+                      :formatter="formatEditPhone"
+                      @keypress="validateInputPhone"
+                      @paste="formatterPhone"
+                      @input="formatPhone"
+                      @keyup="valueFormatPhone"
+                    />
+                    <b-form-input
+                      v-if="modalEditFormInputType !== 'number'"
+                      v-model="formInputEditItem"
+                      :type="modalEditFormInputType"
+                      :state="errors.length > 0 ? false:null"
+                    />
+                    <template
+                      v-if="modalEditFormInputType === 'password'"
+                    #append>
+                      <b-button
+                        class="btn-icon"
+                        variant="flat-dark"
+                        @click="changeEyeIcon"
+                      >
+                        <feather-icon :icon="itemEyeIcon" />
+                      </b-button>
+                    </template>
+                  </b-input-group>
+                  <small
+                    v-if="messageErrorPassword"
+                    class="text-primary"
+                  >
+                    Password salah
+                  </small>
+                  <div v-if="errorNoHp">
+                    <small class="mr-1 text-primary">
+                      *minimal 8 digit berupa angka
+                    </small>
+                  </div>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+                <validation-provider
+                  v-if="modalEditFormInputType === 'email'"
+                  #default="{errors}"
+                  :name="modalEditFormInputType"
+                  rules="required|email"
+                >
+                  <b-input-group>
+                    <b-form-input
+                      v-model="formInputEditItem"
+                      :type="modalEditFormInputType"
+                      :state="errors.length > 0 ? false:null"
+                      @input="resetMessageErrorEmail"
+                    />
+                    <template
+                      v-if="modalEditFormInputType === 'password'"
+                    #append>
+                      <b-button
+                        class="btn-icon"
+                        variant="flat-dark"
+                        @click="changeEyeIcon"
+                      >
+                        <feather-icon :icon="itemEyeIcon" />
+                      </b-button>
+                    </template>
+                  </b-input-group>
+                  <small
+                    v-if="messageErrorPassword"
+                    class="text-primary"
+                  >
+                    Password salah
+                  </small>
                   <div v-if="errorNoHp">
                     <small class="mr-1 text-primary">
                       *minimal 9 digit berupa angka
                     </small>
                   </div>
-                  <template
-                    v-if="modalEditFormInputType === 'password'"
-                  #append>
-                    <b-button
-                      class="btn-icon"
-                      variant="flat-dark"
-                      @click="changeEyeIcon"
-                    >
-                      <feather-icon :icon="itemEyeIcon" />
-                    </b-button>
-                  </template>
-                </b-input-group>
-                <small
-                  v-if="messageErrorPassword"
-                  class="text-primary"
-                >
-                  Password salah
-                </small>
-              </validation-provider>
-          </b-form-group>
+                  <small v-if="messageErrorEmail !== null" class="text-primary">
+                    {{ messageErrorEmail }}
+                  </small>
+                  <small v-if="emailSamePrevious === true" class="text-primary">
+                    Email yang dimasukan sama dengan yang sekarang, coba email yang lain
+                  </small>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+            </b-form-group>
         </b-col>
-    </b-row>
+      </b-row>
 
-    <b-row class="justify-content-end mb-2">
-      <b-button
-        class="mr-50"
-        variant="outline-primary"
-        @click="closeModalEdit"
-      >
-        Batal
-      </b-button>
-      <b-button
-        v-if="successConfirmPassword === false"
-        class="mr-2"
-        variant="primary"
-        :disabled="!formInputEditItem"
-        @click="submitEdit"
-      >
-        {{ labelSubmit }}
-      </b-button>
+      <b-row class="justify-content-end mb-2">
+        <b-button
+          class="mr-50"
+          variant="outline-primary"
+          @click="closeModalEdit"
+        >
+          Batal
+        </b-button>
+        <b-button
+          v-if="successConfirmPassword === false"
+          class="mr-2"
+          variant="primary"
+          :disabled="!formInputEditItem || invalid"
+          @click="submitEdit"
+        >
+          <b-spinner
+            v-if="loadingEdit"
+            small
+          />
+          {{ labelSubmit }}
+        </b-button>
 
-      <b-button
-        v-if="successConfirmPassword"
-        class="mr-2"
-        variant="primary"
-        :disabled="!formInputEditItem"
-        @click="submitVerification"
-      >
-        Lanjutkan Verifikasi
-      </b-button>
-    </b-row>
+        <b-button
+          v-if="successConfirmPassword"
+          class="mr-2"
+          variant="primary"
+          :disabled="!formInputEditItem || invalid"
+          @click="submitVerification"
+        >
+          <b-spinner
+            v-if="loadingEdit"
+            small
+          />
+          Lanjutkan Verifikasi
+        </b-button>
+      </b-row>
+    </validation-observer>
   </b-modal>
 
   <!-- Modal Success Edit Username -->
@@ -650,8 +712,8 @@
       <PincodeInput
         v-model="otpConfirmation"
         placeholder="0"
-        length="6"
-        autofocus="true"
+        :length="6"
+        :autofocus="true"
       />
     </b-row>
 
@@ -660,9 +722,13 @@
     </b-row>
 
     <b-row class="justify-content-center mb-1">
-      <span>
-        Kirim ulang (59)
+      <span v-if="resendOtp === false">
+        Kirim ulang ({{ countOtp }})
       </span>
+      <b-button v-if="resendOtp === true" variant="flat-primary" size="sm" @click="handleResendOtp">
+        <b-spinner v-if="loadingOtp" small />
+        Kirim ulang
+      </b-button>
     </b-row>
 
     <b-row class="justify-content-center mb-2">
