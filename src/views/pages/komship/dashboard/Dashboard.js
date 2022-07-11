@@ -661,18 +661,6 @@ export default {
         this.visibilityPin = 'password'
       }
     },
-    setColors(color) {
-      if (color === '#B6FBC9') {
-        return 'alert-success'
-      } if (color === '#FFDF82') {
-        return 'alert-warning'
-      } if (color === '#F86363') {
-        return 'alert-danger'
-      } if (color === '#BEE6FC') {
-        return 'alert-info'
-      }
-      return ''
-    },
     windowOpen(link) {
       const url = `https://${link}`
       window.open(url, '_blank')
@@ -686,7 +674,7 @@ export default {
             title: items.title,
             description: items.description,
             url_link: items.url_link,
-            color: this.setColors(items.color),
+            color: items.color,
           }))
         })
         .catch(err => console.error(err))
