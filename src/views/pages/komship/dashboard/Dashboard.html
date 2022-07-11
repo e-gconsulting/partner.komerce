@@ -1,16 +1,13 @@
 <div>
   <div v-if="!loadingOnboarding" class="container p-0">
     <div v-if="notification.length > 0">
-      <div v-for="notif in notification" :key="notif.id" class="alert p-1" :class="notif.color">
       <b-alert v-for="notif in notification" :key="notif.id" :show="notif.show" dismissible class="p-1" :class="`bg-[$notif.color]`" @dismissed="notificationSession(notif)">
-
         <span class="text-[#222222] text-[20px] font-semibold">{{ notif.title }}</span><br>
         <span class="text-[#222222] text-[16px] font-normal">
           {{ notif.description }}&nbsp;
           <a class="text-[#222222] hover:text-[#222222] font-semibold" @click="windowOpen(notif.url_link)">{{ notif.url_link }}</a>
         </span>
       </b-alert>
-      </div>
     </div>
     <div v-if="saldo < 0" class="alert alert-primary p-1">
       Kamu memiliki orderan retur yang belum lunas,
