@@ -764,9 +764,30 @@ export default
       return result
     },
     filterStatusFromBox(value) {
-      if (!this.ticketStatus.includes(value)) {
-        this.ticketStatus.push(value)
-      }
+      this.ticketStatus = []
+      this.ticketStatusItems = [
+        {
+          label: 'Perlu Tindak Lanjut',
+          value: 0,
+          onCheck: false,
+        },
+        {
+          label: 'Belum Diproses',
+          value: 1,
+          onCheck: false,
+        },
+        {
+          label: 'Sedang Diproses',
+          value: 2,
+          onCheck: false,
+        },
+        {
+          label: 'Selesai',
+          value: 3,
+          onCheck: false,
+        },
+      ]
+      this.ticketStatus.push(value)
       const findIndexObj = this.ticketStatusItems.findIndex(items => items.value === value)
       this.ticketStatusItems[findIndexObj].onCheck = true
       this.fetchTicket()
