@@ -16,7 +16,7 @@
     >
         <b-row class="mx-50 my-2 justify-content-center">
             <div
-                class="d-flex justify-content-center align-items-center mr-2 mb-1"
+                class="d-flex justify-content-center align-items-center mr-2 mb-1 btn box__content__status__0"
                 style="
                     background: #FCD4BE;
                     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
@@ -24,6 +24,7 @@
                     width: 200px;
                     height: 102px;
                 "
+                @click="filterStatusFromBox(0)"
             >
                 <div
                     class="text-center"
@@ -52,7 +53,7 @@
             </div>
 
             <div
-                class="d-flex justify-content-center align-items-center mr-2 mb-1"
+                class="d-flex justify-content-center align-items-center mr-2 mb-1 btn box__content__status__1"
                 style="
                     background: #FFEDED;
                     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
@@ -60,6 +61,7 @@
                     width: 200px;
                     height: 102px;
                 "
+                @click="filterStatusFromBox(1)"
             >
                 <div
                     class="text-center"
@@ -88,7 +90,7 @@
             </div>
 
             <div
-                class="d-flex justify-content-center align-items-center mr-2 mb-1"
+                class="d-flex justify-content-center align-items-center mr-2 mb-1 btn box__content__status__2"
                 style="
                     background: #FCEBBE;
                     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
@@ -96,6 +98,7 @@
                     width: 200px;
                     height: 102px;
                 "
+                @click="filterStatusFromBox(2)"
             >
                 <div
                     class="text-center"
@@ -124,7 +127,7 @@
             </div>
 
             <div
-                class="d-flex justify-content-center align-items-center mb-1 mr-2"
+                class="d-flex justify-content-center align-items-center mb-1 mr-2 btn box__content__status__3"
                 style="
                     background: #DCF3EB;
                     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
@@ -132,6 +135,7 @@
                     width: 200px;
                     height: 102px;
                 "
+                @click="filterStatusFromBox(3)"
             >
                 <div
                     class="text-center"
