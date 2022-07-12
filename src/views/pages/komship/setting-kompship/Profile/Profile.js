@@ -724,6 +724,10 @@ export default {
     formatEditPhone(e) {
       return String(e).substring(0, 14)
     },
+    hideCloseModalEdit() {
+      this.formInputEditItem = ''
+      this.successConfirmPassword = false
+    },
   },
 
 }
