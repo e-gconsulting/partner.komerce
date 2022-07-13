@@ -29,20 +29,12 @@
 
   gtag('config', 'AW-962459667');
 </script>
-  <script>
-    function gtag_report_conversion(url) {
-      var callback = function () {
-        if (typeof(url) != 'undefined') {
-          window.location = url;
-        }
-      };
-      gtag('event', 'conversion', {
-          'send_to': 'AW-962459667/SZsjCIe-2KYDEJPw98oD',
-          'event_callback': callback
-      });
-      return false;
-    }
-    </script>
+
+<script>
+  if (window.location.pathname === '/komship-register-berhasil') {
+    gtag('event', 'conversion', {'send_to': 'AW-962459667/SZsjCIe-2KYDEJPw98oD'});
+  }
+</script>
 </head>
 
 <body>
