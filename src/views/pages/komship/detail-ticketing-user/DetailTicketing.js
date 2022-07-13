@@ -431,7 +431,10 @@ export default {
     },
     handleSubmitChat(event) {
       if (event.keyCode === 13 && !event.shiftKey) {
-        this.storeChat()
+        event.preventDefault()
+        if (this.chatItem !== '') {
+          this.storeChat()
+        }
       }
     },
   },

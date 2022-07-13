@@ -1257,7 +1257,6 @@ export default {
               search: this.destination,
             },
           }).then(async res => {
-            console.log(res)
             if (res.data.data.data === undefined) {
               this.destination = null
             } else {
@@ -1280,7 +1279,6 @@ export default {
             this.loadingEditOrder = false
           })
           this.loadingEditOrder = false
-          console.log(this.productSelected)
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
