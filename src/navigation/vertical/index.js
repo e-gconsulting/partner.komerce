@@ -47,6 +47,7 @@ import talentPool from './talent-pool'
 import dashboardKompship from './dashboard-kompship'
 import produk from './produk'
 import order from './order'
+import gudang from './gudang'
 import pickup from './pickup'
 import customer from './customer'
 import settingKompship from './setting-kompship'
@@ -66,6 +67,8 @@ import manajemenAdmin from './manajemenAdmin'
 // Kompack Admin
 import kompackadmin from './kompack/admin'
 import kompackpartner from './kompack/partner'
+import RincianMitraGudang from '@/views/pages/kompack/admin/mitragudang/rincianmitragudang/RincianMitraGudang'
+
 
 // Array of sections
 export default [
@@ -85,6 +88,7 @@ export default [
   ...order,
   ...pickup,
   ...produk,
+  ...gudang,
   ...customer,
   ...keuangan,
   ...settingKompship,
