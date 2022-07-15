@@ -53,4 +53,13 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/Edit-Data-Produk',
+    name: 'Riwayat-Inbound',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-inbound/EditData'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
 ]
