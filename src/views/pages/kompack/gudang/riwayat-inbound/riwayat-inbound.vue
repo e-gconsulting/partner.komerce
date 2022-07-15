@@ -13,23 +13,8 @@
         />
       </b-button>
       <h4 class="my-0">
-        Data Inbound
+        Riwayat Inbound
       </h4>
-    </div>
-    <div class="d-flex mb-3 justify-content-end">
-      <b-button
-        variant="outline-primary"
-        class="px-4 mr-2 py-1 font-bolder"
-      >Semua Partner</b-button>
-      <b-button
-        variant="primary"
-        class="px-4 py-1 font-bolder"
-      >Export
-        <feather-icon
-          icon="externalLink"
-          size="2x"
-        />
-      </b-button>
     </div>
     <b-table
       small
