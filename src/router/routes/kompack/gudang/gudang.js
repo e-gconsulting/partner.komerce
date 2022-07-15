@@ -19,7 +19,7 @@ export default [
   },
   {
     path: '/Ajukan-Inbound',
-    name: 'gudangku',
+    name: 'ajukan-inbound',
     component: () => import('@/views/pages/kompack/gudang/AjukanInbound'),
     meta: {
       resource: 'Gudang',
@@ -28,8 +28,8 @@ export default [
   },
   {
     path: '/Riwayat-Inbound',
-    name: 'gudangku',
-    component: () => import('@/views/pages/kompack/partner/gudang/gudangku/gudangku'),
+    name: 'riwayat-inbound',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-inbound'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
