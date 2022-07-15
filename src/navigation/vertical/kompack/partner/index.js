@@ -7,5 +7,5 @@ export default [
     action: 'manage',
     route: 'kompack-partner-menubaru',
   },
-  
+
 ]
