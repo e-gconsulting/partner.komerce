@@ -111,7 +111,12 @@ router.beforeEach((to, _, next) => {
     return next()
   }
 
-  if (!canNavigate(to) && !isLoggedIn) {
+  if (to.name === 'success-verification-email') {
+    localStorage.clear()
+    return next()
+  }
+
+  if (!canNavigate(to) && !isLoggedIn && to.name !== 'success-verification-email') {
     // Redirect to login if not logged in
     return next({ name: 'auth-login' })
   }
