@@ -786,24 +786,40 @@ export default {
       return value
     },
     cancelPickup() {
-      this.loadingCancelPickup = true
-      this.$http_komship.put(`/v2/order/${this.profile.partner_id}/cancel/${this.idEditOrder}`)
-        .then(() => {
-          this.loadingCancelPickup = false
-          this.$refs['popup-success-cancel-pickup'].show()
-        })
-        .catch(err => {
-          this.loadingCancelPickup = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          }, 2000)
-        })
+      // eslint-disable-next-line global-require
+      const logoWarning = require('@/assets/images/icons/popup-warning.png')
+      this.$swal.fire({
+        title: 'Kamu yakin ingin<br>membatalkan Pickup ?',
+        imageUrl: logoWarning,
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        confirmButtonText: 'Oke',
+        cancelButtonText: 'Batal',
+        cancelButtonColor: '#FFFFFF',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(isConfirm => {
+        if (isConfirm.value === true) {
+          this.loadingCancelPickup = true
+          this.$http_komship.put(`/v2/order/${this.profile.partner_id}/cancel/${this.idEditOrder}`)
+            .then(() => {
+              this.loadingCancelPickup = false
+              this.$refs['popup-success-cancel-pickup'].show()
+            })
+            .catch(err => {
+              this.loadingCancelPickup = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+        }
+      })
     },
 
     // Edit Order
