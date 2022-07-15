@@ -854,7 +854,7 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { heightTransition } from '@core/mixins/ui/transition'
-import httpKomship from '../setting-kompship/http_komship'
+// import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -945,38 +945,38 @@ export default {
     this.getProduct()
   },
   methods: {
-    getProduct() {
-      this.loading = true
-      const params = {
-        status: 1,
-      }
-      if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
-      if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
-      if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
-      if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
-      if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
-      return httpKomship.get('/v1/product', {
-        params,
-      }, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        this.variantData = data
-        this.loading = false
-        return this.variantData
-      }).catch(() => {
-        this.loading = false
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal me-load produk, silahkan coba lagi!',
-            variant: 'danger',
-          },
-        })
-      })
-    },
+    // getProduct() {
+    //   this.loading = true
+    //   const params = {
+    //     status: 1,
+    //   }
+    //   if (this.searchProduct) Object.assign(params, { name: this.searchProduct })
+    //   if (this.soldFrom) Object.assign(params, { soldFrom: this.soldFrom })
+    //   if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
+    //   if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
+    //   if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
+    //   return httpKomship.get('/v1/product', {
+    //     params,
+    //   }, {
+    //     headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+    //   }).then(response => {
+    //     const { data } = response.data
+    //     this.variantData = data
+    //     this.loading = false
+    //     return this.variantData
+    //   }).catch(() => {
+    //     this.loading = false
+    //     this.$toast({
+    //       component: ToastificationContent,
+    //       props: {
+    //         title: 'Gagal',
+    //         icon: 'AlertCircleIcon',
+    //         text: 'Gagal me-load produk, silahkan coba lagi!',
+    //         variant: 'danger',
+    //       },
+    //     })
+    //   })
+    // },
     showConfirmDelete(id) {
       this.idDelete = id
       this.$refs['modal-confirm-delete-product'].show()
@@ -984,31 +984,31 @@ export default {
     closeConfirmDelete() {
       this.$refs['modal-confirm-delete-product'].hide()
     },
-    deleteProduct() {
-      httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Success',
-            icon: 'CheckIcon',
-            text: 'Success hapus produk',
-            variant: 'success',
-          },
-        })
-        this.closeConfirmDelete()
-        this.getProduct()
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal hapus produk, silahkan coba lagi!',
-            variant: 'danger',
-          },
-        })
-      })
-    },
+    // deleteProduct() {
+    //   httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+    //     this.$toast({
+    //       component: ToastificationContent,
+    //       props: {
+    //         title: 'Success',
+    //         icon: 'CheckIcon',
+    //         text: 'Success hapus produk',
+    //         variant: 'success',
+    //       },
+    //     })
+    //     this.closeConfirmDelete()
+    //     this.getProduct()
+    //   }).catch(() => {
+    //     this.$toast({
+    //       component: ToastificationContent,
+    //       props: {
+    //         title: 'Gagal',
+    //         icon: 'AlertCircleIcon',
+    //         text: 'Gagal hapus produk, silahkan coba lagi!',
+    //         variant: 'danger',
+    //       },
+    //     })
+    //   })
+    // },
     resetFilter() {
       this.name = ''
       this.stockFrom = ''
