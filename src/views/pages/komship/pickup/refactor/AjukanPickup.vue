@@ -99,29 +99,44 @@
             label-class="text-black font-weight-bold"
           >
             <b-row>
-              <b-button
-                id="popover-button-3"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="flat-dark"
-                class="btn-icon border ml-1"
+              <b-col
+                md="3"
+                class="d-flex"
               >
-                {{ timeValue }}
-              </b-button>
-              <b-popover
-                target="popover-button-3"
-                placement="bottom"
-                variant="primary"
-                triggers="focus"
-              >
-                <b-time
+                <b-form-input
                   v-model="timeValue"
-                  locale="en"
-                  hide-header
-                  :hour12="false"
-                  :show-seconds="false"
-                  @context="onChangeTime"
+                  class="text-center bg-white"
+                  readonly
                 />
-              </b-popover>
+                <div class="ml-1">
+                  <b-icon-chevron-up
+                    role="button"
+                    @click="pickTime('plus')"
+                  /><br>
+                  <b-icon-chevron-down
+                    role="button"
+                    @click="pickTime('minus')"
+                  />
+                </div>
+                <b-img
+                  id="infoHours"
+                  src="@/assets/images/icons/info-circle.svg"
+                  class="ml-1 cursor-pointer"
+                />
+                <b-popover
+                  target="infoHours"
+                  triggers="hover"
+                  custom-class="bg-primary"
+                >
+                  <ul
+                    class="text-white text-sm"
+                    style="list-style-type:disc;margin-left:15px"
+                  >
+                    <li>Jam operasional pickup dari 9 pagi s.d 9 malam</li>
+                    <li>Pilih jam pickup >1 jam dari waktu saat ini</li>
+                  </ul>
+                </b-popover>
+              </b-col>
             </b-row>
             <small
               v-if="isNotCorrectTime && isNotCorrectDate"
@@ -804,6 +819,7 @@ import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { toInteger } from 'lodash'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
@@ -826,8 +842,6 @@ export default {
     BContainer,
     flatPickr,
     LottieAnimation,
-    BTime,
-    BPopover,
     BOverlay,
   },
   directives: {
@@ -842,7 +856,7 @@ export default {
       dateLabel: '',
 
       timeValueText: '09 : 00',
-      timeValue: moment().format('HH:mm'),
+      timeValue: moment().format('HH:00'),
       isNotCorrectTime: true,
       isNotCorrectDate: true,
       profile: null,
@@ -1241,6 +1255,25 @@ export default {
     },
     showAlertSubmitPickup() {
       this.$refs['modal-alert-submit-pickup'].show()
+    },
+    pickTime(method) {
+      const getHours = this.timeValue.substring(0, 2)
+      let hours = toInteger(getHours)
+      if (method === 'plus') {
+        if (hours === 23) {
+          hours = 0
+        } else {
+          hours += 1
+        }
+      }
+      if (method === 'minus') {
+        if (hours === 0) {
+          hours = 23
+        } else {
+          hours -= 1
+        }
+      }
+      this.timeValue = hours
     },
   },
 }

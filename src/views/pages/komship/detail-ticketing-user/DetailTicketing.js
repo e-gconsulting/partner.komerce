@@ -1,6 +1,10 @@
 /* eslint-disable import/no-unresolved */
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
+  VBToggle,
+} from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
+import {
   getMessaging,
   getToken,
   onMessage,
@@ -68,7 +72,13 @@ export default {
       userId: JSON.parse(localStorage.userData),
       detailOrderMode: false,
       orderId: 0,
+
+      visible: false,
     }
+  },
+  directives: {
+    'b-toggle': VBToggle,
+    Ripple,
   },
   created() {
     this.receiveMessage()
@@ -418,6 +428,14 @@ export default {
           },
         }, 2000)
       })
+    },
+    handleSubmitChat(event) {
+      if (event.keyCode === 13 && !event.shiftKey) {
+        event.preventDefault()
+        if (this.chatItem !== '') {
+          this.storeChat()
+        }
+      }
     },
   },
 }

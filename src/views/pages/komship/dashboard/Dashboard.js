@@ -149,6 +149,7 @@ export default {
       dataProfile: true,
 
       perluTindakLanjut: 0,
+      notification: null,
     }
   },
   computed: {
@@ -178,8 +179,8 @@ export default {
     ]),
     ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
   },
-  mounted() {
-    this.$http_komship
+  async mounted() {
+    await this.$http_komship
       .post('v1/my-profile', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
@@ -194,6 +195,18 @@ export default {
           }
         }
       })
+    if (localStorage.getItem('notifSession')) {
+      try {
+        this.notification = JSON.parse(
+          localStorage.getItem('notifSession'),
+        )
+      } catch (e) {
+        localStorage.removeItem('notifSession')
+        this.checkNotification()
+      }
+    } else {
+      await this.checkNotification()
+    }
   },
   beforeMount() {
     this.$store.dispatch('dashboard/init')
@@ -658,6 +671,31 @@ export default {
       } else {
         this.visibilityPin = 'password'
       }
+    },
+    windowOpen(link) {
+      const url = `https://${link}`
+      window.open(url, '_blank')
+    },
+    async checkNotification() {
+      await this.$http_komship.get('/v1/partner/notification-bar')
+        .then(result => {
+          const { data } = result.data
+          this.notification = data.map(items => ({
+            id: items.id,
+            title: items.title,
+            description: items.description,
+            url_link: items.url_link,
+            color: items.color,
+            show: true,
+          }))
+        })
+        .catch(err => console.error(err))
+    },
+    notificationSession(value) {
+      const index = this.notification.findIndex(items => items.id === value.id)
+      this.notification[index].show = false
+      const parsed = JSON.stringify(this.notification)
+      localStorage.setItem('notifSession', parsed)
     },
   },
 }

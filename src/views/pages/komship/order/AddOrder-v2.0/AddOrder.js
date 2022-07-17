@@ -1315,7 +1315,7 @@ export default {
     formatAddressDetail(e) {
       return String(e).substring(0, 185)
     },
-    formatPhoneCustomer() {
+    formatPhoneCustomer: _.debounce(function () {
       if (this.customerPhone.length < 9) {
         this.messageErrorPhone = true
       } else {
@@ -1325,7 +1325,8 @@ export default {
         this.customerPhone = this.customerPhonePaste
       }
       this.customerPhonePasteMode = false
-    },
+      this.checkWhatsapp()
+    }, 1000),
     validateInputCustomerName(e) {
       if (
         e.keyCode === 47
@@ -1396,10 +1397,12 @@ export default {
         .then(res => {
           const { data } = res.data
           this.isWhatsapp = data
+          this.messageErrorPhone = false
         })
         .catch(error => {
           const { data } = error.response.data
           this.isWhatsapp = data
+          this.messageErrorPhone = false
         })
     },
   },

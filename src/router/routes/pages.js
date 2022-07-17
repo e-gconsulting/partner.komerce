@@ -107,4 +107,13 @@ export default [
       resource: 'Auth',
     },
   },
+  {
+    path: '/success-verification-email',
+    name: 'success-verification-email',
+    component: () => import('@/views/pages/authentication/SuccessVerificationEmail'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
 ]

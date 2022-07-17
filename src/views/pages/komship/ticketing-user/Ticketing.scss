@@ -1,5 +1,21 @@
 @import '~@core/scss/vue/libs/vue-select.scss';
 
+[dir] .box__content__status__0:hover {
+  background: #f29d70!important;
+}
+
+[dir] .box__content__status__1:hover {
+  background: #efd9d9!important;
+}
+
+[dir] .box__content__status__2:hover {
+  background: #efdfb6!important;
+}
+
+[dir] .box__content__status__3:hover {
+  background: #ace0ce!important;
+}
+
 .sk-circle {
     margin: 30px auto;
     width: 100px;
