@@ -810,10 +810,18 @@ export default {
         this.listAwb += `<span class="font-bold">${items.desc}</span>`
         this.listAwb += '</div><br>'
         if (items.send_wa === 1) {
-          this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-          this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-          this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
-          this.listAwb += '</div>'
+          if (items.type === 'sending') {
+            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
+            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
+            this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
+            this.listAwb += '</div>'
+          }
+          if (items.type === 'arrived') {
+            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
+            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
+            this.listAwb += '<span class="my-auto" style="margin-left:6px">Info paket COD hampir sampai telah terkirim ke WA Pelanggan</span>'
+            this.listAwb += '</div>'
+          }
         }
       })
     },
