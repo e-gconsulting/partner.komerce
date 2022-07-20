@@ -21,13 +21,13 @@
         @click="$bvModal.hide('bv-modal-cek-resi')"
       >
     </div>
-    <b-row class="my-8 overflow-auto h-50">
+    <b-row class="my-8 overflow-auto">
       <div
         v-if="itemAwbs.length > 0"
       >
         <div
           class="px-1"
-          style="max-height: 80vh;width: 100%;"
+          :style="handleCloseModalResi === true ? 'max-height: 80vh;width: 100%;' : 'max-height: 35vh;width: 100%;'"
           v-html="listAwbs"
         />
       </div>

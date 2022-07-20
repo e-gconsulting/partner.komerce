@@ -109,6 +109,7 @@ export default {
       scrollToBottom(theElement)
     }
     this.readChat()
+    console.log(this.$route)
   },
   methods: {
     fetchDetailTicket() {
