@@ -540,5 +540,8 @@ export default {
     formatRupiah(x) {
       return `Rp ${this.formatRibuan(x)}`
     },
+    goBack() {
+      window.close()
+    },
   },
 }

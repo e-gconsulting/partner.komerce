@@ -4,8 +4,7 @@
                 variant="primary"
                 class="btn-icon mr-1 ml-2"
                 size="sm"
-                tag="router-link"
-                :to="{ name: $route.meta.routeTicket, params: { filter_status: $route.params.data_ticket } }"
+                @click="goBack"
             >
                 <feather-icon
                     icon="ChevronLeftIcon"
