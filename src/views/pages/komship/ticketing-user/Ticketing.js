@@ -452,7 +452,8 @@ export default
       this.$refs['popup-success-create-ticket'].hide()
     },
     onRowSelected(data) {
-      this.$router.push({ path: `/ticketing/detail/${data[0].id}`, params: { data_ticket: data } })
+      const routeData = this.$router.resolve({ path: `/ticketing/detail/${data[0].id}`, params: { data_ticket: data } })
+      window.open(routeData.href, '_blank')
     },
     cekResi(search, loading) {
       if (search.length) {
