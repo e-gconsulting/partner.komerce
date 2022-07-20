@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   BModal,
@@ -31,6 +32,7 @@ export default {
       orderMassal: null,
       mutationBank: null,
       customLabel: null,
+      notifWA: null,
       isGetting: false,
       isNotSetActive: true,
 
@@ -66,10 +68,12 @@ export default {
       httpKomship2.post('v1/my-profile')
         .then(res => {
           this.profile = res.data.data
+          console.log(res.data.data)
           this.quickType = res.data.data.partner_is_allowed_edit
           this.mutationBank = res.data.data.partner_is_mutation_bank
           this.customLabel = res.data.data.partner_is_custom_label
           this.orderMassal = res.data.data.partner_is_mass_order
+          this.notifWA = res.data.data.partner_is_notification_whatsapp
           this.isGetting = true
           this.getCustomLabel()
         })
@@ -158,6 +162,53 @@ export default {
               },
             }, 2000)
           })
+      }
+    },
+    setNotifWa() {
+      const post = () => {
+        this.$http_komship.post('/v1/setting/isNotificationWhatsapp', {
+          is_nofitication_whatsapp: this.notifWA ? '1' : '0',
+        }).then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: `Notif Whatsapp Berhasil ${this.notifWA ? 'Diaktifkan' : 'Dinonaktifkan'}`,
+              variant: 'success',
+            },
+          }, 2000)
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: `Gagal ${this.notifWA ? 'Mengaktifkan' : 'Menonaktikan'} Notif Whatsapp`,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+      }
+      if (this.notifWA) {
+        this.$swal({
+          html: '<span>Notif WA ini menggunakan <b>No. WA</b> Komship dan akan otomatis mengiriman reminder bahwa paket telah berangkat dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><br><br>Fitur ini GRATIS. Kamu yakin mau aktifin?</span>',
+          imageUrl: require('@/assets/images/icons/warning.svg'),
+          confirmButtonText: 'Ya, Aktifkan',
+          confirmButtonClass: 'btn btn-primary',
+          showCancelButton: true,
+          cancelButtonText: 'Batal',
+          cancelButtonColor: '#FFFFFF',
+          cancelButtonClass: 'btn btn-outline-primary text-primary',
+        }).then(response => {
+          if (response.isConfirmed) {
+            post()
+          } else {
+            this.notifWA = false
+          }
+        })
+      } else {
+        post()
       }
     },
     handleNotActiveCustomLabel() {

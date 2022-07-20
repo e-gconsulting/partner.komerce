@@ -51,7 +51,7 @@
         </b-row>
     </div>
 
-    <div class="p-1" style="border:1px solid #E2E2E2;border-radius:16px">
+    <div class="p-1 mb-2" style="border:1px solid #E2E2E2;border-radius:16px">
       <h4 class="m-1 mb-1 font-bold text-black">Pickup & Label</h4>
       <b-row>
           <b-col v-if="isGetting" md="4">
@@ -77,6 +77,27 @@
                           Sesuaikan
                       </b-button>
                   </b-row>
+              </b-card>
+          </b-col>
+      </b-row>
+  </div>
+
+    <div class="p-1" style="border:1px solid #E2E2E2;border-radius:16px">
+      <h4 class="m-1 mb-1 font-bold text-black">COD</h4>
+      <b-row>
+          <b-col v-if="isGetting" md="4">
+              <b-card img-src="@/assets/images/banner/notif-wa.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="notif-wa" img-top>
+                  <b-card-title class="d-flex justify-between">
+                      <span class="font-bold text-primary">Notif Whatsapp</span>
+                      <b-form-checkbox
+                          v-model="notifWA"
+                          switch
+                          @input="setNotifWa()"
+                      />
+                  </b-card-title>
+                  <b-card-text>
+                    Notif WA dari Komship yang akan dikirim saat paket berangkat dan mendekati kota customer
+                  </b-card-text>
               </b-card>
           </b-col>
       </b-row>
