@@ -546,7 +546,8 @@ export default {
     },
     openTicketing(value) {
       if (value !== null) {
-        this.$router.push(`/ticketing/detail/${value}`)
+        const routeData = this.$router.resolve({ path: `/ticketing/detail/${value}` })
+        window.open(routeData.href, '_blank')
       }
     },
   },
