@@ -1,9 +1,12 @@
+/* eslint-disable global-require */
 /* eslint-disable import/no-unresolved */
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   VBToggle,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
+import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import {
   getMessaging,
   getToken,
@@ -37,6 +40,10 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 
 export default {
+  components: {
+    PopoverInfo,
+    PopupLacakResi,
+  },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
@@ -67,13 +74,20 @@ export default {
 
       // cancel ticket
       loadingCancelTicket: false,
-      moment,
 
       userId: JSON.parse(localStorage.userData),
       detailOrderMode: false,
       orderId: 0,
 
       visible: false,
+
+      orderData: [],
+      itemAwb: [],
+      listAwb: '',
+      moment,
+
+      transactionValue: '',
+      isLoading: false,
     }
   },
   directives: {
@@ -114,6 +128,7 @@ export default {
           this.messages = data.history_ticket
           this.orderId = data.order_id
           this.loadingDataDetail = false
+          this.fetchDataResi()
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
             const scrollToBottom = node => {
@@ -436,6 +451,85 @@ export default {
           this.storeChat()
         }
       }
+    },
+    async fetchDataResi() {
+      try {
+        const order = await this.$http_komship.get(`v1/order/${this.userId.partner_detail.id}/detail/${this.orderId}`)
+        const { data } = await order.data
+        this.transactionValue = data.old_grandtotal
+        this.orderData = await data
+        this.getHistoryPackage()
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+        this.loadingDetailOrder = false
+      }
+    },
+    async getHistoryPackage() {
+      this.isLoading = true
+      const body = {
+        data: this.orderData.airway_bill,
+      }
+      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
+        const { data } = res.data
+        this.itemAwb = data.history
+        this.isLoading = false
+        this.getElementAwb()
+      }).catch(err => {
+        this.isLoading = false
+      })
+    },
+    getElementAwb() {
+      const formatDate = date => {
+        const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
+        const day = moment(date).format('DD')
+        const month = moment(date).format('M')
+        const year = moment(date).format('YYYY')
+        const time = moment(date).format('HH.mm')
+        return `${day} ${monthName[month - 1]} ${year} - ${time}`
+      }
+      this.listAwb = ''
+      this.itemAwb.forEach(items => {
+        this.listAwb += '<div class="icon-awb d-inline-block">'
+        if (items.status === 'Pickup') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-pickup.svg')}">`
+        } else if (items.status === 'Process') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-kirim.svg')}">`
+        } else if (items.status === 'Problem') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
+        } else if (items.status === 'Delivered') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
+        } else if (items.status === 'Retur') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
+        }
+        this.listAwb += '</div>'
+        this.listAwb += '<div style="font-size: 16px;display: inline-block;">'
+        this.listAwb += `<span>${formatDate(items.date)}</span><br>`
+        this.listAwb += `<span class="font-bold">${items.desc}</span>`
+        this.listAwb += '</div><br>'
+        if (items.send_wa === 1) {
+          this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
+          this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
+          this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
+          this.listAwb += '</div>'
+        }
+      })
+    },
+    formatRibuan(x) {
+      if (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
+      return x
+    },
+    formatRupiah(x) {
+      return `Rp ${this.formatRibuan(x)}`
     },
   },
 }

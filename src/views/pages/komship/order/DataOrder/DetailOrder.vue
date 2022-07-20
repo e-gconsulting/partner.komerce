@@ -241,7 +241,7 @@
               <b-col class="d-flex justify-content-end">
                 <button
                   class="btn btn-outline-primary"
-                  @click="lacakresi()"
+                  @click="lacakresi"
                 >
                   Lacak resi
                 </button>
@@ -252,55 +252,13 @@
                   hide-header
                   hide-footer
                 >
-                  <div
-                    class="d-flex justify-between"
-                  >
-                    <div class="d-flex">
-                      <span
-                        class="font-bold my-auto"
-                        style="font-size: 20px;"
-                      >Riwayat Perjalanan</span>
-                      <img
-                        :src="orderData.shipment_image_path"
-                        style="height: 45px"
-                      >
-                    </div>
-                    <img
-                      src="@/assets/images/icons/close-circle.svg"
-                      style="cursor:pointer"
-                      @click="$bvModal.hide('bv-modal-cek-resi')"
-                    >
-                  </div>
-                  <b-row class="my-8 overflow-auto h-50">
-                    <div
-                      v-if="itemAwb.length > 0"
-                    >
-                      <div
-                        class="px-1"
-                        style="max-height: 80vh;width: 100%;"
-                        v-html="listAwb"
-                      />
-                    </div>
-                    <b-col v-else>
-                      <div
-                        v-if="isLoading===false"
-                        class="d-block mt-5 mb-5 align-content-center text-center"
-                      >
-                        Data riwayat perjalan tidak ditemukan. <b>Bisa jadi</b> sudah request pickup/dijemput kurir saat pickup namun <b>belum discan</b> QR code untuk memulai perjalanan di kantor cabang. Harap menunggu
-                      </div>
-                      <div
-                        v-if="isLoading===true"
-                        class="d-block mt-5 mb-5 align-content-center text-center"
-                      >
-                        <div
-                          class="spinner-border text-primary"
-                          role="status"
-                        >
-                          <span class="sr-only">Loading...</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
+                  <popup-lacak-resi
+                    :item-awbs="itemAwb"
+                    :loading="isLoading"
+                    :order-datas="orderData"
+                    :list-awbs="listAwb"
+                    :handle-close-modal-resi="true"
+                  />
                 </b-modal>
               </b-col>
             </b-row>
@@ -583,12 +541,13 @@ import {
 } from 'bootstrap-vue'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
 import EditOrder from '../EditOrder/EditOrder.vue'
 import httpKomship2 from '../../setting-kompship/http_komship2'
 
 export default {
   components: {
-    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder, BBadge, BImg,
+    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder, BBadge, BImg, PopupLacakResi,
   },
   directives: { VBModal },
   data() {
@@ -596,6 +555,7 @@ export default {
       profile: {},
       orderData: [],
       statusOrder: null,
+      statusOrderMobile: null,
       fieldOrder: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
@@ -630,17 +590,6 @@ export default {
     this.idEditOrder = this.$route.params.order_id
   },
   methods: {
-    lacakresi() {
-      this.isLoading = true
-      const modal = new Promise((resolve, reject) => {
-        this.$refs['bv-modal-cek-resi'].show()
-        resolve(true)
-      })
-
-      modal.then(() => {
-        this.getHistoryPackage()
-      })
-    },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
       const validDate = moment(date)
@@ -686,19 +635,6 @@ export default {
         }, 2000)
         this.loadingDetailOrder = false
       }
-    },
-    async getHistoryPackage() {
-      const body = {
-        data: this.orderData.airway_bill,
-      }
-      await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
-        const { data } = res.data
-        this.itemAwb = data.history
-        this.isLoading = false
-        this.getElementAwb()
-      }).catch(err => {
-        this.isLoading = false
-      })
     },
     setAlertMobile(status) {
       if (status === 'Diajukan') {
@@ -821,13 +757,29 @@ export default {
         }
       })
     },
+    lacakresi() {
+      this.isLoading = true
+      const modal = new Promise((resolve, reject) => {
+        this.$bvModal.show('bv-modal-cek-resi')
+        resolve(true)
+      })
 
-    // Edit Order
-    changeEditMode() {
-      this.editMode = true
+      modal.then(() => {
+        this.getHistoryPackage()
+      })
     },
-    applyUpdateEditMode() {
-      this.editMode = false
+    async getHistoryPackage() {
+      const body = {
+        data: this.orderData.airway_bill,
+      }
+      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
+        const { data } = res.data
+        this.itemAwb = data.history
+        this.isLoading = false
+        this.getElementAwb()
+      }).catch(err => {
+        this.isLoading = false
+      })
     },
     getElementAwb() {
       const formatDate = date => {
@@ -864,6 +816,14 @@ export default {
           this.listAwb += '</div>'
         }
       })
+    },
+
+    // Edit Order
+    changeEditMode() {
+      this.editMode = true
+    },
+    applyUpdateEditMode() {
+      this.editMode = false
     },
   },
 }
