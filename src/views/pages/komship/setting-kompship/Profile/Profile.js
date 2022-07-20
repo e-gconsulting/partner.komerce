@@ -85,7 +85,8 @@ export default {
 
       fieldLogoBusiness: [],
 
-      cityCode: '',
+      cityCode: null,
+      cityCodeValue: null,
 
       // Validation
       required,
@@ -182,8 +183,8 @@ export default {
           formData.append('business_type_id', this.typeBusiness)
           formData.append('business_location', String(this.address))
           formData.append('email', this.emailUser)
-          if (this.cityCode !== null && this.cityCode.length < 6) {
-            formData.append('city_code', this.cityCode)
+          if (this.cityCodeValue !== null) {
+            formData.append('city_code', this.cityCodeValue)
           }
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
@@ -727,6 +728,10 @@ export default {
     hideCloseModalEdit() {
       this.formInputEditItem = ''
       this.successConfirmPassword = false
+    },
+    handleValueCityCode() {
+      console.log(this.cityCode)
+      this.cityCodeValue = this.cityCode.city_code
     },
   },
 

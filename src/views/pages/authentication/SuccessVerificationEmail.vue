@@ -11,7 +11,7 @@
       </h4>
       <div class="mb-2">
         <span>
-          Kami telah mengkonfirmasi  danirizky12@gmail.com sebagai alamat email untuk Akun Komerce kamu
+          Kami telah mengkonfirmasi {{ email }} sebagai alamat email untuk Akun Komerce kamu
         </span>
       </div>
       <b-button
@@ -37,6 +37,15 @@ export default {
     BButton,
     BRow,
     BCol,
+  },
+  data() {
+    return {
+      email: '',
+    }
+  },
+  mounted() {
+    console.log(this.$router.history.current.query.email)
+    this.email = this.$router.history.current.query.email
   },
 }
 </script>

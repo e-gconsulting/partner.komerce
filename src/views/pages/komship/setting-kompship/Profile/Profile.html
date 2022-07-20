@@ -401,9 +401,9 @@
                 <v-select
                   v-model="cityCode"
                   :options="provinceItems"
-                  :reduce="option => option.city_code"
                   label="values"
                   :state="errors.length > 0 ? false:null"
+                  @input="handleValueCityCode"
                   @search="onSearchProvince"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
