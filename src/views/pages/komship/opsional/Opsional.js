@@ -192,7 +192,7 @@ export default {
       }
       if (this.notifWA) {
         this.$swal({
-          html: '<span>Notif WA ini menggunakan <b>No. WA</b> Komship dan akan otomatis mengiriman reminder bahwa paket telah berangkat dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><br><br>Fitur ini GRATIS. Kamu yakin mau aktifin?</span>',
+          html: '<span>Notif WA ini menggunakan <b>No. WA Komship</b> dan akan otomatis mengiriman reminder bahwa paket telah berangkat dan notif kedua ketika paket <b>tiba di dekat kota customer.</b><br><br>Fitur ini GRATIS. Kamu yakin mau aktifin?</span>',
           imageUrl: require('@/assets/images/icons/warning.svg'),
           confirmButtonText: 'Ya, Aktifkan',
           confirmButtonClass: 'btn btn-primary',
