@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import CodeInput from 'vue-verification-code-input'
 import { mapState, mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
@@ -696,6 +697,10 @@ export default {
       this.notification[index].show = false
       const parsed = JSON.stringify(this.notification)
       localStorage.setItem('notifSession', parsed)
+    },
+    errorImage(e) {
+      e.target.src = require('@/assets/images/avatars/image-null.png')
+      console.log(e.target)
     },
   },
 }
