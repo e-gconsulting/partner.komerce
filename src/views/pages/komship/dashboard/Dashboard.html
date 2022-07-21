@@ -451,17 +451,16 @@
                   >
                     <div class="d-flex align-items-center">
                       <img
-                        v-if="produkTerlaris.photo !== null || produkTerlaris.photo !== ''"
-                        width="50px"
-                        class="img-fluid"
-                        :src="produkTerlaris.photo"
-                        alt="Photo"
-                      />
-                      <img
-                        v-else
+                        v-if="produkTerlaris.photo === null || produkTerlaris.photo === ''"
                         :src="require('@/assets/images/avatars/image-null.png')"
                         class="image-product"
                       >
+                      <img
+                        v-else
+                        width="50px"
+                        class="img-fluid"
+                        :src="produkTerlaris.photo"
+                      />
                       <div>
                         <p class="list-text-1 h-text-dark ml-2 mb-0">
                           {{ produkTerlaris.name }}
