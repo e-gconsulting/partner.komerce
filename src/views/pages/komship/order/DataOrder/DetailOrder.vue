@@ -253,11 +253,10 @@
                   hide-footer
                 >
                   <popup-lacak-resi
-                    :item-awbs="itemAwb"
-                    :loading="isLoading"
+                    ref="modalLacakResi"
                     :order-datas="orderData"
-                    :list-awbs="listAwb"
                     :handle-close-modal-resi="true"
+                    :promise-modal="valuePromiseModal"
                   />
                 </b-modal>
               </b-col>
@@ -578,6 +577,8 @@ export default {
       editBy: null,
       editDate: null,
       listAwb: '',
+
+      valuePromiseModal: null,
     }
   },
   async created() {
@@ -757,74 +758,6 @@ export default {
         }
       })
     },
-    lacakresi() {
-      this.isLoading = true
-      const modal = new Promise((resolve, reject) => {
-        this.$bvModal.show('bv-modal-cek-resi')
-        resolve(true)
-      })
-
-      modal.then(() => {
-        this.getHistoryPackage()
-      })
-    },
-    async getHistoryPackage() {
-      const body = {
-        data: this.orderData.airway_bill,
-      }
-      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
-        const { data } = res.data
-        this.itemAwb = data.history
-        this.isLoading = false
-        this.getElementAwb()
-      }).catch(err => {
-        this.isLoading = false
-      })
-    },
-    getElementAwb() {
-      const formatDate = date => {
-        const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-        const day = moment(date).format('DD')
-        const month = moment(date).format('M')
-        const year = moment(date).format('YYYY')
-        const time = moment(date).format('HH.mm')
-        return `${day} ${monthName[month - 1]} ${year} - ${time}`
-      }
-      this.listAwb = ''
-      this.itemAwb.forEach(items => {
-        this.listAwb += '<div class="icon-awb d-inline-block">'
-        if (items.status === 'Pickup') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-pickup.svg')}">`
-        } else if (items.status === 'Process') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-kirim.svg')}">`
-        } else if (items.status === 'Problem') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
-        } else if (items.status === 'Delivered') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
-        } else if (items.status === 'Retur') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
-        }
-        this.listAwb += '</div>'
-        this.listAwb += '<div style="font-size: 16px;display: inline-block;">'
-        this.listAwb += `<span>${formatDate(items.date)}</span><br>`
-        this.listAwb += `<span class="font-bold">${items.desc}</span>`
-        this.listAwb += '</div><br>'
-        if (items.send_wa === 1) {
-          if (items.type === 'sending') {
-            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-            this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
-            this.listAwb += '</div>'
-          }
-          if (items.type === 'arrived') {
-            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-            this.listAwb += '<span class="my-auto" style="margin-left:6px">Info paket COD hampir sampai telah terkirim ke WA Pelanggan</span>'
-            this.listAwb += '</div>'
-          }
-        }
-      })
-    },
 
     // Edit Order
     changeEditMode() {
@@ -832,6 +765,12 @@ export default {
     },
     applyUpdateEditMode() {
       this.editMode = false
+    },
+    lacakresi() {
+      this.valuePromiseModal = new Promise((resolve, reject) => {
+        this.$bvModal.show('bv-modal-cek-resi')
+        resolve(true)
+      })
     },
   },
 }
