@@ -60,6 +60,7 @@ import {
   VBModal,
 } from 'bootstrap-vue'
 import moment from 'moment'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   directives: { VBModal },
@@ -70,6 +71,8 @@ export default {
     handleCloseModalResi: Boolean,
     // eslint-disable-next-line vue/require-default-prop
     promiseModal: null,
+    // eslint-disable-next-line vue/require-default-prop
+    orderId: null,
   },
   data() {
     return {
@@ -77,7 +80,30 @@ export default {
 
       listAwb: '',
       itemAwb: [],
+      profile: this.$store.state?.auth?.userData,
     }
+  },
+  watch: {
+    async orderId(newVal, oldVal) {
+      try {
+        const order = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}/detail/${this.orderId}`)
+        const { data } = await order.data
+        this.transactionValue = data.old_grandtotal
+        this.orderDatas = await data
+        console.log(this.orderDatas)
+        await this.lacakresi()
+      } catch (err) {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+      }
+    },
   },
   mounted() {
     this.lacakresi()
@@ -86,22 +112,28 @@ export default {
     lacakresi() {
       this.isLoading = true
 
-      this.promiseModal.then(() => {
+      if (this.handleCloseModalResi === true) {
+        this.promiseModal.then(() => {
+          this.getHistoryPackage()
+        })
+      } else {
         this.getHistoryPackage()
-      })
+      }
     },
     async getHistoryPackage() {
-      const body = {
-        data: this.orderDatas.airway_bill,
+      if (this.orderDatas !== []) {
+        const body = {
+          data: this.orderDatas.airway_bill,
+        }
+        await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
+          const { data } = res.data
+          this.itemAwb = data.history
+          this.isLoading = false
+          this.getElementAwb()
+        }).catch(err => {
+          this.isLoading = false
+        })
       }
-      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
-        const { data } = res.data
-        this.itemAwb = data.history
-        this.isLoading = false
-        this.getElementAwb()
-      }).catch(err => {
-        this.isLoading = false
-      })
     },
     getElementAwb() {
       const formatDate = date => {
