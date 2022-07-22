@@ -416,6 +416,7 @@ export default {
     closeModalEdit() {
       this.formInputEditItem = ''
       this.successConfirmPassword = false
+      this.messageErrorUsernameIsSame = false
       this.$refs['modal-edit'].hide()
     },
     closeSuccessEditUsername() {
@@ -518,6 +519,7 @@ export default {
             if (err.response.data.data.check_password === false) {
               this.successConfirmPassword = false
               this.messageErrorPassword = true
+              this.loadingEdit = false
             } else {
               this.$toast({
                 component: ToastificationContent,
@@ -692,6 +694,7 @@ export default {
       }
     },
     resetMessageErrorEmail() {
+      this.messageErrorPassword = false
       this.messageErrorEmail = null
       this.emailSamePrevious = false
     },
@@ -737,10 +740,10 @@ export default {
     },
     hideCloseModalEdit() {
       this.formInputEditItem = ''
+      this.messageErrorUsernameIsSame = false
       this.successConfirmPassword = false
     },
     handleValueCityCode() {
-      console.log(this.cityCode)
       this.cityCodeValue = this.cityCode.city_code
     },
     handleEnter(e) {
@@ -749,6 +752,7 @@ export default {
       }
     },
     handleMessageErrorUsernameIsSame() {
+      this.messageErrorPassword = false
       this.messageErrorUsernameIsSame = false
     },
   },

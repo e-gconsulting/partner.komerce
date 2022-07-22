@@ -559,18 +559,22 @@
                       </b-button>
                     </template>
                   </b-input-group>
-                  <small
-                    v-if="messageErrorPassword"
-                    class="text-primary"
-                  >
-                    Password salah
-                  </small>
-                  <small
-                    v-if="messageErrorUsernameIsSame"
-                    class="text-primary"
-                  >
-                    Username tidak boleh sama dengan saat ini
-                  </small>
+                  <b-row>
+                    <small
+                      v-if="messageErrorPassword"
+                      class="text-primary"
+                    >
+                      Password salah
+                    </small>
+                  </b-row>
+                  <b-row>
+                    <small
+                      v-if="messageErrorUsernameIsSame"
+                      class="text-primary"
+                    >
+                      Username tidak boleh sama dengan saat ini
+                    </small>
+                  </b-row>
                   <div v-if="errorNoHp">
                     <small class="mr-1 text-primary">
                       *minimal 8 digit berupa angka
@@ -603,23 +607,29 @@
                       </b-button>
                     </template>
                   </b-input-group>
-                  <small
-                    v-if="messageErrorPassword"
-                    class="text-primary"
-                  >
-                    Password salah
-                  </small>
+                  <b-row>
+                    <small
+                      v-if="messageErrorPassword"
+                      class="text-primary"
+                    >
+                      Password salah
+                    </small>
+                  </b-row>
                   <div v-if="errorNoHp">
                     <small class="mr-1 text-primary">
                       *minimal 9 digit berupa angka
                     </small>
                   </div>
-                  <small v-if="messageErrorEmail !== null" class="text-primary">
-                    {{ messageErrorEmail }}
-                  </small>
-                  <small v-if="emailSamePrevious === true" class="text-primary">
-                    Email yang dimasukan sama dengan yang sekarang, coba email yang lain
-                  </small>
+                  <b-row>
+                    <small v-if="messageErrorEmail !== null" class="text-primary">
+                      {{ messageErrorEmail }}
+                    </small>
+                  </b-row>
+                  <b-row>
+                    <small v-if="emailSamePrevious === true" class="text-primary">
+                      Email yang dimasukan sama dengan yang sekarang, coba email yang lain
+                    </small>
+                  </b-row>
                   <small class="text-danger">{{ errors[0] }}</small>
                 </validation-provider>
             </b-form-group>
