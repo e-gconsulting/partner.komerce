@@ -698,9 +698,5 @@ export default {
       const parsed = JSON.stringify(this.notification)
       localStorage.setItem('notifSession', parsed)
     },
-    errorImage(e) {
-      e.target.src = require('@/assets/images/avatars/image-null.png')
-      console.log(e.target)
-    },
   },
 }
