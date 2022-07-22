@@ -241,7 +241,7 @@
               <b-col class="d-flex justify-content-end">
                 <button
                   class="btn btn-outline-primary"
-                  @click="lacakresi()"
+                  @click="lacakresi"
                 >
                   Lacak resi
                 </button>
@@ -252,55 +252,12 @@
                   hide-header
                   hide-footer
                 >
-                  <div
-                    class="d-flex justify-between"
-                  >
-                    <div class="d-flex">
-                      <span
-                        class="font-bold my-auto"
-                        style="font-size: 20px;"
-                      >Riwayat Perjalanan</span>
-                      <img
-                        :src="orderData.shipment_image_path"
-                        style="height: 45px"
-                      >
-                    </div>
-                    <img
-                      src="@/assets/images/icons/close-circle.svg"
-                      style="cursor:pointer"
-                      @click="$bvModal.hide('bv-modal-cek-resi')"
-                    >
-                  </div>
-                  <b-row class="my-8 overflow-auto h-50">
-                    <div
-                      v-if="itemAwb.length > 0"
-                    >
-                      <div
-                        class="px-1"
-                        style="max-height: 80vh;width: 100%;"
-                        v-html="listAwb"
-                      />
-                    </div>
-                    <b-col v-else>
-                      <div
-                        v-if="isLoading===false"
-                        class="d-block mt-5 mb-5 align-content-center text-center"
-                      >
-                        Data riwayat perjalan tidak ditemukan. <b>Bisa jadi</b> sudah request pickup/dijemput kurir saat pickup namun <b>belum discan</b> QR code untuk memulai perjalanan di kantor cabang. Harap menunggu
-                      </div>
-                      <div
-                        v-if="isLoading===true"
-                        class="d-block mt-5 mb-5 align-content-center text-center"
-                      >
-                        <div
-                          class="spinner-border text-primary"
-                          role="status"
-                        >
-                          <span class="sr-only">Loading...</span>
-                        </div>
-                      </div>
-                    </b-col>
-                  </b-row>
+                  <popup-lacak-resi
+                    ref="modalLacakResi"
+                    :order-datas="orderData"
+                    :handle-close-modal-resi="true"
+                    :promise-modal="valuePromiseModal"
+                  />
                 </b-modal>
               </b-col>
             </b-row>
@@ -583,12 +540,13 @@ import {
 } from 'bootstrap-vue'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
 import EditOrder from '../EditOrder/EditOrder.vue'
 import httpKomship2 from '../../setting-kompship/http_komship2'
 
 export default {
   components: {
-    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder, BBadge, BImg,
+    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder, BBadge, BImg, PopupLacakResi,
   },
   directives: { VBModal },
   data() {
@@ -596,6 +554,7 @@ export default {
       profile: {},
       orderData: [],
       statusOrder: null,
+      statusOrderMobile: null,
       fieldOrder: [
         { key: 'no', label: 'No' },
         { key: 'product_name', label: 'Nama Produk' },
@@ -618,6 +577,8 @@ export default {
       editBy: null,
       editDate: null,
       listAwb: '',
+
+      valuePromiseModal: null,
     }
   },
   async created() {
@@ -630,17 +591,6 @@ export default {
     this.idEditOrder = this.$route.params.order_id
   },
   methods: {
-    lacakresi() {
-      this.isLoading = true
-      const modal = new Promise((resolve, reject) => {
-        this.$refs['bv-modal-cek-resi'].show()
-        resolve(true)
-      })
-
-      modal.then(() => {
-        this.getHistoryPackage()
-      })
-    },
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
       const validDate = moment(date)
@@ -686,19 +636,6 @@ export default {
         }, 2000)
         this.loadingDetailOrder = false
       }
-    },
-    async getHistoryPackage() {
-      const body = {
-        data: this.orderData.airway_bill,
-      }
-      await httpKomship2.post('v2/bulk-check-awb', body).then(res => {
-        const { data } = res.data
-        this.itemAwb = data.history
-        this.isLoading = false
-        this.getElementAwb()
-      }).catch(err => {
-        this.isLoading = false
-      })
     },
     setAlertMobile(status) {
       if (status === 'Diajukan') {
@@ -786,24 +723,40 @@ export default {
       return value
     },
     cancelPickup() {
-      this.loadingCancelPickup = true
-      this.$http_komship.put(`/v2/order/${this.profile.partner_id}/cancel/${this.idEditOrder}`)
-        .then(() => {
-          this.loadingCancelPickup = false
-          this.$refs['popup-success-cancel-pickup'].show()
-        })
-        .catch(err => {
-          this.loadingCancelPickup = false
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          }, 2000)
-        })
+      // eslint-disable-next-line global-require
+      const logoWarning = require('@/assets/images/icons/popup-warning.png')
+      this.$swal.fire({
+        title: 'Kamu yakin ingin<br>membatalkan Pickup ?',
+        imageUrl: logoWarning,
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        confirmButtonText: 'Oke',
+        cancelButtonText: 'Batal',
+        cancelButtonColor: '#FFFFFF',
+        confirmButtonClass: 'btn btn-primary',
+        cancelButtonClass: 'btn btn-outline-primary text-primary',
+      }).then(isConfirm => {
+        if (isConfirm.value === true) {
+          this.loadingCancelPickup = true
+          this.$http_komship.put(`/v2/order/${this.profile.partner_id}/cancel/${this.idEditOrder}`)
+            .then(() => {
+              this.loadingCancelPickup = false
+              this.$refs['popup-success-cancel-pickup'].show()
+            })
+            .catch(err => {
+              this.loadingCancelPickup = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+        }
+      })
     },
 
     // Edit Order
@@ -813,48 +766,10 @@ export default {
     applyUpdateEditMode() {
       this.editMode = false
     },
-    getElementAwb() {
-      const formatDate = date => {
-        const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-        const day = moment(date).format('DD')
-        const month = moment(date).format('M')
-        const year = moment(date).format('YYYY')
-        const time = moment(date).format('HH.mm')
-        return `${day} ${monthName[month - 1]} ${year} - ${time}`
-      }
-      this.listAwb = ''
-      this.itemAwb.forEach(items => {
-        this.listAwb += '<div class="icon-awb d-inline-block">'
-        if (items.status === 'Pickup') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-pickup.svg')}">`
-        } else if (items.status === 'Process') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-kirim.svg')}">`
-        } else if (items.status === 'Problem') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
-        } else if (items.status === 'Delivered') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
-        } else if (items.status === 'Retur') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
-        }
-        this.listAwb += '</div>'
-        this.listAwb += '<div style="font-size: 16px;display: inline-block;">'
-        this.listAwb += `<span>${formatDate(items.date)}</span><br>`
-        this.listAwb += `<span class="font-bold">${items.desc}</span>`
-        this.listAwb += '</div><br>'
-        if (items.send_wa === 1) {
-          if (items.type === 'sending') {
-            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-            this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
-            this.listAwb += '</div>'
-          }
-          if (items.type === 'arrived') {
-            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-            this.listAwb += '<span class="my-auto" style="margin-left:6px">Info paket COD hampir sampai telah terkirim ke WA Pelanggan</span>'
-            this.listAwb += '</div>'
-          }
-        }
+    lacakresi() {
+      this.valuePromiseModal = new Promise((resolve, reject) => {
+        this.$bvModal.show('bv-modal-cek-resi')
+        resolve(true)
       })
     },
   },

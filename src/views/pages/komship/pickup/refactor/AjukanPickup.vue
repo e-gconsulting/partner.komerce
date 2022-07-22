@@ -106,6 +106,7 @@
                 <b-form-input
                   v-model="timeValue"
                   class="text-center bg-white"
+                  style="max-width:70px"
                   readonly
                 />
                 <div class="ml-1">
@@ -138,12 +139,6 @@
                 </b-popover>
               </b-col>
             </b-row>
-            <small
-              v-if="isNotCorrectTime && isNotCorrectDate"
-              class="text-primary mt-50"
-            >
-              *Tidak bisa angkut jam pickup kurang dari jam saat ini
-            </small>
           </b-form-group>
         </b-col>
         <b-col
@@ -856,7 +851,8 @@ export default {
       dateLabel: '',
 
       timeValueText: '09 : 00',
-      timeValue: moment().format('HH:00'),
+      timeValue: null,
+      minTime: null,
       isNotCorrectTime: true,
       isNotCorrectDate: true,
       profile: null,
@@ -970,6 +966,7 @@ export default {
     //   this.timeValue = moment().format('HH:mm:ss')
     // }, 1000)
     // this.$refs['modal-pickup-error-success'].show()
+    this.getTimeNow()
     this.cekExpedition()
     this.$http_komship.post('v1/my-profile', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -1256,19 +1253,40 @@ export default {
     showAlertSubmitPickup() {
       this.$refs['modal-alert-submit-pickup'].show()
     },
+    getTimeNow() {
+      const hourNow = moment().format('HH')
+      const minuteNow = moment().format('mm')
+      if (minuteNow === '00' && toInteger(hourNow) < 21) {
+        this.timeValue = `${toInteger(hourNow) + 1}:00`
+        this.minTime = toInteger(hourNow) + 1
+      } else if (toInteger(hourNow) < 21) {
+        this.timeValue = `${toInteger(hourNow) + 2}:00`
+        this.minTime = toInteger(hourNow) + 2
+      } else {
+        this.timeValue = '21:00'
+        this.minTime = 21
+      }
+    },
     pickTime(method) {
       const getHours = this.timeValue.substring(0, 2)
+      const pickDate = this.changeDate(this.dateValue, 2)
       let hours = toInteger(getHours)
       if (method === 'plus') {
-        if (hours === 23) {
-          hours = 0
+        if (hours === 21) {
+          hours = 21
         } else {
           hours += 1
         }
       }
       if (method === 'minus') {
-        if (hours === 0) {
-          hours = 23
+        if (pickDate === moment().format('YYYY-M-DD')) {
+          if (hours === this.minTime) {
+            hours = this.minTime
+          } else {
+            hours -= 1
+          }
+        } else if (hours === 9) {
+          hours = 9
         } else {
           hours -= 1
         }

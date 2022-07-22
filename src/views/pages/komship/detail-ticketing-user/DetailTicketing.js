@@ -1,9 +1,12 @@
+/* eslint-disable global-require */
 /* eslint-disable import/no-unresolved */
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   VBToggle,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
+import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
+import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import {
   getMessaging,
   getToken,
@@ -37,6 +40,10 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 
 export default {
+  components: {
+    PopoverInfo,
+    PopupLacakResi,
+  },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
@@ -67,13 +74,20 @@ export default {
 
       // cancel ticket
       loadingCancelTicket: false,
-      moment,
 
       userId: JSON.parse(localStorage.userData),
       detailOrderMode: false,
       orderId: 0,
 
       visible: false,
+
+      orderData: [],
+      itemAwb: [],
+      listAwb: '',
+      moment,
+
+      transactionValue: '',
+      isLoading: false,
     }
   },
   directives: {
@@ -95,11 +109,12 @@ export default {
       scrollToBottom(theElement)
     }
     this.readChat()
+    console.log(this.$route)
   },
   methods: {
     fetchDetailTicket() {
       this.$http_komship.get(`v1/ticket-partner/detail/${this.ticketId}`)
-        .then(response => {
+        .then(async response => {
           const { data } = response.data
           this.ticketStatus = data.ticket_status
           this.orderStatus = data.order_status
@@ -112,7 +127,7 @@ export default {
           this.noResi = data.no_resi
           this.files = data.file
           this.messages = data.history_ticket
-          this.orderId = data.order_id
+          this.orderId = await data.order_id
           this.loadingDataDetail = false
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
@@ -436,6 +451,18 @@ export default {
           this.storeChat()
         }
       }
+    },
+    formatRibuan(x) {
+      if (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
+      return x
+    },
+    formatRupiah(x) {
+      return `Rp ${this.formatRibuan(x)}`
+    },
+    goBack() {
+      window.close()
     },
   },
 }
