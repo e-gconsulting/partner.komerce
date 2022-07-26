@@ -138,6 +138,8 @@ export default {
       messageErrorUsernameIsSame: false,
 
       fieldNewNumber: '',
+
+      nameValidator: '',
     }
   },
   mounted() {
@@ -398,18 +400,21 @@ export default {
         this.modalFormLabel = await 'Username'
         this.modalEditFormInputType = await 'text'
         this.labelSubmit = await 'Simpan'
+        this.nameValidator = 'username'
       } else if (data === 'noHP') {
         this.modalTitle = await 'Password Komship'
         this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
         this.modalFormLabel = await 'Masukkan Pasword'
         this.modalEditFormInputType = await 'password'
         this.labelSubmit = 'Konfirmasi'
+        this.nameValidator = 'password'
       } else if (data === 'email') {
         this.modalTitle = await 'Password Komship'
         this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
         this.modalFormLabel = await 'Masukkan Pasword'
         this.modalEditFormInputType = await 'password'
         this.labelSubmit = await 'Konfirmasi'
+        this.nameValidator = 'password'
       }
       this.$refs['modal-edit'].show()
     },
@@ -417,6 +422,7 @@ export default {
       this.formInputEditItem = ''
       this.successConfirmPassword = false
       this.messageErrorUsernameIsSame = false
+      this.errorNoHp = false
       this.$refs['modal-edit'].hide()
     },
     closeSuccessEditUsername() {
@@ -426,6 +432,7 @@ export default {
       this.messageErrorUsernameIsSame = false
       this.loadingEdit = true
       if (this.editMode === 'username') {
+        this.nameValidator = 'username'
         if (this.userData.username !== this.formInputEditItem) {
           const formData = new FormData()
           formData.append('username', this.formInputEditItem)
@@ -469,6 +476,7 @@ export default {
           this.messageErrorUsernameIsSame = true
         }
       } else if (this.editMode === 'noHP') {
+        this.nameValidator = 'No HP'
         const formData = new FormData()
         formData.append('username', this.usernameCheckPasswword)
         formData.append('password', this.formInputEditItem)
@@ -500,6 +508,7 @@ export default {
             this.loadingEdit = false
           })
       } else if (this.editMode === 'email') {
+        this.nameValidator = 'email'
         const formData = new FormData()
         formData.append('username', this.usernameCheckPasswword)
         formData.append('password', this.formInputEditItem)
@@ -747,6 +756,7 @@ export default {
     hideCloseModalEdit() {
       this.formInputEditItem = ''
       this.messageErrorUsernameIsSame = false
+      this.errorNoHp = false
       this.successConfirmPassword = false
     },
     handleValueCityCode() {

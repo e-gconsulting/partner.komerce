@@ -526,7 +526,7 @@
                 <validation-provider
                   v-if="modalEditFormInputType !== 'email'"
                   #default="{errors}"
-                  :name="modalEditFormInputType === 'number' ? 'No HP' : modalEditFormInputType"
+                  :name="nameValidator"
                   rules="required"
                 >
                   <b-input-group>
@@ -585,7 +585,7 @@
                 <validation-provider
                   v-if="modalEditFormInputType === 'email'"
                   #default="{errors}"
-                  :name="modalEditFormInputType"
+                  :name="nameValidator"
                   rules="required|email"
                 >
                   <b-input-group>
