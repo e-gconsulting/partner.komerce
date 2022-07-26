@@ -116,4 +116,13 @@ export default [
       resource: 'Auth',
     },
   },
+  {
+    path: '/cancel-change-email',
+    name: 'cancel-change-email',
+    component: () => import('@/views/pages/authentication/CancelChangeEmail'),
+    meta: {
+      layout: 'full',
+      resource: 'Dashboard Komship',
+    },
+  },
 ]
