@@ -769,6 +769,10 @@
         variant="primary"
         @click="sendVerification"
       >
+        <b-spinner
+          v-if="loadingEdit"
+          small
+        />
         Konfirmasi
       </b-button>
     </b-row>

@@ -136,6 +136,8 @@ export default {
       resendOtp: false,
       loadingOtp: false,
       messageErrorUsernameIsSame: false,
+
+      fieldNewNumber: '',
     }
   },
   mounted() {
@@ -143,7 +145,6 @@ export default {
     this.loadPartnerCategory()
     this.loadBusinessType()
     this.loadAllProvince()
-    console.log(this.userData)
   },
   methods: {
     removeLogoBusiness() {
@@ -354,7 +355,6 @@ export default {
       return String(e).substring(0, 30)
     },
     formatPhoneProfile(e) {
-      console.log(e)
       if (e.keyCode === 13) {
         e.preventDefault()
       }
@@ -478,7 +478,6 @@ export default {
             this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
             this.modalFormLabel = 'No HP'
             this.modalEditFormInputType = 'number'
-            this.formInputEditItem = ''
             this.successConfirmPassword = true
             this.messageErrorPassword = false
             this.$refs.formRulesEdit.reset()
@@ -540,6 +539,7 @@ export default {
       if (this.editMode === 'noHP') {
         const formData = new FormData()
         formData.append('phone_number', this.formInputEditItem)
+        this.fieldNewNumber = this.formInputEditItem
         this.$http_komship.post('/v1/partner/sms/otp', formData)
           .then(response => {
             this.$refs['modal-edit'].hide()
@@ -586,6 +586,7 @@ export default {
       }
     },
     sendVerification() {
+      this.loadingEdit = true
       const formData = new FormData()
       formData.append('otp', this.otpConfirmation)
       this.$http_komship.post('/v1/partner/sms/otp/verification', formData)
@@ -605,11 +606,13 @@ export default {
               },
             }, 2000)
           }
+          this.loadingEdit = true
         })
     },
     submitEditNomer() {
+      this.loadingEdit = true
       const formData = new FormData()
-      formData.append('no_handphone', this.formInputEditItem)
+      formData.append('no_handphone', this.fieldNewNumber)
       this.$http.post('user/partner/update-profile/no-handphone', formData)
         .then(response => {
           this.successVerificationTitle = 'Terimakasih'
@@ -620,6 +623,7 @@ export default {
           this.formInputEditItem = ''
           this.$refs['modal-verification-edit'].hide()
           this.$refs['modal-success-verification'].show()
+          this.loadingEdit = false
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -630,6 +634,7 @@ export default {
               variant: 'danger',
             },
           }, 2000)
+          this.loadingEdit = false
         })
     },
     handleBackEdit() {
@@ -649,6 +654,7 @@ export default {
       this.successConfirmPassword = false
       this.formInputEditItem = ''
       this.$refs['modal-success-verification'].hide()
+      this.loadProfile()
     },
     formatPhone: _.debounce(function () {
       if (this.formInputEditItem.length < 8) {
