@@ -110,7 +110,7 @@ export default {
           allowOutsideClick: false,
         }).then(res => {
           if (res.isConfirmed) {
-            this.$router.push('setting-kompship/pickup')
+            this.$router.push('gudangku')
           }
         })
       }

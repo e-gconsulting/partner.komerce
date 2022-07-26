@@ -39,6 +39,7 @@ import keuangan from './routes/komship/keuangan/index'
 import hiring from './routes/komship/hiring/index'
 import opsional from './routes/komship/opsional/index'
 import ticketing from './routes/komship/ticketing/index'
+import gudang from './routes/komship/gudang/index'
 
 // Komplace
 import dashboardKomplace from './routes/komplace/dashboard/index'
@@ -86,6 +87,7 @@ const router = new VueRouter({
     ...hiring,
     ...opsional,
     ...ticketing,
+    ...gudang,
 
     ...dashboardKomplace,
     ...monitoring,

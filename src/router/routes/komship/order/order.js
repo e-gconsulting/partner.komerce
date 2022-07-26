@@ -42,9 +42,8 @@ export default [
     meta: {
       name: 'add-order',
       resource: 'Order',
-      routeToAddressPickup: 'kompship-pickup',
       routeToAddProduct: 'add-produk',
-      routeToAddressSetting: 'kompship-pickup',
+      routeToAddressSetting: 'gudangku',
       routeDetail: 'detail-add-order',
       action: 'manage',
       breadcrumb: [
