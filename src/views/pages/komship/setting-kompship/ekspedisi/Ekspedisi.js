@@ -110,7 +110,7 @@ export default {
           allowOutsideClick: false,
         }).then(res => {
           if (res.isConfirmed) {
-            this.$router.push('gudangku')
+            this.$router.push('/gudangku')
           }
         })
       }

@@ -204,16 +204,16 @@
                           </strong>
                         </h5>
                         <div v-if="data.item.product_variant_name !== ''">
-                          <span class="text-black">
+                          <span class="text-primary">
                             <strong>
                               {{ data.item.product_variant_name }}
                             </strong>
                           </span>
                         </div>
                         <div v-else>
-                          <span class="text-black">
+                          <span class="text-primary">
                             <strong>
-                              Tidak ada variasi
+                              -
                             </strong>
                           </span>
                         </div>
@@ -477,7 +477,7 @@
                       </div>
                       <div v-else>
                         <p class="text-primary">
-                          Tidak ada variasi
+                          -
                         </p>
                       </div>
                     </div>
@@ -520,7 +520,7 @@
                         </div>
                         <div v-else>
                           <p class="text-primary">
-                            Tidak ada variasi
+                            -
                           </p>
                         </div>
                       </div>
@@ -562,7 +562,7 @@
                       </div>
                       <div v-else>
                         <p class="text-primary">
-                          Tidak ada variasi
+                          -
                         </p>
                       </div>
                     </div>
