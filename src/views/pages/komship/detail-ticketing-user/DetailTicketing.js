@@ -79,7 +79,7 @@ export default {
       detailOrderMode: false,
       orderId: 0,
 
-      visible: false,
+      visible: true,
 
       orderData: [],
       itemAwb: [],
