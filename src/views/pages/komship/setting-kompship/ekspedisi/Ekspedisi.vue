@@ -34,6 +34,7 @@
           :id="`accordion${items.id}`"
           :accordion="`accordion${items.id}`"
           role="tabpanel"
+          :visible="items.is_active ? false : true"
         >
           <b-card-body class="text-[16px]">
             <b-row>
