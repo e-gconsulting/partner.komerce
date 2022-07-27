@@ -215,6 +215,66 @@ export default {
             type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
           },
         ],
+        contextMenu(obj, x, y, e) {
+          const items = []
+          if (y !== null) {
+            if (obj.options.allowInsertRow === true) {
+              items.push({
+                title: 'Sisipkan 1 baris baru di atasnya',
+                onclick() {
+                  obj.insertRow(1, toInteger(y), 1)
+                },
+              })
+              items.push({
+                title: 'Sisipkan 1 baris baru di bawahnya',
+                onclick() {
+                  obj.insertRow(1, toInteger(y))
+                },
+              })
+            }
+            if (obj.options.allowDeleteRow === true) {
+              items.push({
+                title: 'Hapus baris yang terpilih',
+                onclick() {
+                  obj.deleteRow(obj.getSelectedRows().length ? undefined : toInteger(y))
+                },
+              })
+            }
+            items.push({ type: 'line' })
+            items.push({
+              title: obj.options.text.copy,
+              shortcut: 'Ctrl + C',
+              onclick() {
+                obj.copy(true)
+              },
+            })
+            if (navigator && navigator.clipboard) {
+              items.push({
+                title: obj.options.text.paste,
+                shortcut: 'Ctrl + V',
+                onclick() {
+                  if (obj.selectedCell) {
+                    navigator.clipboard.readText().then(text => {
+                      if (text) {
+                        obj.paste(obj.selectedCell[0], obj.selectedCell[1], text)
+                      }
+                    })
+                  }
+                },
+              })
+            }
+            if (obj.options.allowExport) {
+              items.push({
+                title: obj.options.text.saveAs,
+                shortcut: 'Ctrl + S',
+                onclick() {
+                  obj.download()
+                },
+              })
+            }
+          }
+          return items
+        },
         onchange(instance, cell, col, row, val) {
           if (col === '6') {
             const columnName = jspreadsheet.getColumnNameFromId(['7', row])
