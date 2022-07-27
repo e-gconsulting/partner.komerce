@@ -1149,6 +1149,49 @@
         >Oke</b-button>
       </div>
     </b-modal>
+    <b-modal
+      id="modalOnboarding"
+      hide-header
+      hide-footer
+      size="lg"
+      centered
+    >
+      <b-container class="py-2">
+        <b-img
+          src="@/assets/images/icons/close-circle.svg"
+          class="absolute top-[10px] right-[10px]"
+          style="cursor:pointer"
+          @click="$bvModal.hide('modalOnboarding')"
+        />
+        <p class="text-[20px] font-semibold text-center mb-2">
+          Jangan dipikir input produk itu <span class="text-primary">lama</span> dan <span class="text-primary">ribet</span>
+        </p>
+        <div class="mb-2">
+          <b-img
+            :src="require('@/assets/images/banner/popup-product-onboarding.svg')"
+            style="max-width:100%;"
+            class="mx-auto"
+          />
+        </div>
+        <p class="text-[16px]">🛒 Ga harus langsung semua diinput, bisa coba yang paling sering laku<br>
+          📝 Kalau lagi gabut, bisa isi dulu kolom yang wajib, sisanya dilengkapi pas senggang aja</p>
+        <div class="d-flex justify-content-center mb-2">
+          <b-button
+            variant="primary"
+            class="rounded-lg"
+            @click="dissmissNewUser"
+          >
+            Ok, Coba input 1 dulu ah...
+          </b-button>
+        </div>
+        <p
+          class="text-[12px] mx-auto text-center"
+          style="max-width: 620px"
+        >
+          *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
+        </p>
+      </b-container>
+    </b-modal>
 
   </b-card-actions>
 </template>
@@ -1265,6 +1308,7 @@ export default {
       productId: '',
 
       validatePayment: '',
+      newUser: true,
     }
   },
   computed: {
@@ -1333,6 +1377,12 @@ export default {
         this.profile = data
       }
     })
+    if (localStorage.getItem('newUser')) {
+      this.newUser = localStorage.getItem('newUser')
+    }
+    if (this.newUser === true) {
+      this.$bvModal.show('modalOnboarding')
+    }
   },
   methods: {
     submitPublish() {
@@ -1795,6 +1845,10 @@ export default {
     handleOkModalValidationUpload() {
       this.imageFile = null
       this.$refs['modal-validation-upload'].hide()
+    },
+    dissmissNewUser() {
+      this.$bvModal.hide('modalOnboarding')
+      localStorage.setItem('newUser', false)
     },
   },
 }

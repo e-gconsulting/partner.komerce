@@ -281,7 +281,7 @@ export default {
             confirmButtonClass: 'btn btn-primary',
           }).then(res => {
             if (res.isConfirmed) {
-              this.$router.push('setting-kompship/pickup')
+              this.$router.push('gudangku')
             }
           })
         }

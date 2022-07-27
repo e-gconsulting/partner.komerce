@@ -254,12 +254,16 @@ export default {
                   imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
                   showCloseButton: false,
                   focusConfirm: true,
-                  confirmButtonText: 'Oke',
+                  confirmButtonText: 'Lihat riwayat penarikan',
                   customClass: {
                     confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
                     popup: 'mr-2 ml-1',
                   },
                   buttonsStyling: false,
+                }).then(res => {
+                  if (res.isConfirmed) {
+                    this.$router.push('keuangan/saldo')
+                  }
                 })
               }
             })
