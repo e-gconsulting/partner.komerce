@@ -215,6 +215,34 @@ export default {
             type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
           },
         ],
+        contextMenu(obj, x, y, e) {
+          const items = []
+          if (y !== null) {
+            if (obj.options.allowInsertRow === true) {
+              items.push({
+                title: 'Sisipkan 1 baris baru di atasnya',
+                onclick() {
+                  obj.insertRow(1, toInteger(y), 1)
+                },
+              })
+              items.push({
+                title: 'Sisipkan 1 baris baru di bawahnya',
+                onclick() {
+                  obj.insertRow(1, toInteger(y))
+                },
+              })
+            }
+            if (obj.options.allowDeleteRow === true) {
+              items.push({
+                title: 'Hapus baris yang terpilih',
+                onclick() {
+                  obj.deleteRow(obj.getSelectedRows().length ? undefined : toInteger(y))
+                },
+              })
+            }
+          }
+          return items
+        },
         onchange(instance, cell, col, row, val) {
           if (col === '6') {
             const columnName = jspreadsheet.getColumnNameFromId(['7', row])
