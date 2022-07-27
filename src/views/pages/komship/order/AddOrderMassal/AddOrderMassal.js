@@ -240,6 +240,38 @@ export default {
                 },
               })
             }
+            items.push({ type: 'line' })
+            items.push({
+              title: obj.options.text.copy,
+              shortcut: 'Ctrl + C',
+              onclick() {
+                obj.copy(true)
+              },
+            })
+            if (navigator && navigator.clipboard) {
+              items.push({
+                title: obj.options.text.paste,
+                shortcut: 'Ctrl + V',
+                onclick() {
+                  if (obj.selectedCell) {
+                    navigator.clipboard.readText().then(text => {
+                      if (text) {
+                        obj.paste(obj.selectedCell[0], obj.selectedCell[1], text)
+                      }
+                    })
+                  }
+                },
+              })
+            }
+            if (obj.options.allowExport) {
+              items.push({
+                title: obj.options.text.saveAs,
+                shortcut: 'Ctrl + S',
+                onclick() {
+                  obj.download()
+                },
+              })
+            }
           }
           return items
         },
