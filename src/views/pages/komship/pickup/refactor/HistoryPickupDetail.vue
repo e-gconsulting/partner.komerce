@@ -213,7 +213,7 @@
                         <div v-else>
                           <span class="text-black">
                             <strong>
-                              Tidak ada variasi
+                              -
                             </strong>
                           </span>
                         </div>
@@ -477,7 +477,7 @@
                       </div>
                       <div v-else>
                         <p class="text-primary">
-                          Tidak ada variasi
+                          -
                         </p>
                       </div>
                     </div>
@@ -520,7 +520,7 @@
                         </div>
                         <div v-else>
                           <p class="text-primary">
-                            Tidak ada variasi
+                            -
                           </p>
                         </div>
                       </div>
@@ -562,7 +562,7 @@
                       </div>
                       <div v-else>
                         <p class="text-primary">
-                          Tidak ada variasi
+                          -
                         </p>
                       </div>
                     </div>
