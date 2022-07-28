@@ -75,8 +75,8 @@
                                             </strong>
                                         </span>
                                     </template>
-                                    <b-badge :variant="orderStatusVariant(orderStatus)">
-                                        {{ orderStatus }}
+                                    <b-badge :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Hilang' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
+                                        {{ orderStatus === 'Hilang' ? 'Paket Hilang' : orderStatus }}
                                     </b-badge>
                                 </b-form-group>
                             </div>
