@@ -101,7 +101,7 @@
           autocomplete="off"
           :formatter="formatCustomerName"
           @keypress="validateInputCustomerName"
-          @keydown="getCustomer($event)"
+          @keyup="getCustomer($event)"
         />
         <datalist id="customerList">
           <option

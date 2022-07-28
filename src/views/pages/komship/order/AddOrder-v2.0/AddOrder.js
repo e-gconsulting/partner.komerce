@@ -288,24 +288,26 @@ export default {
       })
     },
     getCustomer: _.debounce(function (e) {
-      const event = e.key ? 'input' : 'list'
-      if (event === 'list') {
-        return this.customerList.forEach(item => {
-          if (item.name === this.customerName) {
-            this.customerId = item.customer_id
-            this.customerPhone = item.phone
-            this.customerAddress = item.address
-          }
-        })
+      if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {
+        const event = e.key ? 'input' : 'list'
+        if (event === 'list') {
+          return this.customerList.forEach(item => {
+            if (item.name === this.customerName) {
+              this.customerId = item.customer_id
+              this.customerPhone = item.phone
+              this.customerAddress = item.address
+            }
+          })
+        }
+        this.$http_komship
+          .get('v1/customer', {
+            params: { search: this.customerName },
+          })
+          .then(response => {
+            const { data } = response.data
+            this.customerList = data
+          })
       }
-      this.$http_komship
-        .get('v1/customer', {
-          params: { search: this.customerName },
-        })
-        .then(response => {
-          const { data } = response.data
-          this.customerList = data
-        })
       return this.customerList
     }, 1000),
     onSearchDestination(search, loading) {
