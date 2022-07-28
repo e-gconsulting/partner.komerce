@@ -461,7 +461,7 @@
                                         </b-row>
                                         <b-row class="justify-content-start mb-2">
                                             <small class="text-black">
-                                                1 januari 2023
+                                                {{ moment(new Date(dateRating)).format('DD MMMM YYYY | HH:mm') }}
                                             </small>
                                         </b-row>
                                     </div>
@@ -500,6 +500,7 @@
                             :list-awbs="listAwb"
                             :handle-close-modal-resi="false"
                             :order-id="orderId"
+                            @updateValueTransaction="applyValueTransaction"
                         />
                     </b-row>
                 </b-col>
