@@ -44,7 +44,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$router.history.current.query.email)
     this.email = this.$router.history.current.query.email
   },
 }

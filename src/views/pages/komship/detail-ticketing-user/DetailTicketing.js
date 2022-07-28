@@ -79,7 +79,7 @@ export default {
       detailOrderMode: false,
       orderId: 0,
 
-      visible: false,
+      visible: true,
 
       orderData: [],
       itemAwb: [],
@@ -112,6 +112,7 @@ export default {
         },
       ],
       ratingUser: null,
+      dateRating: null,
     }
   },
   directives: {
@@ -154,6 +155,7 @@ export default {
           this.loadingDataDetail = false
           this.ratingUser = data.rating_user
           this.previewRating(data.rating_user.rating)
+          this.dateRating = data.date_updated
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
             const scrollToBottom = node => {
@@ -550,6 +552,9 @@ export default {
             },
           }, 2000)
         })
+    },
+    applyValueTransaction(data) {
+      this.transactionValue = data
     },
   },
 }

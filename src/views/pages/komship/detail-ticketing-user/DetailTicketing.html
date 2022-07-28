@@ -306,7 +306,7 @@
             opacity=".5"
         >
             <b-row class="mb-2">
-                <b-col cols="8">
+                <b-col cols="12" md="8" class="mb-1">
                     <div
                         class="p-1 mx-2"
                         style="
@@ -325,15 +325,20 @@
                                 v-for="(messageItem, index) in messages"
                                 :key="index+1"
                             >
+                                <b-col v-if="messageItem.type === 'Mitra'" cols="1">
+                                    <b-img v-if="messageItem.image_path !== '' || messageItem.image_path !== null" :src="messageItem.image_path" />
+                                    <b-img v-if="messageItem.image_path === '' || messageItem.image_path === null" src="@/assets/images/avatars/image-null.png" />
+                                </b-col>
                                 <b-col
                                     :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''"
-                                    md="12"
+                                    md="11"
                                 >
                                     <div v-if="messageItem.message !== null && messageItem.message !== ''">
-                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                            <small class="text-black">
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50 align-items-center' : 'justify-content-start mb-50 align-items-center'">
+                                            <small class="text-black mr-50">
                                                 {{ messageItem.name }}
                                             </small>
+                                            <b-img v-if="messageItem.type === 'Mitra'" src="@/assets/images/icons/verified-icon.svg" />
                                         </b-row>
                                         <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                             <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
@@ -356,10 +361,11 @@
                                             v-for="(fileItem, indexFile) in messageItem.file"
                                             :key="indexFile+1"
                                         >
-                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                                <small class="text-black">
+                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50 align-items-center' : 'justify-content-start mb-50 align-items-center'">
+                                                <small class="text-black mr-50">
                                                     {{ messageItem.name }}
                                                 </small>
+                                                <b-img v-if="messageItem.type === 'Mitra'" src="@/assets/images/icons/verified-icon.svg" />
                                             </b-row>
                                             <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                                 <a :href="fileItem.path" target="_blank">
@@ -461,7 +467,7 @@
                                         </b-row>
                                         <b-row class="justify-content-start mb-2">
                                             <small class="text-black">
-                                                1 januari 2023
+                                                {{ moment(new Date(dateRating)).format('DD MMMM YYYY | HH:mm') }}
                                             </small>
                                         </b-row>
                                     </div>
@@ -470,7 +476,7 @@
                         </div>
                     </div>
                 </b-col>
-                <b-col cols="4" style="background-color: #F8F8F8" class="p-1">
+                <b-col cols="12" md="4" style="background-color: #F8F8F8" class="p-1">
                     <b-row class="align-items-center mx-2">
                         <h4 class="text-black mt-50">
                             <strong>
@@ -500,6 +506,7 @@
                             :list-awbs="listAwb"
                             :handle-close-modal-resi="false"
                             :order-id="orderId"
+                            @updateValueTransaction="applyValueTransaction"
                         />
                     </b-row>
                 </b-col>

@@ -90,8 +90,8 @@ export default {
         const { data } = await order.data
         this.transactionValue = data.old_grandtotal
         this.orderDatas = await data
-        console.log(this.orderDatas)
         await this.lacakresi()
+        await this.$emit('updateValueTransaction', data.old_grandtotal)
       } catch (err) {
         this.$toast({
           component: ToastificationContent,
