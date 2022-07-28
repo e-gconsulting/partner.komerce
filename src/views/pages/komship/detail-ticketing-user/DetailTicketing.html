@@ -306,7 +306,7 @@
             opacity=".5"
         >
             <b-row class="mb-2">
-                <b-col cols="8">
+                <b-col cols="12" md="8" class="mb-1">
                     <div
                         class="p-1 mx-2"
                         style="
@@ -325,15 +325,20 @@
                                 v-for="(messageItem, index) in messages"
                                 :key="index+1"
                             >
+                                <b-col v-if="messageItem.type === 'Mitra'" cols="1">
+                                    <b-img v-if="messageItem.image_path !== '' || messageItem.image_path !== null" :src="messageItem.image_path" />
+                                    <b-img v-if="messageItem.image_path === '' || messageItem.image_path === null" src="@/assets/images/avatars/image-null.png" />
+                                </b-col>
                                 <b-col
                                     :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''"
-                                    md="12"
+                                    md="11"
                                 >
                                     <div v-if="messageItem.message !== null && messageItem.message !== ''">
-                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                            <small class="text-black">
+                                        <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50 align-items-center' : 'justify-content-start mb-50 align-items-center'">
+                                            <small class="text-black mr-50">
                                                 {{ messageItem.name }}
                                             </small>
+                                            <b-img v-if="messageItem.type === 'Mitra'" src="@/assets/images/icons/verified-icon.svg" />
                                         </b-row>
                                         <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                             <div :class="messageItem.type === 'Partner' ? 'wrapper__chat__user p-1' : 'wrapper__chat__isnotuser p-1'">
@@ -356,10 +361,11 @@
                                             v-for="(fileItem, indexFile) in messageItem.file"
                                             :key="indexFile+1"
                                         >
-                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
-                                                <small class="text-black">
+                                            <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50 align-items-center' : 'justify-content-start mb-50 align-items-center'">
+                                                <small class="text-black mr-50">
                                                     {{ messageItem.name }}
                                                 </small>
+                                                <b-img v-if="messageItem.type === 'Mitra'" src="@/assets/images/icons/verified-icon.svg" />
                                             </b-row>
                                             <b-row :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50' : 'justify-content-start mb-50'">
                                                 <a :href="fileItem.path" target="_blank">
@@ -411,10 +417,66 @@
                                     </div>
                                 </b-col>
                             </b-row>
+                            <b-row v-if="orderStatus === 'Diterima' || orderStatus === 'Retur' || orderStatus === 'Hilang' || orderStatus === 'Rusak'">
+                                <b-col cols="1">
+                                    <b-img src="@/assets/images/logo/logo-komship-chat.svg" />
+                                </b-col>
+                                <b-col
+                                    md="8"
+                                >
+                                    <div>
+                                        <b-row class="justify-content-start mb-50">
+                                            <small class="text-black">
+                                                Tim Komship
+                                            </small>
+                                        </b-row>
+                                        <b-row class="justify-content-start mb-50">
+                                            <div class="wrapper__chat__isnotuser p-1">
+                                                <p class="text-black">
+                                                    Penanganan pengiriman telah tertangani, status ticket sudah berganti menjadi selesai. Mohon berikan review atas kinerja penanganan pengiriman kali ini dari tim ekspedisi
+                                                </p>
+                                                <b-row
+                                                    class="mb-1 pl-1"
+                                                >
+                                                    <div v-for="(itemStar, index) in stars"
+                                                    :key="index+1">
+                                                        <div
+                                                            v-if="ratingUser === null"
+                                                            class="cursor-pointer"
+                                                            @mouseover="previewRating(itemStar.value)"
+                                                            @mouseleave="resetRating"
+                                                            @click="submitRating(itemStar.value)"
+                                                        >
+                                                            <svg width="29" height="27" viewBox="0 0 29 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M14.5 0L17.7555 10.0193L28.2903 10.0193L19.7674 16.2115L23.0229 26.2307L14.5 20.0385L5.97711 26.2307L9.23257 16.2115L0.709681 10.0193L11.2445 10.0193L14.5 0Z" :fill="itemStar.active === true ? '#FBBC05' : 'white'"/>
+                                                            </svg>     
+                                                        </div>                                                       
+                                                        <div
+                                                            v-if="ratingUser !== null"
+                                                        >
+                                                            <svg width="29" height="27" viewBox="0 0 29 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M14.5 0L17.7555 10.0193L28.2903 10.0193L19.7674 16.2115L23.0229 26.2307L14.5 20.0385L5.97711 26.2307L9.23257 16.2115L0.709681 10.0193L11.2445 10.0193L14.5 0Z" :fill="itemStar.active === true ? '#FBBC05' : 'white'"/>
+                                                            </svg>     
+                                                        </div>                                                       
+                                                    </div>
+                                                </b-row>
+                                                <p class="text-black">
+                                                    *klik bintang untuk kasih review, evaluasi kamu berharga banget buat kami
+                                                </p>
+                                            </div>
+                                        </b-row>
+                                        <b-row class="justify-content-start mb-2">
+                                            <small class="text-black">
+                                                {{ moment(new Date(dateRating)).format('DD MMMM YYYY | HH:mm') }}
+                                            </small>
+                                        </b-row>
+                                    </div>
+                                </b-col>
+                            </b-row>
                         </div>
                     </div>
                 </b-col>
-                <b-col cols="4" style="background-color: #F8F8F8" class="p-1">
+                <b-col cols="12" md="4" style="background-color: #F8F8F8" class="p-1">
                     <b-row class="align-items-center mx-2">
                         <h4 class="text-black mt-50">
                             <strong>
@@ -444,6 +506,7 @@
                             :list-awbs="listAwb"
                             :handle-close-modal-resi="false"
                             :order-id="orderId"
+                            @updateValueTransaction="applyValueTransaction"
                         />
                     </b-row>
                 </b-col>

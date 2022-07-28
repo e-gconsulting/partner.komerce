@@ -453,6 +453,8 @@ export default {
                 { action: 'manage', subject: 'Setting Ekspedisi' },
                 { action: 'manage', subject: 'Hiring' },
                 { action: 'manage', subject: 'Fitur Pendukung' },
+                { action: 'manage', subject: 'Gudang' },
+                { action: 'manage', subject: 'Gudangku' },
 
                 // Komplace
                 // { action: 'manage', subject: 'Dashboard Komplace' },

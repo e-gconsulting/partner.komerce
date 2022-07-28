@@ -217,7 +217,7 @@
                                 style="
                                     color: white;
                                     font-weight: 400;
-                                    font-size: 20px;
+                                    font-size: 32px;
                                 "
                             >
                                 {{ finished.ticket_finished }}
@@ -687,7 +687,7 @@
                         </span>
                     </div>
                     <div v-if="dataStatusTicket.item.order_status === 'Diterima'" style="min-width: 150px;">
-                        <small class="text-success">Akhirnya Diterima</small>
+                        <small class="text-success">🙌 Akhirnya Diterima</small>
                     </div>
                     <div v-if="dataStatusTicket.item.order_status === 'Retur'" style="min-width: 150px;">
                         <small class="text-primary">Berakhir Retur</small>
@@ -1186,4 +1186,5 @@
             </b-col>
         </b-row>
     </b-modal>
+    <modal-component />
 </b-card>

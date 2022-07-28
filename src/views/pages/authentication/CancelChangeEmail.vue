@@ -6,20 +6,27 @@
     <b-col cols="4 text-center">
       <h4 class="mb-2 text-black">
         <strong>
-          Terimakasih
+          Perubahan Email Dibatalkan
         </strong>
       </h4>
       <div class="mb-2">
         <span>
-          Kami telah mengkonfirmasi {{ email }} sebagai alamat email untuk Akun Komerce kamu
+          Kamu telah membatalkan perubahan email. Ganti password untuk mengamankan akun
         </span>
       </div>
       <b-button
-        variant="primary"
+        class="mr-50"
+        variant="outline-primary"
         tag="router-link"
-        to="/login"
+        to="/dashboard-komship"
       >
-        Masuk
+        Lain Kali
+      </b-button>
+      <b-button
+        variant="primary"
+        @click="handleForgotPassword"
+      >
+        Ganti Password
       </b-button>
     </b-col>
   </b-row>
@@ -38,13 +45,11 @@ export default {
     BRow,
     BCol,
   },
-  data() {
-    return {
-      email: '',
-    }
-  },
-  mounted() {
-    this.email = this.$router.history.current.query.email
+  methods: {
+    handleForgotPassword() {
+      localStorage.clear()
+      window.location.replace('/forgot-password')
+    },
   },
 }
 </script>
