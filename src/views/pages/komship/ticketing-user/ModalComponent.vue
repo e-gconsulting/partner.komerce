@@ -16,7 +16,10 @@
         >
       </div>
       <div class="w-5/6 m-auto">
-        <p class="text-black">
+        <p
+          class="text-black"
+          style="margin-bottom: 1rem !important;"
+        >
           Perhatikan status tiket;
           <strong
             class="font-bold"
@@ -25,11 +28,17 @@
           kamu harus segera membalas biar Orderanmu nggak gantung dan berujung
           retur
         </p>
-        <p class="text-black">
+        <p
+          class="text-black"
+          style="margin-bottom: 1rem !important;"
+        >
           Kesuksesan pengiriman itu karena konfirmasi dari kamu jelas, dan
           Ekspedisi gercep nginfoin ke kurir
         </p>
-        <p class="text-black font-black">
+        <p
+          class="text-black font-black"
+          style="margin-bottom: 1rem !important;"
+        >
           Segera cek Tiket Orderan kamu yang terkendala, mungkin Ekspedisi butuh
           bantuan kamu buat konfirmasi pengiriman
         </p>
