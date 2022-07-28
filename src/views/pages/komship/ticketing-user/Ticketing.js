@@ -28,6 +28,8 @@ import {
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
+import useJwt from '@/@core/auth/jwt/useJwt'
+import ModalComponent from './ModalComponent.vue'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
@@ -64,6 +66,7 @@ export default
     DateRangePicker,
     ValidationProvider,
     ValidationObserver,
+    'modal-component': ModalComponent,
   },
   directives: {
     Ripple,
@@ -295,8 +298,19 @@ export default
         Notification.permission = permission
       }
     })
+    this.getProfile()
   },
   methods: {
+    async getProfile() {
+      await this.$http_komship
+        .post('v1/my-profile')
+        .then(response => {
+          const { data } = response.data
+          if (data.popups[0] !== 'popup_kendala') {
+            this.$bvModal.show('ModalComponent')
+          }
+        })
+    },
     fetchTicketAll() {
       this.loadingDataTable = true
       const params = {}
