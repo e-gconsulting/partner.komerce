@@ -562,7 +562,7 @@
                   <b-row>
                     <small
                       v-if="messageErrorPassword"
-                      class="text-primary"
+                      class="text-primary ml-1"
                     >
                       Password salah
                     </small>
@@ -570,9 +570,17 @@
                   <b-row>
                     <small
                       v-if="messageErrorUsernameIsSame"
-                      class="text-primary"
+                      class="text-primary ml-1"
                     >
                       Username tidak boleh sama dengan saat ini
+                    </small>
+                  </b-row>
+                  <b-row>
+                    <small
+                      v-if="usernameExist"
+                      class="text-primary ml-1"
+                    >
+                      *Username telah digunakan orang lain
                     </small>
                   </b-row>
                   <div v-if="errorNoHp">
@@ -621,12 +629,12 @@
                     </small>
                   </div>
                   <b-row>
-                    <small v-if="messageErrorEmail !== null" class="text-primary">
+                    <small v-if="messageErrorEmail !== null" class="text-primary ml-1">
                       {{ messageErrorEmail }}
                     </small>
                   </b-row>
                   <b-row>
-                    <small v-if="emailSamePrevious === true" class="text-primary">
+                    <small v-if="emailSamePrevious === true" class="text-primary ml-1">
                       Email yang dimasukan sama dengan yang sekarang, coba email yang lain
                     </small>
                   </b-row>

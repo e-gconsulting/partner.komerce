@@ -140,6 +140,8 @@ export default {
       fieldNewNumber: '',
 
       nameValidator: '',
+
+      usernameExist: false,
     }
   },
   mounted() {
@@ -445,15 +447,7 @@ export default {
             .then(response => {
               this.loadingEdit = false
               if (response.data.code === 1009) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Gagal',
-                    icon: 'AlertCircleIcon',
-                    text: response.data.message,
-                    variant: 'danger',
-                  },
-                }, 2000)
+                this.usernameExist = true
               } else {
                 this.$refs['modal-success-edit-username'].show()
                 this.$refs['modal-edit'].hide()
@@ -574,22 +568,22 @@ export default {
         formData.append('email', this.formInputEditItem)
         this.$http.post('/user/partner/update-profile/email', formData)
           .then(response => {
-            if (response.data.message !== 'Successfuly your email is the same as the previous email') {
-              this.$refs.formRulesEdit.reset()
-              this.successVerificationTitle = 'Cek Email Kamu'
-              this.descriptionSuccessVerification = 'Klik link konfirmasi yang telah kami kirimkan ke email danirizky@gmail.com untuk mengonfirmasi alamat email yang baru dan membantu mengamankan akun Anda. Link konfirmasi akan hangus dalam 10 menit setelah email dikirimkan'
-              this.$refs['modal-edit'].hide()
-              this.$refs['modal-success-verification'].show()
-              this.loadingEdit = false
-            } else {
+            if (response.data.message === 'Successfuly your email is the same as the previous email') {
               this.emailSamePrevious = true
-              this.loadingEdit = false
             }
-          })
-          .catch(err => {
-            if (err.response.data.code === 1009) {
+            if (response.data.code === 1009) {
               this.messageErrorEmail = '*Email telah digunakan orang lain'
             }
+            if (response.data.message === 'Successfuly Edit Email') {
+              this.$refs.formRulesEdit.reset()
+              this.successVerificationTitle = 'Cek Email Kamu'
+              this.descriptionSuccessVerification = `Klik link konfirmasi yang telah kami kirimkan ke email ${this.formInputEditItem} untuk mengonfirmasi alamat email yang baru dan membantu mengamankan akun Anda. Link konfirmasi akan hangus dalam 10 menit setelah email dikirimkan`
+              this.$refs['modal-edit'].hide()
+              this.$refs['modal-success-verification'].show()
+            }
+            this.loadingEdit = false
+          })
+          .catch(err => {
             this.loadingEdit = false
           })
       }
@@ -615,7 +609,7 @@ export default {
               },
             }, 2000)
           }
-          this.loadingEdit = true
+          this.loadingEdit = false
         })
     },
     submitEditNomer() {
@@ -625,7 +619,7 @@ export default {
       this.$http.post('user/partner/update-profile/no-handphone', formData)
         .then(response => {
           this.successVerificationTitle = 'Terimakasih'
-          this.descriptionSuccessVerification = `Kami telah mengkonfirmasi ${this.formInputEditItem} sebagai
+          this.descriptionSuccessVerification = `Kami telah mengkonfirmasi ${this.fieldNewNumber} sebagai
           nomor HP untuk Akun Komerce Kamu`
           this.errorOtp = false
           this.successConfirmPassword = false
@@ -647,6 +641,12 @@ export default {
         })
     },
     handleBackEdit() {
+      this.modalTitle = 'Edit No HP'
+      this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
+      this.modalFormLabel = 'No HP'
+      this.modalEditFormInputType = 'number'
+      this.successConfirmPassword = true
+      this.messageErrorPassword = false
       this.$refs['modal-verification-edit'].hide()
       this.$refs['modal-edit'].show()
     },
@@ -660,6 +660,7 @@ export default {
       }
     },
     closeSuccessVerification() {
+      this.messageErrorEmail = null
       this.successConfirmPassword = false
       this.formInputEditItem = ''
       this.$refs['modal-success-verification'].hide()
@@ -758,6 +759,9 @@ export default {
       this.messageErrorUsernameIsSame = false
       this.errorNoHp = false
       this.successConfirmPassword = false
+      this.usernameExist = false
+      this.itemEyeIcon = 'EyeOffIcon'
+      this.messageErrorEmail = null
     },
     handleValueCityCode() {
       this.cityCodeValue = this.cityCode.city_code
@@ -770,6 +774,7 @@ export default {
     handleMessageErrorUsernameIsSame() {
       this.messageErrorPassword = false
       this.messageErrorUsernameIsSame = false
+      this.usernameExist = false
     },
   },
 
