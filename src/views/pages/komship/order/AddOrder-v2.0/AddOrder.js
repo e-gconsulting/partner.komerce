@@ -132,6 +132,8 @@ export default {
       customerPhonePaste: '',
       customerPhonePasteMode: false,
       isWhatsapp: null,
+
+      isSubmitOrder: false,
     }
   },
   created() {
@@ -1219,6 +1221,7 @@ export default {
       this.customLabel = items
     },
     async submit(order) {
+      this.isSubmitOrder = true
       this.checkValidation()
       if (this.isValidate) {
         await this.$http_komship
@@ -1236,6 +1239,7 @@ export default {
               } else {
                 this.$router.push('/data-order')
               }
+              this.isSubmitOrder = false
             })
           })
           .catch(err => {
@@ -1300,6 +1304,7 @@ export default {
             } else {
               this.$refs['modal-error-store-order'].show()
             }
+            this.isSubmitOrder = false
           })
       } else {
         this.$swal({
@@ -1309,6 +1314,7 @@ export default {
           confirmButtonText: 'Oke',
           confirmButtonClass: 'btn btn-primary',
         })
+        this.isSubmitOrder = false
       }
     },
     formatCustomerName(e) {

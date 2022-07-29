@@ -993,10 +993,19 @@
           Submit & Tambah Order Lagi
         </b-button>
         <b-button
+          v-if="isSubmitOrder === false"
           variant="primary"
           class="ml-1"
           :disabled="!isCalculateOnExpedition"
           @click="submit(false)"
+        >
+          Submit
+        </b-button>
+        <b-button
+          v-if="isSubmitOrder === true"
+          variant="primary"
+          class="ml-1"
+          :disabled="true"
         >
           Submit
         </b-button>
