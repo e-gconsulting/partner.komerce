@@ -121,7 +121,7 @@ export default {
       }
     },
     async getHistoryPackage() {
-      if (this.orderDatas !== []) {
+      if (this.orderDatas.airway_bill) {
         const body = {
           data: this.orderDatas.airway_bill,
         }
