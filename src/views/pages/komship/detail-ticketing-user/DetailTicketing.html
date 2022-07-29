@@ -60,8 +60,20 @@
                                             </strong>
                                         </span>
                                     </template>
-                                    <b-badge :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Hilang' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
-                                        {{ orderStatus === 'Hilang' ? 'Paket Hilang' : orderStatus }}
+                                    <b-badge
+                                        v-if="ticketStatus !== 0"
+                                        :variant="statusTicketVariant(ticketStatus)"
+                                    >
+                                        {{ convertTicketStatus(ticketStatus) }}
+                                    </b-badge>
+                                    <b-badge
+                                        v-if="ticketStatus === 0"
+                                        style="
+                                            background: #FCD4BE;
+                                            color: #AB2900;
+                                        "
+                                    >
+                                        Perlu Tindak Lanjut
                                     </b-badge>
                                 </b-form-group>
                             </b-col>
@@ -77,8 +89,8 @@
                                                     </strong>
                                                 </span>
                                             </template>
-                                            <b-badge :variant="orderStatusVariant(orderStatus)">
-                                                {{ orderStatus }}
+                                            <b-badge :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Hilang' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
+                                                {{ orderStatus === 'Hilang' ? 'Paket Hilang' : orderStatus }}
                                             </b-badge>
                                         </b-form-group>
                                     </div>
