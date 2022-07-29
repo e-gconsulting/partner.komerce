@@ -2393,8 +2393,8 @@
             class="mx-auto"
           />
         </div>
-        <p class="text-[16px]">🛒 Ga harus langsung semua diinput, bisa coba yang paling sering laku<br>
-          📝 Kalau lagi gabut, bisa isi dulu kolom yang wajib, sisanya dilengkapi pas senggang aja</p>
+        <p class="text-[16px] mb-1">🛒 Ga harus langsung semua diinput, bisa coba yang <b class="text-primary">paling sering laku</b><br>
+          📝 Kalau lagi gabut, bisa isi dulu <b class="text-primary">kolom yang wajib</b>, sisanya dilengkapi pas senggang aja</p>
         <div class="d-flex justify-content-center mb-2">
           <b-button
             variant="primary"
