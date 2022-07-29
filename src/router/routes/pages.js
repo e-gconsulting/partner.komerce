@@ -107,4 +107,22 @@ export default [
       resource: 'Auth',
     },
   },
+  {
+    path: '/success-verification-email',
+    name: 'success-verification-email',
+    component: () => import('@/views/pages/authentication/SuccessVerificationEmail'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
+  {
+    path: '/cancel-change-email',
+    name: 'cancel-change-email',
+    component: () => import('@/views/pages/authentication/CancelChangeEmail'),
+    meta: {
+      layout: 'full',
+      resource: 'Dashboard Komship',
+    },
+  },
 ]

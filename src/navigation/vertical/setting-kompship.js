@@ -21,13 +21,6 @@ export default [
         action: 'manage',
       },
       {
-        title: 'Alamat Pickup',
-        icon: 'None',
-        resource: 'Setting Pickup Address',
-        route: 'kompship-pickup',
-        action: 'manage',
-      },
-      {
         title: 'Rekening Bank',
         icon: 'None',
         resource: 'Setting Rekening Bank',

@@ -1,5 +1,12 @@
+/* eslint-disable global-require */
 /* eslint-disable import/no-unresolved */
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import {
+  VBToggle,
+} from 'bootstrap-vue'
+import Ripple from 'vue-ripple-directive'
+import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
+import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import {
   getMessaging,
   getToken,
@@ -33,6 +40,10 @@ const app = initializeApp(firebaseConfig)
 const messaging = getMessaging()
 
 export default {
+  components: {
+    PopoverInfo,
+    PopupLacakResi,
+  },
   data() {
     return {
       ticketId: this.$route.params.ticket_id,
@@ -63,12 +74,50 @@ export default {
 
       // cancel ticket
       loadingCancelTicket: false,
-      moment,
 
       userId: JSON.parse(localStorage.userData),
       detailOrderMode: false,
       orderId: 0,
+
+      visible: true,
+
+      orderData: [],
+      itemAwb: [],
+      listAwb: '',
+      moment,
+
+      transactionValue: '',
+      isLoading: false,
+
+      stars: [
+        {
+          value: 1,
+          active: false,
+        },
+        {
+          value: 2,
+          active: false,
+        },
+        {
+          value: 3,
+          active: false,
+        },
+        {
+          value: 4,
+          active: false,
+        },
+        {
+          value: 5,
+          active: false,
+        },
+      ],
+      ratingUser: null,
+      dateRating: null,
     }
+  },
+  directives: {
+    'b-toggle': VBToggle,
+    Ripple,
   },
   created() {
     this.receiveMessage()
@@ -89,7 +138,7 @@ export default {
   methods: {
     fetchDetailTicket() {
       this.$http_komship.get(`v1/ticket-partner/detail/${this.ticketId}`)
-        .then(response => {
+        .then(async response => {
           const { data } = response.data
           this.ticketStatus = data.ticket_status
           this.orderStatus = data.order_status
@@ -102,8 +151,11 @@ export default {
           this.noResi = data.no_resi
           this.files = data.file
           this.messages = data.history_ticket
-          this.orderId = data.order_id
+          this.orderId = await data.order_id
           this.loadingDataDetail = false
+          this.ratingUser = data.rating_user
+          this.previewRating(data.rating_user.rating)
+          this.dateRating = data.date_updated
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
             const scrollToBottom = node => {
@@ -418,6 +470,91 @@ export default {
           },
         }, 2000)
       })
+    },
+    handleSubmitChat(event) {
+      if (event.keyCode === 13 && !event.shiftKey) {
+        event.preventDefault()
+        if (this.chatItem !== '') {
+          this.storeChat()
+        }
+      }
+    },
+    formatRibuan(x) {
+      if (x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
+      return x
+    },
+    formatRupiah(x) {
+      return `Rp ${this.formatRibuan(x)}`
+    },
+    goBack() {
+      window.close()
+    },
+    previewRating(data) {
+      const findIndexRating = this.stars.findIndex(item => item.value === data)
+      this.stars.forEach((item, index) => {
+        if (index <= findIndexRating) {
+          this.stars[index].active = true
+        }
+      })
+    },
+    resetRating() {
+      this.stars = [
+        {
+          value: 1,
+          active: false,
+        },
+        {
+          value: 2,
+          active: false,
+        },
+        {
+          value: 3,
+          active: false,
+        },
+        {
+          value: 4,
+          active: false,
+        },
+        {
+          value: 5,
+          active: false,
+        },
+      ]
+    },
+    submitRating(data) {
+      const formData = new FormData()
+      formData.append('ticket_id', this.ticketId)
+      formData.append('user_id', this.userId.partner_detail.id)
+      formData.append('rating', data)
+      this.$http_komship.post('/v1/ticket-partner/rating/store', formData)
+        .then(response => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'berhasil submit review',
+              variant: 'success',
+            },
+          }, 2000)
+          this.fetchDetailTicket()
+        })
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
+    applyValueTransaction(data) {
+      this.transactionValue = data
     },
   },
 }

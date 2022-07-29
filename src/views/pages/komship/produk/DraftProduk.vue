@@ -352,7 +352,7 @@
                     class=""
                   >
                     <p class="ml-2">
-                      Tidak Ada Variasi
+                      -
                     </p>
                   </b-col>
                   <b-col
@@ -622,7 +622,7 @@
                 </b-collapse>
               </div>
               <div v-else>
-                Tidak ada variasi
+                -
               </div>
             </template>
 

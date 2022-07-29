@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 import CodeInput from 'vue-verification-code-input'
 import { mapState, mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'

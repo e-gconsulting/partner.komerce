@@ -101,7 +101,7 @@
           autocomplete="off"
           :formatter="formatCustomerName"
           @keypress="validateInputCustomerName"
-          @keydown="getCustomer($event)"
+          @keyup="getCustomer($event)"
         />
         <datalist id="customerList">
           <option
@@ -150,7 +150,6 @@
             @paste="formatterPhone"
             @input="formatPhoneCustomer"
             @keyup="valueFormatPhone"
-            @change="checkWhatsapp"
           />
         </b-input-group>
         <b-row class="justify-content-start m-0">
@@ -367,10 +366,10 @@
               </b-button>
             </div>
           </div>
-          <span
+          <p
             v-else
-            class="d-flex text-center"
-          >Tidak Ada Variasi</span>
+            class="text-center"
+          >-</p>
           <b-modal
             :id="`modalVariation${data.index}`"
             hide-footer

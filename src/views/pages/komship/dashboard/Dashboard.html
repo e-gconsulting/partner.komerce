@@ -1,12 +1,13 @@
 <div>
   <div v-if="!loadingOnboarding" class="container p-0">
     <div v-if="notification.length > 0">
-      <b-alert v-for="notif in notification" :key="notif.id" :show="notif.show" dismissible class="p-1" :class="`bg-[$notif.color]`" @dismissed="notificationSession(notif)">
+      <b-alert v-for="notif in notification" :key="notif.id" :show="notif.show" dismissible class="p-1" :style="`background-color: ${notif.color} !important`" @dismissed="notificationSession(notif)">
         <span class="text-[#222222] text-[20px] font-semibold">{{ notif.title }}</span><br>
-        <span class="text-[#222222] text-[16px] font-normal">
+        <div class="text-[#222222] text-[16px] font-normal" style="max-width: 90%;">
           {{ notif.description }}&nbsp;
           <a class="text-[#222222] hover:text-[#222222] font-semibold" @click="windowOpen(notif.url_link)">{{ notif.url_link }}</a>
-        </span>
+        </div>
+
         <template slot="dismiss">
           <img
             src="@/assets/images/icons/close-circle.svg"
@@ -14,7 +15,6 @@
           >
         </template>
       </b-alert>
-
     </div>
     <div v-if="saldo < 0" class="alert alert-primary p-1">
       Kamu memiliki orderan retur yang belum lunas,
@@ -45,10 +45,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo
               </div>
-              <popover-info
-                classprops="dashboardpartner__popoverinfo"
-                text="Saldo kamu saat ini."
-              />
+              <img
+                id="infoSaldo"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+              <b-popover
+                triggers="hover"
+                target="infoSaldo"
+                placement="bottomleft"
+              >Saldo kamu saat ini.</b-popover>
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -117,10 +122,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo Pending
               </div>
-              <popover-info
-                classprops="dashboardpartner__popoverinfo"
-                text="Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima."
-              />
+              <img
+                id="infoSaldoPending"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+              <b-popover
+                triggers="hover"
+                target="infoSaldoPending"
+                placement="bottomleft"
+              >Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima.</b-popover>
             </div>
             <b-button
               variant="flat-dark"
@@ -173,10 +183,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Penghasilan
               </div>
-              <popover-info
-                classprops="dashboardpartner__popoverinfo"
-                text="Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir."
-              />
+              <img
+                id="infoPenghasilan"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+              <b-popover
+                triggers="hover"
+                target="infoPenghasilan"
+                placement="bottomleft"
+              >Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir.</b-popover>
             </div>
             <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
               <v-select
@@ -259,10 +274,15 @@
                   <p class="mb-0 order-head-text">
                     Orderan Retur
                   </p>
-                  <popover-info
-                    classprops="dashboardpartner__popoverinfo"
-                    text="Orderan retur selama 7 hari terakhir."
-                  />
+                  <img
+                    id="infoRetur"
+                    src="@/assets/images/icons/info-circle.svg"
+                  >
+                  <b-popover
+                    triggers="hover"
+                    target="infoRetur"
+                    placement="bottomleft"
+                  >Orderan retur selama 7 hari terakhir.</b-popover>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                   <p class="mb-0 order-body-text">
@@ -297,11 +317,16 @@
               >
                 <p class="mb-0 order-head-text">
                   Kendala Perlu Ditangani
-                  <popover-info
-                      classprops="dashboardpartner__popoverinfo"
-                      text="Jumlah kendala pengiriman yang segera kamu harus tanggapi sekarang juga
-                      "
-                    />
+                  <img
+                    id="infoProblem"
+                    src="@/assets/images/icons/info-circle.svg"
+                    class="d-inline-block"
+                  >
+                  <b-popover
+                    triggers="hover"
+                    target="infoProblem"
+                    placement="bottomleft"
+                  >Jumlah kendala pengiriman yang segera kamu harus tanggapi sekarang juga</b-popover>
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <p class="mb-0 order-body-text">
@@ -330,10 +355,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Top Admin Order
               </div>
-              <popover-info
-                classprops="dashboardpartner__popoverinfo"
-                text="Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan"
-              />
+              <img
+                id="infoTopAdmin"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+              <b-popover
+                triggers="hover"
+                target="infoTopAdmin"
+                placement="bottomleft"
+              >Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan</b-popover>
             </div>
           </div>
           <div class="card-body">
@@ -373,10 +403,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Produk Terlaris
               </div>
-              <popover-info
-                classprops="dashboardpartner__popoverinfo"
-                text="Produk Terlaris merupakan produk kamu yang paling banyak di order."
-              />
+              <img
+                id="infoProdukTerlaris"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+              <b-popover
+                triggers="hover"
+                target="infoProdukTerlaris"
+                placement="bottomleft"
+              >Produk Terlaris merupakan produk kamu yang paling banyak di order.</b-popover>
             </div>
             <b-button
               variant="flat-dark"
@@ -417,17 +452,16 @@
                   >
                     <div class="d-flex align-items-center">
                       <img
-                        v-if="produkTerlaris.photo !== null || produkTerlaris.photo !== ''"
-                        width="50px"
-                        class="img-fluid"
-                        :src="produkTerlaris.photo"
-                        alt="Photo"
-                      />
-                      <img
-                        v-else
+                        v-if="produkTerlaris.photo === null || produkTerlaris.photo === ''"
                         :src="require('@/assets/images/avatars/image-null.png')"
                         class="image-product"
                       >
+                      <img
+                        v-else
+                        width="50px"
+                        class="img-fluid"
+                        :src="produkTerlaris.photo"
+                      />
                       <div>
                         <p class="list-text-1 h-text-dark ml-2 mb-0">
                           {{ produkTerlaris.name }}
@@ -481,10 +515,15 @@
               <div class="first-card-header-text me-8 mb-0">
                 Customer Loyal
               </div>
-              <popover-info
-                classprops="dashboardpartner__popoverinfo"
-                text="Customer Loyal merupakan customer yang sering melakukan order."
-              />
+              <img
+                id="infoCustomerLoyal"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+              <b-popover
+                triggers="hover"
+                target="infoCustomerLoyal"
+                placement="bottomleft"
+              >Customer Loyal merupakan customer yang sering melakukan order.</b-popover>
             </div>
             <b-button
               variant="flat-dark"

@@ -15,148 +15,223 @@
         "
     >
         <b-row class="mx-50 my-2 justify-content-center">
-            <div
-                class="d-flex justify-content-center align-items-center mr-2 mb-1"
-                style="
-                    background: #FCD4BE;
-                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                    border-radius: 12px;
-                    width: 200px;
-                    height: 102px;
-                "
-            >
+            <div class="d-flex mr-2">
                 <div
-                    class="text-center"
+                    class="d-flex mb-1 box__content__status__0"
+                    style="
+                        background: #FF9845;
+                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                        width: 180px;
+                        height: 110px;
+                        border-top-left-radius: 12px;
+                        border-bottom-left-radius: 12px;
+                    "
+                    @click="filterStatusFromBox(0)"
                 >
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #AB2900;
-                            font-weight: 500;
-                            font-size: 16px;
-                        "
+                    <div
+                        class="ml-1"
                     >
-                        Perlu Tindak Lanjut
-                    </p>
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #AB2900;
-                            font-weight: 400;
-                            font-size: 20px;
-                        "
-                    >
-                        {{ perluTindakLanjut }}
-                    </p>
+                        <p
+                            class="mt-1"
+                            style="
+                                color: white;
+                                font-weight: 500;
+                                font-size: 16px;
+                            "
+                        >
+                            Perlu Tindak Lanjut
+                        </p>
+                        <div class="d-flex">
+                            <div class="mr-1">
+                                <b-img src="@/assets/images/svg/new-icon-perlu-tindak-lanjut.svg" />
+                            </div>
+                            <p
+                                class="mt-1"
+                                style="
+                                    color: white;
+                                    font-weight: 400;
+                                    font-size: 32px;
+                                "
+                            >
+                                {{ perluTindakLanjut }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                <div style="
+                    background: #CF762F;
+                    width: 20px;
+                    height: 110px;
+                    border-top-right-radius: 12px;
+                    border-bottom-right-radius: 12px;
+                " />
             </div>
 
-            <div
-                class="d-flex justify-content-center align-items-center mr-2 mb-1"
-                style="
-                    background: #FFEDED;
-                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                    border-radius: 12px;
-                    width: 200px;
-                    height: 102px;
-                "
-            >
+            <div class="d-flex mr-2">
                 <div
-                    class="text-center"
+                    class="d-flex mb-1 box__content__status__1"
+                    style="
+                        background: #F65A5C;
+                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                        border-top-left-radius: 12px;
+                        border-bottom-left-radius: 12px;
+                        width: 200px;
+                        height: 110px;
+                    "
+                    @click="filterStatusFromBox(1)"
                 >
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #E31A1A;
-                            font-weight: 500;
-                            font-size: 16px;
-                        "
+                    <div
+                        class="ml-1"
                     >
-                        Belum Diproses
-                    </p>
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #E31A1A;
-                            font-weight: 400;
-                            font-size: 20px;
-                        "
-                    >
-                        {{ belumDiProses }}
-                    </p>
+                        <p
+                            class="mt-1"
+                            style="
+                                color: white;
+                                font-weight: 500;
+                                font-size: 16px;
+                            "
+                        >
+                            Belum Diproses
+                        </p>
+                        <div class="d-flex">
+                            <div class="mr-1">
+                                <b-img src="@/assets/images/svg/new-icon-belum-diproses.svg" />
+                            </div>
+                            <p
+                                class="mt-1"
+                                style="
+                                    color: white;
+                                    font-weight: 400;
+                                    font-size: 32px;
+                                "
+                            >
+                                {{ belumDiProses }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                <div style="
+                    background: #C8484A;
+                    width: 20px;
+                    height: 110px;
+                    border-top-right-radius: 12px;
+                    border-bottom-right-radius: 12px;
+                " />
             </div>
 
-            <div
-                class="d-flex justify-content-center align-items-center mr-2 mb-1"
-                style="
-                    background: #FCEBBE;
-                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                    border-radius: 12px;
-                    width: 200px;
-                    height: 102px;
-                "
-            >
+            <div class="d-flex mr-2">
                 <div
-                    class="text-center"
+                    class="d-flex mb-1 box__content__status__2"
+                    style="
+                        background: #50A0FF;
+                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                        border-top-left-radius: 12px;
+                        border-bottom-left-radius: 12px;
+                        width: 200px;
+                        height: 110px;
+                    "
+                    @click="filterStatusFromBox(2)"
                 >
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #FBA63C;
-                            font-weight: 500;
-                            font-size: 16px;
-                        "
+                    <div
+                        class="ml-1"
                     >
-                        Sedang Diproses
-                    </p>
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #FBA63C;
-                            font-weight: 400;
-                            font-size: 20px;
-                        "
-                    >
-                        {{ sedangDiProses }}
-                    </p>
+                        <p
+                            class="mt-1"
+                            style="
+                                color: white;
+                                font-weight: 500;
+                                font-size: 16px;
+                            "
+                        >
+                            Sedang Diproses
+                        </p>
+                        <div class="d-flex">
+                            <div class="mr-1">
+                                <b-img src="@/assets/images/svg/new-icon-sedang-diproses.svg" />
+                            </div>
+                            <p
+                                class="mt-1"
+                                style="
+                                    color: white;
+                                    font-weight: 400;
+                                    font-size: 32px;
+                                "
+                            >
+                                {{ sedangDiProses }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                <div style="
+                    background: #3E85D9;
+                    width: 20px;
+                    height: 110px;
+                    border-top-right-radius: 12px;
+                    border-bottom-right-radius: 12px;
+                " />
             </div>
 
-            <div
-                class="d-flex justify-content-center align-items-center mb-1 mr-2"
-                style="
-                    background: #DCF3EB;
-                    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
-                    border-radius: 12px;
-                    width: 200px;
-                    height: 102px;
-                "
-            >
+            <div class="d-flex mr-2">
                 <div
-                    class="text-center"
+                    class="d-flex mb-1 box__content__status__3"
+                    style="
+                        background: #2CCA98;
+                        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
+                        border-top-left-radius: 12px;
+                        border-bottom-left-radius: 12px;
+                        width: 200px;
+                        height: 110px;
+                    "
+                    @click="filterStatusFromBox(3)"
                 >
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #34A770;
-                            font-weight: 500;
-                            font-size: 16px;
-                        "
+                    <div
+                        class="ml-1"
                     >
-                        Selesai
-                    </p>
-                    <p
-                        class="mt-1"
-                        style="
-                            color: #34A770;
-                            font-weight: 400;
-                            font-size: 20px;
-                        "
-                    >
-                        {{ finished }}
-                    </p>
+                        <div class="d-flex mt-1">
+                            <p
+                                class="mr-1"
+                                style="
+                                    color: white;
+                                    font-weight: 500;
+                                    font-size: 16px;
+                                "
+                            >
+                                Selesai
+                            </p>
+                            <span class="mr-1" style="height: 25px; width: 2px; background-color: white" />
+                            <div class="mr-50">
+                                <b-img src="@/assets/images/svg/thropy-selesai.svg" />
+                            </div>
+                            <small class="text-white" style="font-size: 8px;">
+                                {{ finished.order_success }}-nya
+                                <br>
+                                Berhasil Diterima
+                            </small>
+                        </div>
+                        <div class="d-flex">
+                            <div class="mr-1">
+                                <b-img src="@/assets/images/svg/new-icon-selesai.svg" />
+                            </div>
+                            <p
+                                class="mt-1"
+                                style="
+                                    color: white;
+                                    font-weight: 400;
+                                    font-size: 32px;
+                                "
+                            >
+                                {{ finished.ticket_finished }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                <div style="
+                    background: #28B48B;
+                    width: 20px;
+                    height: 110px;
+                    border-top-right-radius: 12px;
+                    border-bottom-right-radius: 12px;
+                " />
             </div>
         </b-row>
     </div>
@@ -517,6 +592,7 @@
                 empty-text="Tidak ada data yang ditampilkan."
                 responsive
                 selectable
+                select-mode="single"
                 head-variant="light"
                 :tbody-tr-class="getRowClass"
                 @row-selected="onRowSelected"
@@ -610,6 +686,15 @@
                         >
                             {{ convertTicketStatus(dataStatusTicket.value) }}
                         </span>
+                    </div>
+                    <div v-if="dataStatusTicket.item.order_status === 'Diterima'" style="min-width: 150px;">
+                        <small class="text-success">🙌 Akhirnya Diterima</small>
+                    </div>
+                    <div v-if="dataStatusTicket.item.order_status === 'Retur'" style="min-width: 150px;">
+                        <small class="text-primary">Berakhir Retur</small>
+                    </div>
+                    <div v-if="dataStatusTicket.item.order_status === 'Hilang'" style="min-width: 150px;">
+                        <small class="text-primary">Paketnya Hilang 🙏</small>
                     </div>
                 </template>
     
@@ -1105,4 +1190,5 @@
             </b-col>
         </b-row>
     </b-modal>
+    <modal-component />
 </b-card>

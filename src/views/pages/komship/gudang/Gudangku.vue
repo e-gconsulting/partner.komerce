@@ -881,8 +881,6 @@ import {
   BModal,
   BImg,
 } from 'bootstrap-vue'
-import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -957,9 +955,7 @@ export default {
   methods: {
     getAddress() {
       this.loading = true
-      httpKomship.get('/v1/address', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(async response => {
+      this.$http_komship.get('/v1/address').then(async response => {
         const { data } = response.data
         data.forEach(this.myLoop)
         this.dataAddress = data
@@ -979,9 +975,7 @@ export default {
       })
     },
     myLoop(data) {
-      httpKomship.get(`/v1/destination?destination_id=${data.destination_id}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$http_komship.get(`/v1/destination?destination_id=${data.destination_id}`).then(response => {
         if (response.data.data !== null) {
           this.tes.push(response.data.data)
           const seen = new Set()
@@ -1019,48 +1013,47 @@ export default {
           formData.append('phone', this.fieldAddPhoneUser)
           formData.append('is_default', this.dataIsDefault)
 
-          httpKomship.post('/v1/address/store', formData, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(response => {
-            if (response.data.code !== 400) {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  icon: 'CheckIcon',
-                  text: 'Success menambahkan alamat pickup',
-                  variant: 'success',
-                },
-              }, 2000)
+          this.$http_komship.post('/v1/address/store', formData)
+            .then(response => {
+              if (response.data.code !== 400) {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success menambahkan alamat pickup',
+                    variant: 'success',
+                  },
+                }, 2000)
+                this.loadingSubmit = false
+                this.formAddAddress = false
+                this.getAddress()
+              } else {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Gagal',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal menambahkan alamat pickup, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
+                }, 2000)
+                this.loadingSubmit = false
+                this.formAddAddress = false
+                this.getAddress()
+              }
+            }).catch(() => {
               this.loadingSubmit = false
-              this.formAddAddress = false
-              this.getAddress()
-            } else {
               this.$toast({
                 component: ToastificationContent,
                 props: {
                   title: 'Gagal',
                   icon: 'AlertCircleIcon',
-                  text: 'Gagal menambahkan alamat pickup, silahkan coba lagi!',
+                  text: 'Gagal menambahkan alamat, silahkan coba lagi',
                   variant: 'danger',
                 },
               }, 2000)
-              this.loadingSubmit = false
-              this.formAddAddress = false
-              this.getAddress()
-            }
-          }).catch(() => {
-            this.loadingSubmit = false
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal menambahkan alamat, silahkan coba lagi',
-                variant: 'danger',
-              },
-            }, 2000)
-          })
+            })
         } else {
           this.loadingSubmit = false
         }
@@ -1103,35 +1096,34 @@ export default {
           formData.append('pic', this.picName)
           formData.append('phone', this.phoneUser)
           formData.append('is_default', this.dataIsDefault)
-          httpKomship.post(`/v1/address/update/${this.editIdAddress}`, formData, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(() => {
-            this.tes = []
-            this.handleOldOrigin = false
-            this.loadingSubmit = false
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                icon: 'CheckIcon',
-                text: 'Success update satu alamat pickup',
-                variant: 'success',
-              },
+          this.$http_komship.post(`/v1/address/update/${this.editIdAddress}`, formData)
+            .then(() => {
+              this.tes = []
+              this.handleOldOrigin = false
+              this.loadingSubmit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Success update satu alamat pickup',
+                  variant: 'success',
+                },
+              })
+              this.editMode = false
+              this.getAddress()
+            }).catch(() => {
+              this.loadingSubmit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal update alamat pickup, silahkan coba lagi!',
+                  variant: 'danger',
+                },
+              }, 2000)
             })
-            this.editMode = false
-            this.getAddress()
-          }).catch(() => {
-            this.loadingSubmit = false
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failed',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal update alamat pickup, silahkan coba lagi!',
-                variant: 'danger',
-              },
-            }, 2000)
-          })
         } else {
           this.loadingSubmit = false
         }
@@ -1166,9 +1158,7 @@ export default {
     },
     deleteAddress() {
       if (this.dataDelete.is_default !== 1) {
-        httpKomship.delete(`/v1/address/delete/${this.dataDelete.address_id}`, {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        })
+        this.$http_komship.delete(`/v1/address/delete/${this.dataDelete.address_id}`)
           .then(response => {
             this.$refs['modal-confirm-delete-address'].hide()
             this.getAddress()
@@ -1201,21 +1191,20 @@ export default {
       that.loadOrigin(search).finally(() => loading(false))
     }, 500),
     loadOrigin(search) {
-      return httpKomship.get(`/v1/destination?search=${search}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        this.itemsOriginEdit = response.data.data.data
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
+      return this.$http_komship.get(`/v1/destination?search=${search}`)
+        .then(response => {
+          this.itemsOriginEdit = response.data.data.data
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
         })
-      })
     },
     changeDefaultAddress() {
       if (this.isDefault === false) {

@@ -26,7 +26,7 @@
         <b-button
           variant="primary"
           class="mb-2 btn-sm-block"
-          :to="{ path: '/' }"
+          @click="backToLogin"
         >
           Back to home
         </b-button>
@@ -78,6 +78,14 @@ export default {
         return this.downImg
       }
       return this.downImg
+    },
+  },
+  mounted() {
+    localStorage.clear()
+  },
+  methods: {
+    backToLogin() {
+      window.location.replace('/')
     },
   },
 }

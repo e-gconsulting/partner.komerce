@@ -283,31 +283,33 @@ export default {
             confirmButtonClass: 'btn btn-primary',
           }).then(res => {
             if (res.isConfirmed) {
-              this.$router.push('setting-kompship/pickup')
+              this.$router.push('gudangku')
             }
           })
         }
       })
     },
     getCustomer: _.debounce(function (e) {
-      const event = e.key ? 'input' : 'list'
-      if (event === 'list') {
-        return this.customerList.forEach(item => {
-          if (item.name === this.customerName) {
-            this.customerId = item.customer_id
-            this.customerPhone = item.phone
-            this.customerAddress = item.address
-          }
-        })
+      if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {
+        const event = e.key ? 'input' : 'list'
+        if (event === 'list') {
+          return this.customerList.forEach(item => {
+            if (item.name === this.customerName) {
+              this.customerId = item.customer_id
+              this.customerPhone = item.phone
+              this.customerAddress = item.address
+            }
+          })
+        }
+        this.$http_komship
+          .get('v1/customer', {
+            params: { search: this.customerName },
+          })
+          .then(response => {
+            const { data } = response.data
+            this.customerList = data
+          })
       }
-      this.$http_komship
-        .get('v1/customer', {
-          params: { search: this.customerName },
-        })
-        .then(response => {
-          const { data } = response.data
-          this.customerList = data
-        })
       return this.customerList
     }, 1000),
     onSearchDestination(search, loading) {
@@ -1321,7 +1323,7 @@ export default {
     formatAddressDetail(e) {
       return String(e).substring(0, 185)
     },
-    formatPhoneCustomer() {
+    formatPhoneCustomer: _.debounce(function () {
       if (this.customerPhone.length < 9) {
         this.messageErrorPhone = true
       } else {
@@ -1331,7 +1333,8 @@ export default {
         this.customerPhone = this.customerPhonePaste
       }
       this.customerPhonePasteMode = false
-    },
+      this.checkWhatsapp()
+    }, 1000),
     validateInputCustomerName(e) {
       if (
         e.keyCode === 47
@@ -1402,10 +1405,12 @@ export default {
         .then(res => {
           const { data } = res.data
           this.isWhatsapp = data
+          this.messageErrorPhone = false
         })
         .catch(error => {
           const { data } = error.response.data
           this.isWhatsapp = data
+          this.messageErrorPhone = false
         })
     },
   },

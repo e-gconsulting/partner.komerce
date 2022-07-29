@@ -28,6 +28,8 @@ import {
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
+import useJwt from '@/@core/auth/jwt/useJwt'
+import ModalComponent from './ModalComponent.vue'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCPYJYeP-9_G3S5MOV_-8QPDSmxF8dj84g',
@@ -64,6 +66,7 @@ export default
     DateRangePicker,
     ValidationProvider,
     ValidationObserver,
+    'modal-component': ModalComponent,
   },
   directives: {
     Ripple,
@@ -295,8 +298,19 @@ export default
         Notification.permission = permission
       }
     })
+    this.getProfile()
   },
   methods: {
+    async getProfile() {
+      await this.$http_komship
+        .post('v1/my-profile')
+        .then(response => {
+          const { data } = response.data
+          if (data.popups[0] !== 'popup_kendala') {
+            this.$bvModal.show('ModalComponent')
+          }
+        })
+    },
     fetchTicketAll() {
       this.loadingDataTable = true
       const params = {}
@@ -452,7 +466,8 @@ export default
       this.$refs['popup-success-create-ticket'].hide()
     },
     onRowSelected(data) {
-      this.$router.push({ path: `/ticketing/detail/${data[0].id}`, params: { data_ticket: data } })
+      const routeData = this.$router.resolve({ path: `/ticketing/detail/${data[0].id}`, params: { data_ticket: data }, query: { filter_status: this.ticketStatus } })
+      window.open(routeData.href, '_blank')
     },
     cekResi(search, loading) {
       if (search.length) {
@@ -762,6 +777,35 @@ export default
         result = item.history_ticket_count_mitra[0] !== undefined ? '' : 'table-secondary'
       }
       return result
+    },
+    filterStatusFromBox(value) {
+      this.ticketStatus = []
+      this.ticketStatusItems = [
+        {
+          label: 'Perlu Tindak Lanjut',
+          value: 0,
+          onCheck: false,
+        },
+        {
+          label: 'Belum Diproses',
+          value: 1,
+          onCheck: false,
+        },
+        {
+          label: 'Sedang Diproses',
+          value: 2,
+          onCheck: false,
+        },
+        {
+          label: 'Selesai',
+          value: 3,
+          onCheck: false,
+        },
+      ]
+      this.ticketStatus.push(value)
+      const findIndexObj = this.ticketStatusItems.findIndex(items => items.value === value)
+      this.ticketStatusItems[findIndexObj].onCheck = true
+      this.fetchTicket()
     },
   },
 }

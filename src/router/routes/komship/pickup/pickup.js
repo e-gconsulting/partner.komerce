@@ -8,7 +8,7 @@ export default [
       routeDetailBefore: 'detail-orderan-pickup-before',
       routeDetailAfter: 'history-pickup',
       routeToActiveExpedition: 'kompship-ekspedisi',
-      routeToAddressSetting: 'kompship-pickup',
+      routeToAddressSetting: 'gudangku',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [

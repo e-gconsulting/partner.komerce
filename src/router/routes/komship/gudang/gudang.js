@@ -2,14 +2,14 @@ const pageName = { singular: 'Pickup', plural: 'pickup' }
 
 export default [
   {
-    path: '/setting-kompship/pickup',
-    name: 'kompship-pickup',
-    component: () => import('@/views/pages/komship/setting-kompship/Pickup.vue'),
+    path: '/gudangku',
+    name: 'gudangku',
+    component: () => import('@/views/pages/komship/gudang/Gudangku.vue'),
     meta: {
       name: pageName.singular,
       routeEdit: 'edit-pickup',
       routeAdd: 'add-pickup',
-      resource: 'Setting Komship',
+      resource: 'Gudang',
       action: 'manage',
       breadcrumb: [
         {

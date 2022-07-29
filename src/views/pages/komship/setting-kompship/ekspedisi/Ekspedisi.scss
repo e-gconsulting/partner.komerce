@@ -1,0 +1,16 @@
+.expedition .card-header {
+    background-color: #F8F8F8;
+    border-radius: 12px;
+    border: 1px solid #E2E2E2;
+}
+.expedition .active {
+    background-color: #FCD4BE;
+}
+.expedition .card-header:hover {
+    opacity: 0.8;
+}
+.expedition ul {
+    list-style-type: disc;
+    list-style-position: inside; 
+    margin-left: 15px; 
+}

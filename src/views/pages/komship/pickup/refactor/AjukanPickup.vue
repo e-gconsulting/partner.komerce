@@ -99,36 +99,46 @@
             label-class="text-black font-weight-bold"
           >
             <b-row>
-              <b-button
-                id="popover-button-3"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                variant="flat-dark"
-                class="btn-icon border ml-1"
+              <b-col
+                md="3"
+                class="d-flex"
               >
-                {{ timeValue }}
-              </b-button>
-              <b-popover
-                target="popover-button-3"
-                placement="bottom"
-                variant="primary"
-                triggers="focus"
-              >
-                <b-time
+                <b-form-input
                   v-model="timeValue"
-                  locale="en"
-                  hide-header
-                  :hour12="false"
-                  :show-seconds="false"
-                  @context="onChangeTime"
+                  class="text-center bg-white"
+                  style="max-width:70px"
+                  readonly
                 />
-              </b-popover>
+                <div class="ml-1">
+                  <b-icon-chevron-up
+                    role="button"
+                    @click="pickTime('plus')"
+                  /><br>
+                  <b-icon-chevron-down
+                    role="button"
+                    @click="pickTime('minus')"
+                  />
+                </div>
+                <b-img
+                  id="infoHours"
+                  src="@/assets/images/icons/info-circle.svg"
+                  class="ml-1 cursor-pointer"
+                />
+                <b-popover
+                  target="infoHours"
+                  triggers="hover"
+                  custom-class="bg-primary"
+                >
+                  <ul
+                    class="text-white text-sm"
+                    style="list-style-type:disc;margin-left:15px"
+                  >
+                    <li>Jam operasional pickup dari 9 pagi s.d 9 malam</li>
+                    <li>Pilih jam pickup >1 jam dari waktu saat ini</li>
+                  </ul>
+                </b-popover>
+              </b-col>
             </b-row>
-            <small
-              v-if="isNotCorrectTime && isNotCorrectDate"
-              class="text-primary mt-50"
-            >
-              *Tidak bisa angkut jam pickup kurang dari jam saat ini
-            </small>
           </b-form-group>
         </b-col>
         <b-col
@@ -804,6 +814,7 @@ import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { toInteger } from 'lodash'
 import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
@@ -826,8 +837,6 @@ export default {
     BContainer,
     flatPickr,
     LottieAnimation,
-    BTime,
-    BPopover,
     BOverlay,
   },
   directives: {
@@ -842,7 +851,8 @@ export default {
       dateLabel: '',
 
       timeValueText: '09 : 00',
-      timeValue: moment().format('HH:mm'),
+      timeValue: null,
+      minTime: null,
       isNotCorrectTime: true,
       isNotCorrectDate: true,
       profile: null,
@@ -956,6 +966,7 @@ export default {
     //   this.timeValue = moment().format('HH:mm:ss')
     // }, 1000)
     // this.$refs['modal-pickup-error-success'].show()
+    this.getTimeNow()
     this.cekExpedition()
     this.$http_komship.post('v1/my-profile', {
       headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -1241,6 +1252,46 @@ export default {
     },
     showAlertSubmitPickup() {
       this.$refs['modal-alert-submit-pickup'].show()
+    },
+    getTimeNow() {
+      const hourNow = moment().format('HH')
+      const minuteNow = moment().format('mm')
+      if (minuteNow === '00' && toInteger(hourNow) < 21) {
+        this.timeValue = `${toInteger(hourNow) + 1}:00`
+        this.minTime = toInteger(hourNow) + 1
+      } else if (toInteger(hourNow) < 21) {
+        this.timeValue = `${toInteger(hourNow) + 2}:00`
+        this.minTime = toInteger(hourNow) + 2
+      } else {
+        this.timeValue = '21:00'
+        this.minTime = 21
+      }
+    },
+    pickTime(method) {
+      const getHours = this.timeValue.substring(0, 2)
+      const pickDate = this.changeDate(this.dateValue, 2)
+      let hours = toInteger(getHours)
+      if (method === 'plus') {
+        if (hours === 21) {
+          hours = 21
+        } else {
+          hours += 1
+        }
+      }
+      if (method === 'minus') {
+        if (pickDate === moment().format('YYYY-M-DD')) {
+          if (hours === this.minTime) {
+            hours = this.minTime
+          } else {
+            hours -= 1
+          }
+        } else if (hours === 9) {
+          hours = 9
+        } else {
+          hours -= 1
+        }
+      }
+      this.timeValue = hours
     },
   },
 }
