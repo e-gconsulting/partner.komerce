@@ -16,8 +16,7 @@
       </div>
       <b-button
         variant="primary"
-        tag="router-link"
-        to="/login"
+        @click="backLogin"
       >
         Masuk
       </b-button>
@@ -45,6 +44,11 @@ export default {
   },
   mounted() {
     this.email = this.$router.history.current.query.email
+  },
+  methods: {
+    backLogin() {
+      window.location.replace('/login')
+    },
   },
 }
 </script>
