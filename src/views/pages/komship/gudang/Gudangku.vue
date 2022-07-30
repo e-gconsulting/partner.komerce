@@ -468,17 +468,17 @@
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
-                      <b-form-group
-                        label-cols-md="4"
+                      <b-col
+                        cols="9"
                       >
-                        <template #label>
-                          <h4 class="text-black">
-                            Kelurahan/Kecamatan<span class="text-primary">*</span>
-                          </h4>
-                        </template>
-                        <b-col
-                          cols="9"
+                        <b-form-group
+                          label-cols-md="4"
                         >
+                          <template #label>
+                            <h4 class="text-black">
+                              Kelurahan/Kecamatan<span class="text-primary">*</span>
+                            </h4>
+                          </template>
                           <validation-provider
                             #default="{errors}"
                             name="Kelurahan/Kecamatan"
@@ -494,8 +494,8 @@
                             />
                             <small class="text-danger">{{ errors[0] }}</small>
                           </validation-provider>
-                        </b-col>
-                      </b-form-group>
+                        </b-form-group>
+                      </b-col>
                     </b-row>
                   </b-col>
 
@@ -606,7 +606,7 @@
                       <b-col
                         cols="9"
                       >
-                        <b-from-group
+                        <b-form-group
                           label-cols-md="4"
                         >
                           <template #label>
@@ -630,7 +630,7 @@
                               @input="formatPhoneUser"
                               @keypress="validateInputPhone"
                             />
-                            <b-row class="justify-content-between">
+                            <b-row class="justify-content-end">
                               <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
                               <small class="mr-1 mt-50">
                                 <small
@@ -642,7 +642,7 @@
                               </small>
                             </b-row>
                           </validation-provider>
-                        </b-from-group>
+                        </b-form-group>
                       </b-col>
                     </b-row>
                   </b-col>
