@@ -154,7 +154,7 @@ export default {
           this.orderId = await data.order_id
           this.loadingDataDetail = false
           this.ratingUser = data.rating_user
-          this.previewRating(data.rating_user.rating)
+          if (data.rating_user !== null) this.previewRating(data.rating_user.rating)
           this.dateRating = data.date_updated
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
