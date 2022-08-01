@@ -85,28 +85,27 @@ export default {
   },
   watch: {
     async orderId(newVal, oldVal) {
-      try {
-        const order = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}/detail/${this.orderId}`)
-        const { data } = await order.data
-        this.transactionValue = data.old_grandtotal
-        this.orderDatas = await data
-        await this.lacakresi()
-        await this.$emit('updateValueTransaction', data.old_grandtotal)
-      } catch (err) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        }, 2000)
+      if (newVal) {
+        try {
+          const order = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}/detail/${this.orderId}`)
+          const { data } = await order.data
+          this.transactionValue = data.old_grandtotal
+          this.orderDatas = await data
+          await this.lacakresi()
+          await this.$emit('updateValueTransaction', data.old_grandtotal)
+        } catch (err) {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        }
       }
     },
-  },
-  mounted() {
-    this.lacakresi()
   },
   methods: {
     lacakresi() {
@@ -121,19 +120,17 @@ export default {
       }
     },
     async getHistoryPackage() {
-      if (this.orderDatas.airway_bill) {
-        const body = {
-          data: this.orderDatas.airway_bill,
-        }
-        await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
-          const { data } = res.data
-          this.itemAwb = data.history
-          this.isLoading = false
-          this.getElementAwb()
-        }).catch(err => {
-          this.isLoading = false
-        })
+      const body = {
+        data: this.orderDatas.airway_bill,
       }
+      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
+        const { data } = res.data
+        this.itemAwb = data.history
+        this.isLoading = false
+        this.getElementAwb()
+      }).catch(err => {
+        this.isLoading = false
+      })
     },
     getElementAwb() {
       const formatDate = date => {
