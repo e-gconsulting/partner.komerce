@@ -592,6 +592,7 @@ export default {
           const { loaded, total } = progressEvent
           this.submitProgress = Math.floor((loaded * 100) / total)
         },
+        timeout: 0,
       }
       await this.$http_komship.post('/v1/order/sheet/save-submit', {
         options: 'submit',
