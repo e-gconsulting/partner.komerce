@@ -72,10 +72,17 @@
                     :formatter="formatNameProduct"
                     :state="errors.length > 0 ? false:null"
                     @keypress="validateInputProductName"
+                    @input="checkProductName"
                   />
-                  <b-row class="justify-content-between">
+                  <b-row>
                     <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
-                    <small class="mr-1 mt-50">
+                    <small
+                      v-if="availableProductName"
+                      class="text-primary mt-50"
+                    >
+                      *Nama Produk '{{ productName }}' sudah dipakai. silahkan isi dengan nama lain.
+                    </small>
+                    <small class="ml-auto mr-1 mt-50">
                       <small
                         v-if="messageErrorIsActive"
                         class="text-primary"
@@ -2530,6 +2537,7 @@ export default {
 
       messageErrorIsActive: false,
       newUser: true,
+      availableProductName: false,
     }
   },
   computed: {
@@ -3349,6 +3357,20 @@ export default {
     dissmissNewUser() {
       this.$bvModal.hide('modalOnboarding')
       localStorage.setItem('newUser', false)
+    },
+    async checkProductName() {
+      await this.$http_komship.get('/v1/product/check-name', {
+        params: {
+          product_name: this.productName,
+        },
+      }).then(response => {
+        const { data } = response
+        if (data.code === 1003) {
+          this.availableProductName = true
+        } else {
+          this.availableProductName = false
+        }
+      }).catch(() => { this.availableProductName = false })
     },
   },
 }
