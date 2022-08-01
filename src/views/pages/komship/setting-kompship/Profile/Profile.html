@@ -65,7 +65,7 @@
                     placeholder="Username"
                     :disabled="true"
                     :state="errors.length > 0 ? false:null"
-                    style="background: white; border: 1.5px solid #F3F3F3 !important"
+                    style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
                   />
                   <template #append>
                    <b-button variant="flat-dark" class="btn-icon" size="sm" @click="openModalEdit('username')":disabled="userData.username_change === false">
@@ -135,7 +135,7 @@
                     type="number"
                     placeholder="Nomer HP"
                     :state="errors.length > 0 ? false:null"
-                    style="background: white; border: 1.5px solid #F3F3F3 !important"
+                    style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
                     disabled
                   />
                   <template #append>
@@ -169,7 +169,7 @@
                     v-model="emailUser"
                     placeholder="Email"
                     :state="errors.length > 0 ? false:null"
-                    style="background: white; border: 1.5px solid #F3F3F3 !important"
+                    style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
                     disabled
                   />
                   <template #append>
