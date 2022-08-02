@@ -94,24 +94,33 @@
         <span class="text-lg">Nama Pelanggan</span>
       </b-col>
       <b-col md="4">
-        <b-form-input
-          v-model="customerName"
-          list="customerList"
-          placeholder="Masukan nama atau cari dari data pelanggan"
-          autocomplete="off"
-          :formatter="formatCustomerName"
-          @keypress="validateInputCustomerName"
-          @keydown="getCustomer($event)"
-        />
-        <datalist id="customerList">
-          <option
-            v-for="item in customerList"
-            :key="item.customer_id"
-            :value="item.name"
-          >
-            {{ item.name }}, {{ item.phone }}, {{ item.address }}
-          </option>
-        </datalist>
+        <b-input-group>
+          <b-form-input
+            v-model="customerName"
+            list="customerList"
+            placeholder="Masukan nama atau cari dari data pelanggan"
+            autocomplete="off"
+            :formatter="formatCustomerName"
+            @keypress="validateInputCustomerName"
+            @keydown="getCustomer($event)"
+          />
+          <template #append>
+            <b-button ref="button-list-customer" id="popover-list-customer" variant="flat-dark" size="sm" class="btn-icon">
+              <feather-icon icon="ChevronDownIcon" />
+            </b-button>
+            <b-popover ref="popoverCustomerList" target="popover-list-customer" triggers="focus" placement="bottom">
+              <div
+                v-for="item in customerList"
+                :key="item.customer_id"
+                :value="item.name"
+              >
+                <b-button variant="flat-dark" size="sm" class="btn-icon mb-1" @click="setDataCustomer(item)">
+                  {{ item.name }}, {{ item.phone }}, {{ item.address }}
+                </b-button>
+              </div>
+            </b-popover>
+          </template>
+        </b-input-group>
         <b-row class="justify-content-end">
           <small class="mr-1 mt-50">
             <small

@@ -305,6 +305,7 @@ export default {
         .then(response => {
           const { data } = response.data
           this.customerList = data
+          this.$refs['button-list-customer'].focus()
         })
       return this.customerList
     }, 1000),
@@ -1404,6 +1405,13 @@ export default {
           this.isWhatsapp = data
           this.messageErrorPhone = false
         })
+    },
+    async setDataCustomer(data) {
+      this.customerId = await data.customer_id
+      this.customerPhone = await data.phone
+      this.customerAddress = await data.address
+      this.$refs.selectDestination.$refs.search.focus()
+      await this.checkWhatsapp()
     },
   },
 }
