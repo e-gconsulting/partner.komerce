@@ -108,14 +108,14 @@
             <b-button ref="button-list-customer" id="popover-list-customer" variant="flat-dark" size="sm" class="btn-icon">
               <feather-icon icon="ChevronDownIcon" />
             </b-button>
-            <b-popover ref="popoverCustomerList" target="popover-list-customer" triggers="focus" placement="bottom">
+            <b-popover ref="popoverCustomerList" target="popover-list-customer" triggers="focus" placement="right">
               <div
                 v-for="item in customerList"
                 :key="item.customer_id"
                 :value="item.name"
               >
-                <b-button variant="flat-dark" size="sm" class="btn-icon mb-1" @click="setDataCustomer(item)">
-                  {{ item.name }}, {{ item.phone }}, {{ item.address }}
+                <b-button variant="flat-dark" size="sm" class="btn-icon mb-1 p-0 text-left" @click="setDataCustomer(item)">
+                  <p>{{ item.name }}, {{ item.phone }}, {{ item.address }}</p>
                 </b-button>
               </div>
             </b-popover>
