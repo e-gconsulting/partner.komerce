@@ -1404,6 +1404,17 @@ export default {
           const { data } = error.response.data
           this.isWhatsapp = data
           this.messageErrorPhone = false
+          if (error.response.data.code !== 1001) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: error,
+                variant: 'danger',
+              },
+            })
+          }
         })
     },
     async setDataCustomer(data) {
