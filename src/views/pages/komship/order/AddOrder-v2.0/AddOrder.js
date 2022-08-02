@@ -305,6 +305,7 @@ export default {
         .then(response => {
           const { data } = response.data
           this.customerList = data
+          this.$refs['button-list-customer'].focus()
         })
       return this.customerList
     }, 1000),
@@ -1403,7 +1404,25 @@ export default {
           const { data } = error.response.data
           this.isWhatsapp = data
           this.messageErrorPhone = false
+          if (error.response.data.code !== 1001) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: error,
+                variant: 'danger',
+              },
+            })
+          }
         })
+    },
+    async setDataCustomer(data) {
+      this.customerId = await data.customer_id
+      this.customerPhone = await data.phone
+      this.customerAddress = await data.address
+      this.$refs.selectDestination.$refs.search.focus()
+      await this.checkWhatsapp()
     },
   },
 }
