@@ -4,6 +4,18 @@
 import jspreadsheet from 'jspreadsheet-ce'
 import { toInteger } from 'lodash'
 import moment from 'moment'
+import axios from 'axios'
+import useJwt from '@core/auth/jwt/useJwt'
+
+const { jwt } = useJwt(axios, {})
+const token = jwt.getToken()
+
+const axiosKomship = axios.create({
+  baseURL: process.env.VUE_APP_BASE_URL_KOMSHIP,
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
 
 const regexNumber = /^\d+$/
 
@@ -592,9 +604,8 @@ export default {
           const { loaded, total } = progressEvent
           this.submitProgress = Math.floor((loaded * 100) / total)
         },
-        timeout: 0,
       }
-      await this.$http_komship.post('/v1/order/sheet/save-submit', {
+      await axiosKomship.post('/v1/order/sheet/save-submit', {
         options: 'submit',
         data: this.dataSubmit,
       }, config)
