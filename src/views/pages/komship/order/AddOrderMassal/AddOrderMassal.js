@@ -605,13 +605,20 @@ export default {
           this.submitProgress = Math.floor((loaded * 100) / total)
         },
       }
-      await axiosKomship.post('/v1/order/sheet/save-submit', {
-        options: 'submit',
-        data: this.dataSubmit,
-      }, config)
-        .then(res => {
-          const count = res.data.data
-          this.$refs.loadingSubmit.hide()
+      const hidePopup = () => {
+        this.$refs.loadingSubmit.hide()
+      }
+      // axiosKomship.default.timeout = 0
+      try {
+        const submit = await axiosKomship.post('/v1/order/sheet/save-submit', {
+          options: 'submit',
+          data: this.dataSubmit,
+        }, config)
+        console.log(submit)
+        if (submit.data.code === 200) {
+          const count = submit.data.data
+          // this.$refs.looadingSubmit.hide()
+          hidePopup()
           this.$swal({
             title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
             imageUrl: require('@/assets/images/icons/success.svg'),
@@ -624,17 +631,17 @@ export default {
               this.table.setData([])
             }
           })
-        })
-        .catch(err => {
-          if (!err.response) {
-            this.submitProgress = 100
-            this.submitProgressStatus = false
-          } else {
-            this.$refs.loadingSubmit.hide()
-            const response = err.response.data
-            this.handleSubmitError(response)
-          }
-        })
+        } else if (submit.data.code === 500) {
+          hidePopup()
+          const response = submit.response.data
+          this.handleSubmitError(response)
+        } else {
+          this.submitProgress = 100
+          this.submitProgressStatus = false
+        }
+      } catch (error) {
+        console.error(error)
+      }
     },
     async checkExpedition() {
       await this.$http_komship
