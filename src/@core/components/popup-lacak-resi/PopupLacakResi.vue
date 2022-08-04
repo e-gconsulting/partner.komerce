@@ -27,7 +27,7 @@
       >
         <div
           class="px-1"
-          :style="handleCloseModalResi === true ? 'max-height: 80vh;width: 100%;' : 'max-height: 35vh;width: 100%;'"
+          :style="handleCloseModalResi === true ? 'max-height: 80vh;width: 100%;' : 'width: 100%;'"
           v-html="listAwb"
         />
       </div>
@@ -93,6 +93,7 @@ export default {
           this.orderDatas = await data
           await this.lacakresi()
           await this.$emit('updateValueTransaction', data.old_grandtotal)
+          await this.$emit('passCustomerPhone', data.customer_phone)
         } catch (err) {
           this.$toast({
             component: ToastificationContent,
