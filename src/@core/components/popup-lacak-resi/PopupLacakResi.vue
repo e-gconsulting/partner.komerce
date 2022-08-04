@@ -27,7 +27,7 @@
       >
         <div
           class="px-1"
-          :style="handleCloseModalResi === true ? 'max-height: 80vh;width: 100%;' : 'max-height: 35vh;width: 100%;'"
+          :style="handleCloseModalResi === true ? 'max-height: 80vh;width: 100%;' : 'width: 100%;'"
           v-html="listAwb"
         />
       </div>

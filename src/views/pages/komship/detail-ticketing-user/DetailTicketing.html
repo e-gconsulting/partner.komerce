@@ -476,39 +476,41 @@
                         </div>
                     </div>
                 </b-col>
-                <b-col cols="12" md="4" style="background-color: #F8F8F8" class="p-1">
-                    <b-row class="align-items-center mx-2">
-                        <h4 class="text-black mt-50">
-                            <strong>
-                                Nilai Transaksi
-                            </strong>
-                        </h4>
-                        <popover-info
-                            classprops="px-0"
-                            text="Nilai total yang pembeli harus bayar"
-                        />
-                    </b-row>
-                    <b-row class="mx-2">
-                        <h1 class="text-success">
-                            <strong>
-                                {{ formatRupiah(transactionValue) }},-
-                            </strong>
-                        </h1>
-                    </b-row>
-                    <b-row class="mx-1 mb-1">
-                        <div style="width: 100%; height: 1px; background-color: #E2E2E2;" />
-                    </b-row>
-                    <b-row class="overflow-auto mx-2">
-                        <popup-lacak-resi
-                            :item-awbs="itemAwb"
-                            :loading="isLoading"
-                            :order-datas="orderData"
-                            :list-awbs="listAwb"
-                            :handle-close-modal-resi="false"
-                            :order-id="orderId"
-                            @updateValueTransaction="applyValueTransaction"
-                        />
-                    </b-row>
+                <b-col cols="12" md="4" style="background-color: #F8F8F8;" class="p-1">
+                    <div style="height: 521px;" class="overflow-auto">
+                        <b-row class="align-items-center mx-2">
+                            <h4 class="text-black mt-50">
+                                <strong>
+                                    Nilai Transaksi
+                                </strong>
+                            </h4>
+                            <popover-info
+                                classprops="px-0"
+                                text="Nilai total yang pembeli harus bayar"
+                            />
+                        </b-row>
+                        <b-row class="mx-2">
+                            <h1 class="text-success">
+                                <strong>
+                                    {{ formatRupiah(transactionValue) }},-
+                                </strong>
+                            </h1>
+                        </b-row>
+                        <b-row class="mx-1 mb-1">
+                            <div style="width: 100%; height: 1px; background-color: #E2E2E2;" />
+                        </b-row>
+                        <b-row class="overflow-auto mx-2">
+                            <popup-lacak-resi
+                                :item-awbs="itemAwb"
+                                :loading="isLoading"
+                                :order-datas="orderData"
+                                :list-awbs="listAwb"
+                                :handle-close-modal-resi="false"
+                                :order-id="orderId"
+                                @updateValueTransaction="applyValueTransaction"
+                            />
+                        </b-row>
+                    </div>
                 </b-col>
             </b-row>
         </b-overlay>
