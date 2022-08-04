@@ -208,17 +208,21 @@
 
                             <b-col md="6">
                                 <b-form-group>
-                                <template #label>
-                                    <span>
-                                        <strong>
-                                            Customer
-                                        </strong>
-                                    </span>
-                                </template>
-                                <b-form-input
-                                    v-model="customerName"
-                                    disabled
-                                />
+                                    <template #label>
+                                        <span>
+                                            <strong>
+                                                Customer
+                                            </strong>
+                                        </span>
+                                    </template>
+                                    <div class="d-flex">
+                                        <b-form-input
+                                            v-model="customerName"
+                                            disabled
+                                            class="mr-1"
+                                        />
+                                        <b-img :src="itemButtonWaCustomer" class="button__wa__customer" @mouseover="handleHoverButtonWa" @mouseleave="handleLeaveHoverButtonWa" @click="handleClickWaCustomer" />
+                                    </div>
                                 </b-form-group>
                             </b-col>
 
@@ -508,6 +512,7 @@
                                 :handle-close-modal-resi="false"
                                 :order-id="orderId"
                                 @updateValueTransaction="applyValueTransaction"
+                                @passCustomerPhone="fetchCustomerPhone"
                             />
                         </b-row>
                     </div>

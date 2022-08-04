@@ -113,6 +113,9 @@ export default {
       ],
       ratingUser: null,
       dateRating: null,
+
+      itemButtonWaCustomer: require('@/assets/images/icons/wa-notactive.svg'),
+      customerPhone: '',
     }
   },
   directives: {
@@ -555,6 +558,18 @@ export default {
     },
     applyValueTransaction(data) {
       this.transactionValue = data
+    },
+    handleHoverButtonWa() {
+      this.itemButtonWaCustomer = require('@/assets/images/icons/wa-active.svg')
+    },
+    handleLeaveHoverButtonWa() {
+      this.itemButtonWaCustomer = require('@/assets/images/icons/wa-notactive.svg')
+    },
+    handleClickWaCustomer() {
+      window.open(`https://api.whatsapp.com/send?phone=${this.customerPhone}`, '_blank')
+    },
+    fetchCustomerPhone(data) {
+      this.customerPhone = data
     },
   },
 }
