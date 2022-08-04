@@ -89,8 +89,11 @@
                                                     </strong>
                                                 </span>
                                             </template>
-                                            <b-badge :variant="orderStatusVariant(orderStatus)">
-                                                {{ orderStatus }}
+                                            <b-badge v-if="orderStatus !== 'Rusak'" :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Hilang' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
+                                                {{ orderStatus === 'Hilang' ? 'Paket Hilang' : orderStatus }}
+                                            </b-badge>
+                                            <b-badge v-if="orderStatus === 'Rusak'" :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Rusak' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
+                                                {{ orderStatus === 'Rusak' ? 'Paket Rusak' : orderStatus }}
                                             </b-badge>
                                         </b-form-group>
                                     </div>
@@ -119,8 +122,9 @@
                                     <b-form-input
                                         v-model="ticketNo"
                                         disabled
+                                        style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                     />
-                                    <b-input-group-append is-text>
+                                    <b-input-group-append is-text style="background-color: white;">
                                     <feather-icon
                                         icon="CopyIcon"
                                         class="cursor-pointer"
@@ -145,8 +149,9 @@
                                     <b-form-input
                                         v-model="noResi"
                                         disabled
+                                        style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                     />
-                                    <b-input-group-append is-text>
+                                    <b-input-group-append is-text style="background-color: white;">
                                     <feather-icon
                                         icon="CopyIcon"
                                         class="cursor-pointer"
@@ -170,6 +175,7 @@
                                 <b-form-input
                                     v-model="ekspedisi"
                                     disabled
+                                    style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                 />
                                 </b-form-group>
                             </b-col>
@@ -186,6 +192,7 @@
                                 <b-form-input
                                     v-model="seller"
                                     disabled
+                                    style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                 />
                                 </b-form-group>
                             </b-col>
@@ -202,6 +209,7 @@
                                 <b-form-input
                                     v-model="ticketType"
                                     disabled
+                                    style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                 />
                                 </b-form-group>
                             </b-col>
@@ -220,6 +228,7 @@
                                             v-model="customerName"
                                             disabled
                                             class="mr-1"
+                                            style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                         />
                                         <b-img :src="itemButtonWaCustomer" class="button__wa__customer" @mouseover="handleHoverButtonWa" @mouseleave="handleLeaveHoverButtonWa" @click="handleClickWaCustomer" />
                                     </div>
@@ -239,6 +248,7 @@
                                     v-model="description"
                                     rows="3"
                                     disabled
+                                    style="background-color: white; border: 1.5px solid #E2E2E2 !important;"
                                 />
                                 </b-form-group>
                             </b-col>
@@ -421,7 +431,7 @@
                                     </div>
                                 </b-col>
                             </b-row>
-                            <b-row v-if="orderStatus === 'Diterima' || orderStatus === 'Retur' || orderStatus === 'Hilang' || orderStatus === 'Rusak'">
+                            <b-row v-if="orderStatus === 'Diterima' || orderStatus === 'Retur' || orderStatus === 'Hilang' || orderStatus === 'Rusak'" class="ml-50">
                                 <b-col cols="1">
                                     <b-img src="@/assets/images/logo/logo-komship-chat.svg" />
                                 </b-col>

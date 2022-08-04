@@ -132,6 +132,8 @@ export default {
       customerPhonePaste: '',
       customerPhonePasteMode: false,
       isWhatsapp: null,
+
+      isSubmitOrder: false,
     }
   },
   created() {
@@ -288,25 +290,27 @@ export default {
       })
     },
     getCustomer: _.debounce(function (e) {
-      const event = e.key ? 'input' : 'list'
-      if (event === 'list') {
-        return this.customerList.forEach(item => {
-          if (item.name === this.customerName) {
-            this.customerId = item.customer_id
-            this.customerPhone = item.phone
-            this.customerAddress = item.address
-          }
-        })
+      if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {
+        const event = e.key ? 'input' : 'list'
+        if (event === 'list') {
+          return this.customerList.forEach(item => {
+            if (item.name === this.customerName) {
+              this.customerId = item.customer_id
+              this.customerPhone = item.phone
+              this.customerAddress = item.address
+            }
+          })
+        }
+        this.$http_komship
+          .get('v1/customer', {
+            params: { search: this.customerName },
+          })
+          .then(response => {
+            const { data } = response.data
+            this.customerList = data
+            this.$refs['button-list-customer'].focus()
+          })
       }
-      this.$http_komship
-        .get('v1/customer', {
-          params: { search: this.customerName },
-        })
-        .then(response => {
-          const { data } = response.data
-          this.customerList = data
-          this.$refs['button-list-customer'].focus()
-        })
       return this.customerList
     }, 1000),
     onSearchDestination(search, loading) {
@@ -1218,6 +1222,7 @@ export default {
       this.customLabel = items
     },
     async submit(order) {
+      this.isSubmitOrder = true
       this.checkValidation()
       if (this.isValidate) {
         await this.$http_komship
@@ -1235,6 +1240,7 @@ export default {
               } else {
                 this.$router.push('/data-order')
               }
+              this.isSubmitOrder = false
             })
           })
           .catch(err => {
@@ -1299,6 +1305,7 @@ export default {
             } else {
               this.$refs['modal-error-store-order'].show()
             }
+            this.isSubmitOrder = false
           })
       } else {
         this.$swal({
@@ -1308,6 +1315,7 @@ export default {
           confirmButtonText: 'Oke',
           confirmButtonClass: 'btn btn-primary',
         })
+        this.isSubmitOrder = false
       }
     },
     formatCustomerName(e) {

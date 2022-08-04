@@ -466,7 +466,7 @@
                 class="p-0"
                 style="border-radius:50%;width:25px;height:25px"
                 size="sm"
-                :disabled="data.item.quantity >= 10 || data.item.stock === 0"
+                :disabled="data.item.quantity >= 30 || data.item.stock === 0"
                 @click="setQuantity('plus',data.index)"
               >
                 <span class="font-bold text-lg">+</span>
@@ -1002,10 +1002,19 @@
           Submit & Tambah Order Lagi
         </b-button>
         <b-button
+          v-if="isSubmitOrder === false"
           variant="primary"
           class="ml-1"
           :disabled="!isCalculateOnExpedition"
           @click="submit(false)"
+        >
+          Submit
+        </b-button>
+        <b-button
+          v-if="isSubmitOrder === true"
+          variant="primary"
+          class="ml-1"
+          :disabled="true"
         >
           Submit
         </b-button>
