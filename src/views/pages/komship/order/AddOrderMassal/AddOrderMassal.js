@@ -12,6 +12,7 @@ export default {
     return {
       dataSheets: [],
       dataSubmit: [],
+      dataSplit: [],
       sourceAddress: null,
       sourcePayment: null,
       sourceProduct: null,
@@ -25,6 +26,7 @@ export default {
       loadingDraft: false,
       loadingSubmit: false,
       saldo: null,
+      totalOrder: null,
       submitProgress: 0,
       submitProgressStatus: true,
     }
@@ -566,6 +568,30 @@ export default {
         row: items.row,
       }))
     },
+    splitDataSubmit() {
+      this.getSheetsData()
+      this.getDataSubmit()
+      let splitOrder = []
+      for (let index = 0; index < this.dataSubmit.length; index++) {
+        if (this.dataSubmit[index].order_date !== '') {
+          if (splitOrder.length > 0) {
+            this.dataSplit.push(splitOrder)
+          }
+          splitOrder = []
+          if (index === this.dataSubmit.length - 1) {
+            splitOrder.push(this.dataSubmit[index])
+            this.dataSplit.push(splitOrder)
+          } else {
+            splitOrder.push(this.dataSubmit[index])
+          }
+        } else if (index === this.dataSubmit.length - 1) {
+          splitOrder.push(this.dataSubmit[index])
+          this.dataSplit.push(splitOrder)
+        } else {
+          splitOrder.push(this.dataSubmit[index])
+        }
+      }
+    },
     onSubmitSheets() {
       this.$swal({
         title: '<span class="font-weight-bold h4">Semua data yang kamu masukan di Speadsheet akan menjadi Order</span>',
@@ -577,53 +603,92 @@ export default {
         cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
       }).then(async result => {
         if (result.isConfirmed) {
-          this.$refs.loadingSubmit.show()
           this.submitSheets()
         }
       })
     },
     async submitSheets() {
-      this.getSheetsData()
-      this.getDataSubmit()
-      this.submitProgress = 0
+      this.splitDataSubmit()
+      this.totalOrder = this.dataSplit.length
       this.submitProgressStatus = true
-      const config = {
-        onUploadProgress: progressEvent => {
-          const { loaded, total } = progressEvent
-          this.submitProgress = Math.floor((loaded * 100) / total)
-        },
-        timeout: 0,
-      }
-      await this.$http_komship.post('/v1/order/sheet/save-submit', {
-        options: 'submit',
-        data: this.dataSubmit,
-      }, config)
-        .then(res => {
-          const count = res.data.data
-          this.$refs.loadingSubmit.hide()
-          this.$swal({
-            title: `<span class="font-weight-bold h4">${count} order berhasil ditambahkan</span>`,
-            imageUrl: require('@/assets/images/icons/success.svg'),
-            confirmButtonText: 'Lihat Data Order',
-            confirmButtonClass: 'btn btn-primary',
-          }).then(response => {
-            if (response.isConfirmed) {
-              this.$router.push('data-order')
-            } else {
-              this.table.setData([])
-            }
+      this.$refs.loadingSubmit.show()
+      let uploadOrder = 0
+      for (let index = 0; index < this.dataSplit.length; index++) {
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          const submit = await this.$http_komship.post('/v1/order/sheet/save-submit', {
+            options: 'submit',
+            data: this.dataSplit[index],
           })
-        })
-        .catch(err => {
-          if (!err.response) {
-            this.submitProgress = 100
+          if (submit.data.code === 200) {
+            const count = submit.data.data
+            uploadOrder += count
+            this.submitProgress = Math.floor((uploadOrder * 100) / this.totalOrder)
+            if (index === this.dataSplit.length - 1) {
+              this.$refs.loadingSubmit.hide()
+              this.$swal({
+                title: `<span class="font-weight-bold h4">${this.totalOrder} order berhasil ditambahkan</span>`,
+                imageUrl: require('@/assets/images/icons/success.svg'),
+                confirmButtonText: 'Lihat Data Order',
+                confirmButtonClass: 'btn btn-primary',
+              }).then(response => {
+                if (response.isConfirmed) {
+                  this.$router.push('data-order')
+                } else {
+                  this.table.setData([])
+                }
+              })
+            }
+          }
+        } catch (error) {
+          const { data } = error.response
+          const rowError = this.dataSplit[index][0].row - 1
+          const dataError = []
+          const dataSheets = this.dataSheets.map(items => ({
+            0: items.order_date,
+            1: items.address,
+            2: items.customer_name,
+            3: items.customer_phone_number,
+            4: `${items.zip_code}`,
+            5: items.customer_address,
+            6: items.product,
+            7: items.variant,
+            8: `${items.qty}`,
+            9: items.payment_method,
+            10: items.expedition,
+            11: `${items.grandtotal}`,
+          }))
+          const dataSuccess = this.dataSheets.map(() => ({
+            0: '',
+            1: '',
+            2: '',
+            3: '',
+            4: '',
+            5: '',
+            6: '',
+            7: '',
+            8: '',
+            9: '',
+            10: '',
+            11: '',
+          }))
+          for (let y = 0; y < this.dataSplit[index][0].row; y++) {
+            dataError.push(dataSuccess[y])
+          }
+          for (let x = rowError; x < dataSheets.length; x++) {
+            dataError.push(dataSheets[x])
+          }
+          if (!data) {
+            this.table.setData(dataError)
             this.submitProgressStatus = false
           } else {
+            this.table.setData(dataError)
             this.$refs.loadingSubmit.hide()
-            const response = err.response.data
-            this.handleSubmitError(response)
+            this.handleSubmitError(data)
           }
-        })
+          break
+        }
+      }
     },
     async checkExpedition() {
       await this.$http_komship
