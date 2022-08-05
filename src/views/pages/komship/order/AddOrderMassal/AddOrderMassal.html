@@ -75,7 +75,7 @@
                 <span v-else style="font-size: 14px;">Orderan kamu ada kendala saat proses mengunggah, mohon submit ulang, cek kembali <b>koneksi internet</b> atau jika masih gagal harap <b>hubungi CS</b> di live chat. Harap simpan terlebih dahulu untuk mengamankan data orderan.</span>
             </div>
             <div class="mb-1">
-                <span v-if="submitProgressStatus" class="d-flex justify-end text-success">{{ submitProgress }}%</span>
+                <span v-if="submitProgressStatus" class="d-flex justify-end text-success">{{ totalOrder }} Orderan</span>
                 <span v-else class="d-flex justify-end text-danger">Gagal</span>
                 <div class="d-flex" style="margin-top: 6px;">
                     <div style="width: 10%;">
