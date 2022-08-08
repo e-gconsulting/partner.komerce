@@ -134,6 +134,8 @@ export default {
       isWhatsapp: null,
 
       isSubmitOrder: false,
+      returnInsight: [],
+      showReturnInsight: false,
     }
   },
   created() {
@@ -288,6 +290,23 @@ export default {
           })
         }
       })
+    },
+    async getReturnInsight() {
+      if (this.profile.partner_is_return_insight && this.destination !== null) {
+        await this.$http_komship.get('/v1/feature/returnInsight', {
+          city_name: this.destination.city_name,
+        })
+          .then(result => {
+            const { data } = result.data
+            this.returnInsight = data
+            this.showReturnInsight = true
+          }).catch(err => {
+            this.showReturnInsight = false
+            console.error(err)
+          })
+      } else {
+        this.showReturnInsight = false
+      }
     },
     getCustomer: _.debounce(function (e) {
       if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {

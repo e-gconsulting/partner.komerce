@@ -30,6 +30,7 @@ export default {
       profile: [],
       quickType: null,
       orderMassal: null,
+      returnInsight: null,
       mutationBank: null,
       customLabel: null,
       notifWA: null,
@@ -68,11 +69,11 @@ export default {
       httpKomship2.post('v1/my-profile')
         .then(res => {
           this.profile = res.data.data
-          console.log(res.data.data)
           this.quickType = res.data.data.partner_is_allowed_edit
           this.mutationBank = res.data.data.partner_is_mutation_bank
           this.customLabel = res.data.data.partner_is_custom_label
           this.orderMassal = res.data.data.partner_is_mass_order
+          this.returnInsight = res.data.data.partner_is_return_insight
           this.notifWA = res.data.data.partner_is_notification_whatsapp
           this.isGetting = true
           this.getCustomLabel()
@@ -110,6 +111,22 @@ export default {
                 title: 'Success',
                 icon: 'CheckIcon',
                 text: `Order Massal Berhasil ${this.orderMassal ? 'Diaktifkan' : 'Dinonaktifkan'}`,
+                variant: 'success',
+              },
+            }, 2000)
+          }
+        })
+    },
+    setReturnInsight() {
+      this.$http_komship.post('/v1/setting/settingIsReturnInsight', { is_return_insight: this.returnInsight ? 1 : 0 })
+        .then(res => {
+          if (res.data.code === 200) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: `Fitur Pendukung Wawasan Retur Berhasil ${this.returnInsight ? 'Diaktifkan' : 'Dinonaktifkan'}`,
                 variant: 'success',
               },
             }, 2000)
