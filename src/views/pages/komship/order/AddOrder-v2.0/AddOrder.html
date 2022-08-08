@@ -196,7 +196,7 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-row class="mb-1">
+    <b-row>
       <b-col md="3">
         <span class="text-lg">Alamat Tujuan</span>
         <div class="text-lg" style="color: #828282; font-size: 12px;">*contoh: Nambangan, Selogiri, Wonogiri (Setelah koma ada spasi)</div>
@@ -210,7 +210,7 @@
           placeholder="Masukkan Kelurahan/Kecamatan"
           :loading="loadingSearchDestination"
           @search="onSearchDestination"
-          @input="getShippingList()"
+          @input="getShippingList(), getReturnInsight()"
         >
           <span
             slot="no-options"
@@ -228,6 +228,46 @@
             </div>
           </template>
         </v-select>
+      </b-col>
+    </b-row>
+    <b-row v-if="showReturnInsight" class="mb-2">
+      <b-col md="3" />
+      <b-col md="9">
+        <span class="d-flex">
+          History rasio retur
+          <img
+            id="infoReturnInsight"
+            src="@/assets/images/icons/info-circle.svg"
+            class="icon-info ml-[5px]"
+          >
+        </span>
+        <b-popover
+          triggers="hover"
+          target="infoReturnInsight"
+          placement="bottomleft"
+        >
+        Tingkat retur di daerah tersebut berdasarkan data yang terkumpul di Komship, itungannya dari jumlah retur dibanding jumlah pengiriman ke daerah tersebut dalam 5 bulan terakhir,
+        </b-popover><br>
+        <div class="d-flex md:-mt-4">
+          <div v-if="returnInsight.percenatge_return_jne" class="d-flex py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+            <img src="@/assets/images/logo/jne.svg" class="my-auto" style="height: 90%;">
+            <b-badge class="ml-1 px-1" style="background-color:#BEFCDE;color:#34A770;border-radius:10px;">
+              {{ `${returnInsight.percenatge_return_jne.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
+            </b-badge>
+          </div>
+          <div v-if="returnInsight.percenatge_return_sicepat" class="d-flex ml-1 py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+            <img src="@/assets/images/logo/sicepat.svg" class="my-auto" style="height: 90%;">
+            <b-badge class="ml-1 px-1" style="background-color:#FCEBBE;color:#FBA63C;border-radius:10px;">
+              {{ `${returnInsight.percenatge_return_sicepat.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
+            </b-badge>
+          </div>
+          <div v-if="returnInsight.percenatge_return_idexpress" class="d-flex ml-1 py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+            <img src="@/assets/images/logo/idexpress.svg" class="my-auto" style="height: 90%;">
+            <b-badge class="ml-1 px-1" style="background-color:#FCBEBE;color:#E31A1A;border-radius:10px;">
+              {{ `${returnInsight.percenatge_return_idexpress.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
+            </b-badge>
+          </div>
+        </div>
       </b-col>
     </b-row>
     <b-row class="mb-1">
