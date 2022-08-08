@@ -942,6 +942,7 @@ export default {
     this.getProduct()
   },
   methods: {
+    // eslint-disable-next-line func-names
     getProduct: _.debounce(function () {
       this.loading = true
       const params = {

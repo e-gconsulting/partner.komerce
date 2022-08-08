@@ -1165,6 +1165,7 @@ export default {
         try {
           window.open(response.data)
         } catch (e) {
+          // eslint-disable-next-line no-alert
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
         }
         this.loadingButtonPrintLabel = false

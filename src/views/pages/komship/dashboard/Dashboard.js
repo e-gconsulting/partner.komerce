@@ -255,6 +255,7 @@ export default {
         try {
           window.open(response.data.data.invoice_xendit_url, '_blank').focus()
         } catch (e) {
+          // eslint-disable-next-line no-alert
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
         }
         this.$refs['modal-after-topup'].show()
