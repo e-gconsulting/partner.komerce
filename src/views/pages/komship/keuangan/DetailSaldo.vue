@@ -4,10 +4,14 @@
       Rincian Saldo
     </h2>
     <b-row class="mb-1">
-      <b-col cols="6">
+      <b-col
+        cols="12"
+        md="6"
+        class="mb-1"
+      >
         <div
           style="border: 1px solid #e2e2e2; border-radius: 8px"
-          class="w-80 text-xl px-1 py-2"
+          class="text-xl px-1 py-2 sm:w-80"
         >
           Saldo:
           <span
@@ -16,9 +20,12 @@
             {{ formatNumber(totalSaldo) }}</span>
         </div>
       </b-col>
-      <b-col cols="6">
+      <b-col
+        cols="12"
+        md="6"
+      >
         <b-row class="justify-content-end mr-2">
-          <div class="mr-1">
+          <div class="mr-1 mb-1">
             <b-input-group class="input-group-merge">
               <b-input-group-prepend is-text>
                 <feather-icon icon="SearchIcon" />
@@ -31,11 +38,54 @@
             </b-input-group>
           </div>
           <div>
-            <b-form-select
-              v-model="selectedFilter"
-              :options="optionsFilter"
-              @change="fetchData"
-            />
+            <date-range-picker
+              ref="picker"
+              v-model="dateRange"
+              :locale-data="locale"
+              :ranges="ranges"
+              :opens="'left'"
+              class="w-100"
+              @start-selection="setCustomDate"
+              @finish-selection="setCustomDate"
+              @select="removeCustomDate"
+            >
+              <template
+                v-slot:input="picker"
+                style="min-width: 350px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center w-100 pt-50"
+                >
+                  <div
+                    class="mr-1"
+                  >
+                    <span
+                      v-if="formatDate(picker.startDate) === formatDate(last7)"
+                      style="color: #828282!important"
+                    >7 Hari Terakhir</span>
+                    <span
+                      v-else-if="formatDate(picker.startDate) === formatDate(last30)"
+                      style="color: #828282!important"
+                    >30 Hari Terakhir</span>
+                    <span
+                      v-else-if="formatDate(picker.startDate) === formatDate(firstDateOfMonth) && formatDate(picker.endDate) === formatDate(today)"
+                      style="color: #828282!important"
+                    >Bulan Ini</span>
+                    <span
+                      v-else-if="formatDate(picker.startDate) === formatDate(today) && formatDate(picker.endDate) === formatDate(today)"
+                      style="color: #828282!important"
+                    >Custom Tanggal</span>
+                    <span
+                      v-else
+                      style="color: #828282!important"
+                    >Custom Tanggal</span>
+                  </div>
+                  <div>
+                    <feather-icon icon="ChevronDownIcon" />
+                  </div>
+                </div>
+              </template>
+            </date-range-picker>
           </div>
         </b-row>
       </b-col>
@@ -324,7 +374,16 @@ import {
   BOverlay,
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import DateRangePicker from 'vue2-daterange-picker'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import moment from 'moment'
+import {
+  today,
+  last7,
+  last30,
+  firstDateOfMonth,
+  lastDateOfMonth,
+} from '@/store/helpers'
 import { mapState } from 'vuex'
 
 export default {
@@ -332,11 +391,12 @@ export default {
     BCard,
     BRow,
     BCol,
-    BFormSelect,
+    // BFormSelect,
     BTable,
     BButton,
     BPagination,
     BOverlay,
+    DateRangePicker,
   },
   data() {
     return {
@@ -345,6 +405,7 @@ export default {
         '7 Hari Terakhir',
         '1 Bulan Terakhir',
         '3 Bulan Terakhir',
+        'Custom',
       ],
       items: [],
       fields: [
@@ -386,6 +447,31 @@ export default {
       totalItems: 0,
 
       searchResi: '',
+
+      // Date range picker
+      locale: {
+        format: 'dd/mm/yyyy',
+        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+      },
+      ranges: {
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan Ini': [firstDateOfMonth, today],
+        'Custom Tanggal': [today, today],
+      },
+      today,
+      last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
+
+      dateRange: {
+        startDate: last7,
+        endDate: today,
+      },
+
+      titleCustomDate: null,
     }
   },
   computed: {
@@ -397,6 +483,11 @@ export default {
         this.fetchData().catch(error => {
           console.error(error)
         })
+      },
+    },
+    dateRange: {
+      handler() {
+        this.fetchData()
       },
     },
   },
@@ -425,19 +516,19 @@ export default {
       return ''
     },
     getDate() {
-      const today = new Date()
-      this.endDate = `${today.getFullYear()}-${today.getMonth()
-        + 1}-${today.getDate()}`
+      const todays = new Date()
+      this.endDate = `${todays.getFullYear()}-${todays.getMonth()
+        + 1}-${todays.getDate()}`
       if (this.selectedFilter === '7 Hari Terakhir') {
-        const last = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000)
+        const last = new Date(todays.getTime() - 7 * 24 * 60 * 60 * 1000)
         this.startDate = `${last.getFullYear()}-${last.getMonth()
           + 1}-${last.getDate()}`
       } else if (this.selectedFilter === '1 Bulan Terakhir') {
-        const last = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+        const last = new Date(todays.getTime() - 30 * 24 * 60 * 60 * 1000)
         this.startDate = `${last.getFullYear()}-${last.getMonth()
           + 1}-${last.getDate()}`
       } else if (this.selectedFilter === '3 Bulan Terakhir') {
-        const last = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000)
+        const last = new Date(todays.getTime() - 90 * 24 * 60 * 60 * 1000)
         this.startDate = `${last.getFullYear()}-${last.getMonth()
           + 1}-${last.getDate()}`
       }
@@ -447,8 +538,8 @@ export default {
       this.items = await this.$http_komship
         .get('v1/partner/order-transaction-balance', {
           params: {
-            start_date: this.startDate,
-            end_date: this.endDate,
+            start_date: moment(this.dateRange.startDate).format('YYYY-MM-DD'),
+            end_date: moment(this.dateRange.endDate).format('YYYY-MM-DD'),
             page: this.currentPage,
             limits: this.perPage,
             search: this.searchResi,
@@ -468,8 +559,23 @@ export default {
       this.perPage = totalPage
       this.fetchData()
     },
-    handleSearchResi: _.debounce(function () {
-      this.fetchData()
+    handleSearchResi: _.debounce(async function () {
+      this.loadTable = true
+      this.items = await this.$http_komship
+        .get('v1/partner/order-transaction-balance', {
+          params: {
+            search: this.searchResi,
+          },
+        })
+        .then(res => {
+          const { data } = res.data
+          this.totalItems = data.total
+          this.loadTable = false
+          return data.data
+        })
+        .catch(error => {
+          // handle error
+        })
     }, 1000),
     copyResi(data) {
       /* Copy the text inside the text field */
@@ -484,6 +590,15 @@ export default {
           variant: 'warning',
         },
       }, 1000)
+    },
+    formatDate(d) {
+      return moment(d).format('D MMM YYYY')
+    },
+    setCustomDate() {
+      this.titleCustomDate = 'Custom Tanggal'
+    },
+    removeCustomDate() {
+      this.titleCustomDate = null
     },
   },
 }
