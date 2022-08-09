@@ -295,6 +295,25 @@
               </template>
             </b-table>
             <hr>
+            <b-row
+              v-if="orderData.order_notes !== '0' && orderData.order_notes !== '' && orderData.order_notes !== null"
+              class="px-2"
+            >
+              <b-col
+                cols="12"
+                class="mb-1 text-[16px] font-medium"
+              >
+                <span class="d-flex">Catatan Order</span>
+              </b-col>
+              <b-col cols="12">
+                <div
+                  class="border px-2 pt-1 pb-3"
+                  style="width:100%"
+                >
+                  {{ orderData.order_notes }}
+                </div>
+              </b-col>
+            </b-row>
             <b-row class="mt-3">
               <b-col
                 lg="5"
