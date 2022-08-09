@@ -81,6 +81,7 @@ export default {
       isCalculate: false,
       isCalculateOnExpedition: false,
       isShipping: false,
+      orderNotes: null,
       paymentMethod: null,
       paymentHistory: false,
       listPayment: ['COD', 'BANK TRANSFER'],
@@ -294,7 +295,7 @@ export default {
     async getReturnInsight() {
       if (this.profile.partner_is_return_insight && this.destination !== null) {
         await this.$http_komship.get('/v1/feature/returnInsight', {
-          city_name: this.destination.city_name,
+          params: { city_name: this.destination.city_name },
         })
           .then(result => {
             const { data } = result.data
@@ -1235,6 +1236,7 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
         custom_label_id: this.customLabel,
+        order_notes: this.orderNotes,
       }
     },
     handleCustomLabel(items) {

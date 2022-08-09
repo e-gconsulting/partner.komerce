@@ -79,6 +79,7 @@ export default {
             customer_address: items.customer_address,
             product: items.product,
             variant: items.variant,
+            order_notes: items.order_notes,
             qty: `${items.qty}`,
             payment_method: items.payment_method,
             expedition: items.expedition,
@@ -206,6 +207,7 @@ export default {
           {
             type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
           },
+          { type: 'text', title: 'Catatan Order' },
           { type: 'text', title: 'Kuantitas' },
           {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
@@ -278,9 +280,12 @@ export default {
           return items
         },
         onchange(instance, cell, col, row, val) {
-          if (col === '6') {
-            const columnName = jspreadsheet.getColumnNameFromId(['7', row])
-            instance.jexcel.setValue(columnName, '')
+          if (col === '2') {
+            if (val.length < 3 || val.length > 30) {
+              const columnName = jspreadsheet.getColumnNameFromId(['2', row])
+              instance.jexcel.setValue(columnName, '')
+              popup('Masukkan Nama pembeli dengan benar yaa..')
+            }
           } else if (col === '3') {
             const columnName = jspreadsheet.getColumnNameFromId(['3', row])
             let phoneNumber = val.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
@@ -301,28 +306,25 @@ export default {
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan Kode Pos alamat pembeli dengan benar yaa..')
             }
-          } else if (col === '8') {
-            if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
-              const columnName = jspreadsheet.getColumnNameFromId(['8', row])
-              instance.jexcel.setValue(columnName, '')
-              popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
-            }
-          } else if (col === '2') {
-            if (val.length < 3 || val.length > 30) {
-              const columnName = jspreadsheet.getColumnNameFromId(['2', row])
-              instance.jexcel.setValue(columnName, '')
-              popup('Masukkan Nama pembeli dengan benar yaa..')
-            }
           } else if (col === '5') {
             if (val.length < 11 || val.length > 185) {
               const columnName = jspreadsheet.getColumnNameFromId(['5', row])
               instance.jexcel.setValue(columnName, '')
               popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
             }
+          } else if (col === '6') {
+            const columnName = jspreadsheet.getColumnNameFromId(['7', row])
+            instance.jexcel.setValue(columnName, '')
           } else if (col === '9') {
+            if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
+              const columnName = jspreadsheet.getColumnNameFromId(['9', row])
+              instance.jexcel.setValue(columnName, '')
+              popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
+            }
+          } else if (col === '10') {
             if (val === 'BANK TRANSFER' && saldo <= 0) {
               popupSaldo()
-              const columnName = jspreadsheet.getColumnNameFromId(['9', row])
+              const columnName = jspreadsheet.getColumnNameFromId(['10', row])
               instance.jexcel.setValue(columnName, '')
             }
           }
@@ -380,7 +382,7 @@ export default {
                     instance.jexcel.setComments(columnName, 'Alamat detail belum tepat, masukkan minimal 11 karakter - 185 karakter ya')
                   }
                 }
-              } else if (getCol === 8) {
+              } else if (getCol === 9) {
                 valueColumn = columnSplit[i].replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '')
                 if (valueColumn !== '') {
                   if (toInteger(valueColumn) < 1 || toInteger(valueColumn) > 1000) {
@@ -454,10 +456,11 @@ export default {
         customer_address: items[5] || items.customer_address || '',
         product: items[6] || items.product || '',
         variant: items[7] || items.variant || '',
-        qty: items[8] || items.qty || '',
-        payment_method: items[9] || items.payment_method || '',
-        expedition: items[10] || items.expedition || '',
-        grandtotal: items[11] || items.grandtotal || '',
+        order_notes: items[8] || items.qty || '',
+        qty: items[9] || items.qty || '',
+        payment_method: items[10] || items.payment_method || '',
+        expedition: items[11] || items.expedition || '',
+        grandtotal: items[12] || items.grandtotal || '',
         row: number++,
       }))
     },
@@ -547,6 +550,7 @@ export default {
         || items.customer_address
         || items.product
         || items.variant
+        || items.order_notes
         || items.qty
         || items.payment_method
         || items.expedition
@@ -561,6 +565,7 @@ export default {
         customer_address: items.customer_address,
         product: items.product,
         variant: items.variant,
+        order_notes: items.order_notes,
         qty: items.qty ? toInteger(items.qty) : '',
         payment_method: items.payment_method,
         expedition: items.expedition,
@@ -653,10 +658,11 @@ export default {
             5: items.customer_address,
             6: items.product,
             7: items.variant,
-            8: `${items.qty}`,
-            9: items.payment_method,
-            10: items.expedition,
-            11: `${items.grandtotal}`,
+            8: items.order_notes,
+            9: `${items.qty}`,
+            10: items.payment_method,
+            11: items.expedition,
+            12: `${items.grandtotal}`,
           }))
           const dataSuccess = this.dataSheets.map(() => ({
             0: '',
@@ -671,6 +677,7 @@ export default {
             9: '',
             10: '',
             11: '',
+            12: '',
           }))
           for (let y = 0; y < this.dataSplit[index][0].row; y++) {
             dataError.push(dataSuccess[y])
