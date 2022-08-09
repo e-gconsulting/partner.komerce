@@ -81,6 +81,7 @@ export default {
       isCalculate: false,
       isCalculateOnExpedition: false,
       isShipping: false,
+      orderNotes: null,
       paymentMethod: null,
       paymentHistory: false,
       listPayment: ['COD', 'BANK TRANSFER'],
@@ -1235,6 +1236,7 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
         custom_label_id: this.customLabel,
+        order_notes: this.orderNotes,
       }
     },
     handleCustomLabel(items) {

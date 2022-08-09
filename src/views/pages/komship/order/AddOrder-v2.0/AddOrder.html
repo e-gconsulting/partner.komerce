@@ -538,6 +538,24 @@
         </template>
       </b-table>
     </section>
+    <b-row v-if="profile.partner_is_order_notes" class="my-2">
+      <b-col cols="12">
+        <span class="d-flex mb-1 text-lg">
+          <img
+            src="@/assets/images/icons/edit.svg"
+            style="max-height:20px;"
+            class="mr-[4px] my-auto"
+          />Catatan Order
+        </span>
+        <b-form-textarea
+          v-model="orderNotes"
+          rows="2"
+          placeholder="Celana Panjang 60cm warna putih letter U"
+          style="border-radius:12px;"
+          no-resize
+        />
+      </b-col>
+    </b-row>
     <section
       class="p-2 mt-1"
       style="border:1px solid #E2E2E2;border-radius:18px"
