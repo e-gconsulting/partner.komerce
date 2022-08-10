@@ -978,7 +978,11 @@
                                 :state="errors.length > 0 ? false:null"
                                 @input="fetchDataResi"
                                 @search="cekResi"
-                            />
+                            >
+                                <template v-slot:no-options>
+                                    Resi tidak ditemukan atau sudah terbuat tiketnya
+                                </template>
+                            </v-select>
                             <small class="text-primary">{{ errors[0] }}</small>
                         </validation-provider>
                     </b-form-group>

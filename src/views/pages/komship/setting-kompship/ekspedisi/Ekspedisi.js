@@ -40,7 +40,7 @@ export default {
           desc = ({
             discount: [
               'Reguler (SIUNTUNG) <b>30%</b>',
-              'Cargo (GOKIL) minimal 10kg, <b>mulai dari</b> Rp. 2.500,- / kg ditambah diskon 15%',
+              'Cargo (GOKIL) minimal 10kg, <b>mulai dari</b> Rp. 2.500,- / kg ditambah diskon 5%',
             ],
             recomend: 'Diskon mantap paket reguler >1kg  dan <b>antar kota besar</b> retur rendah',
           })

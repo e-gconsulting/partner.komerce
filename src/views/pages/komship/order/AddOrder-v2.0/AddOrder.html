@@ -94,24 +94,33 @@
         <span class="text-lg">Nama Pelanggan</span>
       </b-col>
       <b-col md="4">
-        <b-form-input
-          v-model="customerName"
-          list="customerList"
-          placeholder="Masukan nama atau cari dari data pelanggan"
-          autocomplete="off"
-          :formatter="formatCustomerName"
-          @keypress="validateInputCustomerName"
-          @keyup="getCustomer($event)"
-        />
-        <datalist id="customerList">
-          <option
-            v-for="item in customerList"
-            :key="item.customer_id"
-            :value="item.name"
-          >
-            {{ item.name }}, {{ item.phone }}, {{ item.address }}
-          </option>
-        </datalist>
+        <b-input-group>
+          <b-form-input
+            v-model="customerName"
+            list="customerList"
+            placeholder="Masukan nama atau cari dari data pelanggan"
+            autocomplete="off"
+            :formatter="formatCustomerName"
+            @keypress="validateInputCustomerName"
+            @keydown="getCustomer($event)"
+          />
+          <template #append>
+            <b-button ref="button-list-customer" id="popover-list-customer" variant="flat-dark" size="sm" class="btn-icon">
+              <feather-icon icon="ChevronDownIcon" />
+            </b-button>
+            <b-popover ref="popoverCustomerList" target="popover-list-customer" triggers="focus" placement="right">
+              <div
+                v-for="item in customerList"
+                :key="item.customer_id"
+                :value="item.name"
+              >
+                <b-button variant="flat-dark" size="sm" class="btn-icon mb-1 p-0 text-left" @click="setDataCustomer(item)">
+                  <p>{{ item.name }}, {{ item.phone }}, {{ item.address }}</p>
+                </b-button>
+              </div>
+            </b-popover>
+          </template>
+        </b-input-group>
         <b-row class="justify-content-end">
           <small class="mr-1 mt-50">
             <small
@@ -187,7 +196,7 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-row class="mb-1">
+    <b-row>
       <b-col md="3">
         <span class="text-lg">Alamat Tujuan</span>
         <div class="text-lg" style="color: #828282; font-size: 12px;">*contoh: Nambangan, Selogiri, Wonogiri (Setelah koma ada spasi)</div>
@@ -201,7 +210,7 @@
           placeholder="Masukkan Kelurahan/Kecamatan"
           :loading="loadingSearchDestination"
           @search="onSearchDestination"
-          @input="getShippingList()"
+          @input="getShippingList(), getReturnInsight()"
         >
           <span
             slot="no-options"
@@ -219,6 +228,46 @@
             </div>
           </template>
         </v-select>
+      </b-col>
+    </b-row>
+    <b-row v-if="showReturnInsight" class="mb-2">
+      <b-col md="3" />
+      <b-col md="9">
+        <span class="d-flex">
+          History rasio retur
+          <img
+            id="infoReturnInsight"
+            src="@/assets/images/icons/info-circle.svg"
+            class="icon-info ml-[5px]"
+          >
+        </span>
+        <b-popover
+          triggers="hover"
+          target="infoReturnInsight"
+          placement="bottomleft"
+        >
+        Tingkat retur di daerah tersebut berdasarkan data yang terkumpul di Komship, itungannya dari jumlah retur dibanding jumlah pengiriman ke daerah tersebut dalam 5 bulan terakhir,
+        </b-popover><br>
+        <div class="d-flex md:-mt-4">
+          <div v-if="returnInsight.percenatge_return_jne" class="d-flex py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+            <img src="@/assets/images/logo/jne.svg" class="my-auto" style="height: 90%;">
+            <b-badge class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_jne.percentage)">
+              {{ `${returnInsight.percenatge_return_jne.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
+            </b-badge>
+          </div>
+          <div v-if="returnInsight.percenatge_return_sicepat" class="d-flex ml-1 py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+            <img src="@/assets/images/logo/sicepat.svg" class="my-auto" style="height: 90%;">
+            <b-badge class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sicepat.percentage)">
+              {{ `${returnInsight.percenatge_return_sicepat.percentage}% | ${returnInsight.percenatge_return_sicepat.retur}/${returnInsight.percenatge_return_sicepat.total}`}}
+            </b-badge>
+          </div>
+          <div v-if="returnInsight.percenatge_return_idexpress" class="d-flex ml-1 py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
+            <img src="@/assets/images/logo/idexpress.svg" class="my-auto" style="height: 90%;">
+            <b-badge class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_idexpress.percentage)">
+              {{ `${returnInsight.percenatge_return_idexpress.percentage}% | ${returnInsight.percenatge_return_idexpress.retur}/${returnInsight.percenatge_return_idexpress.total}`}}
+            </b-badge>
+          </div>
+        </div>
       </b-col>
     </b-row>
     <b-row class="mb-1">
@@ -489,6 +538,24 @@
         </template>
       </b-table>
     </section>
+    <b-row v-if="profile.partner_is_order_notes" class="my-2">
+      <b-col cols="12">
+        <span class="d-flex mb-1 text-lg">
+          <img
+            src="@/assets/images/icons/edit.svg"
+            style="max-height:20px;"
+            class="mr-[4px] my-auto"
+          />Catatan Order
+        </span>
+        <b-form-textarea
+          v-model="orderNotes"
+          rows="2"
+          placeholder="Celana Panjang 60cm warna putih letter U"
+          style="border-radius:12px;"
+          no-resize
+        />
+      </b-col>
+    </b-row>
     <section
       class="p-2 mt-1"
       style="border:1px solid #E2E2E2;border-radius:18px"

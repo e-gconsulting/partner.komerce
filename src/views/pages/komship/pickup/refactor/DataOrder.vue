@@ -256,15 +256,29 @@
                 </div>
               </template>
 
-              <template #cell(grand_total)="totalData">
-                <div class="price-wrapper">
-                  {{ `Rp ${numberWithCommas(totalData.value)}` }}
-                </div>
+              <template #cell(grand_total)="data">
+                <span class="d-flex">
+                  Rp {{ numberWithCommas(data.item.grand_total) }}
+                  <img
+                    v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
+                    :id="`infoNote` + data.item.order_id"
+                    src="@/assets/images/icons/info-order-notes.svg"
+                    class="ml-2 cursor-pointer"
+                    style="max-width:20px"
+                  >
+                  <b-popover
+                    triggers="hover"
+                    :target="`infoNote` + data.item.order_id"
+                    placement="bottomright"
+                  >
+                    {{ data.item.order_notes }}
+                  </b-popover>
+                </span>
                 <div
-                  v-if="totalData.item.payment_method === 'COD'"
+                  v-if="data.item.payment_method === 'COD'"
                   class="label-wrapper"
                 >
-                  {{ totalData.item.payment_method }}
+                  {{ data.item.payment_method }}
                 </div>
                 <div
                   v-else
@@ -273,52 +287,52 @@
                   Transfer
                 </div>
                 <div
-                  v-if="totalData.item.payment_method !== 'COD'"
-                  :id="`popoverTable${totalData.item.order_id}`"
+                  v-if="data.item.payment_method !== 'COD'"
+                  :id="`popoverTable${data.item.order_id}`"
                   class="tooltip-wrapper"
-                  @click="() => handleShowPopOver(`popoverTable${totalData.item.order_id}`)"
+                  @click="() => handleShowPopOver(`popoverTable${data.item.order_id}`)"
                 >
                   <b-icon-info-circle />
                 </div>
                 <b-popover
-                  v-if="totalData.item.payment_method !== 'COD'"
-                  :id="`popoverTable${totalData.item.order_id}`"
-                  :ref="`popoverTable${totalData.item.order_id}`"
-                  :target="`popoverTable${totalData.item.order_id}`"
+                  v-if="data.item.payment_method !== 'COD'"
+                  :id="`popoverTable${data.item.order_id}`"
+                  :ref="`popoverTable${data.item.order_id}`"
+                  :target="`popoverTable${data.item.order_id}`"
                   triggers="click"
                 >
                   <div class="data-order-table-pop-over">
                     <b-form-group
                       label="Nama Bank:"
-                      :label-for="`labelName-${totalData.item.order_id}`"
+                      :label-for="`labelName-${data.item.order_id}`"
                     >
                       <div
-                        v-if="totalData && totalData.item && totalData.item.bank"
-                        :id="`labelName-${totalData.item.order_id}`"
+                        v-if="data && data.item && data.item.bank"
+                        :id="`labelName-${data.item.order_id}`"
                       >
-                        {{ totalData.item.bank }}
+                        {{ data.item.bank }}
                       </div>
                     </b-form-group>
                     <b-form-group
                       label="No Rekening:"
-                      :label-for="`norek-${totalData.item.order_id}`"
+                      :label-for="`norek-${data.item.order_id}`"
                     >
                       <div
-                        v-if="totalData && totalData.item && totalData.item.bank_account_no"
-                        :id="`norek-${totalData.item.order_id}`"
+                        v-if="data && data.item && data.item.bank_account_no"
+                        :id="`norek-${data.item.order_id}`"
                       >
-                        {{ totalData.item.bank_account_no }}
+                        {{ data.item.bank_account_no }}
                       </div>
                     </b-form-group>
                     <b-form-group
                       label="Pemilik Rekening"
-                      :label-for="`ownerRek-${totalData.item.order_id}`"
+                      :label-for="`ownerRek-${data.item.order_id}`"
                     >
                       <div
-                        v-if="totalData && totalData.item && totalData.item.bank_account_name"
-                        :id="`ownerRek-${totalData.item.order_id}`"
+                        v-if="data && data.item && data.item.bank_account_name"
+                        :id="`ownerRek-${data.item.order_id}`"
                       >
-                        {{ totalData.item.bank_account_name }}
+                        {{ data.item.bank_account_name }}
                       </div>
                     </b-form-group>
                   </div>

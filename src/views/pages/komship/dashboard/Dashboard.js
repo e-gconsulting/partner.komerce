@@ -371,7 +371,7 @@ export default {
                     title:
                       '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
                     text:
-                      'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memilikiantrian penarikanyang belum disetujui.',
+                      'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.',
                     imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
                     showCloseButton: false,
                     focusConfirm: true,

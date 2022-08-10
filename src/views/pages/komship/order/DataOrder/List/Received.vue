@@ -44,7 +44,7 @@
               <flat-pickr
                 v-model="startDate"
                 class="form-control"
-                placeholder="Start Date"
+                placeholder="Mulai Dari"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
               />
             </b-col>
@@ -52,7 +52,7 @@
               <flat-pickr
                 v-model="endDate"
                 class="form-control"
-                placeholder="End Date"
+                placeholder="Sampai Dengan"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
               />
             </b-col>
@@ -213,7 +213,23 @@
           </div>
         </template>
         <template #cell(grand_total)="data">
-          Rp {{ formatNumber(data.item.grand_total) }}<br>
+          <span class="d-flex">
+            Rp {{ formatNumber(data.item.grand_total) }}
+            <img
+              v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
+              :id="`infoNote` + data.item.order_id"
+              src="@/assets/images/icons/info-order-notes.svg"
+              class="ml-auto cursor-pointer"
+              style="max-width:20px"
+            >
+            <b-popover
+              triggers="hover"
+              :target="`infoNote` + data.item.order_id"
+              placement="bottomright"
+            >
+              {{ data.item.order_notes }}
+            </b-popover>
+          </span>
           <span
             v-if="data.item.payment_method === 'COD'"
             class="text-primary"
