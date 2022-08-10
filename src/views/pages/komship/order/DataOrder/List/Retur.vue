@@ -35,7 +35,7 @@
               <flat-pickr
                 v-model="startDate"
                 class="form-control"
-                placeholder="Start Date"
+                placeholder="Mulai Dari"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
               />
             </b-col>
@@ -43,7 +43,7 @@
               <flat-pickr
                 v-model="endDate"
                 class="form-control"
-                placeholder="End Date"
+                placeholder="Sampai Dengan"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
               />
             </b-col>

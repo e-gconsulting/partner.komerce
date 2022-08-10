@@ -263,7 +263,7 @@
                     v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
                     :id="`infoNote` + data.item.order_id"
                     src="@/assets/images/icons/info-order-notes.svg"
-                    class="ml-auto cursor-pointer"
+                    class="ml-2 cursor-pointer"
                     style="max-width:20px"
                   >
                   <b-popover

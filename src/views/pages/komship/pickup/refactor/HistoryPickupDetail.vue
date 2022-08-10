@@ -463,23 +463,11 @@
                       />
                     </div>
                     <div class="ml-1">
-                      <span class="d-flex text-black">
-                        <strong>{{ itemsProduct.product_name }}</strong>
-                        <img
-                          v-if="itemsProduct.order_notes !== '0' && itemsProduct.order_notes !== '' && itemsProduct.order_notes !== null"
-                          :id="`infoNote` + itemsProduct.order_id"
-                          src="@/assets/images/icons/info-order-notes.svg"
-                          class="ml-2 cursor-pointer"
-                          style="max-width:20px"
-                        >
-                        <b-popover
-                          triggers="hover"
-                          :target="`infoNote` + itemsProduct.order_id"
-                          placement="bottomright"
-                        >
-                          {{ itemsProduct.order_notes }}
-                        </b-popover>
-                      </span>
+                      <p class="text-black">
+                        <strong>
+                          {{ itemsProduct.product_name }}
+                        </strong>
+                      </p>
                       <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
                         <p class="text-primary">
                           <strong>
@@ -560,11 +548,23 @@
                       />
                     </div>
                     <div class="ml-1">
-                      <p class="text-black">
-                        <strong>
-                          {{ itemsProduct.product_name }}
-                        </strong>
-                      </p>
+                      <span class="d-flex text-black">
+                        <strong>{{ itemsProduct.product_name }}</strong>
+                        <img
+                          v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
+                          :id="`infoNote` + itemsProduct.order_id"
+                          src="@/assets/images/icons/info-order-notes.svg"
+                          class="ml-2 cursor-pointer"
+                          style="max-width:20px"
+                        >
+                        <b-popover
+                          triggers="hover"
+                          :target="`infoNote` + itemsProduct.order_id"
+                          placement="topright"
+                        >
+                          {{ data.item.order_notes }}
+                        </b-popover>
+                      </span>
                       <div v-if="itemsProduct.variant_name !== '' && itemsProduct.variant_name !== '0'">
                         <p class="text-primary">
                           <strong>
