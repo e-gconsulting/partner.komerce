@@ -123,10 +123,16 @@
           </span>
           <span v-if="data.item.transaction_type === 'orderku_done'">
             Orderan COD (<span class="text-success">Diterima</span>)
-            <img
-              :id="`${data.index}-infoSaldo`"
-              src="@/assets/images/icons/info-circle.svg"
-            >
+            <b-row>
+              <img
+                :src="data.item.shipment_image_path"
+                width="100"
+              >
+              <img
+                :id="`${data.index}-infoSaldo`"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+            </b-row>
             <b-popover
               triggers="hover"
               :target="`${data.index}-infoSaldo`"
@@ -156,10 +162,16 @@
           </span>
           <span v-if="data.item.transaction_type === 'orderku_cancel'">
             Orderan Non COD (<span class="text-muted">Cancel</span>)
-            <img
-              :id="`${data.index}-infoSaldo`"
-              src="@/assets/images/icons/info-circle.svg"
-            >
+            <b-row>
+              <img
+                :src="data.item.shipment_image_path"
+                width="100"
+              >
+              <img
+                :id="`${data.index}-infoSaldo`"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+            </b-row>
             <b-popover
               triggers="hover"
               :target="`${data.index}-infoSaldo`"
@@ -233,10 +245,16 @@
             "
           >
             Orderan COD (<span class="text-danger">Retur</span>)
-            <img
-              :id="`${data.index}-infoSaldo`"
-              src="@/assets/images/icons/info-circle.svg"
-            >
+            <b-row>
+              <img
+                :src="data.item.shipment_image_path"
+                width="100"
+              >
+              <img
+                :id="`${data.index}-infoSaldo`"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+            </b-row>
             <b-popover
               triggers="hover"
               :target="`${data.index}-infoSaldo`"
@@ -270,10 +288,16 @@
                 data.item.payment_method === 'BANK TRANSFER'
             "
           >
-            Orderan Non COD (<span class="text-danger">Retur</span>)<img
-              :id="`${data.index}-infoSaldo`"
-              src="@/assets/images/icons/info-circle.svg"
-            >
+            Orderan Non COD (<span class="text-danger">Retur</span>)<b-row>
+              <img
+                :src="data.item.shipment_image_path"
+                width="100"
+              >
+              <img
+                :id="`${data.index}-infoSaldo`"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+            </b-row>
             <b-popover
               triggers="hover"
               :target="`${data.index}-infoSaldo`"
