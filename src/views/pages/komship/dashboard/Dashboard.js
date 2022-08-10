@@ -151,6 +151,8 @@ export default {
 
       perluTindakLanjut: 0,
       notification: null,
+
+      loadingConfirmationPin: false,
     }
   },
   computed: {
@@ -344,6 +346,7 @@ export default {
           })
           break
         case 2:
+          this.loadingConfirmationPin = true
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
             const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
@@ -359,6 +362,7 @@ export default {
                   this.modalTitle = null
                   this.status = data.status
                 })
+                this.loadingConfirmationPin = false
               })
               .catch(e => {
                 if (e.response.status === 400) {
@@ -378,6 +382,7 @@ export default {
                     buttonsStyling: false,
                   })
                 }
+                this.loadingConfirmationPin = false
               })
 
             this.visibilityPin = 'password'
@@ -396,6 +401,7 @@ export default {
               },
               buttonsStyling: false,
             })
+            this.loadingConfirmationPin = false
           }
           break
         default:

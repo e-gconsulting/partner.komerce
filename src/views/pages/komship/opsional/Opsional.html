@@ -48,6 +48,36 @@
                     </b-card-text>
                 </b-card>
             </b-col>
+            <b-col md="4">
+                <b-card img-src="@/assets/images/banner/wawasan-retur.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Wawasan Retur" img-top>
+                    <b-card-title class="d-flex justify-between">
+                        <span class="font-bold text-primary">Wawasan Retur</span>
+                        <b-form-checkbox
+                            v-model="returnInsight"
+                            switch
+                            @input="setReturnInsight()"
+                        />
+                    </b-card-title>
+                    <b-card-text style="padding-bottom: 50px;">
+                      Jika kamu kebanyakan kirim paket COD, maka ini bisa buat analisa seberapa besar tingkat retur daerah yang mau kamu tuju dari tiap ekspedisi.
+                    </b-card-text>
+                </b-card>
+            </b-col>
+            <b-col md="4">
+                <b-card img-src="@/assets/images/banner/order-notes.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Catatan Order" img-top>
+                    <b-card-title class="d-flex justify-between">
+                        <span class="font-bold text-primary">Catatan Order</span>
+                        <b-form-checkbox
+                            v-model="orderNotes"
+                            switch
+                            @input="setOrderNotes()"
+                        />
+                    </b-card-title>
+                    <b-card-text style="padding-bottom: 50px;">
+                      Cocok bagi yang produknya paketan & banyak variasinya, dengan ini bisa copas nama produk & variasi ke catatan ini tanpa input satu per satu
+                    </b-card-text>
+                </b-card>
+            </b-col>
         </b-row>
     </div>
 

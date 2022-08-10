@@ -81,6 +81,7 @@ export default {
       isCalculate: false,
       isCalculateOnExpedition: false,
       isShipping: false,
+      orderNotes: null,
       paymentMethod: null,
       paymentHistory: false,
       listPayment: ['COD', 'BANK TRANSFER'],
@@ -134,6 +135,8 @@ export default {
       isWhatsapp: null,
 
       isSubmitOrder: false,
+      returnInsight: [],
+      showReturnInsight: false,
     }
   },
   created() {
@@ -289,6 +292,23 @@ export default {
         }
       })
     },
+    async getReturnInsight() {
+      if (this.profile.partner_is_return_insight && this.destination !== null) {
+        await this.$http_komship.get('/v1/feature/returnInsight', {
+          params: { city_name: this.destination.city_name },
+        })
+          .then(result => {
+            const { data } = result.data
+            this.returnInsight = data
+            this.showReturnInsight = true
+          }).catch(err => {
+            this.showReturnInsight = false
+            console.error(err)
+          })
+      } else {
+        this.showReturnInsight = false
+      }
+    },
     getCustomer: _.debounce(function (e) {
       if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {
         const event = e.key ? 'input' : 'list'
@@ -308,6 +328,7 @@ export default {
           .then(response => {
             const { data } = response.data
             this.customerList = data
+            this.$refs['button-list-customer'].focus()
           })
       }
       return this.customerList
@@ -1215,6 +1236,7 @@ export default {
         net_profit: this.netProfit,
         cart: this.cartId,
         custom_label_id: this.customLabel,
+        order_notes: this.orderNotes,
       }
     },
     handleCustomLabel(items) {
@@ -1411,7 +1433,25 @@ export default {
           const { data } = error.response.data
           this.isWhatsapp = data
           this.messageErrorPhone = false
+          if (error.response.data.code !== 1001) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: error,
+                variant: 'danger',
+              },
+            })
+          }
         })
+    },
+    async setDataCustomer(data) {
+      this.customerId = await data.customer_id
+      this.customerPhone = await data.phone
+      this.customerAddress = await data.address
+      this.$refs.selectDestination.$refs.search.focus()
+      await this.checkWhatsapp()
     },
   },
 }
