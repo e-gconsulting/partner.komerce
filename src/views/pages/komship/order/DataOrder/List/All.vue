@@ -36,7 +36,7 @@
               <flat-pickr
                 v-model="startDate"
                 class="form-control"
-                placeholder="Start Date"
+                placeholder="Mulai Dari"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
               />
             </b-col>
@@ -44,7 +44,7 @@
               <flat-pickr
                 v-model="endDate"
                 class="form-control"
-                placeholder="End Date"
+                placeholder="Sampai Dengan"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
               />
             </b-col>
@@ -254,8 +254,46 @@
           </div>
         </template>
         <template #cell(order_status)="data">
-          <span v-if="data.item.order_status === 'Diajukan'">Order Dibuat</span>
-          <span v-else>{{ data.item.order_status }}</span>
+          <b-badge
+            v-if="data.item.order_status === 'Diajukan'"
+            class="text-primary font-semibold px-1"
+            pill
+            style="background-color:#FCD4BE;"
+          >
+            Order Dibuat
+          </b-badge>
+          <b-badge
+            v-if="data.item.order_status === 'Dipacking'"
+            class="text-info font-semibold px-1"
+            pill
+            style="background-color:#BEE6FC"
+          >
+            Dipacking
+          </b-badge>
+          <b-badge
+            v-if="data.item.order_status === 'Dikirim'"
+            class="text-warning font-semibold px-1"
+            pill
+            style="background-color:#FFFCAF"
+          >
+            Dikirim
+          </b-badge>
+          <b-badge
+            v-if="data.item.order_status === 'Diterima'"
+            class="text-success font-semibold px-1"
+            pill
+            style="background-color:#BEFCDE"
+          >
+            Diterima
+          </b-badge>
+          <b-badge
+            v-if="data.item.order_status === 'Retur'"
+            class="text-danger font-semibold px-1"
+            pill
+            style="background-color:#FCBEBE"
+          >
+            Retur
+          </b-badge>
         </template>
         <template #cell(details)="data">
           <b-button
@@ -343,7 +381,7 @@ export default {
           key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'order_status', label: 'Status', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'order_status', label: 'Status', thClass: 'align-middle', tdClass: 'align-top text-center',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',

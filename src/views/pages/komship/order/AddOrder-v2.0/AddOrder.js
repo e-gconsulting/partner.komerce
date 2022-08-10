@@ -309,6 +309,21 @@ export default {
         this.showReturnInsight = false
       }
     },
+    getColorReturnInsight(percentage) {
+      const value = parseFloat(percentage)
+      if (value <= 2) {
+        return 'bg-verygood'
+      } if (value <= 5) {
+        return 'bg-good'
+      } if (value <= 15) {
+        return 'bg-normal'
+      } if (value <= 25) {
+        return 'bg-bad'
+      } if (value > 25) {
+        return 'bg-verybad'
+      }
+      return null
+    },
     getCustomer: _.debounce(function (e) {
       if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {
         const event = e.key ? 'input' : 'list'
