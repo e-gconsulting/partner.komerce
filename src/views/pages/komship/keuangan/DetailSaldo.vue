@@ -126,7 +126,7 @@
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
-                width="100"
+                width="70"
               >
               <img
                 :id="`${data.index}-infoSaldo`"
@@ -165,7 +165,7 @@
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
-                width="100"
+                width="70"
               >
               <img
                 :id="`${data.index}-infoSaldo`"
@@ -204,7 +204,7 @@
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
-                width="100"
+                width="70"
               >
               <img
                 :id="`${data.index}-infoSaldo`"
@@ -248,7 +248,7 @@
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
-                width="100"
+                width="70"
               >
               <img
                 :id="`${data.index}-infoSaldo`"
@@ -291,7 +291,7 @@
             Orderan Non COD (<span class="text-danger">Retur</span>)<b-row>
               <img
                 :src="data.item.shipment_image_path"
-                width="100"
+                width="70"
               >
               <img
                 :id="`${data.index}-infoSaldo`"
