@@ -320,9 +320,10 @@ export default {
         cancelButtonText: 'Kembali',
         cancelButtonColor: '#FFFFFF',
         cancelButtonClass: 'btn btn-outline-primary text-primary',
-      }).then(response => {
+      }).then(async response => {
         if (response.isConfirmed) {
-          this.submitSheets('save', 'dashboard-komship')
+          await this.saveSheets()
+          this.$router.push('dashboard-komship')
         }
       })
       this.table = jspreadsheet(document.getElementById('spreadsheet'), {
@@ -604,8 +605,9 @@ export default {
         cancelButtonClass: 'btn btn-outline-primary text-primary',
       }).then(result => {
         if (result.isConfirmed && redirect) {
-          this.submitSheets('save', 'dashboard-komship')
           this.$router.push('dashboard-komship')
+        } else {
+          window.location.reload()
         }
       })
       if (response.message === "There's error in your input" && response.validation_error.length >= 1) {
@@ -721,8 +723,9 @@ export default {
         confirmButtonClass: 'btn btn-primary',
         cancelButtonText: 'Batal',
         cancelButtonClass: 'btn btn-outline-primary bg-white text-primary',
-      }).then(result => {
+      }).then(async result => {
         if (result.isConfirmed) {
+          await this.saveSheets()
           this.submitSheets()
         }
       })
@@ -755,56 +758,16 @@ export default {
                 if (response.isConfirmed) {
                   this.$router.push('data-order')
                 } else {
-                  this.table.setData([])
+                  window.location.reload()
                 }
               })
             }
           }
         } catch (error) {
           const { data } = error.response
-          const rowError = this.dataSplit[index][0].row - 1
-          const dataError = []
-          const dataSheets = this.dataSheets.map(items => ({
-            0: items.order_date,
-            1: items.address,
-            2: items.customer_name,
-            3: items.customer_phone_number,
-            4: `${items.zip_code}`,
-            5: items.customer_address,
-            6: items.product,
-            7: items.variant,
-            8: items.order_notes,
-            9: `${items.qty}`,
-            10: items.payment_method,
-            11: items.expedition,
-            12: `${items.grandtotal}`,
-          }))
-          const dataSuccess = this.dataSheets.map(() => ({
-            0: '',
-            1: '',
-            2: '',
-            3: '',
-            4: '',
-            5: '',
-            6: '',
-            7: '',
-            8: '',
-            9: '',
-            10: '',
-            11: '',
-            12: '',
-          }))
-          for (let y = 0; y < this.dataSplit[index][0].row; y += 1) {
-            dataError.push(dataSuccess[y])
-          }
-          for (let x = rowError; x < dataSheets.length; x += 1) {
-            dataError.push(dataSheets[x])
-          }
           if (!data) {
-            this.table.setData(dataError)
             this.submitProgressStatus = false
           } else {
-            this.table.setData(dataError)
             this.$refs.loadingSubmit.hide()
             this.handleSubmitError(data)
           }
