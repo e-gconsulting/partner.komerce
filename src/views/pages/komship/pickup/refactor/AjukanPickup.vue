@@ -448,9 +448,14 @@
         <div class="image-wrapper">
           <img src="@/assets/images/icons/success.svg">
         </div>
-        <div class="text-wrapper mb-3">
+        <div class="text-wrapper mb-1">
           Pengajuan Pickup Berhasil
         </div>
+        <b-row class="text-center mb-1 px-2">
+          <span class="text-black">
+            Pastikan <strong>paket anda siap</strong> untuk dipickup. Jam penjemputan yang kamu pilih <strong>hanyalah estimasi</strong>, kurir akan datang dan menghubungi di kisaran jam tersebut
+          </span>
+        </b-row>
         <b-button
           class="org-button"
           tag="router-link"
@@ -962,10 +967,6 @@ export default {
     },
   },
   mounted() {
-    // setInterval(() => {
-    //   this.timeValue = moment().format('HH:mm:ss')
-    // }, 1000)
-    // this.$refs['modal-pickup-error-success'].show()
     this.getTimeNow()
     this.cekExpedition()
     this.$http_komship.post('v1/my-profile', {
@@ -989,7 +990,6 @@ export default {
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
     this.getAddress()
-    // this.$refs['popup-order'].show()
   },
   methods: {
     getDataOrderToStore(data, dataItems) {

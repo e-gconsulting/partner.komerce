@@ -566,7 +566,13 @@ export default {
       this.itemButtonWaCustomer = require('@/assets/images/icons/wa-notactive.svg')
     },
     handleClickWaCustomer() {
-      window.open(`https://api.whatsapp.com/send?phone=${this.customerPhone}`, '_blank')
+      if (this.customerPhone.charAt(0) === '0') {
+        window.open(`https://api.whatsapp.com/send?phone=62${this.customerPhone.slice(1, this.customerPhone)}`, '_blank')
+      } else if (this.customerPhone.charAt(0) === '6' && this.customerPhone.charAt(1) === '2') {
+        window.open(`https://api.whatsapp.com/send?phone=${this.customerPhone}`, '_blank')
+      } else {
+        window.open(`https://api.whatsapp.com/send?phone=62${this.customerPhone}`, '_blank')
+      }
     },
     fetchCustomerPhone(data) {
       this.customerPhone = data
