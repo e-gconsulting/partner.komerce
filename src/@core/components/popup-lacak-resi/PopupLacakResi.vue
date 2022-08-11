@@ -109,6 +109,11 @@ export default {
       }
     },
   },
+  async mounted() {
+    if (this.orderDatas.airway_bill !== undefined) {
+      await this.lacakresi()
+    }
+  },
   methods: {
     lacakresi() {
       this.isLoading = true
