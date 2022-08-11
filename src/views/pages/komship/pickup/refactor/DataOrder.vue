@@ -3,8 +3,9 @@
     id="popupOrder"
     ref="popup-order"
     modal-class="modal-primary"
+    footer-class="custom-footer-class"
     scrollable
-    size="xl"
+    size="lg"
   >
     <div>
       <b-overlay
@@ -419,8 +420,14 @@
             </b-table>
           </b-row>
 
-          <b-row class="justify-content-between mt-5 mx-50 mb-2">
-            <div>
+        </section>
+      </b-overlay>
+    </div>
+    <template #modal-footer>
+      <b-row class="justify-content-between align-items-center pb-50 mr-50 w-full">
+        <div class="mt-1">
+          <b-row class="mx-50">
+            <div class="mt-50 mr-1">
               <span class="text-black mr-1">
                 <strong>
                   List per halaman:
@@ -443,19 +450,18 @@
               :per-page="perPage"
               first-number
               last-number
+              class="mt-50"
             />
           </b-row>
-        </section>
-      </b-overlay>
-    </div>
-    <template #modal-footer>
-      <b-row class="justify-content-end pb-50 mr-50">
-        <b-button
-          variant="primary"
-          @click="getSelectedOrder"
-        >
-          Simpan {{ selectedOrder.length > 0 ? `(${selectedOrder.length})` : '' }}
-        </b-button>
+        </div>
+        <div class="mt-1">
+          <b-button
+            variant="primary"
+            @click="getSelectedOrder"
+          >
+            Simpan {{ selectedOrder.length > 0 ? `(${selectedOrder.length})` : '' }}
+          </b-button>
+        </div>
       </b-row>
     </template>
   </b-modal>
