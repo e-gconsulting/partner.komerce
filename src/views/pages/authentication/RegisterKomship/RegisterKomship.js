@@ -3,8 +3,6 @@ import ToastificationContentVue from '@/@core/components/toastification/Toastifi
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
 import { kirimEmailConfig } from '@/libs/helpers'
-import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
-import axios from 'axios'
 import {
   BCol,
   BNavbarBrand,
@@ -93,7 +91,7 @@ export default {
           this.error = ''
           this.$refs.inputkirimemail_email.value = this.userEmail
           this.$refs.inputkirimemail_full_name.value = this.fullname
-          httpKomship.post('/v1/register', {
+          this.$http_komship.post('/v1/register', {
             full_name: this.fullname,
             no_hp: this.nomorHandphone,
             email: this.userEmail,

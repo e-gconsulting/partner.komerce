@@ -161,6 +161,26 @@
             @keyup="valueFormatPhone"
           />
         </b-input-group>
+        <b-row v-if="isCustomerReputation" class="ml-50 mt-1">
+          <span class="d-flex align-items-center">
+            Reputasi Customer
+            <img
+              id="infoReturnInsight"
+              src="@/assets/images/icons/info-circle.svg"
+              class="icon-info ml-[5px] mr-1"
+            >
+            <div :class="customerReputationClass">
+              <span class="d-flex align-items-center justify-content-center">{{ customerReputation }}% <div :style="customerReputationStyle" class="mx-50 my-[5px]" /> ({{ customerReputationRetur }}/{{ customerReputationOrder }})</span>
+            </div>
+          </span>
+          <b-popover
+            triggers="hover"
+            target="infoReturnInsight"
+            placement="bottomleft"
+          >
+          Tingkat kegagalan transaksi user tersebut selama ini. Itungannya adalah transaksi yang gagal dibandingkan dengan semua transaksi yang pernah dilakukan (identifikasi No.HP)
+          </b-popover>
+        </b-row>
         <b-row class="justify-content-start m-0">
           <div v-if="messageErrorPhone">
             <small class="mr-1 text-primary">

@@ -6,7 +6,6 @@
 import moment from 'moment'
 import vSelect from 'vue-select'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import httpKomship2 from '../../setting-kompship/http_komship2'
 import '@core/scss/vue/libs/vue-select.scss'
 
 export default {
@@ -123,7 +122,7 @@ export default {
     }
   },
   async created() {
-    await httpKomship2.post('v1/my-profile')
+    await this.$http_komship.post('v1/my-profile')
       .then(async res => {
         this.profile = res.data.data
         await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)

@@ -50,16 +50,6 @@ export default [
     },
   },
   {
-    path: '/talent/register',
-    name: 'talent-register',
-    component: () => import('@/views/pages/talent/talent/Register.vue'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      preventRedirect: true,
-    },
-  },
-  {
     path: '/forgot-password',
     name: 'auth-forgot-password',
     component: () => import('@/views/pages/authentication/ForgotPassword'),

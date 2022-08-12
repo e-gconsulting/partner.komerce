@@ -10,7 +10,6 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import Ripple from 'vue-ripple-directive'
-import httpKomship2 from '../setting-kompship/http_komship2'
 
 export default {
   components: {
@@ -60,6 +59,8 @@ export default {
       senderIdentity1Name: null,
       senderIdentity1NoHp: null,
       indexIdentity: 1,
+
+      customerReputation: null,
     }
   },
   created() {
@@ -67,7 +68,7 @@ export default {
   },
   methods: {
     getProfile() {
-      httpKomship2.post('v1/my-profile')
+      this.$http_komship.post('v1/my-profile')
         .then(res => {
           const { data } = res.data
           this.profile = data
@@ -78,6 +79,7 @@ export default {
           this.returnInsight = data.partner_is_return_insight
           this.orderNotes = data.partner_is_order_notes
           this.notifWA = data.partner_is_notification_whatsapp
+          this.customerReputation = data.partner_is_customer_reputation
           this.isGetting = true
           this.getCustomLabel()
         })
@@ -485,6 +487,37 @@ export default {
       } else {
         this.messageErrorLengthSenderNameEdit = false
       }
+    },
+    setCustomerReputation() {
+      let value = 0
+      if (this.customerReputation === true) {
+        value = 1
+      }
+      const formData = new FormData()
+      formData.append('is_customer_reputation', value)
+      this.$http_komship.post('/v1/setting/settingIsCustomerReputation', formData)
+        .then(response => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: response.data.message,
+              variant: 'success',
+            },
+          }, 2000)
+        })
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: err.response.message,
+              variant: 'success',
+            },
+          }, 2000)
+        })
     },
   },
 }

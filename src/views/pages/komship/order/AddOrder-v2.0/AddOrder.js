@@ -10,7 +10,6 @@ import {
   BFormTextarea,
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import httpKomship2 from '../../setting-kompship/http_komship2'
 import '@core/scss/vue/libs/vue-select.scss'
 
 export default {
@@ -137,13 +136,25 @@ export default {
       isSubmitOrder: false,
       returnInsight: [],
       showReturnInsight: false,
+
+      isCustomerReputation: false,
+      customerReputationOrder: 0,
+      customerReputationRetur: 0,
+      customerReputation: 0,
+      customerReputationClass: 'wrapper__customer__reputation__good',
+      customerReputationStyle: 'height: 20px; width: 2px; background-color: #34A770;',
     }
   },
   created() {
-    httpKomship2
+    this.$http_komship
       .post('v1/my-profile')
       .then(res => {
         this.profile = res.data.data
+        if (this.profile.partner_is_customer_reputation === true) {
+          this.isCustomerReputation = true
+        } else {
+          this.isCustomerReputation = false
+        }
       })
       .then(async () => {
         await this.checkExpedition()
@@ -1371,6 +1382,8 @@ export default {
       }
       this.customerPhonePasteMode = false
       this.checkWhatsapp()
+      console.log(this.profile)
+      this.getCustomerReputation()
     }, 1000),
     validateInputCustomerName(e) {
       if (
@@ -1467,6 +1480,53 @@ export default {
       this.customerAddress = await data.address
       this.$refs.selectDestination.$refs.search.focus()
       await this.checkWhatsapp()
+      await this.getCustomerReputation()
+    },
+    getCustomerReputation() {
+      const formData = new FormData()
+      formData.append('customer_phone', this.customerPhone)
+      this.$http_komship.get('/v1/feature/customerReputation', {
+        params: {
+          customer_phone: this.customerPhone,
+        },
+      })
+        .then(response => {
+          const { data } = response.data
+          console.log(data)
+          if (data.customer_rep !== undefined) {
+            this.customerReputation = data.customer_rep
+            this.customerReputationOrder = data.total_order
+            this.customerReputationRetur = data.total_retur
+            if (this.customerReputation < 10) {
+              this.customerReputationClass = 'wrapper__customer__reputation__good'
+              this.customerReputationStyle = 'height: 20px; width: 2px; background-color: #34A770;'
+              console.log('good')
+            } else if (this.customerReputation > 10 && this.customerReputation < 50) {
+              this.customerReputationClass = 'wrapper__customer__reputation__middle'
+              this.customerReputationStyle = 'height: 20px; width: 2px; background-color: #FBA63C'
+              console.log('middle')
+            } else if (this.customerReputation > 50) {
+              this.customerReputationClass = 'wrapper__customer__reputation__bad'
+              this.customerReputationStyle = 'height: 20px; width: 2px; background-color: #E31A1A'
+              console.log('bad')
+            }
+          } else {
+            this.customerReputation = 0
+            this.customerReputationOrder = 0
+            this.customerReputationRetur = 0
+            console.log('tidak ada data')
+          }
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.message,
+              variant: 'danger',
+            },
+          })
+        })
     },
   },
 }
