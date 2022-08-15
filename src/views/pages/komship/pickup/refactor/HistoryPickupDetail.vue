@@ -880,7 +880,6 @@ import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
 import AddPickupPrintPanel from '../AddPickupPrintPanel.vue'
-// import httpKomship from '../../setting-kompship/http_komship'
 
 export default {
 

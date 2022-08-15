@@ -636,7 +636,6 @@ import {
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -721,7 +720,7 @@ export default {
   methods: {
     getBank() {
       this.loading = true
-      return httpKomship.get('v1/bank-account', {
+      return this.$http_komship.get('v1/bank-account', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -749,7 +748,7 @@ export default {
             const formData = new FormData()
             formData.append('_method', 'post')
             formData.append('phone_number', this.phoneNumber)
-            httpKomship.post('/v1/partner/sms/otp', formData, {
+            this.$http_komship.post('/v1/partner/sms/otp', formData, {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(response => {
               this.loadingSubmit = false
@@ -782,7 +781,7 @@ export default {
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneNumber)
-        httpKomship.post('/v1/partner/sms/otp', formData, {
+        this.$http_komship.post('/v1/partner/sms/otp', formData, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {}).catch(() => {
           this.$toast({
@@ -809,9 +808,9 @@ export default {
       }
       const formData = new FormData()
       formData.append('otp', this.dataPin)
-      httpKomship.post('/v1/partner/sms/otp/verification', formData).then(response => {
+      this.$http_komship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
-          httpKomship.post('/v1/bank-account/store',
+          this.$http_komship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
@@ -881,7 +880,7 @@ export default {
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
 
-          httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
+          this.$http_komship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
             this.$toast({
@@ -932,7 +931,7 @@ export default {
       })
     },
     delete(data) {
-      httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
+      this.$http_komship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
         .then(() => {
@@ -963,7 +962,7 @@ export default {
     },
     confirmPin() {
       this.loadingSubmit = true
-      httpKomship.post('/v1/pin/auth', {
+      this.$http_komship.post('/v1/pin/auth', {
         pin: this.dataPin,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },

@@ -767,7 +767,6 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
-import httpKomship from '@/views/pages/komship/setting-kompship/http_komship'
 import {
   BCol,
   BNavbarBrand,
@@ -854,7 +853,7 @@ export default {
         if (success) {
           this.error = ''
 
-          httpKomship.post('/v1/register', {
+          this.$http_komship.post('/v1/register', {
             full_name: this.fullname,
             no_hp: this.nomorHandphone,
             email: this.userEmail,

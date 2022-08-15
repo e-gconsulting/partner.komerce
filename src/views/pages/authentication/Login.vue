@@ -359,13 +359,13 @@ export default {
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
-          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
+          if (!['PARTNER', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
             return
           }
 
-          if (['PARTNER', 'SDM'].includes(role)) {
+          if (['PARTNER'].includes(role)) {
             if (!userData.email_verified_at) {
               // eslint-disable-next-line operator-linebreak
               this.error =
@@ -377,54 +377,6 @@ export default {
           }
 
           switch (role) {
-            case 'ADMIN':
-              ability = [
-                { action: 'read', subject: 'Dashboard' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Management' },
-                { action: 'manage', subject: 'MasterData' },
-                { action: 'manage', subject: 'Partner' },
-                { action: 'manage', subject: 'Position' },
-                { action: 'manage', subject: 'Talent' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Division' },
-                { action: 'manage', subject: 'Invoice' },
-                { action: 'manage', subject: 'Assignment' },
-                { action: 'manage', subject: 'JobRoleSetting' },
-                { action: 'manage', subject: 'Tiket' },
-                { action: 'manage', subject: 'Notification' },
-
-                // Komship
-                { action: 'manage', subject: 'Komship' },
-                { action: 'manage', subject: 'Dashboard Komship Admin' },
-                { action: 'manage', subject: 'Pencairan' },
-                { action: 'manage', subject: 'Pendapatan' },
-                { action: 'manage', subject: 'Membership Komship' },
-                { action: 'manage', subject: 'Perkembangan Partner' },
-                { action: 'manage', subject: 'Data Partner' },
-                { action: 'manage', subject: 'Arsip Partner' },
-                { action: 'manage', subject: 'Data Layanan' },
-                { action: 'manage', subject: 'Ekspedisi' },
-                { action: 'manage', subject: 'Biaya Ekspedisi' },
-                { action: 'manage', subject: 'Performa' },
-              ]
-              break
-            case 'MANAGEMENT':
-              ability = [
-                { action: 'read', subject: 'Dashboard' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Management' },
-                { action: 'manage', subject: 'MasterData' },
-                { action: 'manage', subject: 'Partner' },
-                { action: 'manage', subject: 'Position' },
-                { action: 'manage', subject: 'Talent' },
-                { action: 'manage', subject: 'Training' },
-                { action: 'manage', subject: 'Division' },
-                { action: 'manage', subject: 'Invoice' },
-                { action: 'manage', subject: 'Assignment' },
-                { action: 'manage', subject: 'JobRoleSetting' },
-              ]
-              break
             case 'PARTNER':
               ability = [
                 { action: 'manage', subject: 'Komship TalentPool' },
@@ -455,18 +407,6 @@ export default {
                 { action: 'manage', subject: 'Fitur Pendukung' },
                 { action: 'manage', subject: 'Gudang' },
                 { action: 'manage', subject: 'Gudangku' },
-
-                // Komplace
-                // { action: 'manage', subject: 'Dashboard Komplace' },
-                // { action: 'manage', subject: 'Monitoring' },
-                // { action: 'manage', subject: 'Manajemen Admin' },
-                // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
-              ]
-              break
-            case 'SDM':
-              ability = [
-                { action: 'read', subject: 'TalentHome' },
-                { action: 'manage', subject: 'TalentProfile' },
               ]
               break
             case 'KOMSHIP MEMBER':

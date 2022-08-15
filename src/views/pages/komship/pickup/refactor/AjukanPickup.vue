@@ -820,7 +820,6 @@ import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { toInteger } from 'lodash'
-import httpKomship from '../../setting-kompship/http_komship'
 import dataOrder from './DataOrder.vue'
 
 export default {
@@ -1136,7 +1135,7 @@ export default {
           orders: this.selectedOrdersId,
         }
 
-        httpKomship.post(`/v2/pickup/${this.profile.partner_id}/store`, params)
+        this.$http_komship.post(`/v2/pickup/${this.profile.partner_id}/store`, params)
           .then(response => {
             if (response.data.code !== 500) {
               this.$refs['modal-animate-pickup'].hide()
@@ -1187,7 +1186,7 @@ export default {
       this.$refs['modal-failed-request-pickup'].hide()
     },
     cekExpedition() {
-      httpKomship.get('/v1/partner/shipment/not-active',
+      this.$http_komship.get('/v1/partner/shipment/not-active',
         {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(response => {
