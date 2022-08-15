@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="main">
     <b-row class="mb-1 justify-content-end align-items-center">
 
       <b-col
@@ -96,261 +96,235 @@
         </b-popover>
       </b-col>
     </b-row>
-    <b-overlay
-      variant="light"
-      :show="loadTable"
-      spinner-variant="primary"
-      blur="0"
-      opacity=".5"
-      rounded="sm"
+    <b-table
+      id="table-order"
+      responsive
+      show-empty
+      empty-text="Tidak ada data untuk ditampilkan."
+      :items="items"
+      :fields="fields"
+      :busy="loadingTable"
+      @scroll="getNextData()"
     >
-      <b-table
-        id="table-order"
-        responsive
-        show-empty
-        empty-text="Tidak ada data untuk ditampilkan."
-        :items="items"
-        :fields="fields"
-        :current-page="currentPage"
-        :per-page="0"
-        :busy="loadTable"
-      >
-        <template #cell(order_date)="data">
-          {{ moment(data.item.order_date) }}
-        </template>
-        <template #cell(customer_name)="data">
-          <span class="font-bold">{{ data.item.customer_name }}</span><br>
+      <template #cell(order_date)="data">
+        {{ moment(data.item.order_date) }}
+      </template>
+      <template #cell(customer_name)="data">
+        <span class="font-bold">{{ data.item.customer_name }}</span><br>
+        <div
+          v-if="data.item.is_komship"
+          class="d-flex"
+        >
+          <img
+            :src="data.item.shipment_image_path"
+            style="width:45px"
+          ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
+        </div>
+        <span
+          v-else
+          class="text-muted"
+        >
+          Non-Komship
+        </span>
+      </template>
+      <template #cell(product)="data">
+        <div v-if="data.item.product[0]">
           <div
-            v-if="data.item.is_komship"
+            v-for="(itemProduct, index) in data.item.product.slice(0, 1)"
+            :key="index+1"
             class="d-flex"
+            style="min-width:160px!important"
           >
             <img
-              :src="data.item.shipment_image_path"
-              style="width:45px"
-            ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
-          </div>
-          <span
-            v-else
-            class="text-muted"
-          >
-            Non-Komship
-          </span>
-        </template>
-        <template #cell(product)="data">
-          <div v-if="data.item.product[0]">
+              v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+              class="image-product"
+              :src="require('@/assets/images/avatars/image-null.png')"
+            >
+            <img
+              v-else
+              class="image-product"
+              :src="data.item.product[0].product_image"
+              :alt="data.item.product[0].product_image"
+            >
+            <div style="margin-left:5px;">
+              <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+              <span
+                v-if="itemProduct.variant_name !== '0'"
+                class="text-primary"
+              >{{ itemProduct.variant_name }}</span>
+            </div>
             <div
-              v-for="(itemProduct, index) in data.item.product.slice(0, 1)"
-              :key="index+1"
-              class="d-flex"
-              style="min-width:160px!important"
+              class="font-bold ml-auto"
             >
-              <img
-                v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
-                class="image-product"
-                :src="require('@/assets/images/avatars/image-null.png')"
-              >
-              <img
-                v-else
-                class="image-product"
-                :src="data.item.product[0].product_image"
-                :alt="data.item.product[0].product_image"
-              >
-              <div style="margin-left:5px;">
-                <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
-                <span
-                  v-if="itemProduct.variant_name !== '0'"
-                  class="text-primary"
-                >{{ itemProduct.variant_name }}</span>
-              </div>
+              x{{ itemProduct.qty }}
+            </div>
+          </div>
+          <div v-if="data.item.product.length > 1">
+            <b-collapse :id="'collapse-'+data.item.order_id">
               <div
-                class="font-bold ml-auto"
+                v-for="item in data.item.product.slice(1, data.item.product.length)"
+                :key="item.order_id"
+                class="d-flex mt-1"
+                style="min-width:160px!important"
               >
-                x{{ itemProduct.qty }}
-              </div>
-            </div>
-            <div v-if="data.item.product.length > 1">
-              <b-collapse :id="'collapse-'+data.item.order_id">
-                <div
-                  v-for="item in data.item.product.slice(1, data.item.product.length)"
-                  :key="item.order_id"
-                  class="d-flex mt-1"
-                  style="min-width:160px!important"
+                <img
+                  v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                  class="image-product"
+                  :src="require('@/assets/images/avatars/image-null.png')"
                 >
-                  <img
-                    v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
-                    class="image-product"
-                    :src="require('@/assets/images/avatars/image-null.png')"
-                  >
-                  <img
-                    v-else
-                    class="image-product"
-                    :src="data.item.product[0].product_image"
-                    :alt="data.item.product[0].product_image"
-                  >
-                  <div style="margin-left:5px;">
-                    <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
-                    <span
-                      v-if="item.variant_name !== '0'"
-                      class="text-primary"
-                    >{{ item.variant_name }}</span>
-                  </div>
-                  <div
-                    class="font-bold ml-auto"
-                  >
-                    x{{ item.qty }}
-                  </div>
+                <img
+                  v-else
+                  class="image-product"
+                  :src="data.item.product[0].product_image"
+                  :alt="data.item.product[0].product_image"
+                >
+                <div style="margin-left:5px;">
+                  <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                  <span
+                    v-if="item.variant_name !== '0'"
+                    class="text-primary"
+                  >{{ item.variant_name }}</span>
                 </div>
-              </b-collapse>
-            </div>
+                <div
+                  class="font-bold ml-auto"
+                >
+                  x{{ item.qty }}
+                </div>
+              </div>
+            </b-collapse>
           </div>
-        </template>
-        <template #cell(grand_total)="data">
-          <span class="d-flex">
-            Rp {{ formatNumber(data.item.grand_total) }}
-            <img
-              v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
-              :id="`infoNote` + data.item.order_id"
-              src="@/assets/images/icons/info-order-notes.svg"
-              class="ml-auto cursor-pointer"
-              style="max-width:20px"
-            >
-            <b-popover
-              triggers="hover"
-              :target="`infoNote` + data.item.order_id"
-              placement="bottomright"
-            >
-              {{ data.item.order_notes }}
-            </b-popover>
-          </span>
-          <span
-            v-if="data.item.payment_method === 'COD'"
-            class="text-primary"
+        </div>
+      </template>
+      <template #cell(grand_total)="data">
+        <span class="d-flex">
+          Rp {{ formatNumber(data.item.grand_total) }}
+          <img
+            v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
+            :id="`infoNote` + data.item.order_id"
+            src="@/assets/images/icons/info-order-notes.svg"
+            class="ml-auto cursor-pointer"
+            style="max-width:20px"
           >
-            COD
-          </span>
-          <div
-            v-else-if="data.item.payment_method === 'BANK TRANSFER'"
-            class="d-flex"
+          <b-popover
+            triggers="hover"
+            :target="`infoNote` + data.item.order_id"
+            placement="bottomright"
           >
-            <span class="text-primary">Transfer</span>
-            <img
-              v-if="data.item.bank !== '0'"
-              :id="`iconInfo` + data.item.order_id"
-              src="@/assets/images/icons/info-circle.svg"
-              class="icon-info"
-            >
-            <b-popover
-              triggers="hover"
-              :target="`iconInfo` + data.item.order_id"
-              placement="bottomleft"
-            >
-              <label>Nama Bank:</label><br>
-              <span class="font-bold">{{ data.item.bank }}</span><br>
-              <label>No Rekening:</label><br>
-              <span class="font-bold">{{ data.item.bank_account_no }}</span><br>
-              <label>Pemilik Rekening:</label><br>
-              <span class="font-bold">{{ data.item.bank_account_name }}</span><br>
-            </b-popover>
-          </div>
-        </template>
-        <template #cell(order_status)="data">
-          <b-badge
-            v-if="data.item.order_status === 'Diajukan'"
-            class="text-primary font-semibold px-1"
-            pill
-            style="background-color:#FCD4BE;"
+            {{ data.item.order_notes }}
+          </b-popover>
+        </span>
+        <span
+          v-if="data.item.payment_method === 'COD'"
+          class="text-primary"
+        >
+          COD
+        </span>
+        <div
+          v-else-if="data.item.payment_method === 'BANK TRANSFER'"
+          class="d-flex"
+        >
+          <span class="text-primary">Transfer</span>
+          <img
+            v-if="data.item.bank !== '0'"
+            :id="`iconInfo` + data.item.order_id"
+            src="@/assets/images/icons/info-circle.svg"
+            class="icon-info"
           >
-            Order Dibuat
-          </b-badge>
-          <b-badge
-            v-if="data.item.order_status === 'Dipacking'"
-            class="text-info font-semibold px-1"
-            pill
-            style="background-color:#BEE6FC"
+          <b-popover
+            triggers="hover"
+            :target="`iconInfo` + data.item.order_id"
+            placement="bottomleft"
           >
-            Dipacking
-          </b-badge>
-          <b-badge
-            v-if="data.item.order_status === 'Dikirim'"
-            class="text-warning font-semibold px-1"
-            pill
-            style="background-color:#FFFCAF"
-          >
-            Dikirim
-          </b-badge>
-          <b-badge
-            v-if="data.item.order_status === 'Diterima'"
-            class="text-success font-semibold px-1"
-            pill
-            style="background-color:#BEFCDE"
-          >
-            Diterima
-          </b-badge>
-          <b-badge
-            v-if="data.item.order_status === 'Retur'"
-            class="text-danger font-semibold px-1"
-            pill
-            style="background-color:#FCBEBE"
-          >
-            Retur
-          </b-badge>
-        </template>
-        <template #cell(details)="data">
+            <label>Nama Bank:</label><br>
+            <span class="font-bold">{{ data.item.bank }}</span><br>
+            <label>No Rekening:</label><br>
+            <span class="font-bold">{{ data.item.bank_account_no }}</span><br>
+            <label>Pemilik Rekening:</label><br>
+            <span class="font-bold">{{ data.item.bank_account_name }}</span><br>
+          </b-popover>
+        </div>
+      </template>
+      <template #cell(order_status)="data">
+        <b-badge
+          v-if="data.item.order_status === 'Diajukan'"
+          class="text-primary font-semibold px-1"
+          pill
+          style="background-color:#FCD4BE;"
+        >
+          Order Dibuat
+        </b-badge>
+        <b-badge
+          v-if="data.item.order_status === 'Dipacking'"
+          class="text-info font-semibold px-1"
+          pill
+          style="background-color:#BEE6FC"
+        >
+          Dipacking
+        </b-badge>
+        <b-badge
+          v-if="data.item.order_status === 'Dikirim'"
+          class="text-warning font-semibold px-1"
+          pill
+          style="background-color:#FFFCAF"
+        >
+          Dikirim
+        </b-badge>
+        <b-badge
+          v-if="data.item.order_status === 'Diterima'"
+          class="text-success font-semibold px-1"
+          pill
+          style="background-color:#BEFCDE"
+        >
+          Diterima
+        </b-badge>
+        <b-badge
+          v-if="data.item.order_status === 'Retur'"
+          class="text-danger font-semibold px-1"
+          pill
+          style="background-color:#FCBEBE"
+        >
+          Retur
+        </b-badge>
+      </template>
+      <template #cell(details)="data">
+        <b-button
+          variant="none"
+          class="button-detail d-flex"
+          :to="{ name: $route.meta.routeDetail, params: { order_id: data.item.order_id } }"
+        >
+          Lihat Detail
+        </b-button>
+        <div
+          v-if="data.item.product.length > 1"
+        >
           <b-button
+            v-b-toggle="'collapse-'+data.item.order_id"
+            class="buttonCollapse px-0 text-right relative"
             variant="none"
-            class="button-detail d-flex"
-            :to="{ name: $route.meta.routeDetail, params: { order_id: data.item.order_id } }"
-          >
-            Lihat Detail
-          </b-button>
-          <div
-            v-if="data.item.product.length > 1"
-          >
-            <b-button
-              v-b-toggle="'collapse-'+data.item.order_id"
-              class="buttonCollapse px-0 text-right relative"
-              variant="none"
-              size="sm"
-            >
-              <span class="when-open">Tutup <b-icon-chevron-up /></span>
-              <span class="when-closed">{{ data.item.product.length - 1 }} Produk lainnya <b-icon-chevron-down /></span>
-            </b-button>
-          </div>
-        </template>
-      </b-table>
-      <div class="d-flex justify-between align-middle flex-wrap">
-        <div class="mb-2">
-          <span class="mr-1">List per halaman</span>
-          <b-button
-            v-for="page in pageOptions"
-            :key="page"
-            :variant="page === perPage ? 'primary' : 'light'"
             size="sm"
-            class="btnPage"
-            @click="setPage(page)"
           >
-            {{ page }}
+            <span class="when-open">Tutup <b-icon-chevron-up /></span>
+            <span class="when-closed">{{ data.item.product.length - 1 }} Produk lainnya <b-icon-chevron-down /></span>
           </b-button>
         </div>
-        <b-pagination
-          v-model="currentPage"
-          size="md"
-          class="float-right mr-2"
-          :total-rows="totalItems"
-          :per-page="perPage"
-          first-number
-          last-number
-        />
-      </div>
-    </b-overlay>
+      </template>
+    </b-table>
+    <div
+      v-if="loadingTable"
+      class="loading-data-order"
+    >
+      <lottie-animation
+        path="animation/loading-data-order.json"
+        :width="300"
+        :height="300"
+      />
+    </div>
   </div>
 </template>
 <script>
-import {
-  BTable, BRow, BCol, BPagination, BFormInput, BIconSearch, BButton, BPopover, BCollapse, VBToggle, BIconChevronUp, BIconChevronDown, BOverlay,
-} from 'bootstrap-vue'
 import moment from 'moment'
 import vSelect from 'vue-select'
+import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import 'vue-select/dist/vue-select.css'
 import flatPickr from 'vue-flatpickr-component'
 import '@/@core/scss/vue/libs/vue-flatpicker.scss'
@@ -358,10 +332,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 
 export default {
   components: {
-    BTable, BRow, BCol, BPagination, BFormInput, BIconSearch, BButton, BPopover, vSelect, BCollapse, BIconChevronUp, BIconChevronDown, flatPickr, BOverlay,
-  },
-  directives: {
-    'b-toggle': VBToggle,
+    flatPickr, LottieAnimation, vSelect,
   },
   data() {
     return {
@@ -381,33 +352,24 @@ export default {
           key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'order_status', label: 'Status', thClass: 'align-middle', tdClass: 'align-top text-center',
+          key: 'order_status', label: 'Status', thClass: 'align-middle text-center', tdClass: 'align-top text-center',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
         },
       ],
-      loadTable: false,
+      loadingTable: false,
       formSearch: null,
       paymentMethod: [],
       productList: [],
       productName: [],
       startDate: '',
       endDate: '',
-      currentPage: 1,
-      perPage: 50,
-      pageOptions: [50, 100, 200],
-      totalItems: 0,
+      limit: 50,
+      offset: 0,
       addressId: null,
       addressList: [],
     }
-  },
-  watch: {
-    currentPage: {
-      handler(value) {
-        this.fetchData()
-      },
-    },
   },
   mounted() {
     this.fetchData()
@@ -424,6 +386,11 @@ export default {
         }
       }
     })
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('main').offsetHeight && !this.loadingTable) {
+        this.getNextData()
+      }
+    }
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -435,26 +402,26 @@ export default {
       return date
     },
     fetchData(search) {
-      this.loadTable = true
-      this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
+      this.loadingTable = true
+      this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
         params: {
           search,
           product_name: this.productName,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
           end_date: this.endDate,
-          page: this.currentPage,
-          total_per_page: this.perPage,
           partner_address_id: this.addressId,
+          limit: this.limit,
+          offset: this.offset,
         },
       })
-        .then(res => {
-          const { data } = res.data.data
-          this.totalItems = res.data.data.total
-          this.loadTable = false
+        .then(result => {
+          const { data } = result.data
           this.items = data
-          this.loadTable = false
-        }).catch(err => {
+          this.offset = this.limit
+          this.loadingTable = false
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -464,7 +431,38 @@ export default {
               variant: 'danger',
             },
           })
-          this.loadTable = false
+        })
+    },
+    getNextData() {
+      this.loadingTable = true
+      this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
+        params: {
+          search: this.formSearch,
+          product_name: this.productName,
+          payment_method: this.paymentMethod,
+          start_date: this.startDate,
+          end_date: this.endDate,
+          partner_address_id: this.addressId,
+          limit: this.limit,
+          offset: this.offset,
+        },
+      })
+        .then(result => {
+          const { data } = result.data
+          this.items.push(...data)
+          this.offset += this.limit
+          this.loadingTable = false
+        })
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
         })
     },
     resetFilter() {
@@ -507,10 +505,6 @@ export default {
         return 'Cargo'
       }
       return value
-    },
-    setPage(totalPage) {
-      this.perPage = totalPage
-      this.fetchData()
     },
   },
 }
@@ -558,5 +552,13 @@ export default {
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
+}
+.loading-data-order {
+  position: fixed;
+  left: 0px;
+  top: 33%;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
 </style>
