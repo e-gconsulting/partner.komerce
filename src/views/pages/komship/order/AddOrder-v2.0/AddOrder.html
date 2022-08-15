@@ -161,7 +161,7 @@
             @keyup="valueFormatPhone"
           />
         </b-input-group>
-        <b-row v-if="isCustomerReputation" class="ml-50 mt-1">
+        <b-row v-if="isCustomerReputation" class="ml-50 mt-1 align-items-center">
           <span class="d-flex align-items-center">
             Reputasi Customer
             <img
@@ -173,6 +173,7 @@
               <span class="d-flex align-items-center justify-content-center">{{ customerReputation }}% <div :style="customerReputationStyle" class="mx-50 my-[5px]" /> ({{ customerReputationRetur }}/{{ customerReputationOrder }})</span>
             </div>
           </span>
+          <b-spinner v-if="loadingCustomerReputation" small variant="primary" class="ml-50" />
           <b-popover
             triggers="hover"
             target="infoReturnInsight"

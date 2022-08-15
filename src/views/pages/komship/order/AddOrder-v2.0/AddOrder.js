@@ -143,6 +143,7 @@ export default {
       customerReputation: 0,
       customerReputationClass: 'wrapper__customer__reputation__good',
       customerReputationStyle: 'height: 20px; width: 2px; background-color: #34A770;',
+      loadingCustomerReputation: false,
     }
   },
   created() {
@@ -1382,7 +1383,6 @@ export default {
       }
       this.customerPhonePasteMode = false
       this.checkWhatsapp()
-      console.log(this.profile)
       this.getCustomerReputation()
     }, 1000),
     validateInputCustomerName(e) {
@@ -1479,10 +1479,11 @@ export default {
       this.customerPhone = await data.phone
       this.customerAddress = await data.address
       this.$refs.selectDestination.$refs.search.focus()
-      await this.checkWhatsapp()
-      await this.getCustomerReputation()
+      this.checkWhatsapp()
+      this.getCustomerReputation()
     },
     getCustomerReputation() {
+      this.loadingCustomerReputation = true
       const formData = new FormData()
       formData.append('customer_phone', this.customerPhone)
       this.$http_komship.get('/v1/feature/customerReputation', {
@@ -1492,7 +1493,6 @@ export default {
       })
         .then(response => {
           const { data } = response.data
-          console.log(data)
           if (data.customer_rep !== undefined) {
             this.customerReputation = data.customer_rep
             this.customerReputationOrder = data.total_order
@@ -1500,22 +1500,19 @@ export default {
             if (this.customerReputation < 10) {
               this.customerReputationClass = 'wrapper__customer__reputation__good'
               this.customerReputationStyle = 'height: 20px; width: 2px; background-color: #34A770;'
-              console.log('good')
             } else if (this.customerReputation > 10 && this.customerReputation < 50) {
               this.customerReputationClass = 'wrapper__customer__reputation__middle'
               this.customerReputationStyle = 'height: 20px; width: 2px; background-color: #FBA63C'
-              console.log('middle')
             } else if (this.customerReputation > 50) {
               this.customerReputationClass = 'wrapper__customer__reputation__bad'
               this.customerReputationStyle = 'height: 20px; width: 2px; background-color: #E31A1A'
-              console.log('bad')
             }
           } else {
             this.customerReputation = 0
             this.customerReputationOrder = 0
             this.customerReputationRetur = 0
-            console.log('tidak ada data')
           }
+          this.loadingCustomerReputation = false
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -1526,6 +1523,7 @@ export default {
               variant: 'danger',
             },
           })
+          this.loadingCustomerReputation = false
         })
     },
   },
