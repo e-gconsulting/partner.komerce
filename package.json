@@ -9,7 +9,8 @@
     "prod": "env-cmd -f .env.production vue-cli-service serve",
     "build": "env-cmd -f .env.development vue-cli-service build",
     "build:stg": "env-cmd -f .env.staging vue-cli-service build",
-    "build:prod": "env-cmd -f .env.production vue-cli-service build"
+    "build:prod": "env-cmd -f .env.production vue-cli-service build",
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@bachdgvn/vue-otp-input": "^1.0.8",
