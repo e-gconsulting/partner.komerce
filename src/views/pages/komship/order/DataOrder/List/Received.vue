@@ -111,8 +111,6 @@
       empty-text="Tidak ada data untuk ditampilkan."
       :items="items"
       :fields="fields"
-      :current-page="currentPage"
-      :per-page="0"
       :busy="loadingTable"
     >
       <template #cell(order_date)="data">
