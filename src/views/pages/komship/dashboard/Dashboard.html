@@ -820,7 +820,7 @@
           </form>
         </div>
         <div v-if="stepNow === 1">
-          <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
+          <form ref="form2">
             <p class="text-center h-text-dark font-weight-bold mb-2">
               Mohon verifikasi identitas kamu dengan memasukan PIN
             </p>
@@ -852,7 +852,7 @@
 
             <div class="col-12 mt-2">
               <div class="text-center">
-                <button type="submit" class="btn btn-primary d-block m-auto">
+                <button class="btn btn-primary d-block m-auto" @click="handleSubmit(2)">
                   <b-spinner v-if="loadingConfirmationPin" small />
                   Konfirmasi
                 </button>
