@@ -1,3 +1,4 @@
+/* eslint-disable no-alert */
 /* eslint-disable global-require */
 import CodeInput from 'vue-verification-code-input'
 import { mapState, mapGetters } from 'vuex'
@@ -349,41 +350,42 @@ export default {
           this.loadingConfirmationPin = true
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
-            const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
             if (!response.data.data.is_match) {
-              throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
-            }
-            responseReq
-              .then(val => {
-                const { data } = val
-
-                this.$nextTick(() => {
-                  this.stepNow = 2
-                  this.modalTitle = null
-                  this.status = data.status
-                })
-                this.loadingConfirmationPin = false
-              })
-              .catch(e => {
-                if (e.response.status === 400) {
-                  this.$swal({
-                    title:
-                      '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
-                    text:
-                      'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.',
-                    imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-                    showCloseButton: false,
-                    focusConfirm: true,
-                    confirmButtonText: 'Oke',
-                    customClass: {
-                      confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-                      popup: 'mr-2 ml-1',
-                    },
-                    buttonsStyling: false,
+              this.loadingConfirmationPin = false
+              this.$refs['modal-error-pin'].show()
+            } else {
+              const responseReq = await this.$store.dispatch('saldo/withdrawalRequest')
+              responseReq
+                .then(val => {
+                  const { data } = val
+                  this.$nextTick(() => {
+                    this.stepNow = 2
+                    this.modalTitle = null
+                    this.status = data.status
                   })
-                }
-                this.loadingConfirmationPin = false
-              })
+                  this.loadingConfirmationPin = false
+                })
+                .catch(e => {
+                  if (e.response.status === 400) {
+                    this.$swal({
+                      title:
+                        '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+                      text:
+                        'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.',
+                      imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+                      showCloseButton: false,
+                      focusConfirm: true,
+                      confirmButtonText: 'Oke',
+                      customClass: {
+                        confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                        popup: 'mr-2 ml-1',
+                      },
+                      buttonsStyling: false,
+                    })
+                  }
+                  this.loadingConfirmationPin = false
+                })
+            }
 
             this.visibilityPin = 'password'
           } catch (e) {
@@ -700,6 +702,9 @@ export default {
     formatRupiahNominal() {
       console.log(this.nominal)
       return this.formatRupiah(this.nominal)
+    },
+    handleTryAgain() {
+      this.$refs['modal-error-pin'].hide()
     },
   },
 }
