@@ -178,10 +178,10 @@
     <div class="row">
       <div class="col-12 col-md-6 mt-2">
         <div class="card h-100">
-          <b-row class="justify-content-between mx-3 mt-2">
-            <b-row>
-              <div class="first-card-header-text me-8 mb-0 text-black">
-                Performa Omset & Orderan
+          <div class="card-header flex-nowrap">
+            <div class="d-flex align-items-center">
+              <div class="first-card-header-text me-8 mb-0">
+                Penghasilan
               </div>
               <img
                 id="infoPenghasilan"
@@ -192,16 +192,17 @@
                 target="infoPenghasilan"
                 placement="bottomleft"
               >Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir.</b-popover>
-            </b-row>
-            <b-row class="align-items-center">
-              <div class="mr-1 px-1 py-50" style="background-color: #F4F4F4; border-radius: 8px;">
-                <b-img src="@/assets/images/logo/komship-logo.svg" />
-              </div>
-              <div>
-                <b-img src="@/assets/images/icons/icon-telegram.svg" />
-              </div>
-            </b-row>
-          </b-row>
+            </div>
+            <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
+              <v-select
+                v-model="selectedPenghasilan"
+                label="Square"
+                dir="ltr"
+                :options="optionsPenghasilan"
+                :clearable="false"
+              />
+            </b-form-group>
+          </div>
           <div class="position-relative card-body">
             <v-select
               v-model="selectedChart"
@@ -819,7 +820,7 @@
           </form>
         </div>
         <div v-if="stepNow === 1">
-          <form ref="form2">
+          <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
             <p class="text-center h-text-dark font-weight-bold mb-2">
               Mohon verifikasi identitas kamu dengan memasukan PIN
             </p>
@@ -851,7 +852,7 @@
 
             <div class="col-12 mt-2">
               <div class="text-center">
-                <button class="btn btn-primary d-block m-auto" @click.prevent="handleSubmit(2)">
+                <button type="submit" class="btn btn-primary d-block m-auto">
                   <b-spinner v-if="loadingConfirmationPin" small />
                   Konfirmasi
                 </button>
@@ -959,27 +960,4 @@
   </div>
   <!-- MODAL ONBOARDING -->
   <modal-onboarding></modal-onboarding>
-
-  <!-- modal tarik saldo -->
-  <b-modal ref="popup-message-tarik-saldo" hide-footer hide-header centered>
-    <div class="modal-add-pickup-popup-success">
-      <b-row class="justify-content-center mb-1 pt-1">
-        <img src="@/assets/images/icons/fail.svg" />
-      </b-row>
-      <b-row class="text-center px-4 mb-1">
-        <p class="text-black">
-          Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.
-        </p>
-      </b-row>
-      <b-row class="justify-content-center pb-1">
-        <b-button
-          class="org-button text-center"
-          variant="primary"
-          @click="closeMessageTarikSaldo"
-        >
-          Oke
-        </b-button>
-      </b-row>
-    </div>
-  </b-modal>
 </div>

@@ -366,22 +366,41 @@ export default {
               })
               .catch(e => {
                 if (e.response.status === 400) {
-                  this.$refs['popup-message-tarik-saldo'].show()
+                  this.$swal({
+                    title:
+                      '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+                    text:
+                      'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.',
+                    imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+                    showCloseButton: false,
+                    focusConfirm: true,
+                    confirmButtonText: 'Oke',
+                    customClass: {
+                      confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                      popup: 'mr-2 ml-1',
+                    },
+                    buttonsStyling: false,
+                  })
                 }
                 this.loadingConfirmationPin = false
               })
 
             this.visibilityPin = 'password'
           } catch (e) {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: e.response.message,
-                variant: 'danger',
+            this.$swal({
+              title:
+                '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+              text: e.message,
+              imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+              showCloseButton: false,
+              focusConfirm: true,
+              confirmButtonText: 'Oke',
+              customClass: {
+                confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                popup: 'mr-2 ml-1',
               },
-            }, 2000)
+              buttonsStyling: false,
+            })
             this.loadingConfirmationPin = false
           }
           break
@@ -408,18 +427,11 @@ export default {
         leftSide = this.formatNumber(leftSide)
         rightSide = this.formatNumber(rightSide)
 
-        if (blur) {
-          rightSide += '00'
-        }
         rightSide = rightSide.substring(0, 2)
         inputVal = 'Rp ' + leftSide + ',' + rightSide // eslint-disable-line
       } else {
         inputVal = this.formatNumber(inputVal)
         inputVal = 'Rp ' + inputVal // eslint-disable-line
-
-        if (blur) {
-          inputVal += ',00'
-        }
       }
 
       input.value = inputVal
@@ -685,8 +697,9 @@ export default {
       const parsed = JSON.stringify(this.notification)
       localStorage.setItem('notifSession', parsed)
     },
-    closeMessageTarikSaldo() {
-      this.$refs['popup-message-tarik-saldo'].hide()
+    formatRupiahNominal() {
+      console.log(this.nominal)
+      return this.formatRupiah(this.nominal)
     },
   },
 }
