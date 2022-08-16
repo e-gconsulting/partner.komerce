@@ -959,4 +959,27 @@
   </div>
   <!-- MODAL ONBOARDING -->
   <modal-onboarding></modal-onboarding>
+
+  <!-- modal tarik saldo -->
+  <b-modal ref="popup-message-tarik-saldo" hide-footer hide-header centered>
+    <div class="modal-add-pickup-popup-success">
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/fail.svg" />
+      </b-row>
+      <b-row class="text-center px-4 mb-1">
+        <p class="text-black">
+          Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.
+        </p>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="org-button text-center"
+          variant="primary"
+          @click="closeMessageTarikSaldo"
+        >
+          Oke
+        </b-button>
+      </b-row>
+    </div>
+  </b-modal>
 </div>

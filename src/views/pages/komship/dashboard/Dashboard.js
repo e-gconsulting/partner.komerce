@@ -366,41 +366,22 @@ export default {
               })
               .catch(e => {
                 if (e.response.status === 400) {
-                  this.$swal({
-                    title:
-                      '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
-                    text:
-                      'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.',
-                    imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-                    showCloseButton: false,
-                    focusConfirm: true,
-                    confirmButtonText: 'Oke',
-                    customClass: {
-                      confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-                      popup: 'mr-2 ml-1',
-                    },
-                    buttonsStyling: false,
-                  })
+                  this.$refs['popup-message-tarik-saldo'].show()
                 }
                 this.loadingConfirmationPin = false
               })
 
             this.visibilityPin = 'password'
           } catch (e) {
-            this.$swal({
-              title:
-                '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
-              text: e.message,
-              imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-              showCloseButton: false,
-              focusConfirm: true,
-              confirmButtonText: 'Oke',
-              customClass: {
-                confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-                popup: 'mr-2 ml-1',
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: e.response.message,
+                variant: 'danger',
               },
-              buttonsStyling: false,
-            })
+            }, 2000)
             this.loadingConfirmationPin = false
           }
           break
@@ -703,6 +684,9 @@ export default {
       this.notification[index].show = false
       const parsed = JSON.stringify(this.notification)
       localStorage.setItem('notifSession', parsed)
+    },
+    closeMessageTarikSaldo() {
+      this.$refs['popup-message-tarik-saldo'].hide()
     },
   },
 }
