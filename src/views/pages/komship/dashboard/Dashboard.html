@@ -178,10 +178,10 @@
     <div class="row">
       <div class="col-12 col-md-6 mt-2">
         <div class="card h-100">
-          <div class="card-header flex-nowrap">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Penghasilan
+          <b-row class="justify-content-between mx-3 mt-2">
+            <b-row>
+              <div class="first-card-header-text me-8 mb-0 text-black">
+                Performa Omset & Orderan
               </div>
               <img
                 id="infoPenghasilan"
@@ -192,17 +192,16 @@
                 target="infoPenghasilan"
                 placement="bottomleft"
               >Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir.</b-popover>
-            </div>
-            <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
-              <v-select
-                v-model="selectedPenghasilan"
-                label="Square"
-                dir="ltr"
-                :options="optionsPenghasilan"
-                :clearable="false"
-              />
-            </b-form-group>
-          </div>
+            </b-row>
+            <b-row class="align-items-center">
+              <div class="mr-1 px-1 py-50" style="background-color: #F4F4F4; border-radius: 8px;">
+                <b-img src="@/assets/images/logo/komship-logo.svg" />
+              </div>
+              <div>
+                <b-img src="@/assets/images/icons/icon-telegram.svg" />
+              </div>
+            </b-row>
+          </b-row>
           <div class="position-relative card-body">
             <v-select
               v-model="selectedChart"
@@ -852,7 +851,7 @@
 
             <div class="col-12 mt-2">
               <div class="text-center">
-                <button class="btn btn-primary d-block m-auto" @click="handleSubmit(2)">
+                <button class="btn btn-primary d-block m-auto" @click.prevent="handleSubmit(2)">
                   <b-spinner v-if="loadingConfirmationPin" small />
                   Konfirmasi
                 </button>
