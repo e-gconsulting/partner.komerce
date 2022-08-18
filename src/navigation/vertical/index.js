@@ -31,16 +31,6 @@ tagVariant
 
 */
 import dashboard from './dashboard'
-import training from './training'
-import talent from './talent'
-import partner from './partner'
-import management from './management'
-import masterData from './master-data'
-import assignment from './assignment'
-import settingAndPrivacy from './setting-and-privacy'
-
-// Partner
-import talentPool from './talent-pool'
 // import wishlist from './wishlist'
 
 // Komship
@@ -60,24 +50,13 @@ import gudang from './gudang'
 import komship from './komship'
 
 // Komplace
-import dashboardKomplace from './dashboard-komplace'
-import monitoring from './monitoring-komplace'
-import pengaturanKomplace from './pengaturanKomplace'
-import manajemenAdmin from './manajemenAdmin'
 import tiket from './tiket'
 import notification from './notification'
 
 // Array of sections
 export default [
   ...dashboard,
-  ...training,
-  ...talent,
-  ...partner,
   ...komship,
-  ...management,
-  ...masterData,
-  ...assignment,
-  ...settingAndPrivacy,
 
   ...dashboardKompship,
   ...order,
@@ -91,13 +70,7 @@ export default [
   ...ticketingUser,
   // ...hiring,
 
-  ...dashboardKomplace,
-  ...monitoring,
-  ...pengaturanKomplace,
-  ...manajemenAdmin,
   ...tiket,
   ...notification,
 
-  ...talentPool,
-  // ...wishlist,
 ]

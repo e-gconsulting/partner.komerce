@@ -203,6 +203,25 @@
             </div>
           </div>
         </template>
+        <template #cell(order_status)="data">
+          <b-badge
+            v-if="data.item.is_retur === 1"
+            class="text-danger"
+            style="background-color:#FCBEBE"
+            pill
+          >
+            Perjalanan Pulang
+          </b-badge>
+          <b-badge
+            v-if="data.item.is_retur === 2"
+            class="text-success"
+            style="background-color:#BEFCDE"
+            pill
+          >
+            Retur Diterima
+          </b-badge>
+          <span v-else>-</span>
+        </template>
         <template #cell(grand_total)="data">
           <span class="d-flex">
             Rp {{ formatNumber(data.item.grand_total) }}
@@ -251,6 +270,10 @@
               <span class="font-bold">{{ data.item.bank_account_name }}</span><br>
             </b-popover>
           </div>
+        </template>
+        <template #cell(retur_date)="data">
+          <span v-if="data.item.is_retur === 2">{{ moment(data.item.updated_at) }}</span>
+          <span v-else>-</span>
         </template>
         <template #cell(details)="data">
           <b-button
@@ -338,7 +361,10 @@ export default {
           key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'retur_date', label: 'Tanggal Retur', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'order_status', label: 'Status retur', thClass: 'align-middle text-center', tdClass: 'align-top text-center',
+        },
+        {
+          key: 'retur_date', label: 'Tanggal Diterima', thClass: 'align-middle text-center', tdClass: 'align-top text-center',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',

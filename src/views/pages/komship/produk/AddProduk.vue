@@ -77,7 +77,7 @@
                   <b-row>
                     <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
                     <small
-                      v-if="availableProductName"
+                      v-if="!productNameAvailable"
                       class="text-primary mt-50"
                     >
                       *Nama Produk '{{ productName }}' sudah dipakai. silahkan isi dengan nama lain.
@@ -2449,7 +2449,6 @@ import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -2537,7 +2536,7 @@ export default {
 
       messageErrorIsActive: false,
       newUser: true,
-      availableProductName: false,
+      productNameAvailable: true,
     }
   },
   computed: {
@@ -2622,7 +2621,7 @@ export default {
       }
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
-        if (success) {
+        if (success && this.productNameAvailable) {
           if (this.lengthProduct === null) {
             this.lengthProduct = 0
           }
@@ -2765,7 +2764,7 @@ export default {
             }
           }
 
-          httpKomship.post('/v1/product/create/1', {
+          this.$http_komship.post('/v1/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
             description: this.descriptionProduct,
@@ -2787,7 +2786,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', response.data.data.product_id)
               formData.append('image_path', this.imageFile)
-              httpKomship.post('/v1/product/upload-img-product', formData,
+              this.$http_komship.post('/v1/product/upload-img-product', formData,
                 {
                   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
                 }).then(() => {
@@ -2858,7 +2857,7 @@ export default {
       }
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
-        if (success) {
+        if (success && this.productNameAvailable) {
           if (this.lengthProduct === null) {
             this.lengthProduct = 0
           }
@@ -3001,7 +3000,7 @@ export default {
             }
           }
 
-          httpKomship.post('/v1/product/create/0', {
+          this.$http_komship.post('/v1/product/create/0', {
             product_name: this.productName,
             sku: this.skuName,
             description: this.descriptionProduct,
@@ -3023,7 +3022,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', response.data.data.product_id)
               formData.append('image_path', this.imageFile)
-              httpKomship.post('/v1/product/upload-img-product', formData,
+              this.$http_komship.post('/v1/product/upload-img-product', formData,
                 {
                   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
                 }).then(() => {
@@ -3366,11 +3365,11 @@ export default {
       }).then(response => {
         const { data } = response
         if (data.code === 1003) {
-          this.availableProductName = true
+          this.productNameAvailable = false
         } else {
-          this.availableProductName = false
+          this.productNameAvailable = true
         }
-      }).catch(() => { this.availableProductName = false })
+      }).catch(() => { this.productNameAvailable = true })
     },
   },
 }

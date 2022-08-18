@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/dashboard-komship',
+    path: '/',
     name: 'dashboard-komship',
     component: () => import('@/views/pages/komship/dashboard'),
     meta: {

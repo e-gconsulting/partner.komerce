@@ -78,6 +78,21 @@
                     </b-card-text>
                 </b-card>
             </b-col>
+            <b-col md="4">
+                <b-card img-src="@/assets/images/banner/customer-reputation.svg" style="border:1px solid #E2E2E2;border-radius:20px" img-alt="Catatan Order" img-top>
+                    <b-card-title class="d-flex justify-between">
+                        <span class="font-bold text-primary">Reputasi Customer</span>
+                        <b-form-checkbox
+                            v-model="customerReputation"
+                            switch
+                            @change="setCustomerReputation"
+                        />
+                    </b-card-title>
+                    <b-card-text style="padding-bottom: 50px;">
+                      Melihat data seberapa kemungkinan transaksi gagal/retur dari historis selama ini dia bertransaksi terutama COD
+                    </b-card-text>
+                </b-card>
+            </b-col>
         </b-row>
     </div>
 
