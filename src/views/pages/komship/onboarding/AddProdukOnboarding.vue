@@ -1223,7 +1223,6 @@ import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import Onboarding from './Onboarding.vue'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -1551,7 +1550,7 @@ export default {
               this.variantStore.splice(i, 1)
             }
           }
-          httpKomship.post('/v1/ob/product/create/1', {
+          this.$http_komship.post('/v1/ob/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
             description: this.descriptionProduct,
@@ -1573,7 +1572,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', response.data.data.product_id)
               formData.append('image_path', this.imageFile)
-              httpKomship.post('/v1/ob/product/upload-image', formData,
+              this.$http_komship.post('/v1/ob/product/upload-image', formData,
                 {
                   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
                 }).then(() => {

@@ -852,7 +852,6 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { heightTransition } from '@core/mixins/ui/transition'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -952,7 +951,7 @@ export default {
       if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
       if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
-      return httpKomship.get('/v1/product', {
+      return this.$http_komship.get('/v1/product', {
         params,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -982,7 +981,7 @@ export default {
       this.$refs['modal-confirm-delete-product'].hide()
     },
     deleteProduct() {
-      httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+      this.$http_komship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {

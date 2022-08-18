@@ -125,3 +125,7 @@
 .progress {
   background-color: #e9ecef !important;
 }
+.jexcel > tbody > tr > td:first-child {
+  position: sticky !important;
+  left: 0;
+}

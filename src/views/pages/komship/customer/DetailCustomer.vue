@@ -413,7 +413,6 @@ import {
 import useJwt from '@/auth/jwt/useJwt'
 import Ripple from 'vue-ripple-directive'
 import moment from 'moment'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -488,7 +487,7 @@ export default {
   methods: {
     getCustomerDetail() {
       this.loading = true
-      httpKomship.get(`/v1/customers/${this.customerId}`, {
+      this.$http_komship.get(`/v1/customers/${this.customerId}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data

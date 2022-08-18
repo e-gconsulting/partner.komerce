@@ -960,4 +960,37 @@
   </div>
   <!-- MODAL ONBOARDING -->
   <modal-onboarding></modal-onboarding>
+
+  <b-modal
+      ref="modal-error-pin"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/fail.svg">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black px-4">
+          PIN yang kamu masukkan belum benar, <strong>coba lagi</strong>
+        </span>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="btn-icon mr-1"
+          variant="outline-primary"
+          tag="router-link"
+          :to="{ name: 'kompship-pin' }"
+        >
+          Lupa PIN
+        </b-button>
+        <b-button
+          class="btn-icon"
+          variant="primary"
+          @click="handleTryAgain"
+        >
+          Coba lagi
+        </b-button>
+      </b-row>
+    </b-modal>
 </div>

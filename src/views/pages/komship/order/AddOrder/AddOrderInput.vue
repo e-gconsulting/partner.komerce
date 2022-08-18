@@ -599,8 +599,6 @@ import {
   formatFullDate,
 } from 'node-format-date'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from '../../setting-kompship/http_komship'
-// import AddOrderTable from './AddOrderTable.vue'
 
 function changeDate(dateString) {
   if (dateString && dateString !== '') {
@@ -841,7 +839,7 @@ export default {
       })
     },
     getAddress() {
-      httpKomship.get('/v1/address', {
+      this.$http_komship.get('/v1/address', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data

@@ -561,7 +561,6 @@ import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
 import EditOrder from '../EditOrder/EditOrder.vue'
-import httpKomship2 from '../../setting-kompship/http_komship2'
 
 export default {
   components: {
@@ -633,7 +632,7 @@ export default {
       try {
         this.loadingDetailOrder = true
         this.$refs['popup-success-cancel-pickup'].hide()
-        const order = await httpKomship2.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
+        const order = await this.$http_komship.get(`v1/order/${this.profile.partner_id}/detail/${this.$route.params.order_id}`)
         const { data } = await order.data
         this.orderData = await data
         this.editBy = data.user_name_edited
