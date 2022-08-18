@@ -77,7 +77,7 @@
                   <b-row>
                     <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
                     <small
-                      v-if="availableProductName"
+                      v-if="!productNameAvailable"
                       class="text-primary mt-50"
                     >
                       *Nama Produk '{{ productName }}' sudah dipakai. silahkan isi dengan nama lain.
@@ -2536,7 +2536,7 @@ export default {
 
       messageErrorIsActive: false,
       newUser: true,
-      availableProductName: false,
+      productNameAvailable: true,
     }
   },
   computed: {
@@ -2621,7 +2621,7 @@ export default {
       }
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
-        if (success) {
+        if (success && this.productNameAvailable) {
           if (this.lengthProduct === null) {
             this.lengthProduct = 0
           }
@@ -2857,7 +2857,7 @@ export default {
       }
       this.loadingSubmitPublish = true
       this.$refs.formRules.validate().then(success => {
-        if (success) {
+        if (success && this.productNameAvailable) {
           if (this.lengthProduct === null) {
             this.lengthProduct = 0
           }
@@ -3365,11 +3365,11 @@ export default {
       }).then(response => {
         const { data } = response
         if (data.code === 1003) {
-          this.availableProductName = true
+          this.productNameAvailable = false
         } else {
-          this.availableProductName = false
+          this.productNameAvailable = true
         }
-      }).catch(() => { this.availableProductName = false })
+      }).catch(() => { this.productNameAvailable = true })
     },
   },
 }
