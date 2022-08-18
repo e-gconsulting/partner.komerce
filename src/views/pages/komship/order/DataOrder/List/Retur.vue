@@ -270,6 +270,9 @@
             </b-popover>
           </div>
         </template>
+        <template #cell(retur_date)="data">
+          <span v-if="data.item.is_retur === 2">{{ moment(data.item.updated_at) }}</span>
+        </template>
         <template #cell(details)="data">
           <b-button
             variant="none"
