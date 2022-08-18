@@ -203,6 +203,24 @@
             </div>
           </div>
         </template>
+        <template #cell(order_status)="data">
+          <b-badge
+            v-if="data.item.is_retur === 1"
+            class="text-danger"
+            style="background-color:#FCBEBE"
+            pill
+          >
+            Perjalanan Pulang
+          </b-badge>
+          <b-badge
+            v-if="data.item.is_retur === 2"
+            class="text-success"
+            style="background-color:#BEFCDE"
+            pill
+          >
+            Retur Diterima
+          </b-badge>
+        </template>
         <template #cell(grand_total)="data">
           <span class="d-flex">
             Rp {{ formatNumber(data.item.grand_total) }}
@@ -338,7 +356,10 @@ export default {
           key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
-          key: 'retur_date', label: 'Tanggal Retur', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'order_status', label: 'Status retur', thClass: 'align-middle text-center', tdClass: 'align-top text-center',
+        },
+        {
+          key: 'retur_date', label: 'Tanggal Diterima', thClass: 'align-middle', tdClass: 'align-top',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
