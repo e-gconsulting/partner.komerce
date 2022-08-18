@@ -220,6 +220,7 @@
           >
             Retur Diterima
           </b-badge>
+          <span v-else>-</span>
         </template>
         <template #cell(grand_total)="data">
           <span class="d-flex">
@@ -269,6 +270,10 @@
               <span class="font-bold">{{ data.item.bank_account_name }}</span><br>
             </b-popover>
           </div>
+        </template>
+        <template #cell(retur_date)="data">
+          <span v-if="data.item.is_retur === 2">{{ moment(data.item.updated_at) }}</span>
+          <span v-else>-</span>
         </template>
         <template #cell(details)="data">
           <b-button
@@ -359,7 +364,7 @@ export default {
           key: 'order_status', label: 'Status retur', thClass: 'align-middle text-center', tdClass: 'align-top text-center',
         },
         {
-          key: 'retur_date', label: 'Tanggal Diterima', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'retur_date', label: 'Tanggal Diterima', thClass: 'align-middle text-center', tdClass: 'align-top text-center',
         },
         {
           key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
