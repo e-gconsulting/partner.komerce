@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <li
     v-if="canViewVerticalNavMenuGroup(item) && item.visible"

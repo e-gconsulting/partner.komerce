@@ -17,9 +17,11 @@ export default {
     VueApexcharts,
   },
   props: {
+    // eslint-disable-next-line vue/require-default-prop
     categoriesProp: {
       type: Array,
     },
+    // eslint-disable-next-line vue/require-default-prop
     seriesProp: {
       type: Array,
     },
