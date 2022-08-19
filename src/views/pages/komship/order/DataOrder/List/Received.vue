@@ -440,6 +440,7 @@ export default {
     resetFilter() {
       this.startDate = null
       this.endDate = null
+      this.addressId = null
       this.customerName = null
       this.paymentMethod = null
       return this.fetchData()
