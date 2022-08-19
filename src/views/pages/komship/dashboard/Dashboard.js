@@ -355,9 +355,10 @@ export default {
               this.loadingConfirmationPin = false
               this.$refs['modal-error-pin'].show()
             } else {
-              const responseReq = await this.$store.dispatch('saldo/withdrawalRequest')
+              const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
               responseReq
                 .then(val => {
+                  console.log(val)
                   const { data } = val
                   this.$nextTick(() => {
                     this.stepNow = 2
