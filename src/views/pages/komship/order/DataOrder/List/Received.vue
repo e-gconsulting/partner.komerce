@@ -339,6 +339,7 @@ export default {
       totalItems: 0,
       addressId: null,
       addressList: [],
+      isLastOrder: false,
     }
   },
   mounted() {
@@ -381,6 +382,7 @@ export default {
           payment_method: this.paymentMethod,
           start_date: this.startDate,
           end_date: this.endDate,
+          product_name: this.productName,
           partner_address_id: this.addressId,
           limit: this.limit,
           offset: this.offset,
@@ -389,7 +391,13 @@ export default {
         .then(result => {
           const { data } = result.data
           this.items = data
+          this.offset = data.length
           this.loadingTable = false
+          if (data.length < this.limit) {
+            this.isLastOrder = true
+          } else {
+            this.isLastOrder = false
+          }
         })
         .catch(err => {
           this.$toast({
@@ -405,37 +413,42 @@ export default {
         })
     },
     getNextData() {
-      this.loadingTable = true
-      this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
-        params: {
-          order_status: 'Diterima',
-          search: this.formSearch,
-          product_name: this.productName,
-          payment_method: this.paymentMethod,
-          start_date: this.startDate,
-          end_date: this.endDate,
-          partner_address_id: this.addressId,
-          limit: this.limit,
-          offset: this.offset,
-        },
-      })
-        .then(result => {
-          const { data } = result.data
-          this.items.push(...data)
-          this.offset += this.limit
-          this.loadingTable = false
+      if (!this.isLastOrder) {
+        this.loadingTable = true
+        this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
+          params: {
+            order_status: 'Diterima',
+            search: this.formSearch,
+            product_name: this.productName,
+            payment_method: this.paymentMethod,
+            start_date: this.startDate,
+            end_date: this.endDate,
+            partner_address_id: this.addressId,
+            limit: this.limit,
+            offset: this.offset,
+          },
         })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
+          .then(result => {
+            const { data } = result.data
+            this.items.push(...data)
+            this.offset += data.length
+            this.loadingTable = false
+            if (data.length < this.limit) {
+              this.isLastOrder = true
+            }
           })
-        })
+          .catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
     resetFilter() {
       this.startDate = null
