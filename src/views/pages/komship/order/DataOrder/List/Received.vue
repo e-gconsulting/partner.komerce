@@ -373,6 +373,7 @@ export default {
     },
     async fetchData(search) {
       this.loadingTable = true
+      this.offset = 0
       await this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
         params: {
           order_status: 'Diterima',
