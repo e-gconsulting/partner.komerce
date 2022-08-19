@@ -407,6 +407,7 @@ export default {
       this.loadingTable = true
       this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
         params: {
+          order_status: 'Diterima',
           search: this.formSearch,
           product_name: this.productName,
           payment_method: this.paymentMethod,
