@@ -403,6 +403,7 @@ export default {
     },
     fetchData(search) {
       this.loadingTable = true
+      this.offset = 0
       this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
         params: {
           search,
