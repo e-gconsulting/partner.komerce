@@ -4,16 +4,26 @@ import CodeInput from 'vue-verification-code-input'
 import { mapState, mapGetters } from 'vuex'
 import { mapFields } from 'vuex-map-fields'
 import {
-  BFormGroup, BModal, BFormInput, BFormSelect, BSpinner,
+  BFormGroup,
+  BModal,
+  BFormInput,
+  BFormSelect,
+  BSpinner,
 } from 'bootstrap-vue'
 import useJwt from '@/auth/jwt/useJwt'
 import vSelect from 'vue-select'
 import moment from 'moment'
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
-import ChartPenghasilan from '@/views/components/chart/ChartPenghasilan.vue'
+import ChartPenghasilan from '@/views/components/chart/ChartPerforma.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import VueApexcharts from 'vue-apexcharts'
+import flatPickr from 'vue-flatpickr-component'
+import MonthMode from 'flatpickr/dist/plugins/monthSelect'
+import '@/@core/scss/vue/libs/vue-flatpicker.scss'
+import 'flatpickr/dist/plugins/monthSelect/style.css'
+import html2canvas from 'html2canvas'
 import ModalOnBoarding from './ModalOnBoarding.vue'
 import './ModalOnBoarding.scss'
 
@@ -30,6 +40,8 @@ export default {
     BSpinner,
     CodeInput,
     'modal-onboarding': ModalOnBoarding,
+    VueApexcharts,
+    flatPickr,
   },
   data() {
     const today = new Date()
@@ -154,6 +166,158 @@ export default {
       notification: null,
 
       loadingConfirmationPin: false,
+
+      // New Chart
+      options: {
+        chart: {
+          id: `vuechart-${Date.now()}`,
+          toolbar: {
+            show: false,
+          },
+          stacked: true,
+        },
+        fill: {
+          colors: ['#47AEE4', '#FBA63C'],
+        },
+        colors: ['#47AEE4', '#FBA63C'],
+        xaxis: {
+          type: 'datetime',
+          tickAmount: 14,
+          categories: [],
+          labels: {
+            formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
+          },
+        },
+        yaxis: {
+          tickAmount: 14,
+          labels: {
+            formatter: value => {
+              let formatedVal = 0
+
+              if (Math.abs(Number(value)) >= 1.0e9) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e9} Mn`
+              } else if (Math.abs(Number(value)) >= 1.0e6) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e6} Jt`
+              } else if (Math.abs(Number(value)) >= 1.0e3) {
+                formatedVal = `${Math.abs(Number(value)) / 1.0e3} Rb`
+              } else {
+                formatedVal = Math.abs(Number(value))
+              }
+              return `${formatedVal}`
+            },
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        stroke: {
+          curve: 'smooth',
+        },
+        tooltip: {
+          x: {
+            show: true,
+            format: 'DD MMMM YYYY',
+            formatter: seriesName => this.$moment(new Date(seriesName)).format('DD MMMM YYYY'),
+          },
+          custom: ({
+            series, seriesIndex, dataPointIndex, w,
+          }) => {
+            let htmlRender = ''
+            const arrayData = [...w.globals.series]
+            arrayData.forEach((x, idx) => {
+              if (w.globals.collapsedSeriesIndices.indexOf(idx) !== -1) {
+                htmlRender += ''
+              } else {
+                htmlRender += `
+                <div class="d-flex align-items-center">
+                  <div class="mr-1">
+                    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="6" cy="6.5" r="6" fill="${w.globals.seriesNames[idx] === 'Omset' ? '#FBBC05' : '#47AEE4'}"/>
+                    </svg>
+                  </div>
+
+                <div>
+                <span>
+                ${
+  w.globals.seriesNames[idx] === 'Omset'
+    ? this.formatRupiah(x[dataPointIndex] || 0)
+    : x[dataPointIndex]
+}
+                </span>
+                <span>
+                ${
+  w.globals.seriesNames[idx] === 'Jumlah Order'
+    ? 'Orderan'
+    : ''
+}
+                </span>
+                </div>
+                </div>
+                `
+              }
+            })
+
+            return `
+            <div
+              class="d-grid p-1 rounded align-items-center"
+            >
+              ${htmlRender}
+              <br/>
+            </div>
+            `
+          },
+        },
+      },
+      seriesRevenue: [],
+      filterChartItems: 'Semua',
+      filterChartOptions: [
+        {
+          text: 'Semua',
+          value: 'semua',
+        },
+        {
+          text: 'COD',
+          value: 'cod',
+        },
+        {
+          text: 'Non-COD',
+          value: 'bank transfer',
+        },
+      ],
+      filterDateChartItems: 'Agustus 2022',
+      filterDateChartOptions: [
+        {
+          title: 'Agustus 2022',
+        },
+      ],
+
+      totalRevenueChart: 0,
+      totalOrderanChart: 0,
+
+      configDateChart: {
+        mode: 'single',
+        altInput: true,
+        altFormat: 'j/n/Y',
+        dateFormat: 'Y-m-d',
+        plugins: [
+          new MonthMode({
+            shorthand: true, // defaults to false
+            dateFormat: 'Y-m-d', // defaults to "F Y"
+            altFormat: 'F Y', // defaults to "F Y"
+            theme: 'dark', // defaults to "light"
+          }),
+        ],
+      },
+
+      chartDateItem: null,
+      startDateChart: '',
+      endDateChart: '',
+      chartDateToFilter: null,
+
+      totalProfitTooltipDownload: 0,
+      totalOrderTooltipDownload: 0,
+      dateTooltipDownload: null,
+      paymentMethodsChart: 'semua',
     }
   },
   computed: {
@@ -201,9 +365,7 @@ export default {
       })
     if (localStorage.getItem('notifSession')) {
       try {
-        this.notification = JSON.parse(
-          localStorage.getItem('notifSession'),
-        )
+        this.notification = JSON.parse(localStorage.getItem('notifSession'))
       } catch (e) {
         localStorage.removeItem('notifSession')
         this.checkNotification()
@@ -211,6 +373,7 @@ export default {
     } else {
       await this.checkNotification()
     }
+    this.fetchDataChart()
   },
   beforeMount() {
     this.$store.dispatch('dashboard/init')
@@ -218,20 +381,25 @@ export default {
   },
   methods: {
     fetchTicketPartnerCount() {
-      this.$http_komship.get('/v1/ticket-partner/count')
+      this.$http_komship
+        .get('/v1/ticket-partner/count')
         .then(response => {
           const { data } = response.data
           this.perluTindakLanjut = data.perlu_tindak_lanjut
-        }).catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
             },
-          }, 2000)
+            2000,
+          )
         })
     },
     setDataProfile(data) {
@@ -258,7 +426,9 @@ export default {
         try {
           window.open(response.data.data.invoice_xendit_url, '_blank').focus()
         } catch (e) {
-          alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
+          alert(
+            'Pop-up Blocker is enabled! Please add this site to your exception list.',
+          )
         }
         this.$refs['modal-after-topup'].show()
         this.loadingSubmitTopUp = false
@@ -354,7 +524,9 @@ export default {
               this.loadingConfirmationPin = false
               this.$refs['modal-error-pin'].show()
             } else {
-              const responseReq = await this.$store.dispatch('saldo/withdrawalRequest')
+              const responseReq = await this.$store.dispatch(
+                'saldo/withdrawalRequest',
+              )
               responseReq
                 .then(val => {
                   const { data } = val
@@ -679,7 +851,8 @@ export default {
       window.open(url, '_blank')
     },
     async checkNotification() {
-      await this.$http_komship.get('/v1/partner/notification-bar')
+      await this.$http_komship
+        .get('/v1/partner/notification-bar')
         .then(result => {
           const { data } = result.data
           this.notification = data.map(items => ({
@@ -705,6 +878,81 @@ export default {
     },
     handleTryAgain() {
       this.$refs['modal-error-pin'].hide()
+    },
+    fetchDataChart() {
+      if (this.startDateChart === '' && this.endDateChart === '') {
+        const now = new Date()
+
+        const first = moment(now).format('YYYY-MM-DD')
+        this.chartDateItem = first
+      } else {
+        const params = {
+          start_date: this.startDateChart,
+          end_date: this.endDateChart,
+        }
+        if (this.paymentMethodsChart !== 'semua') Object.assign(params, { payment_method: this.paymentMethodsChart })
+        this.$http_komship
+          .get('/v1/dashboard/partner/revenueOrderPerformance', {
+            params,
+          })
+          .then(response => {
+            const { data } = response.data
+
+            const now = new Date()
+            const dateFormatter = moment(now).format('YYYY-MM-DD')
+            const findChartToday = data.data_days.find(item => item.day === dateFormatter)
+            if (findChartToday) {
+              this.totalProfitTooltipDownload = findChartToday.total_profit
+              this.totalOrderTooltipDownload = findChartToday.total_order
+              this.dateTooltipDownload = moment(findChartToday.day).format('DD MMMM YYYY')
+            }
+
+            this.totalRevenueChart = data.total_profit
+            this.totalOrderanChart = data.total_order
+            this.seriesRevenue = [
+              {
+                name: 'Jumlah Order',
+                data: data.data_days.map(item => item.total_order),
+              },
+              {
+                name: 'Omset',
+                data: data.data_days.map(item => item.total_profit),
+              },
+            ]
+            this.options = {
+              ...this.options,
+              xaxis: {
+                ...this.options.xaxis,
+                categories: data.data_days.map(item => item.day),
+              },
+            }
+          })
+      }
+    },
+    chartDateFilter() {
+      console.log(this.chartDateItem)
+      const now = new Date(this.chartDateItem)
+
+      const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
+      const first = moment(firstDay).format('YYYY-MM-DD')
+      this.startDateChart = first
+
+      const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      const last = moment(lastDay).format('YYYY-MM-DD')
+      this.endDateChart = last
+      this.fetchDataChart()
+    },
+    async downloadChart() {
+      document.getElementById('id__tooltip__chart__download').style.display = 'block'
+      const canvas = await html2canvas(document.getElementById('chart__revenue'))
+      canvas.style.display = 'none'
+      document.body.appendChild(canvas)
+      const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+      const a = document.createElement('a')
+      a.setAttribute('download', 'info.png')
+      a.setAttribute('href', image)
+      a.click()
+      document.getElementById('id__tooltip__chart__download').style.display = 'none'
     },
   },
 }
