@@ -873,7 +873,6 @@ export default {
       localStorage.setItem('notifSession', parsed)
     },
     formatRupiahNominal() {
-      console.log(this.nominal)
       return this.formatRupiah(this.nominal)
     },
     handleTryAgain() {
@@ -898,39 +897,42 @@ export default {
           .then(response => {
             const { data } = response.data
 
-            const now = new Date()
-            const dateFormatter = moment(now).format('YYYY-MM-DD')
-            const findChartToday = data.data_days.find(item => item.day === dateFormatter)
-            if (findChartToday) {
-              this.totalProfitTooltipDownload = findChartToday.total_profit
-              this.totalOrderTooltipDownload = findChartToday.total_order
-              this.dateTooltipDownload = moment(findChartToday.day).format('DD MMMM YYYY')
-            }
+            if (data.data_days !== undefined) {
+              const now = new Date()
+              const dateFormatter = moment(now).format('YYYY-MM-DD')
+              const findChartToday = data.data_days.find(item => item.day === dateFormatter)
+              if (findChartToday) {
+                this.totalProfitTooltipDownload = findChartToday.total_profit
+                this.totalOrderTooltipDownload = findChartToday.total_order
+                this.dateTooltipDownload = moment(findChartToday.day).format('DD MMMM YYYY')
+              }
 
-            this.totalRevenueChart = data.total_profit
-            this.totalOrderanChart = data.total_order
-            this.seriesRevenue = [
-              {
-                name: 'Jumlah Order',
-                data: data.data_days.map(item => item.total_order),
-              },
-              {
-                name: 'Omset',
-                data: data.data_days.map(item => item.total_profit),
-              },
-            ]
-            this.options = {
-              ...this.options,
-              xaxis: {
-                ...this.options.xaxis,
-                categories: data.data_days.map(item => item.day),
-              },
+              this.totalRevenueChart = data.total_profit
+              this.totalOrderanChart = data.total_order
+              this.seriesRevenue = [
+                {
+                  name: 'Jumlah Order',
+                  data: data.data_days.map(item => item.total_order),
+                },
+                {
+                  name: 'Omset',
+                  data: data.data_days.map(item => item.total_profit),
+                },
+              ]
+              this.options = {
+                ...this.options,
+                xaxis: {
+                  ...this.options.xaxis,
+                  categories: data.data_days.map(item => item.day),
+                },
+              }
+            } else {
+              this.seriesRevenue = []
             }
           })
       }
     },
     chartDateFilter() {
-      console.log(this.chartDateItem)
       const now = new Date(this.chartDateItem)
 
       const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
@@ -943,13 +945,14 @@ export default {
       this.fetchDataChart()
     },
     async downloadChart() {
+      const now = moment(new Date()).format('DD MMMM')
       document.getElementById('id__tooltip__chart__download').style.display = 'block'
       const canvas = await html2canvas(document.getElementById('chart__revenue'))
       canvas.style.display = 'none'
       document.body.appendChild(canvas)
       const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
       const a = document.createElement('a')
-      a.setAttribute('download', 'info.png')
+      a.setAttribute('download', `${now}.png`)
       a.setAttribute('href', image)
       a.click()
       document.getElementById('id__tooltip__chart__download').style.display = 'none'
