@@ -174,7 +174,7 @@ export default {
           toolbar: {
             show: false,
           },
-          stacked: true,
+          stacked: false,
         },
         fill: {
           colors: ['#47AEE4', '#FBA63C'],
@@ -188,25 +188,34 @@ export default {
             formatter: (val, timestamp) => this.$moment(new Date(timestamp)).format('DD'),
           },
         },
-        yaxis: {
-          tickAmount: 14,
-          labels: {
-            formatter: value => {
-              let formatedVal = 0
+        yaxis: [
+          {
+            show: false,
+            tickAmount: 14,
+            opposite: true,
+            seriesName: 'Jumlah Order',
+          },
+          {
+            seriesName: 'Omset',
+            tickAmount: 14,
+            labels: {
+              formatter: value => {
+                let formatedVal = 0
 
-              if (Math.abs(Number(value)) >= 1.0e9) {
-                formatedVal = `${Math.abs(Number(value)) / 1.0e9} Mn`
-              } else if (Math.abs(Number(value)) >= 1.0e6) {
-                formatedVal = `${Math.abs(Number(value)) / 1.0e6} Jt`
-              } else if (Math.abs(Number(value)) >= 1.0e3) {
-                formatedVal = `${Math.abs(Number(value)) / 1.0e3} Rb`
-              } else {
-                formatedVal = Math.abs(Number(value))
-              }
-              return `${formatedVal}`
+                if (Math.abs(Number(value)) >= 1.0e9) {
+                  formatedVal = `${Math.abs(Number(value)) / 1.0e9} Mn`
+                } else if (Math.abs(Number(value)) >= 1.0e6) {
+                  formatedVal = `${Math.abs(Number(value)) / 1.0e6} Jt`
+                } else if (Math.abs(Number(value)) >= 1.0e3) {
+                  formatedVal = `${Math.abs(Number(value)) / 1.0e3} Rb`
+                } else {
+                  formatedVal = Math.abs(Number(value))
+                }
+                return `${formatedVal}`
+              },
             },
           },
-        },
+        ],
         dataLabels: {
           enabled: false,
         },
@@ -270,6 +279,7 @@ export default {
       },
       seriesRevenue: [],
       filterChartItems: 'Semua',
+      viewDateTooltipDownload: '',
       filterChartOptions: [
         {
           text: 'Semua',
@@ -318,6 +328,8 @@ export default {
       totalOrderTooltipDownload: 0,
       dateTooltipDownload: null,
       paymentMethodsChart: 'semua',
+
+      downloadChartStatus: false,
     }
   },
   computed: {
@@ -897,6 +909,7 @@ export default {
           .then(response => {
             const { data } = response.data
 
+            this.viewDateTooltipDownload = moment(new Date()).format('DD MMMM')
             if (data.data_days !== undefined) {
               const now = new Date()
               const dateFormatter = moment(now).format('YYYY-MM-DD')
@@ -945,6 +958,11 @@ export default {
       this.fetchDataChart()
     },
     async downloadChart() {
+      this.downloadChartStatus = true
+      document.getElementById('filter__month__chart__download').style.display = 'block'
+      document.getElementById('filter__month__chart').style.display = 'none'
+      document.getElementById('title__chart__tooltip__download').style.display = 'block'
+      document.getElementById('title__chart__tooltip').style.display = 'none'
       const now = moment(new Date()).format('DD MMMM')
       document.getElementById('id__tooltip__chart__download').style.display = 'block'
       const canvas = await html2canvas(document.getElementById('chart__revenue'))
@@ -956,6 +974,11 @@ export default {
       a.setAttribute('href', image)
       a.click()
       document.getElementById('id__tooltip__chart__download').style.display = 'none'
+      document.getElementById('filter__month__chart__download').style.display = 'none'
+      document.getElementById('filter__month__chart').style.display = 'block'
+      document.getElementById('title__chart__tooltip__download').style.display = 'none'
+      document.getElementById('title__chart__tooltip').style.display = 'block'
+      this.downloadChartStatus = false
     },
   },
 }
