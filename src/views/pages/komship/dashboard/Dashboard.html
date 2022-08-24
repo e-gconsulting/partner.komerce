@@ -230,7 +230,10 @@
 
           <b-row class="justify-content-between mx-3 mt-2">
             <b-row class="align-items-center">
-              <div class="first-card-header-text me-8 mb-0 text-black">
+              <div id="title__chart__tooltip__download" class="first-card-header-text me-8 mb-0 text-black" style="margin-top: -20px">
+                Performa Omset & Orderan
+              </div>
+              <div id="title__chart__tooltip" class="first-card-header-text me-8 mb-0 text-black">
                 Performa Omset & Orderan
               </div>
               <img
@@ -255,9 +258,14 @@
                 <b-img src="@/assets/images/logo/komship-logo.svg" />
               </div>
               <div>
-                <b-button class="btn-icon" size="sm" variant="flat-dark" @click="downloadChart">
+                <b-button id="tooltip__download__icon" class="btn-icon" size="sm" variant="flat-dark" @click="downloadChart">
                   <b-img src="@/assets/images/icons/icon-telegram.svg" />
                 </b-button>
+                <b-popover
+                triggers="hover"
+                target="tooltip__download__icon"
+                placement="bottomleft"
+                >share statistik order ini</b-popover>
               </div>
             </b-row>
           </b-row>
@@ -291,7 +299,7 @@
                   </div>
                 </b-row>
               </b-col>
-              <b-col cols="6">
+              <b-col id="filter__month__chart" cols="6">
                 <div class="d-flex justify-content-end">
                   <div class="mr-1">
                     <b-form-select
@@ -303,10 +311,26 @@
                   <div>
                     <flat-pickr
                       v-model="chartDateItem"
-                      class="form-control"
                       :config="configDateChart"
                       @input="chartDateFilter"
                     />
+                  </div>
+                </div>
+              </b-col>
+              <b-col id="filter__month__chart__download" cols="6">
+                <div class="d-flex justify-content-end">
+                  <div class="mr-1">
+                    <b-form-select
+                      v-model="paymentMethodsChart"
+                      :options="filterChartOptions"
+                      @change="fetchDataChart"
+                    />
+                  </div>
+                  <div>
+                    <p style="border: 1px solid #E2E2E2;
+                    border-radius: 8px; padding-bottom: 15px;" class="px-2 text-center">
+                      {{ viewDateTooltipDownload }}
+                    </p>
                   </div>
                 </div>
               </b-col>
