@@ -11,6 +11,7 @@ import {
 } from 'bootstrap-vue'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import '@core/scss/vue/libs/vue-select.scss'
+import { toInteger } from 'lodash'
 
 export default {
   components: { vSelect, BFormTextarea },
@@ -145,6 +146,15 @@ export default {
       customerReputationStyle: 'height: 20px; width: 2px; background-color: #34A770;',
       loadingCustomerReputation: false,
     }
+  },
+  mounted() {
+    window.addEventListener('click', e => {
+      const inputCustomer = document.getElementById('inputCustomer')
+      const clickCustomer = inputCustomer.contains(e.target)
+      if (!clickCustomer) {
+        this.customerList = []
+      }
+    })
   },
   created() {
     this.$http_komship
@@ -336,30 +346,36 @@ export default {
       }
       return null
     },
-    getCustomer: _.debounce(function (e) {
-      if (e.keyCode !== 37 && e.keyCode !== 38 && e.keyCode !== 39 && e.keyCode !== 40) {
-        const event = e.key ? 'input' : 'list'
-        if (event === 'list') {
-          return this.customerList.forEach(item => {
-            if (item.name === this.customerName) {
-              this.customerId = item.customer_id
-              this.customerPhone = item.phone
-              this.customerAddress = item.address
-            }
-          })
-        }
-        this.$http_komship
-          .get('v1/customer', {
-            params: { search: this.customerName },
-          })
-          .then(response => {
-            const { data } = response.data
-            this.customerList = data
-            this.$refs['button-list-customer'].focus()
-          })
+    async searchCustomer() {
+      this.customerList = []
+      if (this.customerName !== '') {
+        this.customerList = await this.$http_komship.get('v1/customer', {
+          params: { search: this.customerName },
+        }).then(result => {
+          const { data } = result.data
+          return data
+        }).catch(err => {
+          console.error(err)
+          return []
+        })
       }
-      return this.customerList
-    }, 1000),
+    },
+    async autofillByCustomer($data) {
+      this.customerPhone = `${toInteger($data.phone)}`
+      this.destination = await this.$http_komship.get('v1/destination', {
+        params: { search: $data.subdistrict_name },
+      }).then(result => {
+        const { data } = result.data.data
+        const dataByTarrifCode = data.find(items => items.value === $data.tariff_code)
+        return dataByTarrifCode || data[0]
+      }).catch(err => {
+        console.error(err)
+        return null
+      })
+      this.customerAddress = $data.address
+      this.customerList = []
+      this.formatPhoneCustomer()
+    },
     onSearchDestination(search, loading) {
       if (search.length) {
         this.loadingSearchDestination = true
@@ -1366,9 +1382,6 @@ export default {
         this.isSubmitOrder = false
       }
     },
-    formatCustomerName(e) {
-      return String(e).substring(0, 30)
-    },
     formatAddressDetail(e) {
       return String(e).substring(0, 185)
     },
@@ -1385,19 +1398,6 @@ export default {
       this.checkWhatsapp()
       this.getCustomerReputation()
     }, 1000),
-    validateInputCustomerName(e) {
-      if (
-        e.keyCode === 47
-        || e.keyCode === 61
-        || e.keyCode === 58
-        || e.keyCode === 59
-      ) {
-        e.preventDefault()
-        this.messageErrorLengthCustomerName = true
-      } else {
-        this.messageErrorLengthCustomerName = false
-      }
-    },
     validateInputAddressDetail(e) {
       if (
         e.keyCode === 47
@@ -1451,36 +1451,32 @@ export default {
       }
     },
     async checkWhatsapp() {
-      await this.$http_komship.post(`/v1/check-wa?phone_no=${this.customerPhone}`)
-        .then(res => {
-          const { data } = res.data
-          this.isWhatsapp = data
-          this.messageErrorPhone = false
-        })
-        .catch(error => {
-          const { data } = error.response.data
-          this.isWhatsapp = data
-          this.messageErrorPhone = false
-          if (error.response.data.code !== 1001) {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Failure',
-                icon: 'AlertCircleIcon',
-                text: error,
-                variant: 'danger',
-              },
-            })
-          }
-        })
-    },
-    async setDataCustomer(data) {
-      this.customerId = await data.customer_id
-      this.customerPhone = await data.phone
-      this.customerAddress = await data.address
-      this.$refs.selectDestination.$refs.search.focus()
-      this.checkWhatsapp()
-      this.getCustomerReputation()
+      if (this.customerPhone.length >= 9) {
+        await this.$http_komship.post(`/v1/check-wa?phone_no=${this.customerPhone}`)
+          .then(res => {
+            const { data } = res.data
+            this.isWhatsapp = data
+            this.messageErrorPhone = false
+          })
+          .catch(error => {
+            const { data } = error.response.data
+            this.isWhatsapp = data
+            this.messageErrorPhone = false
+            if (error.response.data.code !== 1001) {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: error,
+                  variant: 'danger',
+                },
+              })
+            }
+          })
+      } else {
+        this.isWhatsapp = null
+      }
     },
     getCustomerReputation() {
       this.loadingCustomerReputation = true

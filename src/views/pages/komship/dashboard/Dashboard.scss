@@ -511,3 +511,29 @@ input.vue-pincode-input {
 .alert-success {
   background-color: #BEFCDE !important;
 }
+
+.tooltip__chart__download {
+  z-index: 999;
+  background: #FFFFFF;
+  box-shadow: 0px 4px 40px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  margin: auto;
+  left: 50%;
+  min-width: 222px;
+  min-height: 77px;
+  display: none;
+}
+
+#filter__month__chart__download {
+  display: none;
+}
+
+#title__chart__tooltip__download {
+  display: none;
+}
+
+#chart__revenue__download {
+  display: none;
+}

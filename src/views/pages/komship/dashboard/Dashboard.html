@@ -1,18 +1,35 @@
 <div>
   <div v-if="!loadingOnboarding" class="container p-0">
     <div v-if="notification.length > 0">
-      <b-alert v-for="notif in notification" :key="notif.id" :show="notif.show" dismissible class="p-1" :style="`background-color: ${notif.color} !important`" @dismissed="notificationSession(notif)">
-        <span class="text-[#222222] text-[20px] font-semibold">{{ notif.title }}</span><br>
-        <div class="text-[#222222] text-[16px] font-normal" style="max-width: 90%;">
+      <b-alert
+        v-for="notif in notification"
+        :key="notif.id"
+        :show="notif.show"
+        dismissible
+        class="p-1"
+        :style="`background-color: ${notif.color} !important`"
+        @dismissed="notificationSession(notif)"
+      >
+        <span class="text-[#222222] text-[20px] font-semibold"
+          >{{ notif.title }}</span
+        ><br />
+        <div
+          class="text-[#222222] text-[16px] font-normal"
+          style="max-width: 90%;"
+        >
           {{ notif.description }}&nbsp;
-          <a class="text-[#222222] hover:text-[#222222] font-semibold" @click="windowOpen(notif.url_link)">{{ notif.url_link }}</a>
+          <a
+            class="text-[#222222] hover:text-[#222222] font-semibold"
+            @click="windowOpen(notif.url_link)"
+            >{{ notif.url_link }}</a
+          >
         </div>
 
         <template slot="dismiss">
           <img
             src="@/assets/images/icons/close-circle.svg"
             style="cursor:pointer"
-          >
+          />
         </template>
       </b-alert>
     </div>
@@ -45,15 +62,13 @@
               <div class="first-card-header-text me-8 mb-0">
                 Saldo
               </div>
-              <img
-                id="infoSaldo"
-                src="@/assets/images/icons/info-circle.svg"
-              >
+              <img id="infoSaldo" src="@/assets/images/icons/info-circle.svg" />
               <b-popover
                 triggers="hover"
                 target="infoSaldo"
                 placement="bottomleft"
-              >Saldo kamu saat ini.</b-popover>
+                >Saldo kamu saat ini.</b-popover
+              >
             </div>
           </div>
           <div class="card-body h-text-xl pb-0 mb-0">
@@ -125,12 +140,15 @@
               <img
                 id="infoSaldoPending"
                 src="@/assets/images/icons/info-circle.svg"
-              >
+              />
               <b-popover
                 triggers="hover"
                 target="infoSaldoPending"
                 placement="bottomleft"
-              >Saldo Pending merupakan saldo yang akan kamu terima ketika orderan yang statusnya dikirim telah berubah menjadi diterima.</b-popover>
+                >Saldo Pending merupakan saldo yang akan kamu terima ketika
+                orderan yang statusnya dikirim telah berubah menjadi
+                diterima.</b-popover
+              >
             </div>
             <b-button
               variant="flat-dark"
@@ -146,10 +164,18 @@
             </b-button>
           </div>
           <div class="card-body">
-            <span class="h-text-xl pb-0 mb-0">{{ formatRupiah(saldoPending) }}</span>
+            <span class="h-text-xl pb-0 mb-0"
+              >{{ formatRupiah(saldoPending) }}</span
+            >
             <b-row v-if="saldoPendingOnProblem !== 0">
               <div class="ml-1">
-                <span>Dari nilai tersebut, <strong class="text-primary">{{ formatRupiah(saldoPendingOnProblem) }},-</strong> nya perlu dimonitor</span>
+                <span
+                  >Dari nilai tersebut,
+                  <strong class="text-primary"
+                    >{{ formatRupiah(saldoPendingOnProblem) }},-</strong
+                  >
+                  nya perlu dimonitor</span
+                >
               </div>
             </b-row>
           </div>
@@ -177,34 +203,139 @@
     </div>
     <div class="row">
       <div class="col-12 col-md-6 mt-2">
-        <div class="card h-100">
-          <div class="card-header flex-nowrap">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Penghasilan
+        <div id="chart__revenue" class="card h-100">
+
+          <!-- Tooltip download -->
+          <div id="id__tooltip__chart__download" class="tooltip__chart__download">
+            <div class="ml-1 mt-1">
+              <span class="text-black">{{ dateTooltipDownload }}</span>
+            </div>
+            <b-row class="align-items-center ml-2 pr-1">
+              <div class="mr-1 mt-1">
+                <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6" cy="6.5" r="6" fill="#FBBC05"/>
+                </svg>
+              </div>
+              <span>{{ formatRupiah(totalProfitTooltipDownload) }}</span>
+            </b-row>
+            <b-row class="align-items-center ml-2 mt-50 mb-1 pr-1">
+              <div class="mr-1 mt-1">
+                <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="6" cy="6.5" r="6" fill="#47AEE4"/>
+                </svg>
+              </div>
+              <span>{{ totalOrderTooltipDownload }} Orderan</span>
+            </b-row>
+          </div>
+
+          <b-row class="justify-content-between mx-3 mt-2">
+            <b-row class="align-items-center">
+              <div id="title__chart__tooltip__download" class="first-card-header-text me-8 mb-0 text-black" style="margin-top: -20px">
+                Performa Omset & Orderan
+              </div>
+              <div id="title__chart__tooltip" class="first-card-header-text me-8 mb-0 text-black">
+                Performa Omset & Orderan
               </div>
               <img
                 id="infoPenghasilan"
                 src="@/assets/images/icons/info-circle.svg"
-              >
+              />
               <b-popover
                 triggers="hover"
                 target="infoPenghasilan"
                 placement="bottomleft"
-              >Penghasilan merupakan grafik keuangan dari orderan yang telah kamu masukkan ke Komship dari 7 hari terakhir.</b-popover>
-            </div>
-            <b-form-group class="flex-grow-1 pl-3 pr-1 mb-0">
-              <v-select
-                v-model="selectedPenghasilan"
-                label="Square"
-                dir="ltr"
-                :options="optionsPenghasilan"
-                :clearable="false"
-              />
-            </b-form-group>
-          </div>
+                >ini adalah performa omset dan orderan (customer yang beli)
+                bulan ini, belum termasuk paket retur. Untuk penghasilan bersih,
+                next akan kami tampilkan pada menu khusus laporan
+                keuangan.</b-popover
+              >
+            </b-row>
+            <b-row class="align-items-center">
+              <div
+                class="mr-1 px-1 py-50"
+                style="background-color: #F4F4F4; border-radius: 8px;"
+              >
+                <b-img src="@/assets/images/logo/komship-logo.svg" />
+              </div>
+              <div>
+                <b-button id="tooltip__download__icon" class="btn-icon" size="sm" variant="flat-dark" @click="downloadChart">
+                  <b-img src="@/assets/images/icons/icon-telegram.svg" />
+                </b-button>
+                <b-popover
+                triggers="hover"
+                target="tooltip__download__icon"
+                placement="bottomleft"
+                >share statistik order ini</b-popover>
+              </div>
+            </b-row>
+          </b-row>
           <div class="position-relative card-body">
-            <v-select
+            <b-row>
+              <b-col cols="6" class="pl-50">
+                <b-row
+                  class="mr-1 py-1"
+                  style="background: #FBA63C;
+                  box-shadow: 4px 8px 18px rgba(0, 0, 0, 0.08);
+                  border-radius: 0px 8px 8px 0px;"
+                >
+                  <div class="ml-2 mr-1 mt-50">
+                    <small class="text-white">Total Omset</small>
+                    <p class="text-white">
+                      <strong>
+                        {{ formatRupiah(totalRevenueChart) }}
+                      </strong>
+                    </p>
+                  </div>
+                  <div class="mt-50 mr-1">
+                    <b-img src="@/assets/images/line-new-chart.svg" />
+                  </div>
+                  <div class="mt-50">
+                    <small class="text-white">Total Orderan</small>
+                    <p class="text-white">
+                      <strong>
+                        {{ totalOrderanChart }}
+                      </strong>
+                    </p>
+                  </div>
+                </b-row>
+              </b-col>
+              <b-col id="filter__month__chart" cols="6">
+                <div class="d-flex justify-content-end">
+                  <div class="mr-1">
+                    <b-form-select
+                      v-model="paymentMethodsChart"
+                      :options="filterChartOptions"
+                      @change="fetchDataChart"
+                    />
+                  </div>
+                  <div>
+                    <flat-pickr
+                      v-model="chartDateItem"
+                      :config="configDateChart"
+                      @input="chartDateFilter"
+                    />
+                  </div>
+                </div>
+              </b-col>
+              <b-col id="filter__month__chart__download" cols="6">
+                <div class="d-flex justify-content-end">
+                  <div class="mr-1">
+                    <b-form-select
+                      v-model="paymentMethodsChart"
+                      :options="filterChartOptions"
+                      @change="fetchDataChart"
+                    />
+                  </div>
+                  <div>
+                    <p style="border: 1px solid #E2E2E2;
+                    border-radius: 8px; padding-bottom: 15px;" class="px-2 text-center">
+                      {{ viewDateTooltipDownload }}
+                    </p>
+                  </div>
+                </div>
+              </b-col>
+            </b-row>
+            <!-- <v-select
               v-model="selectedChart"
               label="Square"
               dir="ltr"
@@ -212,11 +343,18 @@
               :options="optionsChart"
               :clearable="false"
               @input="handleChangeChart"
-            />
-            <ChartPenghasilan
+            /> -->
+            <!-- <ChartPenghasilan
               :datasets="partnerIncomeGraph.datasets"
               :labels="partnerIncomeGraph.labels"
               class="mt-1"
+            /> -->
+            <VueApexcharts
+              ref="myChart"
+              width="100%"
+              type="area"
+              :options="options"
+              :series="seriesRevenue"
             />
           </div>
         </div>
@@ -277,12 +415,13 @@
                   <img
                     id="infoRetur"
                     src="@/assets/images/icons/info-circle.svg"
-                  >
+                  />
                   <b-popover
                     triggers="hover"
                     target="infoRetur"
                     placement="bottomleft"
-                  >Orderan retur selama 7 hari terakhir.</b-popover>
+                    >Orderan retur selama 7 hari terakhir.</b-popover
+                  >
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
                   <p class="mb-0 order-body-text">
@@ -321,12 +460,14 @@
                     id="infoProblem"
                     src="@/assets/images/icons/info-circle.svg"
                     class="d-inline-block"
-                  >
+                  />
                   <b-popover
                     triggers="hover"
                     target="infoProblem"
                     placement="bottomleft"
-                  >Jumlah kendala pengiriman yang segera kamu harus tanggapi sekarang juga</b-popover>
+                    >Jumlah kendala pengiriman yang segera kamu harus tanggapi
+                    sekarang juga</b-popover
+                  >
                 </p>
                 <div class="d-flex justify-content-between align-items-center">
                   <p class="mb-0 order-body-text">
@@ -358,12 +499,14 @@
               <img
                 id="infoTopAdmin"
                 src="@/assets/images/icons/info-circle.svg"
-              >
+              />
               <b-popover
                 triggers="hover"
                 target="infoTopAdmin"
                 placement="bottomleft"
-              >Top Admin Order merupakan orang yang menginputkan order paling banyak berdasarkan nilai orderan</b-popover>
+                >Top Admin Order merupakan orang yang menginputkan order paling
+                banyak berdasarkan nilai orderan</b-popover
+              >
             </div>
           </div>
           <div class="card-body">
@@ -406,12 +549,14 @@
               <img
                 id="infoProdukTerlaris"
                 src="@/assets/images/icons/info-circle.svg"
-              >
+              />
               <b-popover
                 triggers="hover"
                 target="infoProdukTerlaris"
                 placement="bottomleft"
-              >Produk Terlaris merupakan produk kamu yang paling banyak di order.</b-popover>
+                >Produk Terlaris merupakan produk kamu yang paling banyak di
+                order.</b-popover
+              >
             </div>
             <b-button
               variant="flat-dark"
@@ -455,7 +600,7 @@
                         v-if="produkTerlaris.photo === null || produkTerlaris.photo === ''"
                         :src="require('@/assets/images/avatars/image-null.png')"
                         class="image-product"
-                      >
+                      />
                       <img
                         v-else
                         width="50px"
@@ -518,12 +663,14 @@
               <img
                 id="infoCustomerLoyal"
                 src="@/assets/images/icons/info-circle.svg"
-              >
+              />
               <b-popover
                 triggers="hover"
                 target="infoCustomerLoyal"
                 placement="bottomleft"
-              >Customer Loyal merupakan customer yang sering melakukan order.</b-popover>
+                >Customer Loyal merupakan customer yang sering melakukan
+                order.</b-popover
+              >
             </div>
             <b-button
               variant="flat-dark"
@@ -674,7 +821,13 @@
         <button class="btn btn-outline-primary">Tutup</button>
       </div>
     </div> -->
-    <b-modal id="modalTopUp" centered hide-header hide-footer modal-class="wrapper__modal__topup__saldo">
+    <b-modal
+      id="modalTopUp"
+      centered
+      hide-header
+      hide-footer
+      modal-class="wrapper__modal__topup__saldo"
+    >
       <a href="#" @click="closeModal()">
         <img
           src="@/assets/images/icons/close-circle.svg"
@@ -961,36 +1114,27 @@
   <!-- MODAL ONBOARDING -->
   <modal-onboarding></modal-onboarding>
 
-  <b-modal
-      ref="modal-error-pin"
-      hide-footer
-      hide-header
-      centered
-    >
-      <b-row class="justify-content-center mb-1 pt-1">
-        <img src="@/assets/images/icons/fail.svg">
-      </b-row>
-      <b-row class="justify-content-center text-center mb-1">
-        <span class="text-black px-4">
-          PIN yang kamu masukkan belum benar, <strong>coba lagi</strong>
-        </span>
-      </b-row>
-      <b-row class="justify-content-center pb-1">
-        <b-button
-          class="btn-icon mr-1"
-          variant="outline-primary"
-          tag="router-link"
-          :to="{ name: 'kompship-pin' }"
-        >
-          Lupa PIN
-        </b-button>
-        <b-button
-          class="btn-icon"
-          variant="primary"
-          @click="handleTryAgain"
-        >
-          Coba lagi
-        </b-button>
-      </b-row>
-    </b-modal>
+  <b-modal ref="modal-error-pin" hide-footer hide-header centered>
+    <b-row class="justify-content-center mb-1 pt-1">
+      <img src="@/assets/images/icons/fail.svg" />
+    </b-row>
+    <b-row class="justify-content-center text-center mb-1">
+      <span class="text-black px-4">
+        PIN yang kamu masukkan belum benar, <strong>coba lagi</strong>
+      </span>
+    </b-row>
+    <b-row class="justify-content-center pb-1">
+      <b-button
+        class="btn-icon mr-1"
+        variant="outline-primary"
+        tag="router-link"
+        :to="{ name: 'kompship-pin' }"
+      >
+        Lupa PIN
+      </b-button>
+      <b-button class="btn-icon" variant="primary" @click="handleTryAgain">
+        Coba lagi
+      </b-button>
+    </b-row>
+  </b-modal>
 </div>
