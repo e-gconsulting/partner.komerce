@@ -5,9 +5,9 @@ name: ci
 
 on:
   push:
-    branches: [ production ]
+    branches: [ development ]
   pull_request:
-    branches: [ production ]
+    branches: [ development ]
 
 jobs:
   ci:
@@ -29,7 +29,7 @@ jobs:
     - name: Install depenencies
       run: yarn
     - name: Build application
-      run: yarn build
+      run: yarn build:dev
     # - name: Run linter
     #   run: yarn lint
     # - name: Run tests

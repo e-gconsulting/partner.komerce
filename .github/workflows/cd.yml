@@ -1,7 +1,7 @@
 name: cd
 on:
   push:
-    branches: [ staging ]
+    branches: [ development ]
   schedule:
     - cron: "0 1 22 03 *"
   workflow_dispatch:
@@ -16,8 +16,8 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Build dependencies
-        run: yarn build:stg
-      - name: Archive production artifact
+        run: yarn build:dev
+      - name: Archive development artifact
         uses: actions/upload-artifact@v3
         with:
           name: dist-folder
@@ -34,11 +34,11 @@ jobs:
         with: 
           name: dist-folder
           path: ./dist/
-      - name: Deploy to partner.komerce.id
+      - name: Deploy to dev.partner.komerce.id
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with: 
           server: ${{ secrets.ftp_server }}
           username: ${{ secrets.ftp_username }}
           password: ${{ secrets.ftp_password }}
           local-dir: ./dist/
-          server-dir: ./internal.partner.komerce.id/
+          server-dir: ./dev.partner.komerce.id/
