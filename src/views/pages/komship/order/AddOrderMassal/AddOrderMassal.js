@@ -3,6 +3,18 @@
 import jspreadsheet from 'jspreadsheet-ce'
 import { toInteger } from 'lodash'
 import moment from 'moment'
+import axios from 'axios'
+import useJwt from '@core/auth/jwt/useJwt'
+
+const { jwt } = useJwt(axios, {})
+const token = jwt.getToken()
+
+const axiosKomship = axios.create({
+  baseURL: process.env.VUE_APP_BASE_URL_KOMSHIP,
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+})
 
 const iconWarning = require('@/assets/images/icons/warning.svg')
 const iconNonShipping = require('@/assets/images/icons/non-shipping.svg')
