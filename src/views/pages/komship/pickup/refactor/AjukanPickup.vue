@@ -957,7 +957,7 @@ export default {
         const newMom = moment(newVal, 'HHmm')
         const timeToday = moment()
         if (newMom.isBefore(timeToday) === true) {
-          this.isNotCorrectTime = true
+          this.isNotCorrectTime = false
         } else {
           this.isNotCorrectTime = false
         }
