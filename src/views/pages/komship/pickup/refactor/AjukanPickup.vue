@@ -361,7 +361,7 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime"
+            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime || timeValue < '09 : 00' || timeValue > '21 : 00'"
             @click="showAlertSubmitPickup"
           >
             <b-spinner
