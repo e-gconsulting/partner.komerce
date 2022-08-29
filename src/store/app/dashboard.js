@@ -95,15 +95,16 @@ export default {
       ]
     },
     UPDATE_PRODUK_TERLARISES(state, produkTerlarises) {
-      state.produkTerlarises = [
-        ...produkTerlarises.map(produk => ({
-          photo: produk.images_path,
-          name: produk.product_name,
-          kodeBrg: produk.product_sku,
-          penjualan: produk.total_sold,
-          persentase: produk.total_sold_change_percentage,
+      state.produkTerlarises = produkTerlarises.map(items => ({
+        name: items.detail_product.product_name,
+        photo: items.detail_product.images_path,
+        variants: items.detail_product.variant_list.map(variant => ({
+          variant_name: variant.variant_name,
         })),
-      ]
+        options: items.detail_product.options,
+        total_sold: items.total_sold,
+        percentage: items.total_sold_change_percentage,
+      }))
     },
     UPDATE_PARTNER_INCOME_GRAPH(state, partnerIncomeGraph) {
       state.partnerIncomeGraph = getDates(new Date(state.startDateChart), new Date(state.endDateChart)).map(date => {
@@ -187,7 +188,7 @@ export default {
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
-          'v1/dashboard/partner/bestSellerProducts',
+          'v2/dashboard/partner/bestSellerProducts',
           {
             params: {
               start_date: formatYmd(getters.selectedProdukTerlaris[0]),
