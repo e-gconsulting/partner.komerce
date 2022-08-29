@@ -201,7 +201,7 @@ import {
 import VueHtml2pdf from 'vue-html2pdf'
 import VueBarcode from 'vue-barcode'
 import { $themeConfig } from '@themeConfig'
-import DataOrderTable from '../order/DataOrderDetail.vue'
+// import DataOrderTable from '../order/DataOrderDetail.vue'
 import AddPickupPopupPrint from './AddPickupPopupPrint.vue'
 import PickupLabelPrint from './PickupLabelPrint.vue'
 
@@ -210,7 +210,7 @@ export default {
     BButton,
     BIconChevronLeft,
     BBadge,
-    DataOrderTable,
+    // DataOrderTable,
     AddPickupPopupPrint,
     VueHtml2pdf,
     barcode: VueBarcode,

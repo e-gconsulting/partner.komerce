@@ -5,9 +5,9 @@ name: ci
 
 on:
   push:
-    branches: [ staging ]
+    branches: [ development ]
   pull_request:
-    branches: [ staging ]
+    branches: [ development ]
 
 jobs:
   ci:

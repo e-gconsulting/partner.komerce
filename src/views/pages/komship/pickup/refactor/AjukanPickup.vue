@@ -361,7 +361,7 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime"
+            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime || timeValue < '09 : 00' || timeValue > '21 : 00'"
             @click="showAlertSubmitPickup"
           >
             <b-spinner
@@ -956,8 +956,8 @@ export default {
       handler(newVal, oldVal) {
         const newMom = moment(newVal, 'HHmm')
         const timeToday = moment()
-        if (newMom.isBefore(timeToday) === true) {
-          this.isNotCorrectTime = true
+        if (newMom.isBefore(timeToday) && newMom < '0900' === true) {
+          this.isNotCorrectTime = false
         } else {
           this.isNotCorrectTime = false
         }
@@ -1024,6 +1024,7 @@ export default {
         // Time
         const newMom = moment(this.timeValue, 'HHmm')
         const timeToday = moment()
+        console.log(timeToday)
         if (newMom.isBefore(timeToday) === true) {
           this.isNotCorrectTime = true
         } else {

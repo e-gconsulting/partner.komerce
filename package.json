@@ -42,6 +42,7 @@
     "firebase": "^9.8.1",
     "flatpickr": "^4.6.9",
     "form-data": "^4.0.0",
+    "html2canvas": "^1.4.1",
     "jsonwebtoken": "8.5.1",
     "jspreadsheet-ce": "^4.11.1",
     "leaflet": "1.6.0",

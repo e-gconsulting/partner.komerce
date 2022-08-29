@@ -17,7 +17,7 @@ jobs:
         run: yarn
       - name: Build dependencies
         run: yarn build
-      - name: Archive production artifact
+      - name: Archive development artifact
         uses: actions/upload-artifact@v3
         with:
           name: dist-folder
@@ -34,7 +34,7 @@ jobs:
         with: 
           name: dist-folder
           path: ./dist/
-      - name: Deploy to internal.partner.komerce.id
+      - name: Deploy to dev.partner.komerce.id
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with: 
           server: ${{ secrets.ftp_server }}
