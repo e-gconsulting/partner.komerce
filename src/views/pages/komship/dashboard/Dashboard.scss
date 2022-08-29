@@ -511,3 +511,15 @@ input.vue-pincode-input {
 .alert-success {
   background-color: #BEFCDE !important;
 }
+.collapsed .when-open,
+.not-collapsed .when-closed {
+  display: none;
+}
+.collapsed {
+  background-color: #f6f6f6;
+  color: #6e6b7b;
+}
+.not-collapsed {
+  background-color: #F95031;
+  color: #FFFFFF;
+}
