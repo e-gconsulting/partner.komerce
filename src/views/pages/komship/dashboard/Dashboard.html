@@ -559,17 +559,11 @@
               >
             </div>
             <div class="w-25 ml-auto">
-              <b-form-group class="mb-0">
-                <v-select
-                  id="select_produk_terlaris"
-                  v-model="selectedProdukTerlaris"
-                  label="Bulan Ini"
-                  dir="ltr"
-                  :options="optionsProdukTerlaris"
-                  :clearable="false"
-                  @input="handleChangeProdukTerlaris"
-                />
-              </b-form-group>
+              <flat-pickr
+                v-model="selectedProdukTerlaris"
+                :config="configDateChart"
+                @input="handleChangeProdukTerlaris"
+              />
             </div>
             <b-button
               variant="flat-dark"
