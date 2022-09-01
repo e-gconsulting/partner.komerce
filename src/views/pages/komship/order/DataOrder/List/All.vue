@@ -143,7 +143,6 @@
               v-else
               class="image-product"
               :src="data.item.product[0].product_image"
-              :alt="data.item.product[0].product_image"
             >
             <div style="margin-left:5px;">
               <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
@@ -283,6 +282,14 @@
           style="background-color:#FCBEBE"
         >
           Retur
+        </b-badge>
+        <b-badge
+          v-if="data.item.order_status === 'Batal'"
+          class="text-secondary font-semibold px-1"
+          pill
+          style="background-color:#C2C2C2"
+        >
+          Dibatalkan
         </b-badge>
       </template>
       <template #cell(details)="data">
