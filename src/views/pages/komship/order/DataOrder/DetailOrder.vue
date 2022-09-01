@@ -124,6 +124,7 @@
                   :style="orderData.order_status === 'Hilang' ? 'padding: 5px 0; background-color: #FCBEBE!important; color: #E31A1A!important' : 'padding: 5px 0;' "
                 >
                   <span v-if="orderData.order_status === 'Diajukan'">Order Dibuat</span>
+                  <span v-if="orderData.order_status === 'Batal'">Dibatalkan</span>
                   <span v-else>{{ orderData.order_status === 'Hilang' ? 'Paket Hilang' : orderData.order_status }}</span>
                 </b-alert>
                 <b-badge
@@ -132,6 +133,7 @@
                   class="wrapper__status__order__mobile"
                 >
                   <span v-if="orderData.order_status === 'Diajukan'">Order Dibuat</span>
+                  <span v-if="orderData.order_status === 'Batal'">Dibatalkan</span>
                   <span v-else>{{ orderData.order_status === 'Hilang' ? 'Paket Hilang' : orderData.order_status }}</span>
                 </b-badge>
               </b-col>
