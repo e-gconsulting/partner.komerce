@@ -410,7 +410,7 @@
           <b-form-input
             id="nominal-topup"
             v-model="nominalTopUp"
-            type="number"
+            type="tel"
             data-type="currency"
             required
             class="h-text-sm h-text-dark"
@@ -484,7 +484,7 @@
             <b-form-input
               id="nominal-input"
               v-model="nominal"
-              type="number"
+              type="tel"
               data-type="currency"
               required
               class="h-text-sm h-text-dark"
@@ -544,6 +544,7 @@
           <b-row class="justify-content-center mb-1">
             <CodeInput
               v-model="pin"
+              type="number"
               :loading="false"
               class="input"
               :type="visibilityPin"
