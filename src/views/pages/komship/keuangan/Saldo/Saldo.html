@@ -336,7 +336,7 @@
                       Ditolak
                     </div>
                     <div
-                      v-if="riwayat.status==='rejected'"
+                      v-if="riwayat.status==='canceled'"
                       class="text-danger"
                     >
                       Dibatalkan
@@ -544,6 +544,7 @@
           <b-row class="justify-content-center mb-1">
             <CodeInput
               v-model="pin"
+              type="number"
               :loading="false"
               class="input"
               :type="visibilityPin"

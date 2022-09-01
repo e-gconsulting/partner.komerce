@@ -314,7 +314,7 @@ export default {
             shorthand: true, // defaults to false
             dateFormat: 'Y-m-d', // defaults to "F Y"
             altFormat: 'F Y', // defaults to "F Y"
-            theme: 'dark', // defaults to "light"
+            theme: 'primary', // defaults to "light"
           }),
         ],
       },
@@ -347,7 +347,6 @@ export default {
       'topAdminOrders',
       'customerLoyals',
       'produkTerlarises',
-      'optionsProdukTerlaris',
       'optionsChart',
     ]),
     ...mapGetters('dashboard', ['partnerIncomeGraph']),

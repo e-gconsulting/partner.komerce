@@ -6,4 +6,4 @@
     padding-right: 1rem;
 }
 </style>
-<style lang="scss" src="./Dashboard.scss" scoped />
+<style lang="scss" src="./Dashboard.scss" />

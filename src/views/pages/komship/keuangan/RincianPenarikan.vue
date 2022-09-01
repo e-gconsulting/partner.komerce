@@ -27,6 +27,10 @@
           class="font-weight-bold rounded status-danger"
         >Dibatalkan</span>
         <span
+          v-else-if="statusPenerimaan.toLowerCase() === 'rejected'"
+          class="font-weight-bold rounded status-danger"
+        >Ditolak</span>
+        <span
           v-else
           class="font-weight-bold rounded status-danger"
         >Dibatalkan</span>

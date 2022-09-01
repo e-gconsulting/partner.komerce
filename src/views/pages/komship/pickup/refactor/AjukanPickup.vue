@@ -108,6 +108,7 @@
                   class="text-center bg-white"
                   style="max-width:70px"
                   readonly
+                  @keyup="pickTime('plus')"
                 />
                 <div class="ml-1">
                   <b-icon-chevron-up
@@ -361,7 +362,7 @@
             v-ripple.400="'rgba(186, 191, 199, 0.15)'"
             type="reset"
             variant="primary"
-            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime"
+            :disabled="chosenVehicle === '' || selectedOrderToStore[0] === undefined || addressName === '' || addressDetail === '' || isNotCorrectTime || timeValue < '09 : 00' || timeValue > '21 : 00'"
             @click="showAlertSubmitPickup"
           >
             <b-spinner
@@ -860,7 +861,7 @@ export default {
       isNotCorrectTime: true,
       isNotCorrectDate: true,
       profile: null,
-      chosenVehicle: '',
+      chosenVehicle: 'MOBIL',
 
       itemsAddress: [],
       selectedOrderToStore: [],
@@ -956,7 +957,7 @@ export default {
       handler(newVal, oldVal) {
         const newMom = moment(newVal, 'HHmm')
         const timeToday = moment()
-        if (newMom.isBefore(timeToday) === true) {
+        if (newMom.isBefore(timeToday) && newMom < '0900' === true) {
           this.isNotCorrectTime = false
         } else {
           this.isNotCorrectTime = false
@@ -989,8 +990,18 @@ export default {
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
     this.getAddress()
+    this.Updatedate()
   },
   methods: {
+    Updatedate() {
+      if (moment(this.dateValue).format('HH:mm') > '20:00' === true) {
+        this.UpdateValue = moment(moment(this.dateValue).format('YYYY-MM-DD'), 'YYYY-MM-DD').add(1, 'd')
+        this.dateValue = new Date(this.UpdateValue)
+        this.timeValue = '09 : 00'
+      } else if (moment(this.dateValue).format('HH:mm') < '08:00' === true) {
+        this.timeValue = '09:00'
+      }
+    },
     getDataOrderToStore(data, dataItems) {
       this.selectedOrderToStore = data
       this.itemsPreviewProductOrder = data
@@ -1085,6 +1096,7 @@ export default {
       this.addressId = String(data.address_id)
       this.picPhone = data.phone
       this.valueAddressIsActive = data.address_id
+      this.selectedOrderToStore = []
     },
     onChooseVehicle(vehicle) {
       if (vehicle) this.chosenVehicle = vehicle
