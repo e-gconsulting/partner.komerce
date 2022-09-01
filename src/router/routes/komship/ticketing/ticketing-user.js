@@ -43,4 +43,15 @@ export default [
       ],
     },
   },
+  {
+    path: '/ticketing/detail-ticketing/bukti-chat',
+    name: 'file-claim-retur',
+    component: () => import('@/views/pages/komship/detail-ticketing-user/PageFileProve.vue'),
+    meta: {
+      name: 'file-claim-retur',
+      resource: 'Produk',
+      action: 'manage',
+      layout: 'full',
+    },
+  },
 ]

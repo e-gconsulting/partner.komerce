@@ -89,9 +89,31 @@
                                                     </strong>
                                                 </span>
                                             </template>
-                                            <b-badge v-if="orderStatus !== 'Rusak'" :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Hilang' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
-                                                {{ orderStatus === 'Hilang' ? 'Paket Hilang' : orderStatus }}
-                                            </b-badge>
+                                            <b-row>
+                                                <span v-if="orderStatus !== 'Rusak'" :class="orderStatusTextVariant(orderStatus)" :style="orderStatus === 'Hilang' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
+                                                    {{ orderStatus === 'Hilang' ? 'Paket Hilang' : orderStatus }} <span v-if="claimReturStatus !== null" style="margin-right: 3px;">{{ orderStatus === 'Retur' ? '-' : '' }}</span>
+                                                </span>
+                                                <span :class="returStatusVariant(claimReturStatus)">
+                                                    {{ orderStatus === 'Retur' ? claimReturStatus : '' }}
+                                                </span>
+                                                <img
+                                                    id="claim__retur__link"
+                                                    src="@/assets/images/icons/info-circle.svg"
+                                                />
+                                                <b-popover
+                                                    triggers="hover"
+                                                    target="claim__retur__link"
+                                                    placement="top"
+                                                    >
+                                                        <span>
+                                                            Tooltips dari catatan (alasan) claim di tolak admin
+                                                            <span class="text-info cursor-pointer" size="sm" @click="fetchProveFile">
+                                                                {{ infoLinkClaimRetur }}
+                                                            </span>
+                                                        </span>
+                                                    </b-popover
+                                                >
+                                            </b-row>
                                             <b-badge v-if="orderStatus === 'Rusak'" :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Rusak' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
                                                 {{ orderStatus === 'Rusak' ? 'Paket Rusak' : orderStatus }}
                                             </b-badge>
@@ -431,6 +453,7 @@
                                     </div>
                                 </b-col>
                             </b-row>
+
                             <b-row v-if="orderStatus === 'Diterima' || orderStatus === 'Retur' || orderStatus === 'Hilang' || orderStatus === 'Rusak'" class="ml-50">
                                 <b-col cols="1">
                                     <b-img src="@/assets/images/logo/logo-komship-chat.svg" />
@@ -439,10 +462,29 @@
                                     md="8"
                                 >
                                     <div>
-                                        <b-row class="justify-content-start mb-50">
-                                            <small class="text-black">
-                                                Tim Komship
-                                            </small>
+                                        <b-row class="justify-content-between mb-50">
+                                            <div>
+                                                <small class="text-black">
+                                                    Tim Komship
+                                                </small>
+                                            </div>
+                                            <div v-if="buttonClaimRetur" class="d-flex align-items-center">
+                                                <b-button class="btn-icon" size="sm" variant="flat-dark" @click="openPopupClaimRetur">
+                                                    <small class="text-black" style="color: #08A0F7;">
+                                                        <strong>Claim Retur</strong>
+                                                    </small>
+                                                </b-button>
+                                                <img
+                                                    id="claim__retur"
+                                                    src="@/assets/images/icons/info-circle.svg"
+                                                />
+                                                <b-popover
+                                                    triggers="hover"
+                                                    target="claim__retur"
+                                                    placement="top"
+                                                    >Kamu bisa claim ganti rugi retur (ongkir berangkat) jika ekspedisi retur sepihak padahal customer masih mau bayar</b-popover
+                                                >
+                                            </div>
                                         </b-row>
                                         <b-row class="justify-content-start mb-50">
                                             <div class="wrapper__chat__isnotuser p-1">
@@ -482,6 +524,38 @@
                                         <b-row class="justify-content-start mb-2">
                                             <small class="text-black">
                                                 {{ moment(new Date(dateRating)).format('DD MMMM YYYY | HH:mm') }}
+                                            </small>
+                                        </b-row>
+                                    </div>
+                                </b-col>
+                            </b-row>
+
+                            <!-- info claim retur -->
+                            <b-row v-if="infoClaimRetur" class="ml-50">
+                                <b-col cols="1">
+                                    <b-img src="@/assets/images/logo/logo-komship-chat.svg" />
+                                </b-col>
+                                <b-col
+                                    md="8"
+                                >
+                                    <div>
+                                        <b-row class="justify-content-between mb-50">
+                                            <div>
+                                                <small class="text-black">
+                                                    Tim Komship
+                                                </small>
+                                            </div>
+                                        </b-row>
+                                        <b-row class="justify-content-start mb-50">
+                                            <div class="wrapper__chat__isnotuser p-1">
+                                                <p class="text-black">
+                                                    Kamu <strong>udah berhasil</strong> submit form claim ganti rugi retur. Status claim bisa di pantau pada detail ticketing ya
+                                                </p>
+                                            </div>
+                                        </b-row>
+                                        <b-row class="justify-content-start mb-2">
+                                            <small class="text-black">
+                                                {{ moment(new Date(dateClaimRetur)).format('DD MMMM YYYY | HH:mm') }}
                                             </small>
                                         </b-row>
                                     </div>
@@ -823,5 +897,184 @@
           Oke
         </b-button>
       </b-row>
+    </b-modal>
+
+    <b-modal
+        ref="popup-claim-retur"
+        hide-footer
+        hide-header
+        modal-class="primary"
+        centered
+    >
+        <b-row class="justify-content-end">
+            <b-button class="btn-icon" size="sm" variant="flat-dark" @click="closePopupClaimRetur">
+                <feather-icon icon="XCircleIcon" size="25" />
+            </b-button>
+        </b-row>
+
+        <b-row class="text-center justify-content-center mb-1">
+            <h3 class="text-black">
+                <strong>
+                    Bukti Chat
+                </strong>
+            </h3>
+        </b-row>
+
+        <b-row class="justify-content-center text-center mx-2 px-2 mb-1">
+            <span class="text-black">
+                Untuk memproses claim ongkir retur, mohon upload <strong>bukti chat terupdate</strong> bahwa customermu masih mau bayar. Unggah bukti di bawah ini ya :
+            </span>
+        </b-row>
+
+        <b-row class="justify-content-center mx-2 py-2">
+            <div v-if="fileProv.length === 0" class="w-100 dragzone__prove__file" @dragover.prevent @drop.stop.prevent>
+                <div @drop.stop.prevent="dragFile" class="mb-2">
+                    <b-row class="justify-content-center my-2">
+                        <b-img src="@/assets/images/icons/drag-drop-icon.svg" />
+                    </b-row>
+                    <input id="form__input__file__claim__retur" accept="image/*" type="file" multiple @change="uploadFile" hidden/>
+                    <b-row class="justify-content-center">
+                        <h5>
+                          <strong>
+                              Drop foto disini, atau <label for="form__input__file__claim__retur">
+                                <h5 class="text-primary cursor-pointer">
+                                    <strong>
+                                        pilih                            
+                                    </strong>
+                                </h5>
+                              </label>
+                          </strong>
+                        </h5>
+                    </b-row>
+                    <b-row class="justify-content-center text-center">
+                        <span style="color: #C2C2C2;">file berupa JPG, JPEG2000, PNG</span>
+                    </b-row>
+                  <div v-if="fileProv.length">
+                    <ul v-for="(file, index) in fileProv" :key="index+1">
+                      <li>{{file.name}}</li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+
+            <!-- Preview to upload -->
+            <div v-if="fileProv.length > 0" class="w-100 dragzone__prove__file">
+                <div v-if="fileProv.length" class="d-flex align-items-start flex-wrap">
+                    <div v-for="(file, index) in fileProv" :key="index+1">
+                        <b-overlay
+                            :show="file.progressBar"
+                            spinner-variant="primary"
+                            variant="light"
+                            blur="0"
+                            opacity=".5"
+                            spinner-small
+                        >
+                            <div class="m-1 wrapper__prove__preview">
+                                <div>
+                                    <b-img src="@/assets/images/icons/x-icon-claim-retur.svg" class="cursor-pointer x__icon__retur" @click="deleteProvePreview(file)" />
+                                </div>
+                                <div>
+                                    <a :href="fileUrl(file)" target="_blank">
+                                        <b-img :src="fileUrl(file)" width="75" />
+                                    </a>
+                                </div>
+                            </div>
+                        </b-overlay>
+                    </div>
+                </div>
+            </div>
+        </b-row>
+
+        <b-row v-if="fileProv.length > 0" class="mx-1 mb-1">
+            <b-col cols="6">
+                <input id="form__file" type="file" accept="image/*" multiple @change="uploadFileAgain" hidden/>
+                <label for="form__file" class="btn btn-outline-primary btn-block">
+                        <feather-icon
+                            icon="PlusIcon"
+                            class="mr-50"
+                            style="display: inline-block !important;"
+                        />
+                        <span class="text-black">Tambah File</span>
+                </label>
+            </b-col>
+            <b-col cols="6">
+                <b-button variant="primary" block @click="submitClaimRetur">
+                    <b-spinner v-if="isUploading" small />
+                    Claim Retur
+                </b-button>
+            </b-col>
+        </b-row>
+    </b-modal>
+
+    <!-- Success retur claim -->
+    <b-modal
+        ref="popup-success-claim-retur"
+        centered
+        hide-header
+        hide-footer
+    >
+        <b-row class="justify-content-center text-center mb-2 mt-2">
+            <h4 class="text-black">
+                <strong>
+                    Claim Telah Diajukan
+                </strong>
+            </h4>
+        </b-row>
+
+        <b-row class="mx-2 mb-2 p-1" style="background-color: #DCF3EB;">
+            <b-row class="align-items-center ml-1 mb-1">
+                <span style="color: #34A770; font-size: 18px;" class="mr-50">
+                    <strong>
+                        Complete
+                    </strong>
+                </span>
+                <b-img src="@/assets/images/icons/tick-circle.svg" width="40" />
+            </b-row>
+            <span class="ml-1 text-black">
+                Claim retur sukses diclaim. Tim kami akan memverifikasi dalam 1X24 jam. Kamu bisa pantau status klaimnya pada <strong>detail ticket</strong>.
+            </span>
+        </b-row>
+
+        <b-row class="mx-2 mb-2">
+            <b-button
+                variant="primary"
+                block
+                @click="nextSuccessReturClaim"
+            >
+                Selanjutnya
+            </b-button>
+        </b-row>
+    </b-modal>
+
+    <!-- Have submitted retur claim -->
+    <b-modal
+        ref="popup-have-submitted-retur-claim"
+        centered
+        hide-header
+        hide-footer
+    >
+        <b-row class="justify-content-center text-center mb-2 mt-2">
+            <h4 class="text-black">
+                <strong>
+                    Claim Sudah diajukan
+                </strong>
+            </h4>
+        </b-row>
+
+        <b-row class="mx-2 mb-2">
+            <span class="text-center">
+                Kamu udah ngajuan claim di id ticket ini, jika kamu mau ngasih data tambahan atau claim ulang, data lain bisa kamu upload di lampiran chat ticket ini ya...
+            </span>
+        </b-row>
+
+        <b-row class="mx-2 mb-2">
+            <b-button
+                variant="primary"
+                block
+                @click="handleBackPopupClaimRetur"
+            >
+                Kembali
+            </b-button>
+        </b-row>
     </b-modal>
  </b-card>

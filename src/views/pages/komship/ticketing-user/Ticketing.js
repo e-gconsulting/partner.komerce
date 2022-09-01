@@ -208,8 +208,23 @@ export default
           label: 'Selesai',
           value: 3,
           onCheck: false,
+          childs: [
+            {
+              label: 'Diterima',
+              value: 3,
+              onCheck: false,
+            },
+            {
+              label: 'Retur',
+              value: 3,
+              onCheck: false,
+            },
+          ],
         },
       ],
+      filterClaimRetur: {
+        onCheck: false,
+      },
       fontClassTicketStatus: {
         color: 'salmon',
       },
@@ -252,6 +267,10 @@ export default
       loadingCreateTicket: false,
 
       stylingTableNoTicket: null,
+
+      orderStatusFilterItem: [],
+
+      filterClaimReturValue: null,
     }
   },
   watch: {
@@ -361,6 +380,8 @@ export default
       if (this.filterEkspedisi) Object.assign(params, { shipping: this.filterEkspedisi.join() })
       Object.assign(params, { total_per_page: this.totalPerPage })
       Object.assign(params, { page: this.currentPage })
+      if (this.orderStatusFilterItem.length > 0) Object.assign(params, { order_status: this.orderStatusFilterItem.join() })
+      if (this.filterClaimReturValue !== null) Object.assign(params, { is_claim_retur: this.filterClaimReturValue })
       this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
@@ -806,6 +827,48 @@ export default
       this.ticketStatus.push(value)
       const findIndexObj = this.ticketStatusItems.findIndex(items => items.value === value)
       this.ticketStatusItems[findIndexObj].onCheck = true
+      this.fetchTicket()
+    },
+    getInfoClaimRetur(data) {
+      let result = ''
+      if (data?.status_claim === 0) {
+        result = 'Claim on Review'
+      } else if (data?.status_claim === 1) {
+        result = 'Claim Sukses'
+      } else if (data?.status_claim === 2) {
+        result = 'Claim Ditolak'
+      }
+      return result
+    },
+    getColorInfoClaimRetur(data) {
+      let result = ''
+      if (data?.status_claim === 0) {
+        result = 'text-warning ml-1'
+      } else if (data?.status_claim === 1) {
+        result = 'text-success ml-1'
+      } else if (data?.status_claim === 2) {
+        result = 'text-danger ml-1'
+      }
+      return result
+    },
+    filterTicketOrderStatus(item) {
+      this.loadingDataTable = true
+      if (item === 'diclaim') {
+        if (this.filterClaimRetur.onCheck === true) {
+          this.filterClaimReturValue = 1
+        }
+        if (this.filterClaimRetur.onCheck === false) {
+          this.filterClaimReturValue = null
+        }
+      } else if (item !== 'diclaim') {
+        if (item.onCheck === true) {
+          this.orderStatusFilterItem.push(item.label)
+        }
+        if (item.onCheck === false) {
+          const findIndex = this.orderStatusFilterItem.findIndex(items => items === item.label)
+          this.orderStatusFilterItem.splice(findIndex, 1)
+        }
+      }
       this.fetchTicket()
     },
   },
