@@ -108,6 +108,7 @@
                   class="text-center bg-white"
                   style="max-width:70px"
                   readonly
+                  @keyup="pickTime('plus')"
                 />
                 <div class="ml-1">
                   <b-icon-chevron-up
@@ -860,7 +861,7 @@ export default {
       isNotCorrectTime: true,
       isNotCorrectDate: true,
       profile: null,
-      chosenVehicle: '',
+      chosenVehicle: 'MOBIL',
 
       itemsAddress: [],
       selectedOrderToStore: [],
@@ -989,8 +990,18 @@ export default {
       this.itemsPreviewProductOrder = this.selectedOrderFromDetail
     }
     this.getAddress()
+    this.Updatedate()
   },
   methods: {
+    Updatedate() {
+      if (moment(this.dateValue).format('HH:mm') > '20:00' === true) {
+        this.UpdateValue = moment(moment(this.dateValue).format('YYYY-MM-DD'), 'YYYY-MM-DD').add(1, 'd')
+        this.dateValue = new Date(this.UpdateValue)
+        this.timeValue = '09 : 00'
+      } else if (moment(this.dateValue).format('HH:mm') < '08:00' === true) {
+        this.timeValue = '09:00'
+      }
+    },
     getDataOrderToStore(data, dataItems) {
       this.selectedOrderToStore = data
       this.itemsPreviewProductOrder = data
@@ -1024,7 +1035,6 @@ export default {
         // Time
         const newMom = moment(this.timeValue, 'HHmm')
         const timeToday = moment()
-        console.log(timeToday)
         if (newMom.isBefore(timeToday) === true) {
           this.isNotCorrectTime = true
         } else {
@@ -1086,6 +1096,7 @@ export default {
       this.addressId = String(data.address_id)
       this.picPhone = data.phone
       this.valueAddressIsActive = data.address_id
+      this.selectedOrderToStore = []
     },
     onChooseVehicle(vehicle) {
       if (vehicle) this.chosenVehicle = vehicle
