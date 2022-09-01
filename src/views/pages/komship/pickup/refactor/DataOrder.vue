@@ -760,6 +760,7 @@ export default {
       await this.getProfile()
       await this.getListProductByPartner()
       await this.getOrder()
+      this.selectedOrder = []
       this.loading = false
     },
     getProfile() {

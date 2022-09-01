@@ -22,8 +22,7 @@ export default {
     topAdminOrders: [],
     customerLoyals: [],
     produkTerlarises: [],
-    selectedProdukTerlaris: 'Bulan Ini',
-    optionsProdukTerlaris: ['Bulan Ini', '7 Hari Terakhir'],
+    selectedProdukTerlaris: formatYmd(today),
     partnerIncomeGraph: [],
     selectedChart: 'COD',
     optionsChart: ['COD', 'Transfer Bank'],
@@ -35,7 +34,12 @@ export default {
   getters: {
     getField,
     selectedProdukTerlaris(state) {
-      return ranges[state.selectedProdukTerlaris]
+      const date = new Date(state.selectedProdukTerlaris)
+      const selectedDate = [
+        new Date(date.getFullYear(), date.getMonth(), 1),
+        new Date(date.getFullYear(), date.getMonth() + 1, 0),
+      ]
+      return selectedDate
     },
     partnerIncomeGraph(state) {
       return {
@@ -193,6 +197,7 @@ export default {
             params: {
               start_date: formatYmd(getters.selectedProdukTerlaris[0]),
               end_date: formatYmd(getters.selectedProdukTerlaris[1]),
+              limit: 3,
             },
           },
         )
