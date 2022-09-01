@@ -639,7 +639,7 @@
                   </td>
                   <td class="text-center align-top">
                     <p class="mb-[8px]">{{ items.total_sold }}</p>
-                    <div v-if="items.percentage >= 200" class="d-flex justify-content-center">
+                    <div v-if="items.percentage >= 0" class="d-flex justify-content-center">
                       <b-badge
                       class="text-success"
                       style="background-color:#DCF3EB;"
@@ -648,10 +648,6 @@
                         <img
                           src="@/assets/images/icons/arrow-going-up-alt.svg"
                           alt="arrow-going-up-alt"
-                        />
-                        <img
-                          src="@/assets/images/icons/arrow-going-down-alt.svg"
-                          alt="arrow-going-down-alt"
                         />
                       </div>
                     </div>
