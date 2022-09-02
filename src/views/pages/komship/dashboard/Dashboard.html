@@ -615,24 +615,57 @@
                         </b-row>
                         <span v-else class="font-bold text-muted">&mdash;</span>
                         <b-collapse :id="`collapseVariant${index}`" class="bg-light mx-[-1rem] p-1">
-                          <b-row v-for="option in items.options">
-                            <div class="text-center" :style="`width:${91 / items.variants.length}%`">
-                              {{ option.option_name }}
-                            </div>
-                            <div class="text-center" :style="`width:${91 / items.variants.length}%`">
-                              <p v-for="child in option.option_child" class="mb-[8px]">{{ child.option_name }}</p>
-                            </div>
-                            <div style="width:7%;">
-                              <div v-for="option2 in option.option_child">
-                                <div v-if="option2.option_child > 0">
-                                  <div v-for="option3 in option2.option_child">
-                                    <p class="mb-[8px]">{{ option2.total_sold }}</p>
+                          <div v-if="items.variants.length === 3">
+                            <div v-for="option in items.options" class="d-flex">
+                              <div class="text-center" style="width:30.33%;">
+                                {{ option.option_name }}
+                              </div>
+                              <div style="width:69.66%">
+                                <div v-for="child in option.option_child" class="d-flex">
+                                  <div class="text-center" style="width:48%;">
+                                    {{ child.option_name }}
+                                  </div>
+                                  <div style="width:48%">
+                                    <p v-for="child2 in child.option_child" class="text-center mb-[8px]">
+                                      {{ child2.option_name }}
+                                    </p>
+                                  </div>
+                                  <div style="width:4%">
+                                    <p v-for="child2 in child.option_child" class="text-center mb-[8px]">
+                                      {{ child2.total_sold }}
+                                    </p>
                                   </div>
                                 </div>
-                                <p v-else class="mb-[8px]">{{ option2.total_sold }}</p>
                               </div>
                             </div>
-                          </b-row>
+                          </div>
+                          <div v-else-if="items.variants.length === 2">
+                            <div v-for="option in items.options" class="d-flex">
+                              <div class="text-center" style="width:30.33%;">
+                                {{ option.option_name }}
+                              </div>
+                              <div style="width:69.66%">
+                                <div v-for="child in option.option_child" class="d-flex mb-[8px]">
+                                  <div class="text-center" style="width:96%;">
+                                    {{ child.option_name }}
+                                  </div>
+                                  <div style="width:4%">
+                                    {{ child.total_sold }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div v-else>
+                            <div v-for="option in items.options" class="d-flex mb-[8px]">
+                              <div class="text-center" style="width:96%;">
+                                {{ option.option_name }}
+                              </div>
+                              <div class="text-center" style="width:4%;">
+                                {{ option.total_sold }}
+                              </div>
+                            </div>
+                          </div>
                         </b-collapse>
                       </div>
                     </b-row>
