@@ -82,6 +82,8 @@ export default {
       resTarikSaldo: {},
 
       loadingSubmitTopup: false,
+      fieldwidth: '',
+      fieldheight: '',
     }
   },
   mounted() {
@@ -228,6 +230,14 @@ export default {
           this.$nextTick(() => {
             this.stepNow = 1
             this.modalTitle = 'Verifikasi PIN'
+            const mediaQuery = window.matchMedia('(max-width: 768px)')
+            if (mediaQuery.matches) {
+              this.fieldwidth = '40'
+              this.fieldheight = '44'
+            } else {
+              this.fieldwidth = '50'
+              this.fieldheight = '54'
+            }
           })
           break
         case 2:
