@@ -466,7 +466,7 @@
                                                     Tim Komship
                                                 </small>
                                             </div>
-                                            <div v-if="infoClaimRetur === false" class="d-flex align-items-center">
+                                            <div v-if="infoClaimRetur === false && claimReturIsActive === true" class="d-flex align-items-center">
                                                 <b-button class="btn-icon" size="sm" variant="flat-dark" @click="openPopupClaimRetur">
                                                     <small class="text-black" style="color: #08A0F7;">
                                                         <strong>Claim Retur</strong>
