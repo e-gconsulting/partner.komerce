@@ -7,6 +7,16 @@
       class="view-all-pickup-table"
       responsive
     >
+      <template #cell(date_submission)="data">
+        {{ data.item.date_submission }}<br>
+        <span class="d-flex text-secondary font-normal">
+          <img
+            src="@/assets/images/icons/warehouse.svg"
+            class="mr-[5px]"
+          >
+          {{ data.item.warehouse }}
+        </span>
+      </template>
 
       <template #cell(order_date)="dateData">
         <div class="view-all-pickup-date-text">
