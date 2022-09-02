@@ -137,6 +137,7 @@ export default {
       infoLinkClaimRetur: null,
       isDisableSubmitClaimRetur: true,
       notesRejectRetur: null,
+      claimReturIsActive: false,
     }
   },
   directives: {
@@ -161,6 +162,7 @@ export default {
   },
   methods: {
     fetchDetailTicket() {
+      this.infoClaimRetur = false
       this.$http_komship.get(`v1/ticket-partner/detail/${this.ticketId}`)
         .then(async response => {
           const { data } = response.data
@@ -177,6 +179,7 @@ export default {
               this.buttonClaimRetur = true
             }
           }
+          if (data.payment_method === 'COD') this.claimReturIsActive = true
           if (data.ticket_claim_retur !== 0) this.infoClaimRetur = true
           if (this.claimReturItem?.notes) this.notesRejectRetur = this.claimReturItem.notes
           this.dateClaimRetur = data.claim_retur?.created_at
@@ -657,39 +660,17 @@ export default {
     },
     async uploadFile(e) {
       this.isDisableSubmitClaimRetur = true
-      const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
-      this.fileProv = filterFile
-      await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.fileProv.length; i++) {
-          Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
-        }
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        }, 2000)
-      })
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.fileProv.length; i++) {
-        const formData = new FormData()
-        Object.assign(this.fileProv[i], { progressBar: true })
-        this.$forceUpdate()
-        formData.append('file', this.fileProv[i])
-        formData.append('claim_retur_id', this.fileProv[i].claimReturId)
-        this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
-          this.fileProv[i].progressBar = false
-          Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
-          this.isDisableSubmitClaimRetur = false
-          this.$forceUpdate()
+      if (e.target.files.length > 1) {
+        const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
+        const filterSizeFile = Array.from(filterFile).filter(item => Math.round(item.size / 1024) < 2048)
+        this.fileProv = filterSizeFile
+        await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.fileProv.length; i++) {
+            Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
+            Object.assign(this.fileProv[i], { isUploaded: false })
+          }
         }).catch(err => {
-          this.fileProv[i].progressBar = false
-          this.$forceUpdate()
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -700,43 +681,109 @@ export default {
             },
           }, 2000)
         })
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < this.fileProv.length; i++) {
+          const formData = new FormData()
+          Object.assign(this.fileProv[i], { progressBar: true })
+          this.$forceUpdate()
+          formData.append('file', this.fileProv[i])
+          formData.append('claim_retur_id', this.fileProv[i].claimReturId)
+          this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
+            this.fileProv[i].progressBar = false
+            Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+            this.isDisableSubmitClaimRetur = false
+            this.fileProv[i].isUploaded = true
+            this.$forceUpdate()
+          }).catch(err => {
+            this.fileProv[i].progressBar = false
+            this.$forceUpdate()
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+        }
+      }
+      if (e.target.files.length === 1) {
+        if (Math.round(e.target.files[0].size / 1024) < 2048) {
+          const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
+          const filterSizeFile = Array.from(filterFile).filter(item => Math.round(item.size / 1024) < 2048)
+          this.fileProv = filterSizeFile
+          await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
+          // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.fileProv.length; i++) {
+              Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
+              Object.assign(this.fileProv[i], { isUploaded: false })
+            }
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.fileProv.length; i++) {
+            const formData = new FormData()
+            Object.assign(this.fileProv[i], { progressBar: true })
+            this.$forceUpdate()
+            formData.append('file', this.fileProv[i])
+            formData.append('claim_retur_id', this.fileProv[i].claimReturId)
+            this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
+              this.fileProv[i].progressBar = false
+              Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+              this.isDisableSubmitClaimRetur = false
+              this.fileProv[i].isUploaded = true
+              this.$forceUpdate()
+            }).catch(err => {
+              this.fileProv[i].progressBar = false
+              this.$forceUpdate()
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+          }
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'File Max 2MB',
+              variant: 'danger',
+            },
+          }, 2000)
+        }
       }
     },
     async uploadFileAgain(e) {
       this.isDisableSubmitClaimRetur = true
-      const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
-      this.fileProv = Array.from(this.fileProv).concat(Array.from(filterFile))
-      await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.fileProv.length; i++) {
-          Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
-        }
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        }, 2000)
-      })
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.fileProv.length; i++) {
-        const formData = new FormData()
-        Object.assign(this.fileProv[i], { progressBar: true })
-        this.$forceUpdate()
-        formData.append('file', this.fileProv[i])
-        formData.append('claim_retur_id', this.fileProv[i].claimReturId)
-        this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
-          this.fileProv[i].progressBar = false
-          Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
-          this.isDisableSubmitClaimRetur = false
-          this.$forceUpdate()
+      if (e.target.files.length > 1) {
+        const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
+        const filterSizeFile = Array.from(filterFile).filter(item => Math.round(item.size / 1024) < 2048)
+        this.fileProv = Array.from(this.fileProv).concat(Array.from(filterSizeFile))
+        await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.fileProv.length; i++) {
+            Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
+            if (!this.fileProv[i].isUploaded) Object.assign(this.fileProv[i], { isUploaded: false })
+          }
         }).catch(err => {
-          this.fileProv[i].progressBar = false
-          this.$forceUpdate()
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -747,43 +794,108 @@ export default {
             },
           }, 2000)
         })
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < this.fileProv.length; i++) {
+          const formData = new FormData()
+          Object.assign(this.fileProv[i], { progressBar: true })
+          this.$forceUpdate()
+          formData.append('file', this.fileProv[i])
+          formData.append('claim_retur_id', this.fileProv[i].claimReturId)
+          this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
+            this.fileProv[i].progressBar = false
+            Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+            this.isDisableSubmitClaimRetur = false
+            this.fileProv[i].isUploaded = true
+            this.$forceUpdate()
+          }).catch(err => {
+            this.fileProv[i].progressBar = false
+            this.$forceUpdate()
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+        }
+      }
+      if (e.target.files.length === 1) {
+        if (Math.round(e.target.files[0].size / 1024) < 2048) {
+          const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
+          const filterSizeFile = Array.from(filterFile).filter(item => Math.round(item.size / 1024) < 2048)
+          this.fileProv = Array.from(this.fileProv).concat(Array.from(filterSizeFile))
+          await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
+          // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.fileProv.length; i++) {
+              Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
+              if (!this.fileProv[i].isUploaded) Object.assign(this.fileProv[i], { isUploaded: false })
+            }
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.fileProv.length; i++) {
+            const formData = new FormData()
+            Object.assign(this.fileProv[i], { progressBar: true })
+            this.$forceUpdate()
+            formData.append('file', this.fileProv[i])
+            formData.append('claim_retur_id', this.fileProv[i].claimReturId)
+            this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
+              this.fileProv[i].progressBar = false
+              Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+              this.isDisableSubmitClaimRetur = false
+              this.fileProv[i].isUploaded = true
+              this.$forceUpdate()
+            }).catch(err => {
+              this.fileProv[i].progressBar = false
+              this.$forceUpdate()
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+          }
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'File Max 2MB',
+              variant: 'danger',
+            },
+          }, 2000)
+        }
       }
     },
     async dragFile(e) {
       this.isDisableSubmitClaimRetur = true
-      const filterFile = Array.from(e.dataTransfer.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
-      this.fileProv = filterFile
-      await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.fileProv.length; i++) {
-          Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
-        }
-      }).catch(err => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: err,
-            variant: 'danger',
-          },
-        }, 2000)
-      })
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.fileProv.length; i++) {
-        const formData = new FormData()
-        Object.assign(this.fileProv[i], { progressBar: true })
-        this.$forceUpdate()
-        formData.append('file', this.fileProv[i])
-        formData.append('claim_retur_id', this.fileProv[i].claimReturId)
-        this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
-          this.fileProv[i].progressBar = false
-          Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
-          this.isDisableSubmitClaimRetur = false
-          this.$forceUpdate()
+      if (e.dataTransfer.files.length > 1) {
+        const filterFile = Array.from(e.dataTransfer.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
+        const filterSizeFile = Array.from(filterFile).filter(item => Math.round(item.size / 1024) < 2048)
+        this.fileProv = filterSizeFile
+        await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.fileProv.length; i++) {
+            Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
+          }
         }).catch(err => {
-          this.fileProv[i].progressBar = false
-          this.$forceUpdate()
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -794,6 +906,91 @@ export default {
             },
           }, 2000)
         })
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < this.fileProv.length; i++) {
+          const formData = new FormData()
+          Object.assign(this.fileProv[i], { progressBar: true })
+          this.$forceUpdate()
+          formData.append('file', this.fileProv[i])
+          formData.append('claim_retur_id', this.fileProv[i].claimReturId)
+          this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
+            this.fileProv[i].progressBar = false
+            Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+            this.isDisableSubmitClaimRetur = false
+            this.$forceUpdate()
+          }).catch(err => {
+            this.fileProv[i].progressBar = false
+            this.$forceUpdate()
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+        }
+      }
+      if (e.dataTransfer.files.length === 1) {
+        if (Math.round(e.dataTransfer.files[0].size / 1024) < 2048) {
+          const filterFile = Array.from(e.dataTransfer.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
+          const filterSizeFile = Array.from(filterFile).filter(item => Math.round(item.size / 1024) < 2048)
+          this.fileProv = filterSizeFile
+          await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
+          // eslint-disable-next-line no-plusplus
+            for (let i = 0; i < this.fileProv.length; i++) {
+              Object.assign(this.fileProv[i], { claimReturId: response.data.data.claim_retur })
+            }
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+          // eslint-disable-next-line no-plusplus
+          for (let i = 0; i < this.fileProv.length; i++) {
+            const formData = new FormData()
+            Object.assign(this.fileProv[i], { progressBar: true })
+            this.$forceUpdate()
+            formData.append('file', this.fileProv[i])
+            formData.append('claim_retur_id', this.fileProv[i].claimReturId)
+            this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
+              this.fileProv[i].progressBar = false
+              Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+              this.isDisableSubmitClaimRetur = false
+              this.$forceUpdate()
+            }).catch(err => {
+              this.fileProv[i].progressBar = false
+              this.$forceUpdate()
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+          }
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: 'File Max 2MB',
+              variant: 'danger',
+            },
+          }, 2000)
+        }
       }
     },
     deleteProvePreview(data) {
