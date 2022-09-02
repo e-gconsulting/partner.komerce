@@ -544,10 +544,10 @@
           <b-row class="justify-content-center mb-1">
             <CodeInput
               v-model="pin"
-              type="number"
               :loading="false"
               class="input"
               :type="visibilityPin"
+              onkeypress='return event.charCode >= 48 && event.charCode <= 57'
               @change="onChange"
               @complete="onComplete"
             />
