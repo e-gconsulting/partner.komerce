@@ -78,7 +78,7 @@ export default {
       rekTujuanState: null,
       obj: null,
       status: true,
-      visibilityPin: 'password',
+      visibilityPin: 'number',
       resTarikSaldo: {},
 
       loadingSubmitTopup: false,
