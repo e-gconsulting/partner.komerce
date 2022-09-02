@@ -67,7 +67,7 @@ export default [
       action: 'manage',
       breadcrumb: [
         {
-          // text: 'Detail Orderan Pickup',
+          text: 'Detail Orderan Pickup',
           active: true,
         },
       ],

@@ -314,7 +314,7 @@ export default {
             shorthand: true, // defaults to false
             dateFormat: 'Y-m-d', // defaults to "F Y"
             altFormat: 'F Y', // defaults to "F Y"
-            theme: 'dark', // defaults to "light"
+            theme: 'primary', // defaults to "light"
           }),
         ],
       },
@@ -347,7 +347,6 @@ export default {
       'topAdminOrders',
       'customerLoyals',
       'produkTerlarises',
-      'optionsProdukTerlaris',
       'optionsChart',
     ]),
     ...mapGetters('dashboard', ['partnerIncomeGraph']),
@@ -573,20 +572,23 @@ export default {
 
             this.visibilityPin = 'password'
           } catch (e) {
-            this.$swal({
-              title:
-                '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
-              text: e.message,
-              imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
-              showCloseButton: false,
-              focusConfirm: true,
-              confirmButtonText: 'Oke',
-              customClass: {
-                confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
-                popup: 'mr-2 ml-1',
-              },
-              buttonsStyling: false,
-            })
+            if (e.response.data.code === 400) {
+              this.$swal({
+                title:
+                  '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',
+                text:
+                  'Maaf, kamu tidak bisa melakukan penarikan saldo dikarenakan kamu masih memiliki antrian penarikan yang belum disetujui.',
+                imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
+                showCloseButton: false,
+                focusConfirm: true,
+                confirmButtonText: 'Oke',
+                customClass: {
+                  confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
+                  popup: 'mr-2 ml-1',
+                },
+                buttonsStyling: false,
+              })
+            }
             this.loadingConfirmationPin = false
           }
           break

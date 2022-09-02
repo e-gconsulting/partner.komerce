@@ -558,6 +558,13 @@
                 order.</b-popover
               >
             </div>
+            <div class="w-25 ml-auto">
+              <flat-pickr
+                v-model="selectedProdukTerlaris"
+                :config="configDateChart"
+                @input="handleChangeProdukTerlaris"
+              />
+            </div>
             <b-button
               variant="flat-dark"
               class="btn-icon"
@@ -572,84 +579,132 @@
             </b-button>
           </div>
           <div class="card-body">
-            <div class="w-25">
-              <b-form-group class="mb-0">
-                <v-select
-                  id="select_produk_terlaris"
-                  v-model="selectedProdukTerlaris"
-                  label="Bulan Ini"
-                  dir="ltr"
-                  :options="optionsProdukTerlaris"
-                  :clearable="false"
-                  @input="handleChangeProdukTerlaris"
-                />
-              </b-form-group>
-            </div>
-            <ul class="list-group list-group-flush">
-              <template v-if="produkTerlarises.length > 0">
-                <li
-                  v-for="produkTerlaris in produkTerlarises"
-                  :key="produkTerlarises.indexOf(produkTerlaris)"
-                  class="list-group-item px-0"
-                >
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div class="d-flex align-items-center">
-                      <img
-                        v-if="produkTerlaris.photo === null || produkTerlaris.photo === ''"
+            <table class="table table-light">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th class="px-0">Produk</th>
+                  <th class="text-center">Terjual</th>
+                </tr>
+              </thead>
+              <tbody v-if="produkTerlarises.length > 0">
+                <tr v-for="(items, index) in produkTerlarises">
+                  <td class="align-top">{{ index + 1 }}</td>
+                  <td class="px-0">
+                    <b-row>
+                      <div style="width:18%;">
+                        <img
+                        v-if="items.photo === null"
                         :src="require('@/assets/images/avatars/image-null.png')"
-                        class="image-product"
-                      />
-                      <img
+                        class="image-product">
+                        <img
                         v-else
-                        width="50px"
-                        class="img-fluid"
-                        :src="produkTerlaris.photo"
-                      />
-                      <div>
-                        <p class="list-text-1 h-text-dark ml-2 mb-0">
-                          {{ produkTerlaris.name }}
-                        </p>
-                        <p class="saldo-texts ml-2 mb-0">
-                          SKU: {{ produkTerlaris.kodeBrg }}
-                        </p>
+                        :src="items.photo"
+                        class="image-product">
+                      </div>
+                      <div class="px-1" style="width:82%;">
+                        <span class="my-auto">{{ items.name }}</span><br>
+                        <b-row v-if="items.variants.length > 0" v-b-toggle="`collapseVariant${index}`" class="text-center rounded-pill py-[5px] mt-[5px]" role="button">
+                          <div v-for="options in items.variants" :style="`width:${91 / items.variants.length}%`">
+                            {{ options.variant_name}}
+                          </div>
+                          <div style="width:7%;" class="bg-white text-black rounded-circle">
+                            <b-icon-chevron-down class="when-closed" />
+                            <b-icon-chevron-up class="when-open" />
+                          </div>
+                        </b-row>
+                        <span v-else class="font-bold text-muted">&mdash;</span>
+                        <b-collapse :id="`collapseVariant${index}`" class="bg-light mx-[-1rem] p-1">
+                          <div v-if="items.variants.length === 3">
+                            <div v-for="option in items.options" class="d-flex">
+                              <div class="text-center" style="width:30.33%;">
+                                {{ option.option_name }}
+                              </div>
+                              <div style="width:69.66%">
+                                <div v-for="child in option.option_child" class="d-flex">
+                                  <div class="text-center" style="width:48%;">
+                                    {{ child.option_name }}
+                                  </div>
+                                  <div style="width:48%">
+                                    <p v-for="child2 in child.option_child" class="text-center mb-[8px]">
+                                      {{ child2.option_name }}
+                                    </p>
+                                  </div>
+                                  <div style="width:4%">
+                                    <p v-for="child2 in child.option_child" class="text-center mb-[8px]">
+                                      {{ child2.total_sold }}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div v-else-if="items.variants.length === 2">
+                            <div v-for="option in items.options" class="d-flex">
+                              <div class="text-center" style="width:30.33%;">
+                                {{ option.option_name }}
+                              </div>
+                              <div style="width:69.66%">
+                                <div v-for="child in option.option_child" class="d-flex mb-[8px]">
+                                  <div class="text-center" style="width:96%;">
+                                    {{ child.option_name }}
+                                  </div>
+                                  <div style="width:4%">
+                                    {{ child.total_sold }}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div v-else>
+                            <div v-for="option in items.options" class="d-flex mb-[8px]">
+                              <div class="text-center" style="width:96%;">
+                                {{ option.option_name }}
+                              </div>
+                              <div class="text-center" style="width:4%;">
+                                {{ option.total_sold }}
+                              </div>
+                            </div>
+                          </div>
+                        </b-collapse>
+                      </div>
+                    </b-row>
+                  </td>
+                  <td class="text-center align-top">
+                    <p class="mb-[8px]">{{ items.total_sold }}</p>
+                    <div v-if="items.percentage >= 0" class="d-flex justify-content-center">
+                      <b-badge
+                      class="text-success"
+                      style="background-color:#DCF3EB;"
+                      pill>+{{ items.percentage }}%</b-badge>
+                      <div class="ml-[5px]">
+                        <img
+                          src="@/assets/images/icons/arrow-going-up-alt.svg"
+                          alt="arrow-going-up-alt"
+                        />
                       </div>
                     </div>
-                    <div class="right">
-                      <p class="list-text-2 h-text-dark mb-0">
-                        {{ produkTerlaris.penjualan }}
-                      </p>
-                      <div
-                        :class="
-                          `badge h-badge-${
-                            produkTerlaris.persentase >= 0 ? 'success' : 'danger'
-                          } rounded-pill font-weight-normal`
-                        "
-                      >
-                        {{ produkTerlaris.persentase >= 0 ? '+' : '' }}{{
-                        produkTerlaris.persentase }}%
+                    <div v-else class="d-flex justify-content-center">
+                      <b-badge
+                      class="text-danger"
+                      style="background-color:#FFEDED;"
+                      pill>{{ items.percentage }}%</b-badge>
+                      <div class="ml-[5px]">
+                        <img
+                          src="@/assets/images/icons/arrow-going-down-alt.svg"
+                          alt="arrow-going-down-alt"
+                        />
                       </div>
-                      <img
-                        v-if="produkTerlaris.persentase >= 0"
-                        src="@/assets/images/icons/arrow-going-up-alt.svg"
-                        alt="arrow-going-up-alt"
-                      />
-                      <img
-                        v-else
-                        src="@/assets/images/icons/arrow-going-down-alt.svg"
-                        alt="arrow-going-down-alt"
-                      />
                     </div>
-                  </div>
-                </li>
-              </template>
-              <template v-else>
-                <div class="text-center py-4">
-                  Tidak Ada Data
-                </div>
-              </template>
-            </ul>
+                  </td>
+                </tr>
+              </tbody>
+              <tbody v-else>
+                <tr>
+                  <td colspan="3" class="text-center p-2">Belum ada produk terjual</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
