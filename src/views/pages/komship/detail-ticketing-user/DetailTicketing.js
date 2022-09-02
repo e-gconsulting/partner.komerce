@@ -135,6 +135,8 @@ export default {
       infoClaimRetur: false,
 
       infoLinkClaimRetur: null,
+      isDisableSubmitClaimRetur: true,
+      notesRejectRetur: null,
     }
   },
   directives: {
@@ -171,12 +173,12 @@ export default {
             this.claimReturStatus = 'Claim Ditolak'
           }
           if (data.order_status === 'Retur' || data.order_status === 'Diterima') {
-            if (data.payment_method === 'COD') {
+            if (data.payment_method === 'COD' && this.claimReturItem === null) {
               this.buttonClaimRetur = true
             }
           }
-          if (this.claimReturItem?.created_at) this.infoClaimRetur = true
-          if (this.claimReturItem?.id) this.infoLinkClaimRetur = `${process.env.VUE_APP_BASE_URL_KOMSHIP}/v1/ticket-partner/claim-retur/attachment/${this.claimReturItem.id}`
+          if (data.ticket_claim_retur !== 0) this.infoClaimRetur = true
+          if (this.claimReturItem?.notes) this.notesRejectRetur = this.claimReturItem.notes
           this.dateClaimRetur = data.claim_retur?.created_at
           this.ticketStatus = data.ticket_status
           this.orderStatus = data.order_status
@@ -649,10 +651,12 @@ export default {
       this.$refs['popup-claim-retur'].show()
     },
     closePopupClaimRetur() {
+      this.isDisableSubmitClaimRetur = true
       this.fileProv = []
       this.$refs['popup-claim-retur'].hide()
     },
     async uploadFile(e) {
+      this.isDisableSubmitClaimRetur = true
       const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
       this.fileProv = filterFile
       await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
@@ -675,11 +679,13 @@ export default {
       for (let i = 0; i < this.fileProv.length; i++) {
         const formData = new FormData()
         Object.assign(this.fileProv[i], { progressBar: true })
+        this.$forceUpdate()
         formData.append('file', this.fileProv[i])
         formData.append('claim_retur_id', this.fileProv[i].claimReturId)
         this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
           this.fileProv[i].progressBar = false
           Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+          this.isDisableSubmitClaimRetur = false
           this.$forceUpdate()
         }).catch(err => {
           this.fileProv[i].progressBar = false
@@ -697,6 +703,7 @@ export default {
       }
     },
     async uploadFileAgain(e) {
+      this.isDisableSubmitClaimRetur = true
       const filterFile = Array.from(e.target.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
       this.fileProv = Array.from(this.fileProv).concat(Array.from(filterFile))
       await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
@@ -719,11 +726,13 @@ export default {
       for (let i = 0; i < this.fileProv.length; i++) {
         const formData = new FormData()
         Object.assign(this.fileProv[i], { progressBar: true })
+        this.$forceUpdate()
         formData.append('file', this.fileProv[i])
         formData.append('claim_retur_id', this.fileProv[i].claimReturId)
         this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
           this.fileProv[i].progressBar = false
           Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+          this.isDisableSubmitClaimRetur = false
           this.$forceUpdate()
         }).catch(err => {
           this.fileProv[i].progressBar = false
@@ -741,6 +750,7 @@ export default {
       }
     },
     async dragFile(e) {
+      this.isDisableSubmitClaimRetur = true
       const filterFile = Array.from(e.dataTransfer.files).filter(item => item.type === 'image/png' || item.type === 'image/jpg' || item.type === 'image/jpeg2000' || item.type === 'image/jpeg')
       this.fileProv = filterFile
       await this.$http_komship.post(`/v1/ticket-partner/claim-retur/store/${this.ticketId}`).then(response => {
@@ -763,11 +773,13 @@ export default {
       for (let i = 0; i < this.fileProv.length; i++) {
         const formData = new FormData()
         Object.assign(this.fileProv[i], { progressBar: true })
+        this.$forceUpdate()
         formData.append('file', this.fileProv[i])
         formData.append('claim_retur_id', this.fileProv[i].claimReturId)
         this.$http_komship.post('/v1/ticket-partner/claim-retur/upload/image-temp', formData).then(response => {
           this.fileProv[i].progressBar = false
           Object.assign(this.fileProv[i], { returImageId: response.data.data.retur_image_id })
+          this.isDisableSubmitClaimRetur = false
           this.$forceUpdate()
         }).catch(err => {
           this.fileProv[i].progressBar = false
@@ -785,12 +797,13 @@ export default {
       }
     },
     deleteProvePreview(data) {
+      this.isDisableSubmitClaimRetur = true
       const findIndexFile = Array.from(this.fileProv).findIndex(file => file.name === data.name)
       this.fileProv = Array.from(this.fileProv)
       this.fileProv[findIndexFile].progressBar = true
       this.$http_komship.delete(`/v1/ticket-partner/claim-retur/delete/image/${data.returImageId}`).then(response => {
         this.fileProv.splice(findIndexFile, 1)
-        this.fileProv[findIndexFile].progressBar = false
+        this.isDisableSubmitClaimRetur = false
         this.$forceUpdate()
       }).catch(err => {
         this.$toast({
@@ -810,6 +823,8 @@ export default {
       this.$refs['popup-have-submitted-retur-claim'].hide()
     },
     nextSuccessReturClaim() {
+      this.isDisableSubmitClaimRetur = true
+      this.fetchDetailTicket()
       this.$refs['popup-success-claim-retur'].hide()
     },
     returStatusVariant(data) {
@@ -849,14 +864,13 @@ export default {
         }
       })
     },
-    fetchProveFile() {
-      this.$http_komship.get(this.infoLinkClaimRetur).then(response => {
-        console.log(response)
-        const routeData = this.$router.resolve({ name: 'file-claim-retur' })
-        window.open(routeData.href, '_blank')
-      }).catch(err => {
-        console.log(err)
-      })
+    getLinkOnNotes(chat) {
+      const urlify = text => {
+        const urlRegex = /(https?:\/\/[^\s]+)/g
+        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+      }
+      const link = urlify(chat)
+      return link
     },
   },
 }

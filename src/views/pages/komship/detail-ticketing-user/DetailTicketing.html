@@ -96,23 +96,21 @@
                                                 <span :class="returStatusVariant(claimReturStatus)">
                                                     {{ orderStatus === 'Retur' ? claimReturStatus : '' }}
                                                 </span>
-                                                <img
-                                                    id="claim__retur__link"
-                                                    src="@/assets/images/icons/info-circle.svg"
-                                                />
-                                                <b-popover
-                                                    triggers="hover"
-                                                    target="claim__retur__link"
-                                                    placement="top"
-                                                    >
-                                                        <span>
-                                                            Tooltips dari catatan (alasan) claim di tolak admin
-                                                            <span class="text-info cursor-pointer" size="sm" @click="fetchProveFile">
-                                                                {{ infoLinkClaimRetur }}
+                                                <div v-if="claimReturStatus === 'Claim Ditolak'">
+                                                    <img
+                                                        id="claim__retur__link"
+                                                        src="@/assets/images/icons/info-circle.svg"
+                                                    />
+                                                    <b-popover
+                                                        triggers="hover"
+                                                        target="claim__retur__link"
+                                                        placement="top"
+                                                        >
+                                                            <span v-html="getLinkOnNotes(notesRejectRetur)">
                                                             </span>
-                                                        </span>
-                                                    </b-popover
-                                                >
+                                                        </b-popover
+                                                    >
+                                                </div>
                                             </b-row>
                                             <b-badge v-if="orderStatus === 'Rusak'" :variant="orderStatusVariant(orderStatus)" :style="orderStatus === 'Rusak' ? 'background-color: #FCBEBE!important; color: #E31A1A!important' : '' ">
                                                 {{ orderStatus === 'Rusak' ? 'Paket Rusak' : orderStatus }}
@@ -468,7 +466,7 @@
                                                     Tim Komship
                                                 </small>
                                             </div>
-                                            <div v-if="buttonClaimRetur" class="d-flex align-items-center">
+                                            <div v-if="infoClaimRetur === false" class="d-flex align-items-center">
                                                 <b-button class="btn-icon" size="sm" variant="flat-dark" @click="openPopupClaimRetur">
                                                     <small class="text-black" style="color: #08A0F7;">
                                                         <strong>Claim Retur</strong>
@@ -998,7 +996,7 @@
                 </label>
             </b-col>
             <b-col cols="6">
-                <b-button variant="primary" block @click="submitClaimRetur">
+                <b-button :disabled="isDisableSubmitClaimRetur" variant="primary" block @click="submitClaimRetur">
                     <b-spinner v-if="isUploading" small />
                     Claim Retur
                 </b-button>

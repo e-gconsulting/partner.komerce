@@ -271,6 +271,7 @@ export default
       orderStatusFilterItem: [],
 
       filterClaimReturValue: null,
+      countFilterStatus: 0,
     }
   },
   watch: {
@@ -548,8 +549,10 @@ export default
       const findObj = this.ticketStatus.findIndex(items => items === data.value)
       if (this.ticketStatusItems[findIndexObj].onCheck === true) {
         this.ticketStatus.push(data.value)
+        this.countFilterStatus += 1
       } else {
         this.ticketStatus.splice(findObj, 1)
+        this.countFilterStatus -= 1
       }
       this.fetchTicket()
     },
@@ -856,17 +859,21 @@ export default
       if (item === 'diclaim') {
         if (this.filterClaimRetur.onCheck === true) {
           this.filterClaimReturValue = 1
+          this.countFilterStatus += 1
         }
         if (this.filterClaimRetur.onCheck === false) {
           this.filterClaimReturValue = null
+          this.countFilterStatus -= 1
         }
       } else if (item !== 'diclaim') {
         if (item.onCheck === true) {
           this.orderStatusFilterItem.push(item.label)
+          this.countFilterStatus += 1
         }
         if (item.onCheck === false) {
           const findIndex = this.orderStatusFilterItem.findIndex(items => items === item.label)
           this.orderStatusFilterItem.splice(findIndex, 1)
+          this.countFilterStatus -= 1
         }
       }
       this.fetchTicket()
