@@ -543,11 +543,11 @@
           </p>
           <b-row class="justify-content-center mb-1">
             <CodeInput
+              style="-webkit-text-security: disc"
               v-model="pin"
               :loading="false"
               class="input"
               :type="visibilityPin"
-              onkeypress='return event.charCode >= 48 && event.charCode <= 57'
               @change="onChange"
               @complete="onComplete"
             />
