@@ -438,7 +438,7 @@
   </b-modal>
   <b-modal
     id="modal-keuangan"
-    body-class="px-3 py-2"
+    body-class="px-2 py-2"
     hide-header
     hide-footer
     centered
@@ -545,6 +545,8 @@
             <CodeInput
               style="-webkit-text-security: disc"
               v-model="pin"
+              :fieldWidth ="fieldwidth"
+              :fieldHeight ="fieldheight"
               :loading="false"
               class="input"
               :type="visibilityPin"
