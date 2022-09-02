@@ -112,7 +112,7 @@
           }}</span>
         </template>
         <template #cell(transaction_type)="data">
-          <span v-if="data.item.transaction_type === 'topup'">
+          <span v-if="data.item.transaction_type === 'topup' && data.item.claim_retur === null">
             Top Up Saldo
           </span>
           <span v-if="data.item.transaction_type === 'shopping'">
@@ -316,6 +316,48 @@
                   size="sm"
                   variant="flat-dark"
                   @click="copyResi(data.item.cnote)"
+                >
+                  <img
+                    id="infoSaldo"
+                    src="@/assets/images/icons/icons-copy.svg"
+                  >
+                </b-button>
+              </b-row>
+            </b-popover>
+          </span>
+          <span
+            v-if="
+              data.item.claim_retur !== null
+            "
+          >
+            Orderan COD (<span class="text-muted">Claim Retur</span>)<b-row>
+              <img
+                :src="data.item.shipment_image_path"
+                width="70"
+              >
+              <img
+                :id="`${data.index}-infoSaldo`"
+                src="@/assets/images/icons/info-circle.svg"
+              >
+            </b-row>
+            <b-popover
+              triggers="hover"
+              :target="`${data.index}-infoSaldo`"
+              placement="bottomleft"
+            >
+              <b-row class="px-2 align-items-center">
+                <span class="text-black">
+                  <strong>
+                    Nomor Resi
+                  </strong>
+                  :
+                </span>
+                <span class="text-black mr-1">{{ data.item.claim_retur.no_resi }}</span>
+                <b-button
+                  class="btn-icon"
+                  size="sm"
+                  variant="flat-dark"
+                  @click="copyResi(data.item.claim_retur.no_resi)"
                 >
                   <img
                     id="infoSaldo"
