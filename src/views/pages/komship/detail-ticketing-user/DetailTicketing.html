@@ -945,7 +945,7 @@
                         </h5>
                     </b-row>
                     <b-row class="justify-content-center text-center">
-                        <span style="color: #C2C2C2;">file berupa JPG, JPEG2000, PNG</span>
+                        <span style="color: #C2C2C2;">file berupa JPG, JPEG2000, PNG <span class="text-primary">Max 2MB</span></span>
                     </b-row>
                   <div v-if="fileProv.length">
                     <ul v-for="(file, index) in fileProv" :key="index+1">
@@ -960,7 +960,7 @@
                 <div v-if="fileProv.length" class="d-flex align-items-start flex-wrap">
                     <div v-for="(file, index) in fileProv" :key="index+1">
                         <b-overlay
-                            :show="file.progressBar"
+                            :show="file.progressBar === true && file.isUploaded === false"
                             spinner-variant="primary"
                             variant="light"
                             blur="0"
