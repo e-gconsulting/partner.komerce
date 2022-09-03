@@ -137,6 +137,7 @@ export default {
       infoLinkClaimRetur: null,
       isDisableSubmitClaimRetur: true,
       notesRejectRetur: null,
+      claimReturIsActive: false,
     }
   },
   directives: {
@@ -161,6 +162,7 @@ export default {
   },
   methods: {
     fetchDetailTicket() {
+      this.infoClaimRetur = false
       this.$http_komship.get(`v1/ticket-partner/detail/${this.ticketId}`)
         .then(async response => {
           const { data } = response.data
@@ -177,6 +179,7 @@ export default {
               this.buttonClaimRetur = true
             }
           }
+          if (data.payment_method === 'COD') this.claimReturIsActive = true
           if (data.ticket_claim_retur !== 0) this.infoClaimRetur = true
           if (this.claimReturItem?.notes) this.notesRejectRetur = this.claimReturItem.notes
           this.dateClaimRetur = data.claim_retur?.created_at
