@@ -47,6 +47,7 @@ export default {
         startDate: last30,
         endDate: today,
       },
+      isVisibility: true,
       locale: {
         format: 'dd/mm/yyyy',
         daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
@@ -278,7 +279,7 @@ export default {
               }
             })
 
-            this.visibilityPin = 'password'
+            this.visibilityPin = 'number'
           } catch (e) {
             this.$swal({
               title:
@@ -375,11 +376,7 @@ export default {
       })
     },
     toggleVisibilityPin() {
-      if (this.visibilityPin === 'password') {
-        this.visibilityPin = 'text'
-      } else {
-        this.visibilityPin = 'password'
-      }
+      this.isVisibility = !this.isVisibility
     },
     onChange(v) {
       this.pin = v
