@@ -486,6 +486,7 @@
               v-model="nominal"
               type="tel"
               data-type="currency"
+              autocomplete="off"
               required
               class="h-text-sm h-text-dark"
               :state="nominalState"
@@ -543,7 +544,7 @@
           </p>
           <b-row class="justify-content-center mb-1">
             <CodeInput
-              style="-webkit-text-security: disc"
+              :style="isVisibility ?'-webkit-text-security: disc' : '-webkit-text-security: none'"
               v-model="pin"
               :fieldWidth ="fieldwidth"
               :fieldHeight ="fieldheight"
@@ -559,7 +560,7 @@
             <b-button
               variant="flat-primary"
               class="btn-icon"
-              @click="toggleVisibilityPin"
+              @click="toggleVisibilityPin()"
             >
               Tampilkan
             </b-button>
@@ -568,6 +569,7 @@
             <div class="text-center">
               <button
                 type="submit"
+                value="Submit"
                 class="btn btn-primary d-block m-auto"
               >
                 Konfirmasi
