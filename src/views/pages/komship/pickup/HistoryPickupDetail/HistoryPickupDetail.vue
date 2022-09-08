@@ -876,10 +876,8 @@ import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import vSelect from 'vue-select'
 import { dateFormat } from '@core/mixins/ui/date'
-import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
-import AddPickupPrintPanel from '../AddPickupPrintPanel.vue'
+import AddPickupPrintPanel from './AddPickupPrintPanel.vue'
 
 export default {
 
@@ -899,7 +897,6 @@ export default {
     BPagination,
     BCollapse,
     BSpinner,
-    // AddPickupPopupPrint,
     AddPickupPrintPanel,
     vSelect,
   },
@@ -1407,8 +1404,8 @@ export default {
 </style>
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
-  @import '../add-pickup.scss';
-  @import '../add-pickup-detail.scss';
+  @import '../HistoryPickup/add-pickup.scss';
+  @import '../HistoryPickup/add-pickup-detail.scss';
 
   [dir] .expand-button-variation {
     text-align: right;
