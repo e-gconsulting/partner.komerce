@@ -144,6 +144,7 @@ export default {
     },
     showTopUpModal() {
       this.$bvModal.show('modalTopUp')
+      this.changeAttr()
     },
     async topUpSaldo() {
       this.loadingSubmitTopup = true
@@ -183,6 +184,13 @@ export default {
     showModal() {
       this.resetModal()
       this.$bvModal.show('modal-keuangan')
+      this.changeAttr()
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
     closeModal() {
       this.$bvModal.hide('modalTopUp')
