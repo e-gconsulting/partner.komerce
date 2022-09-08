@@ -6,6 +6,7 @@ import { toInteger } from 'lodash'
 import imageNull from '@/assets/images/avatars/image-null.png'
 import iconWarning from '@/assets/images/icons/warning.svg'
 import iconSuccess from '@/assets/images/icons/success.svg'
+import order from '@/navigation/vertical/order'
 
 export default {
   components: { flatPickr, LottieAnimation },
@@ -17,7 +18,7 @@ export default {
       pickupTime: '',
       vehicle: '',
       order: [],
-      tokens: Math.random().toString(36).substring(2, 7),
+      token: Math.random().toString(36).substring(2, 7),
       addressList: [],
       vehicleList: [],
       fieldProductPreview: [
@@ -62,8 +63,9 @@ export default {
         altInputClass: 'bg-white form-control',
         locale: Indonesian,
       },
-      submitProgres: 0,
-      submitProgresStatus: true,
+      submitProgress: 0,
+      submitStatus: true,
+      submitPercentage: 0,
     }
   },
   created() {
@@ -284,25 +286,26 @@ export default {
       e.target.src = imageNull
     },
     resetField() {
+      localStorage.removeItem('pickupAddress')
       this.address = []
       this.getAddressList()
       this.pickupDate = ''
       this.pickupTime = ''
       this.getCurrentDate()
-      this.setPickupVehicle()
+      this.setPickupVehicle('')
       this.itemProductPreview = []
       this.order = []
       this.itemOrderList = []
       localStorage.removeItem('pickupOrder')
     },
     generateToken() {
-      let result = ' '
+      let result = ''
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
       const charactersLength = characters.length
       for (let i = 0; i < 15; i += 1) {
         result += characters.charAt(Math.floor(Math.random() * charactersLength))
       }
-      this.tokens = result
+      this.token = result
     },
     onSubmitPickup() {
       this.$swal({
@@ -321,12 +324,13 @@ export default {
         }
       })
     },
-    submitPickup() {
-      this.submitProgresStatus = true
+    async submitPickup() {
+      this.submitStatus = true
       this.$bvModal.show('modalSubmitPickup')
-      for (let i = this.submitProgres; i < this.order.length; i += 1) {
+      for (let i = this.submitProgress; i < this.order.length; i += 1) {
         try {
-          const submit = this.$http_komship.post(`/v2/pickup/${this.profile.partner_id}/store`, ({
+          // eslint-disable-next-line no-await-in-loop
+          const submit = await this.$http_komship.post(`/v3/pickup/${this.profile.partner_id}/store`, ({
             partner_name: this.profile.user_fullname,
             pickup_date: this.pickupDate.toISOString().split('T')[0],
             pickup_time: this.pickupTime.replace(/\s/g, ''),
@@ -335,13 +339,16 @@ export default {
             vehicle: this.vehicle,
             address_id: this.address.address_id,
             address_detail: this.order[i].detail_address,
-            orders: this.order[i].order_id,
-            tokens: this.tokens,
+            order: this.order[i].order_id,
+            token: this.token,
           }))
           if (submit.data.code === 200) {
-            this.submitProgres += 1
+            this.submitProgress += 1
+            this.submitPercentage = Math.floor(((i + 1) * 100) / this.order.length)
             if (i === this.order.length - 1) {
               this.resetField()
+              this.$bvModal.hide('modalSubmitPickup')
+              this.submitPercentage = 0
               this.$swal({
                 html: `<span class="text-[16px] w-[564px]">
                 Pastikan <b>paket anda siap</b> untuk dipickup. Jam penjemputan yang kamu pilih <b>hanyalah estimasi</b>, kurir akan datang dan menghubungi di kisaran jam tersebut</span>`,
@@ -350,9 +357,12 @@ export default {
                 confirmButtonClass: 'btn btn-primary',
               })
             }
+          } else {
+            this.submitStatus = false
+            break
           }
         } catch (error) {
-          this.submitProgresStatus = false
+          this.submitStatus = false
           break
         }
       }
