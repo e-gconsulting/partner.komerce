@@ -7,7 +7,7 @@
       <p class="text-[20px]">
         Penjemputan
       </p>
-      <hr class="border border-[#C2C2C2]">
+      <hr class="border border-[#C2C2C2] my-1">
       <b-row class="mb-1">
         <b-col md="2">
           Alamat
