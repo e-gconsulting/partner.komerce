@@ -211,9 +211,9 @@
       <b-alert
         show
         variant="primary"
-        class="p-1 mt-2 border border-[#E31A1A]"
+        class="p-1 mt-2 border border-[#E31A1A] text-[16px] max-w-[625px]"
       >
-        Penarikan saldo kamu memerlukan review oleh pihak admin, dikarenakan adanya kejanggalan dalam pendapatan kamu.
+        *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
       </b-alert>
       <b-row class="mt-2 justify-content-end">
         <b-button
@@ -225,7 +225,7 @@
         <b-button
           variant="primary"
           class="ml-1"
-          :disabled="order.length < 1 || vehicle === ''"
+          :disabled="order.length < 1 || vehicle === '' || address.length < 1"
           @click="onSubmitPickup"
         >
           Ajukan Pickup
@@ -475,14 +475,14 @@
       centered
       hide-header
       hide-footer
-      :no-close-on-backdrop="submitProgresStatus"
+      :no-close-on-backdrop="submitStatus"
     >
       <lottie-animation
         path="animation/pickup-request.json"
         style="margin-top:-100px"
       />
       <div
-        v-if="submitProgresStatus"
+        v-if="submitStatus"
         class="mt-[-110px] mb-2"
       >
         <div class="mb-1">
@@ -508,7 +508,7 @@
               height="20px"
               variant="success"
               style="background-color:#F4F4F4"
-              :value="Math.floor((submitProgres * 100) / order.length)"
+              :value="submitPercentage"
             />
           </div>
         </div>
@@ -541,13 +541,13 @@
                 height="20px"
                 variant="danger"
                 style="background-color:#F4F4F4"
-                :value="Math.floor((submitProgres * 100) / order.length)"
+                :value="submitPercentage"
               />
             </div>
           </div>
         </div>
         <b-button
-          v-if="!submitProgressStatus"
+          v-if="!submitStatus"
           variant="outline-primary"
           size="sm"
           block
