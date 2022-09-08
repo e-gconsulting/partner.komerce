@@ -170,6 +170,19 @@ export default {
         .then(res => {
           const { data } = res.data
           this.addressList = data
+          if (this.addressList.length < 1) {
+            this.$swal({
+              html: '<span class="text-[18px]">Tambahkan Alamat Pick Up untuk melanjutkan kegiatan tambah order.</span>',
+              imageUrl: iconWarning,
+              confirmButtonText: 'Tambahkan Alamat Pickup',
+              confirmButtonClass: 'btn btn-primary',
+              allowOutsideClick: false,
+            }).then(result => {
+              if (result.isConfirmed) {
+                this.$router.push('/gudangku')
+              }
+            })
+          }
           if (this.address.length < 1) {
             const defaultAddress = data.find(items => items.is_default === 1)
             if (defaultAddress && this.address.length < 1) {
