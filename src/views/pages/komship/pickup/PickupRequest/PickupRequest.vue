@@ -7,7 +7,7 @@
       <p class="text-[20px]">
         Penjemputan
       </p>
-      <hr class="border border-[#C2C2C2]">
+      <hr class="border border-[#C2C2C2] my-1">
       <b-row class="mb-1">
         <b-col md="2">
           Alamat
@@ -139,7 +139,18 @@
         </b-col>
       </b-row>
       <b-row class="mb-3">
-        <b-col>Orderan</b-col>
+        <b-col md="2">
+          Orderan
+        </b-col>
+        <b-col md="3">
+          <b-button
+            variant="primary"
+            :disabled="!address"
+            @click="getOrderList"
+          >
+            Pilih Orderan
+          </b-button>
+        </b-col>
       </b-row>
       <b-table
         bordered
@@ -199,13 +210,10 @@
           md="6"
           class="d-flex justify-content-end"
         >
-          <b-button
-            variant="primary"
-            :disabled="!address"
-            @click="getOrderList"
-          >
-            Pilih Orderan
-          </b-button>
+          <span
+            v-if="totalProduct > 0"
+            class="text-[16px] font-bold"
+          >Total Produk : {{ totalProduct }}</span>
         </b-col>
       </b-row>
       <b-alert
@@ -458,7 +466,7 @@
             :disabled="selectedOrder.length < 1"
             @click="submitSelectedOrder"
           >
-            Submit <span v-if="selectedOrder.length > 0">({{ selectedOrder.length }})</span>
+            Simpan <span v-if="selectedOrder.length > 0">({{ selectedOrder.length }})</span>
           </b-button>
           <b-button
             variant="outline-primary"
