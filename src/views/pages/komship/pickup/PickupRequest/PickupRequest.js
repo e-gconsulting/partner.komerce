@@ -6,7 +6,6 @@ import { toInteger } from 'lodash'
 import imageNull from '@/assets/images/avatars/image-null.png'
 import iconWarning from '@/assets/images/icons/warning.svg'
 import iconSuccess from '@/assets/images/icons/success.svg'
-import order from '@/navigation/vertical/order'
 
 export default {
   components: { flatPickr, LottieAnimation },
@@ -18,7 +17,7 @@ export default {
       pickupTime: '',
       vehicle: '',
       order: [],
-      token: Math.random().toString(36).substring(2, 7),
+      token: '',
       addressList: [],
       vehicleList: [],
       fieldProductPreview: [
