@@ -466,7 +466,7 @@
             :disabled="selectedOrder.length < 1"
             @click="submitSelectedOrder"
           >
-            Submit <span v-if="selectedOrder.length > 0">({{ selectedOrder.length }})</span>
+            Simpan <span v-if="selectedOrder.length > 0">({{ selectedOrder.length }})</span>
           </b-button>
           <b-button
             variant="outline-primary"
