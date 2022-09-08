@@ -15,7 +15,7 @@ export default {
       address: [],
       pickupDate: '',
       pickupTime: '',
-      vehicle: '',
+      vehicle: 'CAR',
       order: [],
       token: '',
       addressList: [],
@@ -198,6 +198,7 @@ export default {
         await this.getAddressList()
       }
       this.$bvModal.show('modalSelectAddress')
+      this.changeAttr()
     },
     onSelectAddress(data) {
       this.$bvModal.hide('modalSelectAddress')
@@ -235,6 +236,7 @@ export default {
         this.selectedOrder = this.order
       }
       this.$bvModal.show('modalSelectOrder')
+      this.changeAttr()
     },
     getNextOrderList(e) {
       if (e.target.scrollTop + e.target.clientHeight
@@ -339,6 +341,7 @@ export default {
     async submitPickup() {
       this.submitStatus = true
       this.$bvModal.show('modalSubmitPickup')
+      this.changeAttr()
       for (let i = this.submitProgress; i < this.order.length; i += 1) {
         try {
           // eslint-disable-next-line no-await-in-loop
@@ -378,6 +381,12 @@ export default {
           break
         }
       }
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
   },
 }
