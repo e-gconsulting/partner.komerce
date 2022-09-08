@@ -211,9 +211,9 @@
       <b-alert
         show
         variant="primary"
-        class="p-1 mt-2 border border-[#E31A1A]"
+        class="p-1 mt-2 border border-[#E31A1A] text-[16px] max-w-[625px]"
       >
-        Penarikan saldo kamu memerlukan review oleh pihak admin, dikarenakan adanya kejanggalan dalam pendapatan kamu.
+        *Pastikan produk yang kamu masukan sudah tepat sebelum di ajukan
       </b-alert>
       <b-row class="mt-2 justify-content-end">
         <b-button
