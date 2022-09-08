@@ -20,6 +20,7 @@ export default {
       token: '',
       addressList: [],
       vehicleList: [],
+      totalProduct: 0,
       fieldProductPreview: [
         {
           key: 'product_name', label: 'Produk', thClass: 'pl-0', tdClass: 'pl-0',
@@ -267,6 +268,7 @@ export default {
           product.push(items)
         })
       })
+      this.totalProduct = product.length
       this.itemProductPreview = product.slice(0, 2)
       this.$bvModal.hide('modalSelectOrder')
       localStorage.setItem('pickupOrder', JSON.stringify(this.order))
