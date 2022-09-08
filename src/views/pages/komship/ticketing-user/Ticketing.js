@@ -451,6 +451,7 @@ export default
       this.$refs.formRules.validate().then(success => {
         if (success) {
           this.$refs['loading-create-ticket'].show()
+          this.changeAttr()
           this.$refs['modal-create-ticket'].hide()
           const formData = new FormData()
           formData.append('no_resi', this.noResi)
@@ -480,6 +481,7 @@ export default
             .catch(err => {
               this.$refs['loading-create-ticket'].hide()
               this.$refs['modal-failure-create-ticket'].show()
+              this.changeAttr()
             })
         }
       })
@@ -698,6 +700,7 @@ export default
           Notification.requestPermission().then(permission => {
             if (permission === 'denied' || permission === 'default') {
               this.$refs['modal-alert-notification'].show()
+              this.changeAttr()
             }
             if (!('permission' in Notification)) {
               Notification.permission = permission
@@ -716,6 +719,7 @@ export default
         }
       }).catch(() => {
         this.$refs['modal-alert-notification'].show()
+        this.changeAttr()
       })
     },
     convertTicketStatus(data) {
@@ -767,6 +771,7 @@ export default
     },
     showModalCreateTicket() {
       this.$refs['modal-create-ticket'].show()
+      this.changeAttr()
     },
     getDateCreate(data) {
       const date = moment(data).format('DD MMMM YYYY')
@@ -790,6 +795,7 @@ export default
     },
     handlePopupCreateTicket() {
       this.$refs['modal-create-ticket'].show()
+      this.changeAttr()
       this.$refs['modal-failure-create-ticket'].hide()
     },
     getStyleTicketNo(data) {
@@ -877,6 +883,12 @@ export default
         }
       }
       this.fetchTicket()
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
   },
 }

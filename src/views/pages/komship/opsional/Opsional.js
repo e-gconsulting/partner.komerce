@@ -174,6 +174,7 @@ export default {
     setCustomLabel() {
       if (this.customLabel === false) {
         this.$refs['modal-set-custom-label'].show()
+        this.changeAttr()
       }
       if (this.customLabel && this.isNotSetActive) {
         this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
@@ -518,6 +519,12 @@ export default {
             },
           }, 2000)
         })
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
   },
 }

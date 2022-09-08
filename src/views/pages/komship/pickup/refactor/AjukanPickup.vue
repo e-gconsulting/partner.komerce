@@ -1085,6 +1085,7 @@ export default {
     },
     openPopUpAddress() {
       this.$refs['popup-address'].show()
+      this.changeAttr()
     },
     getDefaultAddress(data) {
       return data.is_default === 1
@@ -1103,6 +1104,7 @@ export default {
     },
     chooseOrder() {
       this.$bvModal.show('popupOrder')
+      this.changeAttr()
     },
     getListOrderByPartner() {
       const partnerId = this.profile.partner_id
@@ -1130,6 +1132,7 @@ export default {
     submitPickup() {
       this.selectedOrdersId = []
       this.$refs['modal-animate-pickup'].show()
+      this.changeAttr()
       setTimeout(() => {
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.selectedOrderToStore.length; x++) {
@@ -1303,6 +1306,12 @@ export default {
         }
       }
       this.timeValue = hours
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
   },
 }
