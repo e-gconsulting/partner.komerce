@@ -47,6 +47,7 @@ export default {
         startDate: last30,
         endDate: today,
       },
+      isVisibility: true,
       locale: {
         format: 'dd/mm/yyyy',
         daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
@@ -143,6 +144,7 @@ export default {
     },
     showTopUpModal() {
       this.$bvModal.show('modalTopUp')
+      this.changeAttr()
     },
     async topUpSaldo() {
       this.loadingSubmitTopup = true
@@ -182,6 +184,13 @@ export default {
     showModal() {
       this.resetModal()
       this.$bvModal.show('modal-keuangan')
+      this.changeAttr()
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
     closeModal() {
       this.$bvModal.hide('modalTopUp')
@@ -278,7 +287,7 @@ export default {
               }
             })
 
-            this.visibilityPin = 'password'
+            this.visibilityPin = 'number'
           } catch (e) {
             this.$swal({
               title:
@@ -375,11 +384,7 @@ export default {
       })
     },
     toggleVisibilityPin() {
-      if (this.visibilityPin === 'password') {
-        this.visibilityPin = 'text'
-      } else {
-        this.visibilityPin = 'password'
-      }
+      this.isVisibility = !this.isVisibility
     },
     onChange(v) {
       this.pin = v
