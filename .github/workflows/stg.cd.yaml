@@ -34,12 +34,10 @@ jobs:
         with: 
           name: dist-folder
           path: ./dist/
-      - name: Deploy to dev.partner.komerce.id
+      - name: Deploy to internal.partner.komerce.id
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with: 
-          server: 103.31.39.57
-          username: komer8334
-          password: komerce2022
-          port: 21
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
           local-dir: ./dist/
-          server-dir: ./internal.my.komerce.my.id/
+          server-dir: ./internal.partner.komerce.id/
