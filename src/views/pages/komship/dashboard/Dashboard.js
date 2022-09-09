@@ -427,6 +427,7 @@ export default {
     },
     showTopUpModal() {
       this.$bvModal.show('modalTopUp')
+      this.changeAttr()
     },
     async topUpSaldo() {
       this.loadingSubmitTopUp = true
@@ -442,6 +443,7 @@ export default {
           )
         }
         this.$refs['modal-after-topup'].show()
+        this.changeAttr()
         this.loadingSubmitTopUp = false
       } catch (e) {
         this.$swal({
@@ -473,8 +475,10 @@ export default {
       this.resetModal()
       if (this.rekTujuanOptions.length === 0) {
         this.$bvModal.show('modal-notif-rekTujuanBlmAda')
+        this.changeAttr()
       } else {
         this.$bvModal.show('modal-keuangan')
+        this.changeAttr()
       }
     },
     closeModal() {
@@ -534,6 +538,7 @@ export default {
             if (!response.data.data.is_match) {
               this.loadingConfirmationPin = false
               this.$refs['modal-error-pin'].show()
+              this.changeAttr()
             } else {
               const responseReq = this.$store.dispatch(
                 'saldo/withdrawalRequest',
@@ -981,6 +986,12 @@ export default {
       document.getElementById('title__chart__tooltip__download').style.display = 'none'
       document.getElementById('title__chart__tooltip').style.display = 'block'
       this.downloadChartStatus = false
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
   },
 }
