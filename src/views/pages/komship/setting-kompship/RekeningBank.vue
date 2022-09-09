@@ -716,6 +716,7 @@ export default {
     this.loadBanks()
     this.getProfile()
     this.$refs['modal-pin'].show()
+    this.changeAttr()
   },
   methods: {
     getBank() {
@@ -753,6 +754,7 @@ export default {
             }).then(response => {
               this.loadingSubmit = false
               this.$refs['modal-verification-submit'].show()
+              this.changeAttr()
               this.countDownTimerOtp()
             }).catch(() => {
               this.loadingSubmit = false
@@ -772,6 +774,7 @@ export default {
         })
       } else {
         this.$refs['modal-verification-submit'].show()
+        this.changeAttr()
       }
     },
     sendOtpAgain() {
@@ -956,6 +959,7 @@ export default {
     },
     showModal() {
       this.$refs['modal-pin'].show()
+      this.changeAttr()
     },
     hideModal() {
       this.$refs['modal-pin'].hide()
@@ -1020,6 +1024,7 @@ export default {
       || this.validateProfile.partner_category_name === '' || this.validateProfile.partner_business_type_id === ''
       || this.validateProfile.partner_business_logo === '') {
         this.$refs['modal-validate-profile'].show()
+        this.changeAttr()
       } else {
         this.fieldActionAddRekening = true
         if (this.editMode === true) {
@@ -1100,8 +1105,13 @@ export default {
         this.visibilityPin = 'password'
       }
     },
-  },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
 
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
+    },
+  },
 }
 </script>
 

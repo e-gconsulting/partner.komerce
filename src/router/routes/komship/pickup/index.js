@@ -1,4 +1,4 @@
-import pickup from './pickup2'
+import pickup from './pickup'
 
 export default [
   ...pickup,

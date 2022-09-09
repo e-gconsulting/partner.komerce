@@ -393,6 +393,7 @@ export default {
           Notification.requestPermission().then(permission => {
             if (permission === 'denied' || permission === 'default') {
               this.$refs['modal-alert-notification'].show()
+              this.changeAttr()
             }
             if (!('permission' in Notification)) {
               Notification.permission = permission
@@ -408,6 +409,7 @@ export default {
         }
       }).catch(err => {
         this.$refs['modal-alert-notification'].show()
+        this.changeAttr()
       })
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
@@ -1068,6 +1070,12 @@ export default {
       }
       const link = urlify(chat)
       return link
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
   },
 }

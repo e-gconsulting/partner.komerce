@@ -707,25 +707,6 @@
             Print
           </b-button>
         </b-row>
-
-        <b-row class="justify-content-center align-items-center pb-2 wrapper__handle__print__label__mobile">
-          <b-form-checkbox
-            v-model="printDateItem"
-            class="custom-control-primary mb-1"
-          >
-            Tambahkan tanggal cetak di label
-          </b-form-checkbox>
-          <b-button
-            variant="primary"
-            @click="onSubmitOptionPrintMobile(selectedOptions)"
-          >
-            <b-spinner
-              v-if="loadingButtonPrintLabel"
-              small
-            />
-            Print
-          </b-button>
-        </b-row>
       </b-modal>
 
       <b-modal
@@ -876,10 +857,8 @@ import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import vSelect from 'vue-select'
 import { dateFormat } from '@core/mixins/ui/date'
-import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import AddPickupPopupPrint from '../AddPickupPopupPrint.vue'
-import AddPickupPrintPanel from '../AddPickupPrintPanel.vue'
+import AddPickupPrintPanel from './AddPickupPrintPanel.vue'
 
 export default {
 
@@ -899,7 +878,6 @@ export default {
     BPagination,
     BCollapse,
     BSpinner,
-    // AddPickupPopupPrint,
     AddPickupPrintPanel,
     vSelect,
   },
@@ -1407,8 +1385,8 @@ export default {
 </style>
 <style lang="scss">
   @import '~@core/scss/vue/libs/vue-select.scss';
-  @import '../add-pickup.scss';
-  @import '../add-pickup-detail.scss';
+  @import '../HistoryPickup/add-pickup.scss';
+  @import '../HistoryPickup/add-pickup-detail.scss';
 
   [dir] .expand-button-variation {
     text-align: right;
