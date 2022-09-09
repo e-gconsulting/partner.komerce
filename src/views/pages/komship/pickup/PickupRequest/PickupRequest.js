@@ -360,6 +360,10 @@ export default {
                 imageUrl: iconSuccess,
                 confirmButtonText: 'Oke',
                 confirmButtonClass: 'btn btn-primary',
+              }).then(result => {
+                if (result.isConfirmed) {
+                  this.$router.push('/history-pickup')
+                }
               })
             } else if (index === this.order.length - 1 && this.itemOrderError.length > 0) {
               this.$bvModal.hide('modalSubmitPickup')
