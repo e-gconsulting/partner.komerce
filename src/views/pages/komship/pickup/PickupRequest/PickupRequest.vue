@@ -119,10 +119,10 @@
             <span class="text-dark">Motor</span>
           </b-button>
           <b-button
-            :variant="vehicle === 'CAR' ? 'outline-primary active' : 'outline-light'"
+            :variant="vehicle === 'MOBIL' ? 'outline-primary active' : 'outline-light'"
             class="rounded-lg border border-[#828282] ml-1 px-1"
             :disabled="!vehicleList.includes('MOBIL')"
-            @click="vehicle = 'CAR'"
+            @click="vehicle = 'MOBIL'"
           >
             <img src="@/assets/images/icons/mobil.png"><br>
             <span class="text-dark">Mobil</span>
