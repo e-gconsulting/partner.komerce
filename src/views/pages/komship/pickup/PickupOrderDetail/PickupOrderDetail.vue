@@ -5,7 +5,13 @@
         variant="primary"
         class="rounded-lg"
         size="sm"
-        :to="{ name: 'ajukan-pickup' }"
+        :to="{ name: 'ajukan-pickup', params: {
+          address: this.$route.params.address,
+          order: itemOrder,
+          pickup_date: this.$route.params.pickup_date,
+          pickup_time: this.$route.params.pickup_time,
+          vehicle: this.$route.params.vehicle
+        } }"
       >
         <b-icon-chevron-left />
       </b-button>
@@ -140,26 +146,13 @@ export default {
         },
       ],
       itemOrder: [],
+      address: [],
     }
   },
-  mounted() {
-    this.getOrderPickup()
+  created() {
+    this.itemOrder = this.$route.params.order
   },
   methods: {
-    getOrderPickup() {
-      if (localStorage.getItem('pickupOrder')) {
-        try {
-          this.itemOrder = JSON.parse(
-            localStorage.getItem('pickupOrder'),
-          )
-        } catch (e) {
-          this.$router.push('/ajukan-pickup')
-          localStorage.removeItem('pickupOrder')
-        }
-      } else {
-        this.$router.push('/ajukan-pickup')
-      }
-    },
     setImageDefault(e) {
       e.target.src = imageNull
     },
