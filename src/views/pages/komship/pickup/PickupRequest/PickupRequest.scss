@@ -25,6 +25,12 @@
   left: 50%;
   transform: translateX(-50%);
 }
+#modalOrderError.modal{
+  width: 100%;
+  max-width: 1400px;
+  left: 50%;
+  transform: translateX(-50%);
+}
 .b-table-sticky-header{
   max-height: 70vh;
   min-height: 350px;

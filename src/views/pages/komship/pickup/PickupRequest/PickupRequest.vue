@@ -113,7 +113,7 @@
             :variant="vehicle === 'MOTOR' ? 'outline-primary active' : 'outline-light'"
             class="rounded-lg border border-[#828282]"
             :disabled="!vehicleList.includes('MOTOR')"
-            @click="setPickupVehicle('MOTOR')"
+            @click="vehicle = 'MOTOR'"
           >
             <img src="@/assets/images/icons/motor.png"><br>
             <span class="text-dark">Motor</span>
@@ -122,7 +122,7 @@
             :variant="vehicle === 'CAR' ? 'outline-primary active' : 'outline-light'"
             class="rounded-lg border border-[#828282] ml-1 px-1"
             :disabled="!vehicleList.includes('MOBIL')"
-            @click="setPickupVehicle('CAR')"
+            @click="vehicle = 'CAR'"
           >
             <img src="@/assets/images/icons/mobil.png"><br>
             <span class="text-dark">Mobil</span>
@@ -131,7 +131,7 @@
             :variant="vehicle === 'TRUCK' ? 'outline-primary active' : 'outline-light'"
             class="rounded-lg border border-[#828282] ml-1 px-2"
             :disabled="!vehicleList.includes('TRUCK')"
-            @click="setPickupVehicle('TRUCK')"
+            @click="vehicle = 'TRUCK'"
           >
             <img src="@/assets/images/icons/truk.png"><br>
             <span class="text-dark">Truk</span>
@@ -201,7 +201,13 @@
             v-else
             variant="none"
             class="button-detail p-0"
-            :to="{ name: 'detail-orderan-pickup' }"
+            :to="{ name: 'detail-orderan-pickup', params: {
+              address: address,
+              order: order,
+              pickup_date: pickupDate,
+              pickup_time: pickupTime,
+              vehicle: vehicle
+            } }"
           >
             Lihat Detail...
           </b-button>
@@ -360,6 +366,7 @@
                     style="max-width:20px"
                   >
                   <b-popover
+                    v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
                     triggers="hover"
                     :target="`infoNote` + data.item.order_id"
                     placement="bottomright"
@@ -444,6 +451,7 @@
               class="icon-info"
             >
             <b-popover
+              v-if="data.item.bank !== '0'"
               triggers="hover"
               :target="`iconInfo` + data.item.order_id"
               placement="bottomleft"
@@ -527,7 +535,7 @@
       >
         <div class="px-2 mb-1">
           <div class="mb-1">
-            <p class="text-[24px] text-center font-semibold">
+            <p class="text-[24px] text-center font-semibold mb-1">
               Mohon maaf...
             </p>
             <p class="text-[14px] text-center">
@@ -565,6 +573,187 @@
             src="@/assets/images/icons/refresh-2.svg"
             class="m-auto"
           >
+        </b-button>
+      </div>
+    </b-modal>
+    <b-modal
+      id="modalOrderError"
+      hide-header
+      hide-footer
+      centered
+      size="xl"
+    >
+      <img
+        src="@/assets/images/icons/warning.svg"
+        class="mx-auto mb-2 mt-3"
+      >
+      <p class="text-[18px] text-center max-w-[865px] mx-auto mb-3">
+        Sebagian orderan telah berhasil diajukan pickup. Silahkan melakukan pickup ulang untuk orderan yang belum berhasil. Jika ada kendala silahkan hubungi CS.
+      </p>
+      <p class="text-[18px] font-semibold mb-1">
+        Orderan yang gagal diajukan pickup :
+      </p>
+      <b-table
+        hover
+        striped
+        show-empty
+        empty-text="Tidak ada data untuk ditampilkan."
+        :busy="loading"
+        :fields="fieldOrderError"
+        :items="itemOrderError"
+        responsive
+        style="max-height:350px"
+      >
+        <template #cell(order_date)="data">
+          <span class="font-bold">{{ data.item.order_date.slice(0, 10) }}</span><br>
+          <span>{{ data.item.order_date.slice(11, -3) }}</span>
+        </template>
+        <template #cell(customer_name)="data">
+          <span class="font-bold">{{ data.item.customer_name }}</span><br>
+          <div
+            class="d-flex"
+          >
+            <img
+              :src="data.item.shipment_image_path"
+              class="w-[45px]"
+            ><span class="my-auto">{{ getShippingLabel(data.item.shipping_type) }}</span>
+          </div>
+        </template>
+        <template #cell(product)="data">
+          <div v-if="data.item.product[0]">
+            <div class="d-flex">
+              <div v-if="data.item.product[0].product_image === null">
+                <img
+                  class="w-[50px] h-[50px]"
+                  :src="imageNull"
+                >
+              </div>
+              <div v-else>
+                <img
+                  class="w-[50px] h-[50px]"
+                  :src="data.item.product[0].product_image"
+                  @error="setImageDefault"
+                >
+              </div>
+              <div
+                class="ml-1 w-[70%]"
+              >
+                <span class="font-bold d-flex">
+                  {{ data.item.product[0].product_name }}
+                  <img
+                    v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
+                    :id="`infoNote` + data.item.order_id"
+                    src="@/assets/images/icons/info-order-notes.svg"
+                    class="ml-auto cursor-pointer"
+                    style="max-width:20px"
+                  >
+                  <b-popover
+                    v-if="data.item.order_notes !== '0' && data.item.order_notes !== '' && data.item.order_notes !== null"
+                    triggers="hover"
+                    :target="`infoNote` + data.item.order_id"
+                    placement="bottomright"
+                  >
+                    {{ data.item.order_notes }}
+                  </b-popover>
+                </span>
+                <span
+                  v-if="data.item.product[0].variant_name !== '0'"
+                  class="text-primary"
+                >{{ data.item.product[0].variant_name }}</span>
+              </div>
+              <div
+                class="ml-1 font-bold w-[10%]"
+              >
+                x{{ data.item.product[0].qty }}
+              </div>
+            </div>
+            <div v-if="data.item.product.length > 1">
+              <b-collapse :id="'collapse-'+data.item.order_id">
+                <div
+                  v-for="item in data.item.product.slice(1)"
+                  :key="item.order_id"
+                  class="d-flex mt-1"
+                >
+                  <div v-if="item.product_image === null">
+                    <img
+                      class="w-[50px] h-[50px]"
+                      :src="imageNull"
+                    >
+                  </div>
+                  <div v-else>
+                    <img
+                      class="w-[50px] h-[50px]"
+                      :src="item.product_image"
+                      @error="setImageDefault"
+                    >
+                  </div>
+                  <div class="ml-1 w-[70%]">
+                    <span class="font-bold">{{ item.product_name }}</span><br>
+                    <span class="text-primary">{{ item.variant_name }}</span>
+                  </div>
+                  <div class="ml-1 font-bold w-[10%]">
+                    x{{ item.qty }}
+                  </div>
+                </div>
+              </b-collapse>
+            </div>
+          </div>
+          <div
+            v-if="data.item.product.length > 1"
+            class="d-flex justify-content-end mt-1 mb-1"
+          >
+            <b-button
+              v-b-toggle="'collapse-'+data.item.order_id"
+              class="buttonCollapse relative p-0"
+              variant="none"
+              size="sm"
+            >
+              <span class="when-open">Tutup <b-icon-chevron-up /></span>
+              <span class="when-closed">{{ data.item.product.length - 1 }} Produk lainnya <b-icon-chevron-down /></span>
+            </b-button>
+          </div>
+        </template>
+        <template #cell(grand_total)="data">
+          Rp {{ formatNumber(data.item.grand_total) }}<br>
+          <span
+            v-if="data.item.payment_method === 'COD'"
+            class="text-primary"
+          >
+            COD
+          </span>
+          <div
+            v-else-if="data.item.payment_method === 'BANK TRANSFER'"
+            class="d-flex"
+          >
+            <span class="text-primary">Transfer</span>
+            <img
+              v-if="data.item.bank !== '0'"
+              :id="`iconInfo` + data.item.order_id"
+              src="@/assets/images/icons/info-circle.svg"
+              class="icon-info"
+            >
+            <b-popover
+              v-if="data.item.bank !== '0'"
+              triggers="hover"
+              :target="`iconInfo` + data.item.order_id"
+              placement="bottomleft"
+            >
+              <label>Nama Bank:</label><br>
+              <span class="font-bold">{{ data.item.bank }}</span><br>
+              <label>No Rekening:</label><br>
+              <span class="font-bold">{{ data.item.bank_account_no }}</span><br>
+              <label>Pemilik Rekening:</label><br>
+              <span class="font-bold">{{ data.item.bank_account_name }}</span><br>
+            </b-popover>
+          </div>
+        </template>
+      </b-table>
+      <div class="w-100 text-center my-1">
+        <b-button
+          variant="primary"
+          @click="$bvModal.hide('modalOrderError')"
+        >
+          Oke
         </b-button>
       </div>
     </b-modal>

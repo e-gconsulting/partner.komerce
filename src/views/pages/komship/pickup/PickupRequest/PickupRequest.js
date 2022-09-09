@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/themes/light.css'
@@ -66,12 +67,29 @@ export default {
       submitProgress: 0,
       submitStatus: true,
       submitPercentage: 0,
+      fieldOrderError: [
+        {
+          key: 'order_date', label: 'Tanggal Order', thClass: 'align-middle', tdClass: 'align-top min-w-[140px]',
+        },
+        {
+          key: 'customer_name', label: 'Pelanggan', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'product', label: 'Produk', thClass: 'align-middle', tdClass: 'align-top p-0',
+        },
+        {
+          key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
+        },
+        {
+          key: 'detail_address', label: 'Alamat', thClass: 'align-middle', tdClass: 'align-top break-words',
+        },
+      ],
+      itemOrderError: [],
     }
   },
   created() {
-    this.getCurrentDate()
-    this.getPickupAddress()
-    this.getPickupOrder()
+    this.getParamsData()
+    this.getAddressList()
     this.getVehicleList()
     this.generateToken()
   },
@@ -111,6 +129,25 @@ export default {
         this.pickupTime = this.formatPickupTime(pickupTime - 1)
       }
     },
+    getParamsData() {
+      if (this.$route.params.order) {
+        this.address = this.$route.params.address
+        this.pickupDate = this.$route.params.pickup_date
+        this.pickupTime = this.$route.params.pickup_time
+        this.vehicle = this.$route.params.vehicle
+        this.order = this.$route.params.order
+        const product = []
+        this.order.forEach(element => {
+          element.product.forEach(items => {
+            product.push(items)
+          })
+        })
+        this.totalProduct = product.length
+        this.itemProductPreview = product.slice(0, 2)
+      } else {
+        this.getCurrentDate()
+      }
+    },
     async getVehicleList() {
       await this.$http_komship.post('v1/my-profile')
         .then(res => {
@@ -118,51 +155,6 @@ export default {
           this.profile = data
           this.vehicleList = data.vehicle
         })
-      if (localStorage.getItem('pickupVehicle')) {
-        try {
-          this.vehicle = localStorage.getItem('pickupVehicle')
-        } catch (e) {
-          localStorage.removeItem('pickupVehicle')
-        }
-      }
-    },
-    setPickupVehicle(value) {
-      this.vehicle = value
-      localStorage.setItem('pickupVehicle', this.vehicle)
-    },
-    getPickupAddress() {
-      if (localStorage.getItem('pickupAddress')) {
-        try {
-          this.address = JSON.parse(
-            localStorage.getItem('pickupAddress'),
-          )
-        } catch (e) {
-          this.getAddressList()
-          localStorage.removeItem('pickupAddress')
-        }
-      } else {
-        this.getAddressList()
-      }
-    },
-    getPickupOrder() {
-      if (localStorage.getItem('pickupOrder')) {
-        try {
-          this.order = JSON.parse(
-            localStorage.getItem('pickupOrder'),
-          )
-          this.selectedOrder = this.order
-          const product = []
-          this.order.forEach(element => {
-            element.product.forEach(items => {
-              product.push(items)
-            })
-          })
-          this.itemProductPreview = product.slice(0, 2)
-        } catch (e) {
-          localStorage.removeItem('pickupOrder')
-          localStorage.removeItem('pickupOrderList')
-        }
-      }
     },
     async getAddressList() {
       this.loading = true
@@ -187,7 +179,6 @@ export default {
             const defaultAddress = data.find(items => items.is_default === 1)
             if (defaultAddress && this.address.length < 1) {
               this.address = defaultAddress
-              localStorage.setItem('pickupAddress', JSON.stringify(this.address))
             }
           }
           this.loading = false
@@ -204,11 +195,10 @@ export default {
     onSelectAddress(data) {
       this.$bvModal.hide('modalSelectAddress')
       this.address = data
+      this.totalProduct = 0
       this.itemProductPreview = []
       this.order = []
       this.itemOrderList = []
-      localStorage.setItem('pickupAddress', JSON.stringify(this.address))
-      localStorage.removeItem('pickupOrder')
     },
     async getOrderList() {
       if (this.itemOrderList.length < 1) {
@@ -233,9 +223,8 @@ export default {
             }
           })
           .catch(() => { this.loading = false })
-      } else {
-        this.selectedOrder = this.order
       }
+      this.selectedOrder = this.order
       this.$bvModal.show('modalSelectOrder')
       this.changeAttr()
     },
@@ -273,7 +262,6 @@ export default {
       this.totalProduct = product.length
       this.itemProductPreview = product.slice(0, 2)
       this.$bvModal.hide('modalSelectOrder')
-      localStorage.setItem('pickupOrder', JSON.stringify(this.order))
     },
     checklistSelectedOrder() {
       if (this.selectAllOrder) {
@@ -302,17 +290,15 @@ export default {
       e.target.src = imageNull
     },
     resetField() {
-      localStorage.removeItem('pickupAddress')
       this.address = []
       this.getAddressList()
       this.pickupDate = ''
       this.pickupTime = ''
       this.getCurrentDate()
-      this.setPickupVehicle('')
+      this.vehicle = ''
       this.itemProductPreview = []
       this.order = []
       this.itemOrderList = []
-      localStorage.removeItem('pickupOrder')
     },
     generateToken() {
       let result = ''
@@ -326,7 +312,7 @@ export default {
     onSubmitPickup() {
       this.$swal({
         html: `<span class="text-[18px] w-[564px]">
-        Apakah kamu yakin untuk melakukan Pengajuan Pickup? 
+        Apakah kamu yakin untuk melakukan Pengajuan Pickup?
         Kurir akan menuju ke lokasi penjemputan kamu</span>`,
         imageUrl: iconWarning,
         showCancelButton: true,
@@ -343,11 +329,13 @@ export default {
     async submitPickup() {
       this.submitStatus = true
       this.$bvModal.show('modalSubmitPickup')
-      this.changeAttr()
-      for (let i = this.submitProgress; i < this.order.length; i += 1) {
+      let startIndex = 0
+      if (this.submitProgress > 0) {
+        startIndex = this.submitProgress
+      }
+      for (let index = startIndex; index < this.order.length; index += 1) {
         try {
-          // eslint-disable-next-line no-await-in-loop
-          const submit = await this.$http_komship.post(`/v3/pickup/${this.profile.partner_id}/store`, ({
+          const submit = await this.$http_komship.post(`/v3/pickup/${this.profile.partner_id}/store`, {
             partner_name: this.profile.user_fullname,
             pickup_date: this.pickupDate.toISOString().split('T')[0],
             pickup_time: this.pickupTime.replace(/\s/g, ''),
@@ -355,32 +343,45 @@ export default {
             pic_phone: this.address.phone,
             vehicle: this.vehicle,
             address_id: this.address.address_id,
-            address_detail: this.order[i].detail_address,
-            order: this.order[i].order_id,
+            address_detail: this.order[index].detail_address,
+            order: this.order[index].order_id,
             token: this.token,
-          }))
-          if (submit.data.code === 200) {
+          })
+          const { code } = submit.data
+          if (code === 200) {
+            this.submitPercentage = Math.floor(((index + 1) * 100) / this.order.length)
             this.submitProgress += 1
-            this.submitPercentage = Math.floor(((i + 1) * 100) / this.order.length)
-            if (i === this.order.length - 1) {
-              this.resetField()
+            if (index === this.order.length - 1 && this.itemOrderError.length < 1) {
               this.$bvModal.hide('modalSubmitPickup')
               this.submitPercentage = 0
               this.$swal({
                 html: `<span class="text-[16px] w-[564px]">
-                Pastikan <b>paket anda siap</b> untuk dipickup. Jam penjemputan yang kamu pilih <b>hanyalah estimasi</b>, kurir akan datang dan menghubungi di kisaran jam tersebut</span>`,
+                  Pastikan <b>paket anda siap</b> untuk dipickup. Jam penjemputan yang kamu pilih <b>hanyalah estimasi</b>, kurir akan datang dan menghubungi di kisaran jam tersebut</span>`,
                 imageUrl: iconSuccess,
                 confirmButtonText: 'Oke',
                 confirmButtonClass: 'btn btn-primary',
               })
+            } else if (index === this.order.length - 1 && this.itemOrderError.length > 0) {
+              this.$bvModal.hide('modalSubmitPickup')
+              this.$bvModal.show('modalOrderError')
+              const product = []
+              this.order = this.itemOrderError
+              this.order.forEach(element => {
+                element.product.forEach(items => {
+                  product.push(items)
+                })
+              })
+              this.totalProduct = product.length
+              this.itemProductPreview = product.slice(0, 2)
             }
+          } else if (code === 500 || code === 1002) {
+            this.itemOrderError.push(this.order[index])
           } else {
             this.submitStatus = false
             break
           }
         } catch (error) {
-          this.submitStatus = false
-          break
+          console.log(error)
         }
       }
     },

@@ -8,6 +8,7 @@ const pickupRoute = [
     path: '/ajukan-pickup',
     name: 'ajukan-pickup',
     component: pickupRequest,
+    props: true,
     meta: {
       name: 'ajukan-pickup',
       action: 'manage',
