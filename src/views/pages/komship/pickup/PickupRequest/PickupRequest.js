@@ -52,7 +52,7 @@ export default {
       ],
       itemOrderList: [],
       loading: false,
-      limit: 50,
+      limit: 200,
       offset: 0,
       selectedOrder: [],
       isLastOrder: false,
