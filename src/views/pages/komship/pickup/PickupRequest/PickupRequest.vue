@@ -535,7 +535,7 @@
       >
         <div class="px-2 mb-1">
           <div class="mb-1">
-            <p class="text-[24px] text-center font-semibold">
+            <p class="text-[24px] text-center font-semibold mb-1">
               Mohon maaf...
             </p>
             <p class="text-[14px] text-center">
