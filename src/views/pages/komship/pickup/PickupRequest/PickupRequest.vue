@@ -49,7 +49,6 @@
               ref="pickupDate"
               v-model="pickupDate"
               :config="configDate"
-              @input="setPickupTime"
             />
             <b-input-group-append
               role="button"
