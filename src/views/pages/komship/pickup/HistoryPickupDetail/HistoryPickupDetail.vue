@@ -707,25 +707,6 @@
             Print
           </b-button>
         </b-row>
-
-        <b-row class="justify-content-center align-items-center pb-2 wrapper__handle__print__label__mobile">
-          <b-form-checkbox
-            v-model="printDateItem"
-            class="custom-control-primary mb-1"
-          >
-            Tambahkan tanggal cetak di label
-          </b-form-checkbox>
-          <b-button
-            variant="primary"
-            @click="onSubmitOptionPrintMobile(selectedOptions)"
-          >
-            <b-spinner
-              v-if="loadingButtonPrintLabel"
-              small
-            />
-            Print
-          </b-button>
-        </b-row>
       </b-modal>
 
       <b-modal
