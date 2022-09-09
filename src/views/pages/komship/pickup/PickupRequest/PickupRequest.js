@@ -1,6 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import LottieAnimation from 'lottie-vuejs/src/LottieAnimation.vue'
 import flatPickr from 'vue-flatpickr-component'
+import moment from 'moment'
 import 'flatpickr/dist/themes/light.css'
 import { Indonesian } from 'flatpickr/dist/l10n/id'
 import { toInteger } from 'lodash'
@@ -16,7 +17,7 @@ export default {
       address: [],
       pickupDate: '',
       pickupTime: '',
-      vehicle: 'CAR',
+      vehicle: '',
       order: [],
       token: '',
       addressList: [],
@@ -99,29 +100,28 @@ export default {
       return `${(`0${value}`).slice(-2)} : 00`
     },
     getCurrentDate() {
-      const today = new Date()
-      const hours = today.getHours()
+      const hours = moment().format('HH')
+      const minDate = moment().add(1, 'days').format('YYYY-MM-DD')
       if (hours >= 21) {
-        this.pickupDate = today.setDate(today.getDate() + 1)
-        this.configDate.minDate = this.pickupDate
+        this.configDate.minDate = minDate
+        this.pickupDate = minDate
       } else {
-        this.pickupDate = today
+        this.pickupDate = moment().format('YYYY-MM-DD')
       }
       this.pickupTime = this.formatPickupTime(hours)
       this.setPickupTime()
     },
     setPickupTime(action) {
-      const today = new Date()
-      const minHours = today.getHours() < 9 ? 9 : today.getHours() + 2
+      const today = moment()
+      const minHours = today.format('HH') < 9 ? 9 : today.add(2, 'hours').format('HH')
       const pickupTime = toInteger(this.pickupTime.slice(0, 2))
-      const pickupDate = new Date(this.pickupDate)
       if (action === 'plus') {
         if (pickupTime >= 21) {
           this.pickupTime = this.formatPickupTime(21)
         } else {
           this.pickupTime = this.formatPickupTime(pickupTime + 1)
         }
-      } else if (pickupTime <= minHours && pickupDate.toISOString().split('T')[0] === today.toISOString().split('T')[0]) {
+      } else if (pickupTime <= minHours && this.pickupDate === today.format('YYYY-MM-DD')) {
         this.pickupTime = this.formatPickupTime(minHours)
       } else if (pickupTime <= 9) {
         this.pickupTime = this.formatPickupTime(9)
@@ -337,7 +337,7 @@ export default {
         try {
           const submit = await this.$http_komship.post(`/v3/pickup/${this.profile.partner_id}/store`, {
             partner_name: this.profile.user_fullname,
-            pickup_date: this.pickupDate.toISOString().split('T')[0],
+            pickup_date: this.pickupDate,
             pickup_time: this.pickupTime.replace(/\s/g, ''),
             pic: this.address.pic,
             pic_phone: this.address.phone,
@@ -386,6 +386,8 @@ export default {
           }
         } catch (error) {
           console.log(error)
+          this.submitStatus = false
+          break
         }
       }
     },
