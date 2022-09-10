@@ -343,7 +343,7 @@ export default {
             pic_phone: this.address.phone,
             vehicle: this.vehicle,
             address_id: this.address.address_id,
-            address_detail: this.order[index].detail_address,
+            address_detail: this.address.address_detail,
             order: this.order[index].order_id,
             token: this.token,
           })
