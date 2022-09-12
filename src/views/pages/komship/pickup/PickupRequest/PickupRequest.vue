@@ -13,22 +13,22 @@
           Alamat
         </b-col>
         <b-col
+          v-if="address !== null"
           md="4"
           cols="9"
         >
-          <div v-if="address">
-            <p class="mb-[8px]">
-              {{ address.address_name }}
-            </p>
-            <p class="mb-0 text-[#828282]">
-              {{ address.address_detail }}
-            </p>
-          </div>
+          <p class="mb-[8px]">
+            {{ address.address_name }}
+          </p>
+          <p class="mb-0 text-[#828282]">
+            {{ address.address_detail }}
+          </p>
         </b-col>
         <b-col
           md="2"
           cols="3"
-          class="pl-0 border-left border-[#C2C2C2]"
+          class="pl-0"
+          :class="address !== null ? 'border-left border-[#C2C2C2]' : ''"
         >
           <b-button
             variant="none"
