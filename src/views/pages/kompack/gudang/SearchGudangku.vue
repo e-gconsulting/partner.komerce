@@ -1,4 +1,23 @@
 <template>
+<template>
+  <b-card body>
+    <div class="d-flex align-items-center">
+      <b-button
+        variant="primary"
+        size="sm"
+        class="mr-1 rounded-lg p-0"
+        @click="$router.go(-1)"
+      >
+        <feather-icon
+          size="2x"
+          icon="ChevronLeftIcon"
+        />
+      </b-button>
+      <br></br>
+      <h4 class="my-0">
+        Search Gudang
+      </h4>
+    </div>
   <b-col class="pl-0 pr-0">
     <b-form>
       <b-row>
@@ -606,7 +625,7 @@
               </b-row>
             </template>
 
-            <template
+            <b-car
               #cell(variants)="data"
             >
               <div v-if="data.item.variants.length > 0">

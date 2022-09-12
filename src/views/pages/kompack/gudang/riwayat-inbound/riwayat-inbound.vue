@@ -12,6 +12,7 @@
           icon="ChevronLeftIcon"
         />
       </b-button>
+      <br></br>
       <h4 class="my-0">
         Riwayat Inbound
       </h4>
