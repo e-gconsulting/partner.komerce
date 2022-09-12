@@ -16,12 +16,17 @@
           md="4"
           cols="9"
         >
-          <div v-if="address">
+          <div v-if="address !== null">
             <p class="mb-[8px]">
               {{ address.address_name }}
             </p>
             <p class="mb-0 text-[#828282]">
               {{ address.address_detail }}
+            </p>
+          </div>
+          <div v-else>
+            <p class="text-[16px] text-[#828282]">
+              Pickup dari salah satu gudangmu
             </p>
           </div>
         </b-col>
