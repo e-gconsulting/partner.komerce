@@ -47,6 +47,7 @@ import talentPool from './talent-pool'
 import dashboardKompship from './dashboard-kompship'
 import produk from './produk'
 import order from './order'
+import gudang from './gudang'
 import pickup from './pickup'
 import customer from './customer'
 import settingKompship from './setting-kompship'
@@ -85,6 +86,7 @@ export default [
   ...order,
   ...pickup,
   ...produk,
+  ...gudang,
   ...customer,
   ...keuangan,
   ...settingKompship,
