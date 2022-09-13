@@ -125,7 +125,9 @@ export default {
       }
     },
     UPDATE_COD_GRAPH(state, codGraph) {
-      state.incomeCODGraph = getDates(state.dateRange.startDate, state.dateRange.endDate).map(date => {
+      const startDate = new Date(state.dateRange.startDate)
+      const endDate = new Date(state.dateRange.endDate)
+      state.incomeCODGraph = getDates(startDate, endDate).map(date => {
         const income = codGraph.find(item => item.date === date)
         if (income) {
           return income
@@ -139,7 +141,9 @@ export default {
       })
     },
     UPDATE_TRANSFER_GRAPH(state, transferGraph) {
-      state.incomeTransferGraph = getDates(state.dateRange.startDate, state.dateRange.endDate).map(date => {
+      const startDate = new Date(state.dateRange.startDate)
+      const endDate = new Date(state.dateRange.endDate)
+      state.incomeTransferGraph = getDates(startDate, endDate).map(date => {
         const income = transferGraph.find(item => item.date === date)
         if (income) {
           return income

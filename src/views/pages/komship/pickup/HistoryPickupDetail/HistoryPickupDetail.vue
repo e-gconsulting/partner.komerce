@@ -694,7 +694,6 @@
             </b-row>
           </b-col>
         </b-row>
-
         <template #modal-footer>
           <b-row>
             <b-col cols="12">
@@ -711,30 +710,6 @@
                   :disabled="isDownloadActive"
                   @click="onSubmitOptionPrint(selectedOptions)"
                 >
-                  <b-spinner
-                    v-if="loadingButtonPrintLabel"
-                    small
-                  />
-                  Download Label
-                </b-button>
-              </b-row>
-              <b-row class="justify-content-center align-items-center pb-2 wrapper__handle__print__label__mobile">
-                <b-form-checkbox
-                  v-model="printDateItem"
-                  class="custom-control-primary mr-2"
-                >
-                  Tambahkan tanggal cetak di label
-                </b-form-checkbox>
-                <b-button
-                  variant="primary"
-                  :class="isDownloadActive ? 'mr-3 py-1 px-3 cursor-not-allowed' : 'mr-3 py-1 px-3'"
-                  :disabled="isDownloadActive"
-                  @click="onSubmitOptionPrintMobile(selectedOptions)"
-                >
-                  <b-spinner
-                    v-if="loadingButtonPrintLabel"
-                    small
-                  />
                   Download Label
                 </b-button>
               </b-row>
@@ -931,7 +906,7 @@ export default {
     BFormCheckbox,
     BPagination,
     BCollapse,
-    BSpinner,
+    // BSpinner,
     AddPickupPrintPanel,
     vSelect,
     BProgress,
@@ -1209,16 +1184,14 @@ export default {
       }
       if (this.printDateItem) Object.assign(params, { print_date: 1 })
       let percent = null
-      axios.post(`https://dev.komship.komerce.my.id/api/v1/generate/print-label?order_id=${this.orderIdBase64.join()}&page=${this.paramsBase64}`, {
+      axios.post(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v2/generate/print-label?order_id=${this.orderIdBase64.join()}&page=${this.paramsBase64}`, {
         params,
       }, {
         onDownloadProgress(progressEvent) {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
           self.percentageDownload = percentCompleted
-          console.log('percentage download', progressEvent)
         },
         onUploadProgress(progressEvent) {
-          console.log('percentage upload', progressEvent)
           percent = setInterval(() => {
             if (self.percentageDownload < 100) self.percentageDownload += 1
             if (self.percentageDownload === 90) self.percentageDownload -= 1
@@ -1244,6 +1217,9 @@ export default {
           docUrl.click()
           this.isDownloadActive = false
         } catch (e) {
+          this.percentageDownload = 0
+          this.isDownloadActive = false
+          clearInterval(percent)
           // eslint-disable-next-line no-alert
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
         }
@@ -1259,6 +1235,8 @@ export default {
             variant: 'danger',
           },
         })
+        this.percentageDownload = 0
+        this.isDownloadActive = false
       })
     },
     onUpdateScreenViewParent() {
