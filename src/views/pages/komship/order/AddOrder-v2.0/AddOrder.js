@@ -1265,6 +1265,7 @@ export default {
         customer_id: this.customerId,
         customer_name: this.customerName,
         customer_phone: this.customerPhone,
+        customer_destination_id: this.destination.id,
         detail_address: this.customerAddress,
         shipping: this.shipping.shipment_name,
         shipping_type: this.shipping.shipping_type,
