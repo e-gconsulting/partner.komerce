@@ -632,7 +632,6 @@
       <!-- Modal Print -->
       <b-modal
         ref="print"
-        hide-footer
         hide-header
         scrollable
         size="xl"
@@ -646,86 +645,120 @@
           Pilih Bentuk Print Label
         </div>
 
-        <section class="add-pickup-popup-print-options-wrapper">
-          <add-pickup-print-panel
-            :is-selected="selectedOptions === 1"
-            :panel-amount="1"
-            :title="'1 Label / Halaman'"
-            :sub-title="'Direkomendasikan kertas A4'"
-            @onChose="() => handleChosePrintOption(1)"
-          />
+        <b-row>
+          <b-col cols="12">
+            <b-row class="justify-content-center align-items-center">
+              <add-pickup-print-panel
+                :is-selected="selectedOptions === 1"
+                :panel-amount="1"
+                :title="'1 Label / Halaman'"
+                :sub-title="'Direkomendasikan kertas A4'"
+                @onChose="() => handleChosePrintOption(1)"
+              />
 
-          <add-pickup-print-panel
-            :is-selected="selectedOptions === 2"
-            :panel-amount="2"
-            :title="'2 Label / Halaman'"
-            :sub-title="'Direkomendasikan kertas A4'"
-            @onChose="() => handleChosePrintOption(2)"
-          />
+              <add-pickup-print-panel
+                :is-selected="selectedOptions === 2"
+                :panel-amount="2"
+                :title="'2 Label / Halaman'"
+                :sub-title="'Direkomendasikan kertas A4'"
+                @onChose="() => handleChosePrintOption(2)"
+              />
 
-          <add-pickup-print-panel
-            :is-selected="selectedOptions === 4"
-            :panel-amount="4"
-            :title="'4 Label / Halaman'"
-            :sub-title="'Direkomendasikan kertas A4'"
-            @onChose="() => handleChosePrintOption(4)"
-          />
+              <add-pickup-print-panel
+                :is-selected="selectedOptions === 4"
+                :panel-amount="4"
+                :title="'4 Label / Halaman'"
+                :sub-title="'Direkomendasikan kertas A4'"
+                @onChose="() => handleChosePrintOption(4)"
+              />
+            </b-row>
+          </b-col>
 
-          <add-pickup-print-panel
-            :is-selected="selectedOptions === 100"
-            :panel-amount="100"
-            :title="'10 cm x 10cm'"
-            :sub-title="'Printer Thermal'"
-            @onChose="() => handleChosePrintOption(100)"
-          />
+          <b-col cols="12">
+            <b-row class="justify-content-center align-items-center">
+              <add-pickup-print-panel
+                :is-selected="selectedOptions === 100"
+                :panel-amount="100"
+                :title="'10 cm x 10cm'"
+                :sub-title="'Printer Thermal'"
+                @onChose="() => handleChosePrintOption(100)"
+              />
 
-          <add-pickup-print-panel
-            :is-selected="selectedOptions === 150"
-            :panel-amount="150"
-            :title="'10 cm x 15cm'"
-            :sub-title="'Printer Thermal'"
-            @onChose="() => handleChosePrintOption(150)"
-          />
-        </section>
-
-        <b-row class="justify-content-end align-items-center pb-2 wrapper__handle__print__label">
-          <b-form-checkbox
-            v-model="printDateItem"
-            class="custom-control-primary mr-2"
-          >
-            Tambahkan tanggal cetak di label
-          </b-form-checkbox>
-          <b-button
-            variant="primary"
-            class="mr-3 py-1 px-3"
-            @click="onSubmitOptionPrint(selectedOptions)"
-          >
-            <b-spinner
-              v-if="loadingButtonPrintLabel"
-              small
-            />
-            Print
-          </b-button>
+              <add-pickup-print-panel
+                :is-selected="selectedOptions === 150"
+                :panel-amount="150"
+                :title="'10 cm x 15cm'"
+                :sub-title="'Printer Thermal'"
+                @onChose="() => handleChosePrintOption(150)"
+              />
+            </b-row>
+          </b-col>
         </b-row>
 
-        <b-row class="justify-content-center align-items-center pb-2 wrapper__handle__print__label__mobile">
-          <b-form-checkbox
-            v-model="printDateItem"
-            class="custom-control-primary mb-1"
-          >
-            Tambahkan tanggal cetak di label
-          </b-form-checkbox>
-          <b-button
-            variant="primary"
-            @click="onSubmitOptionPrintMobile(selectedOptions)"
-          >
-            <b-spinner
-              v-if="loadingButtonPrintLabel"
-              small
-            />
-            Print
-          </b-button>
-        </b-row>
+        <template #modal-footer>
+          <b-row>
+            <b-col cols="12">
+              <b-row class="justify-content-end align-items-center pb-2 wrapper__handle__print__label">
+                <b-form-checkbox
+                  v-model="printDateItem"
+                  class="custom-control-primary mr-2"
+                >
+                  Tambahkan tanggal cetak di label
+                </b-form-checkbox>
+                <b-button
+                  variant="primary"
+                  :class="isDownloadActive ? 'mr-3 py-1 px-3 cursor-not-allowed' : 'mr-3 py-1 px-3'"
+                  :disabled="isDownloadActive"
+                  @click="onSubmitOptionPrint(selectedOptions)"
+                >
+                  <b-spinner
+                    v-if="loadingButtonPrintLabel"
+                    small
+                  />
+                  Download Label
+                </b-button>
+              </b-row>
+              <b-row class="justify-content-center align-items-center pb-2 wrapper__handle__print__label__mobile">
+                <b-form-checkbox
+                  v-model="printDateItem"
+                  class="custom-control-primary mr-2"
+                >
+                  Tambahkan tanggal cetak di label
+                </b-form-checkbox>
+                <b-button
+                  variant="primary"
+                  :class="isDownloadActive ? 'mr-3 py-1 px-3 cursor-not-allowed' : 'mr-3 py-1 px-3'"
+                  :disabled="isDownloadActive"
+                  @click="onSubmitOptionPrintMobile(selectedOptions)"
+                >
+                  <b-spinner
+                    v-if="loadingButtonPrintLabel"
+                    small
+                  />
+                  Download Label
+                </b-button>
+              </b-row>
+            </b-col>
+            <b-col cols="12">
+              <div v-if="percentageDownload !== 0" class="d-flex justify-content-end mr-2">
+                <div>
+                  <b-row class="text-center justify-content-center">
+                    <span>sedang menyiapkan file</span>
+                  </b-row>
+                  <div class="mr-50">
+                    <b-progress
+                      :value="percentageDownload"
+                      max="100"
+                      variant="primary"
+                      style="min-width: 198px; height: 3px;"
+                    />
+                  </div>
+                </div>
+              </div>
+            </b-col>
+
+          </b-row>
+        </template>
       </b-modal>
 
       <b-modal
@@ -871,10 +904,12 @@ import {
   BPagination,
   BCollapse,
   BSpinner,
+  BProgress,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import useJwt from '@/auth/jwt/useJwt'
 import vSelect from 'vue-select'
+import axios from 'axios'
 import { dateFormat } from '@core/mixins/ui/date'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import AddPickupPrintPanel from './AddPickupPrintPanel.vue'
@@ -899,6 +934,7 @@ export default {
     BSpinner,
     AddPickupPrintPanel,
     vSelect,
+    BProgress,
   },
   directives: {
     Ripple,
@@ -1017,6 +1053,9 @@ export default {
       shippingName: '',
       paramsBase64: '',
       printDateItem: false,
+
+      percentageDownload: 0,
+      isDownloadActive: false,
     }
   },
   computed: {
@@ -1161,17 +1200,49 @@ export default {
       }
     },
     getPrintLabelBase64(values) {
+      this.isDownloadActive = true
+      const self = this
       this.loadingButtonPrintLabel = true
       const params = {
         order_id: this.orderIdBase64.join(),
         page: this.paramsBase64,
       }
       if (this.printDateItem) Object.assign(params, { print_date: 1 })
-      this.$http_komship.get('v1/generate/print-label', {
+      let percent = null
+      axios.post(`https://dev.komship.komerce.my.id/api/v1/generate/print-label?order_id=${this.orderIdBase64.join()}&page=${this.paramsBase64}`, {
         params,
+      }, {
+        onDownloadProgress(progressEvent) {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+          self.percentageDownload = percentCompleted
+          console.log('percentage download', progressEvent)
+        },
+        onUploadProgress(progressEvent) {
+          console.log('percentage upload', progressEvent)
+          percent = setInterval(() => {
+            if (self.percentageDownload < 100) self.percentageDownload += 1
+            if (self.percentageDownload === 90) self.percentageDownload -= 1
+          }, 500)
+        },
       }).then(response => {
         try {
-          window.open(response.data)
+          let result = null
+          const date = `${this.idOrderFromHistory.pickup_date}T${this.idOrderFromHistory.pickup_time}`
+          result = `label-${this.$moment(date).format('YYYY-MM-DD-HH-mm-ss')}`
+          this.percentageDownload = 100
+          clearInterval(percent)
+          setTimeout(() => {
+            this.percentageDownload = 0
+            window.open(response.data, '_blank')
+          }, 1000)
+          const FILE = window.URL.createObjectURL(new Blob([response.data]))
+
+          const docUrl = document.createElement('a')
+          docUrl.href = FILE
+          docUrl.setAttribute('download', `${result}.pdf`)
+          document.body.appendChild(docUrl)
+          docUrl.click()
+          this.isDownloadActive = false
         } catch (e) {
           // eslint-disable-next-line no-alert
           alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
