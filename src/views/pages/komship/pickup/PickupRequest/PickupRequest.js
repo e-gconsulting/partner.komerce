@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       profile: [],
-      address: [],
+      address: null,
       pickupDate: '',
       pickupTime: '',
       vehicle: '',
@@ -290,7 +290,7 @@ export default {
       e.target.src = imageNull
     },
     resetField() {
-      this.address = []
+      this.address = null
       this.getAddressList()
       this.pickupDate = ''
       this.pickupTime = ''
