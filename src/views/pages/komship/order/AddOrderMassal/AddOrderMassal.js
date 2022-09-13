@@ -3,23 +3,10 @@
 import jspreadsheet from 'jspreadsheet-ce'
 import { toInteger } from 'lodash'
 import moment from 'moment'
-import axios from 'axios'
-import useJwt from '@core/auth/jwt/useJwt'
-
-const { jwt } = useJwt(axios, {})
-const token = jwt.getToken()
-
-const axiosKomship = axios.create({
-  baseURL: process.env.VUE_APP_BASE_URL_KOMSHIP,
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-})
-
-const iconWarning = require('@/assets/images/icons/warning.svg')
-const iconNonShipping = require('@/assets/images/icons/non-shipping.svg')
-const iconNonCOD = require('@/assets/images/icons/non-cod.svg')
-const iconSuccess = require('@/assets/images/icons/success.svg')
+import iconWarning from '@/assets/images/icons/warning.svg'
+import iconNonShipping from '@/assets/images/icons/non-shipping.svg'
+import iconNonCOD from '@/assets/images/icons/non-cod.svg'
+import iconSuccess from '@/assets/images/icons/success.svg'
 
 const regexNumber = /^\d+$/
 const regexOnlyNumber = /\B(?=(\d{3})+(?!\d))/g
@@ -35,6 +22,7 @@ export default {
       sourceProduct: null,
       sourceVariant: null,
       sourceShipment: null,
+      allVariant: null,
       filterVariant: null,
       table: null,
       columnNumber: null,
@@ -165,6 +153,7 @@ export default {
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
           this.sourceShipment = data.shipments
+          this.allVariant = data.variant
           const { variant } = data
           this.sourceVariant = ['-']
           if (data.addresses.length === 0) {
@@ -214,6 +203,7 @@ export default {
     getTable() {
       const { profile } = this
       const { saldo } = this
+      const { allVariant } = this
       let columnTable
       const getSelectedTable = data => {
         this.selectedTable = data
@@ -441,7 +431,12 @@ export default {
             }
           } else if (col === `${columnNumber.product}`) {
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.variant}`, row])
-            instance.jexcel.setValue(columnName, '')
+            const source = allVariant.find(items => items.product_name === val)
+            if (source.variant.length > 1) {
+              instance.jexcel.setValue(columnName, '')
+            } else {
+              instance.jexcel.setValue(columnName, '-')
+            }
           } else if (col === `${columnNumber.qty}`) {
             if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.qty}`, row])

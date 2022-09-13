@@ -25,7 +25,7 @@
             </p>
           </div>
           <div v-else>
-            <p class="text-[16px] text-[#828282]">
+            <p class="text-[16px] text-muted font-normal">
               Pickup dari salah satu gudangmu
             </p>
           </div>
