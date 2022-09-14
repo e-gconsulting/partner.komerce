@@ -715,7 +715,10 @@
               </b-row>
             </b-col>
             <b-col cols="12">
-              <div v-if="percentageDownload !== 0" class="d-flex justify-content-end mr-2">
+              <div
+                v-if="percentageDownload !== 0"
+                class="d-flex justify-content-end mr-2"
+              >
                 <div>
                   <b-row class="text-center justify-content-center">
                     <span>sedang menyiapkan file</span>
@@ -1184,19 +1187,12 @@ export default {
       }
       if (this.printDateItem) Object.assign(params, { print_date: 1 })
       let percent = null
+      percent = setInterval(() => {
+        if (self.percentageDownload < 100) self.percentageDownload += 1
+        if (self.percentageDownload === 90) self.percentageDownload -= 1
+      }, 500)
       axios.post(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v2/generate/print-label?order_id=${this.orderIdBase64.join()}&page=${this.paramsBase64}`, {
         params,
-      }, {
-        onDownloadProgress(progressEvent) {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-          self.percentageDownload = percentCompleted
-        },
-        onUploadProgress(progressEvent) {
-          percent = setInterval(() => {
-            if (self.percentageDownload < 100) self.percentageDownload += 1
-            if (self.percentageDownload === 90) self.percentageDownload -= 1
-          }, 500)
-        },
       }).then(response => {
         try {
           let result = null
@@ -1204,18 +1200,17 @@ export default {
           result = `label-${this.$moment(date).format('YYYY-MM-DD-HH-mm-ss')}`
           this.percentageDownload = 100
           clearInterval(percent)
+          const linkSource = `data:application/pdf;base64,${response.data.data.base_64}`
+          const downloadLink = document.createElement('a')
+          const fileName = `${result}.pdf`
+          downloadLink.href = linkSource
+          downloadLink.download = fileName
+          downloadLink.click()
+          this.isDownloadActive = false
           setTimeout(() => {
             this.percentageDownload = 0
-            window.open(response.data, '_blank')
+            window.open(response.data.data.path, '_blank')
           }, 1000)
-          const FILE = window.URL.createObjectURL(new Blob([response.data]))
-
-          const docUrl = document.createElement('a')
-          docUrl.href = FILE
-          docUrl.setAttribute('download', `${result}.pdf`)
-          document.body.appendChild(docUrl)
-          docUrl.click()
-          this.isDownloadActive = false
         } catch (e) {
           this.percentageDownload = 0
           this.isDownloadActive = false
@@ -1235,6 +1230,7 @@ export default {
             variant: 'danger',
           },
         })
+        clearInterval(percent)
         this.percentageDownload = 0
         this.isDownloadActive = false
       })
@@ -1324,6 +1320,7 @@ export default {
     },
     getAllItemPrint() {
       if (this.allSelectItemPrint === true) {
+        this.fieldItemsPrint = []
         // eslint-disable-next-line no-plusplus
         for (let x = 0; x < this.items.length; x++) {
           this.items[x].printIsActive = true
