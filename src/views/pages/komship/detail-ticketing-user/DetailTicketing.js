@@ -138,6 +138,8 @@ export default {
       isDisableSubmitClaimRetur: true,
       notesRejectRetur: null,
       claimReturIsActive: false,
+      active_Priority: false,
+      statusPriority: 0,
     }
   },
   directives: {
@@ -182,6 +184,7 @@ export default {
           if (data.payment_method === 'COD') this.claimReturIsActive = true
           if (data.ticket_claim_retur !== 0) this.infoClaimRetur = true
           if (this.claimReturItem?.notes) this.notesRejectRetur = this.claimReturItem.notes
+          if (data.status_priority === 1) this.active_Priority = true
           this.dateClaimRetur = data.claim_retur?.created_at
           this.ticketStatus = data.ticket_status
           this.orderStatus = data.order_status
@@ -197,6 +200,8 @@ export default {
           this.orderId = await data.order_id
           this.loadingDataDetail = false
           this.ratingUser = data.rating_user
+          this.statusPriority = data.status_priority
+          console.log(this.statusPriority)
           if (data.rating_user !== null) this.previewRating(data.rating_user.rating)
           this.dateRating = data.date_updated
           setTimeout(() => {
@@ -1076,6 +1081,47 @@ export default {
 
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
+    },
+    activePriority() {
+      this.active_Priority = !this.active_Priority
+      if (this.active_Priority === true) {
+        this.$http_komship.post(`/v1/ticket-partner/set-priority/${this.ticketId}`, { status_priority: 1 })
+          .then(() => {
+            this.$toast({
+              method: 'POST',
+              body: JSON.stringify({
+                to: this.fcmToken,
+              }),
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Custom Label berhasil diaktifkan',
+                variant: 'success',
+              },
+            }, 2000)
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+      } else {
+        this.$http_komship.post(`/v1/ticket-partner/set-priority/${this.ticketId}`, { status_priority: 0 })
+          .then(() => {
+            this({
+              method: 'POST',
+              body: JSON.stringify({
+                to: this.fcmToken,
+              }),
+            }, 2000)
+          })
+      }
     },
   },
 }
