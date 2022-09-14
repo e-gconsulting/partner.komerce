@@ -360,19 +360,24 @@ export default {
         })
       }
     },
-    async autofillByCustomer($data) {
-      this.customerPhone = `${toInteger($data.phone)}`
-      this.destination = await this.$http_komship.get('v1/destination', {
-        params: { search: $data.subdistrict_name },
-      }).then(result => {
-        const { data } = result.data.data
-        const dataByTarrifCode = data.find(items => items.value === $data.tariff_code)
-        return dataByTarrifCode || data[0]
-      }).catch(err => {
-        console.error(err)
-        return null
-      })
-      this.customerAddress = $data.address
+    async autofillByCustomer(customer) {
+      this.customerId = customer.customer_id
+      this.customerPhone = `${toInteger(customer.phone)}`
+      if (customer.subdistrict_name !== '') {
+        this.destination = await this.$http_komship.get('v1/destination', {
+          params: { search: customer.subdistrict_name === '-' ? customer.district_name : customer.subdistrict_name },
+        }).then(result => {
+          const { data } = result.data.data
+          const dataByTarrifCode = data.find(items => items.value === customer.tariff_code)
+          return dataByTarrifCode
+        }).catch(err => {
+          console.error(err)
+          return null
+        })
+      } else {
+        this.destination = null
+      }
+      this.customerAddress = customer.address
       this.customerList = []
       this.formatPhoneCustomer()
     },
@@ -1260,6 +1265,7 @@ export default {
         customer_id: this.customerId,
         customer_name: this.customerName,
         customer_phone: this.customerPhone,
+        customer_destination_id: this.destination.id,
         detail_address: this.customerAddress,
         shipping: this.shipping.shipment_name,
         shipping_type: this.shipping.shipping_type,
