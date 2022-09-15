@@ -6,7 +6,6 @@
         <h5><strong style="color: #000000" class="text-xl">Grafik Pertumbuhan Pelanggan</strong></h5>
         <Datepicker
           v-model="filterChart"
-          value="2018-12-04"
           :format="formatDateFilter"
           minimum-view="year"
           name="datepicker"
@@ -40,7 +39,8 @@
         </div>
         <BRow class="mr-0 mb-[10px]">
           <BCol class="text-center pl-0 pr-0" md="auto">
-            <BButton class="mr-1" style="padding: 4px 1rem" id="download" variant="primary" size="sm" @click="getDownloadContact"
+            <BButton class="mr-1" style="padding: 4px 1rem" id="download" variant="primary" size="sm"
+                     @click="getDownloadContact"
             >
               <BRow class="align-items-center justify-content-between">
                 <div class="ml-[10px] mr-[10px] flex items-center">
@@ -243,6 +243,7 @@ export default {
         xaxis: {
           type: 'category',
           categories: [],
+          min: '',
         },
         noData: {
           text: 'Tidak ada data',
@@ -258,6 +259,8 @@ export default {
           }) {
             const seriesName = w.globals.seriesNames[seriesIndex]
             const seriesValue = series[seriesIndex][dataPointIndex]
+            const seriesMonth = w.globals.categoryLabels[dataPointIndex].slice(0, 3)
+            const seriesYear = w.config.xaxis.min[dataPointIndex]
 
             return `<div class="px-1 py-75" style="box-shadow: 0px 8px 8px rgba(50, 50, 71, 0.08), 0px 8px 16px rgba(50, 50, 71, 0.06);">
               <div class="row">
@@ -266,6 +269,7 @@ export default {
                   <div class="font-weight-bolder text-dark mb-0 h4 text-sm">${seriesValue}</div>
                 </div>
               </div>
+              <div class="text-muted">${seriesMonth} - ${seriesYear}</div>
             </div>`
           },
         },
@@ -368,14 +372,15 @@ export default {
           this.seriesChart = [
             {
               name: 'Pelanggan',
-              data: data.map(item => item.total_contact),
+              data: data.map(item => item.total.total_contact),
             },
           ]
           this.chartOptions = {
             ...this.chartOptions,
             xaxis: {
               ...this.chartOptions.xaxis,
-              categories: data.map(x => x.month),
+              categories: data.map(item => item.total.month),
+              min: data.map(item => item.total.year),
             },
           }
           this.isLoading = false
