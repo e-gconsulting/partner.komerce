@@ -554,7 +554,7 @@ export default {
                   this.loadingConfirmationPin = false
                 })
                 .catch(e => {
-                  if (e.response.status === 400) {
+                  if (e.response.data.code === 400) {
                     this.$swal({
                       title:
                         '<span class="font-weight-bold h4">Penarikan Saldo Gagal</span>',

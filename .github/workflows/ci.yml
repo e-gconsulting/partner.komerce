@@ -29,7 +29,7 @@ jobs:
     - name: Install depenencies
       run: yarn
     - name: Build application
-      run: yarn build
+      run: yarn build:prod
     # - name: Run linter
     #   run: yarn lint
     # - name: Run tests
