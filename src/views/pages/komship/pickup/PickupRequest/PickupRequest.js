@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       profile: [],
-      address: [],
+      address: null,
       pickupDate: '',
       pickupTime: '',
       vehicle: '',
@@ -88,11 +88,12 @@ export default {
       itemOrderError: [],
     }
   },
-  created() {
-    this.getParamsData()
-    this.getAddressList()
-    this.getVehicleList()
-    this.generateToken()
+  async created() {
+    await this.getParamsData()
+    await this.getAddressList()
+    await this.getVehicleList()
+    await this.generateToken()
+    this.$forceUpdate()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -229,9 +230,11 @@ export default {
       this.changeAttr()
     },
     getNextOrderList(e) {
+      this.$forceUpdate()
       if (e.target.scrollTop + e.target.clientHeight
         >= e.target.scrollHeight && !this.isLastOrder) {
         this.loading = true
+        this.$forceUpdate()
         this.$http_komship.get(`v2/order/${this.profile.partner_id}`, {
           params: {
             order_status: 'Diajukan',
@@ -247,7 +250,9 @@ export default {
             this.loading = false
             if (data.length < this.limit) {
               this.isLastOrder = true
+              this.$forceUpdate()
             }
+            this.$forceUpdate()
           })
       }
     },
@@ -290,7 +295,7 @@ export default {
       e.target.src = imageNull
     },
     resetField() {
-      this.address = []
+      this.address = null
       this.getAddressList()
       this.pickupDate = ''
       this.pickupTime = ''
