@@ -1096,7 +1096,7 @@ export default {
               props: {
                 title: 'Success',
                 icon: 'CheckIcon',
-                text: 'Custom Label berhasil diaktifkan',
+                text: 'Ticket berhasil terlabeli prioritas',
                 variant: 'success',
               },
             }, 2000)
