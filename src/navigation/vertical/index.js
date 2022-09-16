@@ -42,6 +42,7 @@ import customer from './customer'
 import settingKompship from './setting-kompship'
 import keuangan from './keuangan'
 import opsional from './opsional'
+import myapps from './myapps'
 import ticketingUser from './ticketing-user'
 import gudang from './gudang'
 // import hiring from './hiring'
@@ -68,6 +69,7 @@ export default [
   ...settingKompship,
   ...opsional,
   ...ticketingUser,
+  ...myapps,
   // ...hiring,
 
   ...tiket,
