@@ -17,12 +17,13 @@ try {
   const messaging = firebase.messaging(app)
 
   messaging.onBackgroundMessage(payload => {
+    console.log('payload', payload)
     const notificationOption = {
-      body: payload.data.title,
-      icon: payload.data.logo_komship,
+      body: payload.data.message,
+      icon: payload.data.profile_image,
     }
     // eslint-disable-next-line no-restricted-globals
-    return self.registration.showNotification('Komship', notificationOption)
+    return self.registration.showNotification(payload.data.title, notificationOption)
   })
 } catch (err) {
   console.log('err', err)
