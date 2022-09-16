@@ -46,11 +46,11 @@
           <span class="text-[13px] text-black">Total kontak</span>
           <strong class="text-[24px] ml-1 font-bold text-black">{{ totalRows }}</strong>
         </div>
-        <BRow class="mr-0 mb-[10px]">
-          <BCol class="text-center pl-0 pr-0" md="auto">
+        <BRow class="mr-0">
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
             <BButton
               class="mr-1"
-              style="padding: 6px 1rem"
+              style="padding: 5px 1rem"
               id="download"
               variant="primary"
               size="sm"
@@ -64,7 +64,7 @@
               </BRow>
             </BButton>
           </BCol>
-          <BCol class="text-center pl-0 pr-0" md="auto">
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
             <BDropdown
               variant="outline-danger"
               :text="handleTextDropdown(provinceName)"
@@ -72,10 +72,7 @@
               class="dropdown mr-1"
               size="md"
             >
-              <BDropdownItem
-                @click="getCustomer(true)"
-                v-model="allProvinces"
-              >
+              <BDropdownItem @click="filterDataByProvince()">
                 Semua Provinsi
               </BDropdownItem>
               <BDropdownItem
@@ -88,7 +85,7 @@
               </BDropdownItem>
             </BDropdown>
           </BCol>
-          <BCol class="text-center pl-0 pr-0" md="auto">
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
             <BInputGroup class="input-group-merge">
               <BInputGroupPrepend is-text>
                 <feather-icon icon="SearchIcon" />
@@ -236,7 +233,6 @@ export default {
       seriesChart: [],
       provinces: [],
       provinceName: '',
-      allProvinces: 'Semua Provinsi',
       chartOptions: {
         chart: {
           type: 'area',
@@ -312,8 +308,7 @@ export default {
           },
         },
       },
-      filterChart: moment()
-        .format('YYYY-MM-DD'),
+      filterChart: moment().format('YYYY-MM-DD'),
       yearLabel: [],
       items: [],
       fields: [
@@ -339,7 +334,6 @@ export default {
         {
           key: 'total_order',
           label: 'Total Order',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -347,7 +341,6 @@ export default {
         {
           key: 'total_pcs',
           label: 'Total Pcs',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -355,7 +348,6 @@ export default {
         {
           key: 'total_spent',
           label: 'Total Belanja',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -363,7 +355,6 @@ export default {
         {
           key: 'last_order',
           label: 'Terakhir Order',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -399,11 +390,11 @@ export default {
   },
   methods: {
     async getCustomerGrowth() {
+      this.isLoading = true
       const params = {}
       Object.assign(params, {
         filter: this.formatDateFilter(this.filterChart),
       })
-      this.isLoading = true
       await this.$http_komship('/v1/customer/contact-growth', { params })
         .then(res => {
           const { data } = res.data
@@ -430,7 +421,7 @@ export default {
               props: {
                 title: 'Failure',
                 icon: 'AlertCircleIcon',
-                text: err.response.data.message,
+                text: err.message,
                 variant: 'danger',
               },
             },
@@ -439,12 +430,10 @@ export default {
           this.isLoading = false
         })
     },
-    async getCustomer(value) {
+    async getCustomer() {
       const params = {}
       Object.assign(params, { search: this.search })
-      if (!value) {
-        Object.assign(params, { province_name: this.provinceName })
-      }
+      Object.assign(params, { province_name: this.provinceName })
       Object.assign(params, { total_per_page: this.totalPerPage })
       Object.assign(params, { page: this.currentPage })
       await this.$http_komship.get('/v2/customers', { params })
@@ -461,7 +450,7 @@ export default {
               props: {
                 title: 'Failure',
                 icon: 'AlertCircleIcon',
-                text: err.response.data.message,
+                text: err.message,
                 variant: 'danger',
               },
             },
@@ -486,7 +475,7 @@ export default {
               props: {
                 title: 'Failure',
                 icon: 'AlertCircleIcon',
-                text: err.response.data.message,
+                text: err.message,
                 variant: 'danger',
               },
             },
@@ -508,7 +497,7 @@ export default {
               props: {
                 title: 'Failure',
                 icon: 'AlertCircleIcon',
-                text: err.response.data.message,
+                text: err.message,
                 variant: 'danger',
               },
             },
@@ -525,10 +514,7 @@ export default {
       return data
     },
     formatDate(value) {
-      return moment(value)
-        .endOf('month')
-        .format('DD MMMM YYYY')
-        .valueOf()
+      return moment(value).format('DD MMMM YYYY')
     },
     searchData: _.debounce(function search() {
       this.getCustomer()
@@ -541,17 +527,13 @@ export default {
       this.provinceName = value
     },
     handleTextDropdown(value) {
-      console.log(value)
       if (value) {
         return value
       }
       return 'Semua Provinsi'
     },
     formatDateFilter(value) {
-      return moment(value)
-        .startOf('year')
-        .format('YYYY')
-        .valueOf()
+      return moment(value).startOf('year').format('YYYY').valueOf()
     },
     handleToDetail(value) {
       const idCustomer = value[0].customer_id
