@@ -1,18 +1,27 @@
 <template>
   <div>
     <h4><strong class="text-black text-2xl">Pelanggan</strong></h4>
-    <BCard class="card-graphic">
-      <div class="flex justify-between">
+    <BCard class="card-graphic mt-1">
+      <div class="flex justify-between mb-1">
         <h5><strong style="color: #000000" class="text-xl">Grafik Pertumbuhan Pelanggan</strong></h5>
-        <Datepicker
-          v-model="filterChart"
-          :format="formatDateFilter"
-          minimum-view="year"
-          name="datepicker"
-          input-class="w-24 h-8 text-center"
-          wrapper-class="border-solid border-slate-200 border-2 rounded w-auto"
-          calendar-class="w-full ml-[-22em] mt-1"
-        />
+        <BButton
+          size="sm"
+          variant="outline-primary"
+          style="padding: 0.4rem 2rem; border: 1px solid #ECE9F1 !important; color: black;"
+          class="cursor-pointer"
+        >
+          <BRow>
+            <Datepicker
+              v-model="filterChart"
+              :format="formatDateFilter"
+              minimum-view="year"
+              name="datepicker"
+              wrapper-class="border-solid border-slate-200 rounded w-auto"
+              calendar-class="w-full ml-[-22em]"
+            />
+            <b-img src="@/assets/images/icons/arrow-down-light.svg" class="w-3" />
+          </BRow>
+        </BButton>
       </div>
       <BOverlay
         :show="isLoading"
@@ -37,10 +46,15 @@
           <span class="text-[13px] text-black">Total kontak</span>
           <strong class="text-[24px] ml-1 font-bold text-black">{{ totalRows }}</strong>
         </div>
-        <BRow class="mr-0 mb-[10px]">
-          <BCol class="text-center pl-0 pr-0" md="auto">
-            <BButton class="mr-1" style="padding: 4px 1rem" id="download" variant="primary" size="sm"
-                     @click="getDownloadContact"
+        <BRow class="mr-0">
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+            <BButton
+              class="mr-1"
+              style="padding: 5px 1rem"
+              id="download"
+              variant="primary"
+              size="sm"
+              @click="getDownloadContact"
             >
               <BRow class="align-items-center justify-content-between">
                 <div class="ml-[10px] mr-[10px] flex items-center">
@@ -50,30 +64,40 @@
               </BRow>
             </BButton>
           </BCol>
-          <BCol class="text-center pl-0 pr-0" md="auto">
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
             <BDropdown
               variant="outline-danger"
               :text="handleTextDropdown(provinceName)"
               menu-class="h-80 overflow-auto"
               class="dropdown mr-1"
+              size="md"
             >
+              <BDropdownItem @click="filterDataByProvince()">
+                Semua Provinsi
+              </BDropdownItem>
               <BDropdownItem
                 v-for="(items, index) in provinces"
                 :key="index"
-                @click="filterDataByProvince(items.province_name)" v-model="provinceName"
+                @click="filterDataByProvince(items.province_name)"
+                v-model="provinceName"
               >
                 {{ items.province_name }}
               </BDropdownItem>
             </BDropdown>
           </BCol>
-          <BCol class="text-center pl-0 pr-0" md="auto">
-            <BFormInput
-              v-model="search"
-              size="md"
-              placeholder="Nama pelanggan"
-              @input="searchData"
-              style="padding: 8px 1rem"
-            />
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+            <BInputGroup class="input-group-merge">
+              <BInputGroupPrepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </BInputGroupPrepend>
+              <BFormInput
+                v-model="search"
+                size="md"
+                placeholder="Nama pelanggan"
+                @input="searchData"
+                style="padding: 8px 1rem"
+              />
+            </BInputGroup>
           </BCol>
         </BRow>
       </div>
@@ -93,6 +117,10 @@
           responsive
           head-variant="light"
           class="mt-1"
+          selectable
+          :select-mode="selectMode"
+          @row-selected="handleToDetail"
+          hover
         >
           <template #cell(customer_phone)="data">
             <div class="flex items-center">
@@ -176,10 +204,13 @@ import {
   BPagination,
   BDropdown,
   BDropdownItem,
+  BInputGroup,
+  BInputGroupPrepend,
 } from 'bootstrap-vue'
 import VueApexcharts from 'vue-apexcharts'
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -191,9 +222,12 @@ export default {
     BDropdown,
     BDropdownItem,
     Datepicker,
+    BInputGroup,
+    BInputGroupPrepend,
   },
   data() {
     return {
+      selectMode: 'single',
       search: '',
       isLoading: true,
       seriesChart: [],
@@ -274,8 +308,7 @@ export default {
           },
         },
       },
-      filterChart: moment()
-        .format('YYYY-MM-DD'),
+      filterChart: moment().format('YYYY-MM-DD'),
       yearLabel: [],
       items: [],
       fields: [
@@ -301,7 +334,6 @@ export default {
         {
           key: 'total_order',
           label: 'Total Order',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -309,7 +341,6 @@ export default {
         {
           key: 'total_pcs',
           label: 'Total Pcs',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -317,7 +348,6 @@ export default {
         {
           key: 'total_spent',
           label: 'Total Belanja',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -325,7 +355,6 @@ export default {
         {
           key: 'last_order',
           label: 'Terakhir Order',
-          tdClass: 'text-center',
           thClass: 'font-bold',
           class: 'align-middle p-1 text-black',
           sortable: true,
@@ -361,11 +390,11 @@ export default {
   },
   methods: {
     async getCustomerGrowth() {
+      this.isLoading = true
       const params = {}
       Object.assign(params, {
         filter: this.formatDateFilter(this.filterChart),
       })
-      this.isLoading = true
       await this.$http_komship('/v1/customer/contact-growth', { params })
         .then(res => {
           const { data } = res.data
@@ -385,6 +414,21 @@ export default {
           }
           this.isLoading = false
         })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
     },
     async getCustomer() {
       const params = {}
@@ -399,6 +443,21 @@ export default {
           this.totalRows = res.data.data.total
           this.isLoading = false
         })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
     },
     async getDownloadContact() {
       await this.$http_komship.get('/v1/customer/export')
@@ -409,12 +468,42 @@ export default {
           a.download = 'Data Kontak.xls'
           a.click()
         })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
     },
     async getProvince() {
       await this.$http_komship.get('/v1/provinces')
         .then(res => {
           const { data } = res.data
           this.provinces = data
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
         })
     },
     handlePhone(value) {
@@ -425,10 +514,7 @@ export default {
       return data
     },
     formatDate(value) {
-      return moment(value)
-        .endOf('month')
-        .format('DD MMMM YYYY')
-        .valueOf()
+      return moment(value).format('DD MMMM YYYY')
     },
     searchData: _.debounce(function search() {
       this.getCustomer()
@@ -444,13 +530,16 @@ export default {
       if (value) {
         return value
       }
-      return 'Pilih Provinsi'
+      return 'Semua Provinsi'
     },
     formatDateFilter(value) {
-      return moment(value)
-        .startOf('year')
-        .format('YYYY')
-        .valueOf()
+      return moment(value).startOf('year').format('YYYY').valueOf()
+    },
+    handleToDetail(value) {
+      const idCustomer = value[0].customer_id
+      this.$router.push({
+        path: `/info-customer/detail-customer/${idCustomer}`,
+      })
     },
   },
 }
@@ -461,5 +550,9 @@ export default {
   border: 1px solid #E2E2E2;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+}
+
+.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):focus {
+  background-color: transparent;
 }
 </style>
