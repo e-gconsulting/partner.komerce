@@ -42,4 +42,4 @@ jobs:
           password: komerce2022
           port: 21
           local-dir: ./dist/
-          server-dir: ./dev.my.komerce.my.id/
+          server-dir: ./dev.partner.komerce.my.id/

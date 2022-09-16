@@ -84,14 +84,24 @@
                                                         </span>
                                                     </b-popover>
                                                 </div>
-                                                <div class="ml-1" type="button" @click="activePriority()">
-                                                    <span class="border-radius" v-if="active_Priority === false">
+                                                <div id="label__priority" class="ml-1" type="button" @click="activePriority()">
+                                                    <span v-if="active_Priority === false">
                                                         <img src="@/assets/images/flags/white-flag.svg"
                                                             alt="white flag">
                                                     </span>
                                                     <span v-if="active_Priority === true">
                                                         <img src="@/assets/images/flags/red-flag.svg" alt="red flag">
                                                     </span>
+                                                    <b-popover class="custom_arrowlabel" triggers="hover" placement="top" target="label__priority">
+                                                        <span style="text-align: -webkit-center">
+                                                            <span v-if="active_Priority === false">
+                                                                Labeli ticket ini menjadi prioritas
+                                                            </span>
+                                                            <span v-if="active_Priority === true">
+                                                                Ticket prioritas
+                                                            </span>
+                                                        </span>
+                                                    </b-popover>
                                                 </div>
                                             </b-row>
                                             <b-badge v-if="orderStatus === 'Rusak'"
