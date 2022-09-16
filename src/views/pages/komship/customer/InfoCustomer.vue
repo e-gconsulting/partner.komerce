@@ -1,18 +1,27 @@
 <template>
   <div>
     <h4><strong class="text-black text-2xl">Pelanggan</strong></h4>
-    <BCard class="card-graphic">
-      <div class="flex justify-between">
+    <BCard class="card-graphic mt-1">
+      <div class="flex justify-between mb-1">
         <h5><strong style="color: #000000" class="text-xl">Grafik Pertumbuhan Pelanggan</strong></h5>
-        <Datepicker
-          v-model="filterChart"
-          :format="formatDateFilter"
-          minimum-view="year"
-          name="datepicker"
-          input-class="w-24 h-8 text-center"
-          wrapper-class="border-solid border-slate-200 border-2 rounded w-auto"
-          calendar-class="w-full ml-[-22em] mt-1"
-        />
+        <BButton
+          size="sm"
+          variant="outline-primary"
+          style="padding: 0.4rem 2rem; border: 1px solid #ECE9F1 !important; color: black;"
+          class="cursor-pointer"
+        >
+          <BRow>
+            <Datepicker
+              v-model="filterChart"
+              :format="formatDateFilter"
+              minimum-view="year"
+              name="datepicker"
+              wrapper-class="border-solid border-slate-200 rounded w-auto"
+              calendar-class="w-full ml-[-22em]"
+            />
+            <b-img src="@/assets/images/icons/arrow-down-light.svg" class="w-3" />
+          </BRow>
+        </BButton>
       </div>
       <BOverlay
         :show="isLoading"
@@ -39,8 +48,13 @@
         </div>
         <BRow class="mr-0 mb-[10px]">
           <BCol class="text-center pl-0 pr-0" md="auto">
-            <BButton class="mr-1" style="padding: 4px 1rem" id="download" variant="primary" size="sm"
-                     @click="getDownloadContact"
+            <BButton
+              class="mr-1"
+              style="padding: 6px 1rem"
+              id="download"
+              variant="primary"
+              size="sm"
+              @click="getDownloadContact"
             >
               <BRow class="align-items-center justify-content-between">
                 <div class="ml-[10px] mr-[10px] flex items-center">
@@ -56,24 +70,37 @@
               :text="handleTextDropdown(provinceName)"
               menu-class="h-80 overflow-auto"
               class="dropdown mr-1"
+              size="md"
             >
+              <BDropdownItem
+                @click="getCustomer(true)"
+                v-model="allProvinces"
+              >
+                Semua Provinsi
+              </BDropdownItem>
               <BDropdownItem
                 v-for="(items, index) in provinces"
                 :key="index"
-                @click="filterDataByProvince(items.province_name)" v-model="provinceName"
+                @click="filterDataByProvince(items.province_name)"
+                v-model="provinceName"
               >
                 {{ items.province_name }}
               </BDropdownItem>
             </BDropdown>
           </BCol>
           <BCol class="text-center pl-0 pr-0" md="auto">
-            <BFormInput
-              v-model="search"
-              size="md"
-              placeholder="Nama pelanggan"
-              @input="searchData"
-              style="padding: 8px 1rem"
-            />
+            <BInputGroup class="input-group-merge">
+              <BInputGroupPrepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </BInputGroupPrepend>
+              <BFormInput
+                v-model="search"
+                size="md"
+                placeholder="Nama pelanggan"
+                @input="searchData"
+                style="padding: 8px 1rem"
+              />
+            </BInputGroup>
           </BCol>
         </BRow>
       </div>
@@ -93,6 +120,10 @@
           responsive
           head-variant="light"
           class="mt-1"
+          selectable
+          :select-mode="selectMode"
+          @row-selected="handleToDetail"
+          hover
         >
           <template #cell(customer_phone)="data">
             <div class="flex items-center">
@@ -176,10 +207,13 @@ import {
   BPagination,
   BDropdown,
   BDropdownItem,
+  BInputGroup,
+  BInputGroupPrepend,
 } from 'bootstrap-vue'
 import VueApexcharts from 'vue-apexcharts'
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -191,14 +225,18 @@ export default {
     BDropdown,
     BDropdownItem,
     Datepicker,
+    BInputGroup,
+    BInputGroupPrepend,
   },
   data() {
     return {
+      selectMode: 'single',
       search: '',
       isLoading: true,
       seriesChart: [],
       provinces: [],
       provinceName: '',
+      allProvinces: 'Semua Provinsi',
       chartOptions: {
         chart: {
           type: 'area',
@@ -385,11 +423,28 @@ export default {
           }
           this.isLoading = false
         })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.response.data.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
     },
-    async getCustomer() {
+    async getCustomer(value) {
       const params = {}
       Object.assign(params, { search: this.search })
-      Object.assign(params, { province_name: this.provinceName })
+      if (!value) {
+        Object.assign(params, { province_name: this.provinceName })
+      }
       Object.assign(params, { total_per_page: this.totalPerPage })
       Object.assign(params, { page: this.currentPage })
       await this.$http_komship.get('/v2/customers', { params })
@@ -397,6 +452,21 @@ export default {
           const { data } = res.data.data
           this.items = data
           this.totalRows = res.data.data.total
+          this.isLoading = false
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.response.data.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
           this.isLoading = false
         })
     },
@@ -409,12 +479,42 @@ export default {
           a.download = 'Data Kontak.xls'
           a.click()
         })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.response.data.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
     },
     async getProvince() {
       await this.$http_komship.get('/v1/provinces')
         .then(res => {
           const { data } = res.data
           this.provinces = data
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.response.data.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
         })
     },
     handlePhone(value) {
@@ -441,16 +541,23 @@ export default {
       this.provinceName = value
     },
     handleTextDropdown(value) {
+      console.log(value)
       if (value) {
         return value
       }
-      return 'Pilih Provinsi'
+      return 'Semua Provinsi'
     },
     formatDateFilter(value) {
       return moment(value)
         .startOf('year')
         .format('YYYY')
         .valueOf()
+    },
+    handleToDetail(value) {
+      const idCustomer = value[0].customer_id
+      this.$router.push({
+        path: `/info-customer/detail-customer/${idCustomer}`,
+      })
     },
   },
 }
@@ -461,5 +568,9 @@ export default {
   border: 1px solid #E2E2E2;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
   border-radius: 8px;
+}
+
+.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):focus {
+  background-color: transparent;
 }
 </style>
