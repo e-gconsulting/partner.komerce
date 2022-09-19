@@ -407,6 +407,7 @@ export default {
                 { action: 'manage', subject: 'Fitur Pendukung' },
                 { action: 'manage', subject: 'Gudang' },
                 { action: 'manage', subject: 'Gudangku' },
+                { action: 'manage', subject: 'Aplikasiku' },
               ]
               break
             case 'KOMSHIP MEMBER':

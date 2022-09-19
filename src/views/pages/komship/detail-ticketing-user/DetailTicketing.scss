@@ -87,3 +87,7 @@
 .spinner__upload__file {
     position: absolute;
 }
+
+.popover.b-popover.bs-popover-top .arrow::after, .popover.b-popover.bs-popover-auto[x-placement^=top] .arrow::after {
+    border-top-color: #F95031;
+}

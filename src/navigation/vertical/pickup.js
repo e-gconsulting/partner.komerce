@@ -14,7 +14,7 @@ export default [
         action: 'manage',
       },
       {
-        title: 'Riwayat Pickup',
+        title: 'Riwayat & Label',
         icon: 'None',
         resource: 'History Pickup',
         route: 'history-pickup',

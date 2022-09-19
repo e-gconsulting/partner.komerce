@@ -21,6 +21,7 @@ import settingKompship from './routes/komship/setting-kompship/index'
 import keuangan from './routes/komship/keuangan/index'
 import hiring from './routes/komship/hiring/index'
 import opsional from './routes/komship/opsional/index'
+import myapps from './routes/komship/myapps/index'
 import ticketing from './routes/komship/ticketing/index'
 import gudang from './routes/komship/gudang/index'
 
@@ -44,6 +45,7 @@ const router = new VueRouter({
     ...keuangan,
     ...hiring,
     ...opsional,
+    ...myapps,
     ...ticketing,
     ...gudang,
     ...wishlist,

@@ -6,7 +6,7 @@
     background-color: #FF6A3A !important;
     color: white !important;
   }
- 
+
   .daterangepicker td.in-range {
     background-color: #FFECE9 !important;
     border-color: transparent;
@@ -47,4 +47,12 @@
         flex-wrap: wrap !important;
     width: 100% !important;
     flex-wrap: nowrap !important;
+}
+.vdp-datepicker__calendar .cell.selected{
+    background: #F95031 !important;
+    border-color: #F95031 !important;
+    border-radius: 4px;
+}
+.vdp-datepicker__calendar .cell:not(.blank):not(.disabled).day:hover, .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).month:hover, .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).year:hover{
+    border: #F95031 !important;
 }
