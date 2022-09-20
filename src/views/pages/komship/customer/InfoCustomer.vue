@@ -211,6 +211,7 @@ import VueApexcharts from 'vue-apexcharts'
 import moment from 'moment'
 import Datepicker from 'vuejs-datepicker'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   components: {
@@ -308,7 +309,8 @@ export default {
           },
         },
       },
-      filterChart: moment().format('YYYY-MM-DD'),
+      filterChart: moment()
+        .format('YYYY-MM-DD'),
       yearLabel: [],
       items: [],
       fields: [
@@ -401,7 +403,7 @@ export default {
           this.seriesChart = [
             {
               name: 'Pelanggan',
-              data: data.map(item => item.total.total_contact),
+              data: data.map(item => isEmpty(item.total.total_contact) && item.total.total_contact),
             },
           ]
           this.chartOptions = {
@@ -514,7 +516,8 @@ export default {
       return data
     },
     formatDate(value) {
-      return moment(value).format('DD MMMM YYYY')
+      return moment(value)
+        .format('DD MMMM YYYY')
     },
     searchData: _.debounce(function search() {
       this.getCustomer()
@@ -533,7 +536,10 @@ export default {
       return 'Semua Provinsi'
     },
     formatDateFilter(value) {
-      return moment(value).startOf('year').format('YYYY').valueOf()
+      return moment(value)
+        .startOf('year')
+        .format('YYYY')
+        .valueOf()
     },
     handleToDetail(value) {
       const idCustomer = value[0].customer_id
