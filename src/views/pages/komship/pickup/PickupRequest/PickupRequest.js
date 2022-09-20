@@ -52,7 +52,7 @@ export default {
       ],
       itemOrderList: [],
       loading: false,
-      limit: 200,
+      limit: 50,
       offset: 0,
       selectedOrder: [],
       isLastOrder: false,
@@ -93,7 +93,6 @@ export default {
     await this.getAddressList()
     await this.getVehicleList()
     await this.generateToken()
-    this.$forceUpdate()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -229,13 +228,13 @@ export default {
       this.$bvModal.show('modalSelectOrder')
       this.changeAttr()
     },
-    getNextOrderList(e) {
-      this.$forceUpdate()
+    async getNextOrderList(e) {
+      e.preventDefault()
       if (e.target.scrollTop + e.target.clientHeight
-        >= e.target.scrollHeight && !this.isLastOrder) {
+        >= e.target.scrollHeight - 500) {
+        if (this.isLastOrder || this.loading) return
         this.loading = true
-        this.$forceUpdate()
-        this.$http_komship.get(`v2/order/${this.profile.partner_id}`, {
+        await this.$http_komship.get(`v2/order/${this.profile.partner_id}`, {
           params: {
             order_status: 'Diajukan',
             partner_address_id: this.address.address_id,
@@ -250,9 +249,11 @@ export default {
             this.loading = false
             if (data.length < this.limit) {
               this.isLastOrder = true
-              this.$forceUpdate()
             }
-            this.$forceUpdate()
+          })
+          .catch(err => {
+            this.loading = false
+            console.log(err.response)
           })
       }
     },
