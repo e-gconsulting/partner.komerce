@@ -140,6 +140,7 @@ export default {
       claimReturIsActive: false,
       active_Priority: false,
       statusPriority: 0,
+      orderStatusIsRetur: false,
     }
   },
   directives: {
@@ -183,6 +184,7 @@ export default {
           }
           if (data.payment_method === 'COD') this.claimReturIsActive = true
           if (data.ticket_claim_retur !== 0) this.infoClaimRetur = true
+          if (data.order_status === 'Retur') this.orderStatusIsRetur = true
           if (this.claimReturItem?.notes) this.notesRejectRetur = this.claimReturItem.notes
           if (data.status_priority === 1) this.active_Priority = true
           this.dateClaimRetur = data.claim_retur?.created_at

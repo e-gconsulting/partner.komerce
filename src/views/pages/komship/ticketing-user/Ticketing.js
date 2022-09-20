@@ -340,7 +340,7 @@ export default
       })
         .then(response => {
           if (response.data.code !== 400) {
-            const { data } = response.data
+            const { data } = response.data.data
             this.itemsTicket = data
             this.totalRows = response.data.data.total
             this.loadingDataTable = false
@@ -388,8 +388,9 @@ export default
       })
         .then(response => {
           if (response.data.code !== 400) {
-            const { data } = response.data
+            const { data } = response.data.data
             this.itemsTicket = data
+            console.log(this.itemsTicket, 'fetchtiket')
             this.totalRows = response.data.data.total
             this.loadingDataTable = false
           } else {
