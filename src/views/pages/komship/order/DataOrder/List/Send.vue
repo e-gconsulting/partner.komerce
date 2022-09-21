@@ -84,7 +84,6 @@
           </v-select>
           <label class="mt-1">Produk</label>
           <v-select
-            v-model="productName"
             :options="productList"
             :reduce="(option) => option.product_name"
             label="product_name"
@@ -256,13 +255,13 @@
             <span class="text-primary">Transfer</span>
             <img
               v-if="data.item.bank !== '0'"
-              :id="`iconInfo` + data.item.order_id"
+              id="popoverInfoBank"
               src="@/assets/images/icons/info-circle.svg"
               class="icon-info"
             >
             <b-popover
               triggers="hover"
-              :target="`iconInfo` + data.item.order_id"
+              target="popoverInfoBank"
               placement="bottomleft"
             >
               <label>Nama Bank:</label><br>
@@ -275,14 +274,35 @@
           </div>
         </template>
         <template #cell(airway_bill)="data">
-          <div class="inline-flex">
-            {{ data.item.airway_bill }}
-            <img
-              v-if="data.item.airway_bill"
-              src="@/assets/images/icons/copy.png"
-              class="copy-resi"
+          <div class="inline-flex items-center cursor-pointer">
+            <span
+              v-b-tooltip.hover.top="'Klik untuk copy resi'"
               @click.prevent="copyResi(data.item.airway_bill)"
+              class="colorActive"
             >
+              {{ data.item.airway_bill }}
+            </span>
+            <img
+              src="@/assets/images/svg/info-circle.svg"
+              class="copy-resi"
+              :id="`iconInfo` + data.item.order_id"
+            >
+            <div v-if="data.item.last_history_awb !== null">
+              <b-popover
+                triggers="hover"
+                :target="`iconInfo` + data.item.order_id"
+                placement="topleft"
+              >
+                <div class="flex items-center">
+                  <img src="@/assets/images/svg/car.svg" alt="Komerce">
+                  <div class="ml-1">
+                    <span>{{ handleDateTransfer(data.item.last_history_awb.date) }}</span>
+                    <br>
+                    <strong>{{data.item.last_history_awb.desc}}</strong>
+                  </div>
+                </div>
+              </b-popover>
+            </div>
           </div>
           <b-button
             v-if="data.item.is_problem === 1"
@@ -351,7 +371,19 @@
 </template>
 <script>
 import {
-  BTable, BRow, BCol, BPagination, BFormInput, BIconSearch, BButton, BPopover, BCollapse, VBToggle, BIconChevronUp, BIconChevronDown, BOverlay,
+  BTable,
+  BRow,
+  BCol,
+  BPagination,
+  BFormInput,
+  BIconSearch,
+  BButton,
+  BPopover,
+  BCollapse,
+  VBToggle,
+  BIconChevronUp,
+  BIconChevronDown,
+  BOverlay,
 } from 'bootstrap-vue'
 import moment from 'moment'
 import vSelect from 'vue-select'
@@ -362,7 +394,20 @@ import '@/@core/scss/vue/libs/vue-flatpicker.scss'
 
 export default {
   components: {
-    BTable, BRow, BCol, BPagination, BFormInput, BIconSearch, BButton, BPopover, vSelect, BCollapse, BIconChevronUp, BIconChevronDown, flatPickr, BOverlay,
+    BTable,
+    BRow,
+    BCol,
+    BPagination,
+    BFormInput,
+    BIconSearch,
+    BButton,
+    BPopover,
+    vSelect,
+    BCollapse,
+    BIconChevronUp,
+    BIconChevronDown,
+    flatPickr,
+    BOverlay,
   },
   directives: {
     'b-toggle': VBToggle,
@@ -373,22 +418,40 @@ export default {
       items: [],
       fields: [
         {
-          key: 'order_date', label: 'Tanggal Order', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'order_date',
+          label: 'Tanggal Order',
+          thClass: 'align-middle',
+          tdClass: 'align-top',
         },
         {
-          key: 'customer_name', label: 'Pelanggan', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'customer_name',
+          label: 'Pelanggan',
+          thClass: 'align-middle',
+          tdClass: 'align-top',
         },
         {
-          key: 'product', label: 'Produk', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'product',
+          label: 'Produk',
+          thClass: 'align-middle',
+          tdClass: 'align-top',
         },
         {
-          key: 'grand_total', label: 'Total Pembayaran', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'grand_total',
+          label: 'Total Pembayaran',
+          thClass: 'align-middle',
+          tdClass: 'align-top',
         },
         {
-          key: 'airway_bill', label: 'No Resi', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'airway_bill',
+          label: 'No Resi',
+          thClass: 'align-middle',
+          tdClass: 'align-top',
         },
         {
-          key: 'details', label: 'Rincian', thClass: 'align-middle', tdClass: 'align-top',
+          key: 'details',
+          label: 'Rincian',
+          thClass: 'align-middle',
+          tdClass: 'align-top',
         },
       ],
       loadTable: false,
@@ -418,16 +481,18 @@ export default {
   },
   mounted() {
     this.getTotalOrder()
-    this.fetchData().catch(error => {
-      console.error(error)
-    })
+    this.fetchData()
+      .catch(error => {
+        console.error(error)
+      })
     this.getProduct()
     this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
       if (document.getElementById('popoverFilter') !== null) {
-        if (!document.getElementById('popoverFilter').contains(e.target)) {
+        if (!document.getElementById('popoverFilter')
+          .contains(e.target)) {
           this.$root.$emit('bv::hide::popover')
         } else {
           e.stopPropagation()
@@ -436,17 +501,19 @@ export default {
     })
   },
   methods: {
-    formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
+    formatNumber: value => (`${value}`).replace(/\D/g, '')
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
     moment(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('DD-MM-YYYY HH:mm')
+        return moment(date)
+          .format('DD-MM-YYYY HH:mm')
       }
       return date
     },
     async fetchData(search) {
       this.loadTable = true
-      this.items = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
+      await this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
         params: {
           order_status: 'Dikirim',
           search,
@@ -461,6 +528,7 @@ export default {
       })
         .then(res => {
           const { data } = res.data
+          this.items = data
           this.isProblem = false
           this.totalItems = data.total
           this.loadTable = false
@@ -486,7 +554,8 @@ export default {
           const { data } = res.data
           this.totalKirim = data.dikirim
           this.totalProblem = data.order_problem
-        }).catch(err => console.error(err))
+        })
+        .catch(err => console.error(err))
     },
     filterProblem() {
       this.isProblem = true
@@ -505,7 +574,8 @@ export default {
         .then(response => {
           const { data } = response.data
           this.productList = data
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -529,33 +599,26 @@ export default {
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
-      } if (value === 'GOKIL') {
+      }
+      if (value === 'GOKIL') {
         return 'Cargo'
       }
       return value
     },
     async copyResi(resi) {
-      try {
-        await navigator.clipboard.writeText(resi)
-        const Toast = this.$swal.mixin({
-          toast: true,
-          position: 'top-end',
-          showConfirmButton: false,
-          timer: 3000,
-          didOpen: toast => {
-            toast.addEventListener('mouseenter', this.$swal.stopTimer)
-            toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+      navigator.clipboard.writeText(resi)
+      this.$toast(
+        {
+          component: ToastificationContent,
+          props: {
+            title: 'Sukses',
+            icon: 'CheckIcon',
+            text: 'Nomor resi berhasil di copy',
+            variant: 'success',
           },
-        })
-
-        Toast.fire({
-          icon: 'success',
-          title: '<span class="text-success">Success copy to clipboard</span>',
-          showCloseButton: true,
-        })
-      } catch ($e) {
-        // handle error
-      }
+        },
+        2000,
+      )
     },
     async setPage(totalPage) {
       this.perPage = totalPage
@@ -567,6 +630,10 @@ export default {
         window.open(routeData.href, '_blank')
       }
     },
+    handleDateTransfer(value) {
+      console.log(value)
+      return moment(value).format('DD MMMM YYYY - hh.mm')
+    },
   },
 }
 </script>
@@ -576,41 +643,58 @@ export default {
   height: 45px;
   border-radius: 12px;
 }
+
 .button-detail {
   font-size: 14px;
-  color: #08A0F7!important;
+  color: #08A0F7 !important;
 }
+
 .button-detail:hover {
-  color: #c3c3c3!important;
+  color: #c3c3c3 !important;
 }
+
 .icon-info {
   width: 20px;
   height: 20px;
   margin-left: 3px;
   cursor: pointer;
 }
+
 .collapsed > .when-open,
 .not-collapsed > .when-closed {
   display: none;
 }
+
 .buttonCollapse {
   margin-left: -50px;
-  width:130px;
+  width: 130px;
 }
-.copy-resi{
+
+.copy-resi {
   margin-left: 2px;
   height: 20px;
   width: 20px;
   cursor: pointer;
 }
+
 .btnPage {
   padding: 4px 7px;
   margin-right: 5px;
 }
+
 .image-product {
   object-fit: cover;
   object-position: center center;
-  width: 50px!important;
-  height: 50px!important;
+  width: 50px !important;
+  height: 50px !important;
+}
+
+.colorActive {
+  font-weight: 600;
+}
+
+.colorActive:hover {
+  color: #F95031;
+  font-weight: 600;
 }
 </style>
