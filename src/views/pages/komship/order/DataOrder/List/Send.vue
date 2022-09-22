@@ -513,7 +513,7 @@ export default {
     },
     async fetchData(search) {
       this.loadTable = true
-      await this.$http_komship.get(`v2/order/${this.profile.partner_detail.id}`, {
+      await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}`, {
         params: {
           order_status: 'Dikirim',
           search,
@@ -527,7 +527,7 @@ export default {
         },
       })
         .then(res => {
-          const { data } = res.data
+          const { data } = res.data.data
           this.items = data
           this.isProblem = false
           this.totalItems = data.total

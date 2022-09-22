@@ -510,19 +510,23 @@
                 <template #cell(ticket_status)="dataStatusTicket">
                     <div class="d-flex">
                         <div>
-                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] === undefined" class="font-light">
+                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] === undefined"
+                                class="font-light">
                                 <span v-if="dataStatusTicket.value === 0" class="font-light" style="color: #AB2900">
                                     Perlu Tindak Lanjut
                                 </span>
-                                <span v-if="dataStatusTicket.value !== 0" :class="statusTicketClass(dataStatusTicket.value)">
+                                <span v-if="dataStatusTicket.value !== 0"
+                                    :class="statusTicketClass(dataStatusTicket.value)">
                                     {{ convertTicketStatus(dataStatusTicket.value) }}
                                 </span>
                             </div>
-                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] !== undefined" class="font-bold">
+                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] !== undefined"
+                                class="font-bold">
                                 <span v-if="dataStatusTicket.value === 0" class="font-bold" style="color: #AB2900">
                                     Perlu Tindak Lanjut
                                 </span>
-                                <span v-if="dataStatusTicket.value !== 0" :class="statusTicketClass(dataStatusTicket.value)">
+                                <span v-if="dataStatusTicket.value !== 0"
+                                    :class="statusTicketClass(dataStatusTicket.value)">
                                     {{ convertTicketStatus(dataStatusTicket.value) }}
                                 </span>
                             </div>
@@ -539,7 +543,8 @@
                                 <small class="text-primary">Paketnya Rusak 🙏</small>
                             </div>
                         </div>
-                            <img v-if="dataStatusTicket.item.status_priority === 1" src="@/assets/images/flags/red-flag.svg" alt="red flag">
+                        <img v-b-popover.hover.top="'Ticket Prioritas'" v-if="dataStatusTicket.item.status_priority === 1"
+                            src="@/assets/images/flags/red-flag.svg" alt="red flag" />
                     </div>
 
                 </template>
