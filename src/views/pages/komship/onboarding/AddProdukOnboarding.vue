@@ -1149,6 +1149,49 @@
         >Oke</b-button>
       </div>
     </b-modal>
+    <b-modal
+      id="modalOnboarding"
+      hide-header
+      hide-footer
+      size="lg"
+      centered
+    >
+      <b-container class="py-2">
+        <b-img
+          src="@/assets/images/icons/close-circle.svg"
+          class="absolute top-[10px] right-[10px]"
+          style="cursor:pointer"
+          @click="$bvModal.hide('modalOnboarding')"
+        />
+        <p class="text-[20px] font-semibold text-center mb-2">
+          Jangan dipikir input produk itu <span class="text-primary">lama</span> dan <span class="text-primary">ribet</span>
+        </p>
+        <div class="mb-2">
+          <b-img
+            :src="require('@/assets/images/banner/popup-product-onboarding.svg')"
+            style="max-width:100%;"
+            class="mx-auto"
+          />
+        </div>
+        <p class="text-[16px]">🛒 Ga harus langsung semua diinput, bisa coba yang paling sering laku<br>
+          📝 Kalau lagi gabut, bisa isi dulu kolom yang wajib, sisanya dilengkapi pas senggang aja</p>
+        <div class="d-flex justify-content-center mb-2">
+          <b-button
+            variant="primary"
+            class="rounded-lg"
+            @click="dissmissNewUser"
+          >
+            Ok, Coba input 1 dulu ah...
+          </b-button>
+        </div>
+        <p
+          class="text-[12px] mx-auto text-center"
+          style="max-width: 620px"
+        >
+          *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
+        </p>
+      </b-container>
+    </b-modal>
 
   </b-card-actions>
 </template>
@@ -1180,7 +1223,6 @@ import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import Onboarding from './Onboarding.vue'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -1265,6 +1307,7 @@ export default {
       productId: '',
 
       validatePayment: '',
+      newUser: true,
     }
   },
   computed: {
@@ -1333,6 +1376,12 @@ export default {
         this.profile = data
       }
     })
+    if (localStorage.getItem('newUser')) {
+      this.newUser = localStorage.getItem('newUser')
+    }
+    if (this.newUser === true) {
+      this.$bvModal.show('modalOnboarding')
+    }
   },
   methods: {
     submitPublish() {
@@ -1501,7 +1550,7 @@ export default {
               this.variantStore.splice(i, 1)
             }
           }
-          httpKomship.post('/v1/ob/product/create/1', {
+          this.$http_komship.post('/v1/ob/product/create/1', {
             product_name: this.productName,
             sku: this.skuName,
             description: this.descriptionProduct,
@@ -1523,7 +1572,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', response.data.data.product_id)
               formData.append('image_path', this.imageFile)
-              httpKomship.post('/v1/ob/product/upload-image', formData,
+              this.$http_komship.post('/v1/ob/product/upload-image', formData,
                 {
                   headers: { Authorization: `Bearer ${useJwt.getToken()}` },
                 }).then(() => {
@@ -1795,6 +1844,10 @@ export default {
     handleOkModalValidationUpload() {
       this.imageFile = null
       this.$refs['modal-validation-upload'].hide()
+    },
+    dissmissNewUser() {
+      this.$bvModal.hide('modalOnboarding')
+      localStorage.setItem('newUser', false)
     },
   },
 }

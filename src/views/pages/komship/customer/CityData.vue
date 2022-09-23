@@ -77,7 +77,6 @@ import {
 } from 'bootstrap-vue'
 import VueApexCharts from 'vue-apexcharts'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -161,7 +160,7 @@ export default {
   methods: {
     changeData() {
       this.loading = false
-      httpKomship.get('/v1/customers/ranking-customers', {
+      this.$http_komship.get('/v1/customers/ranking-customers', {
         params: {
           is_lifetime: this.rangkingCity,
         },
@@ -190,7 +189,7 @@ export default {
     },
     getData() {
       this.loading = true
-      httpKomship.get('/v1/customers/ranking-customers', {
+      this.$http_komship.get('/v1/customers/ranking-customers', {
         params: {
           is_lifetime: this.rangkingCity,
         },

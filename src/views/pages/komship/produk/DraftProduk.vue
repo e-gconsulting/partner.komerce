@@ -313,22 +313,18 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
-                          <b-avatar
-                            v-if="itemsData.product_image[0] !== undefined"
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="itemsData.product_image[0].images_path"
-                          />
-                          <b-avatar
-                            v-else
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="imageFileProduct"
-                          />
-                        </div>
+                        <img
+                          v-if="itemsData.product_image[0] !== undefined"
+                          variant="light-primary"
+                          square
+                          class="image-product"
+                          :src="itemsData.product_image[0].images_path"
+                        >
+                        <img
+                          v-else
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          class="image-product"
+                        >
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
                           <small>SKU: {{ itemsData.sku }}</small>
@@ -356,7 +352,7 @@
                     class=""
                   >
                     <p class="ml-2">
-                      Tidak Ada Variasi
+                      -
                     </p>
                   </b-col>
                   <b-col
@@ -581,21 +577,18 @@
                   fluid
                   class="d-flex"
                 >
-                  <div v-if="data.item.product_image[0] !== undefined">
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="data.item.product_image[0].images_path"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                    />
-                  </div>
+                  <img
+                    v-if="data.item.product_image[0] !== undefined"
+                    variant="light-primary"
+                    square
+                    class="image-product"
+                    :src="data.item.product_image[0].images_path"
+                  >
+                  <img
+                    v-else
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                    class="image-product"
+                  >
                   <div class="ml-1">
                     <p><strong>{{ data.item.product_name }}</strong></p>
                     <small>SKU: {{ data.item.sku }}</small>
@@ -629,7 +622,7 @@
                 </b-collapse>
               </div>
               <div v-else>
-                Tidak ada variasi
+                -
               </div>
             </template>
 
@@ -852,7 +845,6 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { heightTransition } from '@core/mixins/ui/transition'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -864,7 +856,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    BAvatar,
     BForm,
     BOverlay,
     BModal,
@@ -943,7 +934,8 @@ export default {
     this.getProduct()
   },
   methods: {
-    getProduct() {
+    // eslint-disable-next-line func-names
+    getProduct: _.debounce(function () {
       this.loading = true
       const params = {
         status: 0,
@@ -953,7 +945,7 @@ export default {
       if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
       if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
-      return httpKomship.get('/v1/product', {
+      return this.$http_komship.get('/v1/product', {
         params,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -974,7 +966,7 @@ export default {
           },
         })
       })
-    },
+    }, 1000),
     showConfirmDelete(id) {
       this.idDelete = id
       this.$refs['modal-confirm-delete-product'].show()
@@ -983,7 +975,7 @@ export default {
       this.$refs['modal-confirm-delete-product'].hide()
     },
     deleteProduct() {
-      httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+      this.$http_komship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -1066,6 +1058,13 @@ export default {
   [dir] .wrapper__form__filter__data__product__mobile {
     width: 270px!important;
   }
+}
+
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 
 </style>

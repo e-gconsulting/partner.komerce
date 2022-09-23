@@ -14,7 +14,7 @@ export default [
         action: 'manage',
       },
       {
-        title: 'Saldo',
+        title: 'Riwayat Penarikan',
         icon: 'None',
         resource: 'Saldo',
         route: 'saldo',

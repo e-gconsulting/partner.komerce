@@ -336,7 +336,7 @@
                       Ditolak
                     </div>
                     <div
-                      v-if="riwayat.status==='rejected'"
+                      v-if="riwayat.status==='canceled'"
                       class="text-danger"
                     >
                       Dibatalkan
@@ -438,7 +438,7 @@
   </b-modal>
   <b-modal
     id="modal-keuangan"
-    body-class="px-3 py-2"
+    body-class="px-2 py-2"
     hide-header
     hide-footer
     centered
@@ -486,6 +486,7 @@
               v-model="nominal"
               type="tel"
               data-type="currency"
+              autocomplete="off"
               required
               class="h-text-sm h-text-dark"
               :state="nominalState"
@@ -503,12 +504,17 @@
             invalid-feedback="Rekening tujuan is required"
             :state="rekTujuanState"
           >
-            <b-form-select
-              v-model="selectedRekTujuan"
-              class="h-text-sm h-text-dark"
-              :options="rekTujuanOptions"
-              required
-            />
+              <v-select
+                v-model="selectedRekTujuan"
+                class="h-text-sm h-text-dark"
+                label="text"
+                :reduce="items => items.value"
+                :options="rekTujuanOptions"
+              >
+                <span v-if="rekTujuanOptions.length === 0" slot="no-options">
+                  Anda belum menambahkan rekening bank
+                </span>
+              </v-select>
           </b-form-group>
           <div class="col-12 text-right mt-3">
             <button
@@ -521,6 +527,7 @@
             <button
               type="submit"
               class="btn btn-primary ml-2"
+              :disabled="selectedRekTujuan === null"
             >
               Ajukan Penarikan
             </button>
@@ -537,7 +544,10 @@
           </p>
           <b-row class="justify-content-center mb-1">
             <CodeInput
+              :style="isVisibility ?'-webkit-text-security: disc' : '-webkit-text-security: none'"
               v-model="pin"
+              :fieldWidth ="fieldwidth"
+              :fieldHeight ="fieldheight"
               :loading="false"
               class="input"
               :type="visibilityPin"
@@ -550,7 +560,7 @@
             <b-button
               variant="flat-primary"
               class="btn-icon"
-              @click="toggleVisibilityPin"
+              @click="toggleVisibilityPin()"
             >
               Tampilkan
             </b-button>
@@ -559,6 +569,7 @@
             <div class="text-center">
               <button
                 type="submit"
+                value="Submit"
                 class="btn btn-primary d-block m-auto"
               >
                 Konfirmasi

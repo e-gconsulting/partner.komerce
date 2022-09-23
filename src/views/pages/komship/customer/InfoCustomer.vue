@@ -1,478 +1,564 @@
 <template>
-  <b-card>
-    <h4><strong>Customer</strong></h4>
-    <b-row class="d-flex justify-content-end align-items-center">
-      <b-col
-        cols="3"
-      >
-        <b-input-group class="input-group-merge">
-          <b-input-group-prepend is-text>
-            <feather-icon icon="SearchIcon" />
-          </b-input-group-prepend>
-          <b-form-input
-            v-model="customerName"
-            placeholder="Masukan Nama Customer"
-            @input="datapagination(filterCustomer)"
-          />
-        </b-input-group>
-      </b-col>
-      <b-col
-        cols="auto"
-      >
-        <b-dropdown
-          v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-          right
-          no-caret
-          variant="primary"
-        >
-          <template
-            #button-content
-          >
-            <feather-icon icon="SlidersIcon" />
-          </template>
-          <b-dropdown-form
-            style="width: 417px;"
-          >
-            <b-form>
-              <b-row>
-                <b-col
-                  cols="12"
-                  class="mt-50 pr-2 pl-2"
-                >
-                  <b-form-group
-                    label="Daerah"
-                  >
-                    <v-select
-                      v-model="destination"
-                      label="label"
-                      :options="itemsDestinations"
-                      :reduce="items => items.city_name"
-                      placeholder="Masukan nama Provinsi atau Kota"
-                      @search="onSearchDestination"
-                    />
-                  </b-form-group>
-                </b-col>
-
-                <b-col
-                  cols="12"
-                  class="ml-50"
-                >
-                  <b-form-group
-                    label="Uang Dihabiskan"
-                  >
-                    <div class="d-flex justify-content-center align-items-center">
-                      <b-form-input
-                        v-model="spentFrom"
-                        class=""
-                        placeholder="Rp 10.000.000"
-                      />
-                      <b-button
-                        class="btn-icon"
-                        variant="flat-dark"
-                        disabled
-                      >
-                        <feather-icon
-                          icon="MinusIcon"
-                        />
-                      </b-button>
-                      <b-form-input
-                        v-model="spentTo"
-                        class="mr-1"
-                        placeholder="Rp 10.000.000"
-                      />
-                    </div>
-                  </b-form-group>
-                </b-col>
-
-                <b-col
-                  cols="12"
-                  class="ml-50 mt-50"
-                >
-                  <b-form-group
-                    label="Pcs"
-                  >
-                    <div class="d-flex justify-content-center align-items-center">
-                      <b-form-input
-                        v-model="pcsFrom"
-                        class=""
-                        placeholder="0"
-                      />
-                      <b-button
-                        class="btn-icon"
-                        variant="flat-dark"
-                        disabled
-                      >
-                        <feather-icon
-                          icon="MinusIcon"
-                        />
-                      </b-button>
-                      <b-form-input
-                        v-model="pcsTo"
-                        class="mr-1"
-                        placeholder="0"
-                      />
-                    </div>
-                  </b-form-group>
-                </b-col>
-
-                <b-col
-                  cols="12"
-                  class="ml-50 mt-50"
-                >
-                  <b-form-group
-                    label="Total Order"
-                  >
-                    <div class="d-flex justify-content-center align-items-center">
-                      <b-form-input
-                        v-model="orderFrom"
-                        class=""
-                        placeholder="0"
-                      />
-                      <b-button
-                        class="btn-icon"
-                        variant="flat-dark"
-                        disabled
-                      >
-                        <feather-icon
-                          icon="MinusIcon"
-                        />
-                      </b-button>
-                      <b-form-input
-                        v-model="orderTo"
-                        class="mr-1"
-                        placeholder="0"
-                      />
-                    </div>
-                  </b-form-group>
-                </b-col>
-
-                <!-- submit and reset -->
-                <b-col
-                  cols="12"
-                  class="ml-50 mt-1"
-                >
-                  <b-button
-                    v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                    type="reset"
-                    variant="outline-primary"
-                    class="mr-1"
-                    @click="resetFilter"
-                  >
-                    Reset
-                  </b-button>
-
-                  <b-button
-                    v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                    type="submit"
-                    variant="primary"
-                    @click.prevent="datapagination"
-                  >
-                    Terapkan
-                  </b-button>
-                </b-col>
-              </b-row>
-            </b-form>
-          </b-dropdown-form>
-        </b-dropdown>
-      </b-col>
-    </b-row>
-
-    <b-overlay
-      variant="light"
-      :show="loading"
-      spinner-variant="primary"
-      blur="0"
-      opacity=".5"
-      rounded="sm"
-    >
-      <b-table
-        id="pagination"
-        :current-page="currentPage"
-        striped
-        hover
-        :per-page="0"
-        responsive
-        class="position-relative mt-2"
-        empty-text="Tidak ada data untuk ditampilkan."
-        :items="itemsCustomer"
-        :fields="fields"
-        :show-empty="!loading"
-        @row-clicked="onRowClicked"
-      >
-
-        <template #head(customer_name)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
-        </template>
-        <template #head(customer_address)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
-        </template>
-        <template #head(total_order)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
-        </template>
-        <template #head(total_pcs)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
-        </template>
-        <template #cell(total_spent)="data">
-          <span class="capitalizeText">Rp {{ formatPrice(data.item.total_spent) }}</span>
-        </template>
-        <template #head(last_order)="data">
-          <span class="capitalizeText">{{ data.label }}</span>
-        </template>
-      </b-table>
-    </b-overlay>
-    <b-row class="justify-content-between mt-5 mx-50 mb-2">
-      <div>
-        <span class="text-black mr-1">
-          List Per halaman
-        </span>
-        <b-button
-          v-for="itemcustomer in halamancustomer"
-          :key="itemcustomer"
-          class="btn-icon mr-50"
+  <div>
+    <h4><strong class="text-black text-2xl">Pelanggan</strong></h4>
+    <BCard class="card-graphic mt-1">
+      <div class="flex justify-between mb-1">
+        <h5><strong style="color: #000000" class="text-xl">Grafik Pertumbuhan Pelanggan</strong></h5>
+        <BButton
           size="sm"
-          :variant="itemcustomer === perPage ? 'primary' : 'flat-dark'"
-          @click="halamanpagination(itemcustomer)"
+          variant="outline-primary"
+          style="padding: 0.4rem 2rem; border: 1px solid #ECE9F1 !important; color: black;"
+          class="cursor-pointer"
         >
-          {{ itemcustomer }}
-        </b-button>
+          <BRow>
+            <Datepicker
+              v-model="filterChart"
+              :format="formatDateFilter"
+              minimum-view="year"
+              name="datepicker"
+              wrapper-class="border-solid border-slate-200 rounded w-auto"
+              calendar-class="w-full ml-[-22em]"
+            />
+            <b-img src="@/assets/images/icons/arrow-down-light.svg" class="w-3" />
+          </BRow>
+        </BButton>
       </div>
-      <b-pagination
-        v-model="currentPage"
-        :total-rows="totalRows"
-        :per-page="perPage"
-        first-number
-        hide-goto-end-buttons
-        last-number
-        class="pagination-primary"
-      /></b-row>
-  </b-card>
+      <BOverlay
+        :show="isLoading"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
+        <VueApexcharts
+          ref="myChart"
+          height="300"
+          type="area"
+          :options="chartOptions"
+          :series="seriesChart"
+        />
+      </BOverlay>
+    </BCard>
+    <BCard>
+      <div class="flex justify-between">
+        <div class="flex items-center">
+          <span class="text-[13px] text-black">Total kontak</span>
+          <strong class="text-[24px] ml-1 font-bold text-black">{{ totalRows }}</strong>
+        </div>
+        <BRow class="mr-0">
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+            <BButton
+              class="mr-1"
+              style="padding: 5px 1rem"
+              id="download"
+              variant="primary"
+              size="sm"
+              @click="getDownloadContact"
+            >
+              <BRow class="align-items-center justify-content-between">
+                <div class="ml-[10px] mr-[10px] flex items-center">
+                  <b-img src="@/assets/images/svg/document-download.svg" />
+                  <span class="ml-[4px]">Download Data Excel</span>
+                </div>
+              </BRow>
+            </BButton>
+          </BCol>
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+            <BDropdown
+              variant="outline-danger"
+              :text="handleTextDropdown(provinceName)"
+              menu-class="h-80 overflow-auto"
+              class="dropdown mr-1"
+              size="md"
+            >
+              <BDropdownItem @click="filterDataByProvince()">
+                Semua Provinsi
+              </BDropdownItem>
+              <BDropdownItem
+                v-for="(items, index) in provinces"
+                :key="index"
+                @click="filterDataByProvince(items.province_name)"
+                v-model="provinceName"
+              >
+                {{ items.province_name }}
+              </BDropdownItem>
+            </BDropdown>
+          </BCol>
+          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+            <BInputGroup class="input-group-merge">
+              <BInputGroupPrepend is-text>
+                <feather-icon icon="SearchIcon" />
+              </BInputGroupPrepend>
+              <BFormInput
+                v-model="search"
+                size="md"
+                placeholder="Nama pelanggan"
+                @input="searchData"
+                style="padding: 8px 1rem"
+              />
+            </BInputGroup>
+          </BCol>
+        </BRow>
+      </div>
+      <BOverlay
+        :show="isLoading"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
+        <BTable
+          :items="items"
+          :fields="fields"
+          show-empty
+          empty-text="Tidak ada data yang ditampilkan."
+          responsive
+          head-variant="light"
+          class="mt-1"
+          selectable
+          :select-mode="selectMode"
+          @row-selected="handleToDetail"
+          hover
+        >
+          <template #cell(customer_phone)="data">
+            <div class="flex items-center">
+              <img
+                src="@/assets/images/icons/whatsapp.svg"
+                alt="Komerce"
+                style="cursor: pointer"
+                @click="handlePhone(data.item.customer_phone)"
+              >
+              <span class="text-black ml-[2px]">{{ data.value }}</span>
+            </div>
+          </template>
+          <template #cell(total_spent)="data">
+            Rp. {{ formatRupiah(data.item.total_spent) }}
+          </template>
+          <template #cell(last_order)="data">
+            {{ formatDate(data.item.last_order) }}
+          </template>
+        </BTable>
+        <BRow>
+          <BCol
+            cols="12"
+            class="d-flex justify-content-between"
+          >
+            <div
+              class="
+              bg-light
+              d-flex
+              justify-content-center
+              align-items-center
+              p-50
+              rounded
+            "
+            >
+              <span class="text-black mr-50"> List per halaman: </span>
+              <BButton
+                v-for="page in optionsPage"
+                :key="page"
+                class="btn-icon"
+                size="sm"
+                :variant="totalPerPage === page ? 'primary' : 'flat-dark'"
+                @click="setPerPage(page)"
+              >
+                {{ page }}
+              </BButton>
+            </div>
+
+            <BPagination
+              v-model="currentPage"
+              :total-rows="totalRows"
+              :per-page="totalPerPage"
+              first-number
+              last-number
+              class="pagination-primary"
+            >
+              <template #prev-text>
+                <feather-icon
+                  size="18"
+                  icon="ChevronLeftIcon"
+                />
+              </template>
+              <template #next-text>
+                <feather-icon
+                  size="18"
+                  icon="ChevronRightIcon"
+                />
+              </template>
+            </BPagination>
+          </BCol>
+        </BRow>
+      </BOverlay>
+    </BCard>
+  </div>
 </template>
 <script>
 import {
-  BCol,
+  BCard,
+  BOverlay,
   BFormInput,
+  BTable,
+  BPagination,
+  BDropdown,
+  BDropdownItem,
   BInputGroup,
   BInputGroupPrepend,
-  BButton,
-  BRow,
-  BTable,
-  BForm,
-  BFormGroup,
-  BCard,
-  BPagination,
-  BOverlay,
-  VBPopover,
-  BDropdown,
-  BDropdownForm,
 } from 'bootstrap-vue'
-
-import Ripple from 'vue-ripple-directive'
-import useJwt from '@/auth/jwt/useJwt'
-import { dateFormat } from '@core/mixins/ui/date'
-import vSelect from 'vue-select'
-import httpKomship from '../setting-kompship/http_komship'
+import VueApexcharts from 'vue-apexcharts'
+import moment from 'moment'
+import Datepicker from 'vuejs-datepicker'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import isEmpty from 'lodash/isEmpty'
 
 export default {
   components: {
     BCard,
-    BCol,
+    VueApexcharts,
     BFormInput,
-    BInputGroup,
-    BInputGroupPrepend,
-    BButton,
-    BRow,
     BTable,
-    BForm,
-    BFormGroup,
-    BOverlay,
-    vSelect,
     BPagination,
     BDropdown,
-    BDropdownForm,
+    BDropdownItem,
+    Datepicker,
+    BInputGroup,
+    BInputGroupPrepend,
   },
-  directives: {
-    'b-popover': VBPopover,
-    Ripple,
-  },
-  mixins: [dateFormat],
-
   data() {
     return {
-      loading: false,
-      currentPage: 1,
-      perPage: 50,
-      halamancustomer: [50, 100, 200],
-      totalRows: 0,
-      selected: 1,
-      filterCustomer: null,
-      options: [
-        { value: 1, text: 'Kabupaten' },
-      ],
+      selectMode: 'single',
+      search: '',
+      isLoading: true,
+      seriesChart: [],
+      provinces: [],
+      provinceName: '',
+      chartOptions: {
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          width: '100%',
+          toolbar: {
+            show: false,
+          },
+          zoom: {
+            enabled: false,
+          },
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        markers: {
+          size: 0,
+        },
+        stroke: {
+          curve: 'smooth',
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.75,
+            opacityTo: 0.05,
+            stops: [20, 100, 100, 100],
+          },
+        },
+        yaxis: {
+          forceNiceScale: true,
+          axisBorder: {
+            show: false,
+          },
+          axisTicks: {
+            show: false,
+          },
+        },
+        xaxis: {
+          type: 'category',
+          categories: [],
+          min: '',
+        },
+        noData: {
+          text: 'Tidak ada data',
+        },
+        color: ['#08A0F7'],
+        tooltip: {
+          shared: false,
+          custom({
+            series,
+            seriesIndex,
+            dataPointIndex,
+            w,
+          }) {
+            const seriesName = w.globals.seriesNames[seriesIndex]
+            const seriesValue = series[seriesIndex][dataPointIndex]
+            const seriesMonth = w.globals.categoryLabels[dataPointIndex].slice(0, 3)
+            const seriesYear = w.config.xaxis.min[dataPointIndex]
+
+            return `<div class="px-1 py-75" style="box-shadow: 0px 8px 8px rgba(50, 50, 71, 0.08), 0px 8px 16px rgba(50, 50, 71, 0.06);">
+              <div class="row">
+                <div class="col flex">
+                  <div class="mb-25 mr-1"><small class="text-muted">${seriesName}</small></div>
+                  <div class="font-weight-bolder text-dark mb-0 h4 text-sm">${seriesValue}</div>
+                </div>
+              </div>
+              <div class="text-muted">${seriesMonth} - ${seriesYear}</div>
+            </div>`
+          },
+        },
+      },
+      filterChart: moment()
+        .format('YYYY-MM-DD'),
+      yearLabel: [],
+      items: [],
       fields: [
         {
           key: 'customer_name',
-          label: 'Nama Customer',
+          label: 'Nama Pelanggan',
+          thClass: 'font-bold text-black',
+          class: 'align-middle text-black',
           sortable: true,
+        },
+        {
+          key: 'customer_phone',
+          label: 'No. HP',
+          thClass: 'font-bold',
+          class: 'align-middle text-black',
         },
         {
           key: 'customer_address',
           label: 'Alamat',
-          tdClass: 'capitalizeText',
+          thClass: 'font-bold',
+          class: 'align-middle text-black',
         },
         {
           key: 'total_order',
           label: 'Total Order',
-          tdClass: 'text-center',
+          thClass: 'font-bold pr-1',
+          class: 'align-middle text-black',
           sortable: true,
         },
         {
           key: 'total_pcs',
           label: 'Total Pcs',
-          tdClass: 'text-center',
+          thClass: 'font-bold',
+          class: 'align-middle p-1 text-black',
           sortable: true,
         },
         {
           key: 'total_spent',
-          label: 'Uang Dihabiskan',
+          label: 'Total Belanja',
+          thClass: 'font-bold',
+          class: 'align-middle p-1 text-black',
           sortable: true,
         },
         {
           key: 'last_order',
           label: 'Terakhir Order',
+          thClass: 'font-bold',
+          class: 'align-middle p-1 text-black',
           sortable: true,
-          formatter: value => {
-            if (!value || value === '00-00-0000') return '-'
-            value.split('')
-            const newFormat = []
-            newFormat.push(value[6])
-            newFormat.push(value[7])
-            newFormat.push(value[8])
-            newFormat.push(value[9])
-            newFormat.push(value[2])
-            newFormat.push(value[3])
-            newFormat.push(value[4])
-            newFormat.push(value[5])
-            newFormat.push(value[0])
-            newFormat.push(value[1])
-            newFormat.join('')
-            return this.dateFormat(String(newFormat.join('')), 'dd mmmm yyyy')
-          },
         },
       ],
-
-      itemsCustomer: [],
-      productName: '',
-      spentFrom: null,
-      spentTo: null,
-      orderFrom: null,
-      orderTo: null,
-      pcsFrom: null,
-      pcsTo: null,
-      area: '',
-      destination: '',
-      itemsDestinations: [],
-
-      customerName: '',
-
-      endpoint: null,
-      url: '/v1/customers',
-      loadTable: false,
-
+      currentPage: 1,
+      totalRows: 0,
+      optionsPage: [50, 100, 200],
+      totalPerPage: 50,
     }
   },
-
   watch: {
     currentPage: {
-      handler(value) {
-        this.tableProvider().catch(error => {
-          console.error(error)
-        })
+      handler() {
+        this.getCustomer()
+      },
+    },
+    filterChart: {
+      handler() {
+        this.getCustomerGrowth()
+      },
+    },
+    provinceName: {
+      handler() {
+        this.getCustomer()
       },
     },
   },
   mounted() {
-    this.tableProvider()
+    this.getCustomerGrowth()
+    this.getCustomer()
+    this.getProvince()
   },
   methods: {
-    halamanpagination(halamantotal) {
-      this.totalPerPage = halamantotal
-      this.tableProvider()
-    },
-    tableProvider() {
-      this.loading = true
-      return this.$http_komship.get('v1/customers', {
-      }).then(response => {
-        const { data } = response.data.data
-        this.itemsCustomer = data
-        this.totalRows = response.data.data.total
-        this.loading = false
-      })
-    },
-    datapagination() {
-      this.loading = true
+    async getCustomerGrowth() {
+      this.isLoading = true
       const params = {}
-
-      if (this.customerName) Object.assign(params, { customer_name: this.customerName })
-      if (this.orderFrom) Object.assign(params, { orderFrom: this.orderFrom })
-      if (this.orderTo) Object.assign(params, { orderTo: this.orderTo })
-      if (this.destination) Object.assign(params, { area: this.destination })
-      if (this.spentFrom) Object.assign(params, { spentFrom: this.spentFrom })
-      if (this.spentTo) Object.assign(params, { spentTo: this.spentTo })
-      if (this.pcsFrom) Object.assign(params, { pcsFrom: this.pcsFrom })
-      if (this.pcsTo) Object.assign(params, { pcsTo: this.pcsTo })
-      if (this.currentPage) Object.assign(params, { page: this.currentPage })
-      if (this.totalPerPage) Object.assign(params, { limits: this.totalPerPage })
-      httpKomship.get('/v1/customers', {
-        params,
-      }, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        this.itemsCustomer = data
-        this.loading = false
-        return this.itemsCustomer
+      Object.assign(params, {
+        filter: this.formatDateFilter(this.filterChart),
       })
+      await this.$http_komship('/v1/customer/contact-growth', { params })
+        .then(res => {
+          const { data } = res.data
+          this.seriesChart = [
+            {
+              name: 'Pelanggan',
+              data: data.map(item => isEmpty(item.total.total_contact) && item.total.total_contact),
+            },
+          ]
+          this.chartOptions = {
+            ...this.chartOptions,
+            xaxis: {
+              ...this.chartOptions.xaxis,
+              categories: data.map(item => item.total.month),
+              min: data.map(item => item.total.year),
+            },
+          }
+          this.isLoading = false
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
     },
-
-    onSearchDestination(search, loading) {
-      if (search.length) {
-        this.searchDestination(loading, search, this)
+    async getCustomer() {
+      const params = {}
+      Object.assign(params, { search: this.search })
+      Object.assign(params, { province_name: this.provinceName })
+      Object.assign(params, { total_per_page: this.totalPerPage })
+      Object.assign(params, { page: this.currentPage })
+      await this.$http_komship.get('/v2/customers', { params })
+        .then(res => {
+          const { data } = res.data.data
+          this.items = data
+          this.totalRows = res.data.data.total
+          this.isLoading = false
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
+    },
+    async getDownloadContact() {
+      await this.$http_komship.get('/v1/customer/export')
+        .then(res => {
+          const { data } = res
+          const a = document.createElement('a')
+          a.href = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${data}`
+          a.download = 'Data Kontak.xls'
+          a.click()
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
+    },
+    async getProvince() {
+      await this.$http_komship.get('/v1/provinces')
+        .then(res => {
+          const { data } = res.data
+          this.provinces = data
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err.message,
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.isLoading = false
+        })
+    },
+    handlePhone(value) {
+      window.open(`https://wa.me/62${value.substring(1)}`, '_blank')
+    },
+    formatRupiah(value) {
+      const data = new Intl.NumberFormat('id-ID').format(value)
+      return data
+    },
+    formatDate(value) {
+      return moment(value)
+        .format('DD MMMM YYYY')
+    },
+    searchData: _.debounce(function search() {
+      this.getCustomer()
+    }, 1000),
+    setPerPage(page) {
+      this.totalPerPage = page
+      this.getCustomer()
+    },
+    filterDataByProvince(value) {
+      this.provinceName = value
+    },
+    handleTextDropdown(value) {
+      if (value) {
+        return value
       }
+      return 'Semua Provinsi'
     },
-    searchDestination: _.debounce((loading, search, that) => {
-      loading(true)
-      that.loadDestination(search).finally(() => loading(false))
-    }, 500),
-    loadDestination(search) {
-      return httpKomship.get(`/v1/destination?search=${search}`, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data.data
-        this.itemsDestinations = data
-        return this.itemsDestinations
-      })
+    formatDateFilter(value) {
+      return moment(value)
+        .startOf('year')
+        .format('YYYY')
+        .valueOf()
     },
-    resetFilter() {
-      this.tableProvider()
-      return this.datapagination()
-    },
-    formatPrice(value) {
-      const val = value
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    },
-    onRowClicked(item) {
+    handleToDetail(value) {
+      const idCustomer = value[0].customer_id
       this.$router.push({
-        name: this.$route.meta.routeDetail,
-        params: { customer_id: item.customer_id },
+        path: `/info-customer/detail-customer/${idCustomer}`,
       })
     },
   },
 }
 </script>
 
-<style lang="scss">
-@import '~@core/scss/vue/libs/vue-select.scss';
-.capitalizeText {
-  text-transform: capitalize;
+<style scoped>
+.card-graphic {
+  border: 1px solid #E2E2E2;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.btn-outline-primary:not(:disabled):not(.disabled):active, .btn-outline-primary:not(:disabled):not(.disabled).active, .btn-outline-primary:not(:disabled):not(.disabled):focus {
+  background-color: transparent;
 }
 </style>

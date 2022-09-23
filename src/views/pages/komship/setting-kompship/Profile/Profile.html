@@ -14,7 +14,7 @@
           <strong>Edit Profile</strong>
         </h3>
         <h4 class="ml-2 text-black">
-          <strong>Profile Penanggung Jawab</strong>
+          <strong>Profile Pemilik Bisnis</strong>
         </h4>
         <b-row class="mt-1">
 
@@ -37,6 +37,7 @@
                   v-model="fullname"
                   placeholder="Nama Lengkap"
                   :state="errors.length > 0 ? false:null"
+                  @keypress="handleEnter"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -58,12 +59,28 @@
                 name="Username"
                 rules="required"
               >
-                <b-form-input
-                  v-model="username"
-                  placeholder="Username"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-input-group>
+                  <b-form-input
+                    v-model="username"
+                    placeholder="Username"
+                    :disabled="true"
+                    :state="errors.length > 0 ? false:null"
+                    style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
+                  />
+                  <template #append>
+                   <b-button variant="flat-dark" class="btn-icon" size="sm" @click="openModalEdit('username')":disabled="userData.username_change === false">
+                      <b-img
+                        v-if="userData.username_change === true"
+                        src="@/assets/images/icons/new-edit-icon.svg"
+                      />
+                      <b-img
+                        v-if="userData.username_change === false"
+                        src="@/assets/images/icons/disable-edit-icon.svg"
+                      />
+                    </b-button>
+                  </template>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </b-input-group>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -112,13 +129,22 @@
                 name=" No. HP"
                 rules="required"
               >
-                <b-form-input
-                  v-model="noHP"
-                  type="number"
-                  placeholder="Nomer HP"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-input-group>
+                  <b-form-input
+                    v-model="noHP"
+                    type="number"
+                    placeholder="Nomer HP"
+                    :state="errors.length > 0 ? false:null"
+                    style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
+                    disabled
+                  />
+                  <template #append>
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('noHP')">
+                      <b-img src="@/assets/images/icons/new-edit-icon.svg" />
+                    </b-button>
+                  </template>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </b-input-group>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -138,12 +164,21 @@
                 name="Email"
                 rules="required|email"
               >
-                <b-form-input
-                  v-model="emailUser"
-                  placeholder="Email"
-                  :state="errors.length > 0 ? false:null"
-                />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-input-group>
+                  <b-form-input
+                    v-model="emailUser"
+                    placeholder="Email"
+                    :state="errors.length > 0 ? false:null"
+                    style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
+                    disabled
+                  />
+                  <template #append>
+                    <b-button variant="flat-dark" size="sm"  class="btn-icon" @click="openModalEdit('email')">
+                      <b-img src="@/assets/images/icons/new-edit-icon.svg" />
+                    </b-button>
+                  </template>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </b-input-group>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -168,6 +203,7 @@
                   placeholder="Alamat"
                   rows="3"
                   :state="errors.length > 0 ? false:null"
+                  @keypress="handleEnter"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
               </validation-provider>
@@ -286,8 +322,21 @@
                   v-model="nameBusiness"
                   :state="errors.length > 0 ? false:null"
                   placeholder="Nama Bisnis"
+                  :formatter="formatBusinessName"
+                  @keypress="validateInputBusinessName"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-row class="justify-content-between">
+                  <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                  <small class="mr-1 mt-50">
+                    <small
+                      v-if="messageErrorLengthNameBusiness"
+                      class="text-primary"
+                    >
+                      *hindari menggunakan simbol (/) (=) (:) (;)
+                    </small>
+                    {{ nameBusiness.length }}/30
+                  </small>
+                </b-row>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -315,8 +364,22 @@
                   v-model="phoneBusiness"
                   :state="errors.length > 0 ? false:null"
                   placeholder="No HP Bisnis"
+                  type="number"
+                  @input="formatPhoneProfile"
+                  @keypress="validateInputPhoneProfile"
+                  @keydown="handleArrowInput"
                 />
-                <small class="text-danger">{{ errors[0] }}</small>
+                <b-row class="justify-content-between">
+                  <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                  <small class="mr-1 mt-50">
+                    <small
+                      v-if="messageErrorPhone"
+                      class="text-primary"
+                    >
+                      *minimal 9 digit dan hanya berupa angka.
+                    </small>
+                  </small>
+                </b-row>
               </validation-provider>
             </b-form-group>
           </b-col>
@@ -340,9 +403,9 @@
                 <v-select
                   v-model="cityCode"
                   :options="provinceItems"
-                  :reduce="option => option.city_code"
                   label="values"
                   :state="errors.length > 0 ? false:null"
+                  @input="handleValueCityCode"
                   @search="onSearchProvince"
                 />
                 <small class="text-danger">{{ errors[0] }}</small>
@@ -394,10 +457,19 @@
             md="12"
           >
             <b-button
+              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+              type="reset"
+              variant="outline-primary"
+              class="mr-1"
+              @click.prevent="reset"
+            >
+              Batalkan
+            </b-button>
+            <b-button
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"
               type="submit"
               variant="primary"
-              class="mr-1"
+              class="mr-5"
               @click.prevent="updateProfile"
             >
               <b-spinner
@@ -405,16 +477,7 @@
                 variant="light"
                 small
               />
-              Submit
-            </b-button>
-            <b-button
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              type="reset"
-              variant="outline-secondary"
-              class="mr-5"
-              @click.prevent="reset"
-            >
-              Reset
+              Simpan
             </b-button>
           </b-col>
         </b-row>
@@ -423,4 +486,335 @@
     </validation-observer>
 
   </b-card>
+
+  <!-- Modal Edit -->
+  <b-modal
+    ref="modal-edit"
+    hide-footer
+    hide-header
+    centered
+    @hide="hideCloseModalEdit"
+  >
+    <validation-observer
+      ref="formRulesEdit"
+      #default="{invalid}"
+    >
+      <b-row class="pt-2 mb-2 justify-content-center">
+        <h4 class="text-black">
+          <strong>
+            {{ modalTitle }}
+          </strong>
+        </h4>
+      </b-row>
+
+      <b-row class="mb-2 justify-content-center">
+        <span class="text-black">{{ modalSubtitle }}</span>
+      </b-row>
+
+      <b-row class="justify-content-center mx-2 mb-3">
+        <b-col cols="12">
+            <b-form-group
+                label-cols-md="5"
+            >
+                <template #label>
+                  <span class="text-black">
+                    <strong>
+                      {{ modalFormLabel }}
+                    </strong>
+                  </span>
+                </template>
+                <validation-provider
+                  v-if="modalEditFormInputType !== 'email'"
+                  #default="{errors}"
+                  :name="nameValidator"
+                  rules="required"
+                >
+                  <b-input-group>
+                    <b-form-input
+                      v-if="modalEditFormInputType === 'number'"
+                      v-model="formInputEditItem"
+                      :type="modalEditFormInputType"
+                      :formatter="formatEditPhone"
+                      @keypress="validateInputPhone"
+                      @paste="formatterPhone"
+                      @input="formatPhone"
+                      @keyup="valueFormatPhone"
+                    />
+                    <b-form-input
+                      v-if="modalEditFormInputType !== 'number'"
+                      v-model="formInputEditItem"
+                      :type="modalEditFormInputType"
+                      :state="errors.length > 0 ? false:null"
+                      @input="handleMessageErrorUsernameIsSame"
+                    />
+                    <template
+                      v-if="modalTitle === 'Password Komship'"
+                    #append>
+                      <b-button
+                        class="btn-icon"
+                        variant="flat-dark"
+                        @click="changeEyeIcon"
+                      >
+                        <feather-icon :icon="itemEyeIcon" />
+                      </b-button>
+                    </template>
+                  </b-input-group>
+                  <b-row>
+                    <small
+                      v-if="messageErrorPassword"
+                      class="text-primary ml-1"
+                    >
+                      Password salah
+                    </small>
+                  </b-row>
+                  <b-row>
+                    <small
+                      v-if="messageErrorUsernameIsSame"
+                      class="text-primary ml-1"
+                    >
+                      Username tidak boleh sama dengan saat ini
+                    </small>
+                  </b-row>
+                  <b-row>
+                    <small
+                      v-if="usernameExist"
+                      class="text-primary ml-1"
+                    >
+                      *Username telah digunakan orang lain
+                    </small>
+                  </b-row>
+                  <div v-if="errorNoHp">
+                    <small class="mr-1 text-primary">
+                      *minimal 8 digit berupa angka
+                    </small>
+                  </div>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+                <validation-provider
+                  v-if="modalEditFormInputType === 'email'"
+                  #default="{errors}"
+                  :name="nameValidator"
+                  rules="required|email"
+                >
+                  <b-input-group>
+                    <b-form-input
+                      v-model="formInputEditItem"
+                      :type="modalEditFormInputType"
+                      :state="errors.length > 0 ? false:null"
+                      @input="resetMessageErrorEmail"
+                    />
+                    <template
+                      v-if="modalEditFormInputType === 'password'"
+                    #append>
+                      <b-button
+                        class="btn-icon"
+                        variant="flat-dark"
+                        @click="changeEyeIcon"
+                      >
+                        <feather-icon :icon="itemEyeIcon" />
+                      </b-button>
+                    </template>
+                  </b-input-group>
+                  <b-row>
+                    <small
+                      v-if="messageErrorPassword"
+                      class="text-primary"
+                    >
+                      Password salah
+                    </small>
+                  </b-row>
+                  <div v-if="errorNoHp">
+                    <small class="mr-1 text-primary">
+                      *minimal 9 digit berupa angka
+                    </small>
+                  </div>
+                  <b-row>
+                    <small v-if="messageErrorEmail !== null" class="text-primary ml-1">
+                      {{ messageErrorEmail }}
+                    </small>
+                  </b-row>
+                  <b-row>
+                    <small v-if="emailSamePrevious === true" class="text-primary ml-1">
+                      Email yang dimasukan sama dengan yang sekarang, coba email yang lain
+                    </small>
+                  </b-row>
+                  <small class="text-danger">{{ errors[0] }}</small>
+                </validation-provider>
+            </b-form-group>
+        </b-col>
+      </b-row>
+
+      <b-row class="justify-content-end mb-2">
+        <b-button
+          class="mr-50"
+          variant="outline-primary"
+          @click="closeModalEdit"
+        >
+          Batal
+        </b-button>
+        <b-button
+          v-if="successConfirmPassword === false"
+          class="mr-2"
+          variant="primary"
+          :disabled="!formInputEditItem || invalid"
+          @click="submitEdit"
+        >
+          <b-spinner
+            v-if="loadingEdit"
+            small
+          />
+          {{ labelSubmit }}
+        </b-button>
+
+        <b-button
+          v-if="successConfirmPassword"
+          class="mr-2"
+          variant="primary"
+          :disabled="!formInputEditItem || invalid"
+          @click="submitVerification"
+        >
+          <b-spinner
+            v-if="loadingEdit"
+            small
+          />
+          Lanjutkan Verifikasi
+        </b-button>
+      </b-row>
+    </validation-observer>
+  </b-modal>
+
+  <!-- Modal Success Edit Username -->
+  <b-modal
+    ref="modal-success-edit-username"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-center mb-2 pt-2">
+        <b-img src="@/assets/images/icons/success.svg" />
+    </b-row>
+
+    <b-row class="justify-content-center mb-50">
+        <h4 class="text-black text-center">
+          <strong>
+            Username Berhasil Diganti
+          </strong>
+        </h4>
+    </b-row>
+  
+    <b-row class="justify-content-center mb-2 mx-3">
+        <span class="text-black text-center">
+          Sekarang Anda dapat masuk dengan menggunakan username terbaru.
+        </span>
+    </b-row>
+
+    <b-row class="justify-content-center pb-2">
+        <b-col md="4">
+            <b-button
+                    variant="primary"
+                    block
+                    @click="closeSuccessEditUsername"
+                >
+                    Oke
+              </b-button>
+        </b-col>
+    </b-row>
+  </b-modal>
+
+  <!-- Modal Verification -->
+  <b-modal
+    ref="modal-verification-edit"
+    hide-footer
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-center mb-1 mt-1">
+        <h4 class="text-black text-center">
+          <strong>
+            Verifikasi Nomor Hp
+          </strong>
+        </h4>
+    </b-row>
+
+    <b-row class="justify-content-center mb-2 mx-3">
+        <span class="text-black text-center">
+          Mohon verifikasi identitas kamu dengan memasukan Kode Verifikasi (OTP) yang dikirimkan via SMS ke Nomor kamu {{ formInputEditItem }}
+        </span>
+    </b-row>
+
+    <b-row class="justify-content-center mb-50">
+      <PincodeInput
+        v-model="otpConfirmation"
+        placeholder="0"
+        :length="6"
+        :autofocus="true"
+      />
+    </b-row>
+
+    <b-row v-if="errorOtp === true" class="justify-content-center mb-50">
+      <span class="text-primary">Masukan kode OTP dengan benar</span>
+    </b-row>
+
+    <b-row class="justify-content-center mb-1">
+      <span v-if="resendOtp === false">
+        Kirim ulang ({{ countOtp }})
+      </span>
+      <b-button v-if="resendOtp === true" variant="flat-primary" size="sm" @click="handleResendOtp">
+        <b-spinner v-if="loadingOtp" small />
+        Kirim ulang
+      </b-button>
+    </b-row>
+
+    <b-row class="justify-content-center mb-2">
+      <b-button
+        variant="flat-primary"
+        class="mr-1"
+        @click="handleBackEdit"
+      >
+        Kembail
+      </b-button>
+      <b-button
+        variant="primary"
+        @click="sendVerification"
+      >
+        <b-spinner
+          v-if="loadingEdit"
+          small
+        />
+        Konfirmasi
+      </b-button>
+    </b-row>
+  </b-modal>
+
+  <!-- Modal Success Verification -->
+  <b-modal
+    ref="modal-success-verification"
+    hide-footer
+    hide-header
+    centered
+  >
+      <b-row class="justify-content-center mb-1 mt-1">
+          <h4 class="text-black text-center">
+            <strong>
+              {{ successVerificationTitle }}
+            </strong>
+          </h4>
+      </b-row>
+
+      <b-row class="justify-content-center mb-1 mx-3">
+          <span class="text-black text-center">
+            {{ descriptionSuccessVerification }}
+          </span>
+      </b-row>
+
+      <b-row class="justify-content-center mb-2">
+        <b-button
+          variant="primary"
+          @click="closeSuccessVerification"
+        >
+          Oke
+        </b-button>
+      </b-row>
+
+  </b-modal>
 </b-overlay>

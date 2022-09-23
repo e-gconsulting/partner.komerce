@@ -315,22 +315,19 @@
                         fluid
                         class="d-flex"
                       >
-                        <div>
-                          <b-avatar
-                            v-if="itemsData.product_image[0] !== undefined"
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="itemsData.product_image[0].images_path"
-                          />
-                          <b-avatar
-                            v-else
-                            variant="light-primary"
-                            square
-                            size="50px"
-                            :src="imageFileProduct"
-                          />
-                        </div>
+                        <b-img
+                          v-if="itemsData.product_image[0] !== undefined"
+                          :src="itemsData.product_image[0].images_path"
+                          fluid
+                          class="image-product"
+                        />
+                        <b-img
+                          v-else
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          fluid
+                          width="50"
+                          class="image-product"
+                        />
                         <div class="ml-1">
                           <p><strong>{{ itemsData.product_name }}</strong></p>
                           <small>SKU: {{ itemsData.sku }}</small>
@@ -358,7 +355,7 @@
                     class=""
                   >
                     <p class="ml-2">
-                      Tidak Ada Variasi
+                      -
                     </p>
                   </b-col>
                   <b-col
@@ -579,30 +576,31 @@
           >
             <template #cell(product_name)="data">
               <b-row class="ml-2">
-                <b-container
-                  fluid
+                <div
                   class="d-flex"
+                  style="min-width: 300px;"
                 >
-                  <div v-if="data.item.product_image[0] !== undefined">
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                      :src="data.item.product_image[0].images_path"
-                    />
-                  </div>
-                  <div v-else>
-                    <b-avatar
-                      variant="light-primary"
-                      square
-                      size="50px"
-                    />
-                  </div>
+                  <b-img
+                    v-if="data.item.product_image[0] !== undefined"
+                    variant="light-primary"
+                    square
+                    fluid
+                    width="50"
+                    class="image-product"
+                    :src="data.item.product_image[0].images_path"
+                  />
+                  <b-img
+                    v-else
+                    :src="require('@/assets/images/avatars/image-null.png')"
+                    fluid
+                    width="50"
+                    class="image-product"
+                  />
                   <div class="ml-1">
-                    <p><strong>{{ data.item.product_name }}</strong></p>
-                    <small>SKU: {{ data.item.sku }}</small>
+                    <span><strong>{{ data.item.product_name }}</strong></span>
+                    <span>SKU: {{ data.item.sku }}</span>
                   </div>
-                </b-container>
+                </div>
               </b-row>
             </template>
 
@@ -631,7 +629,7 @@
                 </b-collapse>
               </div>
               <div v-else>
-                Tidak ada variasi
+                -
               </div>
             </template>
 
@@ -854,7 +852,6 @@ import Ripple from 'vue-ripple-directive'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import { heightTransition } from '@core/mixins/ui/transition'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -866,7 +863,6 @@ export default {
     BInputGroupPrepend,
     BButton,
     BImg,
-    BAvatar,
     BForm,
     BOverlay,
     BModal,
@@ -945,7 +941,8 @@ export default {
     this.getProduct()
   },
   methods: {
-    getProduct() {
+    // eslint-disable-next-line func-names
+    getProduct: _.debounce(function () {
       this.loading = true
       const params = {
         status: 1,
@@ -955,7 +952,7 @@ export default {
       if (this.soldTo) Object.assign(params, { soldTo: this.soldTo })
       if (this.stockFrom) Object.assign(params, { stockFrom: this.stockFrom })
       if (this.stockTo) Object.assign(params, { stockTo: this.stockTo })
-      return httpKomship.get('/v1/product', {
+      return this.$http_komship.get('/v1/product', {
         params,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -976,7 +973,7 @@ export default {
           },
         })
       })
-    },
+    }, 1000),
     showConfirmDelete(id) {
       this.idDelete = id
       this.$refs['modal-confirm-delete-product'].show()
@@ -985,7 +982,7 @@ export default {
       this.$refs['modal-confirm-delete-product'].hide()
     },
     deleteProduct() {
-      httpKomship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
+      this.$http_komship.delete(`/v1/product/delete/${this.idDelete}`).then(() => {
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -1050,10 +1047,25 @@ export default {
     }
 }
 
+[dir] .when-closed {
+  display: inline-block;
+}
+
+[dir] .when-opened {
+  display: inline-block;
+}
+
 .collapsed > .when-opened,
     :not(.collapsed) > .when-closed {
         display: none;
     }
+
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
+}
 
 @media only screen and (min-width: 991px) {
   [dir] .wrapper__filter__data__product__mobile {

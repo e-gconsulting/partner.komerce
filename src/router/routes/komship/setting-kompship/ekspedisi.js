@@ -4,9 +4,10 @@ export default [
   {
     path: '/setting-kompship/ekspedisi',
     name: 'kompship-ekspedisi',
-    component: () => import('@/views/pages/komship/setting-kompship/Ekspedisi.vue'),
+    component: () => import('@/views/pages/komship/setting-kompship/ekspedisi/Ekspedisi.vue'),
     meta: {
       name: pageName.singular,
+      routeToAddressSetting: 'kompship-pickup',
       resource: 'Setting Komship',
       action: 'manage',
       breadcrumb: [
