@@ -30,6 +30,7 @@ tag
 tagVariant
 
 */
+import RincianMitraGudang from '@/views/pages/kompack/admin/mitragudang/rincianmitragudang/RincianMitraGudang'
 import dashboard from './dashboard'
 // import wishlist from './wishlist'
 
@@ -55,14 +56,12 @@ import tiket from './tiket'
 import notification from './notification'
 
 // Kompack Admin
-import kompackadmin from './kompack/admin'
 import kompackpartner from './kompack/partner'
 
 // Array of sections
 export default [
   ...dashboard,
   ...komship,
-  ...kompackadmin,
   ...kompackpartner,
 
   ...dashboardKompship,
