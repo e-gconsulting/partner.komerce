@@ -60,19 +60,9 @@ export default [
     },
   },
   {
-    path: '/talent/register',
-    name: 'talent-register',
-    component: () => import('@/views/pages/talent/talent/Register.vue'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      preventRedirect: true,
-    },
-  },
-  {
     path: '/forgot-password',
     name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword'),
+    component: () => import('@/views/pages/authentication/ForgotPassword/Partnerlupapassword'),
     meta: {
       layout: 'full',
       resource: 'Auth',
@@ -127,6 +117,24 @@ export default [
     meta: {
       layout: 'full',
       resource: 'Auth',
+    },
+  },
+  {
+    path: '/success-verification-email',
+    name: 'success-verification-email',
+    component: () => import('@/views/pages/authentication/SuccessVerificationEmail'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
+  {
+    path: '/cancel-change-email',
+    name: 'cancel-change-email',
+    component: () => import('@/views/pages/authentication/CancelChangeEmail'),
+    meta: {
+      layout: 'full',
+      resource: 'Dashboard Komship',
     },
   },
 

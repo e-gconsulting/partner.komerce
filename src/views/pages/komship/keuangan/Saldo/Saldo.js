@@ -11,6 +11,7 @@ import {
   BSpinner,
 } from 'bootstrap-vue'
 import { mapState, mapGetters } from 'vuex'
+import vSelect from 'vue-select'
 import DateRangePicker from 'vue2-daterange-picker'
 import CodeInput from 'vue-verification-code-input'
 
@@ -38,6 +39,7 @@ export default {
     BButton,
     CodeInput,
     BSpinner,
+    vSelect,
   },
   data() {
     return {
@@ -45,6 +47,7 @@ export default {
         startDate: last30,
         endDate: today,
       },
+      isVisibility: true,
       locale: {
         format: 'dd/mm/yyyy',
         daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
@@ -76,10 +79,12 @@ export default {
       rekTujuanState: null,
       obj: null,
       status: true,
-      visibilityPin: 'password',
+      visibilityPin: 'number',
       resTarikSaldo: {},
 
       loadingSubmitTopup: false,
+      fieldwidth: '',
+      fieldheight: '',
     }
   },
   mounted() {
@@ -139,6 +144,7 @@ export default {
     },
     showTopUpModal() {
       this.$bvModal.show('modalTopUp')
+      this.changeAttr()
     },
     async topUpSaldo() {
       this.loadingSubmitTopup = true
@@ -178,6 +184,13 @@ export default {
     showModal() {
       this.resetModal()
       this.$bvModal.show('modal-keuangan')
+      this.changeAttr()
+    },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
+
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
     closeModal() {
       this.$bvModal.hide('modalTopUp')
@@ -226,6 +239,14 @@ export default {
           this.$nextTick(() => {
             this.stepNow = 1
             this.modalTitle = 'Verifikasi PIN'
+            const mediaQuery = window.matchMedia('(max-width: 768px)')
+            if (mediaQuery.matches) {
+              this.fieldwidth = '40'
+              this.fieldheight = '44'
+            } else {
+              this.fieldwidth = '50'
+              this.fieldheight = '54'
+            }
           })
           break
         case 2:
@@ -252,17 +273,21 @@ export default {
                   imageUrl: require('@/assets/images/icons/fail.svg'), // eslint-disable-line
                   showCloseButton: false,
                   focusConfirm: true,
-                  confirmButtonText: 'Oke',
+                  confirmButtonText: 'Lihat riwayat penarikan',
                   customClass: {
                     confirmButton: 'btn bg-orange2 btn-primary rounded-lg',
                     popup: 'mr-2 ml-1',
                   },
                   buttonsStyling: false,
+                }).then(res => {
+                  if (res.isConfirmed) {
+                    this.$router.push('keuangan/saldo')
+                  }
                 })
               }
             })
 
-            this.visibilityPin = 'password'
+            this.visibilityPin = 'number'
           } catch (e) {
             this.$swal({
               title:
@@ -359,11 +384,7 @@ export default {
       })
     },
     toggleVisibilityPin() {
-      if (this.visibilityPin === 'password') {
-        this.visibilityPin = 'text'
-      } else {
-        this.visibilityPin = 'password'
-      }
+      this.isVisibility = !this.isVisibility
     },
     onChange(v) {
       this.pin = v

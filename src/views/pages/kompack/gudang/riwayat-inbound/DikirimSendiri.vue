@@ -6,31 +6,38 @@
       @submit="onSubmit"
       @reset="onReset"
     >
-      <h4 class="text-black font-bold">
-        Data Inbound
-      </h4>
+      <div class="d-flex align-items-center">
+        <b-button
+          variant="primary"
+          size="sm"
+          class="mr-1 rounded-lg p-0"
+          @click="$router.go(-1)"
+        >
+          <feather-icon
+            size="2x"
+            icon="ChevronLeftIcon"
+          />
+        </b-button>
+        <h4 class="text-black font-bold">
+          Detail Inbound
+        </h4>
+      </div>
+      <div class="d-flex mb-3 justify-content-end">
+        <b-button
+          to="/Edit-Data-Produk"
+          variant="outline-primary"
+          class="px-4 mr-2 py-1 font-bolder"
+        >Edit</b-button>
+      </div>
       <b-form-group
         id="input-group-1"
-        label="Partner"
+        label="Status Inbound"
         label-for="input-1"
         label-cols-md="3"
       >
         <b-row>
-          <b-col
-            id="input-1"
-            v-model="form.email"
-            lg="2"
-            type="email"
-            required
-          >
-            <img
-              src="@/assets/images/logo.png"
-              alt=""
-            >
-          </b-col>
-          <b-col lg="2">
-            <h4>Herbal Life</h4>
-            <h4>Malang</h4>
+          <b-col>
+            <h4>{{ data }}</h4>
           </b-col>
         </b-row>
       </b-form-group>
@@ -60,7 +67,7 @@
       </b-form-group>
       <b-form-group
         id="input-group-1"
-        label="Jenis Pengiriman"
+        label="Jasa Pengiriman"
         label-for="input-1"
         label-cols-md="3"
       >
@@ -94,25 +101,13 @@
           </b-col>
         </b-row>
       </b-form-group>
-      <b-form-group
-        id="input-group-1"
-        label="Status Inbound"
-        label-for="input-1"
-        label-cols-md="3"
-      >
-        <b-row>
-          <b-col>
-            <h4>{{ data }}</h4>
-          </b-col>
-        </b-row>
-      </b-form-group>
     </b-form>
     <b-form
       class="mt-2"
       border-variant="primary"
     >
       <h4 class="text-black font-bold">
-        Informasi Produk
+        Data Produk
       </h4>
       <b-table
         small
@@ -121,9 +116,7 @@
         responsive="sm"
       >
         <!-- A virtual column -->
-        <template
-          #cell(Nama_Produk)="data"
-        >
+        <template #cell(Nama_Produk)="data">
           {{ data.index }}
         </template>
 

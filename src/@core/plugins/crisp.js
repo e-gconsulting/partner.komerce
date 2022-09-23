@@ -2,6 +2,7 @@ export default () => {
   window.$crisp = []
   window.CRISP_WEBSITE_ID = '91f9372c-da18-40da-89bf-1a114a832ac0';
 
+  // eslint-disable-next-line func-names
   (function () {
     const d = document
     const s = d.createElement('script')

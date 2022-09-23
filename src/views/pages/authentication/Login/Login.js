@@ -224,6 +224,7 @@ export default {
                 { action: 'read', subject: 'Dashboard Komship' },
                 { action: 'manage', subject: 'Customer' },
                 { action: 'manage', subject: 'Produk' },
+                { action: 'manage', subject: 'Gudang' },
                 { action: 'manage', subject: 'Tambah Produk' },
                 { action: 'manage', subject: 'Data Produk' },
                 { action: 'manage', subject: 'Order' },

@@ -1,0 +1,93 @@
+[dir] .wrapper__chat__user {
+    background: #FF6A3A;
+    border-radius: 8px 0px 8px 8px;
+    max-width: 900px;
+}
+
+[dir] .wrapper__chat__isnotuser {
+    background: #FCD4BE;
+    border-radius: 8px 0px 8px 8px;
+    max-width: 900px;
+}
+
+[dir] .class__file__chat {
+    width: 132px;
+    height: 62.12px;
+    border-radius: 11.9457px;
+}
+
+.icon-awb {
+    position: relative;
+    width: 50px;
+    line-height: 50px;
+    text-align: center;
+    margin-top: 50px;
+    background-color: #fff;
+    z-index: 2;
+}
+.icon-awb:first-child {
+    margin-top: 0;
+}
+.icon-awb:before {
+    position: absolute;
+    border: 1px dashed #FBA63C;
+    width: 0;
+    height: 50px;
+    display: block;
+    content: '';
+    left: 47%;
+    z-index: 1;
+    top: -54px;
+    margin-left: -1px;
+}
+.icon-awb:first-child:before {
+    display: none;
+}
+
+.button__wa__customer:hover {
+    cursor: pointer;
+}
+
+.dragzone__prove__file {
+    border: 1px dashed #FCD4BE;
+}
+
+.wrapper__prove__preview {
+    position: relative;
+}
+
+.x__icon__retur {
+    position: absolute;
+    right: 0%;
+    margin-top: -10px;
+    margin-right: -10px;
+    z-index: 9999;
+}
+
+.wrapper__progress__upload {
+    background: #F8F8F8;
+}
+
+.wrapper__pause__upload {
+    border: 1px solid #828282;
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background: #C2C2C2;
+}
+
+.wrapper__cancel__upload {
+    border: 1px solid #E31A1A;
+    width: 28px;
+    height: 28px;
+    border-radius: 14px;
+    background: #FCBEBE;
+}
+
+.spinner__upload__file {
+    position: absolute;
+}
+
+.popover.b-popover.bs-popover-top .arrow::after, .popover.b-popover.bs-popover-auto[x-placement^=top] .arrow::after {
+    border-top-color: #F95031;
+}

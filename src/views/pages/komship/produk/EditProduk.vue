@@ -75,8 +75,21 @@
                       v-model="productName"
                       placeholder="Masukan nama produk kamu"
                       :state="errors.length > 0 ? false:null"
+                      :formatter="formatNameProduct"
+                      @keypress="validateInputProductName"
                     />
-                    <small class="text-primary">{{ errors[0] }}</small>
+                    <b-row class="justify-content-between">
+                      <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                      <small class="mr-1 mt-50">
+                        <small
+                          v-if="messageErrorIsActive"
+                          class="text-primary"
+                        >
+                          *hindari menggunakan simbol (/) (=) (:) (;)
+                        </small>
+                        {{ productName.length }}/60
+                      </small>
+                    </b-row>
                   </validation-provider>
                 </b-col>
               </b-row>
@@ -1982,6 +1995,7 @@
                         type="number"
                         placeholder="1000"
                         :state="errors.length > 0 ? false:null"
+                        @keypress="validateInputWeight"
                       />
                       <b-input-group-append is-text>
                         gram
@@ -2296,7 +2310,6 @@ import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from '../setting-kompship/http_komship'
 
 export default {
   components: {
@@ -2393,6 +2406,8 @@ export default {
       fieldPreviewImage: [],
       fieldEditVariation: [],
 
+      messageErrorIsActive: false,
+
     }
   },
   computed: {
@@ -2450,7 +2465,7 @@ export default {
       if (this.variantItems !== []) {
         this.variantItems = []
       }
-      httpKomship.get(`/v1/product/detail/${this.productId}`, {
+      this.$http_komship.get(`/v1/product/detail/${this.productId}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -2731,6 +2746,7 @@ export default {
                   sold: this.fieldEditVariation.options[x].options[y].sold,
                   stock: this.fieldEditVariation.options[x].options[y].variant_stock,
                   price: this.fieldEditVariation.options[x].options[y].option_price,
+                  option: [],
                 })
               } else {
                 this.variantItems[x].option.push({
@@ -2974,7 +2990,7 @@ export default {
             option: this.optionStore,
           }
 
-          httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+          this.$http_komship.put(`/v1/product/update/${this.productId}`, params, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
             if (this.imageFile) {
@@ -2982,7 +2998,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', this.productId)
               formData.append('image_path', this.imageFile)
-              httpKomship.post('/v1/product/update-upload-img-product', formData, {
+              this.$http_komship.post('/v1/product/update-upload-img-product', formData, {
                 headers: { Authorization: `Bearer ${useJwt.getToken()}` },
               }).then(() => {
                 this.loadingSubmit = false
@@ -3171,7 +3187,7 @@ export default {
             option: this.optionStore,
           }
 
-          httpKomship.put(`/v1/product/update/${this.productId}`, params, {
+          this.$http_komship.put(`/v1/product/update/${this.productId}`, params, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
             if (this.imageFile !== null) {
@@ -3179,7 +3195,7 @@ export default {
               const formData = new FormData()
               formData.append('product_id', this.productId)
               formData.append('image_path', this.imageFile)
-              httpKomship.post('/v1/product/update-upload-img-product', formData, {
+              this.$http_komship.post('/v1/product/update-upload-img-product', formData, {
                 headers: { Authorization: `Bearer ${useJwt.getToken()}` },
               }).then(() => {
                 this.loadingSubmitDraft = false
@@ -3324,6 +3340,28 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
+    formatNameProduct(e) {
+      return String(e).substring(0, 60)
+    },
+    validateInputProductName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+        e.preventDefault()
+        this.messageErrorIsActive = true
+      } else {
+        this.messageErrorIsActive = false
+      }
+    },
+    validateInputWeight(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.weightProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.weightProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+    },
   },
 }
 </script>

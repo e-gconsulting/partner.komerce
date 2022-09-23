@@ -450,6 +450,7 @@
             <feather-icon
               icon="PlusIcon"
               class="mr-50"
+              style="display: inline-block"
             />
             <span class="align-middle">Tambahkan Rekening</span>
           </b-button>
@@ -635,7 +636,6 @@ import {
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -716,11 +716,12 @@ export default {
     this.loadBanks()
     this.getProfile()
     this.$refs['modal-pin'].show()
+    this.changeAttr()
   },
   methods: {
     getBank() {
       this.loading = true
-      return httpKomship.get('v1/bank-account', {
+      return this.$http_komship.get('v1/bank-account', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -748,11 +749,12 @@ export default {
             const formData = new FormData()
             formData.append('_method', 'post')
             formData.append('phone_number', this.phoneNumber)
-            httpKomship.post('/v1/partner/sms/otp', formData, {
+            this.$http_komship.post('/v1/partner/sms/otp', formData, {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(response => {
               this.loadingSubmit = false
               this.$refs['modal-verification-submit'].show()
+              this.changeAttr()
               this.countDownTimerOtp()
             }).catch(() => {
               this.loadingSubmit = false
@@ -772,6 +774,7 @@ export default {
         })
       } else {
         this.$refs['modal-verification-submit'].show()
+        this.changeAttr()
       }
     },
     sendOtpAgain() {
@@ -781,7 +784,7 @@ export default {
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneNumber)
-        httpKomship.post('/v1/partner/sms/otp', formData, {
+        this.$http_komship.post('/v1/partner/sms/otp', formData, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {}).catch(() => {
           this.$toast({
@@ -808,9 +811,9 @@ export default {
       }
       const formData = new FormData()
       formData.append('otp', this.dataPin)
-      httpKomship.post('/v1/partner/sms/otp/verification', formData).then(response => {
+      this.$http_komship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
-          httpKomship.post('/v1/bank-account/store',
+          this.$http_komship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
@@ -880,7 +883,7 @@ export default {
           formData.append('account_name', this.accountName)
           formData.append('account_no', this.accountNo)
 
-          httpKomship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
+          this.$http_komship.post(`/v1/bank-account/update/${this.editIdRek}`, formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
             this.$toast({
@@ -931,7 +934,7 @@ export default {
       })
     },
     delete(data) {
-      httpKomship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
+      this.$http_komship.delete(`/v1/bank-account/delete/${data.bank_account_id}`, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
         .then(() => {
@@ -956,13 +959,14 @@ export default {
     },
     showModal() {
       this.$refs['modal-pin'].show()
+      this.changeAttr()
     },
     hideModal() {
       this.$refs['modal-pin'].hide()
     },
     confirmPin() {
       this.loadingSubmit = true
-      httpKomship.post('/v1/pin/auth', {
+      this.$http_komship.post('/v1/pin/auth', {
         pin: this.dataPin,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -1020,6 +1024,7 @@ export default {
       || this.validateProfile.partner_category_name === '' || this.validateProfile.partner_business_type_id === ''
       || this.validateProfile.partner_business_logo === '') {
         this.$refs['modal-validate-profile'].show()
+        this.changeAttr()
       } else {
         this.fieldActionAddRekening = true
         if (this.editMode === true) {
@@ -1100,8 +1105,13 @@ export default {
         this.visibilityPin = 'password'
       }
     },
-  },
+    async changeAttr() {
+      const element = document.getElementsByTagName('body')[0].className
 
+      await (element === 'modal-open')
+      document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
+    },
+  },
 }
 </script>
 

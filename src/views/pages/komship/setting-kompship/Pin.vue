@@ -826,7 +826,6 @@ import {
 import VueOtpInput from '@bachdgvn/vue-otp-input'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
-import httpKomship from './http_komship'
 
 export default {
   components: {
@@ -878,7 +877,7 @@ export default {
     },
     // ==================================================================
     createPin() {
-      httpKomship.post('/v1/pin/store', {
+      this.$http_komship.post('/v1/pin/store', {
         pin: this.dataPin,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -907,7 +906,7 @@ export default {
       this.dataPinConfirm = v
     },
     showModal() {
-      httpKomship.get('/v1/pin/check', {
+      this.$http_komship.get('/v1/pin/check', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data
@@ -935,7 +934,7 @@ export default {
     confirmCreatePin() {
       this.loadingSubmit = true
       if (this.dataPin === this.dataPinConfirm) {
-        httpKomship.post('/v1/pin/store', {
+        this.$http_komship.post('/v1/pin/store', {
           pin: this.dataPin,
         }, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -968,7 +967,7 @@ export default {
     },
     confirmChangePin() {
       this.loadingSubmit = true
-      httpKomship.post('/v1/pin/auth', {
+      this.$http_komship.post('/v1/pin/auth', {
         pin: this.dataPin,
       }, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
@@ -1001,7 +1000,7 @@ export default {
       formData.append('_method', 'put')
       formData.append('pin', this.dataPin)
 
-      httpKomship.post('/v1/pin/update', formData, {
+      this.$http_komship.post('/v1/pin/update', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response
@@ -1057,7 +1056,7 @@ export default {
       this.loadingSubmit = true
       const formData = new FormData()
       formData.append('_method', 'post')
-      httpKomship.post('/v1/send-otp', formData, {
+      this.$http_komship.post('/v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {
         this.loadingSubmit = false
@@ -1079,7 +1078,7 @@ export default {
       this.countOtp = 60
       const formData = new FormData()
       formData.append('_method', 'post')
-      httpKomship.post('v1/send-otp', formData, {
+      this.$http_komship.post('v1/send-otp', formData, {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(() => {}).catch(() => {
         this.$toast({

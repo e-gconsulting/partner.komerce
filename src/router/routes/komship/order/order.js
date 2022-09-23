@@ -17,10 +17,13 @@ export default [
     },
   },
   {
-    path: '/detail-order/:order_id',
+    path: '/data-order/detail-order/:order_id',
     name: 'detail-order',
     component: () => import('@/views/pages/komship/order/DataOrder/DetailOrder.vue'),
     meta: {
+      navActiveLink: 'data-order',
+      editOrder: 'edit-order',
+      routeToDataOrder: 'data-order',
       name: 'detail-order',
       resource: 'Order',
       action: 'manage',
@@ -39,8 +42,8 @@ export default [
     meta: {
       name: 'add-order',
       resource: 'Order',
-      routeToAddressPickup: 'kompship-pickup',
       routeToAddProduct: 'add-produk',
+      routeToAddressSetting: 'gudangku',
       routeDetail: 'detail-add-order',
       action: 'manage',
       breadcrumb: [
@@ -97,6 +100,45 @@ export default [
           active: true,
         },
       ],
+    },
+  },
+  {
+    path: '/data-order/detail-order/edit/:order_id',
+    name: 'edit-order',
+    component: () => import('@/views/pages/komship/order/EditOrder/EditOrder.vue'),
+    meta: {
+      navActiveLink: 'data-order',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/method-order',
+    name: 'method-order',
+    component: () => import('@/views/pages/komship/order/MethodOrder'),
+    meta: {
+      navActiveLink: 'add-order',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/add-order-massal',
+    name: 'add-order-massal',
+    component: () => import('@/views/pages/komship/order/AddOrderMassal'),
+    meta: {
+      navActiveLink: 'add-order-massal',
+      resource: 'Order',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: () => import('@/views/pages/komship/order/index.vue'),
+    meta: {
+      resource: 'Order',
+      action: 'manage',
     },
   },
 ]

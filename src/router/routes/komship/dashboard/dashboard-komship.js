@@ -1,6 +1,6 @@
 export default [
   {
-    path: '/dashboard-komship',
+    path: '/',
     name: 'dashboard-komship',
     component: () => import('@/views/pages/komship/dashboard'),
     meta: {
@@ -9,6 +9,7 @@ export default [
       routeToTopCustomer: 'info-customer',
       routeToDataProduct: 'data-produk',
       routeToRincianSaldo: 'saldo-detail',
+      routeToTicket: 'ticketing-user',
       resource: 'Dashboard Komship',
       action: 'read',
       breadcrumb: [

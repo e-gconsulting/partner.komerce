@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 import {
   BCard,
   BRow,
@@ -20,6 +21,7 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import PincodeInput from 'vue-pincode-input'
 
 export default {
   components: {
@@ -39,6 +41,7 @@ export default {
     ValidationProvider,
     BSpinner,
     BOverlay,
+    PincodeInput,
   },
   directives: {
     Ripple,
@@ -83,11 +86,63 @@ export default {
 
       fieldLogoBusiness: [],
 
-      cityCode: '',
+      cityCode: null,
+      cityCodeValue: null,
 
       // Validation
       required,
       email,
+
+      messageErrorLengthNameBusiness: false,
+      messageErrorPhone: false,
+
+      // Modal Edit
+      editMode: '',
+      modalTitle: '',
+      modalSubtitle: '',
+      modalFormLabel: '',
+      modalEditFormInputType: '',
+      formInputEditItem: '',
+      formInputEditItemPaste: '',
+      formInputEditItemPasteMode: false,
+      usernameCheckPasswword: this.$store.state.auth.userData.username,
+
+      itemEyeIcon: 'EyeOffIcon',
+      labelSubmit: '',
+
+      actionSubmit: '',
+
+      // Validation Edit
+      messageErrorPassword: false,
+      successConfirmPassword: false,
+
+      errorOtp: false,
+
+      // Modal Success Verification
+      otpConfirmation: '',
+      successVerificationTitle: '',
+      descriptionSuccessVerification: '',
+
+      userData: this.$store.state?.auth?.userData,
+
+      errorNoHp: false,
+
+      loadingEdit: false,
+      rulesFormInput: required,
+      messageErrorEmail: null,
+      nameLabelEdit: '',
+
+      emailSamePrevious: false,
+      countOtp: 60,
+      resendOtp: false,
+      loadingOtp: false,
+      messageErrorUsernameIsSame: false,
+
+      fieldNewNumber: '',
+
+      nameValidator: '',
+
+      usernameExist: false,
     }
   },
   mounted() {
@@ -136,8 +191,8 @@ export default {
           formData.append('business_type_id', this.typeBusiness)
           formData.append('business_location', String(this.address))
           formData.append('email', this.emailUser)
-          if (this.cityCode !== null && this.cityCode.length < 6) {
-            formData.append('city_code', this.cityCode)
+          if (this.cityCodeValue !== null) {
+            formData.append('city_code', this.cityCodeValue)
           }
           this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
             this.$toast({
@@ -171,9 +226,7 @@ export default {
     loadProfile() {
       this.fieldLogoBusiness.push({ logo: '' })
       this.loading = true
-      this.$http_komship.post('/v1/my-profile', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      this.$http_komship.post('/v1/my-profile').then(response => {
         const { data } = response.data
         this.id = data.user_id
         this.fullname = data.user_fullname
@@ -197,7 +250,7 @@ export default {
           this.cityCode = data.address_partner_business
           this.loadAllProvince()
         }
-        this.sektorBusiness = data.partner_category_name
+        if (data.partner_business_name === 'null') this.sektorBusiness = ''
         this.typeBusiness = data.partner_business_type_id
         this.loading = false
       }).catch(err => {
@@ -300,20 +353,430 @@ export default {
       }
     },
     reset() {
-      this.fullname = ''
-      this.username = ''
-      this.jenisKelamin = null
-      this.noHP = ''
-      this.emailUser = ''
-      this.address = ''
-      this.imageFile = null
-      this.imageInitialFile = null
-      this.nameBusiness = ''
-      this.location = ''
-      this.sektorBusiness = ''
-      this.typeBusiness = ''
+      window.history.go(-1)
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
+    formatBusinessName(e) {
+      return String(e).substring(0, 30)
+    },
+    formatPhoneProfile(e) {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+      }
+      if (this.phoneBusiness.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    validateInputBusinessName(e) {
+      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 13) {
+        e.preventDefault()
+        this.messageErrorLengthNameBusiness = true
+      } else {
+        this.messageErrorLengthNameBusiness = false
+      }
+    },
+    validateInputPhoneProfile(e) {
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 101 || e.keyCode === 44 || e.keyCode === 13) {
+        e.preventDefault()
+      }
+      if (this.phoneBusiness.length < 9) {
+        this.messageErrorPhone = true
+      } else {
+        this.messageErrorPhone = false
+      }
+    },
+    handleArrowInput(e) {
+      if (e.which === 38 || e.which === 40) {
+        e.preventDefault()
+      }
+    },
+    async openModalEdit(data) {
+      this.editMode = data
+      if (data === 'number') {
+        this.nameLabelEdit = 'No HP'
+      }
+      if (data === 'username') {
+        this.modalTitle = await 'Edit Username'
+        this.modalSubtitle = await 'Kamu hanya dapat mengganti username satu kali'
+        this.modalFormLabel = await 'Username'
+        this.modalEditFormInputType = await 'text'
+        this.labelSubmit = await 'Simpan'
+        this.nameValidator = 'username'
+      } else if (data === 'noHP') {
+        this.modalTitle = await 'Password Komship'
+        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalFormLabel = await 'Masukkan Pasword'
+        this.modalEditFormInputType = await 'password'
+        this.labelSubmit = 'Konfirmasi'
+        this.nameValidator = 'password'
+      } else if (data === 'email') {
+        this.modalTitle = await 'Password Komship'
+        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalFormLabel = await 'Masukkan Pasword'
+        this.modalEditFormInputType = await 'password'
+        this.labelSubmit = await 'Konfirmasi'
+        this.nameValidator = 'password'
+      }
+      this.$refs['modal-edit'].show()
+    },
+    closeModalEdit() {
+      this.formInputEditItem = ''
+      this.successConfirmPassword = false
+      this.messageErrorUsernameIsSame = false
+      this.errorNoHp = false
+      this.$refs['modal-edit'].hide()
+    },
+    closeSuccessEditUsername() {
+      this.$refs['modal-success-edit-username'].hide()
+    },
+    submitEdit() {
+      this.messageErrorUsernameIsSame = false
+      this.loadingEdit = true
+      if (this.editMode === 'username') {
+        this.nameValidator = 'username'
+        if (this.userData.username !== this.formInputEditItem) {
+          const formData = new FormData()
+          formData.append('username', this.formInputEditItem)
+          const params = {
+            username: this.formInputEditItem,
+          }
+          this.$http.put('/user/partner/update-profile/username', {
+            username: this.formInputEditItem,
+          })
+            .then(response => {
+              this.loadingEdit = false
+              if (response.data.code === 1009) {
+                this.usernameExist = true
+              } else {
+                this.$refs['modal-success-edit-username'].show()
+                this.$refs['modal-edit'].hide()
+              }
+            })
+            .catch(err => {
+              this.loadingEdit = false
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+        } else {
+          this.loadingEdit = false
+          this.messageErrorUsernameIsSame = true
+        }
+      } else if (this.editMode === 'noHP') {
+        this.nameValidator = 'No HP'
+        const formData = new FormData()
+        formData.append('username', this.usernameCheckPasswword)
+        formData.append('password', this.formInputEditItem)
+        this.$http.post('/check-password', formData)
+          .then(response => {
+            this.modalTitle = 'Edit No HP'
+            this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
+            this.modalFormLabel = 'No HP'
+            this.modalEditFormInputType = 'number'
+            this.successConfirmPassword = true
+            this.messageErrorPassword = false
+            this.$refs.formRulesEdit.reset()
+            this.loadingEdit = false
+          }).catch(err => {
+            if (err.response.data.data.check_password === false) {
+              this.successConfirmPassword = false
+              this.messageErrorPassword = true
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            }
+            this.loadingEdit = false
+          })
+      } else if (this.editMode === 'email') {
+        this.nameValidator = 'email'
+        const formData = new FormData()
+        formData.append('username', this.usernameCheckPasswword)
+        formData.append('password', this.formInputEditItem)
+        this.$http.post('/check-password', formData)
+          .then(response => {
+            this.modalTitle = 'Ganti Email'
+            this.modalSubtitle = 'Pastikan email yang baru milik Kamu'
+            this.modalFormLabel = 'Email'
+            this.modalEditFormInputType = 'email'
+            this.formInputEditItem = ''
+            this.successConfirmPassword = true
+            this.messageErrorPassword = false
+            this.loadingEdit = false
+            this.$refs.formRulesEdit.reset()
+          }).catch(err => {
+            if (err.response.data.data.check_password === false) {
+              this.successConfirmPassword = false
+              this.messageErrorPassword = true
+              this.loadingEdit = false
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+              this.loadingEdit = false
+            }
+          })
+      }
+    },
+    submitVerification() {
+      this.loadingEdit = true
+      if (this.editMode === 'noHP') {
+        const formData = new FormData()
+        formData.append('phone_number', this.formInputEditItem)
+        this.fieldNewNumber = this.formInputEditItem
+        this.$http_komship.post('/v1/partner/sms/otp', formData)
+          .then(response => {
+            this.$refs['modal-edit'].hide()
+            this.$refs['modal-verification-edit'].show()
+            this.loadingEdit = false
+            this.countDownTimer()
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+            this.loadingEdit = false
+          })
+      }
+      if (this.editMode === 'email') {
+        const formData = new FormData()
+        formData.append('id_user', this.id)
+        formData.append('email', this.formInputEditItem)
+        this.$http.post('/user/partner/update-profile/email', formData)
+          .then(response => {
+            if (response.data.message === 'Successfuly your email is the same as the previous email') {
+              this.emailSamePrevious = true
+            }
+            if (response.data.code === 1009) {
+              this.messageErrorEmail = '*Email telah digunakan orang lain'
+            }
+            if (response.data.message === 'Successfuly Edit Email') {
+              this.$refs.formRulesEdit.reset()
+              this.successVerificationTitle = 'Cek Email Kamu'
+              this.descriptionSuccessVerification = `Klik link konfirmasi yang telah kami kirimkan ke email ${this.formInputEditItem} untuk mengonfirmasi alamat email yang baru dan membantu mengamankan akun Anda. Link konfirmasi akan hangus dalam 10 menit setelah email dikirimkan`
+              this.$refs['modal-edit'].hide()
+              this.$refs['modal-success-verification'].show()
+            }
+            this.loadingEdit = false
+          })
+          .catch(err => {
+            this.loadingEdit = false
+          })
+      }
+    },
+    sendVerification() {
+      this.loadingEdit = true
+      const formData = new FormData()
+      formData.append('otp', this.otpConfirmation)
+      this.$http_komship.post('/v1/partner/sms/otp/verification', formData)
+        .then(response => {
+          this.submitEditNomer()
+        }).catch(err => {
+          if (err.response.data.code === 400) {
+            this.errorOtp = true
+          } else {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          }
+          this.loadingEdit = false
+        })
+    },
+    submitEditNomer() {
+      this.loadingEdit = true
+      const formData = new FormData()
+      formData.append('no_handphone', this.fieldNewNumber)
+      this.$http.post('user/partner/update-profile/no-handphone', formData)
+        .then(response => {
+          this.successVerificationTitle = 'Terimakasih'
+          this.descriptionSuccessVerification = `Kami telah mengkonfirmasi ${this.fieldNewNumber} sebagai
+          nomor HP untuk Akun Komerce Kamu`
+          this.errorOtp = false
+          this.successConfirmPassword = false
+          this.formInputEditItem = ''
+          this.$refs['modal-verification-edit'].hide()
+          this.$refs['modal-success-verification'].show()
+          this.loadingEdit = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingEdit = false
+        })
+    },
+    handleBackEdit() {
+      this.modalTitle = 'Edit No HP'
+      this.modalSubtitle = 'Pastikan nomor benar-benar milik Kamu'
+      this.modalFormLabel = 'No HP'
+      this.modalEditFormInputType = 'number'
+      this.successConfirmPassword = true
+      this.messageErrorPassword = false
+      this.$refs['modal-verification-edit'].hide()
+      this.$refs['modal-edit'].show()
+    },
+    changeEyeIcon() {
+      if (this.itemEyeIcon === 'EyeOffIcon') {
+        this.itemEyeIcon = 'EyeIcon'
+        this.modalEditFormInputType = 'text'
+      } else {
+        this.itemEyeIcon = 'EyeOffIcon'
+        this.modalEditFormInputType = 'password'
+      }
+    },
+    closeSuccessVerification() {
+      this.messageErrorEmail = null
+      this.successConfirmPassword = false
+      this.formInputEditItem = ''
+      this.$refs['modal-success-verification'].hide()
+      this.loadProfile()
+    },
+    formatPhone: _.debounce(function () {
+      if (this.formInputEditItem.length < 8) {
+        this.errorNoHp = true
+      } else {
+        this.errorNoHp = false
+      }
+      if (this.formInputEditItemPasteMode === true) {
+        this.formInputEditItem = this.formInputEditItemPaste
+      }
+      this.formInputEditItemPasteMode = false
+    }, 1000),
+    validateInputPhone(e) {
+      if (e.keyCode === 46 || e.keyCode === 45 || e.keyCode === 43) {
+        e.preventDefault()
+      }
+    },
+    formatterPhone(e) {
+      this.formInputEditItemPasteMode = true
+      this.formInputEditItem = ''
+      this.formInputEditItemPaste = ''
+      this.formInputEditItemPaste = e.clipboardData.getData('text').replace(/\D/g, '')
+      if (this.formInputEditItemPaste.charAt(0) === '0') {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(1, this.formInputEditItemPaste.length)
+      } else {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(0, this.formInputEditItemPaste.length)
+      }
+      if (this.formInputEditItemPaste.charAt(0) === '6') {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(2, this.formInputEditItemPaste.length)
+      } else {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(0, this.formInputEditItemPaste.length)
+      }
+      if (this.formInputEditItem.includes('+62') && this.formInputEditItem.charAt(0) !== '0') {
+        this.formInputEditItemPaste = this.formInputEditItemPaste.substr(3, this.formInputEditItemPaste.length)
+      }
+      this.formInputEditItemPaste = `0${this.formInputEditItemPaste}`
+    },
+    valueFormatPhone(e) {
+      if (e.target.value.length < 8) {
+        this.errorNoHp = true
+      } else {
+        this.errorNoHp = false
+      }
+    },
+    resetMessageErrorEmail() {
+      this.messageErrorPassword = false
+      this.messageErrorEmail = null
+      this.emailSamePrevious = false
+    },
+    countDownTimer() {
+      if (this.countOtp > 0) {
+        setTimeout(() => {
+          this.countOtp -= 1
+          this.countDownTimer()
+        }, 1000)
+      }
+      if (this.countOtp === 0) {
+        this.resendOtp = true
+      }
+    },
+    handleResendOtp() {
+      this.loadingOtp = true
+      const formData = new FormData()
+      formData.append('phone_number', this.formInputEditItem)
+      this.$http_komship.post('/v1/partner/sms/otp', formData)
+        .then(response => {
+          this.$refs['modal-edit'].hide()
+          this.$refs['modal-verification-edit'].show()
+          this.loadingEdit = false
+          this.countOtp = 60
+          this.resendOtp = false
+          this.countDownTimer()
+          this.loadingOtp = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingOtp = true
+        })
+    },
+    formatEditPhone(e) {
+      return String(e).substring(0, 14)
+    },
+    hideCloseModalEdit() {
+      this.formInputEditItem = ''
+      this.messageErrorUsernameIsSame = false
+      this.errorNoHp = false
+      this.successConfirmPassword = false
+      this.usernameExist = false
+      this.itemEyeIcon = 'EyeOffIcon'
+      this.messageErrorEmail = null
+    },
+    handleValueCityCode() {
+      this.cityCodeValue = this.cityCode.city_code
+    },
+    handleEnter(e) {
+      if (e.keyCode === 13) {
+        e.preventDefault()
+      }
+    },
+    handleMessageErrorUsernameIsSame() {
+      this.messageErrorPassword = false
+      this.messageErrorUsernameIsSame = false
+      this.usernameExist = false
+    },
   },
 
 }
