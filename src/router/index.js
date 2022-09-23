@@ -23,13 +23,6 @@ import hiring from './routes/komship/hiring/index'
 import opsional from './routes/komship/opsional/index'
 import gudang from './routes/kompack/gudang/index'
 
-// Komplace
-import dashboardKomplace from './routes/komplace/dashboard/index'
-import monitoring from './routes/komplace/monitoring/index'
-import manajemenAdmin from './routes/komplace/manajemenAdmin/index'
-import pengaturanKomplace from './routes/komplace/pengaturan/index'
-
-import cetaklabel from './routes/cetak-label'
 // Kompack
 import kompackAdmin from './routes/kompack/admin'
 import kompackLogin from './routes/kompack/login'
@@ -44,11 +37,6 @@ const router = new VueRouter({
     return { x: 0, y: 0 }
   },
   routes: [
-    ...dashboard,
-    ...penarikan,
-    ...pendapatan,
-    ...membership,
-    ...ekspedisi,
     ...kompackAdmin,
     ...kompackLogin,
     ...kompackPartner,
@@ -63,9 +51,6 @@ const router = new VueRouter({
     ...keuangan,
     ...hiring,
     ...opsional,
-    ...gudang,
-    ...myapps,
-    ...ticketing,
     ...gudang,
     ...wishlist,
     {
