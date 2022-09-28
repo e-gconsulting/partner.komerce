@@ -190,6 +190,9 @@ export default {
 
                 // Kompack
                 { action: 'manage', subject: 'Kompack-Admin' },
+                { action: 'manage', subject: 'gudang'},
+                { action: 'manage', subject: 'ajukan-inbound'},
+                { action: 'manage', subject: 'riwayat-inbound'},
               ]
               break
             case 'MANAGEMENT':
