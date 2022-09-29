@@ -205,19 +205,18 @@
         </b-row>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="mb-2">
       <b-col md="3">
         <span class="text-lg">Alamat Tujuan</span>
-        <div class="text-lg" style="color: #828282; font-size: 12px;">*contoh: Nambangan, Selogiri, Wonogiri (Setelah koma ada spasi)</div>
       </b-col>
-      <b-col md="4">
+      <b-col id="inputDestination" md="4">
         <input
           v-model="destinationLabel"
           type="text"
-          maxlength="30"
           autocomplete="off"
           placeholder="Masukkan Kelurahan/Kecamatan"
           class="form-control"
+          @focus="getDestination"
           @keyup="getDestination"
           @input="getShippingList()">
           <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">

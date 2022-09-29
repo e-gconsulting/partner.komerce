@@ -156,6 +156,11 @@ export default {
       if (!clickCustomer) {
         this.customerList = []
       }
+      const inputDestination = document.getElementById('inputDestination')
+      const clickDestination = inputDestination.contains(e.target)
+      if (!clickDestination) {
+        this.destinationList = []
+      }
     })
   },
   created() {
@@ -396,6 +401,7 @@ export default {
       that.getDestination(search)
     }, 1000),
     async getDestination() {
+      this.destinationList = []
       await this.$http_komship
         .get('v1/destination', {
           params: { search: this.destinationLabel },
