@@ -1985,7 +1985,7 @@ export default {
           val: item.option_name,
           parent: 0,
           stock: this.variantInputItems.length === 1 ? item.variant_stock : null,
-          price: this.variantInputItems.length === 1 ? item.option_price : null,
+          price: this.variantInputItems.length === 1 ? item.option_price.split('.').join('') : null,
           option: [],
         })
         if (this.variantInputItems.length === 2) {
@@ -1994,7 +1994,7 @@ export default {
               val: optionItem.option_name,
               parent: 0,
               stock: this.variantInputItems.length === 2 ? optionItem.variant_stock : null,
-              price: this.variantInputItems.length === 2 ? optionItem.option_price : null,
+              price: this.variantInputItems.length === 2 ? optionItem.option_price.split('.').join('') : null,
               option: [],
             })
             if (this.variantInputItems.length === 3) {
@@ -2003,7 +2003,7 @@ export default {
                   val: secondOptionItem.option_name,
                   parent: 0,
                   stock: this.variantInputItems.length === 3 ? secondOptionItem.variant_stock : null,
-                  price: this.variantInputItems.length === 3 ? secondOptionItem.option_price : null,
+                  price: this.variantInputItems.length === 3 ? secondOptionItem.option_price.split('.').join('') : null,
                   option: [],
                 })
               })
@@ -2027,7 +2027,7 @@ export default {
         width: this.widthProduct,
         height: this.heightProduct,
         status,
-        price: this.isVariantActive ? null : this.priceProduct,
+        price: this.isVariantActive ? null : this.priceProductsplit('.').join(''),
         stock: this.isVariantActive ? null : this.stockProduct,
         variant_option: this.variantStore,
         option: this.optionStore,

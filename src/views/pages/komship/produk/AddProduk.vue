@@ -1807,7 +1807,7 @@ export default {
               val: dataVariant.variantOptionName,
               parent: 0,
               stock: this.variantInputItems.length === 1 ? dataVariant.stock : null,
-              price: this.variantInputItems.length === 1 ? dataVariant.price : null,
+              price: this.variantInputItems.length === 1 ? dataVariant.price.split('.').join('') : null,
               option: [],
             })
           })
@@ -1819,7 +1819,7 @@ export default {
                 val: dataVariant.variantOptionName,
                 parent: 0,
                 stock: this.variantInputItems.length === 2 ? dataVariant.stock : null,
-                price: this.variantInputItems.length === 2 ? dataVariant.price : null,
+                price: this.variantInputItems.length === 2 ? dataVariant.price.split('.').join('') : null,
                 option: [],
               })
             })
@@ -1833,7 +1833,7 @@ export default {
                   val: dataVariant.variantOptionName,
                   parent: 0,
                   stock: this.variantInputItems.length === 3 ? dataVariant.stock : null,
-                  price: this.variantInputItems.length === 3 ? dataVariant.price : null,
+                  price: this.variantInputItems.length === 3 ? dataVariant.price.split('.').join('') : null,
                   option: [],
                 })
               })
@@ -1853,7 +1853,7 @@ export default {
         length: this.lengthProduct,
         width: this.widthProduct,
         height: this.heightProduct,
-        price: this.isVariantActive ? null : this.priceProduct,
+        price: this.isVariantActive ? null : this.priceProduct.split('.').join(''),
         stock: this.isVariantActive ? null : this.stockProduct,
       }
 
