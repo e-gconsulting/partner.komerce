@@ -213,11 +213,12 @@
         <input
           v-model="destinationLabel"
           type="text"
-          maxlength="30"
           autocomplete="off"
           placeholder="Masukkan Kelurahan/Kecamatan"
           class="form-control"
+          @focus="getDestination"
           @keyup="getDestination"
+          @focusout="handleFocusOutDestination"
           @input="getShippingList()">
           <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">
             <li v-for="items in destinationList" class="autocomplete-item" role="button" @click="applyDestination(items)">

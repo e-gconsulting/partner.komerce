@@ -396,6 +396,7 @@ export default {
       that.getDestination(search)
     }, 1000),
     async getDestination() {
+      this.destinationList = []
       await this.$http_komship
         .get('v1/destination', {
           params: { search: this.destinationLabel },
@@ -1537,6 +1538,9 @@ export default {
       this.destination = items
       this.destinationLabel = items.label
       this.getReturnInsight()
+      this.destinationList = []
+    },
+    handleFocusOutDestination() {
       this.destinationList = []
     },
   },
