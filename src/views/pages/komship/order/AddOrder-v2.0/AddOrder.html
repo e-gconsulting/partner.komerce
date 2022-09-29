@@ -211,7 +211,21 @@
         <div class="text-lg" style="color: #828282; font-size: 12px;">*contoh: Nambangan, Selogiri, Wonogiri (Setelah koma ada spasi)</div>
       </b-col>
       <b-col md="4">
-        <v-select
+        <input
+          v-model="destinationLabel"
+          type="text"
+          maxlength="30"
+          autocomplete="off"
+          placeholder="Masukkan Kelurahan/Kecamatan"
+          class="form-control"
+          @keyup="getDestination"
+          @input="getShippingList(), getReturnInsight()">
+          <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">
+            <li v-for="items in destinationList" class="autocomplete-item" role="button" @click="applyDestination(items)">
+              {{`${items.label}`}}
+            </li>
+          </ul>
+        <!-- <v-select
           ref="selectDestination"
           v-model="destination"
           :options="destinationList"
@@ -236,7 +250,7 @@
               The .vs__spinner class will hide the text for me.
             </div>
           </template>
-        </v-select>
+        </v-select> -->
       </b-col>
     </b-row>
     <b-row v-if="showReturnInsight" class="mb-2">

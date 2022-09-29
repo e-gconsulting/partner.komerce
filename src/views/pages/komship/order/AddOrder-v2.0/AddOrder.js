@@ -145,6 +145,8 @@ export default {
       customerReputationClass: 'wrapper__customer__reputation__good',
       customerReputationStyle: 'height: 20px; width: 2px; background-color: #34A770;',
       loadingCustomerReputation: false,
+
+      destinationLabel: '',
     }
   },
   mounted() {
@@ -157,6 +159,7 @@ export default {
     })
   },
   created() {
+    this.$forceUpdate()
     this.$http_komship
       .post('v1/my-profile')
       .then(res => {
@@ -369,6 +372,7 @@ export default {
         }).then(result => {
           const { data } = result.data.data
           const dataByTarrifCode = data.find(items => items.value === customer.tariff_code)
+          this.destinationLabel = dataByTarrifCode.label
           return dataByTarrifCode
         }).catch(err => {
           console.error(err)
@@ -388,12 +392,12 @@ export default {
       }
     },
     searchDestination: _.debounce((loading, search, that) => {
-      that.getDestination(search).finally(() => {})
+      that.getDestination(search)
     }, 1000),
-    async getDestination(search) {
-      this.$http_komship
+    async getDestination() {
+      await this.$http_komship
         .get('v1/destination', {
-          params: { search },
+          params: { search: this.destinationLabel },
         })
         .then(res => {
           const { data } = res.data.data
@@ -1527,6 +1531,11 @@ export default {
           })
           this.loadingCustomerReputation = false
         })
+    },
+    applyDestination(items) {
+      this.destination = items
+      this.destinationLabel = items.label
+      this.destinationList = []
     },
   },
 }
