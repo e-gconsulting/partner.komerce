@@ -209,7 +209,7 @@
       <b-col md="3">
         <span class="text-lg">Alamat Tujuan</span>
       </b-col>
-      <b-col md="4">
+      <b-col id="inputDestination" md="4">
         <input
           v-model="destinationLabel"
           type="text"
@@ -218,7 +218,6 @@
           class="form-control"
           @focus="getDestination"
           @keyup="getDestination"
-          @focusout="handleFocusOutDestination"
           @input="getShippingList()">
           <ul v-if="destinationList[0] !== undefined" class="autocomplete-list">
             <li v-for="items in destinationList" class="autocomplete-item" role="button" @click="applyDestination(items)">

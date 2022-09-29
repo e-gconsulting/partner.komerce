@@ -156,6 +156,11 @@ export default {
       if (!clickCustomer) {
         this.customerList = []
       }
+      const inputDestination = document.getElementById('inputDestination')
+      const clickDestination = inputDestination.contains(e.target)
+      if (!clickDestination) {
+        this.destinationList = []
+      }
     })
   },
   created() {
@@ -1538,9 +1543,6 @@ export default {
       this.destination = items
       this.destinationLabel = items.label
       this.getReturnInsight()
-      this.destinationList = []
-    },
-    handleFocusOutDestination() {
       this.destinationList = []
     },
   },
