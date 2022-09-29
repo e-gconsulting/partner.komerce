@@ -381,6 +381,7 @@ export default {
       } else {
         this.destination = null
       }
+      this.getReturnInsight()
       this.customerAddress = customer.address
       this.customerList = []
       this.formatPhoneCustomer()
@@ -1535,6 +1536,7 @@ export default {
     applyDestination(items) {
       this.destination = items
       this.destinationLabel = items.label
+      this.getReturnInsight()
       this.destinationList = []
     },
   },
