@@ -8,4 +8,23 @@ export default [
       resource: 'Auth',
     },
   },
+
+  {
+    path: '/kompack-register',
+    name: 'kompack-register',
+    component: () => import('@/views/pages/authentication/RegisterKompack'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
+  {
+    path: '/kompack-reset-password',
+    name: 'kompack-auth-login',
+    component: () => import('@/views/pages/authentication/ResetPassword'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+    },
+  },
 ]
