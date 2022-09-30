@@ -182,9 +182,6 @@ export default {
         await this.addToCart()
         await this.getRekening()
         await this.getCustomLabel()
-        await this.$http_komship
-          .delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {})
       })
       .catch(() => {
         this.$toast({
@@ -430,13 +427,15 @@ export default {
         const result = await this.productSelected.find(
           item => item.product_id === itemSelected.product_id,
         )
+        console.log(result)
+        console.log(itemSelected)
         if (
           result === undefined
           || result.length === 0
           || result.variantSubmit
         ) {
           let variantSelected
-          if (itemSelected.is_variant >= 1) {
+          if (itemSelected.is_variant === '1') {
             const variantOption = await itemSelected.variant[0].variant_option.map(
               item => ({
                 option_id: item.option_id,
@@ -756,11 +755,16 @@ export default {
       await this.getShippingList()
     }, 1000),
     async removeProduct(data, index) {
+      console.log('data', data)
+      console.log('index', index)
       this.idCartDelete = this.cartProductId
+      console.log('cartProductId', this.cartProductId)
+      console.log('idCartDelete', this.idCartDelete)
       const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       this.productSelected.splice(index, 1)
       this.productHistory = false
+      console.log('findCartProduct', findCartProduct)
       if (this.productSelected.length === 0) {
         this.paymentMethod = null
         this.shipping = null
@@ -870,29 +874,12 @@ export default {
           .post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
             this.cartId = []
-            this.cartProductId = res.data.data.cart_id
+            this.cartProductId = res.data.data
             await this.cartProductId.forEach(items => {
               this.cartId.push(items.cart_id)
             })
-            if (this.cartId.length !== cart.length) {
-              let cartDelete = null
-              await this.cartId.forEach(async item => {
-                cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
-              })
-              this.$http_komship.delete('/v1/cart/delete', {
-                params: {
-                  cart_id: [cartDelete.cart_id],
-                },
-              }).then(() => {
-                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
-                this.cartId.splice(findIndexCartToDelete, 1)
-                this.loadingCalculate = false
-                this.calculate(true)
-              })
-            } else {
-              this.loadingCalculate = false
-              await this.calculate(true)
-            }
+            this.loadingCalculate = false
+            await this.calculate(true)
           })
       } else {
         this.isCalculate = false
