@@ -71,17 +71,6 @@ export default [
   },
 
   {
-    path: '/partner-forgot-password',
-    name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword/Partnerlupapassword'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      redirectIfLoggedIn: true,
-    },
-  },
-
-  {
     path: '/change-password',
     name: 'auth-change-password',
     component: () => import('@/views/pages/authentication/CreatePassword.vue'),
@@ -167,27 +156,4 @@ export default [
       resource: 'Auth',
     },
   },
-
-  {
-    path: '/mitragudang-forgot-password',
-    name: 'auth-Mitragudang-lupapassword',
-    component: () => import('@/views/pages/authentication/Mitragudang/forgotpassword'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      redirectIfLoggedIn: true,
-    },
-  },
-
-  {
-    path: '/mitra-newpassword',
-    name: 'auth-reset-passworddata',
-    component: () => import('@/views/pages/authentication/Mitraresetpassword'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      action: 'read',
-    },
-  },
-
 ]
