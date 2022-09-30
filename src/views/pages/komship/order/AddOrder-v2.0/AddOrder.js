@@ -427,8 +427,6 @@ export default {
         const result = await this.productSelected.find(
           item => item.product_id === itemSelected.product_id,
         )
-        console.log(result)
-        console.log(itemSelected)
         if (
           result === undefined
           || result.length === 0
@@ -755,16 +753,11 @@ export default {
       await this.getShippingList()
     }, 1000),
     async removeProduct(data, index) {
-      console.log('data', data)
-      console.log('index', index)
       this.idCartDelete = this.cartProductId
-      console.log('cartProductId', this.cartProductId)
-      console.log('idCartDelete', this.idCartDelete)
       const findCartProduct = this.idCartDelete.find(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       const findIndexCartProduct = this.idCartDelete.findIndex(item => item.product_id === data.item.product_id && item.variant_id === data.item.variant_id)
       this.productSelected.splice(index, 1)
       this.productHistory = false
-      console.log('findCartProduct', findCartProduct)
       if (this.productSelected.length === 0) {
         this.paymentMethod = null
         this.shipping = null
