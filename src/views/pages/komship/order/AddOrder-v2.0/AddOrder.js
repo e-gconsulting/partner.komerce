@@ -182,9 +182,6 @@ export default {
         await this.addToCart()
         await this.getRekening()
         await this.getCustomLabel()
-        await this.$http_komship
-          .delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {})
       })
       .catch(() => {
         this.$toast({
@@ -436,7 +433,7 @@ export default {
           || result.variantSubmit
         ) {
           let variantSelected
-          if (itemSelected.is_variant >= 1) {
+          if (itemSelected.is_variant === '1') {
             const variantOption = await itemSelected.variant[0].variant_option.map(
               item => ({
                 option_id: item.option_id,
@@ -870,29 +867,12 @@ export default {
           .post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
             this.cartId = []
-            this.cartProductId = res.data.data.cart_id
+            this.cartProductId = res.data.data
             await this.cartProductId.forEach(items => {
               this.cartId.push(items.cart_id)
             })
-            if (this.cartId.length !== cart.length) {
-              let cartDelete = null
-              await this.cartId.forEach(async item => {
-                cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
-              })
-              this.$http_komship.delete('/v1/cart/delete', {
-                params: {
-                  cart_id: [cartDelete.cart_id],
-                },
-              }).then(() => {
-                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
-                this.cartId.splice(findIndexCartToDelete, 1)
-                this.loadingCalculate = false
-                this.calculate(true)
-              })
-            } else {
-              this.loadingCalculate = false
-              await this.calculate(true)
-            }
+            this.loadingCalculate = false
+            await this.calculate(true)
           })
       } else {
         this.isCalculate = false
