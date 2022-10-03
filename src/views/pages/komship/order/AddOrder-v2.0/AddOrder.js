@@ -975,11 +975,17 @@ export default {
         this.loadingOptionExpedition = false
       }
     },
-    checkNewTotal() {
+    checkNewTotal: _.debounce(async function () {
       if (this.newGrandTotal < this.shippingCost) {
         this.newGrandTotal = this.shippingCost
         this.calculate(false)
+      } else {
+        this.calculate(false)
       }
+    }, 1000),
+    checkTotal() {
+      this.loadingCalculate = true
+      this.checkNewTotal()
     },
     checkDiscount() {
       if (this.discount > this.subTotal) {
@@ -1085,6 +1091,9 @@ export default {
               this.loadingCalculate = false
             }
             this.loadingCalculate = false
+          }
+          if (this.newGrandTotal === this.shippingCost) {
+            this.grandTotal = this.newGrandTotal
           }
         }).catch(async err => {
           this.loadingWrapperOtherCost = false
