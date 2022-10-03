@@ -1,3 +1,4 @@
+import secureLocalStorage from '@/libs/secureLocalstorage'
 import jwtDefaultConfig from './jwtDefaultConfig'
 
 export default class JwtService {
@@ -79,7 +80,7 @@ export default class JwtService {
   }
 
   getToken() {
-    return localStorage.getItem(this.jwtConfig.storageTokenKeyName)
+    return secureLocalStorage.getItem(this.jwtConfig.storageTokenKeyName)
   }
 
   getRefreshToken() {
@@ -87,7 +88,7 @@ export default class JwtService {
   }
 
   setToken(value) {
-    localStorage.setItem(this.jwtConfig.storageTokenKeyName, value)
+    secureLocalStorage.setItem(this.jwtConfig.storageTokenKeyName, value)
   }
 
   setRefreshToken(value) {
