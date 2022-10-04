@@ -203,7 +203,6 @@ export default {
           this.loadingDataDetail = false
           this.ratingUser = data.rating_user
           this.statusPriority = data.status_priority
-          console.log(this.statusPriority)
           if (data.rating_user !== null) this.previewRating(data.rating_user.rating)
           this.dateRating = data.date_updated
           setTimeout(() => {
@@ -1071,11 +1070,14 @@ export default {
       })
     },
     getLinkOnNotes(chat) {
-      const urlify = text => {
-        const urlRegex = /(https?:\/\/[^\s]+)/g
-        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+      let link = null
+      if (chat !== null) {
+        const urlify = text => {
+          const urlRegex = /(https?:\/\/[^\s]+)/g
+          return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+        }
+        link = urlify(chat)
       }
-      const link = urlify(chat)
       return link
     },
     async changeAttr() {
