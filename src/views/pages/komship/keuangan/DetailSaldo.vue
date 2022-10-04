@@ -122,12 +122,20 @@
             Penarikan Saldo
           </span>
           <span v-if="data.item.transaction_type === 'orderku_done'">
-            Orderan COD (<span class="text-success">Diterima</span>)
-            <b-row
-              v-if="data.item.order_status === 'Hilang' || data.item.order_status === 'Rusak'"
-            >
-              <span class="ml-1">Ganti Rugi Paket Rusak</span>
-            </b-row>
+            Orderan COD (
+            <span
+              v-if="data.item.order_status !== 'Hilang' && data.item.order_status !== 'Rusak'"
+              class="text-success"
+            >Diterima</span>
+            <span
+              v-if="data.item.order_status !== 'Hilang'"
+              class="text-muted"
+            >Ganti Rugi Paket Hilang</span>
+            <span
+              v-if="data.item.order_status !== 'Rusak'"
+              class="text-muted"
+            >Ganti Rugi Paket Rusak</span>
+            )
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
@@ -167,11 +175,6 @@
           </span>
           <span v-if="data.item.transaction_type === 'orderku_cancel'">
             Orderan Non COD (<span class="text-muted">Cancel</span>)
-            <b-row
-              v-if="data.item.order_status === 'Hilang' || data.item.order_status === 'Rusak'"
-            >
-              <span class="ml-1">Ganti Rugi Paket Rusak</span>
-            </b-row>
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
@@ -211,11 +214,6 @@
           </span>
           <span v-if="data.item.transaction_type === 'orderku_ongkir'">
             Orderan Non COD (<span class="text-muted">Ongkir</span>)
-            <b-row
-              v-if="data.item.order_status === 'Hilang' || data.item.order_status === 'Rusak'"
-            >
-              <span class="ml-1">Ganti Rugi Paket Rusak</span>
-            </b-row>
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
@@ -260,11 +258,6 @@
             "
           >
             Orderan COD (<span class="text-danger">Retur</span>)
-            <b-row
-              v-if="data.item.order_status === 'Hilang' || data.item.order_status === 'Rusak'"
-            >
-              <span class="ml-1">Ganti Rugi Paket Rusak</span>
-            </b-row>
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
@@ -308,13 +301,7 @@
                 data.item.payment_method === 'BANK TRANSFER'
             "
           >
-            Orderan Non COD (<span class="text-danger">Retur</span>)
-            <b-row
-              v-if="data.item.order_status === 'Hilang' || data.item.order_status === 'Rusak'"
-            >
-              <span class="ml-1">Ganti Rugi Paket Rusak</span>
-            </b-row>
-            <b-row>
+            Orderan Non COD (<span class="text-danger">Retur</span>)<b-row>
               <img
                 :src="data.item.shipment_image_path"
                 width="70"
@@ -356,13 +343,7 @@
               data.item.claim_retur !== null
             "
           >
-            Orderan COD (<span class="text-muted">Claim Retur</span>)
-            <b-row
-              v-if="data.item.order_status === 'Hilang' || data.item.order_status === 'Rusak'"
-            >
-              <span class="ml-1">Ganti Rugi Paket Rusak</span>
-            </b-row>
-            <b-row>
+            Orderan COD (<span class="text-muted">Claim Retur</span>)<b-row>
               <img
                 :src="data.item.shipment_image_path"
                 width="70"
