@@ -1071,11 +1071,14 @@ export default {
       })
     },
     getLinkOnNotes(chat) {
-      const urlify = text => {
-        const urlRegex = /(https?:\/\/[^\s]+)/g
-        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+      let link = null
+      if (chat !== null) {
+        const urlify = text => {
+          const urlRegex = /(https?:\/\/[^\s]+)/g
+          return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+        }
+        link = urlify(chat)
       }
-      const link = urlify(chat)
       return link
     },
     async changeAttr() {
