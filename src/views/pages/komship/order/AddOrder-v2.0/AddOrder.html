@@ -877,7 +877,9 @@
             <b-form-input
               v-model="newGrandTotal"
               type="number"
-              @keyup="checkTotal()"
+              :formatter="formatterNewGrandTotal"
+              @keyup="checkTotal"
+              @paste="handlePasteCheckTotal"
             />
           </b-col>
       </b-row>
