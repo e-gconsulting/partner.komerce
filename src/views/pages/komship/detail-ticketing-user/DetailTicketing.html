@@ -298,7 +298,7 @@
                                 <b-img v-if="messageItem.image_path === '' || messageItem.image_path === null"
                                     src="@/assets/images/avatars/image-null.png" />
                             </b-col>
-                            <b-col :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''" md="11">
+                            <b-col v-if="messageItem.type !== 'Shipping'" :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''" md="11">
                                 <div v-if="messageItem.message !== null && messageItem.message !== ''">
                                     <b-row
                                         :class="messageItem.type === 'Partner' ? 'justify-content-end mb-50 align-items-center' : 'justify-content-start mb-50 align-items-center'">
@@ -376,6 +376,35 @@
                                             </small>
                                         </b-row>
                                     </div>
+                                </div>
+                            </b-col>
+
+                            <b-col
+                                v-if="messageItem.type === 'Shipping'"
+                                cols="12"
+                                class="my-2"
+                            >
+                                <div class="d-flex align-items-center justify-content-center">
+                                    <hr style="height:2px;min-width: 100px;max-width: 157px;color:gray;background-color:gray">
+                                    <div class="d-flex align-items-center p-1 mx-2" style="background: #E2E2E2;
+                                    border-radius: 32px;">
+                                        <div>
+                                            <b-img src="@/assets/images/icons/resi-kirim.svg" style="min-width: 60px!important;"/>
+                                        </div>
+                                        <div>
+                                            <b-col
+                                                cols="12"
+                                            >
+                                                <span style="font-size: 12px; font-weight: 600;">{{ messageItem.message }}</span>
+                                            </b-col>
+                                            <b-col
+                                                cols="12"
+                                            >
+                                                <span style="font-size: 10px; font-weight: 600;">{{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}</span>
+                                            </b-col>
+                                        </div>
+                                    </div>
+                                    <hr style="height:2px;min-width: 100px;max-width: 157px;color:gray;background-color:gray">
                                 </div>
                             </b-col>
                         </b-row>
