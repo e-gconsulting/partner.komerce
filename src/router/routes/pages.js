@@ -30,16 +30,6 @@ export default [
     },
   },
   {
-    path: '/verified-partner-kompack',
-    name: 'verified-kompack',
-    component: () => import('@/views/pages/authentication/verifiedemailkompack.vue'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      action: 'read',
-    },
-  },
-  {
     path: '/login',
     name: 'auth-login',
     component: () => import('@/views/pages/authentication/Login'),
@@ -137,37 +127,6 @@ export default [
       resource: 'Dashboard Komship',
     },
   },
-
-  {
-    path: '/kompack-register-berhasil',
-    name: 'kompack-register-validate',
-    component: () => import('@/views/pages/authentication/RegisterValidateKompack'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-    },
-  },
-
-  {
-    path: '/kompack-register',
-    name: 'kompack-daftar',
-    component: () => import('@/views/pages/authentication/RegisterKompack'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-    },
-  },
-
-  {
-    path: '/kompack-register-berhasil',
-    name: 'kompack-register-validate',
-    component: () => import('@/views/pages/authentication/RegisterValidateKompack'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-    },
-  },
-
   {
     path: '/mitragudang-forgot-password',
     name: 'auth-Mitragudang-lupapassword',
@@ -187,6 +146,15 @@ export default [
       layout: 'full',
       resource: 'Auth',
       action: 'read',
+    },
+  },
+  {
+    path: '/kompack-register',
+    name: 'kompack-daftar',
+    component: () => import('@/views/pages/authentication/RegisterKompack/RegisterKompack.vue'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
     },
   },
 
