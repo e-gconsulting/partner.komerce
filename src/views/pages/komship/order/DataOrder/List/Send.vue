@@ -277,15 +277,15 @@
           <div class="inline-flex items-center cursor-pointer">
             <span
               v-b-tooltip.hover.top="'Klik untuk copy resi'"
-              @click.prevent="copyResi(data.item.airway_bill)"
               class="colorActive"
+              @click.prevent="copyResi(data.item.airway_bill)"
             >
               {{ data.item.airway_bill }}
             </span>
             <img
+              :id="`iconInfo` + data.item.order_id"
               src="@/assets/images/svg/info-circle.svg"
               class="copy-resi"
-              :id="`iconInfo` + data.item.order_id"
             >
             <div v-if="data.item.last_history_awb !== null">
               <b-popover
@@ -294,11 +294,14 @@
                 placement="topleft"
               >
                 <div class="flex items-center">
-                  <img src="@/assets/images/svg/car.svg" alt="Komerce">
+                  <img
+                    src="@/assets/images/svg/car.svg"
+                    alt="Komerce"
+                  >
                   <div class="ml-1">
                     <span>{{ handleDateTransfer(data.item.last_history_awb.date) }}</span>
                     <br>
-                    <strong>{{data.item.last_history_awb.desc}}</strong>
+                    <strong>{{ data.item.last_history_awb.desc }}</strong>
                   </div>
                 </div>
               </b-popover>
