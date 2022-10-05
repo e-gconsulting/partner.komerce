@@ -477,6 +477,7 @@
                               :formatter="formatPriceVariant"
                               @keyup="formatCurrency(false, 'all-price-variant')"
                               @blur="formatCurrency(true, 'all-price-variant')"
+                              @paste="handlePastePriceAll"
                             />
                           </b-input-group>
                         </div>
@@ -498,6 +499,7 @@
                             :formatter="formatPriceVariant"
                             @keyup="formatCurrency(false, 'all-stock-variant')"
                             @blur="formatCurrency(true, 'all-stock-variant')"
+                            @paste="handlePasteStockAll"
                           />
                         </b-input-group>
                       </b-col>
@@ -600,25 +602,23 @@
                       </template>
 
                       <template #cell(variant3)="data">
-                        <b-row>
-                          <div
-                            v-for="(item, index) in data.item.variant1.option"
-                            :key="index+1"
+                        <div
+                          v-for="(item, index) in data.item.variant1.option"
+                          :key="index+1"
+                        >
+                          <b-col
+                            v-for="(items, index1) in item.variant2.option"
+                            :key="index1+1"
+                            cols="12"
                           >
-                            <b-col
-                              v-for="(items, index1) in item.variant2.option"
-                              :key="index1+1"
-                              cols="12"
+                            <div
+                              class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                              disabled
                             >
-                              <div
-                                class="wrapper__variant2__table mb-1 d-flex align-items-center"
-                                disabled
-                              >
-                                {{ items.variant3.val }}
-                              </div>
-                            </b-col>
-                          </div>
-                        </b-row>
+                              {{ items.variant3.val }}
+                            </div>
+                          </b-col>
+                        </div>
                       </template>
 
                       <template #cell(stock)="data">
@@ -638,8 +638,8 @@
                                 class="wrapper__form__input__variant mb-1"
                                 placeholder="Contoh : 1.000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`)"
-                                @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`)"
+                                @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant3.stock"
+                                @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant3.stock"
                               />
                             </div>
                           </b-col>
@@ -657,8 +657,8 @@
                               class="wrapper__form__input__variant mb-1"
                               placeholder="Contoh : 1.000"
                               :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`)"
-                              @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`)"
+                              @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`), items.variant2.stock"
+                              @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`), items.variant2.stock"
                             />
                           </b-col>
                         </div>
@@ -670,8 +670,8 @@
                             class="wrapper__form__input__variant mb-1"
                             placeholder="Contoh : 1.000"
                             :formatter="formatPriceVariant"
-                            @keyup="formatCurrency(false, 'stock-variant')"
-                            @blur="formatCurrency(true, 'stock-variant')"
+                            @keyup="formatCurrency(false, 'stock-variant'), data.item.variant1.stock"
+                            @blur="formatCurrency(true, 'stock-variant'), data.item.variant1.stock"
                           />
                         </div>
                       </template>
@@ -701,8 +701,8 @@
                                   class="wrapper__form__input__variant"
                                   placeholder="Contoh : 85.000"
                                   :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`)"
-                                  @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`)"
+                                  @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant3.price"
+                                  @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant3.price"
                                 />
                               </b-input-group>
                             </div>
@@ -729,8 +729,8 @@
                                 class="wrapper__form__input__variant"
                                 placeholder="Contoh : 85.000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`)"
-                                @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`)"
+                                @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`), items.variant2.price"
+                                @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`), items.variant2.price"
                               />
                             </b-input-group>
                           </b-col>
@@ -751,8 +751,8 @@
                               class="wrapper__form__input__variant"
                               placeholder="Contoh : 85.000"
                               :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'price-variant')"
-                              @blur="formatCurrency(true, 'price-variant')"
+                              @keyup="formatCurrency(false, 'price-variant'), data.item.variant1.price"
+                              @blur="formatCurrency(true, 'price-variant'), data.item.variant1.price"
                             />
                           </b-input-group>
                         </div>
@@ -814,6 +814,7 @@
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
                           @keyup="formatPriceInput($event)"
+                          @keypress="validateInputWeight($event)"
                           @paste="handlePastePrice"
                         />
                       </b-input-group>
@@ -866,6 +867,7 @@
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
                           @keyup="formatStock($event)"
+                          @keypress="validateInputWeight($event)"
                           @paste="handlePasteStock"
                         />
                       </b-input-group>
@@ -970,7 +972,7 @@
                     <label for="price-product">
                       <h5>
                         <strong>
-                          Volume<span class="text-primary">*</span>
+                          Volume
                         </strong>
                       </h5>
                       <small>
@@ -993,8 +995,11 @@
                             placeholder="Panjang"
                             type="number"
                             :formatter="formatterVolume"
+                            @keypress="validateInputVolume($event)"
                             @keydown="validateInputVolume($event)"
+                            @keyup="validateInputVolume($event)"
                             @input="calculateVolumeProduct"
+                            @paste="handlePasteLength"
                           />
                           <b-input-group-append is-text>
                             cm
@@ -1011,7 +1016,10 @@
                             type="number"
                             :formatter="formatterVolume"
                             @keydown="validateInputVolume($event)"
+                            @keypress="validateInputVolume($event)"
+                            @keyup="validateInputVolume($event)"
                             @input="calculateVolumeProduct"
+                            @paste="handlePasteWidth"
                           />
                           <b-input-group-append is-text>
                             cm
@@ -1028,7 +1036,10 @@
                             type="number"
                             :formatter="formatterVolume"
                             @keydown="validateInputVolume($event)"
+                            @keypress="validateInputVolume($event)"
+                            @keyup="validateInputVolume($event)"
                             @input="calculateVolumeProduct"
+                            @paste="handlePasteHeight"
                           />
                           <b-input-group-append is-text>
                             cm
@@ -1068,7 +1079,11 @@
                   <div>
                     <span class="text-black">
                       Perhatikan dengan baik berat dan Volume produk ya agar tidak terjadi selisih data dengan pihak kurir
-                      <span class="text-info">Pelajari selengkapnya</span>
+                      <span class="text-info"><a
+                        class="text-info"
+                        href="https://bantuan.komerce.id/id/article/cara-menghitung-konversi-volume-ke-berat-di-pengiriman-barang-1hofvu6/"
+                        target="_blank"
+                      >Pelajari selengkapnya</a></span>
                     </span>
                   </div>
                 </div>
@@ -1357,16 +1372,20 @@ export default {
       pricePaste: null,
       pricePasteMode: false,
       stockPaste: null,
-      stockPasteMode: true,
+      stockPasteMode: false,
 
       weightPaste: null,
-      weightPasteMode: true,
+      weightPasteMode: false,
       lengthPaste: null,
-      lengthPasteMode: true,
+      lengthPasteMode: false,
       widthPaste: null,
-      widthPasteMode: true,
+      widthPasteMode: false,
       heightPaste: null,
-      heightPasteMode: true,
+      heightPasteMode: false,
+      priceAllPaste: null,
+      priceAllPasteMode: false,
+      stockAllPaste: null,
+      stockAllPasteMode: false,
     }
   },
   computed: {},
@@ -1403,9 +1422,13 @@ export default {
       this.stockPasteMode = false
     },
     formatPriceInput($event) {
+      const e = $event
       const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
         $event.preventDefault()
+      }
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101 || e.keyCode === 190) {
+        e.preventDefault()
       }
       if (this.pricePasteMode) this.priceProduct = this.pricePaste
       this.pricePasteMode = false
@@ -1984,7 +2007,7 @@ export default {
     goBack() {
       window.history.back()
     },
-    formatCurrency(blur, el) {
+    formatCurrency(blur, el, value) {
       const input = document.getElementById(el)
       let inputVal = input.value
 
@@ -2015,6 +2038,11 @@ export default {
       const updatedLen = inputVal.length
       caretPos = updatedLen - originalLen + caretPos
       input.setSelectionRange(caretPos, caretPos)
+
+      if (this.priceAllPasteMode) this.setPriceAll = this.priceAllPaste
+      this.priceAllPasteMode = false
+      if (this.stockAllPasteMode) this.setStockAll = this.stockAllPaste
+      this.stockAllPasteMode = false
     },
     formatNumber(n) {
       return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
@@ -2028,8 +2056,7 @@ export default {
       || this.lengthProduct === ''
       || this.widthProduct === ''
       || this.heightProduct === ''
-      || this.productName === ''
-      || this.skuName === '') {
+      || this.productName === '') {
         this.buttonIsSubmit = true
       } else {
         this.buttonIsSubmit = false
@@ -2039,26 +2066,42 @@ export default {
     handlePastePrice(e) {
       this.pricePasteMode = true
       this.pricePaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.pricePaste.charAt(0) === '0') this.pricePaste = this.pricePaste.slice(1, this.pricePaste.length)
     },
     handlePasteStock(e) {
       this.stockPasteMode = true
       this.stockPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.stockPaste.charAt(0) === '0') this.stockPaste = this.stockPaste.slice(1, this.stockPaste.length)
     },
     handlePasteWeight(e) {
       this.weightPasteMode = true
       this.weightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.weightPaste.charAt(0) === '0') this.weightPaste = this.weightPaste.slice(1, this.weightPaste.length)
     },
     handlePasteWidth(e) {
       this.widthPasteMode = true
       this.widthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.widthPaste.charAt(0) === '0') this.widthPaste = this.widthPaste.slice(1, this.widthPaste.length)
     },
     handlePasteLength(e) {
       this.lengthPasteMode = true
       this.lengthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.lengthPaste.charAt(0) === '0') this.lengthPaste = this.lengthPaste.slice(1, this.lengthPaste.length)
     },
     handlePasteHeight(e) {
       this.heightPasteMode = true
       this.heightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.heightPaste.charAt(0) === '0') this.heightPaste = this.heightPaste.slice(1, this.heightPaste.length)
+    },
+    handlePastePriceAll(e) {
+      this.priceAllPasteMode = true
+      this.priceAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.priceAllPaste.charAt(0) === '0') this.priceAllPaste = this.priceAllPaste.slice(1, this.priceAllPaste.length)
+    },
+    handlePasteStockAll(e) {
+      this.stockAllPasteMode = true
+      this.stockAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.stockAllPaste.charAt(0) === '0') this.stockAllPaste = this.stockAllPaste.slice(1, this.stockAllPaste.length)
     },
   },
 }
