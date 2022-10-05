@@ -1,92 +1,165 @@
 <template>
-  <b-card-actions
-    ref="formCard"
-    no-actions
+  <b-overlay
+    variant="light"
+    :show="loadingLoadData"
+    spinner-variant="primary"
+    blur="0"
+    opacity=".75"
+    rounded="sm"
   >
+    <b-card-actions
+      ref="formCard"
+      no-actions
+    >
 
-    <b-row class="align-items-center">
-      <div
-        class="wrapper__handle__back ml-50 cursor-pointer"
-        @click="goBack"
-      >
-        <feather-icon
-          icon="ChevronLeftIcon"
-          size="25"
-          style="color: black;"
-        />
-      </div>
-      <h3 class="text-black ml-1 mt-50">
-        <strong>
-          Edit Produk
-        </strong>
-      </h3>
-    </b-row>
-    <validation-observer ref="formRules">
-      <b-form
-        class="mt-1"
-      >
-        <b-row>
+      <b-row class="align-items-center">
+        <div
+          class="wrapper__handle__back ml-50 cursor-pointer"
+          @click="goBack"
+        >
+          <feather-icon
+            icon="ChevronLeftIcon"
+            size="25"
+            style="color: black;"
+          />
+        </div>
+        <h3 class="text-black ml-1 mt-50">
+          <strong>
+            Edit Produk
+          </strong>
+        </h3>
+      </b-row>
+      <validation-observer ref="formRules">
+        <b-form
+          class="mt-1"
+        >
+          <b-row>
 
-          <b-row class="mx-1 p-2 wrapper__product__name mb-2">
-            <b-row class="ml-50">
-              <h4 class="text-black ml-50 mt-50">
-                <strong>
-                  Informasi Produk
-                </strong>
-              </h4>
-            </b-row>
-            <b-col
-              cols="12"
-              class="mb-2 mt-1"
-            >
-              <b-row>
-                <b-col
-                  cols="2"
-                >
-                  <label for="name-product">
-                    <h5>
-                      <strong>
-                        Nama Produk<span class="text-primary">*</span>
-                      </strong>
-                    </h5>
-                  </label>
-                </b-col>
+            <b-row class="mx-1 p-2 wrapper__product__name mb-2">
+              <b-row class="ml-50">
+                <h4 class="text-black ml-50 mt-50">
+                  <strong>
+                    Informasi Produk
+                  </strong>
+                </h4>
+              </b-row>
+              <b-col
+                cols="12"
+                class="mb-2 mt-1"
+              >
+                <b-row>
+                  <b-col
+                    cols="2"
+                  >
+                    <label for="name-product">
+                      <h5>
+                        <strong>
+                          Nama Produk<span class="text-primary">*</span>
+                        </strong>
+                      </h5>
+                    </label>
+                  </b-col>
 
-                <b-col
-                  cols="10"
-                >
-                  <validation-provider
-                    #default="{errors}"
-                    name="Nama Produk"
-                    rules="required"
+                  <b-col
+                    cols="10"
+                  >
+                    <validation-provider
+                      #default="{errors}"
+                      name="Nama Produk"
+                      rules="required"
+                    >
+                      <b-form-input
+                        id="name-product"
+                        v-model="productName"
+                        class="wrapper__form__input__variant"
+                        placeholder="Contoh: Jilbab Pashmina"
+                        :formatter="formatNameProduct"
+                        :state="errors.length > 0 ? false:null"
+                        :style="errors[0] || !productNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                        @keypress="validateInputProductName"
+                        @input="checkProductName"
+                      />
+                      <b-row>
+                        <small
+                          v-if="errors[0]"
+                          class="text-primary ml-1 mt-50"
+                        >*Wajib diisi ya</small>
+                        <small
+                          v-if="!productNameAvailable"
+                          class="text-primary mt-50"
+                        >
+                          *Nama produk sudah dipakai, yuk coba dengan nama lain
+                        </small>
+                        <small
+                          v-if="messageErrorLengthProduct"
+                          class="text-primary mt-50 ml-1"
+                        >
+                          *Terlalu pendek
+                        </small>
+                        <small class="ml-auto mr-1 mt-50">
+                          <small
+                            v-if="messageErrorIsActive"
+                            class="text-primary"
+                          >
+                            *hindari menggunakan simbol (/) (=) (:) (;) (&)
+                          </small>
+                          {{ productName.length }}/60
+                        </small>
+                      </b-row>
+                    </validation-provider>
+                  </b-col>
+                </b-row>
+              </b-col>
+
+              <b-col
+                cols="12"
+                class="mb-2"
+              >
+                <b-row>
+                  <b-col
+                    cols="2"
+                  >
+                    <label for="sku-product">
+                      <div class="d-flex">
+                        <h5 class="mr-50 mt-50">
+                          <strong>
+                            SKU
+                          </strong>
+                        </h5>
+                        <img
+                          id="infoSaldoPending"
+                          src="@/assets/images/icons/info-circle.svg"
+                        >
+                        <b-popover
+                          triggers="hover"
+                          target="infoSaldoPending"
+                          placement="topright"
+                          custom-class="my-popover-class"
+                        >
+                          Stock Keeping Unit adalah kode unik untuk menandai barangmu. Kalo punya, kamu bisa isi loh...
+                        </b-popover>
+                      </div>
+                    </label>
+                  </b-col>
+
+                  <b-col
+                    cols="10"
                   >
                     <b-form-input
-                      id="name-product"
-                      v-model="productName"
+                      id="sku-product"
+                      v-model="skuName"
                       class="wrapper__form__input__variant"
-                      placeholder="Contoh: Jilbab Pashmina"
-                      :formatter="formatNameProduct"
-                      :state="errors.length > 0 ? false:null"
-                      :style="errors[0] || !productNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                      @keypress="validateInputProductName"
-                      @input="checkProductName"
+                      placeholder="Contoh: Pashmina-001"
+                      :formatter="formatSkuProduct"
+                      :style="!skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                      @input="checkSkuName"
                     />
                     <b-row>
                       <small
-                        v-if="errors[0]"
-                        class="text-primary ml-1 mt-50"
-                      >*Wajib diisi ya</small>
-                      <small
-                        v-if="!productNameAvailable"
+                        v-if="!skuNameAvailable"
                         class="text-primary mt-50"
                       >
-                        *Nama produk sudah dipakai, yuk coba dengan nama lain
-                      </small>
-                      <small
-                        v-if="messageErrorLengthProduct"
-                        class="text-primary mt-50 ml-1"
-                      >
-                        *Terlalu pendek
+                        *SKU sudah digunakan, yuk coba dengan nama lain
                       </small>
                       <small class="ml-auto mr-1 mt-50">
                         <small
@@ -95,486 +168,435 @@
                         >
                           *hindari menggunakan simbol (/) (=) (:) (;) (&)
                         </small>
-                        {{ productName.length }}/60
+                        {{ skuName.length }}/60
                       </small>
                     </b-row>
-                  </validation-provider>
-                </b-col>
-              </b-row>
-            </b-col>
+                  </b-col>
+                </b-row>
+              </b-col>
 
-            <b-col
-              cols="12"
-              class="mb-2"
-            >
-              <b-row>
-                <b-col
-                  cols="2"
-                >
-                  <label for="sku-product">
-                    <div class="d-flex">
-                      <h5 class="mr-50 mt-50">
+              <b-col
+                cols="12"
+                class="mb-2"
+              >
+                <b-row>
+                  <b-col
+                    cols="2"
+                  >
+                    <label for="description-product">
+                      <h5>
                         <strong>
-                          SKU
+                          Deskripsi Produk
                         </strong>
                       </h5>
-                      <img
-                        id="infoSaldoPending"
-                        src="@/assets/images/icons/info-circle.svg"
-                      >
-                      <b-popover
-                        triggers="hover"
-                        target="infoSaldoPending"
-                        placement="topright"
-                        custom-class="my-popover-class"
-                      >
-                        Stock Keeping Unit adalah kode unik untuk menandai barangmu. Kalo punya, kamu bisa isi loh...
-                      </b-popover>
-                    </div>
-                  </label>
-                </b-col>
+                    </label>
+                  </b-col>
 
-                <b-col
-                  cols="10"
-                >
-                  <b-form-input
-                    id="sku-product"
-                    v-model="skuName"
-                    class="wrapper__form__input__variant"
-                    placeholder="Contoh: Pashmina-001"
-                    :formatter="formatSkuProduct"
-                    :style="!skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                    @input="checkSkuName"
-                  />
-                  <b-row>
-                    <small
-                      v-if="!skuNameAvailable"
-                      class="text-primary mt-50"
-                    >
-                      *SKU sudah digunakan, yuk coba dengan nama lain
-                    </small>
-                    <small class="ml-auto mr-1 mt-50">
-                      <small
-                        v-if="messageErrorIsActive"
-                        class="text-primary"
-                      >
-                        *hindari menggunakan simbol (/) (=) (:) (;) (&)
+                  <b-col
+                    cols="10"
+                  >
+                    <b-form-textarea
+                      id="description-product"
+                      v-model="descriptionProduct"
+                      :formatter="formatDescriptionProduct"
+                      placeholder="Masukkan deskripsi produkmu disini ya"
+                      rows="3"
+                    />
+                    <b-row>
+                      <small class="ml-auto mr-1 mt-50">
+                        {{ descriptionProduct.length }}/300
                       </small>
-                      {{ skuName.length }}/60
-                    </small>
-                  </b-row>
-                </b-col>
-              </b-row>
-            </b-col>
-
-            <b-col
-              cols="12"
-              class="mb-2"
-            >
-              <b-row>
-                <b-col
-                  cols="2"
-                >
-                  <label for="description-product">
-                    <h5>
-                      <strong>
-                        Deskripsi Produk
-                      </strong>
-                    </h5>
-                  </label>
-                </b-col>
-
-                <b-col
-                  cols="10"
-                >
-                  <b-form-textarea
-                    id="description-product"
-                    v-model="descriptionProduct"
-                    :formatter="formatDescriptionProduct"
-                    placeholder="Masukkan deskripsi produkmu disini ya"
-                    rows="3"
-                  />
-                  <b-row>
-                    <small class="ml-auto mr-1 mt-50">
-                      {{ descriptionProduct.length }}/300
-                    </small>
-                  </b-row>
-                </b-col>
-              </b-row>
-            </b-col>
-          </b-row>
-
-          <b-row class="mx-1 wrapper__product__variant mb-2">
-            <b-row
-              class="py-2 w-100 justify-content-between align-items-center ml-50"
-              :style="isVariantActive ? 'border-bottom: 1px solid #E2E2E2; margin: 0px 0px 0px 0px;' : 'margin: 0px 0px 0px 0px;'"
-            >
-              <div class="ml-1">
-                <h4 class="text-black ml-1 mt-50">
-                  <strong>
-                    Varian Produk
-                  </strong>
-                </h4>
-                <span class="ml-1">
-                  Kamu bisa menambah varian seperti warna, ukuran, atau lainnya disini loh.
-                </span>
-              </div>
-              <div>
-                <b-button
-                  :variant="isVariantActive ? 'flat-dark' : 'flat-primary'"
-                  :class="isVariantActive ? 'text-dark btn-icon mr-2' : 'text-primary btn-icon mr-2'"
-                  style="border: 1px solid #E2E2E2;"
-                  @click="handleIsVariant"
-                >
-                  <feather-icon
-                    :icon="isVariantActive ? 'MinusIcon' : 'PlusIcon'"
-                    style="display: inline-block!important;"
-                  />
-                  {{ isVariantActive ? 'Hapus Varian' : 'Tambah Varian' }}
-                </b-button>
-              </div>
+                    </b-row>
+                  </b-col>
+                </b-row>
+              </b-col>
             </b-row>
 
-            <!-- Variant -->
-            <b-row
-              v-if="isVariantActive"
-              class="w-100 mx-1 mt-2 mb-2"
-            >
+            <b-row class="mx-1 wrapper__product__variant mb-2">
               <b-row
-                v-for="(item, index) in variantInputItems"
-                :key="index+1"
-                class="w-100 mb-2 ml-50"
+                class="py-2 w-100 justify-content-between align-items-center ml-50"
+                :style="isVariantActive ? 'border-bottom: 1px solid #E2E2E2; margin: 0px 0px 0px 0px;' : 'margin: 0px 0px 0px 0px;'"
               >
-                <b-col
-                  cols="12"
-                >
-                  <h4
-                    class="text-black mb-1"
-                    style="font-weight: 500;"
-                  >
-                    Tipe Variasi {{ index+1 }}
+                <div class="ml-1">
+                  <h4 class="text-black ml-1 mt-50">
+                    <strong>
+                      Varian Produk
+                    </strong>
                   </h4>
-                </b-col>
-                <b-col
-                  cols="12"
-                  class="ml-1"
+                  <span class="ml-1">
+                    Kamu bisa menambah varian seperti warna, ukuran, atau lainnya disini loh.
+                  </span>
+                </div>
+                <div>
+                  <b-button
+                    :variant="isVariantActive ? 'flat-dark' : 'flat-primary'"
+                    :class="isVariantActive ? 'text-dark btn-icon mr-2' : 'text-primary btn-icon mr-2'"
+                    style="border: 1px solid #E2E2E2;"
+                    @click="handleIsVariant"
+                  >
+                    <feather-icon
+                      :icon="isVariantActive ? 'MinusIcon' : 'PlusIcon'"
+                      style="display: inline-block!important;"
+                    />
+                    {{ isVariantActive ? 'Hapus Varian' : 'Tambah Varian' }}
+                  </b-button>
+                </div>
+              </b-row>
+
+              <!-- Variant -->
+              <b-row
+                v-if="isVariantActive"
+                class="w-100 mx-1 mt-2 mb-2"
+              >
+                <b-row
+                  v-for="(item, index) in variantInputItems"
+                  :key="index+1"
+                  class="w-100 mb-2 ml-50"
                 >
-                  <b-row class="w-100">
-                    <b-col cols="6">
-                      <b-form-group
-                        label-for="variant-name"
-                      >
-                        <template #label>
-                          <span style="font-size: 14px;">
-                            <strong>
-                              Nama Variasi
-                            </strong>
-                          </span>
-                        </template>
-                        <div class="d-flex align-items-center">
-                          <b-form-input
-                            id="variant-name"
-                            v-model="item.variant.variantName"
-                            placeholder="Contoh: Warna, Ukuran, Bahan"
-                            class="wrapper__form__input__variant"
-                            :style="item.variant.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                            @input="validateVariantField(item, index)"
-                          />
-                          <div>
-                            <b-button
-                              class="btn-icon"
-                              size="sm"
-                              variant="flat-dark"
-                              @click="deleteVariant(item)"
-                            >
-                              <b-img
-                                src="@/assets/images/icons/trash.svg"
-                                width="30"
-                              />
-                            </b-button>
-                          </div>
-                        </div>
-                        <small
-                          v-if="item.variant.isValid === false"
-                          class="text-primary"
-                        >*Wajib diisi ya</small>
-                      </b-form-group>
-                    </b-col>
-                    <b-col
-                      v-for="(variantOption, indexVariantOption) in item.variant.variantOptionItem"
-                      :key="indexVariantOption+1"
-                      cols="6"
-                      :offset="indexVariantOption !== 0 ? 6 : ''"
+                  <b-col
+                    cols="12"
+                  >
+                    <h4
+                      class="text-black mb-1"
+                      style="font-weight: 500;"
                     >
-                      <div>
+                      Tipe Variasi {{ index+1 }}
+                    </h4>
+                  </b-col>
+                  <b-col
+                    cols="12"
+                    class="ml-1"
+                  >
+                    <b-row class="w-100">
+                      <b-col cols="6">
                         <b-form-group
                           label-for="variant-name"
                         >
-                          <template
-                            v-if="indexVariantOption === 0"
-                            #label
-                          >
-                            <span>
-                              <span style="font-size: 14px;">
-                                <strong>
-                                  Pilihan
-                                </strong>
-                              </span>
-                              (Max 8 Pilihan)
+                          <template #label>
+                            <span style="font-size: 14px;">
+                              <strong>
+                                Nama Variasi
+                              </strong>
                             </span>
                           </template>
                           <div class="d-flex align-items-center">
-                            <b-input-group
-                              class="input-group-merge"
-                            >
-                              <b-form-input
-                                id="variant-name"
-                                v-model="variantOption.variantOptionName"
-                                placeholder="Contoh: Merah, XL, Cotton"
-                                class="wrapper__form__input__variant"
-                                :style="variantOption.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                                @input="validateVariantOptionField(index, indexVariantOption, variantOption)"
-                              />
-                              <b-input-group-append
-                                is-text
-                                style="border-radius: 12px !important;"
-                              >
-                                <b-img src="@/assets/images/icons/icon-draggable.svg" />
-                              </b-input-group-append>
-                            </b-input-group>
+                            <b-form-input
+                              id="variant-name"
+                              v-model="item.variant.variantName"
+                              placeholder="Contoh: Warna, Ukuran, Bahan"
+                              class="wrapper__form__input__variant"
+                              :style="item.variant.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                              @input="validateVariantField(item, index)"
+                            />
                             <div>
                               <b-button
-                                :class="item.variant.variantOptionItem.length < 2 ? 'btn-icon cursor-not-allowed' : 'btn-icon'"
+                                class="btn-icon"
                                 size="sm"
                                 variant="flat-dark"
-                                :disabled="item.variant.variantOptionItem.length < 2"
-                                @click="deleteVariantOption(item, variantOption)"
+                                @click="deleteVariant(item)"
                               >
                                 <b-img
-                                  src="@/assets/images/icons/close-circle.svg"
+                                  src="@/assets/images/icons/trash.svg"
                                   width="30"
                                 />
                               </b-button>
                             </div>
                           </div>
                           <small
-                            v-if="variantOption.isValid === false"
+                            v-if="item.variant.isValid === false"
                             class="text-primary"
                           >*Wajib diisi ya</small>
                         </b-form-group>
-                      </div>
-                    </b-col>
-                    <b-row
-                      v-if="item.variant.variantOptionItem.length < 8"
-                      class="justify-content-end w-100"
-                    >
-                      <b-col cols="6">
+                      </b-col>
+                      <b-col
+                        v-for="(variantOption, indexVariantOption) in item.variant.variantOptionItem"
+                        :key="indexVariantOption+1"
+                        cols="6"
+                        :offset="indexVariantOption !== 0 ? 6 : ''"
+                      >
+                        <div>
+                          <b-form-group
+                            label-for="variant-name"
+                          >
+                            <template
+                              v-if="indexVariantOption === 0"
+                              #label
+                            >
+                              <span>
+                                <span style="font-size: 14px;">
+                                  <strong>
+                                    Pilihan
+                                  </strong>
+                                </span>
+                                (Max 8 Pilihan)
+                              </span>
+                            </template>
+                            <div class="d-flex align-items-center">
+                              <b-input-group
+                                class="input-group-merge"
+                              >
+                                <b-form-input
+                                  id="variant-name"
+                                  v-model="variantOption.variantOptionName"
+                                  placeholder="Contoh: Merah, XL, Cotton"
+                                  class="wrapper__form__input__variant"
+                                  :style="variantOption.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                                  @input="validateVariantOptionField(index, indexVariantOption, variantOption)"
+                                />
+                                <b-input-group-append
+                                  is-text
+                                  style="border-radius: 12px !important;"
+                                >
+                                  <b-img src="@/assets/images/icons/icon-draggable.svg" />
+                                </b-input-group-append>
+                              </b-input-group>
+                              <div>
+                                <b-button
+                                  :class="item.variant.variantOptionItem.length < 2 ? 'btn-icon cursor-not-allowed' : 'btn-icon'"
+                                  size="sm"
+                                  variant="flat-dark"
+                                  :disabled="item.variant.variantOptionItem.length < 2"
+                                  @click="deleteVariantOption(item, variantOption)"
+                                >
+                                  <b-img
+                                    src="@/assets/images/icons/close-circle.svg"
+                                    width="30"
+                                  />
+                                </b-button>
+                              </div>
+                            </div>
+                            <small
+                              v-if="variantOption.isValid === false"
+                              class="text-primary"
+                            >*Wajib diisi ya</small>
+                          </b-form-group>
+                        </div>
+                      </b-col>
+                      <b-row
+                        v-if="item.variant.variantOptionItem.length < 8"
+                        class="justify-content-end w-100"
+                      >
+                        <b-col cols="6">
+                          <b-button
+                            variant="flat-dark"
+                            class="text-dark btn-icon ml-1"
+                            style="border: 1px solid #E2E2E2;"
+                            @click="addVariantOption(item)"
+                          >
+                            <feather-icon
+                              icon="PlusIcon"
+                              style="display: inline-block!important;"
+                            />
+                            Tambah Pilihan
+                          </b-button>
+                        </b-col>
+                      </b-row>
+                    </b-row>
+                  </b-col>
+                </b-row>
+
+                <b-row class="w-100 mx-1 mb-2">
+                  <span
+                    style="border: 1px solid #E2E2E2; height: 1px; width: 100%;"
+                  />
+                </b-row>
+
+                <b-row class="justify-content-end w-100 mb-2">
+                  <b-col
+                    cols="6"
+                  >
+                    <b-row class="ml-50">
+                      <b-col
+                        cols="6"
+                      >
                         <b-button
-                          variant="flat-dark"
-                          class="text-dark btn-icon ml-1"
-                          style="border: 1px solid #E2E2E2;"
-                          @click="addVariantOption(item)"
+                          v-if="variantInputItems.length < 3"
+                          variant="outline-primary"
+                          style="height: 45px;"
+                          block
+                          @click="addVariant"
                         >
                           <feather-icon
                             icon="PlusIcon"
-                            style="display: inline-block!important;"
+                            style="display: inline-block !important;"
                           />
-                          Tambah Pilihan
+                          Tambahkan tipe varian
+                        </b-button>
+                      </b-col>
+                      <b-col cols="6">
+                        <b-button
+                          :class="applyVariantIsActive ? 'text-white cursor-not-allowed' : 'text-white'"
+                          :variant="applyVariantIsActive ? 'dark' : 'primary'"
+                          block
+                          :style="applyVariantIsActive ? 'height: 45px; background: #C2C2C2!important; border: 0px!important' : 'height: 45px;'"
+                          :disabled="applyVariantIsActive"
+                          @click="applyVariant"
+                        >
+                          Terapkan Variasi
                         </b-button>
                       </b-col>
                     </b-row>
-                  </b-row>
-                </b-col>
-              </b-row>
+                  </b-col>
+                </b-row>
 
-              <b-row class="w-100 mx-1 mb-2">
-                <span
-                  style="border: 1px solid #E2E2E2; height: 1px; width: 100%;"
-                />
-              </b-row>
+                <b-row class="w-100 mx-1 mb-2">
+                  <span
+                    style="border: 1px solid #E2E2E2; height: 1px; width: 100%;"
+                  />
+                </b-row>
 
-              <b-row class="justify-content-end w-100 mb-2">
-                <b-col
-                  cols="6"
-                >
-                  <b-row class="ml-50">
-                    <b-col
-                      cols="6"
-                    >
-                      <b-button
-                        v-if="variantInputItems.length < 3"
-                        variant="outline-primary"
-                        style="height: 45px;"
-                        block
-                        @click="addVariant"
-                      >
-                        <feather-icon
-                          icon="PlusIcon"
-                          style="display: inline-block !important;"
-                        />
-                        Tambahkan tipe varian
-                      </b-button>
-                    </b-col>
-                    <b-col cols="6">
-                      <b-button
-                        :class="applyVariantIsActive ? 'text-white cursor-not-allowed' : 'text-white'"
-                        :variant="applyVariantIsActive ? 'dark' : 'primary'"
-                        block
-                        :style="applyVariantIsActive ? 'height: 45px; background: #C2C2C2!important; border: 0px!important' : 'height: 45px;'"
-                        :disabled="applyVariantIsActive"
-                        @click="applyVariant"
-                      >
-                        Terapkan Variasi
-                      </b-button>
-                    </b-col>
-                  </b-row>
-                </b-col>
-              </b-row>
-
-              <b-row class="w-100 mx-1 mb-2">
-                <span
-                  style="border: 1px solid #E2E2E2; height: 1px; width: 100%;"
-                />
-              </b-row>
-
-              <b-row class="mb-2 w-100 ml-50">
-                <b-col
-                  cols="12"
-                >
-                  <h4
-                    class="text-black mb-1"
-                    style="font-weight: 500;"
+                <b-row class="mb-2 w-100 ml-50">
+                  <b-col
+                    cols="12"
                   >
-                    Tabel Varian
-                  </h4>
-                </b-col>
+                    <h4
+                      class="text-black mb-1"
+                      style="font-weight: 500;"
+                    >
+                      Tabel Varian
+                    </h4>
+                  </b-col>
 
-                <b-col
-                  cols="12"
-                >
-                  <div class="w-100 mx-1 wrapper__table__variant py-2">
-                    <b-row class="mx-1 mb-2">
-                      <b-col cols="5">
-                        <div class="d-flex align-items-center">
-                          <span style="font-size: 14px; min-width: 110px;">
-                            <strong>
-                              Harga & Stok
-                            </strong>
-                          </span>
+                  <b-col
+                    cols="12"
+                  >
+                    <div class="w-100 mx-1 wrapper__table__variant py-2">
+                      <b-row class="mx-1 mb-2">
+                        <b-col cols="5">
+                          <div class="d-flex align-items-center">
+                            <span style="font-size: 14px; min-width: 110px;">
+                              <strong>
+                                Harga & Stok
+                              </strong>
+                            </span>
+                            <b-input-group>
+                              <b-input-group-prepend is-text>
+                                <span style="font-size: 14px;">
+                                  <strong>
+                                    Rp
+                                  </strong>
+                                </span>
+                              </b-input-group-prepend>
+                              <b-form-input
+                                id="all-price-variant"
+                                v-model="setPriceAll"
+                                class="wrapper__form__input__variant"
+                                placeholder="Contoh : 85.000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatCurrency(false, 'all-price-variant')"
+                                @blur="formatCurrency(true, 'all-price-variant')"
+                                @paste="handlePastePriceAll"
+                              />
+                            </b-input-group>
+                          </div>
+                        </b-col>
+                        <b-col cols="4">
                           <b-input-group>
                             <b-input-group-prepend is-text>
                               <span style="font-size: 14px;">
                                 <strong>
-                                  Rp
+                                  Stok
                                 </strong>
                               </span>
                             </b-input-group-prepend>
                             <b-form-input
-                              id="all-price-variant"
-                              v-model="setPriceAll"
+                              id="all-stock-variant"
+                              v-model="setStockAll"
                               class="wrapper__form__input__variant"
-                              placeholder="Contoh : 85.000"
+                              placeholder="Contoh : 1000"
                               :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'all-price-variant')"
-                              @blur="formatCurrency(true, 'all-price-variant')"
-                              @paste="handlePastePriceAll"
+                              @keyup="formatCurrency(false, 'all-stock-variant')"
+                              @blur="formatCurrency(true, 'all-stock-variant')"
+                              @paste="handlePasteStockAll"
                             />
                           </b-input-group>
-                        </div>
-                      </b-col>
-                      <b-col cols="4">
-                        <b-input-group>
-                          <b-input-group-prepend is-text>
-                            <span style="font-size: 14px;">
-                              <strong>
-                                Stok
-                              </strong>
-                            </span>
-                          </b-input-group-prepend>
-                          <b-form-input
-                            id="all-stock-variant"
-                            v-model="setStockAll"
-                            class="wrapper__form__input__variant"
-                            placeholder="Contoh : 1000"
-                            :formatter="formatPriceVariant"
-                            @keyup="formatCurrency(false, 'all-stock-variant')"
-                            @blur="formatCurrency(true, 'all-stock-variant')"
-                            @paste="handlePasteStockAll"
-                          />
-                        </b-input-group>
-                      </b-col>
-                      <b-col cols="3">
-                        <b-button
-                          :variant="variantItems.length === 0 ? '' : 'outline-primary'"
-                          block
-                          :style="variantItems.length === 0 ? 'height: 45px; background: #C2C2C2!important; border: 0px!important;' : 'height: 45px;'"
-                          :class="variantItems.length === 0 ? 'cursor-not-allowed' : ''"
-                          :disabled="variantItems.length === 0 ? true : false"
-                          @click="setAllPriceStock"
-                        >
-                          Terapkan ke semua
-                        </b-button>
-                      </b-col>
-                    </b-row>
-
-                    <b-table
-                      striped
-                      hover
-                      :fields="variantFields"
-                      :items="variantItems"
-                      show-empty
-                    >
-                      <template #head="data">
-                        <span style="font-size: 14px;">
-                          <strong>
-                            {{ data.label }}
-                          </strong>
-                        </span>
-                      </template>
-                      <template #empty>
-                        <div
-                          style="height: 150px;"
-                          class="d-flex justify-content-center align-items-center"
-                        >
-                          <div>
-                            <b-row
-                              class="text-center justify-content-center"
-                            >
-                              <h3
-                                class="text-center"
-                                style="color: #626262;"
-                              >
-                                Tabel varian belum diisi
-                              </h3>
-                            </b-row>
-                            <b-row class="text-center justify-content-center">
-                              <span
-                                class="text-center"
-                                style="color: #626262;"
-                              >
-                                Lengkapi tipe varian di atas untuk mengisi tabel varian
-                              </span>
-                            </b-row>
-                          </div>
-                        </div>
-                      </template>
-
-                      <template #cell(variant1)="data">
-                        <b-row class="mt-1">
-                          {{ data.item.option_name }}
-                        </b-row>
-                      </template>
-
-                      <template #cell(variant2)="data">
-                        <b-row v-if="variantInputItems.length === 3">
-                          <b-col
-                            v-for="(item, index) in data.item.options"
-                            :key="index+1"
-                            cols="12"
+                        </b-col>
+                        <b-col cols="3">
+                          <b-button
+                            :variant="variantItems.length === 0 ? '' : 'outline-primary'"
+                            block
+                            :style="variantItems.length === 0 ? 'height: 45px; background: #C2C2C2!important; border: 0px!important;' : 'height: 45px;'"
+                            :class="variantItems.length === 0 ? 'cursor-not-allowed' : ''"
+                            :disabled="variantItems.length === 0 ? true : false"
+                            @click="setAllPriceStock"
                           >
+                            Terapkan ke semua
+                          </b-button>
+                        </b-col>
+                      </b-row>
+
+                      <b-table
+                        striped
+                        hover
+                        :fields="variantFields"
+                        :items="variantItems"
+                        show-empty
+                      >
+                        <template #head="data">
+                          <span style="font-size: 14px;">
+                            <strong>
+                              {{ data.label }}
+                            </strong>
+                          </span>
+                        </template>
+                        <template #empty>
+                          <div
+                            style="height: 150px;"
+                            class="d-flex justify-content-center align-items-center"
+                          >
+                            <div>
+                              <b-row
+                                class="text-center justify-content-center"
+                              >
+                                <h3
+                                  class="text-center"
+                                  style="color: #626262;"
+                                >
+                                  Tabel varian belum diisi
+                                </h3>
+                              </b-row>
+                              <b-row class="text-center justify-content-center">
+                                <span
+                                  class="text-center"
+                                  style="color: #626262;"
+                                >
+                                  Lengkapi tipe varian di atas untuk mengisi tabel varian
+                                </span>
+                              </b-row>
+                            </div>
+                          </div>
+                        </template>
+
+                        <template #cell(variant1)="data">
+                          <b-row class="mt-1">
+                            {{ data.item.option_name }}
+                          </b-row>
+                        </template>
+
+                        <template #cell(variant2)="data">
+                          <b-row v-if="variantInputItems.length === 3">
+                            <b-col
+                              v-for="(item, index) in data.item.options"
+                              :key="index+1"
+                              cols="12"
+                            >
+                              <div
+                                v-for="(secondItem, secondIndex) in item.options"
+                                :key="secondIndex+1"
+                              >
+                                <b-form-input
+                                  v-model="item.option_name"
+                                  class="wrapper__variant2__table mb-1"
+                                  disabled
+                                />
+                              </div>
+                            </b-col>
+                          </b-row>
+                          <b-row v-if="variantInputItems.length === 2">
                             <div
-                              v-for="(secondItem, secondIndex) in item.options"
-                              :key="secondIndex+1"
+                              v-for="(item, index) in data.item.options"
+                              :key="index+1"
+                              cols="12"
                             >
                               <b-form-input
                                 v-model="item.option_name"
@@ -582,47 +604,89 @@
                                 disabled
                               />
                             </div>
-                          </b-col>
-                        </b-row>
-                        <b-row v-if="variantInputItems.length === 2">
-                          <div
-                            v-for="(item, index) in data.item.options"
-                            :key="index+1"
-                            cols="12"
-                          >
-                            <b-form-input
-                              v-model="item.option_name"
-                              class="wrapper__variant2__table mb-1"
-                              disabled
-                            />
-                          </div>
-                        </b-row>
-                      </template>
+                          </b-row>
+                        </template>
 
-                      <template #cell(variant3)="data">
-                        <b-row>
-                          <b-col
-                            v-for="(item, index) in data.item.options"
-                            :key="index+1"
-                            cols="12"
-                          >
-                            <div
-                              v-for="(items, index1) in item.options"
-                              :key="index1+1"
+                        <template #cell(variant3)="data">
+                          <b-row>
+                            <b-col
+                              v-for="(item, index) in data.item.options"
+                              :key="index+1"
                               cols="12"
                             >
+                              <div
+                                v-for="(items, index1) in item.options"
+                                :key="index1+1"
+                                cols="12"
+                              >
+                                <b-form-input
+                                  v-model="items.option_name"
+                                  class="wrapper__variant2__table mb-1"
+                                  disabled
+                                />
+                              </div>
+                            </b-col>
+                          </b-row>
+                        </template>
+
+                        <template #cell(stock)="data">
+                          <b-row>
+                            <div v-if="variantInputItems.length === 3">
+                              <b-col
+                                v-for="(items, index) in data.item.options"
+                                :key="index+1"
+                                cols="12"
+                              >
+                                <div
+                                  v-for="(itemVariant, indexVariant) in items.options"
+                                  :key="indexVariant+1"
+                                >
+                                  <b-form-input
+                                    :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
+                                    v-model="itemVariant.variant_stock"
+                                    class="wrapper__form__input__variant mb-1"
+                                    placeholder="Contoh : 85.000"
+                                    :formatter="formatPriceVariant"
+                                    @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
+                                    @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
+                                  />
+                                </div>
+                              </b-col>
+                            </div>
+
+                            <div v-if="variantInputItems.length === 2">
+                              <b-col
+                                v-for="(items, index) in data.item.options"
+                                :key="index+1"
+                                cols="12"
+                              >
+                                <b-form-input
+                                  :id="`stock-variant-${index + data.index}-${data.index+1}`"
+                                  v-model="items.variant_stock"
+                                  class="wrapper__form__input__variant mb-1"
+                                  placeholder="Contoh : 85.000"
+                                  :formatter="formatPriceVariant"
+                                  @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
+                                  @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
+                                />
+                              </b-col>
+                            </div>
+
+                            <div v-if="variantInputItems.length === 1">
                               <b-form-input
-                                v-model="items.option_name"
-                                class="wrapper__variant2__table mb-1"
-                                disabled
+                                id="stock-variant"
+                                v-model="data.item.variant_stock"
+                                class="wrapper__form__input__variant mb-1"
+                                placeholder="Contoh : 85.000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatCurrency(false, 'stock-variant'), data.item.variant_stock"
+                                @blur="formatCurrency(true, 'stock-variant'), data.item.variant_stock"
                               />
                             </div>
-                          </b-col>
-                        </b-row>
-                      </template>
+                          </b-row>
+                        </template>
 
-                      <template #cell(stock)="data">
-                        <b-row>
+                        <template #cell(price)="data">
                           <div v-if="variantInputItems.length === 3">
                             <b-col
                               v-for="(items, index) in data.item.options"
@@ -633,15 +697,24 @@
                                 v-for="(itemVariant, indexVariant) in items.options"
                                 :key="indexVariant+1"
                               >
-                                <b-form-input
-                                  :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
-                                  v-model="itemVariant.variant_stock"
-                                  class="wrapper__form__input__variant mb-1"
-                                  placeholder="Contoh : 85.000"
-                                  :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
-                                  @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
-                                />
+                                <b-input-group class="mb-1">
+                                  <b-input-group-prepend is-text>
+                                    <span style="font-size: 14px;">
+                                      <strong>
+                                        Rp
+                                      </strong>
+                                    </span>
+                                  </b-input-group-prepend>
+                                  <b-form-input
+                                    :id="`price-variant-${indexVariant + data.index}-${data.index+1}`"
+                                    v-model="itemVariant.option_price"
+                                    class="wrapper__form__input__variant"
+                                    placeholder="Contoh : 85.000"
+                                    :formatter="formatPriceVariant"
+                                    @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
+                                    @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
+                                  />
+                                </b-input-group>
                               </div>
                             </b-col>
                           </div>
@@ -652,43 +725,6 @@
                               :key="index+1"
                               cols="12"
                             >
-                              <b-form-input
-                                :id="`stock-variant-${index + data.index}-${data.index+1}`"
-                                v-model="items.variant_stock"
-                                class="wrapper__form__input__variant mb-1"
-                                placeholder="Contoh : 85.000"
-                                :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
-                                @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
-                              />
-                            </b-col>
-                          </div>
-
-                          <div v-if="variantInputItems.length === 1">
-                            <b-form-input
-                              id="stock-variant"
-                              v-model="data.item.variant_stock"
-                              class="wrapper__form__input__variant mb-1"
-                              placeholder="Contoh : 85.000"
-                              :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'stock-variant'), data.item.variant_stock"
-                              @blur="formatCurrency(true, 'stock-variant'), data.item.variant_stock"
-                            />
-                          </div>
-                        </b-row>
-                      </template>
-
-                      <template #cell(price)="data">
-                        <div v-if="variantInputItems.length === 3">
-                          <b-col
-                            v-for="(items, index) in data.item.options"
-                            :key="index+1"
-                            cols="12"
-                          >
-                            <div
-                              v-for="(itemVariant, indexVariant) in items.options"
-                              :key="indexVariant+1"
-                            >
                               <b-input-group class="mb-1">
                                 <b-input-group-prepend is-text>
                                   <span style="font-size: 14px;">
@@ -698,25 +734,19 @@
                                   </span>
                                 </b-input-group-prepend>
                                 <b-form-input
-                                  :id="`price-variant-${indexVariant + data.index}-${data.index+1}`"
-                                  v-model="itemVariant.option_price"
+                                  :id="`price-variant-${index + data.index}-${data.index+1}`"
+                                  v-model="items.option_price"
                                   class="wrapper__form__input__variant"
                                   placeholder="Contoh : 85.000"
                                   :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
-                                  @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
+                                  @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
+                                  @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
                                 />
                               </b-input-group>
-                            </div>
-                          </b-col>
-                        </div>
+                            </b-col>
+                          </div>
 
-                        <div v-if="variantInputItems.length === 2">
-                          <b-col
-                            v-for="(items, index) in data.item.options"
-                            :key="index+1"
-                            cols="12"
-                          >
+                          <div v-if="variantInputItems.length === 1">
                             <b-input-group class="mb-1">
                               <b-input-group-prepend is-text>
                                 <span style="font-size: 14px;">
@@ -726,559 +756,538 @@
                                 </span>
                               </b-input-group-prepend>
                               <b-form-input
-                                :id="`price-variant-${index + data.index}-${data.index+1}`"
-                                v-model="items.option_price"
+                                id="price-variant"
+                                v-model="data.item.option_price"
                                 class="wrapper__form__input__variant"
                                 placeholder="Contoh : 85.000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
-                                @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
+                                @keyup="formatCurrency(false, 'price-variant'),data.item.option_price"
+                                @blur="formatCurrency(true, 'price-variant'), data.item.option_price"
                               />
                             </b-input-group>
-                          </b-col>
-                        </div>
+                          </div>
+                        </template>
 
-                        <div v-if="variantInputItems.length === 1">
-                          <b-input-group class="mb-1">
-                            <b-input-group-prepend is-text>
-                              <span style="font-size: 14px;">
-                                <strong>
-                                  Rp
-                                </strong>
-                              </span>
-                            </b-input-group-prepend>
+                      </b-table>
+                    </div>
+                  </b-col>
+                </b-row>
+              </b-row>
+            </b-row>
+
+            <b-row class="mx-1 p-2 wrapper__product__info mb-2">
+              <b-row class="ml-50 w-100 mb-1">
+                <h4 class="text-black ml-50 mt-50">
+                  <strong>
+                    Harga, Stok dan Ukuran
+                  </strong>
+                </h4>
+              </b-row>
+              <b-row class="w-100">
+                <b-col
+                  v-if="!isVariantActive"
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <b-row>
+                    <b-col
+                      cols="2"
+                    >
+                      <label for="price-product">
+                        <h5>
+                          <strong>
+                            Harga<span class="text-primary">*</span>
+                          </strong>
+                        </h5>
+                      </label>
+                    </b-col>
+
+                    <b-col
+                      cols="10"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Harga"
+                        rules="required"
+                      >
+                        <b-input-group>
+                          <b-input-group-prepend is-text>
+                            Rp
+                          </b-input-group-prepend>
+                          <b-form-input
+                            id="price-product"
+                            v-model="priceProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Contoh : 85000 (masukkan angka saja tanpa titik, koma atau karakter lain)"
+                            :formatter="formatPriceNotVariant"
+                            type="number"
+                            :state="errors.length > 0 ? false:null"
+                            :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                            @keyup="formatPriceInput($event)"
+                            @keypress="validateInputWeight($event)"
+                            @paste="handlePastePrice"
+                          />
+                        </b-input-group>
+                        <small
+                          v-if="errors[0]"
+                          class="text-primary ml-1 mt-50"
+                        >*Wajib diisi ya</small>
+                      </validation-provider>
+                    </b-col>
+                  </b-row>
+                </b-col>
+
+                <b-col
+                  v-if="!isVariantActive"
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <b-row>
+                    <b-col
+                      cols="2"
+                    >
+                      <label for="stock-product">
+                        <h5>
+                          <strong>
+                            Stok<span class="text-primary">*</span>
+                          </strong>
+                        </h5>
+                      </label>
+                    </b-col>
+
+                    <b-col
+                      cols="10"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Stock"
+                        rules="required"
+                      >
+                        <b-form-input
+                          id="stock-product"
+                          v-model="stockProduct"
+                          class="wrapper__form__input__variant"
+                          placeholder="Masukkan jumlah stok produk"
+                          type="number"
+                          :formatter="formatPriceNotVariant"
+                          :state="errors.length > 0 ? false:null"
+                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                          @keyup="formatStock($event)"
+                          @keypress="validateInputWeight($event)"
+                          @paste="handlePasteStock"
+                        />
+                        <small
+                          v-if="errors[0]"
+                          class="text-primary ml-1 mt-50"
+                        >*Wajib diisi ya</small>
+                      </validation-provider>
+                    </b-col>
+                  </b-row>
+                </b-col>
+
+                <b-col
+                  v-if="isVariantActive"
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <b-row>
+                    <b-col
+                      cols="2"
+                    >
+                      <label for="stock-product">
+                        <h5>
+                          <strong>
+                            Harga & Stok<span class="text-primary">*</span>
+                          </strong>
+                        </h5>
+                      </label>
+                    </b-col>
+
+                    <b-col
+                      cols="10"
+                    >
+                      <span style="color: #626262;">Kamu telah mengatur <strong>Harga</strong> dan <strong>Jumlah Stok</strong> di variasi produk</span>
+                    </b-col>
+                  </b-row>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <b-row>
+                    <b-col
+                      cols="2"
+                    >
+                      <label for="price-product">
+                        <h5>
+                          <strong>
+                            Berat Produk<span class="text-primary">*</span>
+                          </strong>
+                        </h5>
+                        <small>
+                          Masukkan berat produk setelah dikemas ya
+                        </small>
+                      </label>
+                    </b-col>
+
+                    <b-col
+                      cols="10"
+                    >
+                      <validation-provider
+                        #default="{errors}"
+                        name="Berat Produk"
+                        rules="required"
+                      >
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="weightProduct"
+                            class="wrapper__form__input__variant"
+                            :formatter="formatterVolume"
+                            placeholder="Masukkan harga produk"
+                            type="number"
+                            :state="errors.length > 0 ? false:null"
+                            :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                            @keypress="validateInputWeight($event)"
+                            @keyup="validateInputWeight($event)"
+                            @paste="handlePasteWeight"
+                          />
+                          <b-input-group-append is-text>
+                            gram
+                          </b-input-group-append>
+                        </b-input-group>
+                        <small
+                          v-if="errors[0]"
+                          class="text-primary ml-1 mt-50"
+                        >*Wajib diisi ya, minimal 1 gram</small>
+                      </validation-provider>
+                    </b-col>
+                  </b-row>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <b-row>
+                    <b-col
+                      cols="2"
+                    >
+                      <label for="price-product">
+                        <h5>
+                          <strong>
+                            Volume
+                          </strong>
+                        </h5>
+                        <small>
+                          Masukkan ukuran produk setelah
+                          dikemas, untuk mempermudah sistem menghitung volume.
+                        </small>
+                      </label>
+                    </b-col>
+
+                    <b-col
+                      cols="10"
+                    >
+                      <b-row class="justify-content-around">
+                        <b-col>
+                          <b-input-group>
                             <b-form-input
-                              id="price-variant"
-                              v-model="data.item.option_price"
+                              id="price-product"
+                              v-model="lengthProduct"
                               class="wrapper__form__input__variant"
-                              placeholder="Contoh : 85.000"
-                              :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'price-variant'),data.item.option_price"
-                              @blur="formatCurrency(true, 'price-variant'), data.item.option_price"
+                              placeholder="Panjang"
+                              type="number"
+                              :formatter="formatterVolume"
+                              @keypress="validateInputVolume($event)"
+                              @keydown="validateInputVolume($event)"
+                              @keyup="validateInputVolume($event)"
+                              @input="calculateVolumeProduct"
+                              @paste="handlePasteLength"
                             />
+                            <b-input-group-append is-text>
+                              cm
+                            </b-input-group-append>
                           </b-input-group>
-                        </div>
-                      </template>
+                        </b-col>
+                        <b-col>
+                          <b-input-group>
+                            <b-form-input
+                              id="price-product"
+                              v-model="widthProduct"
+                              class="wrapper__form__input__variant"
+                              placeholder="Lebar"
+                              type="number"
+                              :formatter="formatterVolume"
+                              @keypress="validateInputVolume($event)"
+                              @keydown="validateInputVolume($event)"
+                              @keyup="validateInputVolume($event)"
+                              @input="calculateVolumeProduct"
+                              @paste="handlePasteWidth"
+                            />
+                            <b-input-group-append is-text>
+                              cm
+                            </b-input-group-append>
+                          </b-input-group>
+                        </b-col>
+                        <b-col>
+                          <b-input-group>
+                            <b-form-input
+                              id="price-product"
+                              v-model="heightProduct"
+                              class="wrapper__form__input__variant"
+                              placeholder="Tinggi"
+                              type="number"
+                              :formatter="formatterVolume"
+                              @keypress="validateInputVolume($event)"
+                              @keydown="validateInputVolume($event)"
+                              @keyup="validateInputVolume($event)"
+                              @input="calculateVolumeProduct"
+                              @paste="handlePasteHeight"
+                            />
+                            <b-input-group-append is-text>
+                              cm
+                            </b-input-group-append>
+                          </b-input-group>
+                        </b-col>
+                      </b-row>
+                    </b-col>
+                  </b-row>
+                </b-col>
 
-                    </b-table>
+                <b-col
+                  v-if="calculateVolumeProductItem !== 0"
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <div class="wrapper__alert__volume__product">
+                    <div class="mr-1">
+                      <b-img src="@/assets/images/icons/warning-alert-product.svg" />
+                    </div>
+                    <div>
+                      <span class="text-black">
+                        Berat yang dipakai adalah {{ Math.ceil(calculateVolumeProductItem) }} kg (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
+                      </span>
+                    </div>
+                  </div>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  class="mb-2 ml-1"
+                >
+                  <div class="wrapper__alert__volume__product">
+                    <div class="mr-1">
+                      <b-img src="@/assets/images/icons/warning-alert-product.svg" />
+                    </div>
+                    <div>
+                      <span class="text-black">
+                        Perhatikan dengan baik berat dan Volume produk ya agar tidak terjadi selisih data dengan pihak kurir
+                        <span class="text-info"><a
+                          class="text-info"
+                          href="https://bantuan.komerce.id/id/article/cara-menghitung-konversi-volume-ke-berat-di-pengiriman-barang-1hofvu6/"
+                          target="_blank"
+                        >Pelajari selengkapnya</a></span>
+                      </span>
+                    </div>
                   </div>
                 </b-col>
               </b-row>
             </b-row>
-          </b-row>
 
-          <b-row class="mx-1 p-2 wrapper__product__info mb-2">
-            <b-row class="ml-50 w-100 mb-1">
-              <h4 class="text-black ml-50 mt-50">
-                <strong>
-                  Harga, Stok dan Ukuran
-                </strong>
-              </h4>
-            </b-row>
-            <b-row class="w-100">
+            <b-row class="mx-1 p-2 wrapper__product__variant mb-2 align-items-center">
               <b-col
-                v-if="!isVariantActive"
                 cols="12"
-                class="mb-2 ml-1"
+                class="mb-2 mt-1"
               >
-                <b-row>
+                <div class="w-100">
+                  <h4 class="text-black">
+                    <strong>
+                      Upload Foto
+                    </strong>
+                  </h4>
+                </div>
+                <b-row class="align-items-center">
                   <b-col
                     cols="2"
                   >
-                    <label for="price-product">
+                    <label for="name-product">
                       <h5>
                         <strong>
-                          Harga<span class="text-primary">*</span>
+                          Foto Produk
                         </strong>
                       </h5>
+                      <small>
+                        Format gambar .jpg .jpeg .png dan ukuran minimum 300 x 300px
+                        (Untuk gambar optimal gunakan ukuran minimal 700 x 700 px).
+                      </small>
                     </label>
                   </b-col>
 
                   <b-col
                     cols="10"
                   >
-                    <validation-provider
-                      #default="{errors}"
-                      name="Harga"
-                      rules="required"
-                    >
-                      <b-input-group>
-                        <b-input-group-prepend is-text>
-                          Rp
-                        </b-input-group-prepend>
-                        <b-form-input
-                          id="price-product"
-                          v-model="priceProduct"
-                          class="wrapper__form__input__variant"
-                          placeholder="Contoh : 85000 (masukkan angka saja tanpa titik, koma atau karakter lain)"
-                          :formatter="formatPriceNotVariant"
-                          type="number"
-                          :state="errors.length > 0 ? false:null"
-                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keyup="formatPriceInput($event)"
-                          @keypress="validateInputWeight($event)"
-                          @paste="handlePastePrice"
-                        />
-                      </b-input-group>
-                      <small
-                        v-if="errors[0]"
-                        class="text-primary ml-1 mt-50"
-                      >*Wajib diisi ya</small>
-                    </validation-provider>
-                  </b-col>
-                </b-row>
-              </b-col>
-
-              <b-col
-                v-if="!isVariantActive"
-                cols="12"
-                class="mb-2 ml-1"
-              >
-                <b-row>
-                  <b-col
-                    cols="2"
-                  >
-                    <label for="stock-product">
-                      <h5>
-                        <strong>
-                          Stok<span class="text-primary">*</span>
-                        </strong>
-                      </h5>
-                    </label>
-                  </b-col>
-
-                  <b-col
-                    cols="10"
-                  >
-                    <validation-provider
-                      #default="{errors}"
-                      name="Stock"
-                      rules="required"
-                    >
-                      <b-form-input
-                        id="stock-product"
-                        v-model="stockProduct"
-                        class="wrapper__form__input__variant"
-                        placeholder="Masukkan jumlah stok produk"
-                        type="number"
-                        :formatter="formatPriceNotVariant"
-                        :state="errors.length > 0 ? false:null"
-                        :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                        @keyup="formatStock($event)"
-                        @keypress="validateInputWeight($event)"
-                        @paste="handlePasteStock"
+                    <b-row class="align-items-center">
+                      <b-img
+                        v-if="imageFile === null && imageInitialFile === null"
+                        src="@/assets/images/icons/preview-default-prov-retur.svg"
+                        width="75"
+                        class="mr-1"
                       />
-                      <small
-                        v-if="errors[0]"
-                        class="text-primary ml-1 mt-50"
-                      >*Wajib diisi ya</small>
-                    </validation-provider>
-                  </b-col>
-                </b-row>
-              </b-col>
-
-              <b-col
-                v-if="isVariantActive"
-                cols="12"
-                class="mb-2 ml-1"
-              >
-                <b-row>
-                  <b-col
-                    cols="2"
-                  >
-                    <label for="stock-product">
-                      <h5>
-                        <strong>
-                          Harga & Stok<span class="text-primary">*</span>
-                        </strong>
-                      </h5>
-                    </label>
-                  </b-col>
-
-                  <b-col
-                    cols="10"
-                  >
-                    <span style="color: #626262;">Kamu telah mengatur <strong>Harga</strong> dan <strong>Jumlah Stok</strong> di variasi produk</span>
-                  </b-col>
-                </b-row>
-              </b-col>
-
-              <b-col
-                cols="12"
-                class="mb-2 ml-1"
-              >
-                <b-row>
-                  <b-col
-                    cols="2"
-                  >
-                    <label for="price-product">
-                      <h5>
-                        <strong>
-                          Berat Produk<span class="text-primary">*</span>
-                        </strong>
-                      </h5>
-                      <small>
-                        Masukkan berat produk setelah dikemas ya
-                      </small>
-                    </label>
-                  </b-col>
-
-                  <b-col
-                    cols="10"
-                  >
-                    <validation-provider
-                      #default="{errors}"
-                      name="Berat Produk"
-                      rules="required"
-                    >
-                      <b-input-group>
-                        <b-form-input
-                          id="price-product"
-                          v-model="weightProduct"
-                          class="wrapper__form__input__variant"
-                          :formatter="formatterVolume"
-                          placeholder="Masukkan harga produk"
-                          type="number"
-                          :state="errors.length > 0 ? false:null"
-                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keypress="validateInputWeight($event)"
-                          @keyup="validateInputWeight($event)"
-                          @paste="handlePasteWeight"
+                      <a
+                        :href="fileUrl(imageFile)"
+                        target="_blank"
+                      >
+                        <b-img
+                          v-if="imageFile !== null"
+                          :src="fileUrl(imageFile)"
+                          width="75"
+                          class="mr-1"
                         />
-                        <b-input-group-append is-text>
-                          gram
-                        </b-input-group-append>
-                      </b-input-group>
-                      <small
-                        v-if="errors[0]"
-                        class="text-primary ml-1 mt-50"
-                      >*Wajib diisi ya, minimal 1 gram</small>
-                    </validation-provider>
-                  </b-col>
-                </b-row>
-              </b-col>
-
-              <b-col
-                cols="12"
-                class="mb-2 ml-1"
-              >
-                <b-row>
-                  <b-col
-                    cols="2"
-                  >
-                    <label for="price-product">
-                      <h5>
-                        <strong>
-                          Volume
-                        </strong>
-                      </h5>
-                      <small>
-                        Masukkan ukuran produk setelah
-                        dikemas, untuk mempermudah sistem menghitung volume.
-                      </small>
-                    </label>
-                  </b-col>
-
-                  <b-col
-                    cols="10"
-                  >
-                    <b-row class="justify-content-around">
-                      <b-col>
-                        <b-input-group>
-                          <b-form-input
-                            id="price-product"
-                            v-model="lengthProduct"
-                            class="wrapper__form__input__variant"
-                            placeholder="Panjang"
-                            type="number"
-                            :formatter="formatterVolume"
-                            @keypress="validateInputVolume($event)"
-                            @keydown="validateInputVolume($event)"
-                            @keyup="validateInputVolume($event)"
-                            @input="calculateVolumeProduct"
-                            @paste="handlePasteLength"
-                          />
-                          <b-input-group-append is-text>
-                            cm
-                          </b-input-group-append>
-                        </b-input-group>
-                      </b-col>
-                      <b-col>
-                        <b-input-group>
-                          <b-form-input
-                            id="price-product"
-                            v-model="widthProduct"
-                            class="wrapper__form__input__variant"
-                            placeholder="Lebar"
-                            type="number"
-                            :formatter="formatterVolume"
-                            @keypress="validateInputVolume($event)"
-                            @keydown="validateInputVolume($event)"
-                            @keyup="validateInputVolume($event)"
-                            @input="calculateVolumeProduct"
-                            @paste="handlePasteWidth"
-                          />
-                          <b-input-group-append is-text>
-                            cm
-                          </b-input-group-append>
-                        </b-input-group>
-                      </b-col>
-                      <b-col>
-                        <b-input-group>
-                          <b-form-input
-                            id="price-product"
-                            v-model="heightProduct"
-                            class="wrapper__form__input__variant"
-                            placeholder="Tinggi"
-                            type="number"
-                            :formatter="formatterVolume"
-                            @keypress="validateInputVolume($event)"
-                            @keydown="validateInputVolume($event)"
-                            @keyup="validateInputVolume($event)"
-                            @input="calculateVolumeProduct"
-                            @paste="handlePasteHeight"
-                          />
-                          <b-input-group-append is-text>
-                            cm
-                          </b-input-group-append>
-                        </b-input-group>
-                      </b-col>
+                      </a>
+                      <a
+                        :href="imageInitialFile"
+                        target="_blank"
+                      >
+                        <b-img
+                          v-if="imageFile === null && imageInitialFile !== null"
+                          :src="imageInitialFile"
+                          width="75"
+                          class="mr-1"
+                        />
+                      </a>
+                      <div>
+                        <label
+                          for="image-product"
+                          style="border: 1px solid #E2E2E2;"
+                          class="btn btn-icon btn-flat-dark"
+                        >
+                          Pilih Foto
+                        </label>
+                        <input
+                          id="image-product"
+                          type="file"
+                          hidden
+                          @change="setImageProduct($event)"
+                        >
+                      </div>
                     </b-row>
                   </b-col>
                 </b-row>
               </b-col>
-
-              <b-col
-                v-if="calculateVolumeProductItem !== 0"
-                cols="12"
-                class="mb-2 ml-1"
-              >
-                <div class="wrapper__alert__volume__product">
-                  <div class="mr-1">
-                    <b-img src="@/assets/images/icons/warning-alert-product.svg" />
-                  </div>
-                  <div>
-                    <span class="text-black">
-                      Berat yang dipakai adalah {{ Math.ceil(calculateVolumeProductItem) }} kg (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
-                    </span>
-                  </div>
-                </div>
-              </b-col>
-
-              <b-col
-                cols="12"
-                class="mb-2 ml-1"
-              >
-                <div class="wrapper__alert__volume__product">
-                  <div class="mr-1">
-                    <b-img src="@/assets/images/icons/warning-alert-product.svg" />
-                  </div>
-                  <div>
-                    <span class="text-black">
-                      Perhatikan dengan baik berat dan Volume produk ya agar tidak terjadi selisih data dengan pihak kurir
-                      <span class="text-info"><a
-                        class="text-info"
-                        href="https://bantuan.komerce.id/id/article/cara-menghitung-konversi-volume-ke-berat-di-pengiriman-barang-1hofvu6/"
-                        target="_blank"
-                      >Pelajari selengkapnya</a></span>
-                    </span>
-                  </div>
-                </div>
-              </b-col>
             </b-row>
-          </b-row>
 
-          <b-row class="mx-1 p-2 wrapper__product__variant mb-2 align-items-center">
+            <!-- submit and reset -->
             <b-col
               cols="12"
-              class="mb-2 mt-1"
+              class="d-flex justify-content-end pb-2 pr-2"
             >
-              <div class="w-100">
-                <h4 class="text-black">
-                  <strong>
-                    Upload Foto
-                  </strong>
-                </h4>
-              </div>
-              <b-row class="align-items-center">
-                <b-col
-                  cols="2"
-                >
-                  <label for="name-product">
-                    <h5>
-                      <strong>
-                        Foto Produk
-                      </strong>
-                    </h5>
-                    <small>
-                      Format gambar .jpg .jpeg .png dan ukuran minimum 300 x 300px
-                      (Untuk gambar optimal gunakan ukuran minimal 700 x 700 px).
-                    </small>
-                  </label>
-                </b-col>
-
-                <b-col
-                  cols="10"
-                >
-                  <b-row class="align-items-center">
-                    <b-img
-                      v-if="imageFile === null && imageInitialFile === null"
-                      src="@/assets/images/icons/preview-default-prov-retur.svg"
-                      width="75"
-                      class="mr-1"
-                    />
-                    <a
-                      :href="fileUrl(imageFile)"
-                      target="_blank"
-                    >
-                      <b-img
-                        v-if="imageFile !== null"
-                        :src="fileUrl(imageFile)"
-                        width="75"
-                        class="mr-1"
-                      />
-                    </a>
-                    <a
-                      :href="imageInitialFile"
-                      target="_blank"
-                    >
-                      <b-img
-                        v-if="imageFile === null && imageInitialFile !== null"
-                        :src="imageInitialFile"
-                        width="75"
-                        class="mr-1"
-                      />
-                    </a>
-                    <div>
-                      <label
-                        for="image-product"
-                        style="border: 1px solid #E2E2E2;"
-                        class="btn btn-icon btn-flat-dark"
-                      >
-                        Pilih Foto
-                      </label>
-                      <input
-                        id="image-product"
-                        type="file"
-                        hidden
-                        @change="setImageProduct($event)"
-                      >
-                    </div>
-                  </b-row>
-                </b-col>
-              </b-row>
+              <b-button
+                v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                type="submit"
+                variant="outline-primary"
+                :class="buttonIsSubmit ? 'mr-1 cursor-not-allowed' : 'mr-1'"
+                :disabled="validateSubmitButton()"
+                @click.prevent="submit(0)"
+              >
+                Simpan Draft
+                <b-spinner
+                  v-if="loadingSubmitDraft"
+                  small
+                  variant="primary"
+                />
+              </b-button>
+              <b-button
+                v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                type="reset"
+                variant="primary"
+                :class="buttonIsSubmit ? 'cursor-not-allowed' : ''"
+                :disabled="validateSubmitButton()"
+                @click.prevent="submit(1)"
+              >
+                Simpan ke Produk Aktif
+                <b-spinner
+                  v-if="loadingSubmitPublish"
+                  small
+                />
+              </b-button>
             </b-col>
           </b-row>
+        </b-form>
+      </validation-observer>
 
-          <!-- submit and reset -->
-          <b-col
-            cols="12"
-            class="d-flex justify-content-end pb-2 pr-2"
+      <b-modal
+        ref="modal-validation-upload"
+        body-class="modalUploadWarning__body"
+        hide-header
+        hide-footer
+        hide-header-close
+      >
+        <div class="d-block text-center">
+          <img
+            :src="require('@/assets/images/icons/warning.svg')"
+            alt="warning"
+            width="142px"
+            height="134.43px"
+            class="modalUploadWarning__img"
           >
-            <b-button
-              v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-              type="submit"
-              variant="outline-primary"
-              :class="buttonIsSubmit ? 'mr-1 cursor-not-allowed' : 'mr-1'"
-              :disabled="validateSubmitButton()"
-              @click.prevent="submit(0)"
-            >
-              Simpan Draft
-              <b-spinner
-                v-if="loadingSubmitDraft"
-                small
-                variant="primary"
-              />
-            </b-button>
-            <b-button
-              v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-              type="reset"
-              variant="primary"
-              :class="buttonIsSubmit ? 'cursor-not-allowed' : ''"
-              :disabled="validateSubmitButton()"
-              @click.prevent="submit(1)"
-            >
-              Simpan ke Produk Aktif
-              <b-spinner
-                v-if="loadingSubmitPublish"
-                small
-              />
-            </b-button>
-          </b-col>
-        </b-row>
-      </b-form>
-    </validation-observer>
-
-    <b-modal
-      ref="modal-validation-upload"
-      body-class="modalUploadWarning__body"
-      hide-header
-      hide-footer
-      hide-header-close
-    >
-      <div class="d-block text-center">
-        <img
-          :src="require('@/assets/images/icons/warning.svg')"
-          alt="warning"
-          width="142px"
-          height="134.43px"
-          class="modalUploadWarning__img"
-        >
-        <p class="modalUploadWarning__text">
-          Maaf, maksimal file hanya 2 MB.
-        </p>
-        <b-button
-          variant="danger"
-          class="modalUploadWarning__btn"
-          @click="handleOkModalValidationUpload"
-        >Oke</b-button>
-      </div>
-    </b-modal>
-    <b-modal
-      id="modalOnboarding"
-      hide-header
-      hide-footer
-      size="lg"
-      centered
-    >
-      <b-container class="py-2">
-        <b-img
-          src="@/assets/images/icons/close-circle.svg"
-          class="absolute top-[10px] right-[10px]"
-          style="cursor:pointer"
-          @click="$bvModal.hide('modalOnboarding')"
-        />
-        <p class="text-[20px] font-semibold text-center mb-2">
-          Jangan dipikir input produk itu <span class="text-primary">lama</span> dan <span class="text-primary">ribet</span>
-        </p>
-        <div class="mb-2">
-          <b-img
-            :src="require('@/assets/images/banner/popup-product-onboarding.svg')"
-            style="max-width:100%;"
-            class="mx-auto"
-          />
-        </div>
-        <p class="text-[16px] mb-1">🛒 Ga harus langsung semua diinput, bisa coba yang <b class="text-primary">paling sering laku</b><br>
-          📝 Kalau lagi gabut, bisa isi dulu <b class="text-primary">kolom yang wajib</b>, sisanya dilengkapi pas senggang aja</p>
-        <div class="d-flex justify-content-center mb-2">
+          <p class="modalUploadWarning__text">
+            Maaf, maksimal file hanya 2 MB.
+          </p>
           <b-button
-            variant="primary"
-            class="rounded-lg"
-            @click="dissmissNewUser"
-          >
-            Ok, Coba input 1 dulu ah...
-          </b-button>
+            variant="danger"
+            class="modalUploadWarning__btn"
+            @click="handleOkModalValidationUpload"
+          >Oke</b-button>
         </div>
-        <p
-          class="text-[12px] mx-auto text-center"
-          style="max-width: 620px"
-        >
-          *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
-        </p>
-      </b-container>
-    </b-modal>
+      </b-modal>
+      <b-modal
+        id="modalOnboarding"
+        hide-header
+        hide-footer
+        size="lg"
+        centered
+      >
+        <b-container class="py-2">
+          <b-img
+            src="@/assets/images/icons/close-circle.svg"
+            class="absolute top-[10px] right-[10px]"
+            style="cursor:pointer"
+            @click="$bvModal.hide('modalOnboarding')"
+          />
+          <p class="text-[20px] font-semibold text-center mb-2">
+            Jangan dipikir input produk itu <span class="text-primary">lama</span> dan <span class="text-primary">ribet</span>
+          </p>
+          <div class="mb-2">
+            <b-img
+              :src="require('@/assets/images/banner/popup-product-onboarding.svg')"
+              style="max-width:100%;"
+              class="mx-auto"
+            />
+          </div>
+          <p class="text-[16px] mb-1">🛒 Ga harus langsung semua diinput, bisa coba yang <b class="text-primary">paling sering laku</b><br>
+            📝 Kalau lagi gabut, bisa isi dulu <b class="text-primary">kolom yang wajib</b>, sisanya dilengkapi pas senggang aja</p>
+          <div class="d-flex justify-content-center mb-2">
+            <b-button
+              variant="primary"
+              class="rounded-lg"
+              @click="dissmissNewUser"
+            >
+              Ok, Coba input 1 dulu ah...
+            </b-button>
+          </div>
+          <p
+            class="text-[12px] mx-auto text-center"
+            style="max-width: 620px"
+          >
+            *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
+          </p>
+        </b-container>
+      </b-modal>
 
-  </b-card-actions>
+    </b-card-actions>
+  </b-overlay>
 </template>
 
 <script>
@@ -1398,6 +1407,8 @@ export default {
       priceAllPasteMode: false,
       stockAllPaste: null,
       stockAllPasteMode: false,
+
+      loadingLoadData: false,
     }
   },
   computed: {},
@@ -1418,6 +1429,7 @@ export default {
   },
   methods: {
     loadProduct() {
+      this.loadingLoadData = true
       this.$http_komship.get(`/v1/product/detail/${this.productId}`)
         .then(response => {
           const { data } = response.data
@@ -1554,6 +1566,18 @@ export default {
             }
           })
           this.applyVariantIsActive = false
+          this.loadingLoadData = false
+        }).catch(err => {
+          this.loadingLoadData = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
         })
     },
     formatPrice(value) {
@@ -2063,7 +2087,7 @@ export default {
           price: this.variantInputItems.length === 1 ? item.option_price.split('.').join('') : null,
           option: [],
         })
-        if (this.variantInputItems.length === 2) {
+        if (this.variantInputItems.length > 1) {
           item.options.forEach((optionItem, optionIndex) => {
             this.optionStore[index].option.push({
               val: optionItem.option_name,
@@ -2072,7 +2096,7 @@ export default {
               price: this.variantInputItems.length === 2 ? optionItem.option_price.split('.').join('') : null,
               option: [],
             })
-            if (this.variantInputItems.length === 3) {
+            if (this.variantInputItems.length > 2) {
               optionItem.options.forEach((secondOptionItem, secondIndexOption) => {
                 this.optionStore[index].option[optionIndex].option.push({
                   val: secondOptionItem.option_name,

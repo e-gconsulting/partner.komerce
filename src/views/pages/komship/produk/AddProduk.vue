@@ -566,7 +566,7 @@
                       </template>
 
                       <template #cell(variant2)="data">
-                        <b-row v-if="variantInputItems.length === 3">
+                        <div v-if="variantInputItems.length === 3">
                           <div
                             v-for="(item, index) in data.item.variant1.option"
                             :key="index+1"
@@ -584,8 +584,8 @@
                               </div>
                             </b-col>
                           </div>
-                        </b-row>
-                        <b-row v-if="variantInputItems.length === 2">
+                        </div>
+                        <div v-if="variantInputItems.length === 2">
                           <b-col
                             v-for="(item, index) in data.item.variant1.option"
                             :key="index+1"
@@ -598,7 +598,7 @@
                               {{ item.variant2.val }}
                             </div>
                           </b-col>
-                        </b-row>
+                        </div>
                       </template>
 
                       <template #cell(variant3)="data">
@@ -1993,7 +1993,7 @@ export default {
             props: {
               title: 'Success',
               icon: 'CheckIcon',
-              text: 'Success update produk',
+              text: 'Success menambahkan produk',
               variant: 'success',
             },
           })
