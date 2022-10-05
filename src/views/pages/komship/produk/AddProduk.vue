@@ -72,7 +72,10 @@
                       @input="checkProductName"
                     />
                     <b-row>
-                      <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
                       <small
                         v-if="!productNameAvailable"
                         class="text-primary mt-50"
@@ -81,7 +84,7 @@
                       </small>
                       <small
                         v-if="messageErrorLengthProduct"
-                        class="text-primary mt-50"
+                        class="text-primary mt-50 ml-1"
                       >
                         *Terlalu pendek
                       </small>
@@ -112,7 +115,7 @@
                     <div class="d-flex">
                       <h5 class="mr-50 mt-50">
                         <strong>
-                          SKU Produk
+                          SKU
                         </strong>
                       </h5>
                       <img
@@ -134,40 +137,32 @@
                 <b-col
                   cols="10"
                 >
-                  <validation-provider
-                    #default="{errors}"
-                    name="SKU Produk"
-                    rules="required"
-                  >
-                    <b-form-input
-                      id="sku-product"
-                      v-model="skuName"
-                      class="wrapper__form__input__variant"
-                      placeholder="Contoh: Pashmina-001"
-                      :formatter="formatSkuProduct"
-                      :state="errors.length > 0 ? false:null"
-                      :style="errors[0] || !skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                      @input="checkSkuName"
-                    />
-                    <b-row>
-                      <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                  <b-form-input
+                    id="sku-product"
+                    v-model="skuName"
+                    class="wrapper__form__input__variant"
+                    placeholder="Contoh : JBB"
+                    :formatter="formatSkuProduct"
+                    :style="!skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                    @input="checkSkuName"
+                  />
+                  <b-row>
+                    <small
+                      v-if="!skuNameAvailable"
+                      class="text-primary mt-50"
+                    >
+                      *SKU sudah digunakan, yuk coba dengan nama lain
+                    </small>
+                    <small class="ml-auto mr-1 mt-50">
                       <small
-                        v-if="!skuNameAvailable"
-                        class="text-primary mt-50"
+                        v-if="messageErrorIsActive"
+                        class="text-primary"
                       >
-                        *SKU sudah digunakan, yuk coba dengan nama lain
+                        *hindari menggunakan simbol (/) (=) (:) (;) (&)
                       </small>
-                      <small class="ml-auto mr-1 mt-50">
-                        <small
-                          v-if="messageErrorIsActive"
-                          class="text-primary"
-                        >
-                          *hindari menggunakan simbol (/) (=) (:) (;) (&)
-                        </small>
-                        {{ skuName.length }}/10
-                      </small>
-                    </b-row>
-                  </validation-provider>
+                      {{ skuName.length }}/10
+                    </small>
+                  </b-row>
                 </b-col>
               </b-row>
             </b-col>
@@ -478,7 +473,7 @@
                               id="all-price-variant"
                               v-model="setPriceAll"
                               class="wrapper__form__input__variant"
-                              placeholder="Contoh : 85.000"
+                              placeholder="Contoh : 85000"
                               :formatter="formatPriceVariant"
                               @keyup="formatCurrency(false, 'all-price-variant')"
                               @blur="formatCurrency(true, 'all-price-variant')"
@@ -813,13 +808,19 @@
                           id="price-product"
                           v-model="priceProduct"
                           class="wrapper__form__input__variant"
-                          placeholder="Masukkan harga produk"
+                          placeholder="Contoh : 85000 (masukkan angka saja tanpa titik, koma atau karakter lain)"
+                          :formatter="formatPriceNotVariant"
+                          type="number"
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keypress="formatStock($event)"
+                          @keyup="formatPriceInput($event)"
+                          @paste="handlePastePrice"
                         />
                       </b-input-group>
-                      <small class="text-primary">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
                     </validation-provider>
                   </b-col>
                 </b-row>
@@ -851,16 +852,27 @@
                       name="Stock"
                       rules="required"
                     >
-                      <b-form-input
-                        id="stock-product"
-                        v-model="stockProduct"
-                        class="wrapper__form__input__variant"
-                        placeholder="Masukkan jumlah stok produk"
-                        :state="errors.length > 0 ? false:null"
-                        :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                        @keypress="formatStock($event)"
-                      />
-                      <small class="text-primary">{{ errors[0] }}</small>
+                      <b-input-group>
+                        <b-input-group-prepend is-text>
+                          Pcs
+                        </b-input-group-prepend>
+                        <b-form-input
+                          id="stock-product"
+                          v-model="stockProduct"
+                          class="wrapper__form__input__variant"
+                          placeholder="Contoh : 1000"
+                          type="number"
+                          :formatter="formatPriceNotVariant"
+                          :state="errors.length > 0 ? false:null"
+                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                          @keyup="formatStock($event)"
+                          @paste="handlePasteStock"
+                        />
+                      </b-input-group>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
                     </validation-provider>
                   </b-col>
                 </b-row>
@@ -907,7 +919,7 @@
                         </strong>
                       </h5>
                       <small>
-                        Masukkan berat produk setelah di kemas ya
+                        Masukkan berat produk setelah dikemas ya
                       </small>
                     </label>
                   </b-col>
@@ -926,15 +938,22 @@
                           v-model="weightProduct"
                           class="wrapper__form__input__variant"
                           placeholder="Contoh 200"
+                          type="number"
+                          :formatter="formatterVolume"
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keypress="formatStock($event)"
+                          @keypress="validateInputWeight($event)"
+                          @keyup="validateInputWeight($event)"
+                          @paste="handlePasteWeight"
                         />
                         <b-input-group-append is-text>
                           gram
                         </b-input-group-append>
                       </b-input-group>
-                      <small class="text-primary">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya, minimal 1 gram</small>
                     </validation-provider>
                   </b-col>
                 </b-row>
@@ -966,73 +985,55 @@
                   >
                     <b-row class="justify-content-around">
                       <b-col>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Panjang"
-                          rules="required"
-                        >
-                          <b-input-group>
-                            <b-form-input
-                              id="price-product"
-                              v-model="lengthProduct"
-                              class="wrapper__form__input__variant"
-                              placeholder="Panjang"
-                              :state="errors.length > 0 ? false:null"
-                              @keypress="formatStock($event)"
-                              @input="calculateVolumeProduct"
-                            />
-                            <b-input-group-append is-text>
-                              cm
-                            </b-input-group-append>
-                          </b-input-group>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="lengthProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Panjang"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keydown="validateInputVolume($event)"
+                            @input="calculateVolumeProduct"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
                       </b-col>
                       <b-col>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Lebar"
-                          rules="required"
-                        >
-                          <b-input-group>
-                            <b-form-input
-                              id="price-product"
-                              v-model="widthProduct"
-                              class="wrapper__form__input__variant"
-                              placeholder="Lebar"
-                              :state="errors.length > 0 ? false:null"
-                              @keypress="formatStock($event)"
-                              @input="calculateVolumeProduct"
-                            />
-                            <b-input-group-append is-text>
-                              cm
-                            </b-input-group-append>
-                          </b-input-group>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="widthProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Lebar"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keydown="validateInputVolume($event)"
+                            @input="calculateVolumeProduct"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
                       </b-col>
                       <b-col>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Tinggi"
-                          rules="required"
-                        >
-                          <b-input-group>
-                            <b-form-input
-                              id="price-product"
-                              v-model="heightProduct"
-                              class="wrapper__form__input__variant"
-                              placeholder="Tinggi"
-                              :state="errors.length > 0 ? false:null"
-                              @keypress="formatStock($event)"
-                              @input="calculateVolumeProduct"
-                            />
-                            <b-input-group-append is-text>
-                              cm
-                            </b-input-group-append>
-                          </b-input-group>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="heightProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Tinggi"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keydown="validateInputVolume($event)"
+                            @input="calculateVolumeProduct"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
                       </b-col>
                     </b-row>
                   </b-col>
@@ -1279,7 +1280,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
-import { ValidationObserver, ValidationProvider, number } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
@@ -1346,16 +1347,40 @@ export default {
       lengthProduct: null,
       widthProduct: null,
       heightProduct: null,
-      calculateVolumeProductItem: null,
+      calculateVolumeProductItem: 0,
       imageFile: null,
       variantStore: [],
       optionStore: [],
 
       buttonIsSubmit: false,
+
+      pricePaste: null,
+      pricePasteMode: false,
+      stockPaste: null,
+      stockPasteMode: true,
+
+      weightPaste: null,
+      weightPasteMode: true,
+      lengthPaste: null,
+      lengthPasteMode: true,
+      widthPaste: null,
+      widthPasteMode: true,
+      heightPaste: null,
+      heightPasteMode: true,
     }
   },
   computed: {},
-  watch: {},
+  watch: {
+    productName: {
+      handler() {
+        if (this.productName.length < 4) {
+          this.messageErrorLengthProduct = true
+        } else {
+          this.messageErrorLengthProduct = false
+        }
+      },
+    },
+  },
   mounted() {
     this.checkNewUser()
   },
@@ -1374,6 +1399,16 @@ export default {
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
         $event.preventDefault()
       }
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
+    },
+    formatPriceInput($event) {
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
+        $event.preventDefault()
+      }
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
     },
     formatNameProduct(e) {
       return String(e).substring(0, 60)
@@ -1386,6 +1421,12 @@ export default {
     },
     formatPriceVariant(e) {
       return String(e).substring(0, 9)
+    },
+    formatPriceNotVariant(e) {
+      return String(e).substring(0, 7)
+    },
+    formatterVolume(e) {
+      return String(e).substring(0, 7)
     },
     validateInputProductName(e) {
       if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 38) {
@@ -1410,6 +1451,37 @@ export default {
       if (this.weightProduct === '' && e.keyCode === 48) {
         e.preventDefault()
       }
+      if (this.weightPasteMode) this.weightProduct = this.weightPaste
+      this.weightPasteMode = false
+    },
+    validateInputVolume(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.widthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.widthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.heightProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.heightProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthPasteMode) this.lengthProduct = this.lengthPaste
+      this.lengthPasteMode = false
+      if (this.widthPasteMode) this.widthProduct = this.widthPaste
+      this.widthPasteMode = false
+      if (this.heightPasteMode) this.heightProduct = this.heightPaste
+      this.heightPasteMode = false
     },
     async checkNewUser() {
       if (localStorage.getItem('newUser')) {
@@ -1485,7 +1557,6 @@ export default {
             ],
           },
         })
-        console.log(this.variantInputItems)
       }
     },
     addVariant() {
@@ -1537,7 +1608,6 @@ export default {
     applyVariant() {
       this.variantItems = []
       this.variantFields = []
-      console.log('variantInputItems', this.variantInputItems)
       this.variantInputItems.forEach(item => {
         if (item.variant.type === 1) {
           this.variantFields.push({
@@ -1569,11 +1639,9 @@ export default {
           }
         }
       })
-      console.log('variant1', this.variantItems)
       this.variantInputItems.forEach(item => {
         if (item.variant.type === 2) {
           if (this.variantInputItems.length === 2) {
-            console.log('not 3 variant')
             this.variantFields.push({
               key: 'variant2',
               label: item.variant.variantName,
@@ -1603,7 +1671,6 @@ export default {
               })
             }
           } else {
-            console.log('3 variant')
             this.variantFields.push({
               key: 'variant2',
               label: item.variant.variantName,
@@ -1620,7 +1687,6 @@ export default {
             })
             if (item.variant.variantOptionName !== '') {
               item.variant.variantOptionItem.forEach(secondVariantItem => {
-                console.log(secondVariantItem)
                 this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
                   this.variantItems[indexSecondVariant].variant1.option.push({
                     variant2: {
@@ -1636,7 +1702,6 @@ export default {
           }
         }
       })
-      console.log('variant2', this.variantItems)
       this.variantInputItems.forEach(item => {
         if (item.variant.type === 3) {
           this.variantFields.push({
@@ -1699,7 +1764,6 @@ export default {
           borderBottom: '0px',
         },
       })
-      console.log('variant3', this.variantItems)
     },
 
     validateVariantField(item, index) {
@@ -1795,8 +1859,6 @@ export default {
       this.imageFile = event.target.files[0]
     },
     submit(status) {
-      console.log('variantItems', this.variantItems)
-      console.log('variantInputItems', this.variantInputItems)
       this.variantInputItems.forEach(item => {
         this.variantStore.push({
           val: item.variant.variantName,
@@ -1841,8 +1903,6 @@ export default {
           })
         }
       })
-      console.log('variantStore', this.variantStore)
-      console.log('optionStore', this.optionStore)
 
       const params = {
         product_name: this.productName,
@@ -1925,7 +1985,6 @@ export default {
       window.history.back()
     },
     formatCurrency(blur, el) {
-      console.log(el)
       const input = document.getElementById(el)
       let inputVal = input.value
 
@@ -1976,6 +2035,30 @@ export default {
         this.buttonIsSubmit = false
       }
       return this.buttonIsSubmit
+    },
+    handlePastePrice(e) {
+      this.pricePasteMode = true
+      this.pricePaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    handlePasteStock(e) {
+      this.stockPasteMode = true
+      this.stockPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    handlePasteWeight(e) {
+      this.weightPasteMode = true
+      this.weightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    handlePasteWidth(e) {
+      this.widthPasteMode = true
+      this.widthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    handlePasteLength(e) {
+      this.lengthPasteMode = true
+      this.lengthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    handlePasteHeight(e) {
+      this.heightPasteMode = true
+      this.heightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
     },
   },
 }
