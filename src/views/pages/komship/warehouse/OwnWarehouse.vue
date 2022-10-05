@@ -662,16 +662,16 @@
         <b-col md="10">
           <div class="demo-inline-spacing">
             <b-button
+              v-b-modal="'warehouse-options'"
               block
               variant="outline-primary"
-              @click="addAddress"
             >
               <feather-icon
                 icon="PlusIcon"
                 class="mr-50"
                 style="display: inline-block"
               />
-              <span class="align-middle">Tambahkan Alamat</span>
+              <span class="align-middle">Tambahkan Gudang</span>
             </b-button>
           </div>
         </b-col>
@@ -804,6 +804,69 @@
           </b-button>
         </b-col>
       </template>
+    </b-modal>
+    <b-modal
+      id="warehouse-options"
+      ref="warehouse-options"
+      hide-header
+      hide-footer
+      centered
+    >
+      <div class="py-1">
+        <h2 class="text-[20px] text-center font-semibold mb-2">
+          Tambahkan Gudang
+        </h2>
+        <b-row>
+          <b-col cols="6">
+            <b-card
+              class="border-primary"
+              role="button"
+              style="height:180px"
+              @click="selectWarehouse('ownWarehouse')"
+            >
+              <b-img
+                src="@/assets/images/banner/private-warehouse.svg"
+                class="m-auto"
+              /><br>
+              <p class="text-[16px] text-[#626262] text-center">
+                Gudang Pribadi
+              </p>
+            </b-card>
+          </b-col>
+          <b-col cols="6">
+            <b-card
+              id="partnerWarehouse"
+              class="border-primary"
+              role="button"
+              style="height:180px"
+              @click="selectWarehouse('partnerWarehouse')"
+            >
+              <b-img
+                src="@/assets/images/banner/kompack-warehouse.svg"
+                class="m-auto grayscale"
+              /><br>
+              <p class="text-[14px] text-[#626262] text-center d-flex">
+                Mitra Gudang&nbsp;
+                <b-img
+                  src="@/assets/images/logo/kompack-logo.svg"
+                  class="m-auto grayscale"
+                  style="height:14px"
+                />
+              </p>
+            </b-card>
+            <b-popover
+              target="partnerWarehouse"
+              variant="primary"
+              triggers="hover"
+              placement="bottom"
+            >
+              <small class="text-[#828282] font-medium">
+                Simpan barang kamu di Mitra Gudang Kompack. Biaya packing termurah dan tanpa biaya bulanan. Klik sekarang untuk register!
+              </small>
+            </b-popover>
+          </b-col>
+        </b-row>
+      </div>
     </b-modal>
   </b-overlay>
 </template>
@@ -1263,6 +1326,14 @@ export default {
     validateEditInputPhone(e) {
       if (e.keyCode === 46) {
         e.preventDefault()
+      }
+    },
+    selectWarehouse(option) {
+      if (option === 'ownWarehouse') {
+        this.$refs['warehouse-options'].hide()
+        this.addAddress()
+      } else {
+        window.open('https://kompack.id/', '_blank')
       }
     },
   },
