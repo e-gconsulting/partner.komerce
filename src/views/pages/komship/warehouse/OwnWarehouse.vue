@@ -836,7 +836,7 @@
           <b-col cols="6">
             <b-card
               id="partnerWarehouse"
-              class="border-primary"
+              class="border-primary p-0"
               role="button"
               style="height:180px"
               @click="selectWarehouse('partnerWarehouse')"
@@ -845,25 +845,27 @@
                 src="@/assets/images/banner/kompack-warehouse.svg"
                 class="m-auto grayscale"
               /><br>
-              <p class="text-[14px] text-[#626262] text-center d-flex">
-                Mitra Gudang&nbsp;
+              <div class="d-flex text-center -m-1">
+                <div class="text-[14px] text-[#626262]">
+                  Mitra Gudang
+                </div>
                 <b-img
                   src="@/assets/images/logo/kompack-logo.svg"
-                  class="m-auto grayscale"
+                  class="m-auto kompack-logo ml-[5px]"
                   style="height:14px"
                 />
-              </p>
+              </div>
+              <b-popover
+                target="partnerWarehouse"
+                variant="primary"
+                triggers="hover"
+                placement="bottom"
+              >
+                <small class="text-[#828282] font-medium">
+                  Simpan barang kamu di Mitra Gudang Kompack. Biaya packing termurah dan tanpa biaya bulanan. Klik sekarang untuk register!
+                </small>
+              </b-popover>
             </b-card>
-            <b-popover
-              target="partnerWarehouse"
-              variant="primary"
-              triggers="hover"
-              placement="bottom"
-            >
-              <small class="text-[#828282] font-medium">
-                Simpan barang kamu di Mitra Gudang Kompack. Biaya packing termurah dan tanpa biaya bulanan. Klik sekarang untuk register!
-              </small>
-            </b-popover>
           </b-col>
         </b-row>
       </div>
@@ -1342,4 +1344,10 @@ export default {
 
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
+.kompack-logo{
+  filter: grayscale(100%);
+}
+#partnerWarehouse:hover .kompack-logo {
+  filter: grayscale(0);
+}
 </style>
