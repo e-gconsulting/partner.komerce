@@ -72,12 +72,21 @@
                       @input="checkProductName"
                     />
                     <b-row>
-                      <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
                       <small
                         v-if="!productNameAvailable"
                         class="text-primary mt-50"
                       >
                         *Nama produk sudah dipakai, yuk coba dengan nama lain
+                      </small>
+                      <small
+                        v-if="messageErrorLengthProduct"
+                        class="text-primary mt-50 ml-1"
+                      >
+                        *Terlalu pendek
                       </small>
                       <small class="ml-auto mr-1 mt-50">
                         <small
@@ -106,7 +115,7 @@
                     <div class="d-flex">
                       <h5 class="mr-50 mt-50">
                         <strong>
-                          SKU Produk
+                          SKU
                         </strong>
                       </h5>
                       <img
@@ -128,40 +137,32 @@
                 <b-col
                   cols="10"
                 >
-                  <validation-provider
-                    #default="{errors}"
-                    name="SKU Produk"
-                    rules="required"
-                  >
-                    <b-form-input
-                      id="sku-product"
-                      v-model="skuName"
-                      class="wrapper__form__input__variant"
-                      placeholder="Contoh: Pashmina-001"
-                      :formatter="formatSkuProduct"
-                      :state="errors.length > 0 ? false:null"
-                      :style="errors[0] || !skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                      @input="checkSkuName"
-                    />
-                    <b-row>
-                      <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                  <b-form-input
+                    id="sku-product"
+                    v-model="skuName"
+                    class="wrapper__form__input__variant"
+                    placeholder="Contoh: Pashmina-001"
+                    :formatter="formatSkuProduct"
+                    :style="!skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                    @input="checkSkuName"
+                  />
+                  <b-row>
+                    <small
+                      v-if="!skuNameAvailable"
+                      class="text-primary mt-50"
+                    >
+                      *SKU sudah digunakan, yuk coba dengan nama lain
+                    </small>
+                    <small class="ml-auto mr-1 mt-50">
                       <small
-                        v-if="!skuNameAvailable"
-                        class="text-primary mt-50"
+                        v-if="messageErrorIsActive"
+                        class="text-primary"
                       >
-                        *SKU sudah digunakan, yuk coba dengan nama lain
+                        *hindari menggunakan simbol (/) (=) (:) (;) (&)
                       </small>
-                      <small class="ml-auto mr-1 mt-50">
-                        <small
-                          v-if="messageErrorIsActive"
-                          class="text-primary"
-                        >
-                          *hindari menggunakan simbol (/) (=) (:) (;) (&)
-                        </small>
-                        {{ skuName.length }}/60
-                      </small>
-                    </b-row>
-                  </validation-provider>
+                      {{ skuName.length }}/60
+                    </small>
+                  </b-row>
                 </b-col>
               </b-row>
             </b-col>
@@ -476,6 +477,7 @@
                               :formatter="formatPriceVariant"
                               @keyup="formatCurrency(false, 'all-price-variant')"
                               @blur="formatCurrency(true, 'all-price-variant')"
+                              @paste="handlePastePriceAll"
                             />
                           </b-input-group>
                         </div>
@@ -497,6 +499,7 @@
                             :formatter="formatPriceVariant"
                             @keyup="formatCurrency(false, 'all-stock-variant')"
                             @blur="formatCurrency(true, 'all-stock-variant')"
+                            @paste="handlePasteStockAll"
                           />
                         </b-input-group>
                       </b-col>
@@ -636,8 +639,8 @@
                                   class="wrapper__form__input__variant mb-1"
                                   placeholder="Contoh : 85.000"
                                   :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`)"
-                                  @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`)"
+                                  @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
+                                  @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
                                 />
                               </div>
                             </b-col>
@@ -655,8 +658,8 @@
                                 class="wrapper__form__input__variant mb-1"
                                 placeholder="Contoh : 85.000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`)"
-                                @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`)"
+                                @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
+                                @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
                               />
                             </b-col>
                           </div>
@@ -668,8 +671,8 @@
                               class="wrapper__form__input__variant mb-1"
                               placeholder="Contoh : 85.000"
                               :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'stock-variant')"
-                              @blur="formatCurrency(true, 'stock-variant')"
+                              @keyup="formatCurrency(false, 'stock-variant'), data.item.variant_stock"
+                              @blur="formatCurrency(true, 'stock-variant'), data.item.variant_stock"
                             />
                           </div>
                         </b-row>
@@ -700,8 +703,8 @@
                                   class="wrapper__form__input__variant"
                                   placeholder="Contoh : 85.000"
                                   :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`)"
-                                  @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`)"
+                                  @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
+                                  @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
                                 />
                               </b-input-group>
                             </div>
@@ -728,8 +731,8 @@
                                 class="wrapper__form__input__variant"
                                 placeholder="Contoh : 85.000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`)"
-                                @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`)"
+                                @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
+                                @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
                               />
                             </b-input-group>
                           </b-col>
@@ -750,8 +753,8 @@
                               class="wrapper__form__input__variant"
                               placeholder="Contoh : 85.000"
                               :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'price-variant')"
-                              @blur="formatCurrency(true, 'price-variant')"
+                              @keyup="formatCurrency(false, 'price-variant'),data.item.option_price"
+                              @blur="formatCurrency(true, 'price-variant'), data.item.option_price"
                             />
                           </b-input-group>
                         </div>
@@ -807,13 +810,20 @@
                           id="price-product"
                           v-model="priceProduct"
                           class="wrapper__form__input__variant"
-                          placeholder="Masukkan harga produk"
+                          placeholder="Contoh : 85000 (masukkan angka saja tanpa titik, koma atau karakter lain)"
+                          :formatter="formatPriceNotVariant"
+                          type="number"
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keypress="formatStock($event)"
+                          @keyup="formatPriceInput($event)"
+                          @keypress="validateInputWeight($event)"
+                          @paste="handlePastePrice"
                         />
                       </b-input-group>
-                      <small class="text-primary">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
                     </validation-provider>
                   </b-col>
                 </b-row>
@@ -850,11 +860,18 @@
                         v-model="stockProduct"
                         class="wrapper__form__input__variant"
                         placeholder="Masukkan jumlah stok produk"
+                        type="number"
+                        :formatter="formatPriceNotVariant"
                         :state="errors.length > 0 ? false:null"
                         :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                        @keypress="formatStock($event)"
+                        @keyup="formatStock($event)"
+                        @keypress="validateInputWeight($event)"
+                        @paste="handlePasteStock"
                       />
-                      <small class="text-primary">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
                     </validation-provider>
                   </b-col>
                 </b-row>
@@ -901,7 +918,7 @@
                         </strong>
                       </h5>
                       <small>
-                        Masukkan berat produk setelah di kemas ya
+                        Masukkan berat produk setelah dikemas ya
                       </small>
                     </label>
                   </b-col>
@@ -919,16 +936,23 @@
                           id="price-product"
                           v-model="weightProduct"
                           class="wrapper__form__input__variant"
+                          :formatter="formatterVolume"
                           placeholder="Masukkan harga produk"
+                          type="number"
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keypress="formatStock($event)"
+                          @keypress="validateInputWeight($event)"
+                          @keyup="validateInputWeight($event)"
+                          @paste="handlePasteWeight"
                         />
                         <b-input-group-append is-text>
                           gram
                         </b-input-group-append>
                       </b-input-group>
-                      <small class="text-primary">{{ errors[0] }}</small>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya, minimal 1 gram</small>
                     </validation-provider>
                   </b-col>
                 </b-row>
@@ -945,7 +969,7 @@
                     <label for="price-product">
                       <h5>
                         <strong>
-                          Volume<span class="text-primary">*</span>
+                          Volume
                         </strong>
                       </h5>
                       <small>
@@ -960,73 +984,64 @@
                   >
                     <b-row class="justify-content-around">
                       <b-col>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Panjang"
-                          rules="required"
-                        >
-                          <b-input-group>
-                            <b-form-input
-                              id="price-product"
-                              v-model="lengthProduct"
-                              class="wrapper__form__input__variant"
-                              placeholder="Panjang"
-                              :state="errors.length > 0 ? false:null"
-                              @keypress="formatStock($event)"
-                              @input="calculateVolumeProduct"
-                            />
-                            <b-input-group-append is-text>
-                              cm
-                            </b-input-group-append>
-                          </b-input-group>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="lengthProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Panjang"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keypress="validateInputVolume($event)"
+                            @keydown="validateInputVolume($event)"
+                            @keyup="validateInputVolume($event)"
+                            @input="calculateVolumeProduct"
+                            @paste="handlePasteLength"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
                       </b-col>
                       <b-col>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Lebar"
-                          rules="required"
-                        >
-                          <b-input-group>
-                            <b-form-input
-                              id="price-product"
-                              v-model="widthProduct"
-                              class="wrapper__form__input__variant"
-                              placeholder="Lebar"
-                              :state="errors.length > 0 ? false:null"
-                              @keypress="formatStock($event)"
-                              @input="calculateVolumeProduct"
-                            />
-                            <b-input-group-append is-text>
-                              cm
-                            </b-input-group-append>
-                          </b-input-group>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="widthProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Lebar"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keypress="validateInputVolume($event)"
+                            @keydown="validateInputVolume($event)"
+                            @keyup="validateInputVolume($event)"
+                            @input="calculateVolumeProduct"
+                            @paste="handlePasteWidth"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
                       </b-col>
                       <b-col>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Tinggi"
-                          rules="required"
-                        >
-                          <b-input-group>
-                            <b-form-input
-                              id="price-product"
-                              v-model="heightProduct"
-                              class="wrapper__form__input__variant"
-                              placeholder="Tinggi"
-                              :state="errors.length > 0 ? false:null"
-                              @keypress="formatStock($event)"
-                              @input="calculateVolumeProduct"
-                            />
-                            <b-input-group-append is-text>
-                              cm
-                            </b-input-group-append>
-                          </b-input-group>
-                          <small class="text-primary">{{ errors[0] }}</small>
-                        </validation-provider>
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="heightProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Tinggi"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keypress="validateInputVolume($event)"
+                            @keydown="validateInputVolume($event)"
+                            @keyup="validateInputVolume($event)"
+                            @input="calculateVolumeProduct"
+                            @paste="handlePasteHeight"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
                       </b-col>
                     </b-row>
                   </b-col>
@@ -1061,7 +1076,11 @@
                   <div>
                     <span class="text-black">
                       Perhatikan dengan baik berat dan Volume produk ya agar tidak terjadi selisih data dengan pihak kurir
-                      <span class="text-info">Pelajari selengkapnya</span>
+                      <span class="text-info"><a
+                        class="text-info"
+                        href="https://bantuan.komerce.id/id/article/cara-menghitung-konversi-volume-ke-berat-di-pengiriman-barang-1hofvu6/"
+                        target="_blank"
+                      >Pelajari selengkapnya</a></span>
                     </span>
                   </div>
                 </div>
@@ -1359,9 +1378,40 @@ export default {
       optionStore: [],
 
       buttonIsSubmit: false,
+
+      messageErrorLengthProduct: false,
+
+      pricePaste: null,
+      pricePasteMode: false,
+      stockPaste: null,
+      stockPasteMode: false,
+
+      weightPaste: null,
+      weightPasteMode: false,
+      lengthPaste: null,
+      lengthPasteMode: false,
+      widthPaste: null,
+      widthPasteMode: false,
+      heightPaste: null,
+      heightPasteMode: false,
+      priceAllPaste: null,
+      priceAllPasteMode: false,
+      stockAllPaste: null,
+      stockAllPasteMode: false,
     }
   },
   computed: {},
+  watch: {
+    productName: {
+      handler() {
+        if (this.productName.length < 4) {
+          this.messageErrorLengthProduct = true
+        } else {
+          this.messageErrorLengthProduct = false
+        }
+      },
+    },
+  },
   mounted() {
     this.checkNewUser()
     this.loadProduct()
@@ -1371,7 +1421,6 @@ export default {
       this.$http_komship.get(`/v1/product/detail/${this.productId}`)
         .then(response => {
           const { data } = response.data
-          console.log(data)
           this.productName = data.product_name
           this.skuName = data.product_sku
           this.descriptionProduct = data.product_description
@@ -1383,7 +1432,6 @@ export default {
           if (data.product_image[0] !== undefined) {
             this.imageInitialFile = data.product_image[0].images_path
           }
-          console.log(this.imageFile)
           this.calculateVolumeProduct()
           if (data.product_is_variant === '1') this.isVariantActive = true
           this.priceProduct = data.product_price
@@ -1506,8 +1554,6 @@ export default {
             }
           })
           this.applyVariantIsActive = false
-          console.log('variantInputItems', this.variantInputItems)
-          console.log('variantItems', this.variantItems)
         })
     },
     formatPrice(value) {
@@ -1524,6 +1570,20 @@ export default {
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
         $event.preventDefault()
       }
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
+    },
+    formatPriceInput($event) {
+      const e = $event
+      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
+      if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
+        $event.preventDefault()
+      }
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101 || e.keyCode === 190) {
+        e.preventDefault()
+      }
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
     },
     formatNameProduct(e) {
       return String(e).substring(0, 60)
@@ -1536,6 +1596,12 @@ export default {
     },
     formatPriceVariant(e) {
       return String(e).substring(0, 9)
+    },
+    formatPriceNotVariant(e) {
+      return String(e).substring(0, 7)
+    },
+    formatterVolume(e) {
+      return String(e).substring(0, 7)
     },
     validateInputProductName(e) {
       if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 38) {
@@ -1555,6 +1621,37 @@ export default {
       if (this.weightProduct === '' && e.keyCode === 48) {
         e.preventDefault()
       }
+      if (this.weightPasteMode) this.weightProduct = this.weightPaste
+      this.weightPasteMode = false
+    },
+    validateInputVolume(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.widthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.widthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.heightProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.heightProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthPasteMode) this.lengthProduct = this.lengthPaste
+      this.lengthPasteMode = false
+      if (this.widthPasteMode) this.widthProduct = this.widthPaste
+      this.widthPasteMode = false
+      if (this.heightPasteMode) this.heightProduct = this.heightPaste
+      this.heightPasteMode = false
     },
     async checkNewUser() {
       if (localStorage.getItem('newUser')) {
@@ -1575,18 +1672,20 @@ export default {
       localStorage.setItem('newUser', false)
     },
     async checkProductName() {
-      await this.$http_komship.get('/v1/product/check-name', {
-        params: {
-          product_name: this.productName,
-        },
-      }).then(response => {
-        const { data } = response
-        if (data.code === 1003) {
-          this.productNameAvailable = false
-        } else {
-          this.productNameAvailable = true
-        }
-      }).catch(() => { this.productNameAvailable = true })
+      if (this.messageErrorLengthProduct === false) {
+        await this.$http_komship.get('/v1/product/check-name', {
+          params: {
+            product_name: this.productName,
+          },
+        }).then(response => {
+          const { data } = response
+          if (data.code === 1003) {
+            this.productNameAvailable = false
+          } else {
+            this.productNameAvailable = true
+          }
+        }).catch(() => { this.productNameAvailable = true })
+      }
     },
     async checkSkuName() {
       await this.$http_komship.get('/v1/product/check-sku', {
@@ -1631,7 +1730,6 @@ export default {
             ],
           },
         })
-        console.log(this.variantInputItems)
       }
     },
     addVariant() {
@@ -1686,30 +1784,21 @@ export default {
           this.variantInputItems[indexs].variant.newSecondParent = true
         })
       }
-      console.log(this.variantInputItems)
       this.applyVariantIsActive = true
     },
     deleteVariant(data) {
-      console.log('data', data)
-      console.log('variantFields', this.variantFields)
       const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === data.variant.type)
       this.variantInputItems.splice(findIndexVariant, 1)
       const findIndexFieldsVariant = this.variantFields.findIndex(items => items.label === data.variant.variantName)
       if (findIndexFieldsVariant !== -1) {
         this.variantFields.splice(findIndexFieldsVariant, 1)
       }
-      console.log('variantInputItems', this.variantInputItems)
-      console.log('variantItems', this.variantItems)
     },
     deleteVariantOption(item, variantOption) {
-      console.log('item', item)
-      console.log('variantOption', variantOption)
-      console.log('variantItems', this.variantItems)
       const findIndexVariant = this.variantInputItems.findIndex(itemVariant => itemVariant.variant.variantName === item.variant.variantName)
       const findIndexVariantOption = this.variantInputItems[findIndexVariant].variant.variantOptionItem.findIndex(itemVariantOption => itemVariantOption.variantOptionName === variantOption.variantOptionName)
       this.variantInputItems[findIndexVariant].variant.variantOptionItem.splice(findIndexVariantOption, 1)
       const findVariant = this.variantItems.findIndex(items => items.option_name === variantOption.variantOptionName)
-      console.log(findVariant)
       if (findVariant !== -1) {
         this.variantItems.splice(findVariant, 1)
       }
@@ -1732,7 +1821,6 @@ export default {
     },
     applyVariant() {
       this.variantFields = []
-      console.log('variantInputItems', this.variantInputItems)
       this.variantInputItems.forEach(item => {
         if (item.variant.type === 1) {
           this.variantFields.push({
@@ -1751,7 +1839,6 @@ export default {
             },
           })
           item.variant.variantOptionItem.forEach(parentItem => {
-            console.log('parentItem', parentItem)
             const findVariant = this.variantItems.find(variantItem => variantItem.option_name === parentItem.variantOptionName)
             if (findVariant === undefined) {
               this.variantItems.push({
@@ -1765,11 +1852,9 @@ export default {
           })
         }
       })
-      console.log('variant1', this.variantItems)
       this.variantInputItems.forEach(item => {
         if (item.variant.type === 2) {
           if (this.variantInputItems.length === 2) {
-            console.log('not 3 variant')
             this.variantFields.push({
               key: 'variant2',
               label: item.variant.variantName,
@@ -1785,7 +1870,6 @@ export default {
               },
             })
             item.variant.variantOptionItem.forEach(secondVariantItem => {
-              console.log('secondVariantItem', secondVariantItem)
               this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
                 const findVariant = this.variantItems[indexSecondVariant].options.find(variantItem => variantItem.option_name === secondVariantItem.variantOptionName)
                 if (findVariant === undefined) {
@@ -1800,7 +1884,6 @@ export default {
               })
             })
           } else {
-            console.log('3 variant')
             this.variantFields.push({
               key: 'variant2',
               label: item.variant.variantName,
@@ -1816,7 +1899,6 @@ export default {
               },
             })
             item.variant.variantOptionItem.forEach(secondVariantItem => {
-              console.log('secondVariantItem', secondVariantItem)
               this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
                 const findVariant = this.variantItems[indexSecondVariant].options.find(variantItem => variantItem.option_name === secondVariantItem.variantOptionName)
                 if (findVariant === undefined) {
@@ -1833,7 +1915,6 @@ export default {
           }
         }
       })
-      console.log('variant2', this.variantItems)
       this.variantInputItems.forEach(item => {
         if (item.variant.type === 3) {
           this.variantFields.push({
@@ -1851,7 +1932,6 @@ export default {
             },
           })
           item.variant.variantOptionItem.forEach(thirdVariant => {
-            console.log('thirdVariant', thirdVariant)
             this.variantItems.forEach((dataSecondVariant, index) => {
               this.variantItems[index].options.forEach((dataThirdVariant, indexThirdVariant) => {
                 const findVariant = this.variantItems[index].options[indexThirdVariant].options.find(variantItem => variantItem.option_name === thirdVariant.variantOptionName)
@@ -1897,9 +1977,6 @@ export default {
           borderBottom: '0px',
         },
       })
-      console.log('variant3', this.variantItems)
-      console.log('variantItems', this.variantItems)
-      console.log('editVariantItems', this.editVariantItems)
     },
 
     validateVariantField(item, index) {
@@ -1973,8 +2050,6 @@ export default {
     submit(status) {
       this.variantStore = []
       this.optionStore = []
-      console.log('variantItems', this.variantItems)
-      console.log('variantInputItems', this.variantInputItems)
       this.variantInputItems.forEach(item => {
         this.variantStore.push({
           val: item.variant.variantName,
@@ -2011,8 +2086,6 @@ export default {
           })
         }
       })
-      console.log('variantStore', this.variantStore)
-      console.log('optionStore', this.optionStore)
 
       this.buttonIsSubmit = true
       if (status === 0) this.loadingSubmitDraft = true
@@ -2087,8 +2160,7 @@ export default {
     goBack() {
       window.history.back()
     },
-    formatCurrency(blur, el) {
-      console.log(el)
+    formatCurrency(blur, el, value) {
       const input = document.getElementById(el)
       let inputVal = input.value
 
@@ -2119,6 +2191,11 @@ export default {
       const updatedLen = inputVal.length
       caretPos = updatedLen - originalLen + caretPos
       input.setSelectionRange(caretPos, caretPos)
+
+      if (this.priceAllPasteMode) this.setPriceAll = this.priceAllPaste
+      this.priceAllPasteMode = false
+      if (this.stockAllPasteMode) this.setStockAll = this.stockAllPaste
+      this.stockAllPasteMode = false
     },
     formatNumber(n) {
       return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
@@ -2132,13 +2209,52 @@ export default {
       || this.lengthProduct === ''
       || this.widthProduct === ''
       || this.heightProduct === ''
-      || this.productName === ''
-      || this.skuName === '') {
+      || this.productName === '') {
         this.buttonIsSubmit = true
       } else {
         this.buttonIsSubmit = false
       }
       return this.buttonIsSubmit
+    },
+    handlePastePrice(e) {
+      this.pricePasteMode = true
+      this.pricePaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.pricePaste.charAt(0) === '0') this.pricePaste = this.pricePaste.slice(1, this.pricePaste.length)
+    },
+    handlePasteStock(e) {
+      this.stockPasteMode = true
+      this.stockPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.stockPaste.charAt(0) === '0') this.stockPaste = this.stockPaste.slice(1, this.stockPaste.length)
+    },
+    handlePasteWeight(e) {
+      this.weightPasteMode = true
+      this.weightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.weightPaste.charAt(0) === '0') this.weightPaste = this.weightPaste.slice(1, this.weightPaste.length)
+    },
+    handlePasteWidth(e) {
+      this.widthPasteMode = true
+      this.widthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.widthPaste.charAt(0) === '0') this.widthPaste = this.widthPaste.slice(1, this.widthPaste.length)
+    },
+    handlePasteLength(e) {
+      this.lengthPasteMode = true
+      this.lengthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.lengthPaste.charAt(0) === '0') this.lengthPaste = this.lengthPaste.slice(1, this.lengthPaste.length)
+    },
+    handlePasteHeight(e) {
+      this.heightPasteMode = true
+      this.heightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.heightPaste.charAt(0) === '0') this.heightPaste = this.heightPaste.slice(1, this.heightPaste.length)
+    },
+    handlePastePriceAll(e) {
+      this.priceAllPasteMode = true
+      this.priceAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.priceAllPaste.charAt(0) === '0') this.priceAllPaste = this.priceAllPaste.slice(1, this.priceAllPaste.length)
+    },
+    handlePasteStockAll(e) {
+      this.stockAllPasteMode = true
+      this.stockAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.stockAllPaste.charAt(0) === '0') this.stockAllPaste = this.stockAllPaste.slice(1, this.stockAllPaste.length)
     },
   },
 }
