@@ -997,7 +997,7 @@ export default {
       }
     },
     handlePasteCheckTotal(e) {
-      this.addProduct.newGrandTotalPasteMode = true
+      this.newGrandTotalPasteMode = true
       this.newGrandTotalPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
     },
     formatterNewGrandTotal(e) {
