@@ -721,7 +721,7 @@ export default {
   methods: {
     getBank() {
       this.loading = true
-      return this.$http_komship.get('v1/bank-account', {
+      return this.$http_komship.get('v1/kompack/setting/bank-account', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         const { data } = response.data

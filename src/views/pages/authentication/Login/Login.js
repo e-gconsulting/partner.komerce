@@ -276,6 +276,11 @@ export default {
             default:
               break
           }
+          if (data.role_id !== 0) {
+            this.error = 'Akun anda tidak memiliki hak akses untuk masuk kompack.'
+            this.logout()
+            return
+          }
 
           if (role === 'PARTNER') {
             data = await this.getPartnerProfile(this.userId)
