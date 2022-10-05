@@ -602,25 +602,23 @@
                       </template>
 
                       <template #cell(variant3)="data">
-                        <b-row>
-                          <div
-                            v-for="(item, index) in data.item.variant1.option"
-                            :key="index+1"
+                        <div
+                          v-for="(item, index) in data.item.variant1.option"
+                          :key="index+1"
+                        >
+                          <b-col
+                            v-for="(items, index1) in item.variant2.option"
+                            :key="index1+1"
+                            cols="12"
                           >
-                            <b-col
-                              v-for="(items, index1) in item.variant2.option"
-                              :key="index1+1"
-                              cols="12"
+                            <div
+                              class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                              disabled
                             >
-                              <div
-                                class="wrapper__variant2__table mb-1 d-flex align-items-center"
-                                disabled
-                              >
-                                {{ items.variant3.val }}
-                              </div>
-                            </b-col>
-                          </div>
-                        </b-row>
+                              {{ items.variant3.val }}
+                            </div>
+                          </b-col>
+                        </div>
                       </template>
 
                       <template #cell(stock)="data">
