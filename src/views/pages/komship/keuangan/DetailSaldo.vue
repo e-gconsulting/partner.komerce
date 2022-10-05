@@ -128,11 +128,11 @@
               class="text-success"
             >Diterima</span>
             <span
-              v-if="data.item.order_status !== 'Hilang'"
+              v-if="data.item.order_status === 'Hilang'"
               class="text-muted"
             >Ganti Rugi Paket Hilang</span>
             <span
-              v-if="data.item.order_status !== 'Rusak'"
+              v-if="data.item.order_status === 'Rusak'"
               class="text-muted"
             >Ganti Rugi Paket Rusak</span>
             )
