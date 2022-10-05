@@ -8,12 +8,9 @@
     rounded="sm"
   >
     <b-card>
-
       <h3 class="text-black ml-50">
         <strong>Pengaturan Alamat Penjemputan</strong>
       </h3>
-
-      <!-- List & Edit -->
       <b-row
         v-for="(data, index) in dataAddress"
         :key="index + 1"
@@ -23,11 +20,10 @@
           cols="11"
           class="border"
         >
-
           <b-row class="d-flex mt-50 mb-1">
             <b-col md="6">
               <h4 class="text-black">
-                <strong>Alamat {{ index+1 }}</strong>
+                <strong>Alamat {{ index + 1 }}</strong>
               </h4>
             </b-col>
             <b-col
@@ -46,9 +42,7 @@
                 class="btn-icon"
                 @click="changeEditMode"
               >
-                <feather-icon
-                  icon="EditIcon"
-                />
+                <feather-icon icon="EditIcon" />
               </b-button>
               <b-button
                 v-else
@@ -56,31 +50,23 @@
                 class="btn-icon"
                 @click="editAddress(data)"
               >
-                <feather-icon
-                  icon="EditIcon"
-                />
+                <feather-icon icon="EditIcon" />
               </b-button>
             </b-col>
           </b-row>
-
           <validation-observer
             ref="formRulesEdit"
             #default="{invalid}"
           >
             <b-form>
               <b-row>
-
                 <b-col
                   cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
-                    <b-col
-                      cols="9"
-                    >
-                      <b-form-group
-                        label-cols-md="4"
-                      >
+                    <b-col cols="9">
+                      <b-form-group label-cols-md="4">
                         <template #label>
                           <h4 class="text-black">
                             Nama Tempat<span class="text-primary">*</span>
@@ -94,7 +80,7 @@
                           <div v-if="editMode === true && editIdAddress === data.address_id">
                             <b-form-input
                               v-model="addressName"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                             />
                           </div>
                           <div v-else>
@@ -109,24 +95,24 @@
                     </b-col>
                   </b-row>
                 </b-col>
-
                 <b-col
                   cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
-                    <b-col
-                      cols="9"
-                    >
-                      <b-form-group
-                        label-cols-md="4"
-                      >
+                    <b-col cols="9">
+                      <b-form-group label-cols-md="4">
                         <template #label>
                           <h4 class="text-black">
                             Kelurahan/Kecamatan<span class="text-primary">*</span>
                           </h4>
                         </template>
-                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                        <div
+                          v-if="
+                            editMode === true &&
+                              editIdAddress === data.address_id
+                          "
+                        >
                           <validation-provider
                             #default="{errors}"
                             name="Kelurahan/Kecamatan"
@@ -134,14 +120,14 @@
                           >
                             <div
                               v-for="(dataOrigin, indexOrigin) in tes"
-                              :key="indexOrigin+1"
+                              :key="indexOrigin + 1"
                             >
                               <v-select
                                 v-if="dataOrigin.id === data.destination_id"
                                 v-model="originValue"
                                 :options="itemsOriginEdit"
                                 label="label"
-                                :state="errors.length > 0 ? false:null"
+                                :state="errors.length > 0 ? false : null"
                                 @search="onSearchOrigin"
                               />
                             </div>
@@ -150,7 +136,7 @@
                               v-model="originValue"
                               :options="itemsOriginEdit"
                               label="label"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                               @search="onSearchOrigin"
                             />
                             <small class="text-primary">{{ errors[0] }}</small>
@@ -159,7 +145,7 @@
                         <div v-else>
                           <div
                             v-for="(dataOrigin, indexOrigin) in tes"
-                            :key="indexOrigin+1"
+                            :key="indexOrigin + 1"
                           >
                             <div v-if="dataOrigin.id !== undefined">
                               <v-select
@@ -175,27 +161,28 @@
                     </b-col>
                   </b-row>
                 </b-col>
-
                 <b-col
                   cols="12"
                   class="mb-3 ml-16 pl-50"
                 >
                   <b-row>
-                    <b-col
-                      cols="9"
-                    >
-                      <b-form-group
-                        label-cols-md="4"
-                      >
+                    <b-col cols="9">
+                      <b-form-group label-cols-md="4">
                         <template #label>
                           <h4 class="text-black">
                             Alamat Detail<span class="text-primary">*</span>
                           </h4>
                           <small>
-                            Alamat ini akan jadi petunjuk kurir saat mau jemput barang. Pastikan kamu isi dengan detail ya.
+                            Alamat ini akan jadi petunjuk kurir saat mau jemput
+                            barang. Pastikan kamu isi dengan detail ya.
                           </small>
                         </template>
-                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                        <div
+                          v-if="
+                            editMode === true &&
+                              editIdAddress === data.address_id
+                          "
+                        >
                           <validation-provider
                             #default="{errors}"
                             name="Alamat Detail"
@@ -205,12 +192,14 @@
                               v-model="addressDetail"
                               placeholder="Alamat Detail"
                               rows="3"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                               :formatter="formatDetailAddress"
                               @keypress="validateInputDetail"
                             />
                             <b-row class="justify-content-between">
-                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="text-primary ml-1 mt-50">{{
+                                errors[0]
+                              }}</small>
                               <small class="mr-1 mt-50">
                                 <small
                                   v-if="messageErrorLengthAddress"
@@ -235,7 +224,6 @@
                     </b-col>
                   </b-row>
                 </b-col>
-
                 <b-col
                   cols="12"
                   class="mb-2"
@@ -246,18 +234,13 @@
                     </strong>
                   </h4>
                 </b-col>
-
                 <b-col
                   cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
-                    <b-col
-                      cols="9"
-                    >
-                      <b-form-group
-                        label-cols-md="4"
-                      >
+                    <b-col cols="9">
+                      <b-form-group label-cols-md="4">
                         <template #label>
                           <h4 class="text-black">
                             Nama
@@ -291,18 +274,13 @@
                     </b-col>
                   </b-row>
                 </b-col>
-
                 <b-col
                   cols="12"
                   class="mb-1 ml-16 pl-50"
                 >
                   <b-row>
-                    <b-col
-                      cols="9"
-                    >
-                      <b-form-group
-                        label-cols-md="4"
-                      >
+                    <b-col cols="9">
+                      <b-form-group label-cols-md="4">
                         <template #label>
                           <h4 class="text-black">
                             No. HP<span class="text-primary">*</span>
@@ -311,7 +289,12 @@
                             Kurir yang jemput akan menghubungi nomor ini
                           </small>
                         </template>
-                        <div v-if="editMode === true && editIdAddress === data.address_id">
+                        <div
+                          v-if="
+                            editMode === true &&
+                              editIdAddress === data.address_id
+                          "
+                        >
                           <validation-provider
                             #default="{errors}"
                             name="No. HP"
@@ -319,13 +302,15 @@
                           >
                             <b-form-input
                               v-model="phoneUser"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                               type="number"
                               @input="formatEditPhoneUser"
                               @keypress="validateEditInputPhone"
                             />
                             <b-row class="justify-content-between">
-                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="text-primary ml-1 mt-50">{{
+                                errors[0]
+                              }}</small>
                               <small class="mr-1 mt-50">
                                 <small
                                   v-if="messageErrorPhone"
@@ -347,15 +332,12 @@
                     </b-col>
                   </b-row>
                 </b-col>
-
                 <b-col
                   v-if="editMode === true && editIdAddress === data.address_id"
                   md="12"
                   class="ml-16 pl-50"
                 >
-                  <b-form-group
-                    label-cols-md="4"
-                  >
+                  <b-form-group label-cols-md="4">
                     <b-form-checkbox
                       v-model="isDefault"
                       @change="changeDefaultAddress"
@@ -367,7 +349,9 @@
 
                 <transition name="fade">
                   <b-col
-                    v-if="editMode === true && editIdAddress === data.address_id"
+                    v-if="
+                      editMode === true && editIdAddress === data.address_id
+                    "
                     md="12"
                     class="d-flex justify-content-end mt-1 pb-1"
                   >
@@ -397,14 +381,11 @@
                     </b-button>
                   </b-col>
                 </transition>
-
               </b-row>
             </b-form>
           </validation-observer>
         </b-col>
       </b-row>
-
-      <!-- Add Address -->
       <transition name="fade">
         <b-row
           v-if="formAddAddress === true"
@@ -414,7 +395,6 @@
             cols="11"
             class="border"
           >
-
             <b-row class="d-flex mt-50 mb-1">
               <b-col md="6">
                 <h4 class="text-black">
@@ -422,25 +402,19 @@
                 </h4>
               </b-col>
             </b-row>
-
             <validation-observer
               ref="formRulesAdd"
               #default="{invalid}"
             >
               <b-form class="">
                 <b-row>
-
                   <b-col
                     cols="12"
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
-                      <b-col
-                        cols="9"
-                      >
-                        <b-form-group
-                          label-cols-md="4"
-                        >
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
                               Nama Tempat<span class="text-primary">*</span>
@@ -454,7 +428,7 @@
                             <b-form-input
                               v-model="fieldAddAddressName"
                               placeholder="Contoh: Gudang Jawa Barat"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                             />
                             <small class="text-danger">{{ errors[0] }}</small>
                           </validation-provider>
@@ -468,12 +442,8 @@
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
-                      <b-col
-                        cols="9"
-                      >
-                        <b-form-group
-                          label-cols-md="4"
-                        >
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
                               Kelurahan/Kecamatan<span class="text-primary">*</span>
@@ -488,7 +458,7 @@
                               v-model="fieldAddOrigin"
                               :options="itemsOriginEdit"
                               label="label"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                               placeholder="Masukkan Kelurahan/Kecamatan"
                               @search="onSearchOrigin"
                             />
@@ -498,24 +468,20 @@
                       </b-col>
                     </b-row>
                   </b-col>
-
                   <b-col
                     cols="12"
                     class="mb-3 ml-16 pl-50"
                   >
                     <b-row>
-                      <b-col
-                        cols="9"
-                      >
-                        <b-form-group
-                          label-cols-md="4"
-                        >
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
                               Alamat Detail<span class="text-primary">*</span>
                             </h4>
                             <small>
-                              Alamat ini akan jadi petunjuk kurir saat mau jemput barang. Pastikan kamu isi dengan detail ya.
+                              Alamat ini akan jadi petunjuk kurir saat mau
+                              jemput barang. Pastikan kamu isi dengan detail ya.
                             </small>
                           </template>
                           <validation-provider
@@ -527,12 +493,14 @@
                               v-model="fieldAddAddressDetail"
                               placeholder="Contoh: Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355"
                               rows="3"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                               :formatter="formatDetailAddress"
                               @keypress="validateInputDetail"
                             />
                             <b-row class="justify-content-between">
-                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="text-primary ml-1 mt-50">{{
+                                errors[0]
+                              }}</small>
                               <small class="mr-1 mt-50">
                                 <small
                                   v-if="messageErrorLengthAddress"
@@ -548,7 +516,6 @@
                       </b-col>
                     </b-row>
                   </b-col>
-
                   <b-col
                     cols="12"
                     class="mb-2"
@@ -559,18 +526,13 @@
                       </strong>
                     </h4>
                   </b-col>
-
                   <b-col
                     cols="12"
                     class="mb-1 ml-16 pl-50"
                   >
                     <b-row>
-                      <b-col
-                        cols="9"
-                      >
-                        <b-form-group
-                          label-cols-md="4"
-                        >
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
                               Nama
@@ -597,18 +559,13 @@
                       </b-col>
                     </b-row>
                   </b-col>
-
                   <b-col
                     cols="12"
                     class="ml-16 pl-50"
                   >
                     <b-row>
-                      <b-col
-                        cols="9"
-                      >
-                        <b-form-group
-                          label-cols-md="4"
-                        >
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
                               No. HP<span class="text-primary">*</span>
@@ -626,12 +583,14 @@
                               v-model="fieldAddPhoneUser"
                               placeholder="Masukkan Nomor HP Penanggung Jawab Gudang"
                               type="number"
-                              :state="errors.length > 0 ? false:null"
+                              :state="errors.length > 0 ? false : null"
                               @input="formatPhoneUser"
                               @keypress="validateInputPhone"
                             />
                             <b-row class="justify-content-end">
-                              <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
+                              <small class="text-primary ml-1 mt-50">{{
+                                errors[0]
+                              }}</small>
                               <small class="mr-1 mt-50">
                                 <small
                                   v-if="messageErrorPhone"
@@ -651,9 +610,7 @@
                     md="12"
                     class="ml-16 pl-50"
                   >
-                    <b-form-group
-                      label-cols-md="4"
-                    >
+                    <b-form-group label-cols-md="4">
                       <b-form-checkbox
                         v-model="isDefault"
                         @change="changeDefaultAddress"
@@ -694,7 +651,6 @@
                       </b-button>
                     </b-col>
                   </transition>
-
                 </b-row>
               </b-form>
             </validation-observer>
@@ -706,21 +662,20 @@
         <b-col md="10">
           <div class="demo-inline-spacing">
             <b-button
+              v-b-modal="'warehouse-options'"
               block
               variant="outline-primary"
-              @click="addAddress"
             >
               <feather-icon
                 icon="PlusIcon"
                 class="mr-50"
                 style="display: inline-block"
               />
-              <span class="align-middle">Tambahkan Alamat</span>
+              <span class="align-middle">Tambahkan Gudang</span>
             </b-button>
           </div>
         </b-col>
       </b-row>
-
     </b-card>
 
     <!-- confirm Delete Address -->
@@ -733,7 +688,6 @@
       centered
       title="Primary Modal"
     >
-
       <b-col
         md="12"
         class="d-flex justify-content-center pt-3"
@@ -770,7 +724,6 @@
           </b-button>
         </b-col>
       </template>
-
     </b-modal>
 
     <b-modal
@@ -782,7 +735,6 @@
       centered
       title="Primary Modal"
     >
-
       <b-col
         md="12"
         class="d-flex justify-content-center pt-3"
@@ -795,7 +747,8 @@
 
       <b-col class="text-center mt-1">
         <h4>
-          Kamu tidak dapat menghapus alamat penjemputan yang menjadi alamat utama.
+          Kamu tidak dapat menghapus alamat penjemputan yang menjadi alamat
+          utama.
         </h4>
       </b-col>
 
@@ -813,10 +766,7 @@
           </b-button>
         </b-col>
       </template>
-
     </b-modal>
-
-    <!-- Modal can't delete address still in use -->
     <b-modal
       ref="modal-validate-address-stilluse"
       hide-header-close
@@ -825,7 +775,6 @@
       centered
       title="Primary Modal"
     >
-
       <b-col
         md="12"
         class="d-flex justify-content-center pt-3 mb-2"
@@ -838,10 +787,10 @@
 
       <b-col class="text-center">
         <h4 class="text-black">
-          Kamu tidak dapat menghapus alamat penjemputan karena sudah terhubung dengan orderku.
+          Kamu tidak dapat menghapus alamat penjemputan karena sudah terhubung
+          dengan orderku.
         </h4>
       </b-col>
-
       <template #modal-footer>
         <b-col
           md="12"
@@ -855,7 +804,69 @@
           </b-button>
         </b-col>
       </template>
-
+    </b-modal>
+    <b-modal
+      id="warehouse-options"
+      ref="warehouse-options"
+      hide-header
+      hide-footer
+      centered
+    >
+      <div class="py-1">
+        <h2 class="text-[20px] text-center font-semibold mb-2">
+          Tambahkan Gudang
+        </h2>
+        <b-row>
+          <b-col cols="6">
+            <b-card
+              class="border-primary"
+              role="button"
+              style="height:180px"
+              @click="selectWarehouse('ownWarehouse')"
+            >
+              <b-img
+                src="@/assets/images/banner/private-warehouse.svg"
+                class="m-auto"
+              /><br>
+              <p class="text-[16px] text-[#626262] text-center">
+                Gudang Pribadi
+              </p>
+            </b-card>
+          </b-col>
+          <b-col cols="6">
+            <b-card
+              id="partnerWarehouse"
+              class="border-primary"
+              role="button"
+              style="height:180px"
+              @click="selectWarehouse('partnerWarehouse')"
+            >
+              <b-img
+                src="@/assets/images/banner/kompack-warehouse.svg"
+                class="m-auto grayscale"
+              /><br>
+              <p class="text-[14px] text-[#626262] text-center d-flex">
+                Mitra Gudang&nbsp;
+                <b-img
+                  src="@/assets/images/logo/kompack-logo.svg"
+                  class="m-auto grayscale"
+                  style="height:14px"
+                />
+              </p>
+            </b-card>
+            <b-popover
+              target="partnerWarehouse"
+              variant="primary"
+              triggers="hover"
+              placement="bottom"
+            >
+              <small class="text-[#828282] font-medium">
+                Simpan barang kamu di Mitra Gudang Kompack. Biaya packing termurah dan tanpa biaya bulanan. Klik sekarang untuk register!
+              </small>
+            </b-popover>
+          </b-col>
+        </b-row>
+      </div>
     </b-modal>
   </b-overlay>
 </template>
@@ -955,48 +966,60 @@ export default {
   methods: {
     getAddress() {
       this.loading = true
-      this.$http_komship.get('/v1/address').then(async response => {
-        const { data } = response.data
-        data.forEach(this.myLoop)
-        this.dataAddress = data
-        this.loading = false
-        return this.dataAddress
-      }).catch(() => {
-        this.loading = false
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan coba lagi',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+      this.$http_komship
+        .get('/v1/address')
+        .then(async response => {
+          const { data } = response.data
+          data.forEach(this.myLoop)
+          this.dataAddress = data
+          this.loading = false
+          return this.dataAddress
+        })
+        .catch(() => {
+          this.loading = false
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
     },
     myLoop(data) {
-      this.$http_komship.get(`/v1/destination?destination_id=${data.destination_id}`).then(response => {
-        if (response.data.data !== null) {
-          this.tes.push(response.data.data)
-          const seen = new Set()
+      this.$http_komship
+        .get(`/v1/destination?destination_id=${data.destination_id}`)
+        .then(response => {
+          if (response.data.data !== null) {
+            this.tes.push(response.data.data)
+            const seen = new Set()
 
-          this.tes = this.tes.filter(el => {
-            const duplicate = seen.has(el.id)
-            seen.add(el.id)
-            return !duplicate
-          })
-        }
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan coba lagi!',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+            this.tes = this.tes.filter(el => {
+              const duplicate = seen.has(el.id)
+              seen.add(el.id)
+              return !duplicate
+            })
+          }
+        })
+        .catch(() => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi!',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
     },
     submitAddress() {
       this.loadingSubmit = true
@@ -1013,46 +1036,58 @@ export default {
           formData.append('phone', this.fieldAddPhoneUser)
           formData.append('is_default', this.dataIsDefault)
 
-          this.$http_komship.post('/v1/address/store', formData)
+          this.$http_komship
+            .post('/v1/address/store', formData)
             .then(response => {
               if (response.data.code !== 400) {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Success',
-                    icon: 'CheckIcon',
-                    text: 'Success menambahkan alamat pickup',
-                    variant: 'success',
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Success',
+                      icon: 'CheckIcon',
+                      text: 'Success menambahkan alamat pickup',
+                      variant: 'success',
+                    },
                   },
-                }, 2000)
+                  2000,
+                )
                 this.loadingSubmit = false
                 this.formAddAddress = false
                 this.getAddress()
               } else {
-                this.$toast({
-                  component: ToastificationContent,
-                  props: {
-                    title: 'Gagal',
-                    icon: 'AlertCircleIcon',
-                    text: 'Gagal menambahkan alamat pickup, silahkan coba lagi!',
-                    variant: 'danger',
+                this.$toast(
+                  {
+                    component: ToastificationContent,
+                    props: {
+                      title: 'Gagal',
+                      icon: 'AlertCircleIcon',
+                      text:
+                        'Gagal menambahkan alamat pickup, silahkan coba lagi!',
+                      variant: 'danger',
+                    },
                   },
-                }, 2000)
+                  2000,
+                )
                 this.loadingSubmit = false
                 this.formAddAddress = false
                 this.getAddress()
               }
-            }).catch(() => {
+            })
+            .catch(() => {
               this.loadingSubmit = false
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Gagal',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal menambahkan alamat, silahkan coba lagi',
-                  variant: 'danger',
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Gagal',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal menambahkan alamat, silahkan coba lagi',
+                    variant: 'danger',
+                  },
                 },
-              }, 2000)
+                2000,
+              )
             })
         } else {
           this.loadingSubmit = false
@@ -1096,7 +1131,8 @@ export default {
           formData.append('pic', this.picName)
           formData.append('phone', this.phoneUser)
           formData.append('is_default', this.dataIsDefault)
-          this.$http_komship.post(`/v1/address/update/${this.editIdAddress}`, formData)
+          this.$http_komship
+            .post(`/v1/address/update/${this.editIdAddress}`, formData)
             .then(() => {
               this.tes = []
               this.handleOldOrigin = false
@@ -1112,17 +1148,21 @@ export default {
               })
               this.editMode = false
               this.getAddress()
-            }).catch(() => {
+            })
+            .catch(() => {
               this.loadingSubmit = false
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failed',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal update alamat pickup, silahkan coba lagi!',
-                  variant: 'danger',
+              this.$toast(
+                {
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    icon: 'AlertCircleIcon',
+                    text: 'Gagal update alamat pickup, silahkan coba lagi!',
+                    variant: 'danger',
+                  },
                 },
-              }, 2000)
+                2000,
+              )
             })
         } else {
           this.loadingSubmit = false
@@ -1158,14 +1198,16 @@ export default {
     },
     deleteAddress() {
       if (this.dataDelete.is_default !== 1) {
-        this.$http_komship.delete(`/v1/address/delete/${this.dataDelete.address_id}`)
+        this.$http_komship
+          .delete(`/v1/address/delete/${this.dataDelete.address_id}`)
           .then(response => {
             this.$refs['modal-confirm-delete-address'].hide()
             this.getAddress()
             if (response.data.code === 400) {
               this.$refs['modal-validate-address-stilluse'].show()
             }
-          }).catch(() => {
+          })
+          .catch(() => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -1191,10 +1233,12 @@ export default {
       that.loadOrigin(search).finally(() => loading(false))
     }, 500),
     loadOrigin(search) {
-      return this.$http_komship.get(`/v1/destination?search=${search}`)
+      return this.$http_komship
+        .get(`/v1/destination?search=${search}`)
         .then(response => {
           this.itemsOriginEdit = response.data.data.data
-        }).catch(err => {
+        })
+        .catch(err => {
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -1249,7 +1293,12 @@ export default {
       }
     },
     validateInputDetail(e) {
-      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+      if (
+        e.keyCode === 47
+        || e.keyCode === 61
+        || e.keyCode === 58
+        || e.keyCode === 59
+      ) {
         e.preventDefault()
         this.messageErrorLengthAddress = true
       } else {
@@ -1257,7 +1306,12 @@ export default {
       }
     },
     validateInputName(e) {
-      if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59) {
+      if (
+        e.keyCode === 47
+        || e.keyCode === 61
+        || e.keyCode === 58
+        || e.keyCode === 59
+      ) {
         e.preventDefault()
         this.messageErrorLengthName = true
       } else {
@@ -1274,8 +1328,15 @@ export default {
         e.preventDefault()
       }
     },
+    selectWarehouse(option) {
+      if (option === 'ownWarehouse') {
+        this.$refs['warehouse-options'].hide()
+        this.addAddress()
+      } else {
+        window.open('https://kompack.id/', '_blank')
+      }
+    },
   },
-
 }
 </script>
 

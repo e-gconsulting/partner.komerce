@@ -233,6 +233,7 @@ import ToastificationContentVue from '@/@core/components/toastification/Toastifi
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
+import secureLocalStorage from '@/libs/secureLocalstorage'
 
 export default {
   directives: {
@@ -591,7 +592,7 @@ export default {
         .then(() => {
           // Remove userData from localStorage
           // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
-          localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
+          secureLocalStorage.clearItem(useJwt.jwtConfig.storageTokenKeyName)
           localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
         })
         .finally(() => {
