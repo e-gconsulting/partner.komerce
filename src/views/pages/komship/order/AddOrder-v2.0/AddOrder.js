@@ -110,6 +110,8 @@ export default {
       netProfit: null,
       grandTotal: null,
       newGrandTotal: null,
+      newGrandTotalPaste: null,
+      newGrandTotalPasteMode: false,
       isValidate: false,
       formData: null,
 
@@ -975,11 +977,31 @@ export default {
         this.loadingOptionExpedition = false
       }
     },
-    checkNewTotal() {
+    checkNewTotal: _.debounce(async function () {
       if (this.newGrandTotal < this.shippingCost) {
-        this.newGrandTotal = this.shippingCost
-        this.calculate(false)
+        this.newGrandTotal = await this.shippingCost
+        await this.calculate(false)
+        this.newGrandTotalPasteMode = false
+      } else {
+        await this.calculate(false)
+        this.newGrandTotalPasteMode = false
       }
+    }, 1000),
+    checkTotal(e) {
+      if (e.keyCode !== 65 && e.code !== 'ControlLeft' && e.code !== 'ControlRight') {
+        if (this.newGrandTotal.toString().length >= 4) {
+          if (this.newGrandTotalPasteMode) this.newGrandTotal = this.newGrandTotalPaste
+          this.loadingCalculate = true
+          this.checkNewTotal()
+        }
+      }
+    },
+    handlePasteCheckTotal(e) {
+      this.newGrandTotalPasteMode = true
+      this.newGrandTotalPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    formatterNewGrandTotal(e) {
+      return e.replace(/[^\d]/g, '')
     },
     checkDiscount() {
       if (this.discount > this.subTotal) {
@@ -1085,6 +1107,10 @@ export default {
               this.loadingCalculate = false
             }
             this.loadingCalculate = false
+          }
+          if (this.newGrandTotal === this.shippingCost) {
+            this.grandTotal = this.newGrandTotal
+            this.netProfit = result.net_profit
           }
         }).catch(async err => {
           this.loadingWrapperOtherCost = false

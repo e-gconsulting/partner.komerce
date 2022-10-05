@@ -23,7 +23,7 @@ import hiring from './routes/komship/hiring/index'
 import opsional from './routes/komship/opsional/index'
 import myapps from './routes/komship/myapps/index'
 import ticketing from './routes/komship/ticketing/index'
-import gudang from './routes/komship/gudang/index'
+import warehouse from './routes/komship/warehouse/index'
 
 Vue.use(VueRouter)
 
@@ -47,7 +47,7 @@ const router = new VueRouter({
     ...opsional,
     ...myapps,
     ...ticketing,
-    ...gudang,
+    ...warehouse,
     ...wishlist,
     {
       path: '*',
