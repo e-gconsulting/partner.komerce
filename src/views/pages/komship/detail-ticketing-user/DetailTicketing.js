@@ -203,7 +203,6 @@ export default {
           this.loadingDataDetail = false
           this.ratingUser = data.rating_user
           this.statusPriority = data.status_priority
-          console.log(this.statusPriority)
           if (data.rating_user !== null) this.previewRating(data.rating_user.rating)
           this.dateRating = data.date_updated
           setTimeout(() => {
