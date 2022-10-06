@@ -199,7 +199,7 @@
                       id="description-product"
                       v-model="descriptionProduct"
                       :formatter="formatDescriptionProduct"
-                      placeholder="Masukkan deskripsi produkmu disini ya"
+                      placeholder="Masukkan deskripsi produkmu di sini ya"
                       rows="3"
                     />
                     <b-row>
@@ -945,7 +945,7 @@
                             v-model="weightProduct"
                             class="wrapper__form__input__variant"
                             :formatter="formatterVolume"
-                            placeholder="Masukkan harga produk"
+                            placeholder="(Contoh : 200)"
                             type="number"
                             :state="errors.length > 0 ? false:null"
                             :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
@@ -1057,7 +1057,7 @@
                 </b-col>
 
                 <b-col
-                  v-if="calculateVolumeProductItem !== 0"
+                  v-if="calculateVolumeProductItem > weightProduct / 1000"
                   cols="12"
                   class="mb-2 ml-1"
                 >
@@ -2311,14 +2311,8 @@ export default {
       || !this.skuNameAvailable
       || this.messageErrorIsActive
       || this.weightProduct === ''
-      || this.lengthProduct === ''
-      || this.widthProduct === ''
-      || this.heightProduct === ''
       || this.productName === ''
       || this.weightProduct === null
-      || this.lengthProduct === null
-      || this.widthProduct === null
-      || this.heightProduct === null
       || this.productName === null
       || this.priceProduct === null
       || this.priceProduct === ''
