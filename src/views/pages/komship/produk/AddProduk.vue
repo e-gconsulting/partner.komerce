@@ -814,7 +814,7 @@
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
                           @keyup="formatPriceInput($event)"
-                          @keypress="validateInputWeight($event)"
+                          @keypress="validateInputPrice($event)"
                           @paste="handlePastePrice"
                         />
                       </b-input-group>
@@ -867,7 +867,7 @@
                           :state="errors.length > 0 ? false:null"
                           :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
                           @keyup="formatStock($event)"
-                          @keypress="validateInputWeight($event)"
+                          @keypress="validateInputStock($event)"
                           @paste="handlePasteStock"
                         />
                       </b-input-group>
@@ -995,9 +995,9 @@
                             placeholder="Panjang"
                             type="number"
                             :formatter="formatterVolume"
-                            @keypress="validateInputVolume($event)"
-                            @keydown="validateInputVolume($event)"
-                            @keyup="validateInputVolume($event)"
+                            @keypress="validateInputVolumeLength($event)"
+                            @keydown="validateInputVolumeLength($event)"
+                            @keyup="validateInputVolumeLength($event)"
                             @input="calculateVolumeProduct"
                             @paste="handlePasteLength"
                           />
@@ -1015,9 +1015,9 @@
                             placeholder="Lebar"
                             type="number"
                             :formatter="formatterVolume"
-                            @keydown="validateInputVolume($event)"
-                            @keypress="validateInputVolume($event)"
-                            @keyup="validateInputVolume($event)"
+                            @keydown="validateInputVolumeWidth($event)"
+                            @keypress="validateInputVolumeWidth($event)"
+                            @keyup="validateInputVolumeWidth($event)"
                             @input="calculateVolumeProduct"
                             @paste="handlePasteWidth"
                           />
@@ -1035,9 +1035,9 @@
                             placeholder="Tinggi"
                             type="number"
                             :formatter="formatterVolume"
-                            @keydown="validateInputVolume($event)"
-                            @keypress="validateInputVolume($event)"
-                            @keyup="validateInputVolume($event)"
+                            @keydown="validateInputVolumeHeight($event)"
+                            @keypress="validateInputVolumeHeight($event)"
+                            @keyup="validateInputVolumeHeight($event)"
                             @input="calculateVolumeProduct"
                             @paste="handlePasteHeight"
                           />
@@ -1422,14 +1422,6 @@ export default {
       this.stockPasteMode = false
     },
     formatPriceInput($event) {
-      const e = $event
-      const keyCode = ($event.keyCode ? $event.keyCode : $event.which)
-      if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
-        $event.preventDefault()
-      }
-      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101 || e.keyCode === 190) {
-        e.preventDefault()
-      }
       if (this.pricePasteMode) this.priceProduct = this.pricePaste
       this.pricePasteMode = false
     },
@@ -1477,7 +1469,46 @@ export default {
       if (this.weightPasteMode) this.weightProduct = this.weightPaste
       this.weightPasteMode = false
     },
-    validateInputVolume(e) {
+    validateInputPrice(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.priceProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.priceProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.weightPasteMode) this.weightProduct = this.weightPaste
+      this.weightPasteMode = false
+    },
+    validateInputStock(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.stockProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.stockProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.weightPasteMode) this.weightProduct = this.weightPaste
+      this.weightPasteMode = false
+    },
+    validateInputVolumeLength(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthPasteMode) this.lengthProduct = this.lengthPaste
+      this.lengthPasteMode = false
+    },
+    validateInputVolumeWidth(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
@@ -1487,10 +1518,11 @@ export default {
       if (this.widthProduct === '' && e.keyCode === 48) {
         e.preventDefault()
       }
-      if (this.lengthProduct === null && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.lengthProduct === '' && e.keyCode === 48) {
+      if (this.widthPasteMode) this.widthProduct = this.widthPaste
+      this.widthPasteMode = false
+    },
+    validateInputVolumeHeight(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
       if (this.heightProduct === null && e.keyCode === 48) {
@@ -1499,10 +1531,6 @@ export default {
       if (this.heightProduct === '' && e.keyCode === 48) {
         e.preventDefault()
       }
-      if (this.lengthPasteMode) this.lengthProduct = this.lengthPaste
-      this.lengthPasteMode = false
-      if (this.widthPasteMode) this.widthProduct = this.widthPaste
-      this.widthPasteMode = false
       if (this.heightPasteMode) this.heightProduct = this.heightPaste
       this.heightPasteMode = false
     },
