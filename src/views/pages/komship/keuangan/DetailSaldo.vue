@@ -588,9 +588,10 @@ export default {
       return ''
     },
     momentTime(date) {
+      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('HH:MM')
+        return moment(date).format('HH:mm')
       }
       return ''
     },
