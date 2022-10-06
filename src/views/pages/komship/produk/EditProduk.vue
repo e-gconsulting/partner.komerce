@@ -2314,7 +2314,16 @@ export default {
       || this.lengthProduct === ''
       || this.widthProduct === ''
       || this.heightProduct === ''
-      || this.productName === '') {
+      || this.productName === ''
+      || this.weightProduct === null
+      || this.lengthProduct === null
+      || this.widthProduct === null
+      || this.heightProduct === null
+      || this.productName === null
+      || this.priceProduct === null
+      || this.priceProduct === ''
+      || this.stockProduct === null
+      || this.stockProduct === '') {
         this.buttonIsSubmit = true
       } else {
         this.buttonIsSubmit = false

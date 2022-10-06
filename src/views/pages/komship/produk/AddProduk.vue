@@ -1918,23 +1918,39 @@ export default {
         })
         if (item.variant.type === 1) {
           item.variant.variantOptionItem.forEach(dataVariant => {
+            let price = null
+            if (dataVariant.price !== null) {
+              if (dataVariant.price.toString().includes('.')) {
+                price = dataVariant.price.split('.').join('')
+              } else {
+                price = dataVariant.price
+              }
+            }
             this.optionStore.push({
               val: dataVariant.variantOptionName,
               parent: 0,
               stock: this.variantInputItems.length === 1 ? dataVariant.stock : null,
-              price: this.variantInputItems.length === 1 ? dataVariant.price.split('.').join('') : null,
+              price: this.variantInputItems.length === 1 ? price : null,
               option: [],
             })
           })
         }
         if (item.variant.type === 2) {
           item.variant.variantOptionItem.forEach(dataVariant => {
+            let secondPrice = null
+            if (dataVariant.price !== null) {
+              if (dataVariant.price.toString().includes('.')) {
+                secondPrice = dataVariant.price.split('.').join('')
+              } else {
+                secondPrice = dataVariant.price
+              }
+            }
             this.optionStore.forEach((optionItem, optionIndex) => {
               this.optionStore[optionIndex].option.push({
                 val: dataVariant.variantOptionName,
                 parent: 0,
                 stock: this.variantInputItems.length === 2 ? dataVariant.stock : null,
-                price: this.variantInputItems.length === 2 ? dataVariant.price.split('.').join('') : null,
+                price: this.variantInputItems.length === 2 ? secondPrice : null,
                 option: [],
               })
             })
@@ -1942,13 +1958,21 @@ export default {
         }
         if (item.variant.type === 3) {
           item.variant.variantOptionItem.forEach(dataVariant => {
+            let thirdPrice = null
+            if (dataVariant.price !== null) {
+              if (dataVariant.price.toString().includes('.')) {
+                thirdPrice = dataVariant.price.split('.').join('')
+              } else {
+                thirdPrice = dataVariant.price
+              }
+            }
             this.optionStore.forEach((optionItem, optionIndex) => {
               this.optionStore[optionIndex].option.forEach((optionItemSecond, optionIndexSecond) => {
                 this.optionStore[optionIndex].option[optionIndexSecond].option.push({
                   val: dataVariant.variantOptionName,
                   parent: 0,
                   stock: this.variantInputItems.length === 3 ? dataVariant.stock : null,
-                  price: this.variantInputItems.length === 3 ? dataVariant.price.split('.').join('') : null,
+                  price: this.variantInputItems.length === 3 ? thirdPrice : null,
                   option: [],
                 })
               })
@@ -1956,6 +1980,15 @@ export default {
           })
         }
       })
+
+      let price = null
+      if (this.priceProduct !== null) {
+        if (this.priceProduct.toString().includes('.')) {
+          price = this.priceProduct.split('.').join('')
+        } else {
+          price = this.priceProduct
+        }
+      }
 
       const params = {
         product_name: this.productName,
@@ -1966,7 +1999,7 @@ export default {
         length: this.lengthProduct,
         width: this.widthProduct,
         height: this.heightProduct,
-        price: this.isVariantActive ? null : this.priceProduct.split('.').join(''),
+        price: this.isVariantActive ? null : price,
         stock: this.isVariantActive ? null : this.stockProduct,
       }
 
@@ -2086,7 +2119,16 @@ export default {
       || this.lengthProduct === ''
       || this.widthProduct === ''
       || this.heightProduct === ''
-      || this.productName === '') {
+      || this.productName === ''
+      || this.weightProduct === null
+      || this.lengthProduct === null
+      || this.widthProduct === null
+      || this.heightProduct === null
+      || this.productName === null
+      || this.priceProduct === null
+      || this.priceProduct === ''
+      || this.stockProduct === null
+      || this.stockProduct === '') {
         this.buttonIsSubmit = true
       } else {
         this.buttonIsSubmit = false
