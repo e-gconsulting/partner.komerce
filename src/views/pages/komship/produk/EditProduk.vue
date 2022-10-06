@@ -1067,7 +1067,7 @@
                     </div>
                     <div>
                       <span class="text-black">
-                        Berat yang dipakai adalah {{ Math.ceil(calculateVolumeProductItem) }} kg (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
+                        Berat yang dipakai adalah {{ calculateVolumeProductItem.toFixed(3).replace(/\./g, ',') }} kg (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
                       </span>
                     </div>
                   </div>
@@ -2187,7 +2187,7 @@ export default {
         sku: this.skuName,
         description: this.descriptionProduct,
         weight: this.weightProduct,
-        weight_pbv: Math.ceil(this.calculateVolumeProductItem),
+        weight_pbv: this.calculateVolumeProductItem.toFixed(3),
         length: this.lengthProduct,
         width: this.widthProduct,
         height: this.heightProduct,

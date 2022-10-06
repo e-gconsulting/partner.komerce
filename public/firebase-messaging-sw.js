@@ -21,6 +21,7 @@ try {
     const notificationOption = {
       body: payload.data.message,
       icon: payload.data.profile_image,
+      // actions: [{ action: 'google.com', title: 'Read Now' }],
     }
     // eslint-disable-next-line no-restricted-globals
     return self.registration.showNotification(payload.data.title, notificationOption)
