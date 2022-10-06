@@ -2116,29 +2116,53 @@ export default {
         })
       })
       this.variantItems.forEach((item, index) => {
+        let price = null
+        if (item.option_price !== null) {
+          if (item.option_price.toString().includes('.')) {
+            price = item.option_price.split('.').join('')
+          } else {
+            price = item.option_price
+          }
+        }
         this.optionStore.push({
           val: item.option_name,
           parent: 0,
           stock: this.variantInputItems.length === 1 ? item.variant_stock : null,
-          price: this.variantInputItems.length === 1 ? item.option_price.split('.').join('') : null,
+          price: this.variantInputItems.length === 1 ? price : null,
           option: [],
         })
         if (this.variantInputItems.length > 1) {
           item.options.forEach((optionItem, optionIndex) => {
+            let secondPrice = null
+            if (optionItem.option_price !== null) {
+              if (optionItem.option_price.toString().includes('.')) {
+                secondPrice = optionItem.option_price.split('.').join('')
+              } else {
+                secondPrice = optionItem.option_price
+              }
+            }
             this.optionStore[index].option.push({
               val: optionItem.option_name,
               parent: 0,
               stock: this.variantInputItems.length === 2 ? optionItem.variant_stock : null,
-              price: this.variantInputItems.length === 2 ? optionItem.option_price.split('.').join('') : null,
+              price: this.variantInputItems.length === 2 ? secondPrice : null,
               option: [],
             })
             if (this.variantInputItems.length > 2) {
               optionItem.options.forEach((secondOptionItem, secondIndexOption) => {
+                let thirdPrice = null
+                if (secondOptionItem.option_price !== null) {
+                  if (secondOptionItem.option_price.toString().includes('.')) {
+                    thirdPrice = secondOptionItem.option_price.split('.').join('')
+                  } else {
+                    thirdPrice = secondOptionItem.option_price
+                  }
+                }
                 this.optionStore[index].option[optionIndex].option.push({
                   val: secondOptionItem.option_name,
                   parent: 0,
                   stock: this.variantInputItems.length === 3 ? secondOptionItem.variant_stock : null,
-                  price: this.variantInputItems.length === 3 ? secondOptionItem.option_price.split('.').join('') : null,
+                  price: this.variantInputItems.length === 3 ? thirdPrice : null,
                   option: [],
                 })
               })
@@ -2215,6 +2239,19 @@ export default {
           this.buttonIsSubmit = false
           this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tab: 'semua' } })
         }
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failed',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        })
+        this.loadingSubmitDraft = false
+        this.loadingSubmitPublish = false
+        this.buttonIsSubmit = false
       })
     },
     goBack() {
