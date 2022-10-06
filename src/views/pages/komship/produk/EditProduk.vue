@@ -1765,6 +1765,8 @@ export default {
       if (this.isVariantActive) {
         this.isVariantActive = false
         this.variantInputItems = []
+        this.variantItems = []
+        this.variantFields = []
       } else {
         this.isVariantActive = true
         this.variantInputItems.push({
@@ -2174,6 +2176,12 @@ export default {
       this.buttonIsSubmit = true
       if (status === 0) this.loadingSubmitDraft = true
       if (status === 1) this.loadingSubmitPublish = true
+      let price = null
+      if (this.priceProduct.toString().includes('.')) {
+        price = this.priceProduct.split('.').join('')
+      } else {
+        price = this.priceProduct
+      }
       this.$http_komship.put(`/v1/product/update/${this.productId}`, {
         product_name: this.productName,
         sku: this.skuName,
@@ -2184,7 +2192,7 @@ export default {
         width: this.widthProduct,
         height: this.heightProduct,
         status,
-        price: this.isVariantActive ? null : this.priceProductsplit('.').join(''),
+        price: this.isVariantActive ? null : price,
         stock: this.isVariantActive ? null : this.stockProduct,
         variant_option: this.variantStore,
         option: this.optionStore,

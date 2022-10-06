@@ -1586,6 +1586,8 @@ export default {
       if (this.isVariantActive) {
         this.isVariantActive = false
         this.variantInputItems = []
+        this.variantItems = []
+        this.variantFields = []
       } else {
         this.isVariantActive = true
         this.variantInputItems.push({
