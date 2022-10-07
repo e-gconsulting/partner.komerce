@@ -1928,83 +1928,45 @@ export default {
       this.imageFile = event.target.files[0]
     },
     submit(status) {
+      console.log(this.variantItems)
+      console.log(this.variantInputItems)
       this.variantInputItems.forEach(item => {
         this.variantStore.push({
           val: item.variant.variantName,
         })
-        if (item.variant.type === 1) {
-          item.variant.variantOptionItem.forEach(dataVariant => {
-            let price = null
-            if (dataVariant.price !== null) {
-              if (dataVariant.price.toString().includes('.')) {
-                price = dataVariant.price.split('.').join('')
-              } else {
-                price = dataVariant.price
-              }
-            }
-            this.optionStore.push({
-              val: dataVariant.variantOptionName,
+      })
+
+      this.variantItems.forEach((item, index) => {
+        this.optionStore.push({
+          val: item.variant1.val,
+          parent: 0,
+          stock: this.variantInputItems.length === 1 ? item.variant1.stock : null,
+          price: this.variantInputItems.length === 1 ? item.variant1.price : null,
+          option: [],
+        })
+        if (this.variantInputItems.length > 1) {
+          item.variant1.option.forEach((optionItem, optionIndex) => {
+            this.optionStore[index].option.push({
+              val: optionItem.variant2.val,
               parent: 0,
-              stock: this.variantInputItems.length === 1 ? dataVariant.stock : null,
-              price: this.variantInputItems.length === 1 ? price : null,
+              stock: this.variantInputItems.length === 2 ? optionItem.variant2.stock : null,
+              price: this.variantInputItems.length === 2 ? optionItem.variant2.price : null,
               option: [],
             })
-          })
-        }
-        if (item.variant.type === 2) {
-          item.variant.variantOptionItem.forEach(dataVariant => {
-            let secondPrice = null
-            if (dataVariant.price !== null) {
-              if (dataVariant.price.toString().includes('.')) {
-                secondPrice = dataVariant.price.split('.').join('')
-              } else {
-                secondPrice = dataVariant.price
-              }
-            }
-            this.optionStore.forEach((optionItem, optionIndex) => {
-              this.optionStore[optionIndex].option.push({
-                val: dataVariant.variantOptionName,
-                parent: 0,
-                stock: this.variantInputItems.length === 2 ? dataVariant.stock : null,
-                price: this.variantInputItems.length === 2 ? secondPrice : null,
-                option: [],
-              })
-            })
-          })
-        }
-        if (item.variant.type === 3) {
-          item.variant.variantOptionItem.forEach(dataVariant => {
-            let thirdPrice = null
-            if (dataVariant.price !== null) {
-              if (dataVariant.price.toString().includes('.')) {
-                thirdPrice = dataVariant.price.split('.').join('')
-              } else {
-                thirdPrice = dataVariant.price
-              }
-            }
-            this.optionStore.forEach((optionItem, optionIndex) => {
-              this.optionStore[optionIndex].option.forEach((optionItemSecond, optionIndexSecond) => {
-                this.optionStore[optionIndex].option[optionIndexSecond].option.push({
-                  val: dataVariant.variantOptionName,
+            if (this.variantInputItems.length > 2) {
+              optionItem.variant2.option.forEach((secondOptionItem, secondIndexOption) => {
+                this.optionStore[index].option[optionIndex].option.push({
+                  val: secondOptionItem.variant3.val,
                   parent: 0,
-                  stock: this.variantInputItems.length === 3 ? dataVariant.stock : null,
-                  price: this.variantInputItems.length === 3 ? thirdPrice : null,
+                  stock: this.variantInputItems.length === 3 ? secondOptionItem.variant3.stock : null,
+                  price: this.variantInputItems.length === 3 ? secondOptionItem.variant3.price : null,
                   option: [],
                 })
               })
-            })
+            }
           })
         }
       })
-
-      let price = null
-      if (this.priceProduct !== null) {
-        if (this.priceProduct.toString().includes('.')) {
-          price = this.priceProduct.split('.').join('')
-        } else {
-          price = this.priceProduct
-        }
-      }
 
       const params = {
         product_name: this.productName,
@@ -2015,7 +1977,7 @@ export default {
         length: this.lengthProduct,
         width: this.widthProduct,
         height: this.heightProduct,
-        price: this.isVariantActive ? null : price,
+        price: this.isVariantActive ? null : this.priceProduct,
         stock: this.isVariantActive ? null : this.stockProduct,
       }
 
