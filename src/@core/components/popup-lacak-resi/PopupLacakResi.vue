@@ -161,6 +161,8 @@ export default {
           this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
         } else if (items.status === 'Retur') {
           this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
+        } else if (items.status === 'Delivery') {
+          this.listAwb += `<img src="${require('@/assets/images/icons/icon-log-pengantar.svg')}">`
         }
         this.listAwb += '</div>'
         this.listAwb += '<div style="font-size: 16px;display: inline-block;">'

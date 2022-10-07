@@ -2285,53 +2285,29 @@ export default {
         })
       })
       this.variantItems.forEach((item, index) => {
-        let price = null
-        if (item.option_price !== null) {
-          if (item.option_price.toString().includes('.')) {
-            price = item.option_price.split('.').join('')
-          } else {
-            price = item.option_price
-          }
-        }
         this.optionStore.push({
           val: item.option_name,
           parent: 0,
           stock: this.variantInputItems.length === 1 ? item.variant_stock : null,
-          price: this.variantInputItems.length === 1 ? price : null,
+          price: this.variantInputItems.length === 1 ? item.option_price : null,
           option: [],
         })
         if (this.variantInputItems.length > 1) {
           item.options.forEach((optionItem, optionIndex) => {
-            let secondPrice = null
-            if (optionItem.option_price !== null) {
-              if (optionItem.option_price.toString().includes('.')) {
-                secondPrice = optionItem.option_price.split('.').join('')
-              } else {
-                secondPrice = optionItem.option_price
-              }
-            }
             this.optionStore[index].option.push({
               val: optionItem.option_name,
               parent: 0,
               stock: this.variantInputItems.length === 2 ? optionItem.variant_stock : null,
-              price: this.variantInputItems.length === 2 ? secondPrice : null,
+              price: this.variantInputItems.length === 2 ? optionItem.option_price : null,
               option: [],
             })
             if (this.variantInputItems.length > 2) {
               optionItem.options.forEach((secondOptionItem, secondIndexOption) => {
-                let thirdPrice = null
-                if (secondOptionItem.option_price !== null) {
-                  if (secondOptionItem.option_price.toString().includes('.')) {
-                    thirdPrice = secondOptionItem.option_price.split('.').join('')
-                  } else {
-                    thirdPrice = secondOptionItem.option_price
-                  }
-                }
                 this.optionStore[index].option[optionIndex].option.push({
                   val: secondOptionItem.option_name,
                   parent: 0,
                   stock: this.variantInputItems.length === 3 ? secondOptionItem.variant_stock : null,
-                  price: this.variantInputItems.length === 3 ? thirdPrice : null,
+                  price: this.variantInputItems.length === 3 ? secondOptionItem.option_price : null,
                   option: [],
                 })
               })
@@ -2343,12 +2319,6 @@ export default {
       this.buttonIsSubmit = true
       if (status === 0) this.loadingSubmitDraft = true
       if (status === 1) this.loadingSubmitPublish = true
-      let price = null
-      if (this.priceProduct.toString().includes('.')) {
-        price = this.priceProduct.split('.').join('')
-      } else {
-        price = this.priceProduct
-      }
       this.$http_komship.put(`/v1/product/update/${this.productId}`, {
         product_name: this.productName,
         sku: this.skuName,
@@ -2359,7 +2329,7 @@ export default {
         width: this.widthProduct,
         height: this.heightProduct,
         status,
-        price: this.isVariantActive ? null : price,
+        price: this.isVariantActive ? null : this.priceProduct,
         stock: this.isVariantActive ? null : this.stockProduct,
         variant_option: this.variantStore,
         option: this.optionStore,
