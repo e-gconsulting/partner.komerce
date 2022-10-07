@@ -2473,21 +2473,38 @@ export default {
       return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
     validateSubmitButton() {
-      if (!this.productNameAvailable
-      || this.messageErrorIsActive
-      || !this.skuNameAvailable
-      || this.messageErrorIsActive
-      || this.weightProduct === ''
-      || this.productName === ''
-      || this.weightProduct === null
-      || this.productName === null
-      || this.priceProduct === null
-      || this.priceProduct === ''
-      || this.stockProduct === null
-      || this.stockProduct === '') {
-        this.buttonIsSubmit = true
-      } else {
-        this.buttonIsSubmit = false
+      if (this.isVariantActive === false) {
+        if (!this.productNameAvailable
+        || this.messageErrorIsActive
+        || !this.skuNameAvailable
+        || this.messageErrorIsActive
+        || this.weightProduct === ''
+        || this.productName === ''
+        || this.weightProduct === null
+        || this.productName === null
+        || this.priceProduct === null
+        || this.priceProduct === ''
+        || this.stockProduct === null
+        || this.stockProduct === '') {
+          this.buttonIsSubmit = true
+        } else {
+          this.buttonIsSubmit = false
+        }
+      }
+
+      if (this.isVariantActive) {
+        if (!this.productNameAvailable
+        || this.messageErrorIsActive
+        || !this.skuNameAvailable
+        || this.messageErrorIsActive
+        || this.weightProduct === ''
+        || this.productName === ''
+        || this.weightProduct === null
+        || this.productName === null) {
+          this.buttonIsSubmit = true
+        } else {
+          this.buttonIsSubmit = false
+        }
       }
       return this.buttonIsSubmit
     },
