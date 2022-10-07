@@ -481,11 +481,11 @@
                                 id="all-price-variant"
                                 v-model="setPriceAll"
                                 class="wrapper__form__input__variant"
-                                placeholder="Contoh : 85.000"
+                                placeholder="Contoh : 85000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, 'all-price-variant')"
-                                @blur="formatCurrency(true, 'all-price-variant')"
-                                @paste="handlePastePriceAll"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, setPriceAll)"
+                                @paste="handlePastePriceVariant"
                               />
                             </b-input-group>
                           </div>
@@ -505,9 +505,9 @@
                               class="wrapper__form__input__variant"
                               placeholder="Contoh : 1000"
                               :formatter="formatPriceVariant"
-                              @keyup="formatCurrency(false, 'all-stock-variant')"
-                              @blur="formatCurrency(true, 'all-stock-variant')"
-                              @paste="handlePasteStockAll"
+                              @keyup="formatPriceInput($event)"
+                              @keypress="validateInputPriceVariant($event, setStockAll)"
+                              @paste="handlePastePriceVariant"
                             />
                           </b-input-group>
                         </b-col>
@@ -645,10 +645,11 @@
                                     :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
                                     v-model="itemVariant.variant_stock"
                                     class="wrapper__form__input__variant mb-1"
-                                    placeholder="Contoh : 85.000"
+                                    placeholder="Contoh : 1000"
                                     :formatter="formatPriceVariant"
-                                    @keyup="formatCurrency(false, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
-                                    @blur="formatCurrency(true, `stock-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.variant_stock"
+                                    @keyup="formatPriceInput($event)"
+                                    @keypress="validateInputPriceVariant($event, itemVariant.variant_stock)"
+                                    @paste="handlePastePriceVariant"
                                   />
                                 </div>
                               </b-col>
@@ -664,10 +665,11 @@
                                   :id="`stock-variant-${index + data.index}-${data.index+1}`"
                                   v-model="items.variant_stock"
                                   class="wrapper__form__input__variant mb-1"
-                                  placeholder="Contoh : 85.000"
+                                  placeholder="Contoh : 1000"
                                   :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
-                                  @blur="formatCurrency(true, `stock-variant-${index + data.index}-${data.index+1}`), items.variant_stock"
+                                  @keyup="formatPriceInput($event)"
+                                  @keypress="validateInputPriceVariant($event, items.variant_stock)"
+                                  @paste="handlePastePriceVariant"
                                 />
                               </b-col>
                             </div>
@@ -677,10 +679,11 @@
                                 id="stock-variant"
                                 v-model="data.item.variant_stock"
                                 class="wrapper__form__input__variant mb-1"
-                                placeholder="Contoh : 85.000"
+                                placeholder="Contoh : 85000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, 'stock-variant'), data.item.variant_stock"
-                                @blur="formatCurrency(true, 'stock-variant'), data.item.variant_stock"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, data.item.variant_stock)"
+                                @paste="handlePastePriceVariant"
                               />
                             </div>
                           </b-row>
@@ -709,10 +712,11 @@
                                     :id="`price-variant-${indexVariant + data.index}-${data.index+1}`"
                                     v-model="itemVariant.option_price"
                                     class="wrapper__form__input__variant"
-                                    placeholder="Contoh : 85.000"
+                                    placeholder="Contoh : 85000"
                                     :formatter="formatPriceVariant"
-                                    @keyup="formatCurrency(false, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
-                                    @blur="formatCurrency(true, `price-variant-${indexVariant + data.index}-${data.index+1}`), itemVariant.option_price"
+                                    @keyup="formatPriceInput($event)"
+                                    @keypress="validateInputPriceVariant($event, itemVariant.option_price)"
+                                    @paste="handlePastePriceVariant"
                                   />
                                 </b-input-group>
                               </div>
@@ -737,10 +741,11 @@
                                   :id="`price-variant-${index + data.index}-${data.index+1}`"
                                   v-model="items.option_price"
                                   class="wrapper__form__input__variant"
-                                  placeholder="Contoh : 85.000"
+                                  placeholder="Contoh : 85000"
                                   :formatter="formatPriceVariant"
-                                  @keyup="formatCurrency(false, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
-                                  @blur="formatCurrency(true, `price-variant-${index + data.index}-${data.index+1}`), items.option_price"
+                                  @keyup="formatPriceInput($event)"
+                                  @keypress="validateInputPriceVariant($event, items.option_price)"
+                                  @paste="handlePastePriceVariant"
                                 />
                               </b-input-group>
                             </b-col>
@@ -759,10 +764,11 @@
                                 id="price-variant"
                                 v-model="data.item.option_price"
                                 class="wrapper__form__input__variant"
-                                placeholder="Contoh : 85.000"
+                                placeholder="Contoh : 85000"
                                 :formatter="formatPriceVariant"
-                                @keyup="formatCurrency(false, 'price-variant'),data.item.option_price"
-                                @blur="formatCurrency(true, 'price-variant'), data.item.option_price"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, data.item.option_price)"
+                                @paste="handlePastePriceVariant"
                               />
                             </b-input-group>
                           </div>
@@ -1067,7 +1073,7 @@
                     </div>
                     <div>
                       <span class="text-black">
-                        Berat yang dipakai adalah {{ calculateVolumeProductItem.toFixed(3).replace(/\./g, ',') }} kg (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
+                        Berat yang dipakai adalah {{ calculateVolumeProductItem.toFixed(3) * 1000 }} gram (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
                       </span>
                     </div>
                   </div>
@@ -1619,7 +1625,7 @@ export default {
       return String(e).substring(0, 300)
     },
     formatPriceVariant(e) {
-      return String(e).substring(0, 9)
+      return String(e).substring(0, 9).replace(/[^\d]/g, '')
     },
     formatPriceNotVariant(e) {
       return String(e).substring(0, 7)
@@ -1660,6 +1666,17 @@ export default {
       }
       if (this.weightPasteMode) this.weightProduct = this.weightPaste
       this.weightPasteMode = false
+    },
+    validateInputPriceVariant(e, data) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (data === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (data === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
     },
     validateInputStock(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
@@ -1882,27 +1899,186 @@ export default {
       }
     },
     applyVariant() {
-      this.variantFields = []
-      this.variantInputItems.forEach(item => {
-        if (item.variant.type === 1) {
-          this.variantFields.push({
-            key: 'variant1',
-            label: item.variant.variantName,
-            tdClass: 'firstVariantItemsClass',
-            trClass: 'firstVariantFieldsClass',
-            tdStyle: {
-              backgroundColor: 'white',
-              borderBottom: '0px',
-              verticalAlign: 'text-top',
-            },
-            thStyle: {
-              backgroundColor: 'white',
-              borderBottom: '0px',
-            },
-          })
-          item.variant.variantOptionItem.forEach(parentItem => {
-            const findVariant = this.variantItems.find(variantItem => variantItem.option_name === parentItem.variantOptionName)
-            if (findVariant === undefined) {
+      if (this.variantItems.length > 0) {
+        this.variantFields = []
+        console.log(this.variantInputItems)
+        this.variantInputItems.forEach(item => {
+          if (item.variant.type === 1) {
+            this.variantFields.push({
+              key: 'variant1',
+              label: item.variant.variantName,
+              tdClass: 'firstVariantItemsClass',
+              trClass: 'firstVariantFieldsClass',
+              tdStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+                verticalAlign: 'text-top',
+              },
+              thStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+              },
+            })
+            item.variant.variantOptionItem.forEach(parentItem => {
+              const findVariant = this.variantItems.find(variantItem => variantItem.option_name === parentItem.variantOptionName)
+              if (findVariant === undefined) {
+                this.variantItems.push({
+                  option_name: parentItem.variantOptionName,
+                  option_parent: parentItem.parent !== null ? parentItem.option_parent : 0,
+                  option_price: parentItem.newVariant || item.variant.newParent ? null : parentItem.price,
+                  variant_stock: parentItem.newVariant || item.variant.newParent ? null : parentItem.stock,
+                  options: [],
+                })
+              }
+            })
+          }
+        })
+        this.variantInputItems.forEach(item => {
+          if (item.variant.type === 2) {
+            if (this.variantInputItems.length === 2) {
+              this.variantFields.push({
+                key: 'variant2',
+                label: item.variant.variantName,
+                tdClass: 'secondVariantItemsClass',
+                tdStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                  verticalAlign: 'text-top',
+                },
+                thStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                },
+              })
+              item.variant.variantOptionItem.forEach(secondVariantItem => {
+                this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
+                  const findVariant = this.variantItems[indexSecondVariant].options.find(variantItem => variantItem.option_name === secondVariantItem.variantOptionName)
+                  if (findVariant === undefined) {
+                    this.variantItems[indexSecondVariant].options.push({
+                      option_name: secondVariantItem.variantOptionName,
+                      option_parent: secondVariantItem.parent !== null ? secondVariantItem.option_parent : 0,
+                      option_price: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.price,
+                      variant_stock: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.stock,
+                      options: [],
+                    })
+                  }
+                })
+              })
+            } else {
+              this.variantFields.push({
+                key: 'variant2',
+                label: item.variant.variantName,
+                tdClass: 'secondVariantItemsClass',
+                tdStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                  verticalAlign: 'text-top',
+                },
+                thStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                },
+              })
+              item.variant.variantOptionItem.forEach(secondVariantItem => {
+                this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
+                  const findVariant = this.variantItems[indexSecondVariant].options.find(variantItem => variantItem.option_name === secondVariantItem.variantOptionName)
+                  if (findVariant === undefined) {
+                    this.variantItems[indexSecondVariant].options.push({
+                      option_name: secondVariantItem.variantOptionName,
+                      option_parent: secondVariantItem.parent !== null ? secondVariantItem.option_parent : 0,
+                      option_price: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.price,
+                      variant_stock: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.stock,
+                      options: [],
+                    })
+                  }
+                })
+              })
+            }
+          }
+        })
+        this.variantInputItems.forEach(item => {
+          if (item.variant.type === 3) {
+            this.variantFields.push({
+              key: 'variant3',
+              label: item.variant.variantName,
+              tdClass: 'bg-white',
+              tdStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+                verticalAlign: 'text-top',
+              },
+              thStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+              },
+            })
+            item.variant.variantOptionItem.forEach(thirdVariant => {
+              this.variantItems.forEach((dataSecondVariant, index) => {
+                this.variantItems[index].options.forEach((dataThirdVariant, indexThirdVariant) => {
+                  const findVariant = this.variantItems[index].options[indexThirdVariant].options.find(variantItem => variantItem.option_name === thirdVariant.variantOptionName)
+                  if (findVariant === undefined) {
+                    this.variantItems[index].options[indexThirdVariant].options.push({
+                      option_name: thirdVariant.variantOptionName,
+                      option_parent: thirdVariant.parent !== null ? thirdVariant.option_parent : 0,
+                      option_price: thirdVariant.newVariant || item.variant.newParent || item.variant.newSecondParent ? null : thirdVariant.price,
+                      variant_stock: thirdVariant.newVariant || item.variant.newParent || item.variant.newSecondParent ? null : thirdVariant.stock,
+                      options: [],
+                    })
+                  }
+                })
+              })
+            })
+          }
+        })
+        this.variantFields.push({
+          key: 'stock',
+          label: 'Stok',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        })
+        this.variantFields.push({
+          key: 'price',
+          label: 'Harga',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        })
+      } else {
+        this.variantFields = []
+        console.log(this.variantInputItems)
+        this.variantInputItems.forEach(item => {
+          if (item.variant.type === 1) {
+            this.variantFields.push({
+              key: 'variant1',
+              label: item.variant.variantName,
+              tdClass: 'firstVariantItemsClass',
+              trClass: 'firstVariantFieldsClass',
+              tdStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+                verticalAlign: 'text-top',
+              },
+              thStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+              },
+            })
+            item.variant.variantOptionItem.forEach(parentItem => {
               this.variantItems.push({
                 option_name: parentItem.variantOptionName,
                 option_parent: parentItem.parent !== null ? parentItem.option_parent : 0,
@@ -1910,94 +2086,85 @@ export default {
                 variant_stock: parentItem.newVariant || item.variant.newParent ? null : parentItem.stock,
                 options: [],
               })
-            }
-          })
-        }
-      })
-      this.variantInputItems.forEach(item => {
-        if (item.variant.type === 2) {
-          if (this.variantInputItems.length === 2) {
-            this.variantFields.push({
-              key: 'variant2',
-              label: item.variant.variantName,
-              tdClass: 'secondVariantItemsClass',
-              tdStyle: {
-                backgroundColor: 'white',
-                borderBottom: '0px',
-                verticalAlign: 'text-top',
-              },
-              thStyle: {
-                backgroundColor: 'white',
-                borderBottom: '0px',
-              },
-            })
-            item.variant.variantOptionItem.forEach(secondVariantItem => {
-              this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
-                const findVariant = this.variantItems[indexSecondVariant].options.find(variantItem => variantItem.option_name === secondVariantItem.variantOptionName)
-                if (findVariant === undefined) {
-                  this.variantItems[indexSecondVariant].options.push({
-                    option_name: secondVariantItem.variantOptionName,
-                    option_parent: secondVariantItem.parent !== null ? secondVariantItem.option_parent : 0,
-                    option_price: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.price,
-                    variant_stock: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.stock,
-                    options: [],
-                  })
-                }
-              })
-            })
-          } else {
-            this.variantFields.push({
-              key: 'variant2',
-              label: item.variant.variantName,
-              tdClass: 'secondVariantItemsClass',
-              tdStyle: {
-                backgroundColor: 'white',
-                borderBottom: '0px',
-                verticalAlign: 'text-top',
-              },
-              thStyle: {
-                backgroundColor: 'white',
-                borderBottom: '0px',
-              },
-            })
-            item.variant.variantOptionItem.forEach(secondVariantItem => {
-              this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
-                const findVariant = this.variantItems[indexSecondVariant].options.find(variantItem => variantItem.option_name === secondVariantItem.variantOptionName)
-                if (findVariant === undefined) {
-                  this.variantItems[indexSecondVariant].options.push({
-                    option_name: secondVariantItem.variantOptionName,
-                    option_parent: secondVariantItem.parent !== null ? secondVariantItem.option_parent : 0,
-                    option_price: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.price,
-                    variant_stock: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.stock,
-                    options: [],
-                  })
-                }
-              })
             })
           }
-        }
-      })
-      this.variantInputItems.forEach(item => {
-        if (item.variant.type === 3) {
-          this.variantFields.push({
-            key: 'variant3',
-            label: item.variant.variantName,
-            tdClass: 'bg-white',
-            tdStyle: {
-              backgroundColor: 'white',
-              borderBottom: '0px',
-              verticalAlign: 'text-top',
-            },
-            thStyle: {
-              backgroundColor: 'white',
-              borderBottom: '0px',
-            },
-          })
-          item.variant.variantOptionItem.forEach(thirdVariant => {
-            this.variantItems.forEach((dataSecondVariant, index) => {
-              this.variantItems[index].options.forEach((dataThirdVariant, indexThirdVariant) => {
-                const findVariant = this.variantItems[index].options[indexThirdVariant].options.find(variantItem => variantItem.option_name === thirdVariant.variantOptionName)
-                if (findVariant === undefined) {
+        })
+        this.variantInputItems.forEach(item => {
+          if (item.variant.type === 2) {
+            if (this.variantInputItems.length === 2) {
+              this.variantFields.push({
+                key: 'variant2',
+                label: item.variant.variantName,
+                tdClass: 'secondVariantItemsClass',
+                tdStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                  verticalAlign: 'text-top',
+                },
+                thStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                },
+              })
+              item.variant.variantOptionItem.forEach(secondVariantItem => {
+                this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
+                  this.variantItems[indexSecondVariant].options.push({
+                    option_name: secondVariantItem.variantOptionName,
+                    option_parent: secondVariantItem.parent !== null ? secondVariantItem.option_parent : 0,
+                    option_price: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.price,
+                    variant_stock: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.stock,
+                    options: [],
+                  })
+                })
+              })
+            } else {
+              this.variantFields.push({
+                key: 'variant2',
+                label: item.variant.variantName,
+                tdClass: 'secondVariantItemsClass',
+                tdStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                  verticalAlign: 'text-top',
+                },
+                thStyle: {
+                  backgroundColor: 'white',
+                  borderBottom: '0px',
+                },
+              })
+              item.variant.variantOptionItem.forEach(secondVariantItem => {
+                this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
+                  this.variantItems[indexSecondVariant].options.push({
+                    option_name: secondVariantItem.variantOptionName,
+                    option_parent: secondVariantItem.parent !== null ? secondVariantItem.option_parent : 0,
+                    option_price: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.price,
+                    variant_stock: secondVariantItem.newVariant || item.variant.newParent ? null : secondVariantItem.stock,
+                    options: [],
+                  })
+                })
+              })
+            }
+          }
+        })
+        this.variantInputItems.forEach(item => {
+          if (item.variant.type === 3) {
+            this.variantFields.push({
+              key: 'variant3',
+              label: item.variant.variantName,
+              tdClass: 'bg-white',
+              tdStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+                verticalAlign: 'text-top',
+              },
+              thStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+              },
+            })
+            item.variant.variantOptionItem.forEach(thirdVariant => {
+              this.variantItems.forEach((dataSecondVariant, index) => {
+                this.variantItems[index].options.forEach((dataThirdVariant, indexThirdVariant) => {
                   this.variantItems[index].options[indexThirdVariant].options.push({
                     option_name: thirdVariant.variantOptionName,
                     option_parent: thirdVariant.parent !== null ? thirdVariant.option_parent : 0,
@@ -2005,40 +2172,40 @@ export default {
                     variant_stock: thirdVariant.newVariant || item.variant.newParent || item.variant.newSecondParent ? null : thirdVariant.stock,
                     options: [],
                   })
-                }
+                })
               })
             })
-          })
-        }
-      })
-      this.variantFields.push({
-        key: 'stock',
-        label: 'Stok',
-        tdClass: 'bg-white',
-        tdStyle: {
-          backgroundColor: 'white',
-          borderBottom: '0px',
-          verticalAlign: 'text-top',
-        },
-        thStyle: {
-          backgroundColor: 'white',
-          borderBottom: '0px',
-        },
-      })
-      this.variantFields.push({
-        key: 'price',
-        label: 'Harga',
-        tdClass: 'bg-white',
-        tdStyle: {
-          backgroundColor: 'white',
-          borderBottom: '0px',
-          verticalAlign: 'text-top',
-        },
-        thStyle: {
-          backgroundColor: 'white',
-          borderBottom: '0px',
-        },
-      })
+          }
+        })
+        this.variantFields.push({
+          key: 'stock',
+          label: 'Stok',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        })
+        this.variantFields.push({
+          key: 'price',
+          label: 'Harga',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        })
+      }
     },
 
     validateVariantField(item, index) {
@@ -2187,7 +2354,7 @@ export default {
         sku: this.skuName,
         description: this.descriptionProduct,
         weight: this.weightProduct,
-        weight_pbv: this.calculateVolumeProductItem.toFixed(3),
+        weight_pbv: this.calculateVolumeProductItem.toFixed(3) * 1000,
         length: this.lengthProduct,
         width: this.widthProduct,
         height: this.heightProduct,
@@ -2328,6 +2495,9 @@ export default {
       this.pricePasteMode = true
       this.pricePaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
       if (this.pricePaste.charAt(0) === '0') this.pricePaste = this.pricePaste.slice(1, this.pricePaste.length)
+    },
+    handlePastePriceVariant(e, data) {
+      return e.target.value.replace(/[^\d]/g, '')
     },
     handlePasteStock(e) {
       this.stockPasteMode = true
