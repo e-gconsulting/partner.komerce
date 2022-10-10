@@ -140,6 +140,7 @@ export default {
           let { data } = response.data
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
+          const data = data.is_kompack.toUpperCase()
 
           if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
@@ -189,10 +190,10 @@ export default {
                 { action: 'manage', subject: 'Performa' },
 
                 // Kompack
-                { action: 'manage', subject: 'Kompack-Admin' },
-                { action: 'manage', subject: 'gudang'},
-                { action: 'manage', subject: 'ajukan-inbound'},
-                { action: 'manage', subject: 'riwayat-inbound'},
+              { action: 'manage', subject: 'Kompack-Admin' },
+              { action: 'manage', subject: 'gudang'},
+              { action: 'manage', subject: 'ajukan-inbound'},
+              { action: 'manage', subject: 'riwayat-inbound'},
               ]
               break
             case 'MANAGEMENT':
@@ -263,9 +264,46 @@ export default {
                 { action: 'manage', subject: 'Dashboard Komship' },
               ]
               break
+              case 'Is_Kompack=1';
+              ability =[
+                  { action: 'manage', subject: 'Kompack-Admin' },
+                  { action: 'manage', subject: 'gudang'},
+                  { action: 'manage', subject: 'ajukan-inbound'},
+                  { action: 'manage', subject: 'riwayat-inbound'},
+                  { action: 'manage', subject: 'Komship TalentPool' },
+                { action: 'manage', subject: 'Komship Wishlist' },
+                { action: 'manage', subject: 'PartnerProfile' },
+                { action: 'read', subject: 'Dashboard Komship' },
+                { action: 'manage', subject: 'Customer' },
+                { action: 'manage', subject: 'Produk' },
+                { action: 'manage', subject: 'Tambah Produk' },
+                { action: 'manage', subject: 'Data Produk' },
+                { action: 'manage', subject: 'Order' },
+                { action: 'manage', subject: 'Tambah Order' },
+                { action: 'manage', subject: 'Data Order' },
+                { action: 'manage', subject: 'Pickup' },
+                { action: 'manage', subject: 'Ajukan Pickup' },
+                { action: 'manage', subject: 'History Pickup' },
+                { action: 'manage', subject: 'Keuangan' },
+                { action: 'manage', subject: 'Penghasilan' },
+                { action: 'manage', subject: 'Saldo' },
+                { action: 'manage', subject: 'Setting Komship' },
+                { action: 'manage', subject: 'Setting Profile' },
+                { action: 'manage', subject: 'Setting Access Account' },
+                { action: 'manage', subject: 'Setting Pickup Address' },
+                { action: 'manage', subject: 'Setting Rekening Bank' },
+                { action: 'manage', subject: 'Setting PIN' },
+                { action: 'manage', subject: 'Setting Ekspedisi' },
+                { action: 'manage', subject: 'Hiring' },
+                { action: 'manage', subject: 'Fitur Pendukung' },
+              ]
             default:
               break
+              case 'is_kompack=0';
+              ability:[
+              ]
           }
+          //======================== Log Is Kompack ===========================
 
           if (role === 'PARTNER') {
             data = await this.getPartnerProfile(this.userId)
