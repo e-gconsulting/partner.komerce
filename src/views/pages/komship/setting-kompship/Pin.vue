@@ -622,7 +622,7 @@
         <b-button
           variant="primary"
           :disabled="matchesPin !== dataPin || dataPin === null"
-          @click="tes()"
+          @click="submitChangeNewPin"
         >
           Ganti PIN
         </b-button>
@@ -797,7 +797,7 @@
         <b-button
           variant="primary"
           :disabled="matchesPin !== dataPin || dataPin === null"
-          @click="tes()"
+          @click="submitChangeNewPin"
         >
           Ganti PIN
         </b-button>
@@ -861,6 +861,8 @@ export default {
       visibilityOTP: 'password',
 
       emailUser: '',
+
+      pinFromOtp: '',
     }
   },
   mounted() {
@@ -930,6 +932,25 @@ export default {
     tes() {
       this.$refs['forgot-confirm-new-pin-email'].hide()
       this.$refs['modal-success-changed-pin'].show()
+    },
+    submitChangeNewPin() {
+      this.$http_komship.put('/v1/pin/update', {
+        pin: this.dataPin,
+      }).then(response => {
+        console.log(response)
+        this.$refs['forgot-confirm-new-pin-email'].hide()
+        this.$refs['modal-success-changed-pin'].show()
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+      })
     },
     confirmCreatePin() {
       this.loadingSubmit = true
@@ -1126,8 +1147,35 @@ export default {
       this.$refs['forgot-confirm-new-pin'].show()
     },
     handleChangePinByEmail() {
-      this.$refs['modal-forgot-email-pin'].hide()
-      this.$refs['forgot-create-new-pin-email'].show()
+      this.$http_komship.post('/v1/auth-otp', {
+        otp: this.dataPin,
+      }).then(response => {
+        const { data } = response.data
+        if (data.is_match) {
+          this.$refs['forgot-create-new-pin-email'].show()
+          this.$refs['modal-forgot-email-pin'].hide()
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal verification OTP, masukan OTP yang sudah dikirimkan ke email!',
+              variant: 'danger',
+            },
+          }, 2000)
+        }
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+      })
     },
     showPopupForgotPin() {
       this.$refs['modal-forgot-pin'].show()
