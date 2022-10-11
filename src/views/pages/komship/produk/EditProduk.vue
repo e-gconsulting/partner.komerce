@@ -284,6 +284,7 @@
                               id="variant-name"
                               v-model="item.variant.variantName"
                               placeholder="Contoh: Warna, Ukuran, Bahan"
+                              :formatter="formatterVariantNameProduct"
                               class="wrapper__form__input__variant"
                               :style="item.variant.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
                               @input="validateVariantField(item, index)"
@@ -293,7 +294,7 @@
                                 class="btn-icon"
                                 size="sm"
                                 variant="flat-dark"
-                                @click="deleteVariant(item)"
+                                @click="handleDeleteVariant(item)"
                               >
                                 <b-img
                                   src="@/assets/images/icons/trash.svg"
@@ -306,6 +307,10 @@
                             v-if="item.variant.isValid === false"
                             class="text-primary"
                           >*Wajib diisi ya</small>
+                          <small
+                            v-if="item.variant.isSame"
+                            class="text-primary"
+                          >*Nama varian sudah dipakai, yuk pakai nama lain.</small>
                         </b-form-group>
                       </b-col>
                       <b-col
@@ -340,6 +345,7 @@
                                   v-model="variantOption.variantOptionName"
                                   placeholder="Contoh: Merah, XL, Cotton"
                                   class="wrapper__form__input__variant"
+                                  :formatter="formatterVariantNameProduct"
                                   :style="variantOption.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
                                   @input="validateVariantOptionField(index, indexVariantOption, variantOption)"
                                 />
@@ -369,6 +375,10 @@
                               v-if="variantOption.isValid === false"
                               class="text-primary"
                             >*Wajib diisi ya</small>
+                            <small
+                              v-if="variantOption.isSame"
+                              class="text-primary"
+                            >*Nama tipe varian sudah dipakai, yuk pakai nama lain.</small>
                           </b-form-group>
                         </div>
                       </b-col>
@@ -381,6 +391,7 @@
                             variant="flat-dark"
                             class="text-dark btn-icon ml-1"
                             style="border: 1px solid #E2E2E2;"
+                            :disabled="addVariantOptionIsActive"
                             @click="addVariantOption(item)"
                           >
                             <feather-icon
@@ -413,7 +424,9 @@
                           v-if="variantInputItems.length < 3"
                           variant="outline-primary"
                           style="height: 45px;"
+                          :class="addVariantIsActive ? 'cursor-not-allowed' : ''"
                           block
+                          :disabled="addVariantIsActive"
                           @click="addVariant"
                         >
                           <feather-icon
@@ -649,6 +662,7 @@
                                     :formatter="formatPriceVariant"
                                     @keyup="formatPriceInput($event)"
                                     @keypress="validateInputPriceVariant($event, itemVariant.variant_stock)"
+                                    @input="checkValidationSubmit(itemVariant)"
                                     @paste="handlePastePriceVariant"
                                   />
                                 </div>
@@ -669,6 +683,7 @@
                                   :formatter="formatPriceVariant"
                                   @keyup="formatPriceInput($event)"
                                   @keypress="validateInputPriceVariant($event, items.variant_stock)"
+                                  @input="checkValidationSubmit(items)"
                                   @paste="handlePastePriceVariant"
                                 />
                               </b-col>
@@ -683,6 +698,7 @@
                                 :formatter="formatPriceVariant"
                                 @keyup="formatPriceInput($event)"
                                 @keypress="validateInputPriceVariant($event, data.item.variant_stock)"
+                                @input="checkValidationSubmit(data.item)"
                                 @paste="handlePastePriceVariant"
                               />
                             </div>
@@ -716,6 +732,7 @@
                                     :formatter="formatPriceVariant"
                                     @keyup="formatPriceInput($event)"
                                     @keypress="validateInputPriceVariant($event, itemVariant.option_price)"
+                                    @input="checkValidationSubmit(itemVariant)"
                                     @paste="handlePastePriceVariant"
                                   />
                                 </b-input-group>
@@ -745,6 +762,7 @@
                                   :formatter="formatPriceVariant"
                                   @keyup="formatPriceInput($event)"
                                   @keypress="validateInputPriceVariant($event, items.option_price)"
+                                  @input="checkValidationSubmit(items)"
                                   @paste="handlePastePriceVariant"
                                 />
                               </b-input-group>
@@ -768,6 +786,7 @@
                                 :formatter="formatPriceVariant"
                                 @keyup="formatPriceInput($event)"
                                 @keypress="validateInputPriceVariant($event, data.item.option_price)"
+                                @input="checkValidationSubmit(data.item)"
                                 @paste="handlePastePriceVariant"
                               />
                             </b-input-group>
@@ -1194,7 +1213,7 @@
                 type="submit"
                 variant="outline-primary"
                 :class="buttonIsSubmit ? 'mr-1 cursor-not-allowed' : 'mr-1'"
-                :disabled="validateSubmitButton()"
+                :disabled="buttonIsSubmit"
                 @click.prevent="submit(0)"
               >
                 Simpan Draft
@@ -1209,7 +1228,7 @@
                 type="reset"
                 variant="primary"
                 :class="buttonIsSubmit ? 'cursor-not-allowed' : ''"
-                :disabled="validateSubmitButton()"
+                :disabled="buttonIsSubmit"
                 @click.prevent="submit(1)"
               >
                 Simpan ke Produk Aktif
@@ -1290,6 +1309,102 @@
             *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
           </p>
         </b-container>
+      </b-modal>
+
+      <!-- Popup delete variant -->
+      <b-modal
+        ref="popup-delete-variant"
+        hide-header
+        hide-footer
+        centered
+      >
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-img src="@/assets/images/icons/icon-delete-variant.svg" />
+        </b-row>
+
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <h4 class="text-black">
+              Hapus Tipe Varian?
+            </h4>
+          </b-col>
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <p>
+              Semua list pilihan dari varian akan otomatis terhapus juga lho...
+            </p>
+          </b-col>
+        </b-row>
+
+        <b-row class="justify-content-center mx-1 mt-1 mb-2">
+          <b-button
+            variant="outline-primary"
+            class="mr-2"
+            @click="closePopupDeleteVariant"
+          >
+            Batal
+          </b-button>
+          <b-button
+            variant="primary"
+            class="text-white"
+            @click="deleteVariant"
+          >
+            Hapus
+          </b-button>
+        </b-row>
+      </b-modal>
+
+      <!-- Popup delete All variant -->
+      <b-modal
+        ref="popup-delete-all-variant"
+        hide-header
+        hide-footer
+        centered
+      >
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-img src="@/assets/images/icons/icon-delete-variant.svg" />
+        </b-row>
+
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <h4 class="text-black">
+              Hapus Semua Varian?
+            </h4>
+          </b-col>
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <p>
+              Semua list pilihan dari varian akan otomatis terhapus juga lho...
+            </p>
+          </b-col>
+        </b-row>
+
+        <b-row class="justify-content-center mx-1 mt-1 mb-2">
+          <b-button
+            variant="outline-primary"
+            class="mr-2"
+            @click="closePopupDeleteAllVariant"
+          >
+            Batal
+          </b-button>
+          <b-button
+            variant="primary"
+            class="text-white"
+            @click="deleteAllVariant"
+          >
+            Hapus
+          </b-button>
+        </b-row>
       </b-modal>
 
     </b-card-actions>
@@ -1415,6 +1530,16 @@ export default {
       stockAllPasteMode: false,
 
       loadingLoadData: false,
+
+      itemToDelete: null,
+      variantOptionToDelete: null,
+
+      variantToDelete: null,
+
+      addVariantIsActive: false,
+      addVariantOptionIsActive: false,
+
+      empty: [],
     }
   },
   computed: {},
@@ -1633,12 +1758,20 @@ export default {
     formatterVolume(e) {
       return String(e).substring(0, 7)
     },
+    formatterVariantNameProduct(e) {
+      return String(e).substring(0, 30)
+    },
     validateInputProductName(e) {
       if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 38) {
         e.preventDefault()
         this.messageErrorIsActive = true
       } else {
         this.messageErrorIsActive = false
+      }
+      if (this.productName.length < 3) {
+        this.messageErrorLengthProduct = true
+      } else {
+        this.messageErrorLengthProduct = false
       }
     },
     validateInputWeight(e) {
@@ -1653,6 +1786,7 @@ export default {
       }
       if (this.weightPasteMode) this.weightProduct = this.weightPaste
       this.weightPasteMode = false
+      this.validateSubmitButton()
     },
     validateInputPrice(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
@@ -1666,6 +1800,7 @@ export default {
       }
       if (this.weightPasteMode) this.weightProduct = this.weightPaste
       this.weightPasteMode = false
+      this.validateSubmitButton()
     },
     validateInputPriceVariant(e, data) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
@@ -1677,6 +1812,7 @@ export default {
       if (data === '' && e.keyCode === 48) {
         e.preventDefault()
       }
+      this.validateSubmitButton()
     },
     validateInputStock(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
@@ -1690,6 +1826,7 @@ export default {
       }
       if (this.weightPasteMode) this.weightProduct = this.weightPaste
       this.weightPasteMode = false
+      this.validateSubmitButton()
     },
     validateInputVolumeLength(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
@@ -1749,6 +1886,7 @@ export default {
       localStorage.setItem('newUser', false)
     },
     async checkProductName() {
+      this.validateSubmitButton()
       if (this.messageErrorLengthProduct === false) {
         await this.$http_komship.get('/v1/product/check-name', {
           params: {
@@ -1780,10 +1918,7 @@ export default {
     },
     handleIsVariant() {
       if (this.isVariantActive) {
-        this.isVariantActive = false
-        this.variantInputItems = []
-        this.variantItems = []
-        this.variantFields = []
+        this.$refs['popup-delete-all-variant'].show()
       } else {
         this.isVariantActive = true
         this.variantInputItems.push({
@@ -1796,6 +1931,7 @@ export default {
             newParent: false,
             newSecondParent: false,
             isValid: true,
+            isSame: false,
             variantOptionItem: [
               {
                 variantOptionName: '',
@@ -1803,6 +1939,7 @@ export default {
                 stock: null,
                 price: null,
                 isValid: true,
+                isSame: false,
                 newParentItem: true,
                 option: [],
               },
@@ -1821,6 +1958,7 @@ export default {
             stock: null,
             price: null,
             isValid: true,
+            isSame: false,
             newParent: true,
             newSecondParent: false,
             variantOptionItem: [
@@ -1830,6 +1968,7 @@ export default {
                 stock: null,
                 price: null,
                 isValid: true,
+                isSame: false,
                 newParentItem: true,
                 option: [],
               },
@@ -1848,6 +1987,7 @@ export default {
           stock: null,
           price: null,
           isValid: true,
+          isSame: false,
           newVariant: true,
           option: [],
           newParentItem: true,
@@ -1865,13 +2005,18 @@ export default {
       }
       this.applyVariantIsActive = true
     },
-    deleteVariant(data) {
-      const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === data.variant.type)
+    handleDeleteVariant(data) {
+      this.variantToDelete = data
+      this.$refs['popup-delete-variant'].show()
+    },
+    deleteVariant() {
+      const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === this.variantToDelete.variant.type)
       this.variantInputItems.splice(findIndexVariant, 1)
-      const findIndexFieldsVariant = this.variantFields.findIndex(items => items.label === data.variant.variantName)
-      if (findIndexFieldsVariant !== -1) {
-        this.variantFields.splice(findIndexFieldsVariant, 1)
-      }
+      if (this.variantInputItems.length === 0) this.isVariantActive = false
+      this.$refs['popup-delete-variant'].hide()
+    },
+    closePopupDeleteVariant() {
+      this.$refs['popup-delete-variant'].hide()
     },
     deleteVariantOption(item, variantOption) {
       const findIndexVariant = this.variantInputItems.findIndex(itemVariant => itemVariant.variant.variantName === item.variant.variantName)
@@ -1897,6 +2042,17 @@ export default {
           }
         })
       }
+    },
+    deleteAllVariant() {
+      this.variantItems = []
+      this.variantFields = []
+      this.variantInputItems = []
+      this.isVariantActive = false
+      this.$refs['popup-delete-all-variant'].hide()
+    },
+    closePopupDeleteAllVariant() {
+      this.isVariantActive = true
+      this.$refs['popup-delete-all-variant'].hide()
     },
     applyVariant() {
       if (this.variantItems.length > 0) {
@@ -2221,6 +2377,43 @@ export default {
       } else {
         this.applyVariantIsActive = false
       }
+      if (this.variantInputItems.length > 1) {
+        const findSameVariant = this.variantInputItems.filter(items => items.variant.variantName === item.variant.variantName)
+        if (findSameVariant.length > 1) {
+          this.addVariantIsActive = true
+          this.applyVariantIsActive = true
+        } else {
+          this.addVariantIsActive = false
+          this.applyVariantIsActive = false
+        }
+      }
+
+      if (this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.isValid === true && findOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+
+      const findEmptyOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.variantOptionName === '')
+      if (findEmptyOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+
+      if (this.variantInputItems.length > 1) {
+        const findSameVariantNotEmpty = this.variantInputItems.filter(option => option.variant.variantName !== '')
+        const findSameVariant = findSameVariantNotEmpty.filter(option => option.variant.variantName === item.variant.variantName)
+        if (findSameVariant.length > 1) {
+          this.variantInputItems[index].variant.isSame = true
+          this.applyVariantIsActive = true
+        } else {
+          this.variantInputItems[index].variant.isSame = false
+          this.applyVariantIsActive = false
+        }
+      }
     },
     validateVariantOptionField(index, indexVariantOption, variantOption) {
       if (variantOption.variantOptionName !== '') {
@@ -2238,6 +2431,50 @@ export default {
         this.applyVariantIsActive = true
       } else {
         this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem.length > 1) {
+        const filterEmptyOption = this.variantInputItems[index].variant.variantOptionItem.filter(itemOption => itemOption.variantOptionName !== '')
+        const filterOption = filterEmptyOption?.filter(itemOption => itemOption.variantOptionName === variantOption.variantOptionName)
+        if (filterOption.length > 1) {
+          this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = true
+          this.addVariantOptionIsActive = true
+          this.addVariantIsActive = true
+          this.applyVariantIsActive = true
+        } else {
+          this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = false
+          this.addVariantOptionIsActive = false
+          this.addVariantIsActive = false
+          this.applyVariantIsActive = false
+        }
+      }
+      if (this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === true && this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame === true && this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      }
+
+      const findEmptyOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.variantOptionName === '')
+      if (findEmptyOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+      const findSameOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.isSame === true)
+      if (findSameOption !== undefined) {
+        this.applyVariantIsActive = true
       }
     },
     setAllPriceStock() {
@@ -2455,7 +2692,8 @@ export default {
         || this.priceProduct === null
         || this.priceProduct === ''
         || this.stockProduct === null
-        || this.stockProduct === '') {
+        || this.stockProduct === ''
+        || this.empty.length > 0) {
           this.buttonIsSubmit = true
         } else {
           this.buttonIsSubmit = false
@@ -2470,13 +2708,13 @@ export default {
         || this.weightProduct === ''
         || this.productName === ''
         || this.weightProduct === null
-        || this.productName === null) {
+        || this.productName === null
+        || this.empty.length > 0) {
           this.buttonIsSubmit = true
         } else {
           this.buttonIsSubmit = false
         }
       }
-      return this.buttonIsSubmit
     },
     handlePastePrice(e) {
       this.pricePasteMode = true
@@ -2520,6 +2758,49 @@ export default {
       this.stockAllPasteMode = true
       this.stockAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
       if (this.stockAllPaste.charAt(0) === '0') this.stockAllPaste = this.stockAllPaste.slice(1, this.stockAllPaste.length)
+    },
+    checkValidationSubmit(data) {
+      if (this.variantInputItems.length === 1) console.log('1', data)
+      if (this.variantInputItems.length === 2) console.log('2', data)
+      if (this.variantInputItems.length === 3) console.log('3', data)
+      this.empty = []
+      if (this.variantInputItems.length === 1) {
+        this.variantItems.forEach(item => {
+          if (item.variant_stock === null || item.variant_stock === '') {
+            this.empty.push(item)
+          }
+          if (item.option_price === null || item.option_price === '') {
+            this.empty.push(item)
+          }
+        })
+      }
+      if (this.variantInputItems.length === 2) {
+        this.variantItems.forEach(item => {
+          item.options.forEach(secondItem => {
+            if (secondItem.variant_stock === null || secondItem.variant_stock === '') {
+              this.empty.push(secondItem)
+            }
+            if (secondItem.option_price === null || secondItem.option_price === '') {
+              this.empty.push(secondItem)
+            }
+          })
+        })
+      }
+      if (this.variantInputItems.length === 3) {
+        this.variantItems.forEach(item => {
+          item.options.forEach(secondItem => {
+            secondItem.options.forEach(thirdItem => {
+              if (thirdItem.variant_stock === null || thirdItem.variant_stock === '') {
+                this.empty.push(thirdItem)
+              }
+              if (thirdItem.option_price === null || thirdItem.option_price === '') {
+                this.empty.push(thirdItem)
+              }
+            })
+          })
+        })
+      }
+      this.validateSubmitButton()
     },
   },
 }
