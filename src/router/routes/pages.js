@@ -30,16 +30,6 @@ export default [
     },
   },
   {
-    path: '/verified-partner-kompack',
-    name: 'verified-kompack',
-    component: () => import('@/views/pages/authentication/verifiedemailkompack.vue'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      action: 'read',
-    },
-  },
-  {
     path: '/login',
     name: 'auth-login',
     component: () => import('@/views/pages/authentication/Login'),
@@ -60,17 +50,6 @@ export default [
     },
   },
   {
-    path: '/forgot-password',
-    name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword/Partnerlupapassword'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      redirectIfLoggedIn: true,
-    },
-  },
-
-  {
     path: '/change-password',
     name: 'auth-change-password',
     component: () => import('@/views/pages/authentication/CreatePassword.vue'),
@@ -82,6 +61,16 @@ export default [
   },
   {
     path: '/partner-reset-password',
+    name: 'auth-reset-passworddata',
+    component: () => import('@/views/pages/authentication/ResetPassword'),
+    meta: {
+      layout: 'full',
+      resource: 'Auth',
+      action: 'read',
+    },
+  },
+  {
+    path: '/reset-newpassword',
     name: 'auth-reset-passworddata',
     component: () => import('@/views/pages/authentication/ResetPassword'),
     meta: {
@@ -126,31 +115,10 @@ export default [
       resource: 'Dashboard Komship',
     },
   },
-
-  {
-    path: '/kompack-register-berhasil',
-    name: 'kompack-register-validate',
-    component: () => import('@/views/pages/authentication/RegisterValidateKompack'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-    },
-  },
-
   {
     path: '/kompack-register',
     name: 'kompack-daftar',
     component: () => import('@/views/pages/authentication/RegisterKompack'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-    },
-  },
-
-  {
-    path: '/kompack-register-berhasil',
-    name: 'kompack-register-validate',
-    component: () => import('@/views/pages/authentication/RegisterValidateKompack'),
     meta: {
       layout: 'full',
       resource: 'Auth',
