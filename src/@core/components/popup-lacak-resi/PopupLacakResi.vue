@@ -93,7 +93,7 @@ export default {
           this.transactionValue = data.old_grandtotal
           this.orderDatas = await data
           await this.lacakresi()
-          await this.$emit('updateValueTransaction', data.old_grandtotal)
+          await this.$emit('updateValueTransaction', data.grandtotal)
           await this.$emit('passCustomerPhone', data.customer_phone)
         } catch (err) {
           this.$toast({
