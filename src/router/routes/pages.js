@@ -52,18 +52,7 @@ export default [
   {
     path: '/forgot-password',
     name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword/Partnerlupapassword'),
-    meta: {
-      layout: 'full',
-      resource: 'Auth',
-      redirectIfLoggedIn: true,
-    },
-  },
-
-  {
-    path: '/partner-forgot-password',
-    name: 'auth-forgot-password',
-    component: () => import('@/views/pages/authentication/ForgotPassword/Partnerlupapassword'),
+    component: () => import('@/views/pages/authentication/ForgotPassword'),
     meta: {
       layout: 'full',
       resource: 'Auth',
