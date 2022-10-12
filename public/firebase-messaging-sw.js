@@ -16,10 +16,10 @@ try {
 
   const messaging = firebase.messaging(app)
 
-  let url = ''
+  const url = ''
 
   messaging.onBackgroundMessage(payload => {
-    console.log('payload', payload)
+    // console.log('payload', payload)
     this.url = payload.data.url_path
     const notificationOption = {
       body: payload.data.message,
