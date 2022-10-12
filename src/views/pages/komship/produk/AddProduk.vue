@@ -41,7 +41,8 @@
             >
               <b-row>
                 <b-col
-                  cols="2"
+                  cols="12"
+                  md="2"
                 >
                   <label for="name-product">
                     <h5>
@@ -53,7 +54,8 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
+                  md="10"
                 >
                   <validation-provider
                     #default="{errors}"
@@ -109,7 +111,8 @@
             >
               <b-row>
                 <b-col
-                  cols="2"
+                  cols="12"
+                  md="2"
                 >
                   <label for="sku-product">
                     <div class="d-flex">
@@ -135,7 +138,8 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
+                  md="10"
                 >
                   <b-form-input
                     id="sku-product"
@@ -173,7 +177,8 @@
             >
               <b-row>
                 <b-col
-                  cols="2"
+                  cols="12"
+                  md="2"
                 >
                   <label for="description-product">
                     <h5>
@@ -185,7 +190,8 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
+                  md="10"
                 >
                   <b-form-textarea
                     id="description-product"
@@ -206,20 +212,28 @@
 
           <b-row class="mx-1 wrapper__product__variant mb-2">
             <b-row
-              class="py-2 w-100 justify-content-between align-items-center ml-50"
+              class="py-2 w-100 ml-2 align-items-center"
               :style="isVariantActive ? 'border-bottom: 1px solid #E2E2E2; margin: 0px 0px 0px 0px;' : 'margin: 0px 0px 0px 0px;'"
             >
-              <div class="ml-1">
-                <h4 class="text-black ml-1 mt-50">
+              <b-col
+                cols="12"
+                md="6"
+                class="mb-1"
+              >
+                <h4 class="text-blackmt-50">
                   <strong>
                     Varian Produk
                   </strong>
                 </h4>
-                <span class="ml-1">
+                <span>
                   Kamu bisa menambah varian seperti warna, ukuran, atau lainnya disini loh.
                 </span>
-              </div>
-              <div>
+              </b-col>
+              <b-col
+                cols="12"
+                md="6"
+                class="d-flex align-items-center justify-content-end"
+              >
                 <b-button
                   :variant="isVariantActive ? 'flat-dark' : 'flat-primary'"
                   :class="isVariantActive ? 'text-dark btn-icon mr-2' : 'text-primary btn-icon mr-2'"
@@ -232,7 +246,7 @@
                   />
                   {{ isVariantActive ? 'Hapus Varian' : 'Tambah Varian' }}
                 </b-button>
-              </div>
+              </b-col>
             </b-row>
 
             <!-- Variant -->
@@ -260,7 +274,10 @@
                   class="ml-1"
                 >
                   <b-row class="w-100">
-                    <b-col cols="6">
+                    <b-col
+                      cols="12"
+                      md="6"
+                    >
                       <b-form-group
                         label-for="variant-name"
                       >
@@ -308,8 +325,10 @@
                     <b-col
                       v-for="(variantOption, indexVariantOption) in item.variant.variantOptionItem"
                       :key="indexVariantOption+1"
-                      cols="6"
-                      :offset="indexVariantOption !== 0 ? 6 : ''"
+                      cols="12"
+                      md="6"
+                      :offset="indexVariantOption !== 0 ? 12 : ''"
+                      :offset-md="indexVariantOption !== 0 ? 6 : ''"
                     >
                       <div>
                         <b-form-group
@@ -378,7 +397,10 @@
                       v-if="item.variant.variantOptionItem.length < 8"
                       class="justify-content-end w-100"
                     >
-                      <b-col cols="6">
+                      <b-col
+                        cols="12"
+                        md="6"
+                      >
                         <b-button
                           variant="flat-dark"
                           :class="addVariantOptionIsActive ? 'text-dark btn-icon ml-1 cursor-not-allowed' : 'text-dark btn-icon ml-1'"
@@ -406,17 +428,19 @@
 
               <b-row class="justify-content-end w-100 mb-2">
                 <b-col
-                  cols="6"
+                  cols="12"
+                  md="6"
                 >
                   <b-row class="ml-50">
                     <b-col
-                      cols="6"
+                      cols="12"
+                      md="6"
                     >
                       <b-button
                         v-if="variantInputItems.length < 3"
                         variant="outline-primary"
                         style="height: 45px;"
-                        :class="addVariantIsActive ? 'cursor-not-allowed' : ''"
+                        :class="addVariantIsActive ? 'cursor-not-allowed mb-1' : 'mb-1'"
                         block
                         :disabled="addVariantIsActive"
                         @click="addVariant"
@@ -428,7 +452,10 @@
                         Tambahkan tipe varian
                       </b-button>
                     </b-col>
-                    <b-col cols="6">
+                    <b-col
+                      cols="12"
+                      md="6"
+                    >
                       <b-button
                         :class="applyVariantIsActive ? 'text-white cursor-not-allowed' : 'text-white'"
                         :variant="applyVariantIsActive ? 'dark' : 'primary'"
@@ -450,12 +477,12 @@
                 />
               </b-row>
 
-              <b-row class="mb-2 w-100 ml-50">
+              <b-row class="mb-2 w-100">
                 <b-col
                   cols="12"
                 >
                   <h4
-                    class="text-black mb-1"
+                    class="text-black mb-1 ml-1"
                     style="font-weight: 500;"
                   >
                     Tabel Varian
@@ -467,13 +494,23 @@
                 >
                   <div class="w-100 mx-1 wrapper__table__variant py-2">
                     <b-row class="mx-1 mb-2">
-                      <b-col cols="5">
+                      <b-col
+                        cols="12"
+                        md="2"
+                        class="mb-1 d-flex align-items-center"
+                      >
+                        <span style="font-size: 14px; min-width: 110px;">
+                          <strong>
+                            Harga & Stok
+                          </strong>
+                        </span>
+                      </b-col>
+                      <b-col
+                        cols="12"
+                        md="4"
+                        class="mb-1"
+                      >
                         <div class="d-flex align-items-center">
-                          <span style="font-size: 14px; min-width: 110px;">
-                            <strong>
-                              Harga & Stok
-                            </strong>
-                          </span>
                           <b-input-group>
                             <b-input-group-prepend is-text>
                               <span style="font-size: 14px;">
@@ -495,7 +532,11 @@
                           </b-input-group>
                         </div>
                       </b-col>
-                      <b-col cols="4">
+                      <b-col
+                        cols="12"
+                        md="4"
+                        class="mb-1"
+                      >
                         <b-input-group>
                           <b-input-group-prepend is-text>
                             <span style="font-size: 14px;">
@@ -516,7 +557,10 @@
                           />
                         </b-input-group>
                       </b-col>
-                      <b-col cols="3">
+                      <b-col
+                        cols="12"
+                        md="2"
+                      >
                         <b-button
                           :variant="variantItems.length === 0 ? '' : 'outline-primary'"
                           block
@@ -537,6 +581,7 @@
                       :items="variantItems"
                       show-empty
                       responsive
+                      class="position-relative"
                     >
                       <template #head="data">
                         <span style="font-size: 14px;">
@@ -574,9 +619,12 @@
                       </template>
 
                       <template #cell(variant1)="data">
-                        <b-row class="mt-1">
+                        <div
+                          class="mt-1"
+                          style="min-width: 200px!important;"
+                        >
                           {{ data.item.variant1.val }}
-                        </b-row>
+                        </div>
                       </template>
 
                       <template #cell(variant2)="data">
@@ -585,33 +633,35 @@
                             v-for="(item, index) in data.item.variant1.option"
                             :key="index+1"
                           >
-                            <b-col
+                            <div
                               v-for="(secondItem, secondIndex) in item.variant2.option"
                               :key="secondIndex+1"
-                              cols="12"
                             >
-                              <div
+                              <b-col
                                 class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                                cols="12"
+                                style="min-width: 200px!important;"
                                 disabled
                               >
                                 {{ item.variant2.val }}
-                              </div>
-                            </b-col>
+                              </b-col>
+                            </div>
                           </div>
                         </div>
                         <div v-if="variantInputItems.length === 2">
-                          <b-col
+                          <b-row
                             v-for="(item, index) in data.item.variant1.option"
                             :key="index+1"
-                            cols="12"
                           >
-                            <div
+                            <b-col
                               class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                              cols="12"
+                              style="min-width: 200px!important;"
                               disabled
                             >
                               {{ item.variant2.val }}
-                            </div>
-                          </b-col>
+                            </b-col>
+                          </b-row>
                         </div>
                       </template>
 
@@ -620,31 +670,33 @@
                           v-for="(item, index) in data.item.variant1.option"
                           :key="index+1"
                         >
-                          <b-col
+                          <b-row
                             v-for="(items, index1) in item.variant2.option"
                             :key="index1+1"
-                            cols="12"
                           >
-                            <div
+                            <b-col
                               class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                              cols="12"
+                              style="min-width: 200px!important;"
                               disabled
                             >
                               {{ items.variant3.val }}
-                            </div>
-                          </b-col>
+                            </b-col>
+                          </b-row>
                         </div>
                       </template>
 
                       <template #cell(stock)="data">
                         <div v-if="variantInputItems.length === 3">
-                          <b-col
+                          <b-row
                             v-for="(items, index) in data.item.variant1.option"
                             :key="index+1"
-                            cols="12"
                           >
-                            <div
+                            <b-col
                               v-for="(itemVariant, indexVariant) in items.variant2.option"
                               :key="indexVariant+1"
+                              cols="12"
+                              style="min-width: 200px!important;"
                             >
                               <b-form-input
                                 :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
@@ -657,8 +709,8 @@
                                 @input="checkValidationSubmit(itemVariant)"
                                 @paste="handlePastePriceVariant"
                               />
-                            </div>
-                          </b-col>
+                            </b-col>
+                          </b-row>
                         </div>
 
                         <div v-if="variantInputItems.length === 2">
@@ -666,6 +718,7 @@
                             v-for="(items, index) in data.item.variant1.option"
                             :key="index+1"
                             cols="12"
+                            style="min-width: 200px!important;"
                           >
                             <b-form-input
                               :id="`stock-variant-${index + data.index}-${data.index+1}`"
@@ -682,29 +735,34 @@
                         </div>
 
                         <div v-if="variantInputItems.length === 1">
-                          <b-form-input
-                            v-model="data.item.variant1.stock"
-                            class="wrapper__form__input__variant mb-1"
-                            placeholder="Contoh : 1000"
-                            :formatter="formatPriceVariant"
-                            @keyup="formatPriceInput($event)"
-                            @keypress="validateInputPriceVariant($event, data.item.variant1.stock)"
-                            @input="checkValidationSubmit(data.item)"
-                            @paste="handlePastePriceVariant"
-                          />
+                          <div
+                            style="min-width: 200px!important;"
+                          >
+                            <b-form-input
+                              v-model="data.item.variant1.stock"
+                              class="wrapper__form__input__variant mb-1"
+                              placeholder="Contoh : 1000"
+                              :formatter="formatPriceVariant"
+                              @keyup="formatPriceInput($event)"
+                              @keypress="validateInputPriceVariant($event, data.item.variant1.stock)"
+                              @input="checkValidationSubmit(data.item)"
+                              @paste="handlePastePriceVariant"
+                            />
+                          </div>
                         </div>
                       </template>
 
                       <template #cell(price)="data">
                         <div v-if="variantInputItems.length === 3">
-                          <b-col
+                          <b-row
                             v-for="(items, index) in data.item.variant1.option"
                             :key="index+1"
-                            cols="12"
                           >
-                            <div
+                            <b-col
                               v-for="(itemVariant, indexVariant) in items.variant2.option"
                               :key="indexVariant+1"
+                              cols="12"
+                              style="min-width: 200px!important;"
                             >
                               <b-input-group class="mb-1">
                                 <b-input-group-prepend is-text>
@@ -726,8 +784,8 @@
                                   @paste="handlePastePriceVariant"
                                 />
                               </b-input-group>
-                            </div>
-                          </b-col>
+                            </b-col>
+                          </b-row>
                         </div>
 
                         <div v-if="variantInputItems.length === 2">
@@ -735,6 +793,7 @@
                             v-for="(items, index) in data.item.variant1.option"
                             :key="index+1"
                             cols="12"
+                            style="min-width: 200px!important;"
                           >
                             <b-input-group class="mb-1">
                               <b-input-group-prepend is-text>
@@ -760,26 +819,30 @@
                         </div>
 
                         <div v-if="variantInputItems.length === 1">
-                          <b-input-group class="mb-1">
-                            <b-input-group-prepend is-text>
-                              <span style="font-size: 14px;">
-                                <strong>
-                                  Rp
-                                </strong>
-                              </span>
-                            </b-input-group-prepend>
-                            <b-form-input
-                              id="price-variant"
-                              v-model="data.item.variant1.price"
-                              class="wrapper__form__input__variant"
-                              placeholder="Contoh : 85000"
-                              :formatter="formatPriceVariant"
-                              @keyup="formatPriceInput($event)"
-                              @keypress="validateInputPriceVariant($event, data.item.variant1.price)"
-                              @input="checkValidationSubmit(data.item)"
-                              @paste="handlePastePriceVariant"
-                            />
-                          </b-input-group>
+                          <div
+                            style="min-width: 200px!important;"
+                          >
+                            <b-input-group class="mb-1">
+                              <b-input-group-prepend is-text>
+                                <span style="font-size: 14px;">
+                                  <strong>
+                                    Rp
+                                  </strong>
+                                </span>
+                              </b-input-group-prepend>
+                              <b-form-input
+                                id="price-variant"
+                                v-model="data.item.variant1.price"
+                                class="wrapper__form__input__variant"
+                                placeholder="Contoh : 85000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, data.item.variant1.price)"
+                                @input="checkValidationSubmit(data.item)"
+                                @paste="handlePastePriceVariant"
+                              />
+                            </b-input-group>
+                          </div>
                         </div>
                       </template>
 
@@ -806,7 +869,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="price-product">
                       <h5>
@@ -818,7 +882,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <validation-provider
                       #default="{errors}"
@@ -859,7 +924,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="stock-product">
                       <h5>
@@ -871,7 +937,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <validation-provider
                       #default="{errors}"
@@ -912,7 +979,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="stock-product">
                       <h5>
@@ -924,7 +992,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <span style="color: #626262;">Kamu telah mengatur <strong>Harga</strong> dan <strong>Jumlah Stok</strong> di variasi produk</span>
                   </b-col>
@@ -937,7 +1006,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="price-product">
                       <h5>
@@ -952,7 +1022,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <validation-provider
                       #default="{errors}"
@@ -992,7 +1063,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="price-product">
                       <h5>
@@ -1008,10 +1080,15 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
-                    <b-row class="justify-content-around">
-                      <b-col>
+                    <b-row class="justify-content-between">
+                      <b-col
+                        cols="12"
+                        md="auto"
+                        class="mb-1"
+                      >
                         <b-input-group>
                           <b-form-input
                             id="price-product"
@@ -1031,7 +1108,11 @@
                           </b-input-group-append>
                         </b-input-group>
                       </b-col>
-                      <b-col>
+                      <b-col
+                        cols="12"
+                        md="auto"
+                        class="mb-1"
+                      >
                         <b-input-group>
                           <b-form-input
                             id="price-product"
@@ -1051,7 +1132,11 @@
                           </b-input-group-append>
                         </b-input-group>
                       </b-col>
-                      <b-col>
+                      <b-col
+                        cols="12"
+                        md="auto"
+                        class="mb-1"
+                      >
                         <b-input-group>
                           <b-form-input
                             id="price-product"
@@ -1130,7 +1215,8 @@
               </div>
               <b-row class="align-items-center">
                 <b-col
-                  cols="2"
+                  cols="12"
+                  md="2"
                 >
                   <label for="name-product">
                     <h5>
@@ -1146,7 +1232,8 @@
                 </b-col>
 
                 <b-col
-                  cols="10"
+                  cols="12"
+                  md="10"
                 >
                   <b-row class="align-items-center">
                     <b-img
