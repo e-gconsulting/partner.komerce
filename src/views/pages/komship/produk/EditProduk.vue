@@ -1792,25 +1792,27 @@ export default {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (this.priceProduct === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (this.priceProduct === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.weightPasteMode) this.weightProduct = this.weightPaste
-      this.weightPasteMode = false
       this.validateSubmitButton()
     },
     validateInputPriceVariant(e, data) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (data === null && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (data === '' && e.keyCode === 48) {
-        e.preventDefault()
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
       this.validateSubmitButton()
     },
@@ -1818,14 +1820,15 @@ export default {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (this.stockProduct === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (this.stockProduct === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.weightPasteMode) this.weightProduct = this.weightPaste
-      this.weightPasteMode = false
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
       this.validateSubmitButton()
     },
     validateInputVolumeLength(e) {
@@ -2057,7 +2060,6 @@ export default {
     applyVariant() {
       if (this.variantItems.length > 0) {
         this.variantFields = []
-        console.log(this.variantInputItems)
         this.variantInputItems.forEach(item => {
           if (item.variant.type === 1) {
             this.variantFields.push({
@@ -2216,7 +2218,6 @@ export default {
         })
       } else {
         this.variantFields = []
-        console.log(this.variantInputItems)
         this.variantInputItems.forEach(item => {
           if (item.variant.type === 1) {
             this.variantFields.push({
@@ -2500,6 +2501,8 @@ export default {
           this.variantItems[index].option_price = this.setPriceAll
         })
       }
+      this.empty = []
+      this.validateSubmitButton()
     },
     calculateVolumeProduct() {
       if (this.lengthProduct && this.widthProduct && this.heightProduct) {
@@ -2760,9 +2763,6 @@ export default {
       if (this.stockAllPaste.charAt(0) === '0') this.stockAllPaste = this.stockAllPaste.slice(1, this.stockAllPaste.length)
     },
     checkValidationSubmit(data) {
-      if (this.variantInputItems.length === 1) console.log('1', data)
-      if (this.variantInputItems.length === 2) console.log('2', data)
-      if (this.variantInputItems.length === 3) console.log('3', data)
       this.empty = []
       if (this.variantInputItems.length === 1) {
         this.variantItems.forEach(item => {

@@ -536,6 +536,7 @@
                       :fields="variantFields"
                       :items="variantItems"
                       show-empty
+                      responsive
                     >
                       <template #head="data">
                         <span style="font-size: 14px;">
@@ -1607,25 +1608,27 @@ export default {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (this.priceProduct === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (this.priceProduct === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.weightPasteMode) this.weightProduct = this.weightPaste
-      this.weightPasteMode = false
       this.validateSubmitButton()
     },
     validateInputPriceVariant(e, data) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (data === null && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (data === '' && e.keyCode === 48) {
-        e.preventDefault()
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
       this.validateSubmitButton()
     },
@@ -1633,14 +1636,15 @@ export default {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (this.stockProduct === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (this.stockProduct === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.weightPasteMode) this.weightProduct = this.weightPaste
-      this.weightPasteMode = false
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
       this.validateSubmitButton()
     },
     validateInputVolumeLength(e) {
@@ -2161,6 +2165,8 @@ export default {
           }
         })
       }
+      this.empty = []
+      this.validateSubmitButton()
     },
     calculateVolumeProduct() {
       if (this.lengthProduct && this.widthProduct && this.heightProduct) {
@@ -2355,6 +2361,7 @@ export default {
       }
 
       if (this.isVariantActive) {
+        console.log(this.empty)
         if (!this.productNameAvailable
         || this.messageErrorIsActive
         || !this.skuNameAvailable
