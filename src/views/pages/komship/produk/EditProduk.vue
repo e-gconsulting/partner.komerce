@@ -49,7 +49,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="name-product">
                       <h5>
@@ -61,7 +62,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="2"
                   >
                     <validation-provider
                       #default="{errors}"
@@ -117,7 +119,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="sku-product">
                       <div class="d-flex">
@@ -143,7 +146,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <b-form-input
                       id="sku-product"
@@ -181,7 +185,8 @@
               >
                 <b-row>
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="description-product">
                       <h5>
@@ -193,7 +198,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <b-form-textarea
                       id="description-product"
@@ -214,10 +220,14 @@
 
             <b-row class="mx-1 wrapper__product__variant mb-2">
               <b-row
-                class="py-2 w-100 justify-content-between align-items-center ml-50"
+                class="py-2 w-100 ml-2 align-items-center"
                 :style="isVariantActive ? 'border-bottom: 1px solid #E2E2E2; margin: 0px 0px 0px 0px;' : 'margin: 0px 0px 0px 0px;'"
               >
-                <div class="ml-1">
+                <b-col
+                  cols="12"
+                  md="6"
+                  class="mb-1"
+                >
                   <h4 class="text-black ml-1 mt-50">
                     <strong>
                       Varian Produk
@@ -226,8 +236,12 @@
                   <span class="ml-1">
                     Kamu bisa menambah varian seperti warna, ukuran, atau lainnya disini loh.
                   </span>
-                </div>
-                <div>
+                </b-col>
+                <b-col
+                  cols="12"
+                  md="6"
+                  class="d-flex align-items-center justify-content-end"
+                >
                   <b-button
                     :variant="isVariantActive ? 'flat-dark' : 'flat-primary'"
                     :class="isVariantActive ? 'text-dark btn-icon mr-2' : 'text-primary btn-icon mr-2'"
@@ -240,7 +254,7 @@
                     />
                     {{ isVariantActive ? 'Hapus Varian' : 'Tambah Varian' }}
                   </b-button>
-                </div>
+                </b-col>
               </b-row>
 
               <!-- Variant -->
@@ -268,7 +282,10 @@
                     class="ml-1"
                   >
                     <b-row class="w-100">
-                      <b-col cols="6">
+                      <b-col
+                        cols="12"
+                        md="6"
+                      >
                         <b-form-group
                           label-for="variant-name"
                         >
@@ -284,6 +301,7 @@
                               id="variant-name"
                               v-model="item.variant.variantName"
                               placeholder="Contoh: Warna, Ukuran, Bahan"
+                              :formatter="formatterVariantNameProduct"
                               class="wrapper__form__input__variant"
                               :style="item.variant.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
                               @input="validateVariantField(item, index)"
@@ -293,7 +311,7 @@
                                 class="btn-icon"
                                 size="sm"
                                 variant="flat-dark"
-                                @click="deleteVariant(item)"
+                                @click="handleDeleteVariant(item)"
                               >
                                 <b-img
                                   src="@/assets/images/icons/trash.svg"
@@ -306,13 +324,19 @@
                             v-if="item.variant.isValid === false"
                             class="text-primary"
                           >*Wajib diisi ya</small>
+                          <small
+                            v-if="item.variant.isSame"
+                            class="text-primary"
+                          >*Nama varian sudah dipakai, yuk pakai nama lain.</small>
                         </b-form-group>
                       </b-col>
                       <b-col
                         v-for="(variantOption, indexVariantOption) in item.variant.variantOptionItem"
                         :key="indexVariantOption+1"
-                        cols="6"
-                        :offset="indexVariantOption !== 0 ? 6 : ''"
+                        cols="12"
+                        md="6"
+                        :offset="indexVariantOption !== 0 ? 12 : ''"
+                        :offset-md="indexVariantOption !== 0 ? 6 : ''"
                       >
                         <div>
                           <b-form-group
@@ -340,6 +364,7 @@
                                   v-model="variantOption.variantOptionName"
                                   placeholder="Contoh: Merah, XL, Cotton"
                                   class="wrapper__form__input__variant"
+                                  :formatter="formatterVariantNameProduct"
                                   :style="variantOption.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
                                   @input="validateVariantOptionField(index, indexVariantOption, variantOption)"
                                 />
@@ -369,6 +394,10 @@
                               v-if="variantOption.isValid === false"
                               class="text-primary"
                             >*Wajib diisi ya</small>
+                            <small
+                              v-if="variantOption.isSame"
+                              class="text-primary"
+                            >*Nama tipe varian sudah dipakai, yuk pakai nama lain.</small>
                           </b-form-group>
                         </div>
                       </b-col>
@@ -376,11 +405,15 @@
                         v-if="item.variant.variantOptionItem.length < 8"
                         class="justify-content-end w-100"
                       >
-                        <b-col cols="6">
+                        <b-col
+                          cols="12"
+                          md="6"
+                        >
                           <b-button
                             variant="flat-dark"
                             class="text-dark btn-icon ml-1"
                             style="border: 1px solid #E2E2E2;"
+                            :disabled="addVariantOptionIsActive"
                             @click="addVariantOption(item)"
                           >
                             <feather-icon
@@ -403,17 +436,21 @@
 
                 <b-row class="justify-content-end w-100 mb-2">
                   <b-col
-                    cols="6"
+                    cols="12"
+                    md="6"
                   >
                     <b-row class="ml-50">
                       <b-col
-                        cols="6"
+                        cols="12"
+                        md="6"
                       >
                         <b-button
                           v-if="variantInputItems.length < 3"
                           variant="outline-primary"
                           style="height: 45px;"
+                          :class="addVariantIsActive ? 'cursor-not-allowed mb-1' : 'mb-1'"
                           block
+                          :disabled="addVariantIsActive"
                           @click="addVariant"
                         >
                           <feather-icon
@@ -423,7 +460,10 @@
                           Tambahkan tipe varian
                         </b-button>
                       </b-col>
-                      <b-col cols="6">
+                      <b-col
+                        cols="12"
+                        md="6"
+                      >
                         <b-button
                           :class="applyVariantIsActive ? 'text-white cursor-not-allowed' : 'text-white'"
                           :variant="applyVariantIsActive ? 'dark' : 'primary'"
@@ -445,12 +485,12 @@
                   />
                 </b-row>
 
-                <b-row class="mb-2 w-100 ml-50">
+                <b-row class="mb-2 w-100">
                   <b-col
                     cols="12"
                   >
                     <h4
-                      class="text-black mb-1"
+                      class="text-black mb-1 ml-1"
                       style="font-weight: 500;"
                     >
                       Tabel Varian
@@ -462,13 +502,23 @@
                   >
                     <div class="w-100 mx-1 wrapper__table__variant py-2">
                       <b-row class="mx-1 mb-2">
-                        <b-col cols="5">
+                        <b-col
+                          cols="12"
+                          md="2"
+                          class="mb-1 d-flex align-items-center"
+                        >
+                          <span style="font-size: 14px; min-width: 110px;">
+                            <strong>
+                              Harga & Stok
+                            </strong>
+                          </span>
+                        </b-col>
+                        <b-col
+                          cols="12"
+                          md="4"
+                          class="mb-1"
+                        >
                           <div class="d-flex align-items-center">
-                            <span style="font-size: 14px; min-width: 110px;">
-                              <strong>
-                                Harga & Stok
-                              </strong>
-                            </span>
                             <b-input-group>
                               <b-input-group-prepend is-text>
                                 <span style="font-size: 14px;">
@@ -490,7 +540,11 @@
                             </b-input-group>
                           </div>
                         </b-col>
-                        <b-col cols="4">
+                        <b-col
+                          cols="12"
+                          md="4"
+                          class="mb-1"
+                        >
                           <b-input-group>
                             <b-input-group-prepend is-text>
                               <span style="font-size: 14px;">
@@ -511,7 +565,10 @@
                             />
                           </b-input-group>
                         </b-col>
-                        <b-col cols="3">
+                        <b-col
+                          cols="12"
+                          md="2"
+                        >
                           <b-button
                             :variant="variantItems.length === 0 ? '' : 'outline-primary'"
                             block
@@ -531,6 +588,8 @@
                         :fields="variantFields"
                         :items="variantItems"
                         show-empty
+                        responsive
+                        class="position-relative"
                       >
                         <template #head="data">
                           <span style="font-size: 14px;">
@@ -568,113 +627,125 @@
                         </template>
 
                         <template #cell(variant1)="data">
-                          <b-row class="mt-1">
+                          <div
+                            class="mt-1"
+                            style="min-width: 200px!important;"
+                          >
                             {{ data.item.option_name }}
-                          </b-row>
+                          </div>
                         </template>
 
                         <template #cell(variant2)="data">
-                          <b-row v-if="variantInputItems.length === 3">
-                            <b-col
+                          <div v-if="variantInputItems.length === 3">
+                            <div
                               v-for="(item, index) in data.item.options"
                               :key="index+1"
-                              cols="12"
                             >
                               <div
                                 v-for="(secondItem, secondIndex) in item.options"
                                 :key="secondIndex+1"
                               >
-                                <b-form-input
-                                  v-model="item.option_name"
-                                  class="wrapper__variant2__table mb-1"
+                                <b-col
+                                  class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                                  cols="12"
+                                  style="min-width: 200px!important;"
                                   disabled
-                                />
+                                >
+                                  {{ item.option_name }}
+                                </b-col>
                               </div>
-                            </b-col>
-                          </b-row>
-                          <b-row v-if="variantInputItems.length === 2">
-                            <div
+                            </div>
+                          </div>
+                          <div v-if="variantInputItems.length === 2">
+                            <b-row
                               v-for="(item, index) in data.item.options"
                               :key="index+1"
                               cols="12"
                             >
-                              <b-form-input
-                                v-model="item.option_name"
-                                class="wrapper__variant2__table mb-1"
-                                disabled
-                              />
-                            </div>
-                          </b-row>
+                              <b-col
+                                class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                                cols="12"
+                                style="min-width: 200px!important;"
+                              >
+                                {{ item.option_name }}
+                              </b-col>
+                            </b-row>
+                          </div>
                         </template>
 
                         <template #cell(variant3)="data">
-                          <b-row>
-                            <b-col
-                              v-for="(item, index) in data.item.options"
-                              :key="index+1"
-                              cols="12"
+                          <div
+                            v-for="(item, index) in data.item.options"
+                            :key="index+1"
+                          >
+                            <b-row
+                              v-for="(items, index1) in item.options"
+                              :key="index1+1"
                             >
-                              <div
-                                v-for="(items, index1) in item.options"
-                                :key="index1+1"
+                              <b-col
+                                class="wrapper__variant2__table mb-1 d-flex align-items-center"
                                 cols="12"
+                                style="min-width: 200px!important;"
+                                disabled
                               >
-                                <b-form-input
-                                  v-model="items.option_name"
-                                  class="wrapper__variant2__table mb-1"
-                                  disabled
-                                />
-                              </div>
-                            </b-col>
-                          </b-row>
+                                {{ items.option_name }}
+                              </b-col>
+                            </b-row>
+                          </div>
                         </template>
 
                         <template #cell(stock)="data">
-                          <b-row>
-                            <div v-if="variantInputItems.length === 3">
+                          <div v-if="variantInputItems.length === 3">
+                            <b-row
+                              v-for="(items, index) in data.item.options"
+                              :key="index+1"
+                            >
                               <b-col
-                                v-for="(items, index) in data.item.options"
-                                :key="index+1"
+                                v-for="(itemVariant, indexVariant) in items.options"
+                                :key="indexVariant+1"
                                 cols="12"
-                              >
-                                <div
-                                  v-for="(itemVariant, indexVariant) in items.options"
-                                  :key="indexVariant+1"
-                                >
-                                  <b-form-input
-                                    :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
-                                    v-model="itemVariant.variant_stock"
-                                    class="wrapper__form__input__variant mb-1"
-                                    placeholder="Contoh : 1000"
-                                    :formatter="formatPriceVariant"
-                                    @keyup="formatPriceInput($event)"
-                                    @keypress="validateInputPriceVariant($event, itemVariant.variant_stock)"
-                                    @paste="handlePastePriceVariant"
-                                  />
-                                </div>
-                              </b-col>
-                            </div>
-
-                            <div v-if="variantInputItems.length === 2">
-                              <b-col
-                                v-for="(items, index) in data.item.options"
-                                :key="index+1"
-                                cols="12"
+                                style="min-width: 200px!important;"
                               >
                                 <b-form-input
-                                  :id="`stock-variant-${index + data.index}-${data.index+1}`"
-                                  v-model="items.variant_stock"
+                                  :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
+                                  v-model="itemVariant.variant_stock"
                                   class="wrapper__form__input__variant mb-1"
                                   placeholder="Contoh : 1000"
                                   :formatter="formatPriceVariant"
                                   @keyup="formatPriceInput($event)"
-                                  @keypress="validateInputPriceVariant($event, items.variant_stock)"
+                                  @keypress="validateInputPriceVariant($event, itemVariant.variant_stock)"
+                                  @input="checkValidationSubmit(itemVariant)"
                                   @paste="handlePastePriceVariant"
                                 />
                               </b-col>
-                            </div>
+                            </b-row>
+                          </div>
 
-                            <div v-if="variantInputItems.length === 1">
+                          <div v-if="variantInputItems.length === 2">
+                            <b-col
+                              v-for="(items, index) in data.item.options"
+                              :key="index+1"
+                              cols="12"
+                              style="min-width: 200px!important;"
+                            >
+                              <b-form-input
+                                :id="`stock-variant-${index + data.index}-${data.index+1}`"
+                                v-model="items.variant_stock"
+                                class="wrapper__form__input__variant mb-1"
+                                placeholder="Contoh : 1000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, items.variant_stock)"
+                                @input="checkValidationSubmit(items)"
+                                @paste="handlePastePriceVariant"
+                              />
+                            </b-col>
+                          </div>
+
+                          <div v-if="variantInputItems.length === 1">
+                            <div
+                              style="min-width: 200px!important;"
+                            >
                               <b-form-input
                                 id="stock-variant"
                                 v-model="data.item.variant_stock"
@@ -683,22 +754,24 @@
                                 :formatter="formatPriceVariant"
                                 @keyup="formatPriceInput($event)"
                                 @keypress="validateInputPriceVariant($event, data.item.variant_stock)"
+                                @input="checkValidationSubmit(data.item)"
                                 @paste="handlePastePriceVariant"
                               />
                             </div>
-                          </b-row>
+                          </div>
                         </template>
 
                         <template #cell(price)="data">
                           <div v-if="variantInputItems.length === 3">
-                            <b-col
+                            <b-row
                               v-for="(items, index) in data.item.options"
                               :key="index+1"
-                              cols="12"
                             >
-                              <div
+                              <b-col
                                 v-for="(itemVariant, indexVariant) in items.options"
                                 :key="indexVariant+1"
+                                cols="12"
+                                style="min-width: 200px!important;"
                               >
                                 <b-input-group class="mb-1">
                                   <b-input-group-prepend is-text>
@@ -716,11 +789,12 @@
                                     :formatter="formatPriceVariant"
                                     @keyup="formatPriceInput($event)"
                                     @keypress="validateInputPriceVariant($event, itemVariant.option_price)"
+                                    @input="checkValidationSubmit(itemVariant)"
                                     @paste="handlePastePriceVariant"
                                   />
                                 </b-input-group>
-                              </div>
-                            </b-col>
+                              </b-col>
+                            </b-row>
                           </div>
 
                           <div v-if="variantInputItems.length === 2">
@@ -728,6 +802,7 @@
                               v-for="(items, index) in data.item.options"
                               :key="index+1"
                               cols="12"
+                              style="min-width: 200px!important;"
                             >
                               <b-input-group class="mb-1">
                                 <b-input-group-prepend is-text>
@@ -745,6 +820,7 @@
                                   :formatter="formatPriceVariant"
                                   @keyup="formatPriceInput($event)"
                                   @keypress="validateInputPriceVariant($event, items.option_price)"
+                                  @input="checkValidationSubmit(items)"
                                   @paste="handlePastePriceVariant"
                                 />
                               </b-input-group>
@@ -752,25 +828,30 @@
                           </div>
 
                           <div v-if="variantInputItems.length === 1">
-                            <b-input-group class="mb-1">
-                              <b-input-group-prepend is-text>
-                                <span style="font-size: 14px;">
-                                  <strong>
-                                    Rp
-                                  </strong>
-                                </span>
-                              </b-input-group-prepend>
-                              <b-form-input
-                                id="price-variant"
-                                v-model="data.item.option_price"
-                                class="wrapper__form__input__variant"
-                                placeholder="Contoh : 85000"
-                                :formatter="formatPriceVariant"
-                                @keyup="formatPriceInput($event)"
-                                @keypress="validateInputPriceVariant($event, data.item.option_price)"
-                                @paste="handlePastePriceVariant"
-                              />
-                            </b-input-group>
+                            <div
+                              style="min-width: 200px!important;"
+                            >
+                              <b-input-group class="mb-1">
+                                <b-input-group-prepend is-text>
+                                  <span style="font-size: 14px;">
+                                    <strong>
+                                      Rp
+                                    </strong>
+                                  </span>
+                                </b-input-group-prepend>
+                                <b-form-input
+                                  id="price-variant"
+                                  v-model="data.item.option_price"
+                                  class="wrapper__form__input__variant"
+                                  placeholder="Contoh : 85000"
+                                  :formatter="formatPriceVariant"
+                                  @keyup="formatPriceInput($event)"
+                                  @keypress="validateInputPriceVariant($event, data.item.option_price)"
+                                  @input="checkValidationSubmit(data.item)"
+                                  @paste="handlePastePriceVariant"
+                                />
+                              </b-input-group>
+                            </div>
                           </div>
                         </template>
 
@@ -797,7 +878,8 @@
                 >
                   <b-row>
                     <b-col
-                      cols="2"
+                      cols="12"
+                      md="2"
                     >
                       <label for="price-product">
                         <h5>
@@ -809,7 +891,8 @@
                     </b-col>
 
                     <b-col
-                      cols="10"
+                      cols="12"
+                      md="10"
                     >
                       <validation-provider
                         #default="{errors}"
@@ -850,7 +933,8 @@
                 >
                   <b-row>
                     <b-col
-                      cols="2"
+                      cols="12"
+                      md="2"
                     >
                       <label for="stock-product">
                         <h5>
@@ -862,26 +946,32 @@
                     </b-col>
 
                     <b-col
-                      cols="10"
+                      cols="12"
+                      md="10"
                     >
                       <validation-provider
                         #default="{errors}"
                         name="Stock"
                         rules="required"
                       >
-                        <b-form-input
-                          id="stock-product"
-                          v-model="stockProduct"
-                          class="wrapper__form__input__variant"
-                          placeholder="Masukkan jumlah stok produk"
-                          type="number"
-                          :formatter="formatPriceNotVariant"
-                          :state="errors.length > 0 ? false:null"
-                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
-                          @keyup="formatStock($event)"
-                          @keypress="validateInputStock($event)"
-                          @paste="handlePasteStock"
-                        />
+                        <b-input-group>
+                          <b-input-group-prepend is-text>
+                            Pcs
+                          </b-input-group-prepend>
+                          <b-form-input
+                            id="stock-product"
+                            v-model="stockProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Masukkan jumlah stok produk"
+                            type="number"
+                            :formatter="formatPriceNotVariant"
+                            :state="errors.length > 0 ? false:null"
+                            :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                            @keyup="formatStock($event)"
+                            @keypress="validateInputStock($event)"
+                            @paste="handlePasteStock"
+                          />
+                        </b-input-group>
                         <small
                           v-if="errors[0]"
                           class="text-primary ml-1 mt-50"
@@ -910,7 +1000,8 @@
                     </b-col>
 
                     <b-col
-                      cols="10"
+                      cols="12"
+                      md="10"
                     >
                       <span style="color: #626262;">Kamu telah mengatur <strong>Harga</strong> dan <strong>Jumlah Stok</strong> di variasi produk</span>
                     </b-col>
@@ -923,7 +1014,8 @@
                 >
                   <b-row>
                     <b-col
-                      cols="2"
+                      cols="12"
+                      md="2"
                     >
                       <label for="price-product">
                         <h5>
@@ -938,7 +1030,8 @@
                     </b-col>
 
                     <b-col
-                      cols="10"
+                      cols="12"
+                      md="10"
                     >
                       <validation-provider
                         #default="{errors}"
@@ -978,7 +1071,8 @@
                 >
                   <b-row>
                     <b-col
-                      cols="2"
+                      cols="12"
+                      md="2"
                     >
                       <label for="price-product">
                         <h5>
@@ -994,10 +1088,15 @@
                     </b-col>
 
                     <b-col
-                      cols="10"
+                      cols="12"
+                      md="10"
                     >
-                      <b-row class="justify-content-around">
-                        <b-col>
+                      <b-row class="justify-content-between">
+                        <b-col
+                          cols="12"
+                          md="auto"
+                          class="mb-1"
+                        >
                           <b-input-group>
                             <b-form-input
                               id="price-product"
@@ -1017,7 +1116,11 @@
                             </b-input-group-append>
                           </b-input-group>
                         </b-col>
-                        <b-col>
+                        <b-col
+                          cols="12"
+                          md="auto"
+                          class="mb-1"
+                        >
                           <b-input-group>
                             <b-form-input
                               id="price-product"
@@ -1037,7 +1140,11 @@
                             </b-input-group-append>
                           </b-input-group>
                         </b-col>
-                        <b-col>
+                        <b-col
+                          cols="12"
+                          md="auto"
+                          class="mb-1"
+                        >
                           <b-input-group>
                             <b-form-input
                               id="price-product"
@@ -1116,7 +1223,8 @@
                 </div>
                 <b-row class="align-items-center">
                   <b-col
-                    cols="2"
+                    cols="12"
+                    md="2"
                   >
                     <label for="name-product">
                       <h5>
@@ -1132,7 +1240,8 @@
                   </b-col>
 
                   <b-col
-                    cols="10"
+                    cols="12"
+                    md="10"
                   >
                     <b-row class="align-items-center">
                       <b-img
@@ -1194,7 +1303,7 @@
                 type="submit"
                 variant="outline-primary"
                 :class="buttonIsSubmit ? 'mr-1 cursor-not-allowed' : 'mr-1'"
-                :disabled="validateSubmitButton()"
+                :disabled="buttonIsSubmit"
                 @click.prevent="submit(0)"
               >
                 Simpan Draft
@@ -1209,7 +1318,7 @@
                 type="reset"
                 variant="primary"
                 :class="buttonIsSubmit ? 'cursor-not-allowed' : ''"
-                :disabled="validateSubmitButton()"
+                :disabled="buttonIsSubmit"
                 @click.prevent="submit(1)"
               >
                 Simpan ke Produk Aktif
@@ -1290,6 +1399,102 @@
             *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
           </p>
         </b-container>
+      </b-modal>
+
+      <!-- Popup delete variant -->
+      <b-modal
+        ref="popup-delete-variant"
+        hide-header
+        hide-footer
+        centered
+      >
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-img src="@/assets/images/icons/icon-delete-variant.svg" />
+        </b-row>
+
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <h4 class="text-black">
+              Hapus Tipe Varian?
+            </h4>
+          </b-col>
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <p>
+              Semua list pilihan dari varian akan otomatis terhapus juga lho...
+            </p>
+          </b-col>
+        </b-row>
+
+        <b-row class="justify-content-center mx-1 mt-1 mb-2">
+          <b-button
+            variant="outline-primary"
+            class="mr-2"
+            @click="closePopupDeleteVariant"
+          >
+            Batal
+          </b-button>
+          <b-button
+            variant="primary"
+            class="text-white"
+            @click="deleteVariant"
+          >
+            Hapus
+          </b-button>
+        </b-row>
+      </b-modal>
+
+      <!-- Popup delete All variant -->
+      <b-modal
+        ref="popup-delete-all-variant"
+        hide-header
+        hide-footer
+        centered
+      >
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-img src="@/assets/images/icons/icon-delete-variant.svg" />
+        </b-row>
+
+        <b-row class="my-1 justify-content-center mx-1">
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <h4 class="text-black">
+              Hapus Semua Varian?
+            </h4>
+          </b-col>
+          <b-col
+            class="text-center"
+            cols="12"
+          >
+            <p>
+              Semua list pilihan dari varian akan otomatis terhapus juga lho...
+            </p>
+          </b-col>
+        </b-row>
+
+        <b-row class="justify-content-center mx-1 mt-1 mb-2">
+          <b-button
+            variant="outline-primary"
+            class="mr-2"
+            @click="closePopupDeleteAllVariant"
+          >
+            Batal
+          </b-button>
+          <b-button
+            variant="primary"
+            class="text-white"
+            @click="deleteAllVariant"
+          >
+            Hapus
+          </b-button>
+        </b-row>
       </b-modal>
 
     </b-card-actions>
@@ -1415,6 +1620,16 @@ export default {
       stockAllPasteMode: false,
 
       loadingLoadData: false,
+
+      itemToDelete: null,
+      variantOptionToDelete: null,
+
+      variantToDelete: null,
+
+      addVariantIsActive: false,
+      addVariantOptionIsActive: false,
+
+      empty: [],
     }
   },
   computed: {},
@@ -1633,12 +1848,20 @@ export default {
     formatterVolume(e) {
       return String(e).substring(0, 7)
     },
+    formatterVariantNameProduct(e) {
+      return String(e).substring(0, 30)
+    },
     validateInputProductName(e) {
       if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 38) {
         e.preventDefault()
         this.messageErrorIsActive = true
       } else {
         this.messageErrorIsActive = false
+      }
+      if (this.productName.length < 3) {
+        this.messageErrorLengthProduct = true
+      } else {
+        this.messageErrorLengthProduct = false
       }
     },
     validateInputWeight(e) {
@@ -1653,43 +1876,50 @@ export default {
       }
       if (this.weightPasteMode) this.weightProduct = this.weightPaste
       this.weightPasteMode = false
+      this.validateSubmitButton()
     },
     validateInputPrice(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (this.priceProduct === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (this.priceProduct === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.weightPasteMode) this.weightProduct = this.weightPaste
-      this.weightPasteMode = false
+      this.validateSubmitButton()
     },
     validateInputPriceVariant(e, data) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (data === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (data === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
+      this.validateSubmitButton()
     },
     validateInputStock(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
         e.preventDefault()
       }
-      if (this.stockProduct === null && e.keyCode === 48) {
-        e.preventDefault()
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
       }
-      if (this.stockProduct === '' && e.keyCode === 48) {
-        e.preventDefault()
-      }
-      if (this.weightPasteMode) this.weightProduct = this.weightPaste
-      this.weightPasteMode = false
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
+      this.validateSubmitButton()
     },
     validateInputVolumeLength(e) {
       if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
@@ -1749,6 +1979,7 @@ export default {
       localStorage.setItem('newUser', false)
     },
     async checkProductName() {
+      this.validateSubmitButton()
       if (this.messageErrorLengthProduct === false) {
         await this.$http_komship.get('/v1/product/check-name', {
           params: {
@@ -1780,10 +2011,7 @@ export default {
     },
     handleIsVariant() {
       if (this.isVariantActive) {
-        this.isVariantActive = false
-        this.variantInputItems = []
-        this.variantItems = []
-        this.variantFields = []
+        this.$refs['popup-delete-all-variant'].show()
       } else {
         this.isVariantActive = true
         this.variantInputItems.push({
@@ -1796,6 +2024,7 @@ export default {
             newParent: false,
             newSecondParent: false,
             isValid: true,
+            isSame: false,
             variantOptionItem: [
               {
                 variantOptionName: '',
@@ -1803,6 +2032,7 @@ export default {
                 stock: null,
                 price: null,
                 isValid: true,
+                isSame: false,
                 newParentItem: true,
                 option: [],
               },
@@ -1821,6 +2051,7 @@ export default {
             stock: null,
             price: null,
             isValid: true,
+            isSame: false,
             newParent: true,
             newSecondParent: false,
             variantOptionItem: [
@@ -1830,6 +2061,7 @@ export default {
                 stock: null,
                 price: null,
                 isValid: true,
+                isSame: false,
                 newParentItem: true,
                 option: [],
               },
@@ -1848,6 +2080,7 @@ export default {
           stock: null,
           price: null,
           isValid: true,
+          isSame: false,
           newVariant: true,
           option: [],
           newParentItem: true,
@@ -1865,13 +2098,18 @@ export default {
       }
       this.applyVariantIsActive = true
     },
-    deleteVariant(data) {
-      const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === data.variant.type)
+    handleDeleteVariant(data) {
+      this.variantToDelete = data
+      this.$refs['popup-delete-variant'].show()
+    },
+    deleteVariant() {
+      const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === this.variantToDelete.variant.type)
       this.variantInputItems.splice(findIndexVariant, 1)
-      const findIndexFieldsVariant = this.variantFields.findIndex(items => items.label === data.variant.variantName)
-      if (findIndexFieldsVariant !== -1) {
-        this.variantFields.splice(findIndexFieldsVariant, 1)
-      }
+      if (this.variantInputItems.length === 0) this.isVariantActive = false
+      this.$refs['popup-delete-variant'].hide()
+    },
+    closePopupDeleteVariant() {
+      this.$refs['popup-delete-variant'].hide()
     },
     deleteVariantOption(item, variantOption) {
       const findIndexVariant = this.variantInputItems.findIndex(itemVariant => itemVariant.variant.variantName === item.variant.variantName)
@@ -1898,10 +2136,20 @@ export default {
         })
       }
     },
+    deleteAllVariant() {
+      this.variantItems = []
+      this.variantFields = []
+      this.variantInputItems = []
+      this.isVariantActive = false
+      this.$refs['popup-delete-all-variant'].hide()
+    },
+    closePopupDeleteAllVariant() {
+      this.isVariantActive = true
+      this.$refs['popup-delete-all-variant'].hide()
+    },
     applyVariant() {
       if (this.variantItems.length > 0) {
         this.variantFields = []
-        console.log(this.variantInputItems)
         this.variantInputItems.forEach(item => {
           if (item.variant.type === 1) {
             this.variantFields.push({
@@ -2060,7 +2308,6 @@ export default {
         })
       } else {
         this.variantFields = []
-        console.log(this.variantInputItems)
         this.variantInputItems.forEach(item => {
           if (item.variant.type === 1) {
             this.variantFields.push({
@@ -2221,6 +2468,43 @@ export default {
       } else {
         this.applyVariantIsActive = false
       }
+      if (this.variantInputItems.length > 1) {
+        const findSameVariant = this.variantInputItems.filter(items => items.variant.variantName === item.variant.variantName)
+        if (findSameVariant.length > 1) {
+          this.addVariantIsActive = true
+          this.applyVariantIsActive = true
+        } else {
+          this.addVariantIsActive = false
+          this.applyVariantIsActive = false
+        }
+      }
+
+      if (this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.isValid === true && findOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+
+      const findEmptyOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.variantOptionName === '')
+      if (findEmptyOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+
+      if (this.variantInputItems.length > 1) {
+        const findSameVariantNotEmpty = this.variantInputItems.filter(option => option.variant.variantName !== '')
+        const findSameVariant = findSameVariantNotEmpty.filter(option => option.variant.variantName === item.variant.variantName)
+        if (findSameVariant.length > 1) {
+          this.variantInputItems[index].variant.isSame = true
+          this.applyVariantIsActive = true
+        } else {
+          this.variantInputItems[index].variant.isSame = false
+          this.applyVariantIsActive = false
+        }
+      }
     },
     validateVariantOptionField(index, indexVariantOption, variantOption) {
       if (variantOption.variantOptionName !== '') {
@@ -2238,6 +2522,50 @@ export default {
         this.applyVariantIsActive = true
       } else {
         this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem.length > 1) {
+        const filterEmptyOption = this.variantInputItems[index].variant.variantOptionItem.filter(itemOption => itemOption.variantOptionName !== '')
+        const filterOption = filterEmptyOption?.filter(itemOption => itemOption.variantOptionName === variantOption.variantOptionName)
+        if (filterOption.length > 1) {
+          this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = true
+          this.addVariantOptionIsActive = true
+          this.addVariantIsActive = true
+          this.applyVariantIsActive = true
+        } else {
+          this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = false
+          this.addVariantOptionIsActive = false
+          this.addVariantIsActive = false
+          this.applyVariantIsActive = false
+        }
+      }
+      if (this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === true && this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame === true && this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      }
+
+      const findEmptyOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.variantOptionName === '')
+      if (findEmptyOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+      const findSameOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.isSame === true)
+      if (findSameOption !== undefined) {
+        this.applyVariantIsActive = true
       }
     },
     setAllPriceStock() {
@@ -2263,6 +2591,8 @@ export default {
           this.variantItems[index].option_price = this.setPriceAll
         })
       }
+      this.empty = []
+      this.validateSubmitButton()
     },
     calculateVolumeProduct() {
       if (this.lengthProduct && this.widthProduct && this.heightProduct) {
@@ -2455,7 +2785,8 @@ export default {
         || this.priceProduct === null
         || this.priceProduct === ''
         || this.stockProduct === null
-        || this.stockProduct === '') {
+        || this.stockProduct === ''
+        || this.empty.length > 0) {
           this.buttonIsSubmit = true
         } else {
           this.buttonIsSubmit = false
@@ -2470,13 +2801,13 @@ export default {
         || this.weightProduct === ''
         || this.productName === ''
         || this.weightProduct === null
-        || this.productName === null) {
+        || this.productName === null
+        || this.empty.length > 0) {
           this.buttonIsSubmit = true
         } else {
           this.buttonIsSubmit = false
         }
       }
-      return this.buttonIsSubmit
     },
     handlePastePrice(e) {
       this.pricePasteMode = true
@@ -2520,6 +2851,46 @@ export default {
       this.stockAllPasteMode = true
       this.stockAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
       if (this.stockAllPaste.charAt(0) === '0') this.stockAllPaste = this.stockAllPaste.slice(1, this.stockAllPaste.length)
+    },
+    checkValidationSubmit(data) {
+      this.empty = []
+      if (this.variantInputItems.length === 1) {
+        this.variantItems.forEach(item => {
+          if (item.variant_stock === null || item.variant_stock === '') {
+            this.empty.push(item)
+          }
+          if (item.option_price === null || item.option_price === '') {
+            this.empty.push(item)
+          }
+        })
+      }
+      if (this.variantInputItems.length === 2) {
+        this.variantItems.forEach(item => {
+          item.options.forEach(secondItem => {
+            if (secondItem.variant_stock === null || secondItem.variant_stock === '') {
+              this.empty.push(secondItem)
+            }
+            if (secondItem.option_price === null || secondItem.option_price === '') {
+              this.empty.push(secondItem)
+            }
+          })
+        })
+      }
+      if (this.variantInputItems.length === 3) {
+        this.variantItems.forEach(item => {
+          item.options.forEach(secondItem => {
+            secondItem.options.forEach(thirdItem => {
+              if (thirdItem.variant_stock === null || thirdItem.variant_stock === '') {
+                this.empty.push(thirdItem)
+              }
+              if (thirdItem.option_price === null || thirdItem.option_price === '') {
+                this.empty.push(thirdItem)
+              }
+            })
+          })
+        })
+      }
+      this.validateSubmitButton()
     },
   },
 }
