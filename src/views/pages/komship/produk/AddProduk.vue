@@ -621,7 +621,7 @@
                       <template #cell(variant1)="data">
                         <div
                           class="mt-1"
-                          style="min-width: 200px!important;"
+                          style="min-width: 100px!important;"
                         >
                           {{ data.item.variant1.val }}
                         </div>
@@ -640,7 +640,7 @@
                               <b-col
                                 class="wrapper__variant2__table mb-1 d-flex align-items-center"
                                 cols="12"
-                                style="min-width: 200px!important;"
+                                style="min-width: 100px!important;"
                                 disabled
                               >
                                 {{ item.variant2.val }}
@@ -656,7 +656,7 @@
                             <b-col
                               class="wrapper__variant2__table mb-1 d-flex align-items-center"
                               cols="12"
-                              style="min-width: 200px!important;"
+                              style="min-width: 100px!important;"
                               disabled
                             >
                               {{ item.variant2.val }}
@@ -677,7 +677,7 @@
                             <b-col
                               class="wrapper__variant2__table mb-1 d-flex align-items-center"
                               cols="12"
-                              style="min-width: 200px!important;"
+                              style="min-width: 100px!important;"
                               disabled
                             >
                               {{ items.variant3.val }}
@@ -696,7 +696,7 @@
                               v-for="(itemVariant, indexVariant) in items.variant2.option"
                               :key="indexVariant+1"
                               cols="12"
-                              style="min-width: 200px!important;"
+                              style="min-width: 250px!important;"
                             >
                               <b-form-input
                                 :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
@@ -718,7 +718,7 @@
                             v-for="(items, index) in data.item.variant1.option"
                             :key="index+1"
                             cols="12"
-                            style="min-width: 200px!important;"
+                            style="min-width: 250px!important;"
                           >
                             <b-form-input
                               :id="`stock-variant-${index + data.index}-${data.index+1}`"
@@ -736,7 +736,7 @@
 
                         <div v-if="variantInputItems.length === 1">
                           <div
-                            style="min-width: 200px!important;"
+                            style="min-width: 250px!important;"
                           >
                             <b-form-input
                               v-model="data.item.variant1.stock"
@@ -762,7 +762,7 @@
                               v-for="(itemVariant, indexVariant) in items.variant2.option"
                               :key="indexVariant+1"
                               cols="12"
-                              style="min-width: 200px!important;"
+                              style="min-width: 250px!important;"
                             >
                               <b-input-group class="mb-1">
                                 <b-input-group-prepend is-text>
@@ -793,7 +793,7 @@
                             v-for="(items, index) in data.item.variant1.option"
                             :key="index+1"
                             cols="12"
-                            style="min-width: 200px!important;"
+                            style="min-width: 250px!important;"
                           >
                             <b-input-group class="mb-1">
                               <b-input-group-prepend is-text>
@@ -820,7 +820,7 @@
 
                         <div v-if="variantInputItems.length === 1">
                           <div
-                            style="min-width: 200px!important;"
+                            style="min-width: 250px!important;"
                           >
                             <b-input-group class="mb-1">
                               <b-input-group-prepend is-text>
@@ -1792,7 +1792,6 @@ export default {
       localStorage.setItem('newUser', false)
     },
     async checkProductName() {
-      this.validateSubmitButton()
       if (this.messageErrorLengthProduct === false) {
         await this.$http_komship.get('/v1/product/check-name', {
           params: {
@@ -1805,6 +1804,7 @@ export default {
           } else {
             this.productNameAvailable = true
           }
+          this.validateSubmitButton()
         }).catch(() => { this.productNameAvailable = true })
       }
     },
@@ -2090,6 +2090,43 @@ export default {
           borderBottom: '0px',
         },
       })
+
+      if (this.variantInputItems.length === 1) {
+        this.variantItems.forEach(item => {
+          if (item.variant1.stock === null || item.variant1.stock === '') {
+            this.empty.push(item)
+          }
+          if (item.variant1.price === null || item.variant1.price === '') {
+            this.empty.push(item)
+          }
+        })
+      }
+      if (this.variantInputItems.length === 2) {
+        this.variantItems.forEach(item => {
+          item.variant1.option.forEach(secondItem => {
+            if (secondItem.variant2.stock === null || secondItem.variant2.stock === '') {
+              this.empty.push(secondItem)
+            }
+            if (secondItem.variant2.price === null || secondItem.variant2.price === '') {
+              this.empty.push(secondItem)
+            }
+          })
+        })
+      }
+      if (this.variantInputItems.length === 3) {
+        this.variantItems.forEach(item => {
+          item.variant1.option.forEach(secondItem => {
+            secondItem.variant2.option.forEach(thirdItem => {
+              if (thirdItem.variant3.stock === null || thirdItem.variant3.stock === '') {
+                this.empty.push(thirdItem)
+              }
+              if (thirdItem.variant3.price === null || thirdItem.variant3.price === '') {
+                this.empty.push(thirdItem)
+              }
+            })
+          })
+        })
+      }
     },
 
     validateVariantField(item, index) {
@@ -2133,7 +2170,7 @@ export default {
 
       if (this.variantInputItems.length > 1) {
         const findSameVariantNotEmpty = this.variantInputItems.filter(option => option.variant.variantName !== '')
-        const findSameVariant = findSameVariantNotEmpty.filter(option => option.variant.variantName === item.variant.variantName)
+        const findSameVariant = findSameVariantNotEmpty.filter(option => option.variant.variantName.toUpperCase() === item.variant.variantName.toUpperCase())
         if (findSameVariant.length > 1) {
           this.variantInputItems[index].variant.isSame = true
           this.applyVariantIsActive = true
@@ -2163,7 +2200,7 @@ export default {
 
       if (this.variantInputItems[index].variant.variantOptionItem.length > 1) {
         const filterEmptyOption = this.variantInputItems[index].variant.variantOptionItem.filter(itemOption => itemOption.variantOptionName !== '')
-        const filterOption = filterEmptyOption?.filter(itemOption => itemOption.variantOptionName === variantOption.variantOptionName)
+        const filterOption = filterEmptyOption?.filter(itemOption => itemOption.variantOptionName.toUpperCase() === variantOption.variantOptionName.toUpperCase())
         if (filterOption.length > 1) {
           this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = true
           this.addVariantOptionIsActive = true
@@ -2448,7 +2485,6 @@ export default {
       }
 
       if (this.isVariantActive) {
-        console.log(this.empty)
         if (!this.productNameAvailable
         || this.messageErrorIsActive
         || !this.skuNameAvailable

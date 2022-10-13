@@ -1,194 +1,234 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
   <div>
-    <div
-      class="d-flex justify-between"
+    <BRow
+      v-if="item.status === 'Pickup'"
+      class="mb-1"
     >
-      <div class="d-flex">
-        <h4 class="text-black mt-50">
-          <strong>
-            Riwayat Perjalanan
-          </strong>
-        </h4>
+      <BCol
+        cols="2"
+        md="2"
+        class="pr-0"
+      >
         <img
-          :src="orderDatas.shipment_image_path"
-          style="height: 45px"
+          src="@/assets/images/icons/resi-pickup.svg"
+          alt="Komerce"
+          class="w-10"
+          style="top: -15px"
         >
-      </div>
-      <img
-        v-if="handleCloseModalResi === true"
-        src="@/assets/images/icons/close-circle.svg"
-        style="cursor:pointer"
-        @click="$bvModal.hide('bv-modal-cek-resi')"
+        <div class="dashed" />
+      </BCol>
+      <BCol
+        cols="10"
+        md="10"
       >
-    </div>
-    <b-row class="my-8 overflow-auto">
-      <div
-        v-if="itemAwb.length > 0"
-      >
-        <div
-          class="px-1"
-          :style="handleCloseModalResi === true ? 'max-height: 80vh;width: 100%;' : 'width: 100%;'"
-          v-html="listAwb"
-        />
-      </div>
-      <b-col v-if="itemAwb.length === 0">
-        <div
-          v-if="isLoading===false"
-          class="d-block mt-5 mb-5 align-content-center text-center"
+        <span>{{ formatDate(item.date) }}</span>
+        <h5 class="mb-1">
+          {{ item.desc }}
+        </h5>
+        <BRow
+          v-if="item.send_wa === 1"
+          class="flex rounded p-[5px]"
+          style="border: 1px solid #e2e2e2"
         >
-          Data riwayat perjalan tidak ditemukan. <b>Bisa jadi</b> sudah request pickup/dijemput kurir saat pickup namun <b>belum discan</b> QR code untuk memulai perjalanan di kantor cabang. Harap menunggu
-        </div>
-        <div
-          v-if="isLoading===true"
-          class="d-block mt-5 mb-5 align-content-center text-center"
-        >
-          <div
-            class="spinner-border text-primary"
-            role="status"
+          <BCol
+            cols="3"
+            class="p-0"
           >
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-      </b-col>
-    </b-row>
+            <div>
+              <img
+                src="@/assets/images/icons/whatsapp-notif.svg"
+                alt="Komerce"
+              >
+            </div>
+          </BCol>
+          <BCol
+            cols="9"
+            class="pl-0"
+          >
+            <h5
+              v-if="item.type === 'sending'"
+              class="mb-1 ml-1"
+            >
+              Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan
+            </h5>
+            <h5
+              v-if="item.type === 'arrived'"
+              class="mb-1 ml-1"
+            >
+              Info paket COD hampir sampai telah terkirim ke WA Pelanggan
+            </h5>
+          </BCol>
+        </BRow>
+      </BCol>
+    </BRow>
+    <BRow
+      v-if="item.status === 'Process'"
+      class="mb-1"
+    >
+      <BCol
+        cols="2"
+        class="pr-0"
+      >
+        <img
+          src="@/assets/images/icons/resi-kirim.svg"
+          alt="Komerce"
+          class="w-10"
+          style="top: -15px"
+        >
+        <div class="dashed" />
+      </BCol>
+      <BCol cols="10">
+        <span>{{ formatDate(item.date) }}</span>
+        <h5 class="mb-1">
+          {{ item.desc }}
+        </h5>
+      </BCol>
+    </BRow>
+    <BRow
+      v-if="item.status === 'Delivered'"
+      class="mb-1"
+    >
+      <BCol
+        cols="2"
+        class="pr-0"
+      >
+        <img
+          src="@/assets/images/icons/resi-terima.svg"
+          alt="Komerce"
+          class="w-10"
+          style="top: -15px"
+        >
+        <!-- <div class="dashed" /> -->
+      </BCol>
+      <BCol cols="10">
+        <span>{{ formatDate(item.date) }}</span>
+        <h5 class="mb-1">
+          {{ item.desc }}
+        </h5>
+      </BCol>
+    </BRow>
+    <BRow
+      v-if="item.status === 'Problem'"
+      class="mb-1"
+    >
+      <BCol
+        cols="2"
+        class="pr-0"
+      >
+        <img
+          src="@/assets/images/icons/resi-problem.svg"
+          alt="Komerce"
+          class="w-10"
+          style="top: -15px"
+        >
+        <div class="dashed" />
+      </BCol>
+      <BCol cols="10">
+        <span>{{ formatDate(item.date) }}</span>
+        <h5
+          class="mb-1"
+          style="color: #e31a1a"
+        >
+          Kendala Pengiriman
+        </h5>
+        <BRow
+          class="flex rounded p-[5px]"
+          style="border: 1px solid #e2e2e2"
+        >
+          <BCol
+            cols="2"
+            class="p-0"
+          >
+            <img
+              src="@/assets/images/icons/resi-retur.svg"
+              alt="Komerce"
+              class="w-10"
+              style="top: -15px"
+            >
+          </BCol>
+          <BCol
+            cols="10"
+            class="pl-0"
+          >
+            <h5
+              class="mb-1"
+              style="color: #e31a1a"
+            >
+              {{ item.desc }}
+            </h5>
+          </BCol>
+        </BRow>
+      </BCol>
+    </BRow>
+    <BRow
+      v-if="item.status === 'Retur'"
+      class="mb-1 no-wrap"
+    >
+      <BCol
+        cols="2"
+        class="pr-0"
+      >
+        <img
+          src="@/assets/images/icons/resi-retur.svg"
+          alt="Komerce"
+          class="w-10"
+          style="top: -15px"
+        >
+        <div class="dashed" />
+      </BCol>
+      <BCol cols="10">
+        <span>{{ formatDate(item.date) }}</span>
+        <h5 class="mb-1">
+          {{ item.desc }}
+        </h5>
+      </BCol>
+    </BRow>
+    <BRow
+      v-if="item.status === 'Delivery'"
+      class="mb-1 no-wrap"
+    >
+      <BCol
+        cols="2"
+        class="pr-0"
+      >
+        <img
+          src="@/assets/images/icons/icon-log-pengantar.svg"
+          alt="Komerce"
+          class="w-10"
+          style="top: -15px"
+        >
+        <div class="dashed" />
+      </BCol>
+      <BCol cols="10">
+        <span>{{ formatDate(item.date) }}</span>
+        <h5 class="mb-1">
+          {{ item.desc }}
+        </h5>
+      </BCol>
+    </BRow>
   </div>
 </template>
 
 <script>
-/* eslint-disable global-require */
-import {
-  VBModal,
-} from 'bootstrap-vue'
+import { BCol, BRow } from 'bootstrap-vue'
 import moment from 'moment'
-import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
-  directives: { VBModal },
+  components: {
+    BCol,
+    BRow,
+  },
   props: {
-    // eslint-disable-next-line vue/require-default-prop
-    orderDatas: null,
-    loading: Boolean,
-    handleCloseModalResi: Boolean,
-    // eslint-disable-next-line vue/require-default-prop
-    promiseModal: null,
-    // eslint-disable-next-line vue/require-default-prop
-    orderId: null,
-  },
-  data() {
-    return {
-      isLoading: false,
-
-      listAwb: '',
-      itemAwb: [],
-      profile: this.$store.state?.auth?.userData,
-    }
-  },
-  watch: {
-    async orderId(newVal, oldVal) {
-      if (newVal) {
-        try {
-          const order = await this.$http_komship.get(`v1/order/${this.profile.partner_detail.id}/detail/${this.orderId}`)
-          const { data } = await order.data
-          this.transactionValue = data.old_grandtotal
-          this.orderDatas = await data
-          await this.lacakresi()
-          await this.$emit('updateValueTransaction', data.grandtotal)
-          await this.$emit('passCustomerPhone', data.customer_phone)
-        } catch (err) {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          }, 2000)
-        }
-      }
+    item: {
+      type: Object,
+      required: true,
     },
-  },
-  async mounted() {
-    if (this.orderDatas.airway_bill !== undefined) {
-      await this.lacakresi()
-    }
   },
   methods: {
-    lacakresi() {
-      this.isLoading = true
-
-      if (this.handleCloseModalResi === true) {
-        this.promiseModal.then(() => {
-          this.getHistoryPackage()
-        })
-      } else {
-        this.getHistoryPackage()
-      }
-    },
-    async getHistoryPackage() {
-      const body = {
-        data: this.orderDatas.airway_bill,
-      }
-      await this.$http_komship.post('v2/bulk-check-awb', body).then(res => {
-        const { data } = res.data
-        this.itemAwb = data.history
-        this.isLoading = false
-        this.getElementAwb()
-      }).catch(err => {
-        this.isLoading = false
-      })
-    },
-    getElementAwb() {
-      const formatDate = date => {
-        const monthName = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
-        const day = moment(date).format('DD')
-        const month = moment(date).format('M')
-        const year = moment(date).format('YYYY')
-        const time = moment(date).format('HH.mm')
-        return `${day} ${monthName[month - 1]} ${year} - ${time}`
-      }
-      this.listAwb = ''
-      this.itemAwb.forEach(items => {
-        this.listAwb += '<div class="icon-awb d-inline-block">'
-        if (items.status === 'Pickup') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-pickup.svg')}">`
-        } else if (items.status === 'Process') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-kirim.svg')}">`
-        } else if (items.status === 'Problem') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
-        } else if (items.status === 'Delivered') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
-        } else if (items.status === 'Retur') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
-        } else if (items.status === 'Delivery') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/icon-log-pengantar.svg')}">`
-        }
-        this.listAwb += '</div>'
-        this.listAwb += '<div style="font-size: 16px;display: inline-block;">'
-        this.listAwb += `<span>${formatDate(items.date)}</span><br>`
-        this.listAwb += `<span class="font-bold">${items.desc}</span>`
-        this.listAwb += '</div><br>'
-        if (items.send_wa === 1) {
-          if (items.type === 'sending') {
-            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-            this.listAwb += '<span class="my-auto" style="margin-left:6px">Pemberitahuan pemberangkatan telah terkirim ke WA Pelanggan</span>'
-            this.listAwb += '</div>'
-          }
-          if (items.type === 'arrived') {
-            this.listAwb += '<div class="d-flex relative p-1" style="margin-left:50px;border:1px solid #E2E2E2;border-radius:4px;margin-bottom:-50px;max-width:400px">'
-            this.listAwb += `<img src="${require('@/assets/images/icons/whatsapp-notif.svg')}">`
-            this.listAwb += '<span class="my-auto" style="margin-left:6px">Info paket COD hampir sampai telah terkirim ke WA Pelanggan</span>'
-            this.listAwb += '</div>'
-          }
-        }
-      })
+    formatDate(value) {
+      return moment(value).format('DD MMMM YYYY - hh:mm')
     },
   },
 }
 </script>
-
-<style>
-
-</style>
+<style lang src="./PopupLacakResi.scss" />

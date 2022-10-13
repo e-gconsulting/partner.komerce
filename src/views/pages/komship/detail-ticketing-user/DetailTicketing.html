@@ -378,34 +378,40 @@
                                     </div>
                                 </div>
                             </b-col>
-
                             <b-col
                                 v-if="messageItem.type === 'Shipping'"
                                 cols="12"
                                 class="my-2"
                             >
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <hr style="height:2px;min-width: 100px;max-width: 157px;color:gray;background-color:gray">
-                                    <div class="d-flex align-items-center p-1 mx-2" style="background: #E2E2E2;
-                                    border-radius: 32px;">
-                                        <div>
-                                            <b-img src="@/assets/images/icons/resi-kirim.svg" style="min-width: 60px!important;"/>
+                                <b-row class="align-items-center">
+                                    <b-col cols="2">
+                                        <hr style="height:0.7px;min-width: 100%;color:gray;background-color:gray">
+                                    </b-col>
+                                    <b-col cols="8" class="p-0">
+                                        <div class="d-flex align-items-center" style="background: #E2E2E2;
+                                        border-radius: 32px;padding-left: 10px; padding-top: 5px;padding-bottom: 5px;padding-right: 10px;">
+                                            <div>
+                                                <b-img src="@/assets/images/icons/icon-log-pengantar.svg" style="max-width: 25px!important"/>
+                                            </div>
+                                            <div>
+                                                <b-col
+                                                    cols="12"
+                                                >
+                                                    <span style="font-size: 12px; font-weight: 600;">{{ messageItem.message }}</span>
+                                                </b-col>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <b-col
-                                                cols="12"
-                                            >
-                                                <span style="font-size: 12px; font-weight: 600;">{{ messageItem.message }}</span>
-                                            </b-col>
-                                            <b-col
-                                                cols="12"
-                                            >
-                                                <span style="font-size: 10px; font-weight: 600;">{{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}</span>
-                                            </b-col>
-                                        </div>
-                                    </div>
-                                    <hr style="height:2px;min-width: 100px;max-width: 157px;color:gray;background-color:gray">
-                                </div>
+                                    </b-col>
+                                    <b-col cols="2">
+                                        <hr style="height:0.7px;min-width: 100%;color:gray;background-color:gray">
+                                    </b-col>
+                                </b-row>
+                                <b-col
+                                    cols="12"
+                                    class="text-center"
+                                >
+                                    <span style="font-size: 10px; font-weight: 600;">{{ moment(new Date(messageItem.date_created)).format('DD MMMM YYYY | HH:mm') }}</span>
+                                </b-col>
                             </b-col>
                         </b-row>
 
@@ -534,11 +540,52 @@
                     <b-row class="mx-1 mb-1">
                         <div style="width: 100%; height: 1px; background-color: #E2E2E2;" />
                     </b-row>
-                    <b-row class="overflow-auto mx-2">
+                    <BOverlay
+                      :show="isLoading"
+                      spinner-variant="primary"
+                      variant="light"
+                      blur="0"
+                      opacity=".5"
+                      rounded="sm"
+                    >
+                      <div class="flex mb-2">
+                        <strong
+                          class="text-black font-bold text-[16px] mr-1"
+                        >Riwayat Perjalanan</strong>
+                        <img
+                          v-b-tooltip.hover.top="'Nilai total yang pembeli harus bayar'"
+                          :src="dataAwb.shipping_icon"
+                          alt="Komerce"
+                          class="w-12"
+                        >
+                      </div>
+                      <div
+                        v-if="dataAwb.history"
+                        style="height: 521px; overflow: auto"
+                      >
+                        <div
+                          v-for="(item, idx) in dataAwb.history"
+                          :key="idx"
+                        >
+                          <PopupLacakResi :item="item" />
+                        </div>
+                      </div>
+                      <div
+                        v-else
+                        style="height: 45vh; overflow: auto"
+                      >
+                        <p class="text-center">
+                          Data riwayat perjalan tidak ditemukan. Bisa jadi sudah request
+                          pickup/dijemput kurir saat pickup namun belum discan QR code
+                          untuk memulai perjalanan di kantor cabang. Harap menunggu
+                        </p>
+                      </div>
+                    </BOverlay>
+                    <!-- <b-row class="overflow-auto mx-2">
                         <popup-lacak-resi :item-awbs="itemAwb" :loading="isLoading" :order-datas="orderData"
                             :list-awbs="listAwb" :handle-close-modal-resi="false" :order-id="orderId"
                             @updateValueTransaction="applyValueTransaction" @passCustomerPhone="fetchCustomerPhone" />
-                    </b-row>
+                    </b-row> -->
                 </div>
             </b-col>
         </b-row>
