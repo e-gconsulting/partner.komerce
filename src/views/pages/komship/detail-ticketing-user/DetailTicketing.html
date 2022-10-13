@@ -534,11 +534,52 @@
                     <b-row class="mx-1 mb-1">
                         <div style="width: 100%; height: 1px; background-color: #E2E2E2;" />
                     </b-row>
-                    <b-row class="overflow-auto mx-2">
+                    <BOverlay
+                      :show="isLoading"
+                      spinner-variant="primary"
+                      variant="light"
+                      blur="0"
+                      opacity=".5"
+                      rounded="sm"
+                    >
+                      <div class="flex mb-2">
+                        <strong
+                          class="text-black font-bold text-[16px] mr-1"
+                        >Riwayat Perjalanan</strong>
+                        <img
+                          v-b-tooltip.hover.top="'Nilai total yang pembeli harus bayar'"
+                          :src="dataAwb.shipping_icon"
+                          alt="Komerce"
+                          class="w-12"
+                        >
+                      </div>
+                      <div
+                        v-if="dataAwb.history"
+                        style="height: 521px; overflow: auto"
+                      >
+                        <div
+                          v-for="(item, idx) in dataAwb.history"
+                          :key="idx"
+                        >
+                          <PopupLacakResi :item="item" />
+                        </div>
+                      </div>
+                      <div
+                        v-else
+                        style="height: 45vh; overflow: auto"
+                      >
+                        <p class="text-center">
+                          Data riwayat perjalan tidak ditemukan. Bisa jadi sudah request
+                          pickup/dijemput kurir saat pickup namun belum discan QR code
+                          untuk memulai perjalanan di kantor cabang. Harap menunggu
+                        </p>
+                      </div>
+                    </BOverlay>
+                    <!-- <b-row class="overflow-auto mx-2">
                         <popup-lacak-resi :item-awbs="itemAwb" :loading="isLoading" :order-datas="orderData"
                             :list-awbs="listAwb" :handle-close-modal-resi="false" :order-id="orderId"
                             @updateValueTransaction="applyValueTransaction" @passCustomerPhone="fetchCustomerPhone" />
-                    </b-row>
+                    </b-row> -->
                 </div>
             </b-col>
         </b-row>

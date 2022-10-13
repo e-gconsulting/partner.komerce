@@ -149,6 +149,8 @@ export default {
       loadingCustomerReputation: false,
 
       destinationLabel: '',
+
+      weightProduct: null,
     }
   },
   mounted() {
@@ -1053,6 +1055,8 @@ export default {
               this.bebankanCustomer = Math.round(result.service_fee)
               this.newGrandTotal = result.grandtotal
               this.oldGrandTotal = result.grandtotal
+              this.weightProduct = result.weight
+              this.weight = result.weight.toFixed(1)
               if (this.paymentMethod === 'COD') {
                 this.jenisBiayaLain = '0'
               } else {
@@ -1068,7 +1072,7 @@ export default {
               this.netProfit = result.net_profit
               this.serviceFee = Math.round(result.service_fee)
               this.serviceFeePercentage = result.service_fee_percentage
-              this.weight = result.weight.toFixed(2)
+              this.weight = result.weight.toFixed(1)
               this.grandTotal = result.grandtotal
               this.cashback = result.cashback
               this.cashbackPercentage = result.cashback_percentage
@@ -1083,6 +1087,7 @@ export default {
               this.bebankanCustomer = Math.round(resultDefault.service_fee)
               this.newGrandTotal = resultDefault.grandtotal
               this.oldGrandTotal = resultDefault.grandtotal
+              this.weight = resultDefault.weight.toFixed(1)
               if (this.paymentMethod === 'COD') {
                 this.jenisBiayaLain = '0'
               } else {
@@ -1098,11 +1103,12 @@ export default {
               this.netProfit = resultDefault.net_profit
               this.serviceFee = Math.round(resultDefault.service_fee)
               this.serviceFeePercentage = resultDefault.service_fee_percentage
-              this.weight = resultDefault.weight.toFixed(2)
+              this.weight = resultDefault.weight.toFixed(1)
               this.grandTotal = resultDefault.grandtotal
               this.cashback = resultDefault.cashback
               this.cashbackPercentage = resultDefault.cashback_percentage
               this.additionalCost = resultDefault.additional_cost
+              this.weightProduct = resultDefault.weight
               this.isCalculate = true
               this.loadingCalculate = false
             }
@@ -1173,6 +1179,7 @@ export default {
             this.bebankanCustomer = Math.round(result.service_fee)
             this.newGrandTotal = result.grandtotal
             this.oldGrandTotal = result.grandtotal
+            this.weight = result.weight.toFixed(1)
             if (this.paymentMethod === 'COD') {
               this.jenisBiayaLain = '0'
             } else {
@@ -1188,7 +1195,7 @@ export default {
             this.netProfit = result.net_profit
             this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight.toFixed(2)
+            this.weight = result.weight.toFixed(1)
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
@@ -1196,6 +1203,7 @@ export default {
             this.isCalculateOnExpedition = true
             this.loadingCalculate = false
           }
+          this.weight = result.weight.toFixed(1)
           this.loadingWrapperOtherCost = false
           this.loadingCalculate = false
         }).catch(async err => {

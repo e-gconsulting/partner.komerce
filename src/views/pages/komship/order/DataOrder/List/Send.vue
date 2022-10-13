@@ -197,18 +197,18 @@
                   style="min-width:160px!important"
                 >
                   <img
-                    v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                    v-if="item.product_image === null || item.product_image === ''"
                     class="image-product"
                     :src="require('@/assets/images/avatars/image-null.png')"
                   >
                   <img
                     v-else
                     class="image-product"
-                    :src="data.item.product[0].product_image"
-                    :alt="data.item.product[0].product_image"
+                    :src="item.product_image"
+                    :alt="item.product_image"
                   >
                   <div style="margin-left:5px;">
-                    <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                    <span class="d-flex font-bold">{{ item.product_name }}</span>
                     <span
                       v-if="item.variant_name !== '0'"
                       class="text-primary"
@@ -277,15 +277,15 @@
           <div class="inline-flex items-center cursor-pointer">
             <span
               v-b-tooltip.hover.top="'Klik untuk copy resi'"
-              @click.prevent="copyResi(data.item.airway_bill)"
               class="colorActive"
+              @click.prevent="copyResi(data.item.airway_bill)"
             >
               {{ data.item.airway_bill }}
             </span>
             <img
+              :id="`iconInfo` + data.item.order_id"
               src="@/assets/images/svg/info-circle.svg"
               class="copy-resi"
-              :id="`iconInfo` + data.item.order_id"
             >
             <div v-if="data.item.last_history_awb !== null">
               <b-popover
@@ -294,11 +294,14 @@
                 placement="topleft"
               >
                 <div class="flex items-center">
-                  <img src="@/assets/images/svg/car.svg" alt="Komerce">
+                  <img
+                    src="@/assets/images/svg/car.svg"
+                    alt="Komerce"
+                  >
                   <div class="ml-1">
                     <span>{{ handleDateTransfer(data.item.last_history_awb.date) }}</span>
                     <br>
-                    <strong>{{data.item.last_history_awb.desc}}</strong>
+                    <strong>{{ data.item.last_history_awb.desc }}</strong>
                   </div>
                 </div>
               </b-popover>
