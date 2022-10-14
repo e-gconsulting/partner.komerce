@@ -1181,19 +1181,16 @@ export default {
       this.isDownloadActive = true
       const self = this
       this.loadingButtonPrintLabel = true
-      const params = {
-        order_id: this.orderIdBase64.join(),
-        page: this.paramsBase64,
-      }
-      if (this.printDateItem) Object.assign(params, { print_date: 1 })
       let percent = null
       percent = setInterval(() => {
         if (self.percentageDownload < 100) self.percentageDownload += 1
         if (self.percentageDownload === 90) self.percentageDownload -= 1
       }, 500)
-      axios.post(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v2/generate/print-label?order_id=${this.orderIdBase64.join()}&page=${this.paramsBase64}`, {
-        params,
-      }).then(response => {
+      const formData = new FormData()
+      formData.append('order_id', this.orderIdBase64.join())
+      formData.append('page', this.paramsBase64)
+      if (this.printDateItem) formData.append('print_date', 1)
+      axios.post(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v2/generate/print-label`, formData).then(response => {
         try {
           let result = null
           const date = `${this.idOrderFromHistory.pickup_date}T${this.idOrderFromHistory.pickup_time}`
