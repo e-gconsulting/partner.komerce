@@ -141,6 +141,8 @@ export default {
       active_Priority: false,
       statusPriority: 0,
       orderStatusIsRetur: false,
+
+      dataAwb: {},
     }
   },
   directives: {
@@ -213,6 +215,7 @@ export default {
             }
             scrollToBottom(theElement)
           }, 500)
+          this.getTicketTrip()
         })
         .catch(err => {
           this.loadingDataDetail = false
@@ -1126,6 +1129,32 @@ export default {
             }, 2000)
           })
       }
+    },
+    getTicketTrip() {
+      const resi = this.noResi
+      this.loading = true
+      this.$http_komship
+        .post(`/v2/bulk-check-awb?data=${resi}`)
+        .then(res => {
+          const { data } = res
+          this.dataAwb = data.data
+          this.loading = false
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: 'Data Riwayat Perjalanan Tidak Ditemukan',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.loading = false
+        })
     },
   },
 }

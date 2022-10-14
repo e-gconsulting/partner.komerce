@@ -1,0 +1,114 @@
+.title {
+    color: #222222;
+    font-weight: bold;
+    font-size: 17.5px;
+  }
+  .history {
+    padding: 2em;
+    background: #f8f8f8;
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    height: 541px;
+    overflow: auto;
+  
+    &-right {
+      margin-top: 1em;
+      margin-left: 22em;
+      &-card {
+        background: #ff6a3a;
+        border-radius: 8px 0px 8px 8px;
+        padding: 1em;
+        color: white;
+        text-align: justify;
+        max-width: 350px;
+      }
+    }
+  
+    &-left {
+      margin-bottom: 1.5em;
+      &-card {
+        background: #fcd4be;
+        border-radius: 0px 8px 8px 8px;
+        padding: 1em;
+        max-width: 350px;
+        width: fit-content;
+        color: #222222;
+      }
+    }
+  
+    &-center {
+      &-card {
+        display: flex;
+        align-items: center;
+        letter-spacing: 0.1em;
+        --text-divider-gap: 1rem;
+  
+        &::before,
+        &::after {
+          content: '';
+          height: 1px;
+          background-color: silver;
+          flex-grow: 1;
+        }
+  
+        &::before {
+          margin-right: var(--text-divider-gap);
+        }
+  
+        &::after {
+          margin-left: var(--text-divider-gap);
+        }
+      }
+      .flex {
+        background: #e2e2e2;
+        border-radius: 32px;
+        border: 1px solid #e2e2e2;
+        padding: 10px;
+      }
+    }
+    .time {
+      color: #222222;
+      font-size: 12px;
+    }
+    .time-shipping {
+      color: #828282;
+      font-size: 12px;
+    }
+  }
+  @media screen and(min-width: 320px) and (max-width: 768px) {
+    .history {
+      padding: 10px;
+    }
+  }
+  
+  @media screen and(min-width: 320px) and (max-width: 768px) {
+    .history-left-card {
+      // width: auto;
+      text-align: justify;
+    }
+    .history-right {
+      margin-top: 1em;
+      margin-left: 0;
+    }
+  }
+  
+  @media screen and(min-width: 789px) and (max-width: 1024px) {
+    .history-right {
+      margin-top: 1em;
+      margin-left: 30em;
+    }
+  }
+  .img-partner {
+    margin-top: 10px;
+  }
+  .img-mitra {
+    margin: 10px auto;
+  }
+  
+  .dashed {
+    display: inline-block;
+    border-left: 3px dashed #FBA63C;
+    margin: 0 16px;
+    height: 100%;
+  }
+  

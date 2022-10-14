@@ -128,11 +128,11 @@
               class="text-success"
             >Diterima</span>
             <span
-              v-if="data.item.order_status !== 'Hilang'"
+              v-if="data.item.order_status === 'Hilang'"
               class="text-muted"
             >Ganti Rugi Paket Hilang</span>
             <span
-              v-if="data.item.order_status !== 'Rusak'"
+              v-if="data.item.order_status === 'Rusak'"
               class="text-muted"
             >Ganti Rugi Paket Rusak</span>
             )
@@ -588,9 +588,10 @@ export default {
       return ''
     },
     momentTime(date) {
+      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('HH:MM')
+        return moment(date).format('HH:mm')
       }
       return ''
     },
