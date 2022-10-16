@@ -413,7 +413,7 @@ export default {
         this.nameValidator = 'password'
       } else if (data === 'email') {
         this.modalTitle = await 'Password Komship'
-        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti Email'
         this.modalFormLabel = await 'Masukkan Pasword'
         this.modalEditFormInputType = await 'password'
         this.labelSubmit = await 'Konfirmasi'
