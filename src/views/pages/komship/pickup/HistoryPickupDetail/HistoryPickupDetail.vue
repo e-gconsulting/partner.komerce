@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <b-card class="text-[#222222]">
     <header class="d-flex mb-2">
@@ -9,18 +10,18 @@
       >
         <b-icon-chevron-left />
       </b-button>
-      <h3 class="text-[22px] text-[#222222] font-semibold my-auto">
+      <h3 class="text-[20px] text-[#222222] font-semibold my-auto">
         Riwayat Pengajuan Pickup
       </h3>
     </header>
     <main class="mx-auto max-w-[93%]">
       <header class="d-flex justify-between">
-        <h4 class="text-[18px] text-[#222222] font-semibold my-auto">
+        <h4 class="text-[16px] text-[#222222] font-semibold my-auto">
           Penjemputan
         </h4>
         <b-button
           variant="primary"
-          class="d-flex rounded-lg"
+          class="d-flex rounded-lg mb-1"
           :to="`/detail-orderan-pickup/${$route.params.order_data_id}`"
         >
           <span class="font-semibold mr-[6px]">Label Pengiriman</span>
@@ -33,15 +34,15 @@
           cols="4"
           lg="3"
         >
-          <span class="text-[18px] font-semibold">Alamat</span>
+          <span class="text-[16px] font-semibold">Alamat</span>
         </b-col>
         <b-col
           cols="8"
           lg="9"
           class="p-0"
         >
-          <span class="text-[18px] font-semibold">{{ address.address_name }}</span><br>
-          <span class="text-[16px] font-medium text-[#828282]">{{ address.address_detail }}</span>
+          <span class="text-[16px] font-semibold">{{ address.address_name }}</span><br>
+          <span class="text-[14px] font-medium text-[#828282]">{{ address.address_detail }}</span>
         </b-col>
       </b-row>
       <b-row class="mb-1">
@@ -49,14 +50,14 @@
           cols="4"
           lg="3"
         >
-          <span class="text-[18px] font-semibold">Tanggal</span>
+          <span class="text-[16px] font-semibold">Tanggal</span>
         </b-col>
         <b-col
           cols="8"
           lg="9"
           class="p-0"
         >
-          <span class="text-[16px] font-medium text-[#828282]">{{ formatDate(pickupDate) }}</span>
+          <span class="text-[14px] font-medium text-[#828282]">{{ formatDate(pickupDate) }}</span>
         </b-col>
       </b-row>
       <b-row class="mb-1">
@@ -64,14 +65,14 @@
           cols="4"
           lg="3"
         >
-          <span class="text-[18px] font-semibold">Pukul</span>
+          <span class="text-[16px] font-semibold">Pukul</span>
         </b-col>
         <b-col
           cols="8"
           lg="9"
           class="p-0"
         >
-          <span class="text-[16px] font-medium text-[#828282]">{{ pickupTime }}</span>
+          <span class="text-[14px] font-medium text-[#828282]">{{ pickupTime }}</span>
         </b-col>
       </b-row>
       <b-row class="mb-1">
@@ -79,7 +80,7 @@
           cols="4"
           lg="3"
         >
-          <span class="text-[18px] font-semibold">Kendaraan</span>
+          <span class="text-[16px] font-semibold">Kendaraan</span>
         </b-col>
         <b-col
           cols="8"
@@ -121,7 +122,7 @@
       >
         <div class="d-flex justify-between mb-1">
           <div class="d-flex my-auto">
-            <span class="text-[16px] font-semibold">Packing List</span>
+            <span class="text-[14px] font-semibold">Packing List</span>
             <img
               id="infoPackingList"
               src="@/assets/images/icons/info-circle.svg"
@@ -238,92 +239,109 @@
       pdf-format="a4"
       pdf-orientation="portrait"
       pdf-content-width="800px"
+      :html-to-pdf-options="pdfOptions"
     >
       <section slot="pdf-content">
-        <div class="container">
-          <h3 style="font-size:28px;font-weight:600;text-align:center">
-            Packing List
-          </h3>
-          <table style="width:98%;margin:0 auto;margin-top:10px">
-            <thead style="background-color:#F4F4F4">
-              <tr>
-                <th
-                  colspan="2"
-                  style="padding:5px"
+        <b-container class="py-1">
+          <div
+            class="p-1"
+            style="border:2px solid #222222;border-radius:6px"
+          >
+            <div class="d-flex justify-between mb-2">
+              <span class="text-[16px] font-semibold my-auto">Packing List</span>
+              <div class="d-flex">
+                <span class="text-[16px] font-semibold my-auto mr-[6px]">Pengiriman Via</span>
+                <img
+                  style="margin-top:10px"
+                  src="@/assets/images/logo/komship-logo.svg"
                 >
-                  Produk
-                </th>
-                <th style="text-align:right;padding:5px">
-                  Jumlah
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="items in order"
-                :key="items.index"
-                style="border:1px solid #E2E2E2"
-              >
-                <td style="vertical-align:top;width:60px">
-                  <img
-                    :src="items.image_path"
-                    style="width:50px;height:50px"
-                    @error="setImageDefault"
+              </div>
+            </div>
+            <table class="table border text-[14px]">
+              <thead>
+                <tr>
+                  <th colspan="2">
+                    Produk
+                  </th>
+                  <th class="text-right">
+                    Jumlah
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="items in order"
+                  :key="items.index"
+                  class="border"
+                >
+                  <td
+                    class="pr-0 align-top"
+                    style="width:80px"
                   >
-                </td>
-                <td colspan="2">
-                  <div>
-                    <p style="margin-bottom:8px;font-weight:600">
-                      {{ items.product_name }}
-                    </p>
-                    <template v-if="items.is_variant === 1">
-                      <div
-                        v-for="options in items.variant"
-                        :key="options.index"
-                        style="display:flex;justify-content:space-between;margin-bottom:8px"
-                      >
-                        <span>{{ options.product_variant_name }}</span>
-                        <span>{{ options.total }}</span>
-                      </div>
-                    </template>
-                    <template v-else>
-                      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-                        <span>&mdash;</span>
-                        <span>{{ items.total }}</span>
-                      </div>
-                    </template>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-            <tfoot style="background-color:#F4F4F4">
-              <tr>
-                <td colspan="2">
-                  Waktu Pickup
-                </td>
-                <td style="text-align:right">
-                  Total Kuantitas: {{ totalQty }} Pcs
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  {{ formatDate(pickupDate) }}
-                </td>
-                <td style="text-align:right">
-                  Total Orderan*: {{ totalOrder }} Paket
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  {{ pickupTime }} WIB
-                </td>
-                <td style="text-align:right">
-                  *detail orderan cek di label pengiriman
-                </td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+                    <img
+                      style="width:100%"
+                      :src="items.image_path"
+                      crossorigin=""
+                      @error="setImageDefault"
+                    >
+                  </td>
+                  <td
+                    colspan="2"
+                    class="pl-0 "
+                  >
+                    <div class="ml-[8px]">
+                      <p class="mb-[8px] font-semibold">
+                        {{ items.product_name }}
+                      </p>
+                      <template v-if="items.is_variant === 1">
+                        <div
+                          v-for="options in items.variant"
+                          :key="options.index"
+                          class="d-flex justify-between mb-[8px]"
+                        >
+                          <span>{{ options.product_variant_name }}</span>
+                          <span>{{ options.total }}</span>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <div class="d-flex justify-between mb-[8px]">
+                          <span>&mdash;</span>
+                          <span>{{ items.total }}</span>
+                        </div>
+                      </template>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot class="bg-[#F4F4F4] text-[#222222] text-[14px]">
+                <tr>
+                  <td
+                    colspan="2"
+                    class="font-semibold"
+                  >
+                    Waktu Pickup
+                  </td>
+                  <td class="font-semibold text-right">
+                    Total Kuantitas: {{ totalQty }} Pcs
+                  </td>
+                </tr>
+                <tr>
+                  <td
+                    colspan="2"
+                    class="pt-0"
+                  >
+                    {{ formatDate(pickupDate) }}<br>
+                    <small class="text-[12px] text-[#828282]">{{ pickupTime }} WIB</small>
+                  </td>
+                  <td class="font-semibold text-right pt-0">
+                    Total Orderan: {{ totalOrder }} Paket<br>
+                    <small class="text-[12px]">*detail orderan cek di label pengiriman</small>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </b-container>
       </section>
     </VueHtml2pdf>
   </b-card>
@@ -345,6 +363,13 @@ export default {
       buttonDownload: false,
       totalQty: '',
       totalOrder: '',
+      pdfOptions: {
+        image: { type: 'png', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          bottom: 20,
+        },
+      },
     }
   },
   created() {
@@ -389,7 +414,7 @@ export default {
 .btn-download{
   display: flex;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 14px;
   border: 1px solid #C2C2C2;
   border-radius: 4px;
 }
