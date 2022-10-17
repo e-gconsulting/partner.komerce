@@ -86,6 +86,7 @@ export default {
         },
       ],
       itemOrderError: [],
+      totalOrderTimeout: 0,
     }
   },
   async created() {
@@ -337,7 +338,7 @@ export default {
       this.$bvModal.show('modalSubmitPickup')
       let startIndex = 0
       if (this.submitProgress > 0) {
-        startIndex = this.submitProgress
+        startIndex = this.submitProgress - this.totalOrderTimeout
       }
       for (let index = startIndex; index < this.order.length; index += 1) {
         try {
@@ -357,6 +358,7 @@ export default {
           if (code === 200) {
             this.submitPercentage = Math.floor(((index + 1) * 100) / this.order.length)
             this.submitProgress += 1
+            this.totalOrderTimeout = 0
             if (index === this.order.length - 1 && this.itemOrderError.length < 1) {
               this.$bvModal.hide('modalSubmitPickup')
               this.submitPercentage = 0
@@ -387,13 +389,21 @@ export default {
           } else if (code === 500 || code === 1002) {
             this.itemOrderError.push(this.order[index])
           } else {
-            this.submitStatus = false
-            break
+            this.itemOrderError.push(this.order[index])
+            this.totalOrderTimeout += 1
+            if (this.totalOrderTimeout >= 3) {
+              this.submitStatus = false
+              break
+            }
           }
         } catch (error) {
           console.log(error)
-          this.submitStatus = false
-          break
+          this.itemOrderError.push(this.order[index])
+          this.totalOrderTimeout += 1
+          if (this.totalOrderTimeout >= 3) {
+            this.submitStatus = false
+            break
+          }
         }
       }
     },
