@@ -574,10 +574,13 @@
           block
           @click="submitPickup"
         >
-          <img
-            src="@/assets/images/icons/refresh-2.svg"
-            class="m-auto"
-          >
+          <div class="d-flex justify-center my-auto">
+            <img
+              src="@/assets/images/icons/refresh-2.svg"
+              class="my-auto"
+            >
+            <span class="ml-[6px] text-[16px] my-auto">Submit Ulang</span>
+          </div>
         </b-button>
       </div>
     </b-modal>
