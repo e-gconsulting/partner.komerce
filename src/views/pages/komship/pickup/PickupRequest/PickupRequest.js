@@ -356,6 +356,9 @@ export default {
           })
           const { code } = submit.data
           if (code === 200) {
+            if (this.itemOrderError.length > 0) {
+              this.itemOrderError = this.itemOrderError.filter(items => items.order_id !== this.order[index].order_id)
+            }
             this.submitPercentage = Math.floor(((index + 1) * 100) / this.order.length)
             this.submitProgress += 1
             this.totalOrderTimeout = 0
