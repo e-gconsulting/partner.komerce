@@ -21,11 +21,17 @@ import settingKompship from './routes/komship/setting-kompship/index'
 import keuangan from './routes/komship/keuangan/index'
 import hiring from './routes/komship/hiring/index'
 import opsional from './routes/komship/opsional/index'
+<<<<<<< HEAD
 import gudang from './routes/kompack/gudang/index'
 
 // Kompack
 import kompackAdmin from './routes/kompack/admin'
 import kompackPartner from './routes/kompack/partner'
+=======
+import myapps from './routes/komship/myapps/index'
+import ticketing from './routes/komship/ticketing/index'
+import warehouse from './routes/komship/warehouse/index'
+>>>>>>> aa044d61668a5ac6698aa169a095ec00e5d597a7
 
 Vue.use(VueRouter)
 
@@ -49,7 +55,13 @@ const router = new VueRouter({
     ...keuangan,
     ...hiring,
     ...opsional,
+<<<<<<< HEAD
     ...gudang,
+=======
+    ...myapps,
+    ...ticketing,
+    ...warehouse,
+>>>>>>> aa044d61668a5ac6698aa169a095ec00e5d597a7
     ...wishlist,
     {
       path: '*',

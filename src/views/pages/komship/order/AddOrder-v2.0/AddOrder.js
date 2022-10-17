@@ -110,6 +110,8 @@ export default {
       netProfit: null,
       grandTotal: null,
       newGrandTotal: null,
+      newGrandTotalPaste: null,
+      newGrandTotalPasteMode: false,
       isValidate: false,
       formData: null,
 
@@ -145,6 +147,10 @@ export default {
       customerReputationClass: 'wrapper__customer__reputation__good',
       customerReputationStyle: 'height: 20px; width: 2px; background-color: #34A770;',
       loadingCustomerReputation: false,
+
+      destinationLabel: '',
+
+      weightProduct: null,
     }
   },
   mounted() {
@@ -154,9 +160,15 @@ export default {
       if (!clickCustomer) {
         this.customerList = []
       }
+      const inputDestination = document.getElementById('inputDestination')
+      const clickDestination = inputDestination.contains(e.target)
+      if (!clickDestination) {
+        this.destinationList = []
+      }
     })
   },
   created() {
+    this.$forceUpdate()
     this.$http_komship
       .post('v1/my-profile')
       .then(res => {
@@ -174,9 +186,6 @@ export default {
         await this.addToCart()
         await this.getRekening()
         await this.getCustomLabel()
-        await this.$http_komship
-          .delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {})
       })
       .catch(() => {
         this.$toast({
@@ -369,6 +378,7 @@ export default {
         }).then(result => {
           const { data } = result.data.data
           const dataByTarrifCode = data.find(items => items.value === customer.tariff_code)
+          this.destinationLabel = dataByTarrifCode.label
           return dataByTarrifCode
         }).catch(err => {
           console.error(err)
@@ -377,6 +387,7 @@ export default {
       } else {
         this.destination = null
       }
+      this.getReturnInsight()
       this.customerAddress = customer.address
       this.customerList = []
       this.formatPhoneCustomer()
@@ -388,12 +399,13 @@ export default {
       }
     },
     searchDestination: _.debounce((loading, search, that) => {
-      that.getDestination(search).finally(() => {})
+      that.getDestination(search)
     }, 1000),
-    async getDestination(search) {
-      this.$http_komship
+    async getDestination() {
+      this.destinationList = []
+      await this.$http_komship
         .get('v1/destination', {
-          params: { search },
+          params: { search: this.destinationLabel },
         })
         .then(res => {
           const { data } = res.data.data
@@ -425,7 +437,7 @@ export default {
           || result.variantSubmit
         ) {
           let variantSelected
-          if (itemSelected.is_variant >= 1) {
+          if (itemSelected.is_variant === '1') {
             const variantOption = await itemSelected.variant[0].variant_option.map(
               item => ({
                 option_id: item.option_id,
@@ -859,29 +871,12 @@ export default {
           .post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
             this.cartId = []
-            this.cartProductId = res.data.data.cart_id
+            this.cartProductId = res.data.data
             await this.cartProductId.forEach(items => {
               this.cartId.push(items.cart_id)
             })
-            if (this.cartId.length !== cart.length) {
-              let cartDelete = null
-              await this.cartId.forEach(async item => {
-                cartDelete = await this.cartProductId.find(items => item.variant_id !== items.variant_id)
-              })
-              this.$http_komship.delete('/v1/cart/delete', {
-                params: {
-                  cart_id: [cartDelete.cart_id],
-                },
-              }).then(() => {
-                const findIndexCartToDelete = this.cartId.findIndex(itemCart => itemCart === cartDelete.cart_id)
-                this.cartId.splice(findIndexCartToDelete, 1)
-                this.loadingCalculate = false
-                this.calculate(true)
-              })
-            } else {
-              this.loadingCalculate = false
-              await this.calculate(true)
-            }
+            this.loadingCalculate = false
+            await this.calculate(true)
           })
       } else {
         this.isCalculate = false
@@ -984,11 +979,31 @@ export default {
         this.loadingOptionExpedition = false
       }
     },
-    checkNewTotal() {
+    checkNewTotal: _.debounce(async function () {
       if (this.newGrandTotal < this.shippingCost) {
-        this.newGrandTotal = this.shippingCost
-        this.calculate(false)
+        this.newGrandTotal = await this.shippingCost
+        await this.calculate(false)
+        this.newGrandTotalPasteMode = false
+      } else {
+        await this.calculate(false)
+        this.newGrandTotalPasteMode = false
       }
+    }, 1000),
+    checkTotal(e) {
+      if (e.keyCode !== 65 && e.code !== 'ControlLeft' && e.code !== 'ControlRight') {
+        if (this.newGrandTotal.toString().length >= 4) {
+          if (this.newGrandTotalPasteMode) this.newGrandTotal = this.newGrandTotalPaste
+          this.loadingCalculate = true
+          this.checkNewTotal()
+        }
+      }
+    },
+    handlePasteCheckTotal(e) {
+      this.newGrandTotalPasteMode = true
+      this.newGrandTotalPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+    },
+    formatterNewGrandTotal(e) {
+      return e.replace(/[^\d]/g, '')
     },
     checkDiscount() {
       if (this.discount > this.subTotal) {
@@ -1040,6 +1055,8 @@ export default {
               this.bebankanCustomer = Math.round(result.service_fee)
               this.newGrandTotal = result.grandtotal
               this.oldGrandTotal = result.grandtotal
+              this.weightProduct = result.weight
+              this.weight = result.weight.toFixed(1)
               if (this.paymentMethod === 'COD') {
                 this.jenisBiayaLain = '0'
               } else {
@@ -1055,7 +1072,7 @@ export default {
               this.netProfit = result.net_profit
               this.serviceFee = Math.round(result.service_fee)
               this.serviceFeePercentage = result.service_fee_percentage
-              this.weight = result.weight.toFixed(2)
+              this.weight = result.weight.toFixed(1)
               this.grandTotal = result.grandtotal
               this.cashback = result.cashback
               this.cashbackPercentage = result.cashback_percentage
@@ -1070,6 +1087,7 @@ export default {
               this.bebankanCustomer = Math.round(resultDefault.service_fee)
               this.newGrandTotal = resultDefault.grandtotal
               this.oldGrandTotal = resultDefault.grandtotal
+              this.weight = resultDefault.weight.toFixed(1)
               if (this.paymentMethod === 'COD') {
                 this.jenisBiayaLain = '0'
               } else {
@@ -1085,15 +1103,20 @@ export default {
               this.netProfit = resultDefault.net_profit
               this.serviceFee = Math.round(resultDefault.service_fee)
               this.serviceFeePercentage = resultDefault.service_fee_percentage
-              this.weight = resultDefault.weight.toFixed(2)
+              this.weight = resultDefault.weight.toFixed(1)
               this.grandTotal = resultDefault.grandtotal
               this.cashback = resultDefault.cashback
               this.cashbackPercentage = resultDefault.cashback_percentage
               this.additionalCost = resultDefault.additional_cost
+              this.weightProduct = resultDefault.weight
               this.isCalculate = true
               this.loadingCalculate = false
             }
             this.loadingCalculate = false
+          }
+          if (this.newGrandTotal === this.shippingCost) {
+            this.grandTotal = this.newGrandTotal
+            this.netProfit = result.net_profit
           }
         }).catch(async err => {
           this.loadingWrapperOtherCost = false
@@ -1156,6 +1179,7 @@ export default {
             this.bebankanCustomer = Math.round(result.service_fee)
             this.newGrandTotal = result.grandtotal
             this.oldGrandTotal = result.grandtotal
+            this.weight = result.weight.toFixed(1)
             if (this.paymentMethod === 'COD') {
               this.jenisBiayaLain = '0'
             } else {
@@ -1171,7 +1195,7 @@ export default {
             this.netProfit = result.net_profit
             this.serviceFee = Math.round(result.service_fee)
             this.serviceFeePercentage = result.service_fee_percentage
-            this.weight = result.weight.toFixed(2)
+            this.weight = result.weight.toFixed(1)
             this.grandTotal = result.grandtotal
             this.cashback = result.cashback
             this.cashbackPercentage = result.cashback_percentage
@@ -1179,6 +1203,7 @@ export default {
             this.isCalculateOnExpedition = true
             this.loadingCalculate = false
           }
+          this.weight = result.weight.toFixed(1)
           this.loadingWrapperOtherCost = false
           this.loadingCalculate = false
         }).catch(async err => {
@@ -1527,6 +1552,12 @@ export default {
           })
           this.loadingCustomerReputation = false
         })
+    },
+    applyDestination(items) {
+      this.destination = items
+      this.destinationLabel = items.label
+      this.getReturnInsight()
+      this.destinationList = []
     },
   },
 }

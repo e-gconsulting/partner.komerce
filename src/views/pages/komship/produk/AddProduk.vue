@@ -3,8 +3,19 @@
     ref="formCard"
     no-actions
   >
-    <b-row>
-      <h3 class="text-black ml-1">
+
+    <b-row class="align-items-center">
+      <div
+        class="wrapper__handle__back ml-50 cursor-pointer"
+        @click="goBack"
+      >
+        <feather-icon
+          icon="ChevronLeftIcon"
+          size="25"
+          style="color: black;"
+        />
+      </div>
+      <h3 class="text-black ml-1 mt-50">
         <strong>
           Tambah Produk
         </strong>
@@ -12,75 +23,139 @@
     </b-row>
     <validation-observer ref="formRules">
       <b-form
-        class="mt-3"
+        class="mt-1"
       >
         <b-row>
 
-          <b-col
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="name-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Nama Produk<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                  <small>
-                    Cantumkan nama produk
-                    Kamu dengan jelas untuk memudahkan Kamu dan tim
-                    Kamu mengidentifikasi produk.
-                  </small>
-                </label>
-              </b-col>
+          <b-row class="mx-1 p-2 wrapper__product__name mb-2">
+            <b-row class="ml-50">
+              <h4 class="text-black ml-50 mt-50">
+                <strong>
+                  Informasi Produk
+                </strong>
+              </h4>
+            </b-row>
+            <b-col
+              cols="12"
+              class="mb-2 mt-1"
+            >
+              <b-row>
+                <b-col
+                  cols="12"
+                  md="2"
+                >
+                  <label for="name-product">
+                    <h5>
+                      <strong>
+                        Nama Produk<span class="text-primary">*</span>
+                      </strong>
+                    </h5>
+                  </label>
+                </b-col>
 
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label for="name-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Nama Produk<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                  <small>
-                    Cantumkan nama produk
-                    Kamu dengan jelas untuk memudahkan Kamu dan tim
-                    Kamu mengidentifikasi produk.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="10"
-              >
-                <validation-provider
-                  #default="{errors}"
-                  name="Nama Produk"
-                  rules="required"
+                <b-col
+                  cols="12"
+                  md="10"
+                >
+                  <validation-provider
+                    #default="{errors}"
+                    name="Nama Produk"
+                    rules="required"
+                  >
+                    <b-form-input
+                      id="name-product"
+                      v-model="productName"
+                      class="wrapper__form__input__variant"
+                      placeholder="Contoh: Jilbab Pashmina"
+                      :formatter="formatNameProduct"
+                      :state="errors.length > 0 ? false:null"
+                      :style="errors[0] || !productNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                      @keypress="validateInputProductName"
+                      @input="checkProductName"
+                    />
+                    <b-row>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
+                      <small
+                        v-if="!productNameAvailable"
+                        class="text-primary mt-50"
+                      >
+                        *Nama produk sudah dipakai, yuk coba dengan nama lain
+                      </small>
+                      <small
+                        v-if="messageErrorLengthProduct"
+                        class="text-primary mt-50 ml-1"
+                      >
+                        *Terlalu pendek
+                      </small>
+                      <small class="ml-auto mr-1 mt-50">
+                        <small
+                          v-if="messageErrorIsActive"
+                          class="text-primary"
+                        >
+                          *hindari menggunakan simbol (/) (=) (:) (;) (&)
+                        </small>
+                        {{ productName.length }}/60
+                      </small>
+                    </b-row>
+                  </validation-provider>
+                </b-col>
+              </b-row>
+            </b-col>
+
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
+              <b-row>
+                <b-col
+                  cols="12"
+                  md="2"
+                >
+                  <label for="sku-product">
+                    <div class="d-flex">
+                      <h5 class="mr-50 mt-50">
+                        <strong>
+                          SKU
+                        </strong>
+                      </h5>
+                      <img
+                        id="infoSaldoPending"
+                        src="@/assets/images/icons/info-circle.svg"
+                      >
+                      <b-popover
+                        triggers="hover"
+                        target="infoSaldoPending"
+                        placement="topright"
+                        custom-class="my-popover-class"
+                      >
+                        Stock Keeping Unit adalah kode unik untuk menandai barangmu. Kalo punya, kamu bisa isi loh...
+                      </b-popover>
+                    </div>
+                  </label>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  md="10"
                 >
                   <b-form-input
-                    id="name-product"
-                    v-model="productName"
-                    placeholder="Contoh: Jilbab Pashmina"
-                    :formatter="formatNameProduct"
-                    :state="errors.length > 0 ? false:null"
-                    @keypress="validateInputProductName"
-                    @input="checkProductName"
+                    id="sku-product"
+                    v-model="skuName"
+                    class="wrapper__form__input__variant"
+                    placeholder="Contoh : JBB"
+                    :formatter="formatSkuProduct"
+                    :style="!skuNameAvailable ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                    @input="checkSkuName"
                   />
                   <b-row>
-                    <small class="text-primary ml-1 mt-50">{{ errors[0] }}</small>
                     <small
-                      v-if="!productNameAvailable"
+                      v-if="!skuNameAvailable"
                       class="text-primary mt-50"
                     >
-                      *Nama Produk '{{ productName }}' sudah dipakai. silahkan isi dengan nama lain.
+                      *SKU sudah digunakan, yuk coba dengan nama lain
                     </small>
                     <small class="ml-auto mr-1 mt-50">
                       <small
@@ -89,2228 +164,1115 @@
                       >
                         *hindari menggunakan simbol (/) (=) (:) (;) (&)
                       </small>
-                      {{ productName.length }}/60
+                      {{ skuName.length }}/10
                     </small>
                   </b-row>
-                </validation-provider>
-              </b-col>
-            </b-row>
-          </b-col>
+                </b-col>
+              </b-row>
+            </b-col>
 
-          <b-col
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="sku-product">
-                  <h4 class="text-black">
-                    <strong>
-                      SKU Produk
-                    </strong>
-                  </h4>
-                  <small>
-                    Cantumkan kode unik SKU
-                    untuk menandai produkmu.
-                  </small>
-                </label>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label for="sku-product">
-                  <h4 class="text-black">
-                    <strong>
-                      SKU Produk
-                    </strong>
-                  </h4>
-                  <small>
-                    Cantumkan kode unik SKU
-                    untuk menandai produkmu.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="10"
-              >
-                <b-form-input
-                  id="sku-product"
-                  v-model="skuName"
-                  placeholder="Contoh: Pashmina-001"
-                />
-              </b-col>
-            </b-row>
-          </b-col>
-
-          <b-col
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label>
-                  <h4 class="text-black">
-                    <strong>
-                      Upload Gambar
-                    </strong>
-                  </h4>
-                  <small>
-                    Format gambar .jpg .jpeg .png dan ukuran minimum
-                    300 x 300 px (Untuk gambar optimal gunakan ukuran
-                    minimum 700 x 700 px).
-                  </small>
-                </label>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label>
-                  <h4 class="text-black">
-                    <strong>
-                      Upload Gambar
-                    </strong>
-                  </h4>
-                  <small>
-                    Format gambar .jpg .jpeg .png dan ukuran minimum
-                    300 x 300 px (Untuk gambar optimal gunakan ukuran
-                    minimum 700 x 700 px).
-                  </small>
-                </label>
-              </b-col>
-
-              <b-col
-                cols="10"
-              >
-                <validation-provider
-                  #default="{errors}"
-                  name="Upload Gambar"
+            <b-col
+              cols="12"
+              class="mb-2"
+            >
+              <b-row>
+                <b-col
+                  cols="12"
+                  md="2"
                 >
-                  <!-- Preview Image -->
-                  <transition name="fade">
-                    <div class="form-input col col-xs-12 col-sm-8 col-md-10">
-                      <b-avatar
-                        v-if="imageFile !== null"
-                        variant="light-primary"
-                        size="90"
-                        :rules="rulesimage"
-                        :src="imageFile ? fileUrl(imageFile) : imageInitialFile"
-                        class="mr-50"
-                      />
-                    </div></transition>
-                  <!-- Button Upload Image -->
-                  <label
-                    for="uploadImage"
+                  <label for="description-product">
+                    <h5>
+                      <strong>
+                        Deskripsi Produk
+                      </strong>
+                    </h5>
+                  </label>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  md="10"
+                >
+                  <b-form-textarea
+                    id="description-product"
+                    v-model="descriptionProduct"
+                    :formatter="formatDescriptionProduct"
+                    placeholder="Masukkan deskripsi produkmu di sini ya"
+                    rows="3"
+                  />
+                  <b-row>
+                    <small class="ml-auto mr-1 mt-50">
+                      {{ descriptionProduct.length }}/300
+                    </small>
+                  </b-row>
+                </b-col>
+              </b-row>
+            </b-col>
+          </b-row>
+
+          <b-row class="mx-1 wrapper__product__variant mb-2">
+            <b-row
+              class="py-2 w-100 ml-2 align-items-center"
+              :style="isVariantActive ? 'border-bottom: 1px solid #E2E2E2; margin: 0px 0px 0px 0px;' : 'margin: 0px 0px 0px 0px;'"
+            >
+              <b-col
+                cols="12"
+                md="6"
+                class="mb-1"
+              >
+                <h4 class="text-blackmt-50">
+                  <strong>
+                    Varian Produk
+                  </strong>
+                </h4>
+                <span>
+                  Kamu bisa menambah varian seperti warna, ukuran, atau lainnya disini loh.
+                </span>
+              </b-col>
+              <b-col
+                cols="12"
+                md="6"
+                class="d-flex align-items-center justify-content-end"
+              >
+                <b-button
+                  :variant="isVariantActive ? 'flat-dark' : 'flat-primary'"
+                  :class="isVariantActive ? 'text-dark btn-icon mr-2' : 'text-primary btn-icon mr-2'"
+                  style="border: 1px solid #E2E2E2;"
+                  @click="handleIsVariant"
+                >
+                  <feather-icon
+                    :icon="isVariantActive ? 'MinusIcon' : 'PlusIcon'"
+                    style="display: inline-block!important;"
+                  />
+                  {{ isVariantActive ? 'Hapus Varian' : 'Tambah Varian' }}
+                </b-button>
+              </b-col>
+            </b-row>
+
+            <!-- Variant -->
+            <b-row
+              v-if="isVariantActive"
+              class="w-100 mx-1 mt-2 mb-2"
+            >
+              <b-row
+                v-for="(item, index) in variantInputItems"
+                :key="index+1"
+                class="w-100 mb-2 ml-50"
+              >
+                <b-col
+                  cols="12"
+                >
+                  <h4
+                    class="text-black mb-1"
+                    style="font-weight: 500;"
                   >
-                    <b-avatar
-                      v-if="imageFile === null"
-                      variant="light-dark"
-                      size="90"
-                      type="file"
-                      name="photo"
-                      class="btn btn-flat-primary btn-icon"
+                    Tipe Variasi {{ index+1 }}
+                  </h4>
+                </b-col>
+                <b-col
+                  cols="12"
+                  class="ml-1"
+                >
+                  <b-row class="w-100">
+                    <b-col
+                      cols="12"
+                      md="6"
                     >
-                      <feather-icon
-                        icon="PlusIcon"
-                        size="55"
-                        style="display: inline-block"
-                      />
-                    </b-avatar>
-                    <label>
-                      <label
-                        v-if="imageFile !== null"
-                        for="uploadImage"
-                        class="btn btn-flat-dark btn-icon"
+                      <b-form-group
+                        label-for="variant-name"
+                      >
+                        <template #label>
+                          <span style="font-size: 14px;">
+                            <strong>
+                              Nama Variasi
+                            </strong>
+                          </span>
+                        </template>
+                        <div class="d-flex align-items-center">
+                          <b-form-input
+                            id="variant-name"
+                            v-model="item.variant.variantName"
+                            placeholder="Contoh: Warna, Ukuran, Bahan"
+                            class="wrapper__form__input__variant"
+                            :formatter="formatterVariantNameProduct"
+                            :style="item.variant.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                            @input="validateVariantField(item, index)"
+                          />
+                          <div>
+                            <b-button
+                              class="btn-icon"
+                              size="sm"
+                              variant="flat-dark"
+                              @click="handleDeleteVariant(item)"
+                            >
+                              <b-img
+                                src="@/assets/images/icons/trash.svg"
+                                width="30"
+                              />
+                            </b-button>
+                          </div>
+                        </div>
+                        <small
+                          v-if="item.variant.isValid === false"
+                          class="text-primary"
+                        >*Wajib diisi ya</small>
+                        <small
+                          v-if="item.variant.isSame"
+                          class="text-primary"
+                        >*Nama varian sudah dipakai, yuk pakai nama lain.</small>
+                      </b-form-group>
+                    </b-col>
+                    <b-col
+                      v-for="(variantOption, indexVariantOption) in item.variant.variantOptionItem"
+                      :key="indexVariantOption+1"
+                      cols="12"
+                      md="6"
+                      :offset="indexVariantOption !== 0 ? 12 : ''"
+                      :offset-md="indexVariantOption !== 0 ? 6 : ''"
+                    >
+                      <div>
+                        <b-form-group
+                          label-for="variant-name"
+                        >
+                          <template
+                            v-if="indexVariantOption === 0"
+                            #label
+                          >
+                            <span>
+                              <span style="font-size: 14px;">
+                                <strong>
+                                  Pilihan
+                                </strong>
+                              </span>
+                              (Max 8 Pilihan)
+                            </span>
+                          </template>
+                          <div class="d-flex align-items-center">
+                            <b-input-group
+                              class="input-group-merge"
+                            >
+                              <b-form-input
+                                id="variant-name"
+                                v-model="variantOption.variantOptionName"
+                                placeholder="Contoh: Merah, XL, Cotton"
+                                class="wrapper__form__input__variant"
+                                :formatter="formatterVariantNameProduct"
+                                :style="variantOption.isValid === false ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                                @input="validateVariantOptionField(index, indexVariantOption, variantOption)"
+                              />
+                              <b-input-group-append
+                                is-text
+                                style="border-radius: 12px !important;"
+                              >
+                                <b-img src="@/assets/images/icons/icon-draggable.svg" />
+                              </b-input-group-append>
+                            </b-input-group>
+                            <div>
+                              <b-button
+                                :class="item.variant.variantOptionItem.length < 2 ? 'btn-icon cursor-not-allowed' : 'btn-icon'"
+                                size="sm"
+                                variant="flat-dark"
+                                :disabled="item.variant.variantOptionItem.length < 2"
+                                @click="deleteVariantOption(item, variantOption)"
+                              >
+                                <b-img
+                                  src="@/assets/images/icons/close-circle.svg"
+                                  width="30"
+                                />
+                              </b-button>
+                            </div>
+                          </div>
+                          <small
+                            v-if="variantOption.isValid === false"
+                            class="text-primary"
+                          >*Wajib diisi ya</small>
+                          <small
+                            v-if="variantOption.isSame"
+                            class="text-primary"
+                          >*Nama tipe varian sudah dipakai, yuk pakai nama lain.</small>
+                        </b-form-group>
+                      </div>
+                    </b-col>
+                    <b-row
+                      v-if="item.variant.variantOptionItem.length < 8"
+                      class="justify-content-end w-100"
+                    >
+                      <b-col
+                        cols="12"
+                        md="6"
+                      >
+                        <b-button
+                          variant="flat-dark"
+                          :class="addVariantOptionIsActive ? 'text-dark btn-icon ml-1 cursor-not-allowed' : 'text-dark btn-icon ml-1'"
+                          style="border: 1px solid #E2E2E2;"
+                          :disabled="addVariantOptionIsActive"
+                          @click="addVariantOption(item)"
+                        >
+                          <feather-icon
+                            icon="PlusIcon"
+                            style="display: inline-block!important;"
+                          />
+                          Tambah Pilihan
+                        </b-button>
+                      </b-col>
+                    </b-row>
+                  </b-row>
+                </b-col>
+              </b-row>
+
+              <b-row class="w-100 mx-1 mb-2">
+                <span
+                  style="border: 1px solid #E2E2E2; height: 1px; width: 100%;"
+                />
+              </b-row>
+
+              <b-row class="justify-content-end w-100 mb-2">
+                <b-col
+                  cols="12"
+                  md="6"
+                >
+                  <b-row class="ml-50">
+                    <b-col
+                      cols="12"
+                      md="6"
+                    >
+                      <b-button
+                        v-if="variantInputItems.length < 3"
+                        variant="outline-primary"
+                        style="height: 45px;"
+                        :class="addVariantIsActive ? 'cursor-not-allowed mb-1' : 'mb-1'"
+                        block
+                        :disabled="addVariantIsActive"
+                        @click="addVariant"
                       >
                         <feather-icon
-                          icon="EditIcon"
-                          size="20"
+                          icon="PlusIcon"
+                          style="display: inline-block !important;"
                         />
-                      </label>
+                        Tambahkan tipe varian
+                      </b-button>
+                    </b-col>
+                    <b-col
+                      cols="12"
+                      md="6"
+                    >
+                      <b-button
+                        :class="applyVariantIsActive ? 'text-white cursor-not-allowed' : 'text-white'"
+                        :variant="applyVariantIsActive ? 'dark' : 'primary'"
+                        block
+                        :style="applyVariantIsActive ? 'height: 45px; background: #C2C2C2!important; border: 0px!important' : 'height: 45px;'"
+                        :disabled="applyVariantIsActive"
+                        @click="applyVariant"
+                      >
+                        Terapkan Variasi
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </b-col>
+              </b-row>
 
-                      <!-- Field Gambar -->
-                      <b-form-file
-                        id="uploadImage"
-                        v-model="imageFile"
-                        :state="errors.length > 0 ? false : null"
-                        :placeholder="
-                          imageInitialFile
-                            ? imageInitialFile.split('/').pop()
-                            : `Pilih atau drop file disini...`
-                        "
-                        drop-placeholder="Drop file disini..."
-                        accept="image/*"
-                        class="d-none"
-                      />
-                      <small class="text-primary">{{ errors[0] }}</small>
-                    </label></label></validation-provider>
-              </b-col>
-            </b-row>
-          </b-col>
-
-          <b-col
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="description-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Masukan Deskripsi
-                    </strong>
-                  </h4>
-                  <small>
-                    Pastikan deskripsi produk
-                    dapat membantu tim
-                    Kamu memahami dengan
-                    lebih jelas. Seperti memuat spesifikasi, ukuran, bahan, masa berlaku, dan catatan penting lainnya.
-                  </small>
-                </label>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label for="description-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Masukan Deskripsi
-                    </strong>
-                  </h4>
-                  <small>
-                    Pastikan deskripsi produk
-                    dapat membantu tim
-                    Kamu memahami dengan
-                    lebih jelas. Seperti memuat spesifikasi, ukuran, bahan, masa berlaku, dan catatan penting lainnya.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="10"
-              >
-                <b-form-textarea
-                  id="description-product"
-                  v-model="descriptionProduct"
-                  placeholder="Contoh :  Jilbab Pashmina
-                    Bahan: Cotton Premium
-                    Ukuran: 180 x 75cm"
-                  rows="3"
+              <b-row class="w-100 mx-1 mb-2">
+                <span
+                  style="border: 1px solid #E2E2E2; height: 1px; width: 100%;"
                 />
-              </b-col>
-            </b-row>
-          </b-col>
+              </b-row>
 
-          <b-col
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="name-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Variasi
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label for="name-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Variasi
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-
-              <b-col
-                cols="10"
-                class="wrapper__field__input"
-              >
-                <b-button
-                  v-if="isVariation === false"
-                  v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                  variant="outline-info"
-                  @click="addVariation"
+              <b-row class="mb-2 w-100">
+                <b-col
+                  cols="12"
                 >
-                  <feather-icon
-                    icon="PlusIcon"
-                    class="mr-50"
-                    style="display: inline-block"
-                  />
-                  <span class="align-middle">Tambahkan Variasi</span>
-                </b-button>
-
-                <transition name="fade">
-                  <div
-                    v-if="variationFields1 === true"
+                  <h4
+                    class="text-black mb-1 ml-1"
+                    style="font-weight: 500;"
                   >
-                    <b-form-group
-                      v-if="isVariation === true"
-                      label="Variasi 1"
-                      label-cols-md="2"
-                      class="mt-1"
-                    >
-                      <b-col cols="8">
-                        <b-form-group
-                          label="Nama"
-                          label-cols-md="3"
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Variasi 1"
-                          >
-                            <b-row class="d-flex align-items-center">
-                              <b-col
-                                cols="11"
-                                class=""
-                              >
-                                <b-form-input
-                                  v-model="variationName1"
-                                  placeholder="Masukan nama variasi"
-                                  :state="errors.length > 0 ? false:null"
-                                />
-                              </b-col>
-                              <b-col
-                                cols="1"
-                                class="pr-0 pl-0 text-center"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeVariant1"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                            <small class="text-primary">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
+                    Tabel Varian
+                  </h4>
+                </b-col>
 
-                      <b-col
-                        cols="8"
-                      >
-                        <b-form-group
-                          label="Pilihan"
-                          label-cols-md="3"
-                        >
-                          <draggable v-model="myList1">
-                            <transition-group name="fade">
-                              <b-row
-                                v-for="(data, indexs) in formChoices1"
-                                :key="indexs + 1"
-                                class="d-flex align-items-center justify-content-center"
-                              >
-                                <b-col
-                                  class="pt-0 pr-0 pb-0 mb-1"
-                                >
-                                  <validation-provider
-                                    #default="{errors}"
-                                    name="Pilihan"
-                                  >
-                                    <b-input-group>
-                                      <b-form-input
-                                        v-model="data.choices"
-                                        placeholder="Masukan Pilihan Variasi"
-                                        :state="errors.length > 0 ? false:null"
-                                      />
-                                      <b-input-group-append is-text>
-                                        <feather-icon
-                                          icon="AlignJustifyIcon"
-                                        />
-                                      </b-input-group-append>
-                                    </b-input-group>
-                                    <small class="text-primary">{{ errors[0] }}</small>
-                                  </validation-provider>
-                                </b-col>
-                                <b-col
-                                  v-if="formChoices1.length > 1"
-                                  md="auto"
-                                  class="mb-1"
-                                >
-                                  <b-button
-                                    class="btn-icon"
-                                    variant="light-dark"
-                                    size="sm"
-                                    @click="removeChoices1(indexs)"
-                                  >
-                                    <feather-icon
-                                      icon="Trash2Icon"
-                                    />
-                                  </b-button>
-                                </b-col>
-                              </b-row>
-                            </transition-group>
-                          </draggable>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        v-if="formChoices1.length < 20"
-                        cols="8"
-                      >
-                        <b-form-group
-                          label=""
-                          label-cols-md="3"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            variant="outline-info"
-                            @click="addChoices1"
-                          >
-                            <feather-icon
-                              icon="PlusIcon"
-                              class="mr-50"
-                              style="display: inline-block"
-                            />
-                            <span class="align-middle">Tambahkan Pilihan</span>
-                          </b-button>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-group>
-                  </div>
-                </transition>
-
-                <transition name="fade">
-                  <div
-                    v-if="variationFields2 === true"
-                  >
-                    <b-form-group
-                      v-if="isVariation === true"
-                      label="Variasi 2"
-                      label-cols-md="2"
-                      class="mt-1"
-                    >
-                      <b-col cols="8">
-                        <b-form-group
-                          label="Nama"
-                          label-cols-md="3"
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Variasi 2"
-                          >
-                            <b-row class="d-flex align-items-center">
-                              <b-col
-                                cols="11"
-                                class=""
-                              >
-                                <b-form-input
-                                  v-model="variationName2"
-                                  placeholder="Masukan nama variasi"
-                                  :state="errors.length > 0 ? false:null"
-                                />
-                              </b-col>
-                              <b-col
-                                cols="1"
-                                class="pr-0 pl-0 text-center"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeVariant2"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        cols="8"
-                      >
-                        <b-form-group
-                          label="Pilihan"
-                          label-cols-md="3"
-                        >
-                          <draggable v-model="myList2">
-                            <transition-group name="fade">
-                              <b-row
-                                v-for="(data, indexs) in formChoices2"
-                                :key="indexs + 1"
-                                class="d-flex align-items-center justify-content-center"
-                              >
-                                <b-col
-                                  class="pt-0 pr-0 pb-0 mb-1"
-                                >
-                                  <b-input-group>
-                                    <b-form-input
-                                      v-model="data.choices"
-                                      placeholder="Masukan Pilihan Variasi"
-                                    />
-                                    <b-input-group-append is-text>
-                                      <feather-icon
-                                        icon="AlignJustifyIcon"
-                                      />
-                                    </b-input-group-append>
-                                  </b-input-group>
-                                </b-col>
-                                <b-col
-                                  v-if="formChoices2.length > 1"
-                                  md="auto"
-                                  class="mb-1"
-                                >
-                                  <b-button
-                                    class="btn-icon"
-                                    variant="light-dark"
-                                    size="sm"
-                                    @click="removeChoices2(indexs)"
-                                  >
-                                    <feather-icon
-                                      icon="Trash2Icon"
-                                    />
-                                  </b-button>
-                                </b-col>
-                              </b-row>
-                            </transition-group>
-                          </draggable>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        v-if="formChoices2.length < 20"
-                        cols="8"
-                      >
-                        <b-form-group
-                          label=""
-                          label-cols-md="3"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            variant="outline-info"
-                            @click="addChoices2"
-                          >
-                            <feather-icon
-                              icon="PlusIcon"
-                              class="mr-50"
-                              style="display: inline-block"
-                            />
-                            <span class="align-middle">Tambahkan Pilihan</span>
-                          </b-button>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-group>
-                  </div>
-                </transition>
-
-                <transition name="fade">
-                  <div
-                    v-if="variationFields3 === true"
-                  >
-                    <b-form-group
-                      v-if="isVariation === true"
-                      label="Variasi 3"
-                      label-cols-md="2"
-                      class="mt-1"
-                    >
-                      <b-col cols="8">
-                        <b-form-group
-                          label="Nama"
-                          label-cols-md="3"
-                        >
-                          <b-row class="d-flex align-items-center">
-                            <b-col
-                              cols="11"
-                              class=""
-                            >
-                              <b-form-input
-                                v-model="variationName3"
-                                placeholder="Masukan nama variasi"
-                              />
-                            </b-col>
-                            <b-col
-                              cols="1"
-                              class="pr-0 pl-0 text-center"
-                            >
-                              <b-button
-                                class="btn-icon"
-                                variant="light-dark"
-                                size="sm"
-                                @click="removeVariant3"
-                              >
-                                <feather-icon
-                                  icon="Trash2Icon"
-                                />
-                              </b-button>
-                            </b-col>
-                          </b-row>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        cols="8"
-                      >
-                        <b-form-group
-                          label="Pilihan"
-                          label-cols-md="3"
-                        >
-                          <draggable v-model="myList3">
-                            <transition-group name="fade">
-                              <b-row
-                                v-for="(data, indexs) in formChoices3"
-                                :key="indexs + 1"
-                                class="d-flex align-items-center justify-content-center"
-                              >
-                                <b-col
-                                  class="pt-0 pr-0 pb-0 mb-1"
-                                >
-                                  <b-input-group>
-                                    <b-form-input
-                                      v-model="data.choices"
-                                      placeholder="Masukan Pilihan Variasi"
-                                    />
-                                    <b-input-group-append is-text>
-                                      <feather-icon
-                                        icon="AlignJustifyIcon"
-                                      />
-                                    </b-input-group-append>
-                                  </b-input-group>
-                                </b-col>
-                                <b-col
-                                  v-if="formChoices3.length > 1"
-                                  md="auto"
-                                  class="mb-1"
-                                >
-                                  <b-button
-                                    class="btn-icon"
-                                    variant="light-dark"
-                                    size="sm"
-                                    @click="removeChoices3(indexs)"
-                                  >
-                                    <feather-icon
-                                      icon="Trash2Icon"
-                                    />
-                                  </b-button>
-                                </b-col>
-                              </b-row>
-                            </transition-group>
-                          </draggable>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        v-if="formChoices3.length < 20"
-                        cols="8"
-                      >
-                        <b-form-group
-                          label=""
-                          label-cols-md="3"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            variant="outline-info"
-                            @click="addChoices3"
-                          >
-                            <feather-icon
-                              icon="PlusIcon"
-                              class="mr-50"
-                              style="display: inline-block"
-                            />
-                            <span class="align-middle">Tambahkan Pilihan</span>
-                          </b-button>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-group>
-                  </div>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="variationFields1 === true && activeAddChoices1 === true"
-                    label="Tambah Variasi"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-button
-                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                      variant="outline-info"
-                      @click="addVariationItems2"
-                    >
-                      <feather-icon
-                        icon="PlusIcon"
-                        class="mr-50"
-                        style="display: inline-block"
-                      />
-                      <span class="align-middle">Tambahkan Variasi</span>
-                    </b-button>
-                  </b-form-group>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="variationFields2 === true && activeAddChoices2 === true "
-                    label="Tambah Variasi"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-button
-                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                      variant="outline-info"
-                      @click="addVariationItems3"
-                    >
-                      <feather-icon
-                        icon="PlusIcon"
-                        class="mr-50"
-                        style="display: inline-block"
-                      />
-                      <span class="align-middle">Tambahkan Variasi</span>
-                    </b-button>
-                  </b-form-group>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Info Variasi"
-                    label-cols-md="2"
-                    class="mt-2"
-                  >
-                    <b-row class="d-flex align-items-center">
-                      <b-col md="4">
-                        <b-form-input
-                          v-model="price"
-                          placeholder="Rp | Harga"
-                          @keypress="formatStock($event)"
-                        />
-                      </b-col>
-
-                      <b-col md="2">
-                        <b-form-input
-                          v-model="stock"
-                          placeholder="Stok"
-                          @keypress="formatStock($event)"
-                        />
-                      </b-col>
-
-                      <b-col
-                        md="6"
-                        class="d-flex align-items-center"
-                      >
-                        <div class="d-flex align-items-center">
-                          <b-button
-                            variant="primary"
-                            class="d-flex align-items-center"
-                            @click="createListVariation"
-                          >
-                            Terapkan Kesemua
-                          </b-button>
-                        </div>
-                      </b-col>
-
-                    </b-row>
-                  </b-form-group>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Daftar Variasi"
-                    label-cols-md="2"
-                    class="mt-2"
-                  >
-                    <b-overlay
-                      :show="loading"
-                      variant="light"
-                      spinner-variant="primary"
-                      rounded="sm"
-                      opacity=".5"
-                      blur="0"
-                    >
-                      <b-table
-                        responsive
-                        class="border position-relative"
-                        :fields="fields"
-                        :items="variantItems"
-                      >
-
-                        <template #cell(variant1)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <b-form-input
-                                v-model="data.item.variant1.val"
-                                class="mb-50"
-                              />
-                            </b-col>
-                          </div>
-                          <div v-else>
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              {{ data.item.variant1.val }}
-                            </b-col>
-                          </div>
-                        </template>
-
-                        <template #cell(variant2)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                <b-form-input
-                                  v-model="dataItem.variant2.val"
-                                  class="mb-50"
-                                />
-                              </div>
-                            </b-col>
-                          </div>
-                          <div v-else>
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                {{ dataItem.variant2.val }}
-                              </div>
-                            </b-col>
-                          </div>
-                        </template>
-
-                        <template #cell(variant3)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                <div
-                                  v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                  :key="indexVariant+1"
-                                >
-                                  <b-form-input
-                                    v-model="dataVariant.variant3.val"
-                                    class="mb-50"
-                                  />
-                                </div>
-                              </div>
-                            </b-col>
-                          </div>
-                          <div v-else>
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                <div
-                                  v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                  :key="indexVariant+1"
-                                >
-                                  {{ dataVariant.variant3.val }}
-                                </div>
-                              </div>
-                            </b-col>
-                          </div>
-                        </template>
-
-                        <template #cell(price)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                    :key="indexVariantPrice+1"
-                                  >
-                                    <b-form-input
-                                      v-model="itemsVariant.variant3.price"
-                                      type="number"
-                                    />
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  <b-form-input
-                                    v-model="item.variant2.price"
-                                    type="number"
-                                  />
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              <b-form-input
-                                v-model="data.item.variant1.price"
-                                type="number"
-                              />
-                            </div>
-                          </div>
-                          <div v-else>
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                    :key="indexVariantPrice+1"
-                                  >
-                                    Rp {{ formatPrice(itemsVariant.variant3.price) }}
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  Rp {{ formatPrice(item.variant2.price) }}
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              Rp {{ formatPrice(data.item.variant1.price) }}
-                            </div>
-                          </div>
-                        </template>
-
-                        <template #cell(stock)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                    :key="indexVariantPrice+1"
-                                  >
-                                    <b-form-input
-                                      v-model="itemsVariant.variant3.stock"
-                                      type="number"
-                                    />
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  <b-form-input
-                                    v-model="item.variant2.stock"
-                                    type="number"
-                                  />
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              <b-form-input
-                                v-model="data.item.variant1.stock"
-                                type="number"
-                              />
-                            </div>
-                          </div>
-                          <div v-else>
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantStock) in item.variant2.option"
-                                    :key="indexVariantStock+1"
-                                  >
-                                    {{ itemsVariant.variant3.stock }}
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  {{ item.variant2.stock }}
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              {{ data.item.variant1.stock }}
-                            </div>
-                          </div>
-                        </template>
-
-                        <template #cell(action)="data">
-                          <b-button
-                            variant="flat-secondary"
-                            class="btn-icon"
-                            @click="editTable(data)"
-                          >
-                            <feather-icon
-                              icon="EditIcon"
-                            />
-                          </b-button>
-                          <b-button
-                            v-if="editMode === true && indexRow === data.index"
-                            variant="flat-primary"
-                            class="btn-icon"
-                            @click="updateTable(data)"
-                          >
-                            Simpan
-                          </b-button>
-                        </template>
-
-                      </b-table>
-                    </b-overlay>
-                  </b-form-group>
-                </transition>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <b-button
-                  v-if="isVariation === false"
-                  v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                  variant="outline-info"
-                  @click="addVariation"
+                <b-col
+                  cols="12"
                 >
-                  <feather-icon
-                    icon="PlusIcon"
-                    class="mr-50"
-                    style="display: inline-block"
-                  />
-                  <span class="align-middle">Tambahkan Variasi</span>
-                </b-button>
-
-                <transition name="fade">
-                  <div
-                    v-if="variationFields1 === true"
-                  >
-                    <b-form-group
-                      v-if="isVariation === true"
-                      label="Variasi 1"
-                      label-cols-md="2"
-                      class="mt-1"
-                    >
-                      <b-col cols="12">
-                        <b-form-group
-                          label="Nama"
-                          label-cols-md="3"
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Variasi 1"
-                          >
-                            <b-row class="d-flex align-items-center">
-                              <b-col
-                                cols="11"
-                                class=""
-                              >
-                                <b-form-input
-                                  v-model="variationName1"
-                                  placeholder="Masukan nama variasi"
-                                  :state="errors.length > 0 ? false:null"
-                                />
-                              </b-col>
-                              <b-col
-                                cols="1"
-                                class="pr-0 pl-0 text-center"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeVariant1"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                            <small class="text-primary">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
-
+                  <div class="w-100 mx-1 wrapper__table__variant py-2">
+                    <b-row class="mx-1 mb-2">
                       <b-col
                         cols="12"
+                        md="2"
+                        class="mb-1 d-flex align-items-center"
                       >
-                        <b-form-group
-                          label="Pilihan"
-                          label-cols-md="3"
-                        >
-                          <draggable v-model="myList1">
-                            <transition-group name="fade">
-                              <b-row
-                                v-for="(data, indexs) in formChoices1"
-                                :key="indexs + 1"
-                                class="d-flex align-items-center justify-content-center"
-                              >
-                                <b-col
-                                  class="pt-0 pr-0 pb-0 mb-1"
-                                >
-                                  <validation-provider
-                                    #default="{errors}"
-                                    name="Pilihan"
-                                  >
-                                    <b-input-group>
-                                      <b-form-input
-                                        v-model="data.choices"
-                                        placeholder="Masukan Pilihan Variasi"
-                                        :state="errors.length > 0 ? false:null"
-                                      />
-                                      <b-input-group-append is-text>
-                                        <feather-icon
-                                          icon="AlignJustifyIcon"
-                                        />
-                                      </b-input-group-append>
-                                    </b-input-group>
-                                    <small class="text-primary">{{ errors[0] }}</small>
-                                  </validation-provider>
-                                </b-col>
-                                <b-col
-                                  v-if="formChoices1.length > 1"
-                                  md="auto"
-                                  class="mb-1"
-                                >
-                                  <b-button
-                                    class="btn-icon"
-                                    variant="light-dark"
-                                    size="sm"
-                                    @click="removeChoices1(indexs)"
-                                  >
-                                    <feather-icon
-                                      icon="Trash2Icon"
-                                    />
-                                  </b-button>
-                                </b-col>
-                              </b-row>
-                            </transition-group>
-                          </draggable>
-                        </b-form-group>
+                        <span style="font-size: 14px; min-width: 110px;">
+                          <strong>
+                            Harga & Stok
+                          </strong>
+                        </span>
                       </b-col>
-
-                      <b-col
-                        v-if="formChoices1.length < 20"
-                        cols="12"
-                      >
-                        <b-form-group
-                          label=""
-                          label-cols-md="3"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            variant="outline-info"
-                            @click="addChoices1"
-                          >
-                            <feather-icon
-                              icon="PlusIcon"
-                              class="mr-50"
-                              style="display: inline-block"
-                            />
-                            <span class="align-middle">Tambahkan Pilihan</span>
-                          </b-button>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-group>
-                  </div>
-                </transition>
-
-                <transition name="fade">
-                  <div
-                    v-if="variationFields2 === true"
-                  >
-                    <b-form-group
-                      v-if="isVariation === true"
-                      label="Variasi 2"
-                      label-cols-md="2"
-                      class="mt-1"
-                    >
-                      <b-col cols="12">
-                        <b-form-group
-                          label="Nama"
-                          label-cols-md="3"
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Variasi 2"
-                          >
-                            <b-row class="d-flex align-items-center">
-                              <b-col
-                                cols="11"
-                                class=""
-                              >
-                                <b-form-input
-                                  v-model="variationName2"
-                                  placeholder="Masukan nama variasi"
-                                  :state="errors.length > 0 ? false:null"
-                                />
-                              </b-col>
-                              <b-col
-                                cols="1"
-                                class="pr-0 pl-0 text-center"
-                              >
-                                <b-button
-                                  class="btn-icon"
-                                  variant="light-dark"
-                                  size="sm"
-                                  @click="removeVariant2"
-                                >
-                                  <feather-icon
-                                    icon="Trash2Icon"
-                                  />
-                                </b-button>
-                              </b-col>
-                            </b-row>
-                          </validation-provider>
-                        </b-form-group>
-                      </b-col>
-
                       <b-col
                         cols="12"
-                      >
-                        <b-form-group
-                          label="Pilihan"
-                          label-cols-md="3"
-                        >
-                          <draggable v-model="myList2">
-                            <transition-group name="fade">
-                              <b-row
-                                v-for="(data, indexs) in formChoices2"
-                                :key="indexs + 1"
-                                class="d-flex align-items-center justify-content-center"
-                              >
-                                <b-col
-                                  class="pt-0 pr-0 pb-0 mb-1"
-                                >
-                                  <b-input-group>
-                                    <b-form-input
-                                      v-model="data.choices"
-                                      placeholder="Masukan Pilihan Variasi"
-                                    />
-                                    <b-input-group-append is-text>
-                                      <feather-icon
-                                        icon="AlignJustifyIcon"
-                                      />
-                                    </b-input-group-append>
-                                  </b-input-group>
-                                </b-col>
-                                <b-col
-                                  v-if="formChoices2.length > 1"
-                                  md="auto"
-                                  class="mb-1"
-                                >
-                                  <b-button
-                                    class="btn-icon"
-                                    variant="light-dark"
-                                    size="sm"
-                                    @click="removeChoices2(indexs)"
-                                  >
-                                    <feather-icon
-                                      icon="Trash2Icon"
-                                    />
-                                  </b-button>
-                                </b-col>
-                              </b-row>
-                            </transition-group>
-                          </draggable>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        v-if="formChoices2.length < 20"
-                        cols="12"
-                      >
-                        <b-form-group
-                          label=""
-                          label-cols-md="3"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            variant="outline-info"
-                            @click="addChoices2"
-                          >
-                            <feather-icon
-                              icon="PlusIcon"
-                              class="mr-50"
-                              style="display: inline-block"
-                            />
-                            <span class="align-middle">Tambahkan Pilihan</span>
-                          </b-button>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-group>
-                  </div>
-                </transition>
-
-                <transition name="fade">
-                  <div
-                    v-if="variationFields3 === true"
-                  >
-                    <b-form-group
-                      v-if="isVariation === true"
-                      label="Variasi 3"
-                      label-cols-md="2"
-                      class="mt-1"
-                    >
-                      <b-col cols="12">
-                        <b-form-group
-                          label="Nama"
-                          label-cols-md="3"
-                        >
-                          <b-row class="d-flex align-items-center">
-                            <b-col
-                              cols="11"
-                              class=""
-                            >
-                              <b-form-input
-                                v-model="variationName3"
-                                placeholder="Masukan nama variasi"
-                              />
-                            </b-col>
-                            <b-col
-                              cols="1"
-                              class="pr-0 pl-0 text-center"
-                            >
-                              <b-button
-                                class="btn-icon"
-                                variant="light-dark"
-                                size="sm"
-                                @click="removeVariant3"
-                              >
-                                <feather-icon
-                                  icon="Trash2Icon"
-                                />
-                              </b-button>
-                            </b-col>
-                          </b-row>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        cols="12"
-                      >
-                        <b-form-group
-                          label="Pilihan"
-                          label-cols-md="3"
-                        >
-                          <draggable v-model="myList3">
-                            <transition-group name="fade">
-                              <b-row
-                                v-for="(data, indexs) in formChoices3"
-                                :key="indexs + 1"
-                                class="d-flex align-items-center justify-content-center"
-                              >
-                                <b-col
-                                  class="pt-0 pr-0 pb-0 mb-1"
-                                >
-                                  <b-input-group>
-                                    <b-form-input
-                                      v-model="data.choices"
-                                      placeholder="Masukan Pilihan Variasi"
-                                    />
-                                    <b-input-group-append is-text>
-                                      <feather-icon
-                                        icon="AlignJustifyIcon"
-                                      />
-                                    </b-input-group-append>
-                                  </b-input-group>
-                                </b-col>
-                                <b-col
-                                  v-if="formChoices3.length > 1"
-                                  md="auto"
-                                  class="mb-1"
-                                >
-                                  <b-button
-                                    class="btn-icon"
-                                    variant="light-dark"
-                                    size="sm"
-                                    @click="removeChoices3(indexs)"
-                                  >
-                                    <feather-icon
-                                      icon="Trash2Icon"
-                                    />
-                                  </b-button>
-                                </b-col>
-                              </b-row>
-                            </transition-group>
-                          </draggable>
-                        </b-form-group>
-                      </b-col>
-
-                      <b-col
-                        v-if="formChoices3.length < 20"
-                        cols="12"
-                      >
-                        <b-form-group
-                          label=""
-                          label-cols-md="3"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                            variant="outline-info"
-                            @click="addChoices3"
-                          >
-                            <feather-icon
-                              icon="PlusIcon"
-                              class="mr-50"
-                              style="display: inline-block"
-                            />
-                            <span class="align-middle">Tambahkan Pilihan</span>
-                          </b-button>
-                        </b-form-group>
-                      </b-col>
-                    </b-form-group>
-                  </div>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="variationFields1 === true && activeAddChoices1 === true"
-                    label="Tambah Variasi"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-button
-                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                      variant="outline-info"
-                      @click="addVariationItems2"
-                    >
-                      <feather-icon
-                        icon="PlusIcon"
-                        class="mr-50"
-                        style="display: inline-block"
-                      />
-                      <span class="align-middle">Tambahkan Variasi</span>
-                    </b-button>
-                  </b-form-group>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="variationFields2 === true && activeAddChoices2 === true "
-                    label="Tambah Variasi"
-                    label-cols-md="2"
-                    class="mt-1"
-                  >
-                    <b-button
-                      v-ripple.400="'rgba(113, 102, 240, 0.15)'"
-                      variant="outline-info"
-                      @click="addVariationItems3"
-                    >
-                      <feather-icon
-                        icon="PlusIcon"
-                        class="mr-50"
-                        style="display: inline-block"
-                      />
-                      <span class="align-middle">Tambahkan Variasi</span>
-                    </b-button>
-                  </b-form-group>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Info Variasi"
-                    label-cols-md="2"
-                    class="mt-2"
-                  >
-                    <b-row class="d-flex align-items-center">
-                      <b-col
                         md="4"
                         class="mb-1"
                       >
-                        <b-form-input
-                          v-model="price"
-                          placeholder="Rp | Harga"
-                          @keypress="formatStock($event)"
-                        />
-                      </b-col>
-
-                      <b-col
-                        md="2"
-                        class="mb-1"
-                      >
-                        <b-form-input
-                          v-model="stock"
-                          placeholder="Stok"
-                          @keypress="formatStock($event)"
-                        />
-                      </b-col>
-
-                      <b-col
-                        md="6"
-                        class="d-flex align-items-center"
-                      >
                         <div class="d-flex align-items-center">
-                          <b-button
-                            variant="primary"
-                            class="d-flex align-items-center"
-                            @click="createListVariation"
-                          >
-                            Terapkan Kesemua
-                          </b-button>
+                          <b-input-group>
+                            <b-input-group-prepend is-text>
+                              <span style="font-size: 14px;">
+                                <strong>
+                                  Rp
+                                </strong>
+                              </span>
+                            </b-input-group-prepend>
+                            <b-form-input
+                              id="all-price-variant"
+                              v-model="setPriceAll"
+                              class="wrapper__form__input__variant"
+                              placeholder="Contoh : 85000"
+                              :formatter="formatPriceVariant"
+                              @keyup="formatPriceInput($event)"
+                              @keypress="validateInputPriceVariant($event, setPriceAll)"
+                              @paste="handlePastePriceVariant"
+                            />
+                          </b-input-group>
                         </div>
                       </b-col>
-
-                    </b-row>
-                  </b-form-group>
-                </transition>
-
-                <transition name="fade">
-                  <b-form-group
-                    v-if="isVariation === true"
-                    label="Daftar Variasi"
-                    label-cols-md="2"
-                    class="mt-2"
-                  >
-                    <b-overlay
-                      :show="loading"
-                      variant="light"
-                      spinner-variant="primary"
-                      rounded="sm"
-                      opacity=".5"
-                      blur="0"
-                    >
-                      <b-table
-                        responsive
-                        class="border position-relative"
-                        :fields="fields"
-                        :items="variantItems"
+                      <b-col
+                        cols="12"
+                        md="4"
+                        class="mb-1"
                       >
+                        <b-input-group>
+                          <b-input-group-prepend is-text>
+                            <span style="font-size: 14px;">
+                              <strong>
+                                Stok
+                              </strong>
+                            </span>
+                          </b-input-group-prepend>
+                          <b-form-input
+                            id="all-stock-variant"
+                            v-model="setStockAll"
+                            class="wrapper__form__input__variant"
+                            placeholder="Contoh : 1000"
+                            :formatter="formatPriceVariant"
+                            @keyup="formatPriceInput($event)"
+                            @keypress="validateInputPriceVariant($event, setStockAll)"
+                            @paste="handlePastePriceVariant"
+                          />
+                        </b-input-group>
+                      </b-col>
+                      <b-col
+                        cols="12"
+                        md="2"
+                      >
+                        <b-button
+                          :variant="variantItems.length === 0 ? '' : 'outline-primary'"
+                          block
+                          :style="variantItems.length === 0 ? 'height: 45px; background: #C2C2C2!important; border: 0px!important;' : 'height: 45px;'"
+                          :class="variantItems.length === 0 ? 'cursor-not-allowed' : ''"
+                          :disabled="variantItems.length === 0 ? true : false"
+                          @click="setAllPriceStock"
+                        >
+                          Terapkan ke semua
+                        </b-button>
+                      </b-col>
+                    </b-row>
 
-                        <template #cell(variant1)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <b-col
-                              cols="12"
-                              class="mb-50"
+                    <b-table
+                      striped
+                      hover
+                      :fields="variantFields"
+                      :items="variantItems"
+                      show-empty
+                      responsive
+                      class="position-relative"
+                    >
+                      <template #head="data">
+                        <span style="font-size: 14px;">
+                          <strong>
+                            {{ data.label }}
+                          </strong>
+                        </span>
+                      </template>
+                      <template #empty>
+                        <div
+                          style="height: 150px;"
+                          class="d-flex justify-content-center align-items-center"
+                        >
+                          <div>
+                            <b-row
+                              class="text-center justify-content-center"
                             >
-                              <b-form-input
-                                v-model="data.item.variant1.val"
-                                class="mb-50"
-                              />
-                            </b-col>
+                              <h3
+                                class="text-center"
+                                style="color: #626262;"
+                              >
+                                Tabel varian belum diisi
+                              </h3>
+                            </b-row>
+                            <b-row class="text-center justify-content-center">
+                              <span
+                                class="text-center"
+                                style="color: #626262;"
+                              >
+                                Lengkapi tipe varian di atas untuk mengisi tabel varian
+                              </span>
+                            </b-row>
                           </div>
-                          <div v-else>
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              {{ data.item.variant1.val }}
-                            </b-col>
-                          </div>
-                        </template>
+                        </div>
+                      </template>
 
-                        <template #cell(variant2)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                <b-form-input
-                                  v-model="dataItem.variant2.val"
-                                  class="mb-50"
-                                />
-                              </div>
-                            </b-col>
-                          </div>
-                          <div v-else>
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                {{ dataItem.variant2.val }}
-                              </div>
-                            </b-col>
-                          </div>
-                        </template>
+                      <template #cell(variant1)="data">
+                        <div
+                          class="mt-1"
+                          style="min-width: 100px!important;"
+                        >
+                          {{ data.item.variant1.val }}
+                        </div>
+                      </template>
 
-                        <template #cell(variant3)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                <div
-                                  v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                  :key="indexVariant+1"
-                                >
-                                  <b-form-input
-                                    v-model="dataVariant.variant3.val"
-                                    class="mb-50"
-                                  />
-                                </div>
-                              </div>
-                            </b-col>
-                          </div>
-                          <div v-else>
-                            <b-col
-                              cols="12"
-                              class="mb-50"
-                            >
-                              <div
-                                v-for="(dataItem, index) in data.item.variant1.option"
-                                :key="index+1"
-                              >
-                                <div
-                                  v-for="(dataVariant, indexVariant) in dataItem.variant2.option"
-                                  :key="indexVariant+1"
-                                >
-                                  {{ dataVariant.variant3.val }}
-                                </div>
-                              </div>
-                            </b-col>
-                          </div>
-                        </template>
-
-                        <template #cell(price)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                    :key="indexVariantPrice+1"
-                                  >
-                                    <b-form-input
-                                      v-model="itemsVariant.variant3.price"
-                                      type="number"
-                                    />
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  <b-form-input
-                                    v-model="item.variant2.price"
-                                    type="number"
-                                  />
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              <b-form-input
-                                v-model="data.item.variant1.price"
-                                type="number"
-                              />
-                            </div>
-                          </div>
-                          <div v-else>
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                    :key="indexVariantPrice+1"
-                                  >
-                                    Rp {{ formatPrice(itemsVariant.variant3.price) }}
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  Rp {{ formatPrice(item.variant2.price) }}
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              Rp {{ formatPrice(data.item.variant1.price) }}
-                            </div>
-                          </div>
-                        </template>
-
-                        <template #cell(stock)="data">
-                          <div v-if="editMode === true && indexRow === data.index">
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantPrice) in item.variant2.option"
-                                    :key="indexVariantPrice+1"
-                                  >
-                                    <b-form-input
-                                      v-model="itemsVariant.variant3.stock"
-                                      type="number"
-                                    />
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  <b-form-input
-                                    v-model="item.variant2.stock"
-                                    type="number"
-                                  />
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              <b-form-input
-                                v-model="data.item.variant1.stock"
-                                type="number"
-                              />
-                            </div>
-                          </div>
-                          <div v-else>
-                            <div v-if="data.item.variant1.option !== undefined">
-                              <b-col
-                                v-for="(item, indexVariant) in data.item.variant1.option"
-                                :key="indexVariant+1"
-                                cols="12"
-                              >
-                                <div v-if="item.variant2.option !== undefined">
-                                  <div
-                                    v-for="(itemsVariant, indexVariantStock) in item.variant2.option"
-                                    :key="indexVariantStock+1"
-                                  >
-                                    {{ itemsVariant.variant3.stock }}
-                                  </div>
-                                </div>
-                                <div v-else>
-                                  {{ item.variant2.stock }}
-                                </div>
-                              </b-col>
-                            </div>
-                            <div v-else>
-                              {{ data.item.variant1.stock }}
-                            </div>
-                          </div>
-                        </template>
-
-                        <template #cell(action)="data">
-                          <b-button
-                            variant="flat-secondary"
-                            class="btn-icon"
-                            @click="editTable(data)"
+                      <template #cell(variant2)="data">
+                        <div v-if="variantInputItems.length === 3">
+                          <div
+                            v-for="(item, index) in data.item.variant1.option"
+                            :key="index+1"
                           >
-                            <feather-icon
-                              icon="EditIcon"
+                            <div
+                              v-for="(secondItem, secondIndex) in item.variant2.option"
+                              :key="secondIndex+1"
+                            >
+                              <b-col
+                                class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                                cols="12"
+                                style="min-width: 100px!important;"
+                                disabled
+                              >
+                                {{ item.variant2.val }}
+                              </b-col>
+                            </div>
+                          </div>
+                        </div>
+                        <div v-if="variantInputItems.length === 2">
+                          <b-row
+                            v-for="(item, index) in data.item.variant1.option"
+                            :key="index+1"
+                          >
+                            <b-col
+                              class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                              cols="12"
+                              style="min-width: 100px!important;"
+                              disabled
+                            >
+                              {{ item.variant2.val }}
+                            </b-col>
+                          </b-row>
+                        </div>
+                      </template>
+
+                      <template #cell(variant3)="data">
+                        <div
+                          v-for="(item, index) in data.item.variant1.option"
+                          :key="index+1"
+                        >
+                          <b-row
+                            v-for="(items, index1) in item.variant2.option"
+                            :key="index1+1"
+                          >
+                            <b-col
+                              class="wrapper__variant2__table mb-1 d-flex align-items-center"
+                              cols="12"
+                              style="min-width: 100px!important;"
+                              disabled
+                            >
+                              {{ items.variant3.val }}
+                            </b-col>
+                          </b-row>
+                        </div>
+                      </template>
+
+                      <template #cell(stock)="data">
+                        <div v-if="variantInputItems.length === 3">
+                          <b-row
+                            v-for="(items, index) in data.item.variant1.option"
+                            :key="index+1"
+                          >
+                            <b-col
+                              v-for="(itemVariant, indexVariant) in items.variant2.option"
+                              :key="indexVariant+1"
+                              cols="12"
+                              style="min-width: 250px!important;"
+                            >
+                              <b-form-input
+                                :id="`stock-variant-${indexVariant + data.index}-${data.index+1}`"
+                                v-model="itemVariant.variant3.stock"
+                                class="wrapper__form__input__variant mb-1"
+                                placeholder="Contoh : 1000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, itemVariant.variant3.stock)"
+                                @input="checkValidationSubmit(itemVariant)"
+                                @paste="handlePastePriceVariant"
+                              />
+                            </b-col>
+                          </b-row>
+                        </div>
+
+                        <div v-if="variantInputItems.length === 2">
+                          <b-col
+                            v-for="(items, index) in data.item.variant1.option"
+                            :key="index+1"
+                            cols="12"
+                            style="min-width: 250px!important;"
+                          >
+                            <b-form-input
+                              :id="`stock-variant-${index + data.index}-${data.index+1}`"
+                              v-model="items.variant2.stock"
+                              class="wrapper__form__input__variant mb-1"
+                              placeholder="Contoh : 1000"
+                              :formatter="formatPriceVariant"
+                              @keyup="formatPriceInput($event)"
+                              @keypress="validateInputPriceVariant($event, items.variant2.stock)"
+                              @input="checkValidationSubmit(items)"
+                              @paste="handlePastePriceVariant"
                             />
-                          </b-button>
-                          <b-button
-                            v-if="editMode === true && indexRow === data.index"
-                            variant="flat-primary"
-                            class="btn-icon"
-                            @click="updateTable(data)"
+                          </b-col>
+                        </div>
+
+                        <div v-if="variantInputItems.length === 1">
+                          <div
+                            style="min-width: 250px!important;"
                           >
-                            Simpan
-                          </b-button>
-                        </template>
+                            <b-form-input
+                              v-model="data.item.variant1.stock"
+                              class="wrapper__form__input__variant mb-1"
+                              placeholder="Contoh : 1000"
+                              :formatter="formatPriceVariant"
+                              @keyup="formatPriceInput($event)"
+                              @keypress="validateInputPriceVariant($event, data.item.variant1.stock)"
+                              @input="checkValidationSubmit(data.item)"
+                              @paste="handlePastePriceVariant"
+                            />
+                          </div>
+                        </div>
+                      </template>
 
-                      </b-table>
-                    </b-overlay>
-                  </b-form-group>
-                </transition>
-              </b-col>
+                      <template #cell(price)="data">
+                        <div v-if="variantInputItems.length === 3">
+                          <b-row
+                            v-for="(items, index) in data.item.variant1.option"
+                            :key="index+1"
+                          >
+                            <b-col
+                              v-for="(itemVariant, indexVariant) in items.variant2.option"
+                              :key="indexVariant+1"
+                              cols="12"
+                              style="min-width: 250px!important;"
+                            >
+                              <b-input-group class="mb-1">
+                                <b-input-group-prepend is-text>
+                                  <span style="font-size: 14px;">
+                                    <strong>
+                                      Rp
+                                    </strong>
+                                  </span>
+                                </b-input-group-prepend>
+                                <b-form-input
+                                  :id="`price-variant-${indexVariant + data.index}-${data.index+1}`"
+                                  v-model="itemVariant.variant3.price"
+                                  class="wrapper__form__input__variant"
+                                  placeholder="Contoh : 85000"
+                                  :formatter="formatPriceVariant"
+                                  @keyup="formatPriceInput($event)"
+                                  @keypress="validateInputPriceVariant($event, itemVariant.variant3.price)"
+                                  @input="checkValidationSubmit(itemVariant)"
+                                  @paste="handlePastePriceVariant"
+                                />
+                              </b-input-group>
+                            </b-col>
+                          </b-row>
+                        </div>
 
+                        <div v-if="variantInputItems.length === 2">
+                          <b-col
+                            v-for="(items, index) in data.item.variant1.option"
+                            :key="index+1"
+                            cols="12"
+                            style="min-width: 250px!important;"
+                          >
+                            <b-input-group class="mb-1">
+                              <b-input-group-prepend is-text>
+                                <span style="font-size: 14px;">
+                                  <strong>
+                                    Rp
+                                  </strong>
+                                </span>
+                              </b-input-group-prepend>
+                              <b-form-input
+                                :id="`price-variant-${index + data.index}-${data.index+1}`"
+                                v-model="items.variant2.price"
+                                class="wrapper__form__input__variant"
+                                placeholder="Contoh : 85000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, items.variant2.price)"
+                                @input="checkValidationSubmit(items)"
+                                @paste="handlePastePriceVariant"
+                              />
+                            </b-input-group>
+                          </b-col>
+                        </div>
+
+                        <div v-if="variantInputItems.length === 1">
+                          <div
+                            style="min-width: 250px!important;"
+                          >
+                            <b-input-group class="mb-1">
+                              <b-input-group-prepend is-text>
+                                <span style="font-size: 14px;">
+                                  <strong>
+                                    Rp
+                                  </strong>
+                                </span>
+                              </b-input-group-prepend>
+                              <b-form-input
+                                id="price-variant"
+                                v-model="data.item.variant1.price"
+                                class="wrapper__form__input__variant"
+                                placeholder="Contoh : 85000"
+                                :formatter="formatPriceVariant"
+                                @keyup="formatPriceInput($event)"
+                                @keypress="validateInputPriceVariant($event, data.item.variant1.price)"
+                                @input="checkValidationSubmit(data.item)"
+                                @paste="handlePastePriceVariant"
+                              />
+                            </b-input-group>
+                          </div>
+                        </div>
+                      </template>
+
+                    </b-table>
+                  </div>
+                </b-col>
+              </b-row>
             </b-row>
-          </b-col>
+          </b-row>
 
-          <b-col
-            v-if="isVariation === false"
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="stock-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Stok<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label for="stock-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Stok<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-              <b-col
-                cols="10"
-              >
-                <validation-provider
-                  #default="{errors}"
-                  name="Stock"
-                  rules="required"
-                >
-                  <b-form-input
-                    id="stock-product"
-                    v-model="stockProduct"
-                    placeholder="Masukkan jumlah stok produk"
-                    :state="errors.length > 0 ? false:null"
-                    @keypress="formatStock($event)"
-                  />
-                  <small class="text-primary">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-col>
+          <b-row class="mx-1 p-2 wrapper__product__info mb-2">
+            <b-row class="ml-50 w-100 mb-1">
+              <h4 class="text-black ml-50 mt-50">
+                <strong>
+                  Harga, Stok dan Ukuran
+                </strong>
+              </h4>
             </b-row>
-          </b-col>
-
-          <b-col
-            v-if="isVariation === false"
-            cols="12"
-            class="mb-1"
-          >
-            <b-row>
+            <b-row class="w-100">
               <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="price-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Harga<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-
-              <!-- Mobile -->
-              <b-col
+                v-if="!isVariantActive"
                 cols="12"
-                class="wrapper__field__input__mobile"
+                class="mb-2 ml-1"
               >
-                <label for="price-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Harga<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-              <b-col
-                cols="10"
-              >
-                <validation-provider
-                  #default="{errors}"
-                  name="Harga"
-                  rules="required"
-                >
-                  <b-input-group>
-                    <b-input-group-prepend is-text>
-                      Rp
-                    </b-input-group-prepend>
-                    <b-form-input
-                      id="price-product"
-                      v-model="priceProduct"
-                      placeholder="Masukkan harga produk"
-                      :state="errors.length > 0 ? false:null"
-                      @keypress="formatStock($event)"
-                    />
-                  </b-input-group>
-                  <small class="text-primary">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-col>
-            </b-row>
-          </b-col>
-
-          <b-col cols="12">
-            <b-row>
-              <b-col
-                cols="2"
-                class="wrapper__field__input"
-              >
-                <label for="weight-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Pengiriman
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label for="weight-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Pengiriman
-                    </strong>
-                  </h4>
-                </label>
-              </b-col>
-            </b-row>
-          </b-col>
-
-          <b-col md="12">
-            <b-row>
-              <b-col
-                cols="2"
-                class="ml-5 wrapper__field__input"
-              >
-                <label
-                  for="weight-product"
-                >
-                  <h5 class="text-black">
-                    <strong>
-                      Berat<span class="text-primary">*</span>
-                    </strong>
-                  </h5>
-                  <small>
-                    Cantumkan
-                    berat dengan menimbang produk setelah
-                    dikemas.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label
-                  for="weight-product"
-                >
-                  <h5 class="text-black">
-                    <strong>
-                      Berat<span class="text-primary">*</span>
-                    </strong>
-                  </h5>
-                  <small>
-                    Cantumkan
-                    berat dengan menimbang produk setelah
-                    dikemas.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="2"
-                class="d-flex align-items-center wrapper__field__input"
-              >
-                <validation-provider
-                  #default="{errors}"
-                  name="Berat"
-                  rules="required"
-                >
-                  <b-input-group class="input-group-merge">
-                    <b-form-input
-                      id="weight-product"
-                      v-model="weightProduct"
-                      type="number"
-                      placeholder="1000"
-                      :state="errors.length > 0 ? false:null"
-                      @keypress="validateInputWeight"
-                    />
-                    <b-input-group-append is-text>
-                      gram
-                    </b-input-group-append>
-                  </b-input-group>
-                  <small class="text-primary">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-col>
-              <b-col
-                cols="12"
-                class="d-flex align-items-center wrapper__field__input__mobile mb-2"
-              >
-                <validation-provider
-                  #default="{errors}"
-                  name="Berat"
-                  rules="required"
-                >
-                  <b-input-group class="input-group-merge">
-                    <b-form-input
-                      id="weight-product"
-                      v-model="weightProduct"
-                      type="number"
-                      placeholder="1000"
-                      :state="errors.length > 0 ? false:null"
-                    />
-                    <b-input-group-append is-text>
-                      gram
-                    </b-input-group-append>
-                  </b-input-group>
-                  <small class="text-primary">{{ errors[0] }}</small>
-                </validation-provider>
-              </b-col>
-            </b-row>
-          </b-col>
-
-          <b-col md="12">
-            <b-row>
-              <b-col
-                cols="2"
-                class="ml-5 wrapper__field__input"
-              >
-                <label
-                  for="weight-product"
-                >
-                  <h5 class="text-black">
-                    <strong>
-                      Ukuran
-                    </strong>
-                  </h5>
-                  <small>
-                    Masukkan ukuran produk setelah
-                    dikemas untuk menghitung berat
-                    volume.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="12"
-                class="wrapper__field__input__mobile"
-              >
-                <label
-                  for="weight-product"
-                >
-                  <h5 class="text-black">
-                    <strong>
-                      Ukuran
-                    </strong>
-                  </h5>
-                  <small>
-                    Masukkan ukuran produk setelah
-                    dikemas untuk menghitung berat
-                    volume.
-                  </small>
-                </label>
-              </b-col>
-              <b-col
-                cols="7"
-                class="wrapper__field__input"
-              >
-                <b-row
-                  class="d-flex align-items-center"
-                >
+                <b-row>
                   <b-col
-                    class="d-flex align-items-center"
+                    cols="12"
+                    md="2"
                   >
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="lengthProduct"
-                        type="number"
-                        placeholder="P"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <label for="price-product">
+                      <h5>
+                        <strong>
+                          Harga<span class="text-primary">*</span>
+                        </strong>
+                      </h5>
+                    </label>
                   </b-col>
+
                   <b-col
-                    class="d-flex align-items-center"
+                    cols="12"
+                    md="10"
                   >
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="widthProduct"
-                        type="number"
-                        placeholder="L"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
-                  </b-col>
-                  <b-col
-                    class="d-flex align-items-center"
-                  >
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="heightProduct"
-                        type="number"
-                        placeholder="T"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <validation-provider
+                      #default="{errors}"
+                      name="Harga"
+                      rules="required"
+                    >
+                      <b-input-group>
+                        <b-input-group-prepend is-text>
+                          Rp
+                        </b-input-group-prepend>
+                        <b-form-input
+                          id="price-product"
+                          v-model="priceProduct"
+                          class="wrapper__form__input__variant"
+                          placeholder="Contoh : 85000 (masukkan angka saja tanpa titik, koma atau karakter lain)"
+                          :formatter="formatPriceNotVariant"
+                          type="number"
+                          :state="errors.length > 0 ? false:null"
+                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                          @keyup="formatPriceInput($event)"
+                          @keypress="validateInputPrice($event)"
+                          @paste="handlePastePrice"
+                        />
+                      </b-input-group>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
+                    </validation-provider>
                   </b-col>
                 </b-row>
               </b-col>
+
               <b-col
+                v-if="!isVariantActive"
                 cols="12"
-                class="wrapper__field__input__mobile"
+                class="mb-2 ml-1"
               >
-                <b-row
-                  class="d-flex align-items-center"
-                >
+                <b-row>
                   <b-col
-                    class="d-flex align-items-center mb-1"
                     cols="12"
+                    md="2"
                   >
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="lengthProduct"
-                        type="number"
-                        placeholder="P"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <label for="stock-product">
+                      <h5>
+                        <strong>
+                          Stok<span class="text-primary">*</span>
+                        </strong>
+                      </h5>
+                    </label>
                   </b-col>
+
                   <b-col
-                    class="d-flex align-items-center mb-1"
                     cols="12"
+                    md="10"
                   >
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="widthProduct"
-                        type="number"
-                        placeholder="L"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
-                  </b-col>
-                  <b-col
-                    class="d-flex align-items-center mb-1"
-                    cols="12"
-                  >
-                    <b-input-group class="input-group-merge">
-                      <b-form-input
-                        id="hi-first-name"
-                        v-model="heightProduct"
-                        type="number"
-                        placeholder="T"
-                      />
-                      <b-input-group-append is-text>
-                        cm
-                      </b-input-group-append>
-                    </b-input-group>
+                    <validation-provider
+                      #default="{errors}"
+                      name="Stock"
+                      rules="required"
+                    >
+                      <b-input-group>
+                        <b-input-group-prepend is-text>
+                          Pcs
+                        </b-input-group-prepend>
+                        <b-form-input
+                          id="stock-product"
+                          v-model="stockProduct"
+                          class="wrapper__form__input__variant"
+                          placeholder="Contoh : 1000"
+                          type="number"
+                          :formatter="formatPriceNotVariant"
+                          :state="errors.length > 0 ? false:null"
+                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                          @keyup="formatStock($event)"
+                          @keypress="validateInputStock($event)"
+                          @paste="handlePasteStock"
+                        />
+                      </b-input-group>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya</small>
+                    </validation-provider>
                   </b-col>
                 </b-row>
               </b-col>
-            </b-row>
-          </b-col>
 
-          <b-col
-            cols="10"
-            class="mt-2"
-          >
-            <b-row class="mb-2">
               <b-col
-                cols="2"
-                class="wrapper__field__input"
+                v-if="isVariantActive"
+                cols="12"
+                class="mb-2 ml-1"
               >
-                <label for="name-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Metode Pembayaran<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                  <small>
-                    Pilihan metode pembayaran yang tersedia pada produk anda.
-                  </small>
-                </label>
+                <b-row>
+                  <b-col
+                    cols="12"
+                    md="2"
+                  >
+                    <label for="stock-product">
+                      <h5>
+                        <strong>
+                          Harga & Stok<span class="text-primary">*</span>
+                        </strong>
+                      </h5>
+                    </label>
+                  </b-col>
+
+                  <b-col
+                    cols="12"
+                    md="10"
+                  >
+                    <span style="color: #626262;">Kamu telah mengatur <strong>Harga</strong> dan <strong>Jumlah Stok</strong> di variasi produk</span>
+                  </b-col>
+                </b-row>
               </b-col>
 
-              <!-- Mobile -->
               <b-col
                 cols="12"
-                class="wrapper__field__input__mobile"
+                class="mb-2 ml-1"
               >
-                <label for="name-product">
-                  <h4 class="text-black">
-                    <strong>
-                      Metode Pembayaran<span class="text-primary">*</span>
-                    </strong>
-                  </h4>
-                  <small>
-                    Pilihan metode pembayaran yang tersedia pada produk anda.
-                  </small>
-                </label>
+                <b-row>
+                  <b-col
+                    cols="12"
+                    md="2"
+                  >
+                    <label for="price-product">
+                      <h5>
+                        <strong>
+                          Berat Produk<span class="text-primary">*</span>
+                        </strong>
+                      </h5>
+                      <small>
+                        Masukkan berat produk setelah dikemas ya
+                      </small>
+                    </label>
+                  </b-col>
+
+                  <b-col
+                    cols="12"
+                    md="10"
+                  >
+                    <validation-provider
+                      #default="{errors}"
+                      name="Berat produk"
+                      rules="required"
+                    >
+                      <b-input-group>
+                        <b-form-input
+                          id="price-product"
+                          v-model="weightProduct"
+                          class="wrapper__form__input__variant"
+                          placeholder="(Contoh : 200)"
+                          type="number"
+                          :formatter="formatterVolume"
+                          :state="errors.length > 0 ? false:null"
+                          :style="errors[0] ? 'background-color: #FFEDED;' : 'background-color: white;'"
+                          @keypress="validateInputWeight($event)"
+                          @keyup="validateInputWeight($event)"
+                          @paste="handlePasteWeight"
+                        />
+                        <b-input-group-append is-text>
+                          gram
+                        </b-input-group-append>
+                      </b-input-group>
+                      <small
+                        v-if="errors[0]"
+                        class="text-primary ml-1 mt-50"
+                      >*Wajib diisi ya, minimal 1 gram</small>
+                    </validation-provider>
+                  </b-col>
+                </b-row>
               </b-col>
+
               <b-col
-                cols="10"
+                cols="12"
+                class="mb-2 ml-1"
               >
-                <div
-                  class="demo-inline-spacing"
-                >
-                  <b-form-checkbox
-                    v-model="cod"
-                    class="custom-control-primary"
-                    @change="validationPayment"
+                <b-row>
+                  <b-col
+                    cols="12"
+                    md="2"
                   >
-                    Bayar Ditempat (COD)
-                  </b-form-checkbox>
-                  <b-form-checkbox
-                    v-model="transfer"
-                    class="custom-control-primary"
-                    @change="validationPayment"
+                    <label for="price-product">
+                      <h5>
+                        <strong>
+                          Volume
+                        </strong>
+                      </h5>
+                      <small>
+                        Masukkan ukuran produk setelah
+                        dikemas, untuk mempermudah sistem menghitung volume.
+                      </small>
+                    </label>
+                  </b-col>
+
+                  <b-col
+                    cols="12"
+                    md="10"
                   >
-                    Transfer Bank
-                  </b-form-checkbox>
+                    <b-row class="justify-content-between">
+                      <b-col
+                        cols="12"
+                        md="auto"
+                        class="mb-1"
+                      >
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="lengthProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Panjang"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keypress="validateInputVolumeLength($event)"
+                            @keydown="validateInputVolumeLength($event)"
+                            @keyup="validateInputVolumeLength($event)"
+                            @input="calculateVolumeProduct"
+                            @paste="handlePasteLength"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
+                      </b-col>
+                      <b-col
+                        cols="12"
+                        md="auto"
+                        class="mb-1"
+                      >
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="widthProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Lebar"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keydown="validateInputVolumeWidth($event)"
+                            @keypress="validateInputVolumeWidth($event)"
+                            @keyup="validateInputVolumeWidth($event)"
+                            @input="calculateVolumeProduct"
+                            @paste="handlePasteWidth"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
+                      </b-col>
+                      <b-col
+                        cols="12"
+                        md="auto"
+                        class="mb-1"
+                      >
+                        <b-input-group>
+                          <b-form-input
+                            id="price-product"
+                            v-model="heightProduct"
+                            class="wrapper__form__input__variant"
+                            placeholder="Tinggi"
+                            type="number"
+                            :formatter="formatterVolume"
+                            @keydown="validateInputVolumeHeight($event)"
+                            @keypress="validateInputVolumeHeight($event)"
+                            @keyup="validateInputVolumeHeight($event)"
+                            @input="calculateVolumeProduct"
+                            @paste="handlePasteHeight"
+                          />
+                          <b-input-group-append is-text>
+                            cm
+                          </b-input-group-append>
+                        </b-input-group>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+                </b-row>
+              </b-col>
+
+              <b-col
+                v-if="calculateVolumeProductItem > weightProduct / 1000"
+                cols="12"
+                class="mb-2 ml-1"
+              >
+                <div class="wrapper__alert__volume__product">
+                  <div class="mr-1">
+                    <b-img src="@/assets/images/icons/warning-alert-product.svg" />
+                  </div>
+                  <div>
+                    <span class="text-black">
+                      Berat yang dipakai adalah {{ calculateVolumeProductItem.toFixed(3) * 1000 }} gram (hasil dari konversi volume ke berat) karena lebih besar dari berat aslinya.
+                    </span>
+                  </div>
                 </div>
-                <small class="text-primary">{{ validatePayment }}</small>
+              </b-col>
+
+              <b-col
+                cols="12"
+                class="mb-2 ml-1"
+              >
+                <div class="wrapper__alert__volume__product">
+                  <div class="mr-1">
+                    <b-img src="@/assets/images/icons/warning-alert-product.svg" />
+                  </div>
+                  <div>
+                    <span class="text-black">
+                      Perhatikan dengan baik berat dan Volume produk ya agar tidak terjadi selisih data dengan pihak kurir
+                      <span class="text-info"><a
+                        class="text-info"
+                        href="https://bantuan.komerce.id/id/article/cara-menghitung-konversi-volume-ke-berat-di-pengiriman-barang-1hofvu6/"
+                        target="_blank"
+                      >Pelajari selengkapnya</a></span>
+                    </span>
+                  </div>
+                </div>
               </b-col>
             </b-row>
-          </b-col>
+          </b-row>
+
+          <b-row class="mx-1 p-2 wrapper__product__variant mb-2 align-items-center">
+            <b-col
+              cols="12"
+              class="mb-2 mt-1"
+            >
+              <div class="w-100">
+                <h4 class="text-black">
+                  <strong>
+                    Upload Foto
+                  </strong>
+                </h4>
+              </div>
+              <b-row class="align-items-center">
+                <b-col
+                  cols="12"
+                  md="2"
+                >
+                  <label for="name-product">
+                    <h5>
+                      <strong>
+                        Foto Produk
+                      </strong>
+                    </h5>
+                    <small>
+                      Format gambar .jpg .jpeg .png dan ukuran minimum 300 x 300px
+                      (Untuk gambar optimal gunakan ukuran minimal 700 x 700 px).
+                    </small>
+                  </label>
+                </b-col>
+
+                <b-col
+                  cols="12"
+                  md="10"
+                >
+                  <b-row class="align-items-center">
+                    <b-img
+                      v-if="imageFile === null"
+                      src="@/assets/images/icons/preview-default-prov-retur.svg"
+                      width="75"
+                      class="mr-1"
+                    />
+                    <a
+                      :href="fileUrl(imageFile)"
+                      target="_blank"
+                    >
+                      <b-img
+                        v-if="imageFile !== null"
+                        :src="fileUrl(imageFile)"
+                        width="75"
+                        class="mr-1"
+                      />
+                    </a>
+                    <div>
+                      <label
+                        for="image-product"
+                        style="border: 1px solid #E2E2E2;"
+                        class="btn btn-icon btn-flat-dark"
+                      >
+                        Pilih Foto
+                      </label>
+                      <input
+                        id="image-product"
+                        type="file"
+                        hidden
+                        @change="setImageProduct($event)"
+                      >
+                    </div>
+                  </b-row>
+                </b-col>
+              </b-row>
+            </b-col>
+          </b-row>
 
           <!-- submit and reset -->
           <b-col
@@ -2321,30 +1283,30 @@
               v-ripple.400="'rgba(255, 255, 255, 0.15)'"
               type="submit"
               variant="outline-primary"
-              class="mr-1"
-              :disabled="validatePayment !== ''"
-              @click.prevent="submitDraft"
+              :class="buttonIsSubmit ? 'mr-1 cursor-not-allowed' : 'mr-1'"
+              :disabled="buttonIsSubmit"
+              @click.prevent="submit(0)"
             >
+              Simpan Draft
               <b-spinner
                 v-if="loadingSubmitDraft"
                 small
                 variant="primary"
               />
-              Simpan Draft
             </b-button>
             <b-button
               v-ripple.400="'rgba(186, 191, 199, 0.15)'"
               type="reset"
+              :class="buttonIsSubmit ? 'cursor-not-allowed' : ''"
+              :disabled="buttonIsSubmit"
               variant="primary"
-              :disabled="validatePayment !== ''"
-              @click.prevent="submitPublish"
+              @click.prevent="submit(1)"
             >
+              Simpan ke Produk Aktif
               <b-spinner
                 v-if="loadingSubmitPublish"
                 small
-                variant="light"
               />
-              Publish
             </b-button>
           </b-col>
         </b-row>
@@ -2420,6 +1382,102 @@
       </b-container>
     </b-modal>
 
+    <!-- Popup delete variant -->
+    <b-modal
+      ref="popup-delete-variant"
+      hide-header
+      hide-footer
+      centered
+    >
+      <b-row class="my-1 justify-content-center mx-1">
+        <b-img src="@/assets/images/icons/icon-delete-variant.svg" />
+      </b-row>
+
+      <b-row class="my-1 justify-content-center mx-1">
+        <b-col
+          class="text-center"
+          cols="12"
+        >
+          <h4 class="text-black">
+            Hapus Tipe Varian?
+          </h4>
+        </b-col>
+        <b-col
+          class="text-center"
+          cols="12"
+        >
+          <p>
+            Semua list pilihan dari varian akan otomatis terhapus juga lho...
+          </p>
+        </b-col>
+      </b-row>
+
+      <b-row class="justify-content-center mx-1 mt-1 mb-2">
+        <b-button
+          variant="outline-primary"
+          class="mr-2"
+          @click="closePopupDeleteVariant"
+        >
+          Batal
+        </b-button>
+        <b-button
+          variant="primary"
+          class="text-white"
+          @click="deleteVariant"
+        >
+          Hapus
+        </b-button>
+      </b-row>
+    </b-modal>
+
+    <!-- Popup delete All variant -->
+    <b-modal
+      ref="popup-delete-all-variant"
+      hide-header
+      hide-footer
+      centered
+    >
+      <b-row class="my-1 justify-content-center mx-1">
+        <b-img src="@/assets/images/icons/icon-delete-variant.svg" />
+      </b-row>
+
+      <b-row class="my-1 justify-content-center mx-1">
+        <b-col
+          class="text-center"
+          cols="12"
+        >
+          <h4 class="text-black">
+            Hapus Semua Varian?
+          </h4>
+        </b-col>
+        <b-col
+          class="text-center"
+          cols="12"
+        >
+          <p>
+            Semua list pilihan dari varian akan otomatis terhapus juga lho...
+          </p>
+        </b-col>
+      </b-row>
+
+      <b-row class="justify-content-center mx-1 mt-1 mb-2">
+        <b-button
+          variant="outline-primary"
+          class="mr-2"
+          @click="closePopupDeleteAllVariant"
+        >
+          Batal
+        </b-button>
+        <b-button
+          variant="primary"
+          class="text-white"
+          @click="deleteAllVariant"
+        >
+          Hapus
+        </b-button>
+      </b-row>
+    </b-modal>
+
   </b-card-actions>
 </template>
 
@@ -2440,11 +1498,12 @@ import {
   BAvatar,
   BSpinner,
   BOverlay,
+  BPopover,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
 import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
-import { ValidationObserver, ValidationProvider, number } from 'vee-validate'
+import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
@@ -2454,23 +1513,24 @@ export default {
   components: {
     BRow,
     BCol,
-    BFormGroup,
+    // BFormGroup,
     BFormInput,
-    BFormFile,
+    // BFormFile,
     BForm,
     BButton,
     BCardActions,
     BFormTextarea,
-    BTable,
-    BFormCheckbox,
+    // BTable,
+    // BFormCheckbox,
     BInputGroupAppend,
     BInputGroup,
-    draggable,
+    // draggable,
     ValidationObserver,
     ValidationProvider,
-    BAvatar,
-    BSpinner,
-    BOverlay,
+    // BAvatar,
+    // BSpinner,
+    // BOverlay,
+    BPopover,
   },
   directives: {
     Ripple,
@@ -2478,120 +1538,82 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
-      loadingSubmitPublish: false,
+      isVariantActive: false,
+
       loadingSubmitDraft: false,
-      loading: false,
-      rulesimage: [
-        value => !value || value.size > 2024 || 'avatar size should be less than 2 MB !',
-      ],
-      isVariation: false,
-      formChoices1: [{ choices: null }],
-      formChoices2: [{ choices: null }],
-      formChoices3: [{ choices: null }],
-      variationFields1: false,
-      variationFields2: false,
-      variationFields3: false,
-      activeAddChoices1: false,
-      activeAddChoices2: false,
-      activeAddChoices3: false,
-      variationName1: null,
-      variationName2: null,
-      variationName3: null,
-      variantChoices1: null,
+      loadingSubmitPublish: false,
 
-      // Table
-      fields: [],
+      // Data Option Variant
+      variantInputItems: [],
+
+      // Table Variant
+      variantFields: [],
       variantItems: [],
-      stock: '',
-      price: '',
-      fieldEditData: '',
-      imageFile: null,
-      imageInitialFile: null,
-      editMode: false,
-      indexRow: null,
 
-      // Data Store
       productName: '',
+      productNameAvailable: true,
       skuName: '',
+      skuNameAvailable: true,
+
+      // validation
+      applyVariantIsActive: true,
+      messageErrorIsActive: false,
+      messageErrorLengthProduct: false,
+
+      // store
       descriptionProduct: '',
+      priceProduct: null,
+      stockProduct: null,
+      setPriceAll: null,
+      setStockAll: null,
       weightProduct: null,
       lengthProduct: null,
       widthProduct: null,
       heightProduct: null,
-      flavours: [],
-      cod: true,
-      transfer: true,
+      calculateVolumeProductItem: 0,
+      imageFile: null,
       variantStore: [],
       optionStore: [],
-      priceProduct: null,
-      stockProduct: null,
 
-      // Validation
-      required,
-      fieldImage: [],
-      fieldPreviewImage: [],
-      tesStore: [],
-      productId: '',
-      validatePayment: '',
+      buttonIsSubmit: true,
 
-      messageErrorIsActive: false,
-      newUser: true,
-      productNameAvailable: true,
+      pricePaste: null,
+      pricePasteMode: false,
+      stockPaste: null,
+      stockPasteMode: false,
+
+      weightPaste: null,
+      weightPasteMode: false,
+      lengthPaste: null,
+      lengthPasteMode: false,
+      widthPaste: null,
+      widthPasteMode: false,
+      heightPaste: null,
+      heightPasteMode: false,
+      priceAllPaste: null,
+      priceAllPasteMode: false,
+      stockAllPaste: null,
+      stockAllPasteMode: false,
+
+      itemToDelete: null,
+      variantOptionToDelete: null,
+
+      variantToDelete: null,
+
+      addVariantIsActive: false,
+      addVariantOptionIsActive: false,
+
+      empty: [],
     }
   },
-  computed: {
-    myList1: {
-      get() {
-        return this.$store.state.myList1
-      },
-      set(value) {
-        this.$store.commit('updateList', value)
-      },
-    },
-    myList2: {
-      get() {
-        return this.$store.state.myList2
-      },
-      set(value) {
-        this.$store.commit('updateList', value)
-      },
-    },
-    myList3: {
-      get() {
-        return this.$store.state.myList3
-      },
-      set(value) {
-        this.$store.commit('updateList', value)
-      },
-    },
-    myList4: {
-      get() {
-        return this.$store.state.myList4
-      },
-      set(value) {
-        this.$store.commit('updateList', value)
-      },
-    },
-    myList5: {
-      get() {
-        return this.$store.state.myList5
-      },
-      set(value) {
-        this.$store.commit('updateList', value)
-      },
-    },
-    itemsProvider() {
-      const fields = [...this.fields]
-      return fields
-    },
-  },
+  computed: {},
   watch: {
-    imageFile: {
-      handler(val) {
-        if (val) {
-          if (val.size > 2 * 1024 * 1024) {
-            this.$refs['modal-validation-upload'].show()
-          }
+    productName: {
+      handler() {
+        if (this.productName.length < 4) {
+          this.messageErrorLengthProduct = true
+        } else {
+          this.messageErrorLengthProduct = false
         }
       },
     },
@@ -2600,711 +1622,9 @@ export default {
     this.checkNewUser()
   },
   methods: {
-    submitPublish() {
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices1.length; x++) {
-        if (this.formChoices1[x].choices === null) {
-          this.formChoices1.splice(x, 1)
-        }
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices2.length; x++) {
-        if (this.formChoices2[x].choices === null) {
-          this.formChoices2.splice(x, 1)
-        }
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices3.length; x++) {
-        if (this.formChoices3[x].choices === null) {
-          this.formChoices3.splice(x, 1)
-        }
-      }
-      this.loadingSubmitPublish = true
-      this.$refs.formRules.validate().then(success => {
-        if (success && this.productNameAvailable) {
-          if (this.lengthProduct === null) {
-            this.lengthProduct = 0
-          }
-
-          if (this.widthProduct === null) {
-            this.widthProduct = 0
-          }
-
-          if (this.heightProduct === null) {
-            this.heightProduct = 0
-          }
-          if (this.formChoices3[0] !== undefined) {
-            this.variantStore.push(
-              {
-                val: this.variationName1,
-              },
-              {
-                val: this.variationName2,
-              },
-              {
-                val: this.variationName3,
-              },
-            )
-
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < this.variantItems.length; x++) {
-              this.optionStore.push(
-                {
-                  val: this.formChoices1[x].choices,
-                  parent: 0,
-                  stock: null,
-                  price: null,
-                  option: [],
-                },
-              )
-              // eslint-disable-next-line no-plusplus
-              for (let y = 0; y < this.variantItems[x].variant1.option.length; y++) {
-                this.optionStore[x].option.push(
-                  {
-                    val: this.formChoices2[y].choices,
-                    parent: 0,
-                    stock: null,
-                    price: null,
-                    option: [],
-                  },
-                )
-                // eslint-disable-next-line no-plusplus
-                for (let z = 0; z < this.variantItems[x].variant1.option[y].variant2.option.length; z++) {
-                  this.optionStore[x].option[y].option.push(
-                    {
-                      val: this.variantItems[x].variant1.option[y].variant2.option[z].variant3.val,
-                      parent: 0,
-                      stock: this.variantItems[x].variant1.option[y].variant2.option[z].variant3.stock,
-                      price: this.variantItems[x].variant1.option[y].variant2.option[z].variant3.price,
-                    },
-                  )
-                }
-              }
-            }
-          } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
-            this.variantStore.push(
-              {
-                val: this.variationName1,
-              },
-              {
-                val: this.variationName2,
-              },
-            )
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < this.variantItems.length; x++) {
-              this.optionStore.push(
-                {
-                  val: this.formChoices1[x].choices,
-                  parent: 0,
-                  stock: null,
-                  price: null,
-                  option: [],
-                },
-              )
-              // eslint-disable-next-line no-plusplus
-              for (let y = 0; y < this.variantItems[x].variant1.option.length; y++) {
-                this.optionStore[x].option.push(
-                  {
-                    val: this.variantItems[x].variant1.option[y].variant2.val,
-                    parent: 0,
-                    stock: this.variantItems[x].variant1.option[y].variant2.stock,
-                    price: this.variantItems[x].variant1.option[y].variant2.price,
-                  },
-                )
-              }
-            }
-          } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
-            this.variantStore.push(
-              {
-                val: this.variationName1,
-              },
-            )
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < this.variantItems.length; x++) {
-              this.optionStore.push(
-                {
-                  val: this.formChoices1[x].choices,
-                  parent: 0,
-                  stock: this.variantItems[x].variant1.stock,
-                  price: this.variantItems[x].variant1.price,
-                },
-              )
-            }
-          }
-
-          if (this.cod === true) {
-            this.flavours.push('COD')
-          } else {
-            this.flavours = []
-          }
-          if (this.transfer === true) {
-            this.flavours.push('BANK TRANSFER')
-          } else {
-            this.flavours = []
-          }
-
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.variantStore.length; i++) {
-            if (this.variantStore[i].val === null) {
-              this.variantStore.splice(i, 1)
-            }
-          }
-
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.variantStore.length; i++) {
-            if (this.variantStore[i].val === null) {
-              this.variantStore.splice(i, 1)
-            }
-          }
-
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.variantStore.length; i++) {
-            if (this.variantStore[i].val === null) {
-              this.variantStore.splice(i, 1)
-            }
-          }
-
-          this.$http_komship.post('/v1/product/create/1', {
-            product_name: this.productName,
-            sku: this.skuName,
-            description: this.descriptionProduct,
-            weight: this.weightProduct,
-            length: this.lengthProduct,
-            width: this.widthProduct,
-            height: this.heightProduct,
-            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
-            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
-            flavours: this.flavours,
-            variant_option: this.variantStore,
-            option: this.optionStore,
-          }, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(response => {
-            this.productId = response.data.data.product_id
-            if (this.imageFile !== null) {
-              // Store image
-              const formData = new FormData()
-              formData.append('product_id', response.data.data.product_id)
-              formData.append('image_path', this.imageFile)
-              this.$http_komship.post('/v1/product/upload-img-product', formData,
-                {
-                  headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-                }).then(() => {
-                this.$toast({
-                  component: ToastificationContentVue,
-                  props: {
-                    title: 'Success',
-                    icon: 'CheckIcon',
-                    text: 'Success menambahkan produk',
-                    variant: 'success',
-                  },
-                })
-                this.loadingSubmitPublish = false
-                setTimeout(() => {
-                  this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
-                }, 500)
-              }).catch(() => {
-                this.$toast({
-                  component: ToastificationContentVue,
-                  props: {
-                    title: 'Gagal',
-                    icon: 'AlertCircleIcon',
-                    text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
-                    variant: 'danger',
-                  },
-                })
-                this.loadinsSubmitPublish = false
-              })
-            } else {
-              this.loadingSubmitPublish = false
-              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
-            }
-          }).catch(() => {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal menambahkan produk, silahkan coba lagi!',
-                variant: 'danger',
-              },
-            })
-            this.loadingSubmitPublish = false
-          })
-        } else {
-          this.loadingSubmitPublish = false
-        }
-      })
-    },
-    submitDraft() {
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices1.length; x++) {
-        if (this.formChoices1[x].choices === null) {
-          this.formChoices1.splice(x, 1)
-        }
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices2.length; x++) {
-        if (this.formChoices2[x].choices === null) {
-          this.formChoices2.splice(x, 1)
-        }
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices3.length; x++) {
-        if (this.formChoices3[x].choices === null) {
-          this.formChoices3.splice(x, 1)
-        }
-      }
-      this.loadingSubmitPublish = true
-      this.$refs.formRules.validate().then(success => {
-        if (success && this.productNameAvailable) {
-          if (this.lengthProduct === null) {
-            this.lengthProduct = 0
-          }
-
-          if (this.widthProduct === null) {
-            this.widthProduct = 0
-          }
-
-          if (this.heightProduct === null) {
-            this.heightProduct = 0
-          }
-          if (this.formChoices3[0] !== undefined) {
-            this.variantStore.push(
-              {
-                val: this.variationName1,
-              },
-              {
-                val: this.variationName2,
-              },
-              {
-                val: this.variationName3,
-              },
-            )
-
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < this.variantItems.length; x++) {
-              this.optionStore.push(
-                {
-                  val: this.formChoices1[x].choices,
-                  parent: 0,
-                  stock: null,
-                  price: null,
-                  option: [],
-                },
-              )
-              // eslint-disable-next-line no-plusplus
-              for (let y = 0; y < this.variantItems[x].variant1.option.length; y++) {
-                this.optionStore[x].option.push(
-                  {
-                    val: this.formChoices2[y].choices,
-                    parent: 0,
-                    stock: null,
-                    price: null,
-                    option: [],
-                  },
-                )
-                // eslint-disable-next-line no-plusplus
-                for (let z = 0; z < this.variantItems[x].variant1.option[y].variant2.option.length; z++) {
-                  this.optionStore[x].option[y].option.push(
-                    {
-                      val: this.variantItems[x].variant1.option[y].variant2.option[z].variant3.val,
-                      parent: 0,
-                      stock: this.variantItems[x].variant1.option[y].variant2.option[z].variant3.stock,
-                      price: this.variantItems[x].variant1.option[y].variant2.option[z].variant3.price,
-                    },
-                  )
-                }
-              }
-            }
-          } else if (this.formChoices2[0] !== undefined && this.formChoices3[0] === undefined) {
-            this.variantStore.push(
-              {
-                val: this.variationName1,
-              },
-              {
-                val: this.variationName2,
-              },
-            )
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < this.variantItems.length; x++) {
-              this.optionStore.push(
-                {
-                  val: this.formChoices1[x].choices,
-                  parent: 0,
-                  stock: null,
-                  price: null,
-                  option: [],
-                },
-              )
-              // eslint-disable-next-line no-plusplus
-              for (let y = 0; y < this.variantItems[x].variant1.option.length; y++) {
-                this.optionStore[x].option.push(
-                  {
-                    val: this.variantItems[x].variant1.option[y].variant2.val,
-                    parent: 0,
-                    stock: this.variantItems[x].variant1.option[y].variant2.stock,
-                    price: this.variantItems[x].variant1.option[y].variant2.price,
-                  },
-                )
-              }
-            }
-          } else if (this.formChoices1[0] !== undefined && this.formChoices2[0] === undefined && this.formChoices3[0] === undefined) {
-            this.variantStore.push(
-              {
-                val: this.variationName1,
-              },
-            )
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < this.variantItems.length; x++) {
-              this.optionStore.push(
-                {
-                  val: this.formChoices1[x].choices,
-                  parent: 0,
-                  stock: this.variantItems[x].variant1.stock,
-                  price: this.variantItems[x].variant1.price,
-                },
-              )
-            }
-          }
-
-          if (this.cod === true) {
-            this.flavours.push('COD')
-          } else {
-            this.flavours = []
-          }
-          if (this.transfer === true) {
-            this.flavours.push('BANK TRANSFER')
-          } else {
-            this.flavours = []
-          }
-
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.variantStore.length; i++) {
-            if (this.variantStore[i].val === null) {
-              this.variantStore.splice(i, 1)
-            }
-          }
-
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.variantStore.length; i++) {
-            if (this.variantStore[i].val === null) {
-              this.variantStore.splice(i, 1)
-            }
-          }
-
-          // eslint-disable-next-line no-plusplus
-          for (let i = 0; i < this.variantStore.length; i++) {
-            if (this.variantStore[i].val === null) {
-              this.variantStore.splice(i, 1)
-            }
-          }
-
-          this.$http_komship.post('/v1/product/create/0', {
-            product_name: this.productName,
-            sku: this.skuName,
-            description: this.descriptionProduct,
-            weight: this.weightProduct,
-            length: this.lengthProduct,
-            width: this.widthProduct,
-            height: this.heightProduct,
-            price: this.priceProduct !== 0 ? this.priceProduct : this.price,
-            stock: this.stockProduct !== 0 ? this.stockProduct : this.stock,
-            flavours: this.flavours,
-            variant_option: this.variantStore,
-            option: this.optionStore,
-          }, {
-            headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-          }).then(response => {
-            this.productId = response.data.data.product_id
-            if (this.imageFile !== null) {
-              // Store image
-              const formData = new FormData()
-              formData.append('product_id', response.data.data.product_id)
-              formData.append('image_path', this.imageFile)
-              this.$http_komship.post('/v1/product/upload-img-product', formData,
-                {
-                  headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-                }).then(() => {
-                this.$toast({
-                  component: ToastificationContentVue,
-                  props: {
-                    title: 'Success',
-                    icon: 'CheckIcon',
-                    text: 'Success menambahkan produk',
-                    variant: 'success',
-                  },
-                })
-                this.loadingSubmitPublish = false
-                this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
-              }).catch(() => {
-                this.$toast({
-                  component: ToastificationContentVue,
-                  props: {
-                    title: 'Gagal',
-                    icon: 'AlertCircleIcon',
-                    text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
-                    variant: 'danger',
-                  },
-                })
-                this.loadinsSubmitPublish = false
-              })
-            } else {
-              this.loadingSubmitPublish = false
-              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
-            }
-          }).catch(() => {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal menambahkan produk, silahkan coba lagi!',
-                variant: 'danger',
-              },
-            })
-            this.loadingSubmitPublish = false
-          })
-        } else {
-          this.loadingSubmitPublish = false
-        }
-      })
-    },
-    createListVariation() {
-      if (this.variantItems !== []) {
-        this.variantItems = []
-      }
-      // Delete Null Data
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices1.length; x++) {
-        if (this.formChoices1[x].choices === null) {
-          this.formChoices1.splice(x, 1)
-        }
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices2.length; x++) {
-        if (this.formChoices2[x].choices === null) {
-          this.formChoices2.splice(x, 1)
-        }
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.formChoices3.length; x++) {
-        if (this.formChoices3[x].choices === null) {
-          this.formChoices3.splice(x, 1)
-        }
-      }
-      if (this.formChoices3[0] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantItems.push({
-            variant1: {
-              val: this.formChoices1[i].choices,
-              parent: null,
-              stock: null,
-              price: null,
-              option: [],
-            },
-          })
-          // eslint-disable-next-line no-plusplus
-          for (let x = 0; x < this.formChoices2.length; x++) {
-            this.variantItems[i].variant1.option.push({
-              variant2: {
-                val: this.formChoices2[x].choices,
-                parent: 0,
-                stock: null,
-                price: null,
-                option: [],
-              },
-            })
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.formChoices3.length; y++) {
-              this.variantItems[i].variant1.option[x].variant2.option.push({
-                variant3: {
-                  val: this.formChoices3[y].choices,
-                  parent: 0,
-                  stock: this.stock,
-                  price: this.price,
-                },
-              })
-            }
-          }
-        }
-      }
-      if (this.formChoices3[0] === undefined && this.formChoices2[0] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantItems.push({
-            variant1: {
-              val: this.formChoices1[i].choices,
-              parent: null,
-              stock: null,
-              price: null,
-              option: [],
-            },
-          })
-          // eslint-disable-next-line no-plusplus
-          for (let x = 0; x < this.formChoices2.length; x++) {
-            this.variantItems[i].variant1.option.push({
-              variant2: {
-                val: this.formChoices2[x].choices,
-                parent: 0,
-                stock: this.stock,
-                price: this.price,
-              },
-            })
-          }
-        }
-      }
-      if (this.formChoices3[0] === undefined && this.formChoices2[0] === undefined && this.formChoices1[0] !== undefined) {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < this.formChoices1.length; i++) {
-          this.variantItems.push({
-            variant1: {
-              val: this.formChoices1[i].choices,
-              parent: null,
-              stock: this.stock,
-              price: this.price,
-            },
-          })
-        }
-      }
-
-      if (this.variationName1 !== null) {
-        this.fields.push({
-          key: 'variant1',
-          label: String(this.variationName1),
-        })
-      }
-      if (this.variationName2 !== null) {
-        this.fields.push({
-          key: 'variant2',
-          label: String(this.variationName2),
-        })
-      }
-      if (this.variationName3 !== null) {
-        this.fields.push({
-          key: 'variant3',
-          label: String(this.variationName3),
-        })
-      }
-      if (this.price !== null) {
-        this.fields.push({
-          key: 'price',
-          label: 'Harga',
-        })
-      }
-      if (this.stock !== null) {
-        this.fields.push({
-          key: 'stock',
-          label: 'Stok',
-        })
-      }
-      // eslint-disable-next-line no-plusplus
-      for (let x = 0; x < this.fields.length; x++) {
-        if (this.fields[x].key === 'action') {
-          this.fields.splice(x, 1)
-        }
-      }
-      this.fields.push(
-        {
-          key: 'action',
-          label: 'Aksi',
-          class: 'col-action',
-        },
-      )
-      return this.variantItems
-    },
-    addVariation() {
-      this.isVariation = true
-      this.variationFields1 = true
-      this.activeAddChoices1 = true
-    },
-    addVariationItems2() {
-      this.variationFields2 = true
-      this.activeAddChoices2 = true
-      this.activeAddChoices1 = false
-    },
-    addVariationItems3() {
-      this.variationFields3 = true
-      this.activeAddChoices3 = true
-      this.activeAddChoices2 = false
-    },
-    addChoices1() {
-      this.formChoices1.push({ choices: null })
-    },
-    addChoices2() {
-      this.formChoices2.push({ choices: null })
-    },
-    addChoices3() {
-      this.formChoices3.push({ choices: null })
-    },
-    removeChoices1(index) {
-      this.formChoices1.splice(index, 1)
-    },
-    removeChoices2(index) {
-      this.formChoices2.splice(index, 1)
-    },
-    removeChoices3(index) {
-      this.formChoices3.splice(index, 1)
-    },
-    editTable(data) {
-      this.indexRow = data.index
-      this.rowSelected = data.rowSelected
-      this.rowSelected = true
-      this.editMode = true
-    },
-    updateTable() {
-      this.editMode = false
-    },
-    removeVariant1() {
-      if (this.variationFields2 === true && this.variationFields3 !== true) {
-        this.variationFields2 = false
-        this.variationName2 = ''
-        this.variationName1 = ''
-        this.activeAddChoices1 = true
-      } else if (this.variationFields3 === true) {
-        this.variationFields3 = false
-        this.variationName3 = ''
-        this.variationName1 = ''
-        this.activeAddChoices2 = true
-      } else {
-        this.variationName1 = ''
-        this.variationFields1 = false
-        if (this.variationFields2 === false && this.variationFields3 === false) {
-          this.isVariation = false
-        }
-      }
-    },
-    removeVariant2() {
-      if (this.variationFields3 === true) {
-        this.variationName3 = ''
-        this.variationFields3 = false
-        this.variationName2 = ''
-        this.activeAddChoices2 = true
-      } else {
-        this.variationName2 = ''
-        this.variationFields2 = false
-        this.activeAddChoices1 = true
-      }
-    },
-    removeVariant3() {
-      this.variationName3 = ''
-      this.variationFields3 = false
-      this.activeAddChoices2 = true
-      if (this.variationFields1 === false && this.variationFields2 === false) {
-        this.isVariation = false
-      }
-    },
     formatPrice(value) {
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    },
-    validationPayment() {
-      if (this.cod === false && this.transfer === false) {
-        this.validatePayment = 'Metode pembayaran harus dipilih salah satu!'
-      } else {
-        this.validatePayment = ''
-      }
     },
     fileUrl: file => (file ? URL.createObjectURL(file) : null),
     handleOkModalValidationUpload() {
@@ -3316,9 +1636,33 @@ export default {
       if ((keyCode < 48 || keyCode > 57) && keyCode !== 190) {
         $event.preventDefault()
       }
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
+    },
+    formatPriceInput($event) {
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
     },
     formatNameProduct(e) {
       return String(e).substring(0, 60)
+    },
+    formatSkuProduct(e) {
+      return String(e).substring(0, 10)
+    },
+    formatDescriptionProduct(e) {
+      return String(e).substring(0, 300)
+    },
+    formatPriceVariant(e) {
+      return String(e).substring(0, 9).replace(/[^\d]/g, '')
+    },
+    formatPriceNotVariant(e) {
+      return String(e).substring(0, 7)
+    },
+    formatterVolume(e) {
+      return String(e).substring(0, 7)
+    },
+    formatterVariantNameProduct(e) {
+      return String(e).substring(0, 30)
     },
     validateInputProductName(e) {
       if (e.keyCode === 47 || e.keyCode === 61 || e.keyCode === 58 || e.keyCode === 59 || e.keyCode === 38) {
@@ -3326,6 +1670,11 @@ export default {
         this.messageErrorIsActive = true
       } else {
         this.messageErrorIsActive = false
+      }
+      if (this.productName.length < 3) {
+        this.messageErrorLengthProduct = true
+      } else {
+        this.messageErrorLengthProduct = false
       }
     },
     validateInputWeight(e) {
@@ -3338,6 +1687,91 @@ export default {
       if (this.weightProduct === '' && e.keyCode === 48) {
         e.preventDefault()
       }
+      if (this.weightPasteMode) this.weightProduct = this.weightPaste
+      this.weightPasteMode = false
+      this.validateSubmitButton()
+    },
+    validateInputPrice(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.pricePasteMode) this.priceProduct = this.pricePaste
+      this.pricePasteMode = false
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
+      }
+      this.validateSubmitButton()
+    },
+    validateInputPriceVariant(e, data) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
+      }
+      this.validateSubmitButton()
+    },
+    validateInputStock(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (e.target.value === '0') {
+        if (e.keyCode === 48) {
+          e.preventDefault()
+        } else {
+          e.target.value = e.target.value.substring(1)
+        }
+      }
+      if (this.stockPasteMode) this.stockProduct = this.stockPaste
+      this.stockPasteMode = false
+      this.validateSubmitButton()
+    },
+    validateInputVolumeLength(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.lengthPasteMode) this.lengthProduct = this.lengthPaste
+      this.lengthPasteMode = false
+    },
+    validateInputVolumeWidth(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.widthProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.widthProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.widthPasteMode) this.widthProduct = this.widthPaste
+      this.widthPasteMode = false
+    },
+    validateInputVolumeHeight(e) {
+      if (e.keyCode === 45 || e.keyCode === 43 || e.keyCode === 44 || e.keyCode === 46 || e.keyCode === 101) {
+        e.preventDefault()
+      }
+      if (this.heightProduct === null && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.heightProduct === '' && e.keyCode === 48) {
+        e.preventDefault()
+      }
+      if (this.heightPasteMode) this.heightProduct = this.heightPaste
+      this.heightPasteMode = false
     },
     async checkNewUser() {
       if (localStorage.getItem('newUser')) {
@@ -3358,18 +1792,796 @@ export default {
       localStorage.setItem('newUser', false)
     },
     async checkProductName() {
-      await this.$http_komship.get('/v1/product/check-name', {
+      if (this.messageErrorLengthProduct === false) {
+        await this.$http_komship.get('/v1/product/check-name', {
+          params: {
+            product_name: this.productName,
+          },
+        }).then(response => {
+          const { data } = response
+          if (data.code === 1003) {
+            this.productNameAvailable = false
+          } else {
+            this.productNameAvailable = true
+          }
+          this.validateSubmitButton()
+        }).catch(() => { this.productNameAvailable = true })
+      }
+    },
+    async checkSkuName() {
+      await this.$http_komship.get('/v1/product/check-sku', {
         params: {
-          product_name: this.productName,
+          product_sku: this.skuName,
         },
       }).then(response => {
         const { data } = response
         if (data.code === 1003) {
-          this.productNameAvailable = false
+          this.skuNameAvailable = false
         } else {
-          this.productNameAvailable = true
+          this.skuNameAvailable = true
         }
-      }).catch(() => { this.productNameAvailable = true })
+      }).catch(() => { this.skuNameAvailable = true })
+    },
+    handleIsVariant() {
+      if (this.isVariantActive) {
+        this.$refs['popup-delete-all-variant'].show()
+      } else {
+        this.isVariantActive = true
+        this.variantInputItems.push({
+          variant: {
+            type: this.variantInputItems.length + 1,
+            variantName: '',
+            parent: null,
+            stock: null,
+            price: null,
+            isValid: true,
+            isSame: false,
+            variantOptionItem: [
+              {
+                variantOptionName: '',
+                parent: null,
+                stock: null,
+                price: null,
+                isValid: true,
+                isSame: false,
+                option: [],
+              },
+            ],
+          },
+        })
+      }
+    },
+    addVariant() {
+      if (this.variantInputItems.length < 3) {
+        this.variantInputItems.push({
+          variant: {
+            type: this.variantInputItems.length + 1,
+            variantName: '',
+            parent: null,
+            stock: null,
+            price: null,
+            isValid: true,
+            isSame: false,
+            variantOptionItem: [
+              {
+                variantOptionName: '',
+                parent: null,
+                stock: null,
+                price: null,
+                isValid: true,
+                isSame: false,
+                option: [],
+              },
+            ],
+          },
+        })
+        this.applyVariantIsActive = true
+      }
+    },
+    addVariantOption(data) {
+      const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === data.variant.type)
+      this.variantInputItems[findIndexVariant].variant.variantOptionItem.push(
+        {
+          variantOptionName: '',
+          parent: null,
+          stock: null,
+          price: null,
+          isValid: true,
+          isSame: false,
+          option: [],
+        },
+      )
+      this.applyVariantIsActive = true
+    },
+    handleDeleteVariant(data) {
+      this.variantToDelete = data
+      this.$refs['popup-delete-variant'].show()
+    },
+    deleteVariant() {
+      const findIndexVariant = this.variantInputItems.findIndex(item => item.variant.type === this.variantToDelete.variant.type)
+      this.variantInputItems.splice(findIndexVariant, 1)
+      if (this.variantInputItems.length === 0) this.isVariantActive = false
+      this.$refs['popup-delete-variant'].hide()
+    },
+    closePopupDeleteVariant() {
+      this.$refs['popup-delete-variant'].hide()
+    },
+    deleteVariantOption(item, variantOption) {
+      const findIndexVariant = this.variantInputItems.findIndex(itemVariant => itemVariant.variant.variantName === item.variant.variantName)
+      const findIndexVariantOption = this.variantInputItems[findIndexVariant].variant.variantOptionItem.findIndex(itemVariantOption => itemVariantOption.variantOptionName === variantOption.variantOptionName)
+      this.variantInputItems[findIndexVariant].variant.variantOptionItem.splice(findIndexVariantOption, 1)
+      const findValidOption = this.variantInputItems[findIndexVariant].variant.variantOptionItem.find(itemOption => (itemOption.variantOptionName !== '' && itemOption.isValid !== false) || (itemOption.variantOptionName !== null && itemOption.isValid !== false))
+      if (findValidOption === undefined) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+    },
+    deleteAllVariant() {
+      this.variantItems = []
+      this.variantFields = []
+      this.variantInputItems = []
+      this.isVariantActive = false
+      this.$refs['popup-delete-all-variant'].hide()
+    },
+    closePopupDeleteAllVariant() {
+      this.isVariantActive = true
+      this.$refs['popup-delete-all-variant'].hide()
+    },
+    applyVariant() {
+      this.variantItems = []
+      this.variantFields = []
+      this.variantInputItems.forEach(item => {
+        if (item.variant.type === 1) {
+          this.variantFields.push({
+            key: 'variant1',
+            label: item.variant.variantName,
+            tdClass: 'firstVariantItemsClass',
+            trClass: 'firstVariantFieldsClass',
+            tdStyle: {
+              backgroundColor: 'white',
+              borderBottom: '0px',
+              verticalAlign: 'text-top',
+            },
+            thStyle: {
+              backgroundColor: 'white',
+              borderBottom: '0px',
+            },
+          })
+          if (item.variant.variantOptionName !== '') {
+            item.variant.variantOptionItem.forEach(parentItem => {
+              this.variantItems.push({
+                variant1: {
+                  val: parentItem.variantOptionName,
+                  parent: null,
+                  price: null,
+                  stock: null,
+                  option: [],
+                },
+              })
+            })
+          }
+        }
+      })
+      this.variantInputItems.forEach(item => {
+        if (item.variant.type === 2) {
+          if (this.variantInputItems.length === 2) {
+            this.variantFields.push({
+              key: 'variant2',
+              label: item.variant.variantName,
+              tdClass: 'secondVariantItemsClass',
+              tdStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+                verticalAlign: 'text-top',
+              },
+              thStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+              },
+            })
+            if (item.variant.variantOptionName !== '') {
+              item.variant.variantOptionItem.forEach(secondVariantItem => {
+                this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
+                  this.variantItems[indexSecondVariant].variant1.option.push({
+                    variant2: {
+                      val: secondVariantItem.variantOptionName,
+                      parent: null,
+                      price: null,
+                      stock: null,
+                      option: [],
+                    },
+                  })
+                })
+              })
+            }
+          } else {
+            this.variantFields.push({
+              key: 'variant2',
+              label: item.variant.variantName,
+              tdClass: 'secondVariantItemsClass',
+              tdStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+                verticalAlign: 'text-top',
+              },
+              thStyle: {
+                backgroundColor: 'white',
+                borderBottom: '0px',
+              },
+            })
+            if (item.variant.variantOptionName !== '') {
+              item.variant.variantOptionItem.forEach(secondVariantItem => {
+                this.variantItems.forEach((dataSecondVariant, indexSecondVariant) => {
+                  this.variantItems[indexSecondVariant].variant1.option.push({
+                    variant2: {
+                      val: secondVariantItem.variantOptionName,
+                      parent: null,
+                      price: null,
+                      stock: null,
+                      option: [],
+                    },
+                  })
+                })
+              })
+            }
+          }
+        }
+      })
+      this.variantInputItems.forEach(item => {
+        if (item.variant.type === 3) {
+          this.variantFields.push({
+            key: 'variant3',
+            label: item.variant.variantName,
+            tdClass: 'bg-white',
+            tdStyle: {
+              backgroundColor: 'white',
+              borderBottom: '0px',
+              verticalAlign: 'text-top',
+            },
+            thStyle: {
+              backgroundColor: 'white',
+              borderBottom: '0px',
+            },
+          })
+          if (item.variant.variantOptionName !== '') {
+            item.variant.variantOptionItem.forEach(thirdVariant => {
+              this.variantItems.forEach((dataSecondVariant, index) => {
+                this.variantItems[index].variant1.option.forEach((dataThirdVariant, indexThirdVariant) => {
+                  this.variantItems[index].variant1.option[indexThirdVariant].variant2.option.push({
+                    variant3: {
+                      val: thirdVariant.variantOptionName,
+                      parent: null,
+                      price: null,
+                      option: [],
+                    },
+                  })
+                })
+              })
+            })
+          }
+        }
+      })
+      this.variantFields.push({
+        key: 'stock',
+        label: 'Stok',
+        tdClass: 'bg-white',
+        tdStyle: {
+          backgroundColor: 'white',
+          borderBottom: '0px',
+          verticalAlign: 'text-top',
+        },
+        thStyle: {
+          backgroundColor: 'white',
+          borderBottom: '0px',
+        },
+      })
+      this.variantFields.push({
+        key: 'price',
+        label: 'Harga',
+        tdClass: 'bg-white',
+        tdStyle: {
+          backgroundColor: 'white',
+          borderBottom: '0px',
+          verticalAlign: 'text-top',
+        },
+        thStyle: {
+          backgroundColor: 'white',
+          borderBottom: '0px',
+        },
+      })
+
+      if (this.variantInputItems.length === 1) {
+        this.variantItems.forEach(item => {
+          if (item.variant1.stock === null || item.variant1.stock === '') {
+            this.empty.push(item)
+          }
+          if (item.variant1.price === null || item.variant1.price === '') {
+            this.empty.push(item)
+          }
+        })
+      }
+      if (this.variantInputItems.length === 2) {
+        this.variantItems.forEach(item => {
+          item.variant1.option.forEach(secondItem => {
+            if (secondItem.variant2.stock === null || secondItem.variant2.stock === '') {
+              this.empty.push(secondItem)
+            }
+            if (secondItem.variant2.price === null || secondItem.variant2.price === '') {
+              this.empty.push(secondItem)
+            }
+          })
+        })
+      }
+      if (this.variantInputItems.length === 3) {
+        this.variantItems.forEach(item => {
+          item.variant1.option.forEach(secondItem => {
+            secondItem.variant2.option.forEach(thirdItem => {
+              if (thirdItem.variant3.stock === null || thirdItem.variant3.stock === '') {
+                this.empty.push(thirdItem)
+              }
+              if (thirdItem.variant3.price === null || thirdItem.variant3.price === '') {
+                this.empty.push(thirdItem)
+              }
+            })
+          })
+        })
+      }
+    },
+
+    validateVariantField(item, index) {
+      if (item.variant.variantName !== '') {
+        this.variantInputItems[index].variant.isValid = true
+      } else {
+        this.variantInputItems[index].variant.isValid = false
+      }
+      const findParent = this.variantInputItems.find(items => items.variant.isValid === false)
+      const findOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.isValid === false)
+      if (findParent !== undefined || findOption !== undefined) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+      if (this.variantInputItems.length > 1) {
+        const findSameVariant = this.variantInputItems.filter(items => items.variant.variantName === item.variant.variantName)
+        if (findSameVariant.length > 1) {
+          this.addVariantIsActive = true
+          this.applyVariantIsActive = true
+        } else {
+          this.addVariantIsActive = false
+          this.applyVariantIsActive = false
+        }
+      }
+
+      if (this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.isValid === true && findOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+
+      const findEmptyOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.variantOptionName === '')
+      if (findEmptyOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+
+      if (this.variantInputItems.length > 1) {
+        const findSameVariantNotEmpty = this.variantInputItems.filter(option => option.variant.variantName !== '')
+        const findSameVariant = findSameVariantNotEmpty.filter(option => option.variant.variantName.toUpperCase() === item.variant.variantName.toUpperCase())
+        if (findSameVariant.length > 1) {
+          this.variantInputItems[index].variant.isSame = true
+          this.applyVariantIsActive = true
+        } else {
+          this.variantInputItems[index].variant.isSame = false
+          this.applyVariantIsActive = false
+        }
+      }
+    },
+    validateVariantOptionField(index, indexVariantOption, variantOption) {
+      if (variantOption.variantOptionName !== '') {
+        this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid = true
+        if (this.variantInputItems[index].variant.isValid === true
+        && this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === true) this.applyVariantIsActive = false
+      } else {
+        this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid = false
+        if (this.variantInputItems[index].variant.isValid === true
+        && this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === false) this.applyVariantIsActive = true
+      }
+      const findParent = this.variantInputItems.find(items => items.variant.isValid === false)
+      const findOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.isValid === false)
+      if (findOption !== undefined || findParent !== undefined) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem.length > 1) {
+        const filterEmptyOption = this.variantInputItems[index].variant.variantOptionItem.filter(itemOption => itemOption.variantOptionName !== '')
+        const filterOption = filterEmptyOption?.filter(itemOption => itemOption.variantOptionName.toUpperCase() === variantOption.variantOptionName.toUpperCase())
+        if (filterOption.length > 1) {
+          this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = true
+          this.addVariantOptionIsActive = true
+          this.addVariantIsActive = true
+          this.applyVariantIsActive = true
+        } else {
+          this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame = false
+          this.addVariantOptionIsActive = false
+          this.addVariantIsActive = false
+          this.applyVariantIsActive = false
+        }
+      }
+      if (this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === false) {
+        this.applyVariantIsActive = true
+      } else {
+        this.applyVariantIsActive = false
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isValid === true && this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      }
+
+      if (this.variantInputItems[index].variant.variantOptionItem[indexVariantOption].isSame === true && this.variantInputItems[index].variant.isValid === false) {
+        this.applyVariantIsActive = true
+      }
+
+      const findEmptyOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.variantOptionName === '')
+      if (findEmptyOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+      const findSameOption = this.variantInputItems[index].variant.variantOptionItem.find(itemOption => itemOption.isSame === true)
+      if (findSameOption !== undefined) {
+        this.applyVariantIsActive = true
+      }
+    },
+    setAllPriceStock() {
+      if (this.variantInputItems.length === 3) {
+        this.variantItems.forEach((item, index) => {
+          this.variantItems[index].variant1.option.forEach((secondItem, secondIndex) => {
+            this.variantItems[index].variant1.option[secondIndex].variant2.option.forEach((thirdItem, thirdIndex) => {
+              this.variantItems[index].variant1.option[secondIndex].variant2.option[thirdIndex].variant3.stock = this.setStockAll
+              this.variantItems[index].variant1.option[secondIndex].variant2.option[thirdIndex].variant3.price = this.setPriceAll
+            })
+          })
+        })
+        this.variantInputItems.forEach((dataVariant, dataVariantIndex) => {
+          if (this.variantInputItems[dataVariantIndex].variant.type === 3) {
+            this.variantInputItems[dataVariantIndex].variant.variantOptionItem.forEach((dataOption, indexOption) => {
+              this.variantInputItems[dataVariantIndex].variant.variantOptionItem[indexOption].price = this.setPriceAll
+              this.variantInputItems[dataVariantIndex].variant.variantOptionItem[indexOption].stock = this.setPriceAll
+            })
+          }
+        })
+      } else if (this.variantInputItems.length === 2) {
+        this.variantItems.forEach((item, index) => {
+          this.variantItems[index].variant1.option.forEach((secondItem, secondIndex) => {
+            this.variantItems[index].variant1.option[secondIndex].variant2.stock = this.setStockAll
+            this.variantItems[index].variant1.option[secondIndex].variant2.price = this.setPriceAll
+          })
+        })
+        this.variantInputItems.forEach((dataVariant, dataVariantIndex) => {
+          if (this.variantInputItems[dataVariantIndex].variant.type === 2) {
+            this.variantInputItems[dataVariantIndex].variant.variantOptionItem.forEach((dataOption, indexOption) => {
+              this.variantInputItems[dataVariantIndex].variant.variantOptionItem[indexOption].price = this.setPriceAll
+              this.variantInputItems[dataVariantIndex].variant.variantOptionItem[indexOption].stock = this.setStockAll
+            })
+          }
+        })
+      } else if (this.variantInputItems.length === 1) {
+        this.variantItems.forEach((item, index) => {
+          this.variantItems[index].variant1.stock = this.setStockAll
+          this.variantItems[index].variant1.price = this.setPriceAll
+        })
+        this.variantInputItems.forEach((dataVariant, dataVariantIndex) => {
+          if (this.variantInputItems[dataVariantIndex].variant.type === 1) {
+            this.variantInputItems[dataVariantIndex].variant.variantOptionItem.forEach((dataOption, indexOption) => {
+              this.variantInputItems[dataVariantIndex].variant.variantOptionItem[indexOption].price = this.setPriceAll
+              this.variantInputItems[dataVariantIndex].variant.variantOptionItem[indexOption].stock = this.setStockAll
+            })
+          }
+        })
+      }
+      this.empty = []
+      this.validateSubmitButton()
+    },
+    calculateVolumeProduct() {
+      if (this.lengthProduct && this.widthProduct && this.heightProduct) {
+        // eslint-disable-next-line no-mixed-operators
+        this.calculateVolumeProductItem = this.lengthProduct * this.widthProduct * this.heightProduct / 6000
+      } else {
+        this.calculateVolumeProductItem = 0
+      }
+    },
+    setImageProduct(event) {
+      // eslint-disable-next-line prefer-destructuring
+      this.imageFile = event.target.files[0]
+    },
+    submit(status) {
+      this.variantInputItems.forEach(item => {
+        this.variantStore.push({
+          val: item.variant.variantName,
+        })
+      })
+
+      this.variantItems.forEach((item, index) => {
+        this.optionStore.push({
+          val: item.variant1.val,
+          parent: 0,
+          stock: this.variantInputItems.length === 1 ? item.variant1.stock : null,
+          price: this.variantInputItems.length === 1 ? item.variant1.price : null,
+          option: [],
+        })
+        if (this.variantInputItems.length > 1) {
+          item.variant1.option.forEach((optionItem, optionIndex) => {
+            this.optionStore[index].option.push({
+              val: optionItem.variant2.val,
+              parent: 0,
+              stock: this.variantInputItems.length === 2 ? optionItem.variant2.stock : null,
+              price: this.variantInputItems.length === 2 ? optionItem.variant2.price : null,
+              option: [],
+            })
+            if (this.variantInputItems.length > 2) {
+              optionItem.variant2.option.forEach((secondOptionItem, secondIndexOption) => {
+                this.optionStore[index].option[optionIndex].option.push({
+                  val: secondOptionItem.variant3.val,
+                  parent: 0,
+                  stock: this.variantInputItems.length === 3 ? secondOptionItem.variant3.stock : null,
+                  price: this.variantInputItems.length === 3 ? secondOptionItem.variant3.price : null,
+                  option: [],
+                })
+              })
+            }
+          })
+        }
+      })
+
+      const params = {
+        product_name: this.productName,
+        sku: this.skuName,
+        description: this.descriptionProduct,
+        weight: this.weightProduct,
+        weight_pbv: this.calculateVolumeProductItem.toFixed(3) * 1000,
+        length: this.lengthProduct,
+        width: this.widthProduct,
+        height: this.heightProduct,
+        price: this.isVariantActive ? null : this.priceProduct,
+        stock: this.isVariantActive ? null : this.stockProduct,
+      }
+
+      if (this.isVariantActive === true) {
+        Object.assign(params, {
+          variant_option: this.variantStore,
+          option: this.optionStore,
+        })
+      }
+
+      this.buttonIsSubmit = true
+      if (status === 0) this.loadingSubmitDraft = true
+      if (status === 1) this.loadingSubmitPublish = true
+      this.$http_komship.post(`/v1/product/create/${status}`, params).then(response => {
+        this.productId = response.data.data.product_id
+        if (this.imageFile !== null) {
+          // Store image
+          const formData = new FormData()
+          formData.append('product_id', response.data.data.product_id)
+          formData.append('image_path', this.imageFile)
+          this.$http_komship.post('/v1/product/upload-img-product', formData).then(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'Success menambahkan produk',
+                variant: 'success',
+              },
+            })
+            setTimeout(() => {
+              this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+            }, 500)
+            this.loadingSubmitDraft = false
+            this.loadingSubmitPublish = false
+            this.buttonIsSubmit = false
+          }).catch(() => {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal menambahkan gambar produk, silahkan coba lagi!',
+                variant: 'danger',
+              },
+            })
+            this.loadingSubmitDraft = false
+            this.loadingSubmitPublish = false
+            this.buttonIsSubmit = false
+          })
+        } else {
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success menambahkan produk',
+              variant: 'success',
+            },
+          })
+          this.loadingSubmitDraft = false
+          this.loadingSubmitPublish = false
+          this.buttonIsSubmit = false
+          this.$router.push({ name: this.$route.meta.routeAllProduk, query: { tabs: 'semua' } })
+        }
+      })
+    },
+    goBack() {
+      window.history.back()
+    },
+    formatCurrency(blur, el, value) {
+      const input = document.getElementById(el)
+      let inputVal = input.value
+
+      if (inputVal === '' || inputVal === 'Rp' || inputVal === 'Rp ') {
+        return
+      }
+
+      const originalLen = inputVal.length
+      let caretPos = input.selectionStart
+
+      if (inputVal.indexOf(',') >= 0) {
+        const decimalPos = inputVal.indexOf(',')
+        let leftSide = inputVal.substring(0, decimalPos)
+        let rightSide = inputVal.substring(decimalPos)
+
+        leftSide = this.formatNumber(leftSide)
+        rightSide = this.formatNumber(rightSide)
+
+        rightSide = rightSide.substring(0, 2)
+        inputVal = leftSide + ',' + rightSide // eslint-disable-line
+      } else {
+        inputVal = this.formatNumber(inputVal)
+        inputVal = inputVal // eslint-disable-line
+      }
+
+      input.value = inputVal
+
+      const updatedLen = inputVal.length
+      caretPos = updatedLen - originalLen + caretPos
+      input.setSelectionRange(caretPos, caretPos)
+
+      if (this.priceAllPasteMode) this.setPriceAll = this.priceAllPaste
+      this.priceAllPasteMode = false
+      if (this.stockAllPasteMode) this.setStockAll = this.stockAllPaste
+      this.stockAllPasteMode = false
+    },
+    formatNumber(n) {
+      return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    validateSubmitButton() {
+      if (this.isVariantActive === false) {
+        if (!this.productNameAvailable
+        || this.messageErrorIsActive
+        || !this.skuNameAvailable
+        || this.messageErrorIsActive
+        || this.weightProduct === ''
+        || this.productName === ''
+        || this.weightProduct === null
+        || this.productName === null
+        || this.priceProduct === null
+        || this.priceProduct === ''
+        || this.stockProduct === null
+        || this.stockProduct === ''
+        || this.empty.length > 0) {
+          this.buttonIsSubmit = true
+        } else {
+          this.buttonIsSubmit = false
+        }
+      }
+
+      if (this.isVariantActive) {
+        if (!this.productNameAvailable
+        || this.messageErrorIsActive
+        || !this.skuNameAvailable
+        || this.messageErrorIsActive
+        || this.weightProduct === ''
+        || this.productName === ''
+        || this.weightProduct === null
+        || this.productName === null
+        || this.empty.length > 0) {
+          this.buttonIsSubmit = true
+        } else {
+          this.buttonIsSubmit = false
+        }
+      }
+    },
+    handlePastePrice(e) {
+      this.pricePasteMode = true
+      this.pricePaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.pricePaste.charAt(0) === '0') this.pricePaste = this.pricePaste.slice(1, this.pricePaste.length)
+    },
+    handlePastePriceVariant(e, data) {
+      return e.target.value.replace(/[^\d]/g, '')
+    },
+    handlePasteStock(e) {
+      this.stockPasteMode = true
+      this.stockPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.stockPaste.charAt(0) === '0') this.stockPaste = this.stockPaste.slice(1, this.stockPaste.length)
+    },
+    handlePasteWeight(e) {
+      this.weightPasteMode = true
+      this.weightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.weightPaste.charAt(0) === '0') this.weightPaste = this.weightPaste.slice(1, this.weightPaste.length)
+    },
+    handlePasteWidth(e) {
+      this.widthPasteMode = true
+      this.widthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.widthPaste.charAt(0) === '0') this.widthPaste = this.widthPaste.slice(1, this.widthPaste.length)
+    },
+    handlePasteLength(e) {
+      this.lengthPasteMode = true
+      this.lengthPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.lengthPaste.charAt(0) === '0') this.lengthPaste = this.lengthPaste.slice(1, this.lengthPaste.length)
+    },
+    handlePasteHeight(e) {
+      this.heightPasteMode = true
+      this.heightPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.heightPaste.charAt(0) === '0') this.heightPaste = this.heightPaste.slice(1, this.heightPaste.length)
+    },
+    handlePastePriceAll(e) {
+      this.priceAllPasteMode = true
+      this.priceAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.priceAllPaste.charAt(0) === '0') this.priceAllPaste = this.priceAllPaste.slice(1, this.priceAllPaste.length)
+    },
+    handlePasteStockAll(e) {
+      this.stockAllPasteMode = true
+      this.stockAllPaste = e.clipboardData.getData('text').replace(/[^\d]/g, '')
+      if (this.stockAllPaste.charAt(0) === '0') this.stockAllPaste = this.stockAllPaste.slice(1, this.stockAllPaste.length)
+    },
+    checkValidationSubmit(data) {
+      this.empty = []
+      if (data.variant1) {
+        this.variantItems.forEach(item => {
+          if (item.variant1.stock === null || item.variant1.stock === '') {
+            this.empty.push(item)
+          }
+          if (item.variant1.price === null || item.variant1.price === '') {
+            this.empty.push(item)
+          }
+        })
+      }
+      if (data.variant2) {
+        this.variantItems.forEach(item => {
+          item.variant1.option.forEach(secondItem => {
+            if (secondItem.variant2.stock === null || secondItem.variant2.stock === '') {
+              this.empty.push(secondItem)
+            }
+            if (secondItem.variant2.price === null || secondItem.variant2.price === '') {
+              this.empty.push(secondItem)
+            }
+          })
+        })
+      }
+      if (data.variant3) {
+        this.variantItems.forEach(item => {
+          item.variant1.option.forEach(secondItem => {
+            secondItem.variant2.option.forEach(thirdItem => {
+              if (thirdItem.variant3.stock === null || thirdItem.variant3.stock === '') {
+                this.empty.push(thirdItem)
+              }
+              if (thirdItem.variant3.price === null || thirdItem.variant3.price === '') {
+                this.empty.push(thirdItem)
+              }
+            })
+          })
+        })
+      }
+      this.validateSubmitButton()
     },
   },
 }
@@ -3408,16 +2620,92 @@ export default {
   color: #FFFFFF;
 }
 
-@media only screen and (min-width: 990px) {
-  [dir] .wrapper__field__input__mobile {
-    display: none !important;
-  }
+.wrapper__handle__back {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@media only screen and (max-width: 991px) {
-  [dir] .wrapper__field__input {
-    display: none !important;
-  }
+.wrapper__handle__back:hover {
+  background-color: #F8F8F8;
+}
+
+.wrapper__product__info {
+  width: 100%;
+  border: 1px solid #E2E2E2;
+  border-radius: 16px;
+}
+
+.wrapper__product__variant {
+  width: 100%;
+  border: 1px solid #E2E2E2;
+  border-radius: 16px;
+}
+
+.wrapper__product__name {
+  width: 100%;
+  border: 1px solid #E2E2E2;
+  border-radius: 16px;
+}
+
+.wrapper__form__input__variant {
+  border-radius: 12px;
+  height: 48px !important;
+}
+
+.wrapper__table__variant {
+  border: 1px solid #E2E2E2;
+  border-radius: 12px;
+}
+
+.firstVariantItemsClass {
+  vertical-align: top!important;
+  padding-left: 40px!important;
+  background: white!important;
+}
+
+.firstVariantFieldsClass {
+  background: white!important;
+}
+
+.secondVariantItemsClass {
+  align-items: center;
+  vertical-align: top!important;
+  background: white!important;
+}
+
+.my-popover-class .arrow:after {
+  border-top-color: red !important;
+}
+
+.wrapper__variant2__table {
+  background: white!important;
+  border: 0px!important;
+  height: 48px !important;
+}
+
+.wrapper__variant3__table {
+  background: white!important;
+  border: 0px!important;
+  height: 48px !important;
+}
+
+.wrapper__alert__volume__product {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 12px;;
+  background: #FFF2E2;
+  border: 1px solid #FBA63C;
+  border-radius: 12px;
+  font-weight: 400;
+  font-size: 14px;
 }
 
 </style>

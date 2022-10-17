@@ -4,7 +4,7 @@ export default [
   {
     path: '/gudangku',
     name: 'gudangku',
-    component: () => import('@/views/pages/komship/gudang/Gudangku.vue'),
+    component: () => import('@/views/pages/komship/warehouse/OwnWarehouse.vue'),
     meta: {
       name: pageName.singular,
       routeEdit: 'edit-pickup',
