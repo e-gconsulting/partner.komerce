@@ -25,6 +25,9 @@ import myapps from './routes/komship/myapps/index'
 import ticketing from './routes/komship/ticketing/index'
 import warehouse from './routes/komship/warehouse/index'
 
+// kompack
+import gudang from './routes/kompack/gudang/index'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -49,6 +52,7 @@ const router = new VueRouter({
     ...ticketing,
     ...warehouse,
     ...wishlist,
+    ...gudang,
     {
       path: '*',
       redirect: 'error-404',

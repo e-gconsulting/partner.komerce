@@ -10,8 +10,8 @@ export default [
   },
   {
     path: '/gudangku',
-    name: 'gudangku',
-    component: () => import('@/views/pages/kompack/gudang/Gudangku'),
+    name: 'gudangku-kompack',
+    component: () => import('@/views/pages/komship/warehouse/OwnWarehouse.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
