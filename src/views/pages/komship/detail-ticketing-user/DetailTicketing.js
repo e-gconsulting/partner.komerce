@@ -207,6 +207,7 @@ export default {
           this.statusPriority = data.status_priority
           if (data.rating_user !== null) this.previewRating(data.rating_user.rating)
           this.dateRating = data.date_updated
+          this.transactionValue = data.grand_total
           setTimeout(() => {
             const theElement = document.getElementById('chatFocusing')
             const scrollToBottom = node => {
