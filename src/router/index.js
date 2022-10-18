@@ -49,7 +49,9 @@ const router = new VueRouter({
     ...keuangan,
     ...hiring,
     ...opsional,
-    ...gudang,
+    ...myapps,
+    ...ticketing,
+    ...warehouse,
     ...wishlist,
     {
       path: '*',

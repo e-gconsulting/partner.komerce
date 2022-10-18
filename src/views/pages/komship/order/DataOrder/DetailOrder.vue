@@ -254,7 +254,7 @@
                   hide-header
                   hide-footer
                 >
-                  <popup-lacak-resi
+                  <history-shipping-order
                     ref="modalLacakResi"
                     :order-datas="orderData"
                     :handle-close-modal-resi="true"
@@ -561,12 +561,12 @@ import {
 } from 'bootstrap-vue'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import PopupLacakResi from '@core/components/popup-lacak-resi/PopupLacakResi.vue'
+import HistoryShippingOrder from '@core/components/popup-lacak-resi/HistoryShippingOrder.vue'
 import EditOrder from '../EditOrder/EditOrder.vue'
 
 export default {
   components: {
-    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder, BBadge, BImg, PopupLacakResi,
+    BCard, BRow, BButton, BIconChevronLeft, BContainer, BCol, BAlert, BTable, BCollapse, EditOrder, BBadge, BImg, HistoryShippingOrder,
   },
   directives: { VBModal },
   data() {

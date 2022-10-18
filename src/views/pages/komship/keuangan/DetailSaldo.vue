@@ -122,7 +122,20 @@
             Penarikan Saldo
           </span>
           <span v-if="data.item.transaction_type === 'orderku_done'">
-            Orderan COD (<span class="text-success">Diterima</span>)
+            Orderan COD (
+            <span
+              v-if="data.item.order_status !== 'Hilang' && data.item.order_status !== 'Rusak'"
+              class="text-success"
+            >Diterima</span>
+            <span
+              v-if="data.item.order_status === 'Hilang'"
+              class="text-muted"
+            >Ganti Rugi Paket Hilang</span>
+            <span
+              v-if="data.item.order_status === 'Rusak'"
+              class="text-muted"
+            >Ganti Rugi Paket Rusak</span>
+            )
             <b-row>
               <img
                 :src="data.item.shipment_image_path"
@@ -575,9 +588,10 @@ export default {
       return ''
     },
     momentTime(date) {
+      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
-        return moment(date).format('HH:MM')
+        return moment(date).format('HH:mm')
       }
       return ''
     },
