@@ -126,9 +126,6 @@ export default {
     await this.$http_komship.post('v1/my-profile')
       .then(async res => {
         this.profile = res.data.data
-        await this.$http_komship.delete(`v1/cart/clear/${this.profile.user_id}`)
-          .then(async () => {
-          })
       }).then(async () => {
         await this.checkExpedition()
         await this.getAddress()
@@ -610,7 +607,7 @@ export default {
         await this.$http_komship.post('/v2/cart/bulk-store-web', cart)
           .then(async res => {
             this.cartId = []
-            this.cartProductId = res.data.data.cart_id
+            this.cartProductId = res.data.data
             const getVariantFromCart = []
             const getVariantFromBulk = []
             cart.forEach(item => {

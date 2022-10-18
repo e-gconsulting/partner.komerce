@@ -176,18 +176,18 @@
                   style="min-width:160px!important"
                 >
                   <img
-                    v-if="data.item.product[0].product_image === null || data.item.product[0].product_image === ''"
+                    v-if="item.product_image === null || item.product_image === ''"
                     class="image-product"
                     :src="require('@/assets/images/avatars/image-null.png')"
                   >
                   <img
                     v-else
                     class="image-product"
-                    :src="data.item.product[0].product_image"
-                    :alt="data.item.product[0].product_image"
+                    :src="item.product_image"
+                    :alt="item.product_image"
                   >
                   <div style="margin-left:5px;">
-                    <span class="d-flex font-bold">{{ data.item.product[0].product_name }}</span>
+                    <span class="d-flex font-bold">{{ item.product_name }}</span>
                     <span
                       v-if="item.variant_name !== '0'"
                       class="text-primary"

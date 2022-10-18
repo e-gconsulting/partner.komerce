@@ -145,6 +145,7 @@ export default {
           let ability = []
 
           let { data } = response.data
+          console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
@@ -224,7 +225,7 @@ export default {
                 { action: 'read', subject: 'Dashboard Komship' },
                 { action: 'manage', subject: 'Customer' },
                 { action: 'manage', subject: 'Produk' },
-                { action: 'manage', subject: 'Gudang' },
+                // { action: 'manage', subject: 'Gudang' },
                 { action: 'manage', subject: 'Tambah Produk' },
                 { action: 'manage', subject: 'Data Produk' },
                 { action: 'manage', subject: 'Order' },
@@ -254,7 +255,10 @@ export default {
               ]
               // KOMPACK
               if (userData.is_kompack === 1) {
-                ability.push({ action: 'manage', subject: 'Kompack Partner' })
+                ability.push({ action: 'manage', subject: 'Gudang' })
+              }
+              if (userData.is_kompack === 0) {
+                ability.push({ action: 'manage', subject: 'Gudang Komship' })
               }
               break
             case 'SDM':

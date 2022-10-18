@@ -141,6 +141,8 @@ export default {
       active_Priority: false,
       statusPriority: 0,
       orderStatusIsRetur: false,
+
+      dataAwb: {},
     }
   },
   directives: {
@@ -203,7 +205,6 @@ export default {
           this.loadingDataDetail = false
           this.ratingUser = data.rating_user
           this.statusPriority = data.status_priority
-          console.log(this.statusPriority)
           if (data.rating_user !== null) this.previewRating(data.rating_user.rating)
           this.dateRating = data.date_updated
           setTimeout(() => {
@@ -214,6 +215,7 @@ export default {
             }
             scrollToBottom(theElement)
           }, 500)
+          this.getTicketTrip()
         })
         .catch(err => {
           this.loadingDataDetail = false
@@ -1071,11 +1073,14 @@ export default {
       })
     },
     getLinkOnNotes(chat) {
-      const urlify = text => {
-        const urlRegex = /(https?:\/\/[^\s]+)/g
-        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+      let link = null
+      if (chat !== null) {
+        const urlify = text => {
+          const urlRegex = /(https?:\/\/[^\s]+)/g
+          return text.replace(urlRegex, url => `<a href="${url}" target="_blank" class="text-info">${url}</a>`)
+        }
+        link = urlify(chat)
       }
-      const link = urlify(chat)
       return link
     },
     async changeAttr() {
@@ -1124,6 +1129,32 @@ export default {
             }, 2000)
           })
       }
+    },
+    getTicketTrip() {
+      const resi = this.noResi
+      this.loading = true
+      this.$http_komship
+        .post(`/v2/bulk-check-awb?data=${resi}`)
+        .then(res => {
+          const { data } = res
+          this.dataAwb = data.data
+          this.loading = false
+        })
+        .catch(err => {
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: 'Data Riwayat Perjalanan Tidak Ditemukan',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+          this.loading = false
+        })
     },
   },
 }

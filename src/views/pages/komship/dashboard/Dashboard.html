@@ -201,8 +201,8 @@
         </div>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12 col-md-6 mt-2">
+    <b-row>
+      <b-col cols="12" md="6" class="mt-2">
         <div id="chart__revenue" class="card h-100">
 
           <!-- Tooltip download -->
@@ -228,18 +228,20 @@
             </b-row>
           </div>
 
-          <b-row class="justify-content-between mx-3 mt-2">
-            <b-row class="align-items-center">
+          <b-row class="justify-content-between ml-1 mt-2">
+            <b-col cols="8" class="align-items-start d-flex">
               <div id="title__chart__tooltip__download" class="first-card-header-text me-8 mb-0 text-black" style="margin-top: -20px">
                 Performa Omset & Orderan
               </div>
-              <div id="title__chart__tooltip" class="first-card-header-text me-8 mb-0 text-black">
+              <span id="title__chart__tooltip" class="first-card-header-text me-8 mb-0 text-black">
                 Performa Omset & Orderan
-              </div>
-              <img
+              </span>
+              <span class="align-self-center">
+                <img
                 id="infoPenghasilan"
                 src="@/assets/images/icons/info-circle.svg"
               />
+              </span>
               <b-popover
                 triggers="hover"
                 target="infoPenghasilan"
@@ -249,25 +251,25 @@
                 next akan kami tampilkan pada menu khusus laporan
                 keuangan.</b-popover
               >
-            </b-row>
-            <b-row class="align-items-center">
-              <div
-                class="mr-1 px-1 py-50"
+            </b-col>
+            <b-col cols="4" class="align-items-end align-self-center d-flex">
+              <span
+                class="px-1 py-50"
                 style="background-color: #F4F4F4; border-radius: 8px;"
               >
                 <b-img src="@/assets/images/logo/komship-logo.svg" />
-              </div>
-              <div>
-                <b-button id="tooltip__download__icon" class="btn-icon" size="sm" variant="flat-dark" @click="downloadChart">
-                  <b-img src="@/assets/images/icons/icon-telegram.svg" />
+              </span>
+              <span>
+                <b-button id="tooltip__download__icon" class="btn-icon" variant="flat-dark" @click="downloadChart">
+                  <b-img style="width: 30px;" src="@/assets/images/icons/icon-telegram.svg" />
                 </b-button>
                 <b-popover
                 triggers="hover"
                 target="tooltip__download__icon"
                 placement="bottomleft"
                 >share statistik order ini</b-popover>
-              </div>
-            </b-row>
+              </span>
+            </b-col>
           </b-row>
           <div class="position-relative card-body">
             <b-row>
@@ -358,8 +360,8 @@
             />
           </div>
         </div>
-      </div>
-      <div class="col-12 col-md-6 mt-2">
+      </b-col>
+      <b-col cols="12" md="6" class="mt-2">
         <div class="card">
           <div class="row my-24 mx-16">
             <div class="col-4">
@@ -536,8 +538,8 @@
             </ul>
           </div>
         </div>
-      </div>
-    </div>
+      </b-col>
+    </b-row>
     <div class="row">
       <div class="col-12 col-md-6 mt-2">
         <div class="card h-100 mb-0">

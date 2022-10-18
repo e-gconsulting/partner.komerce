@@ -280,6 +280,18 @@ export default {
       this.selectAllOrder = false
       this.selectedOrder = []
     },
+    openOrderDetailPickup() {
+      this.$router.push({
+        name: 'detail-orderan-pickup',
+        params: {
+          address: this.address,
+          order: this.order,
+          pickup_date: this.pickupDate,
+          pickup_time: this.pickupTime,
+          vehicle: this.vehicle,
+        },
+      })
+    },
     getShippingLabel(value) {
       if (value === 'REG19'
       || value === 'SIUNT'

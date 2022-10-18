@@ -16,13 +16,41 @@ try {
 
   const messaging = firebase.messaging(app)
 
+  const url = ''
+
   messaging.onBackgroundMessage(payload => {
+    // console.log('payload', payload)
+    this.url = payload.data.url_path
     const notificationOption = {
-      body: payload.data.title,
-      icon: payload.data.logo_komship,
+      body: payload.data.message,
+      icon: payload.data.profile_image,
+      actions: [{ action: payload.data.url_path, title: 'Baca Sekarang' }],
+      click_action: payload.data.url_path,
     }
     // eslint-disable-next-line no-restricted-globals
-    return self.registration.showNotification('Komship', notificationOption)
+    return self.registration.showNotification(payload.data.title, notificationOption)
+  })
+  // eslint-disable-next-line no-restricted-globals
+  self.addEventListener('notificationclick', event => {
+    event.waitUntil(async function () {
+      const allClients = await clients.matchAll({
+        includeUncontrolled: true,
+      })
+      let chatClient
+      const appUrl = this.url
+      // eslint-disable-next-line no-restricted-syntax
+      for (const client of allClients) {
+        // here appUrl is the application url, we are checking it application tab is open
+        if (client.url.indexOf(appUrl) >= 0) {
+          client.focus()
+          chatClient = client
+          break
+        }
+      }
+      if (!chatClient) {
+        chatClient = await clients.openWindow(appUrl)
+      }
+    }())
   })
 } catch (err) {
   console.log('err', err)
