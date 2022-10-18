@@ -145,6 +145,7 @@ export default {
           let ability = []
 
           let { data } = response.data
+          console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
 
