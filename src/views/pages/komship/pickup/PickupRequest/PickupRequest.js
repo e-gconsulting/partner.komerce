@@ -391,6 +391,19 @@ export default {
             }
           } else if (code === 500 || code === 1002) {
             this.itemOrderError.push(this.order[index])
+            if (index === this.order.length - 1) {
+              this.$bvModal.hide('modalSubmitPickup')
+              this.$bvModal.show('modalOrderError')
+              const product = []
+              this.order = this.itemOrderError
+              this.order.forEach(element => {
+                element.product.forEach(items => {
+                  product.push(items)
+                })
+              })
+              this.totalProduct = product.length
+              this.itemProductPreview = product.slice(0, 2)
+            }
           } else {
             this.itemOrderError.push(this.order[index])
             this.totalOrderTimeout += 1
