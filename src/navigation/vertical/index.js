@@ -30,7 +30,6 @@ tag
 tagVariant
 
 */
-import RincianMitraGudang from '@/views/pages/kompack/admin/mitragudang/rincianmitragudang/RincianMitraGudang'
 import dashboard from './dashboard'
 // import wishlist from './wishlist'
 
@@ -38,7 +37,8 @@ import dashboard from './dashboard'
 import dashboardKompship from './dashboard-kompship'
 import produk from './produk'
 import order from './order'
-import gudang from './gudang'
+import gudangkomship from './gudang-komship'
+import gudangkompack from './gudang-kompack'
 import pickup from './pickup'
 import customer from './customer'
 import settingKompship from './setting-kompship'
@@ -67,7 +67,8 @@ export default [
   ...dashboardKompship,
   ...order,
   ...produk,
-  ...gudang,
+  ...gudangkomship,
+  ...gudangkompack,
   ...pickup,
   ...customer,
   ...keuangan,
