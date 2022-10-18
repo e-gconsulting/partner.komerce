@@ -170,28 +170,6 @@
               <strong>Rekening {{ index+1 }}</strong>
             </h5>
           </b-col>
-          <b-col class="d-flex justify-content-end">
-            <b-button
-              v-if="editMode === true"
-              class="btn-icon"
-              variant="flat-dark"
-              @click="changeEditMode"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
-            <b-button
-              v-else
-              class="btn-icon"
-              variant="flat-dark"
-              @click="editRekening(data)"
-            >
-              <feather-icon
-                icon="EditIcon"
-              />
-            </b-button>
-          </b-col>
         </b-row>
 
         <validation-observer ref="formRules">
@@ -437,6 +415,7 @@
       </b-col>
 
       <b-col
+        v-if="formRekening.length < 6"
         md="10"
         class="ml-1 mt-1"
       >
@@ -467,114 +446,121 @@
       modal-class="modal-primary"
       centered
     >
+      <b-row class="justify-content-end">
+        <b-button
+          class="btn-icon"
+          variant="flat-dark"
+          size="sm"
+          @click="closeVerification"
+        >
+          <b-img src="@/assets/images/icons/close-circle.svg" />
+        </b-button>
+      </b-row>
 
-      <b-col
-        v-if="errorConfirmOtp === true"
-        class="d-flex justify-content-center mt-2"
-      >
-        <b-badge variant="light-primary">
-          <div class="d-flex align-items-center">
-            <b-button
-              variant="flat-primary"
-              class="btn-icon"
-              size="sm"
-              @click="handleCloseNotifError"
-            >
-              <feather-icon
-                icon="XCircleIcon"
-              />
-            </b-button>
-            Upss, kode verifikasi (OTP) salah
-          </div>
-        </b-badge>
-      </b-col>
+      <b-row class="justify-content-center my-2">
+        <h3 class="text-black">
+          <strong>Tambah Rekening</strong>
+        </h3>
+      </b-row>
 
-      <b-col class="d-flex justify-content-center mt-2">
-        <h4>
-          <strong>Verifikasi Nomor Hp</strong>
+      <b-row class="justify-content-center">
+        <h4 class="text-black">
+          <strong>Pilih Metode Verifikasi</strong>
         </h4>
-      </b-col>
+      </b-row>
 
-      <b-col class="d-flex justify-content-center mt-1">
-        <small class="text-center">
-          <strong>Mohon verifikasi identitas kamu dengan memasukan Kode Verifikasi (OTP) yang dikirimkan via SMS ke Nomor kamu {{ phoneUser }}</strong>
-        </small>
-      </b-col>
+      <b-row class="d-flex justify-content-center mt-1 mb-2">
+        <span class="text-center">
+          Pilih salah satu metode dibawah ini untuk mendapatkan kode verifikasi
+        </span>
+      </b-row>
 
-      <b-col class="d-flex justify-content-center mt-2 mb-1">
-        <div style="display: flex; flex-direction: row;">
-          <CodeInput
-            :loading="false"
-            class="input"
-            :type="visibilityPin"
-            @change="onChange"
-            @complete="onComplete"
-          />
-        </div>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center">
-        <b-button
-          variant="flat-primary"
-          class="btn-icon"
-          @click="toggleVisibilityPin"
-        >
-          Tampilkan
-        </b-button>
-      </b-col>
-
-      <b-col
-        v-if="countSubmit > 1 && countCanResendOtp > 0"
-        class="d-flex justify-content-center mt-2"
+      <b-row
+        :class="buttonOtpIsClick ? 'cursor-not-allowed mb-1' : 'cursor-pointer mb-1'"
+        @click="sendOtpSMS"
       >
-        <b-badge variant="light-warning">
-          <div class="d-flex">
-            <feather-icon
-              icon="AlertCircleIcon"
-              class="mr-50"
-            />
-            {{ validateResendOtp }}
-          </div>
-        </b-badge>
-      </b-col>
+        <b-col
+          cols="12"
+        >
+          <b-card
+            class="mb-0 wrapper__send__otp"
+            :style="loadingOtpSms ? 'background: #FFECE9;' : ''"
+          >
+            <b-row class="align-items-center">
+              <b-col
+                class="d-flex align-items-center"
+                cols="10"
+              >
+                <div class="mx-1">
+                  <b-img src="@/assets/images/icons/sms-icon.svg" />
+                </div>
+                <div>
+                  <span class="text-black">
+                    <strong>
+                      SMS ke
+                    </strong>
+                  </span>
+                  <p class="mb-0">
+                    {{ phoneUser }}
+                  </p>
+                </div>
+              </b-col>
+              <b-col cols="2">
+                <b-spinner
+                  v-if="loadingOtpSms"
+                  variant="primary"
+                />
+              </b-col>
+            </b-row>
+          </b-card>
+        </b-col>
+      </b-row>
 
-      <b-col
-        v-if="validateResendOtp === ''"
-        class="d-flex justify-content-center mt-1"
+      <b-row
+        :class="buttonOtpIsClick ? 'cursor-not-allowed' : 'cursor-pointer'"
+        @click="sendOtpWA"
       >
-        <div v-if="countOtp > 0 && countSubmit !== 2">
-          <small>Kirim Ulang({{ countOtp }})</small>
-        </div>
-        <div v-else>
-          <div v-if="countSubmit < 2">
-            <b-button
-              variant="flat-primary"
-              size="sm"
-              class="btn-icon"
-              @click="sendOtpAgain"
-            >
-              Kirim Ulang
-            </b-button>
-          </div>
-        </div>
-      </b-col>
-
-      <b-col class="d-flex justify-content-center mt-1 pb-2">
-        <b-button
-          variant="flat-primary"
-          class="btn-icon mr-1"
-          @click.prevent="handleClosePopupOtp"
+        <b-col
+          cols="12"
         >
-          Kembali
-        </b-button>
-        <b-button
-          variant="primary"
-          class="btn-icon"
-          @click.prevent="submitRekening"
-        >
-          Konfirmasi
-        </b-button>
-      </b-col>
+          <b-card
+            :style="loadingOtpWa ? 'background: #FFECE9;' : ''"
+            class="wrapper__send__otp"
+          >
+            <b-row class="align-items-center">
+              <b-col
+                class="d-flex align-items-center"
+                cols="10"
+              >
+                <div class="mx-1">
+                  <b-img src="@/assets/images/icons/wa-icon.svg" />
+                </div>
+                <div>
+                  <span class="text-black">
+                    <strong>
+                      WhatsApp ke
+                    </strong>
+                  </span>
+                  <p class="mb-0">
+                    {{ phoneUser }}
+                  </p>
+                  <small :class="messageErrorPhoneUser ? 'text-primary' : 'text-success'">
+                    <strong>
+                      {{ messageErrorPhoneUser ? 'Nomor ini Tidak terhubung ke Whatsapp' : 'Nomor ini terhubung ke Whatsapp' }}
+                    </strong>
+                  </small>
+                </div>
+              </b-col>
+              <b-col cols="2">
+                <b-spinner
+                  v-if="loadingOtpWa"
+                  variant="primary"
+                />
+              </b-col>
+            </b-row>
+          </b-card>
+        </b-col>
+      </b-row>
 
     </b-modal>
 
@@ -610,6 +596,156 @@
         </b-row>
       </div>
     </b-modal>
+
+    <!-- Modal Verification OTP -->
+    <b-modal
+      ref="modal-verification-OTP"
+      no-close-on-backdrop
+      hide-header-close
+      hide-footer
+      hide-header
+      modal-class="modal-primary"
+      centered
+    >
+      <b-row class="justify-content-end">
+        <b-button
+          class="btn-icon"
+          variant="flat-dark"
+          size="sm"
+          @click="closeCheckVerification"
+        >
+          <b-img src="@/assets/images/icons/close-circle.svg" />
+        </b-button>
+      </b-row>
+
+      <b-row class="justify-content-center mt-2 mb-1">
+        <h3 class="text-black">
+          <strong>Verifikasi Kode OTP</strong>
+        </h3>
+      </b-row>
+
+      <b-row class="justify-content-center mb-2">
+        <b-img
+          v-if="otpMode === 'sms'"
+          src="@/assets/images/icons/sms-icon.svg"
+        />
+        <b-img
+          v-if="otpMode === 'wa'"
+          src="@/assets/images/icons/wa-icon.svg"
+        />
+      </b-row>
+
+      <b-row class="justify-content-center">
+        <h4 class="text-black">
+          <strong>Masukan Kode Verifikasi</strong>
+        </h4>
+      </b-row>
+
+      <b-row
+        v-if="errorCheckOtp !== true"
+        class="justify-content-center mt-1"
+      >
+        <span class="text-center">
+          Kode verifikasi telah dikirim melalui {{ otpMode === 'sms' ? 'SMS' : 'WhatsApp' }} ke
+        </span>
+      </b-row>
+
+      <b-row
+        v-if="errorCheckOtp !== true"
+        class="justify-content-center mb-2"
+      >
+        <span class="text-center">
+          <strong>{{ phoneUser }}</strong>
+        </span>
+      </b-row>
+
+      <b-row
+        v-if="errorCheckOtp"
+        class="justify-content-center mb-2 mx-1 mt-1"
+      >
+        <small class="text-center">
+          Kode OTP yang kamu masukkan <strong class="text-primary">salah</strong> harap cek kode OTP di SMS kamu kemudian masukkan kembali
+        </small>
+      </b-row>
+
+      <b-row class="justify-content-center mb-1">
+        <PincodeInput
+          v-model="otpConfirmation"
+          placeholder="0"
+          :length="6"
+          :autofocus="true"
+          @input="checkOtp"
+        />
+      </b-row>
+
+      <b-row
+        v-if="countOtp !== 0"
+        class="justify-content-center align-items-center mb-50"
+      >
+        <small class="text-center">
+          Mohon tunggu dalam <strong>{{ countOtp }} detik</strong> untuk kirim ulang
+        </small>
+      </b-row>
+
+      <b-row
+        v-if="countOtp === 0"
+        class="justify-content-center align-items-center mb-50"
+      >
+        <small class="text-center">
+          Tidak menerima kode?
+        </small>
+        <b-button
+          class="text-primary btn-icon"
+          variant="flat-primary"
+          size="sm"
+          :disabled="buttonOtpIsClick"
+          @click="resendOtp(otpMode)"
+        ><strong>Kirim ulang</strong></b-button>
+      </b-row>
+
+      <b-row class="justify-content-center align-items-center mb-2">
+        <b-button
+          class="text-primary btn-icon"
+          variant="flat-primary"
+          size="sm"
+          @click="changeMethodOtp"
+        ><strong>Coba dengan metode lain</strong></b-button>
+      </b-row>
+
+    </b-modal>
+
+    <!-- Popup Success Add rekening -->
+    <b-modal
+      ref="success-add-rekening"
+      hide-footer
+      hide-header
+      centered
+    >
+      <b-row class="my-2 justify-content-center">
+        <div>
+          <b-img src="@/assets/images/icons/success.svg" />
+        </div>
+      </b-row>
+      <b-row class="justify-content-center text-center">
+        <h4 class="text-black">
+          <strong>Rekening Berhasil Ditambahkan</strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center text-center mb-2 mx-2">
+        <span class="text-black">
+          Selamat! Nomor rekening berhasil ditambahkan di akun kamu
+        </span>
+      </b-row>
+      <b-row class="justify-content-center mb-2">
+        <b-button
+          class="text-white"
+          variant="primary"
+          @click="closePopupSuccess"
+        >
+          Oke
+        </b-button>
+      </b-row>
+    </b-modal>
   </b-overlay>
 </template>
 
@@ -619,6 +755,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import { required } from '@validations'
 import vSelect from 'vue-select'
+import PincodeInput from 'vue-pincode-input'
 import {
   BRow,
   BCol,
@@ -636,6 +773,7 @@ import {
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
 import useJwt from '@/auth/jwt/useJwt'
+import moment from 'moment'
 
 export default {
   components: {
@@ -654,6 +792,7 @@ export default {
     BOverlay,
     BSpinner,
     vSelect,
+    PincodeInput,
   },
   directives: {
     'b-modal': VBModal,
@@ -708,6 +847,15 @@ export default {
       visibilityPin: 'password',
 
       validateProfile: [],
+
+      messageErrorPhoneUser: false,
+      loadingOtpSms: false,
+      loadingOtpWa: false,
+      otpMode: 'sms',
+      otpConfirmation: '',
+      loadingResendOtp: false,
+      errorCheckOtp: false,
+      buttonOtpIsClick: false,
     }
   },
   mounted() {
@@ -716,6 +864,7 @@ export default {
     this.loadBanks()
     this.getProfile()
     this.$refs['modal-pin'].show()
+    this.$refs['modal-verification-submit'].show()
     this.changeAttr()
   },
   methods: {
@@ -741,41 +890,7 @@ export default {
       })
     },
     submitVerification() {
-      // Verification
-      if (this.validateResendOtp === '') {
-        this.loadingSubmit = true
-        this.$refs.formRulesAdd.validate().then(success => {
-          if (success) {
-            const formData = new FormData()
-            formData.append('_method', 'post')
-            formData.append('phone_number', this.phoneNumber)
-            this.$http_komship.post('/v1/partner/sms/otp', formData, {
-              headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-            }).then(response => {
-              this.loadingSubmit = false
-              this.$refs['modal-verification-submit'].show()
-              this.changeAttr()
-              this.countDownTimerOtp()
-            }).catch(() => {
-              this.loadingSubmit = false
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'gagal',
-                  icon: 'AlertCircleIcon',
-                  text: 'Gagal kirim otp, silahkan coba lagi!',
-                  variant: 'danger',
-                },
-              }, 2000)
-            })
-          } else {
-            this.loadingSubmit = false
-          }
-        })
-      } else {
-        this.$refs['modal-verification-submit'].show()
-        this.changeAttr()
-      }
+      this.$refs['modal-verification-submit'].show()
     },
     sendOtpAgain() {
       this.countSubmit += 1
@@ -813,6 +928,7 @@ export default {
       formData.append('otp', this.dataPin)
       this.$http_komship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
+          this.errorCheckOtp = false
           this.$http_komship.post('/v1/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
@@ -861,6 +977,7 @@ export default {
           }, 2000)
           this.loadingSubmit = false
           this.errorConfirmOtp = true
+          this.errorCheckOtp = true
         }
       })
     },
@@ -1059,15 +1176,32 @@ export default {
     changeEditMode() {
       this.editMode = false
     },
-    getProfile() {
-      this.$http_komship.post('v1/my-profile', {
+    async getProfile() {
+      await this.$http_komship.post('v1/my-profile', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
+      }).then(async response => {
         const { data } = response.data
-        // this.phoneUser = data.user_phone.replace(`${data.user_phone.substr(3, 7)}`, '****')
         this.phoneUser = data.user_phone
         this.phoneNumber = data.user_phone
         this.validateProfile = data
+        await this.$http_komship.post(`/v1/check-wa?phone_no=${this.phoneUser}`)
+          .then(res => {
+            this.messageErrorPhoneUser = false
+          })
+          .catch(error => {
+            this.messageErrorPhoneUser = true
+            if (error.response.data.code !== 1001) {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: error,
+                  variant: 'danger',
+                },
+              })
+            }
+          })
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,
@@ -1111,6 +1245,224 @@ export default {
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
+    sendOtpSMS() {
+      if (this.buttonOtpIsClick === false) {
+        this.buttonOtpIsClick = true
+        this.otpMode = 'sms'
+        this.loadingOtpSms = true
+        this.countSubmit += 1
+        const formData = new FormData()
+        formData.append('_method', 'post')
+        formData.append('phone_number', this.phoneUser)
+        this.$http_komship.post('/v1/partner/sms/otp', formData).then(response => {
+          this.loadingOtpSms = false
+          this.loadingResendOtp = false
+          this.countDownTimerOtp()
+          this.$refs['modal-verification-submit'].hide()
+          this.$refs['modal-verification-OTP'].show()
+          this.buttonOtpIsClick = false
+        }).catch(err => {
+          this.loadingOtpSms = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.buttonOtpIsClick = false
+        })
+      }
+    },
+    sendOtpWA() {
+      if (this.buttonOtpIsClick === false) {
+        this.buttonOtpIsClick = true
+        this.otpMode = 'wa'
+        this.loadingOtpWa = true
+        this.countSubmit += 1
+        const formData = new FormData()
+        formData.append('no_hp', this.phoneUser)
+        this.$http_komship.post('/v1/user/send/otp/wa', formData).then(response => {
+          this.countDownTimerOtp()
+          this.loadingOtpWa = false
+          this.loadingResendOtp = false
+          this.$refs['modal-verification-submit'].hide()
+          this.$refs['modal-verification-OTP'].show()
+          this.buttonOtpIsClick = false
+        }).catch(err => {
+          this.loadingOtpWa = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.buttonOtpIsClick = false
+        })
+      }
+    },
+    resendOtp(mode) {
+      this.countSubmit += 1
+      if (this.countSubmit === 2) {
+        this.countOtp = 120
+      }
+      if (this.countSubmit === 3) {
+        this.countOtp = 240
+      }
+      if (this.countSubmit === 4) {
+        this.countOtp = 480
+      }
+      if (this.countSubmit === 5) {
+        this.countOtp = 960
+      }
+      if (this.countSubmit === 6) {
+        this.countOtp = 1920
+      }
+      if (this.countSubmit === 7) {
+        this.countOtp = 60
+        this.countSubmit = 1
+      }
+      this.loadingResendOtp = true
+      if (mode === 'sms') {
+        this.sendOtpSMS()
+      }
+      if (mode === 'wa') {
+        this.sendOtpWA()
+      }
+    },
+    changeMethodOtp() {
+      if (this.countSubmit === 2) {
+        this.countOtp = 120
+      }
+      if (this.countSubmit === 3) {
+        this.countOtp = 240
+      }
+      if (this.countSubmit === 4) {
+        this.countOtp = 480
+      }
+      if (this.countSubmit === 5) {
+        this.countOtp = 960
+      }
+      if (this.countSubmit === 6) {
+        this.countOtp = 1920
+      }
+      if (this.countSubmit === 7) {
+        this.countOtp = 60
+        this.countSubmit = 1
+      }
+      this.otpMode = ''
+      this.otpConfirmation = ''
+      this.errorCheckOtp = false
+      this.loadingOtpWa = false
+      this.loadingOtpSms = false
+      this.$refs['modal-verification-submit'].show()
+      this.$refs['modal-verification-OTP'].hide()
+    },
+    checkOtp: _.debounce(function () {
+      if (this.otpMode === 'sms') {
+        if (this.otpConfirmation.length === 6) {
+          this.submitRekening()
+        }
+      }
+      if (this.otpMode === 'wa') {
+        if (this.otpConfirmation.length === 6) {
+          const formData = new FormData()
+          formData.append('otp', this.otpConfirmation)
+          this.$http_komship.post('/v1/user/send/otp/wa/check', formData).then(response => {
+            this.$http_komship.post('/v1/bank-account/store',
+              {
+                bank_name: this.fieldAddBankName,
+                account_name: this.fieldAddAccountName,
+                account_no: this.fieldAddAccountNo,
+              }, {
+                headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+              }).then(responseStore => {
+              if (responseStore.data.code === 400) {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    icon: 'AlertCircleIcon',
+                    text: responseStore.data.message,
+                    variant: 'danger',
+                  },
+                }, 2000)
+              } else {
+                this.getBank()
+                this.fieldActionAddRekening = false
+                this.$refs['modal-verification-OTP'].hide()
+                this.$refs['success-add-rekening'].show()
+                this.visibilityPin = 'password'
+              }
+            }).catch(err => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+          }).catch(err => {
+            if (err.response.data.code === 1001) {
+              this.errorCheckOtp = true
+            } else {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failure',
+                  icon: 'AlertCircleIcon',
+                  text: err,
+                  variant: 'danger',
+                },
+              }, 2000)
+            }
+          })
+        }
+      }
+    }, 1000),
+    closePopupSuccess() {
+      this.$refs['success-add-rekening'].hide()
+      this.fieldActionAddRekening = false
+      this.getBank()
+    },
+    closeVerification() {
+      this.$refs['modal-verification-submit'].hide()
+    },
+    closeCheckVerification() {
+      if (this.countSubmit === 2) {
+        this.countOtp = 120
+      }
+      if (this.countSubmit === 3) {
+        this.countOtp = 240
+      }
+      if (this.countSubmit === 4) {
+        this.countOtp = 480
+      }
+      if (this.countSubmit === 5) {
+        this.countOtp = 960
+      }
+      if (this.countSubmit === 6) {
+        this.countOtp = 1920
+      }
+      if (this.countSubmit === 7) {
+        this.countOtp = 60
+        this.countSubmit = 1
+      }
+      this.otpMode = ''
+      this.otpConfirmation = ''
+      this.errorCheckOtp = false
+      this.loadingOtpWa = false
+      this.loadingOtpSms = false
+      this.$refs['modal-verification-OTP'].hide()
+    },
   },
 }
 </script>
@@ -1132,4 +1484,27 @@ export default {
     -webkit-appearance: none;
     margin: 0;
   }
+
+  [dir] input.vue-pincode-input {
+    box-shadow: none!important;
+    border-bottom: 2px solid #FF6A3A!important;
+    border-radius: 0px!important;
+    color: black;
+}
+
+    [dir] input.vue-pincode-input:placeholder-shown  {
+      box-shadow: none!important;
+      border-bottom: 2px solid #828282!important;
+      border-radius: 0px!important;
+  }
+  [dir] input.vue-pincode-input:focus {
+    box-shadow: none!important;
+    border-bottom: 2px solid #FF6A3A!important;
+    border-radius: 0px!important;
+}
+
+  [dir] .wrapper__send__otp:hover {
+    background: #FFECE9;
+  }
+
 </style>
