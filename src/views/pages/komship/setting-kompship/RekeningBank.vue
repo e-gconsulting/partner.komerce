@@ -889,7 +889,11 @@ export default {
       })
     },
     submitVerification() {
-      this.$refs['modal-verification-submit'].show()
+      this.$refs.formRulesAdd.validate().then(success => {
+        if (success) {
+          this.$refs['modal-verification-submit'].show()
+        }
+      })
     },
     sendOtpAgain() {
       this.countSubmit += 1
