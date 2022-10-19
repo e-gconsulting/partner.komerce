@@ -65,7 +65,7 @@
           cols="4"
           lg="3"
         >
-          <span class="text-[16px] font-semibold">Pukul</span>
+          <span class="text-[16px] font-semibold">Waktu Jemput</span>
         </b-col>
         <b-col
           cols="8"
@@ -235,7 +235,7 @@
       :paginate-elements-by-height="1100"
       :filename="`packing-list-${pickupDate}`"
       :pdf-quality="2"
-      :manual-pagination="false"
+      :manual-pagination="true"
       pdf-format="a4"
       pdf-orientation="portrait"
       pdf-content-width="800px"
