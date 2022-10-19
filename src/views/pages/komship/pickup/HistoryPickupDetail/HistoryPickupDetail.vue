@@ -229,10 +229,10 @@
       ref="html2Pdf"
       :show-layout="false"
       :float-layout="true"
-      :enable-download="false"
-      :preview-modal="true"
+      :enable-download="true"
+      :preview-modal="false"
       :paginate-elements-by-height="1100"
-      :filename="`packing-list-${pickupDate}`"
+      filename="packing-list"
       :pdf-quality="2"
       :manual-pagination="true"
       pdf-format="a4"
@@ -363,6 +363,7 @@ export default {
       totalQty: '',
       totalOrder: '',
       pdfOptions: {
+        filename: `packing-list-${this.generateRandomCharacters()}.pdf`,
         image: { type: 'png', quality: 0.98 },
         html2canvas: {
           scale: 2,
@@ -375,6 +376,16 @@ export default {
     this.getHistoryPickup()
   },
   methods: {
+    generateRandomCharacters() {
+      let result = ''
+      const length = 3
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+      const charactersLength = characters.length
+      for (let i = 0; i < length; i += 1) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength))
+      }
+      return result
+    },
     setImageDefault(e) {
       e.target.src = imageNull
     },
