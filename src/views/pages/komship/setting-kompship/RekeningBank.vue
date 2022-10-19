@@ -864,7 +864,6 @@ export default {
     this.loadBanks()
     this.getProfile()
     this.$refs['modal-pin'].show()
-    this.$refs['modal-verification-submit'].show()
     this.changeAttr()
   },
   methods: {
