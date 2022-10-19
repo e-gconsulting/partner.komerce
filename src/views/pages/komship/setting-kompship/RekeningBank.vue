@@ -517,15 +517,15 @@
       </b-row>
 
       <b-row
-        :class="buttonOtpIsClick ? 'cursor-not-allowed' : 'cursor-pointer'"
+        :class="buttonOtpIsClick && messageErrorPhoneUser ? 'cursor-not-allowed' : 'cursor-pointer'"
         @click="sendOtpWA"
       >
         <b-col
           cols="12"
         >
           <b-card
+            :class="messageErrorPhoneUser ? 'cursor-not-allowed wrapper__otp__wa' : 'cursor-pointer wrapper__send__otp'"
             :style="loadingOtpWa ? 'background: #FFECE9;' : ''"
-            class="wrapper__send__otp"
           >
             <b-row class="align-items-center">
               <b-col
@@ -1276,7 +1276,7 @@ export default {
       }
     },
     sendOtpWA() {
-      if (this.buttonOtpIsClick === false) {
+      if (this.buttonOtpIsClick === false && !this.messageErrorPhoneUser) {
         this.buttonOtpIsClick = true
         this.otpMode = 'wa'
         this.loadingOtpWa = true
@@ -1504,6 +1504,10 @@ export default {
 
   [dir] .wrapper__send__otp:hover {
     background: #FFECE9;
+  }
+
+  [dir] .wrapper__otp__wa {
+    background: #C2C2C2;
   }
 
 </style>
