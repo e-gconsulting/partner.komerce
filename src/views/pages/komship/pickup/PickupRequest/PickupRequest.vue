@@ -206,13 +206,7 @@
             v-else
             variant="none"
             class="button-detail p-0"
-            :to="{ name: 'detail-orderan-pickup', params: {
-              address: address,
-              order: order,
-              pickup_date: pickupDate,
-              pickup_time: pickupTime,
-              vehicle: vehicle
-            } }"
+            @click="openOrderDetailPickup"
           >
             Lihat Detail...
           </b-button>
