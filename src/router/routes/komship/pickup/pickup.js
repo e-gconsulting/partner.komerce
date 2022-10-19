@@ -27,12 +27,23 @@ const pickupRoute = [
     },
   },
   {
+    path: '/detail-orderan-pickup/:order_data_id',
+    name: 'detail-orderan-pickup/:order_data_id',
+    component: PickupOrderDetail,
+    props: true,
+    meta: {
+      name: 'detail-orderan-pickup/:order_data_id',
+      resource: 'Pickup',
+      action: 'manage',
+    },
+  },
+  {
     path: '/history-pickup',
     name: 'history-pickup',
     component: HistoryPickup,
     meta: {
       name: 'history-pickup',
-      routeDetailHistory: 'history-pickup-detail',
+      routeDetailHistory: 'history-pickup/detail',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [
@@ -44,14 +55,12 @@ const pickupRoute = [
     },
   },
   {
-    path: '/history-pickup-detail/:order_data_id',
-    name: 'history-pickup-detail',
+    path: '/history-pickup/detail/:order_data_id',
+    name: 'history-pickup/detail',
     component: HistoryPickupDetail,
+    props: true,
     meta: {
-      name: 'history-pickup-detail',
-      navActiveLink: 'history-pickup',
-      routeDetailOrderan: 'detail-orderan-pickup-after',
-      routeToHistory: 'history-pickup',
+      name: 'history-pickup/detail',
       resource: 'Pickup',
       action: 'manage',
       breadcrumb: [
