@@ -304,8 +304,15 @@ export default {
       this.getCurrentDate()
       this.vehicle = ''
       this.itemProductPreview = []
+      this.totalProduct = 0
       this.order = []
       this.itemOrderList = []
+      this.itemOrderError = []
+      this.totalOrderTimeout = 0
+      this.submitProgress = 0
+      this.submitStatus = true
+      this.submitPercentage = 0
+      this.generateToken()
     },
     generateToken() {
       let result = ''
@@ -333,14 +340,58 @@ export default {
         }
       })
     },
+    orderPickupError() {
+      this.$bvModal.show('modalOrderError')
+      const product = []
+      this.order = this.itemOrderError
+      this.order.forEach(element => {
+        element.product.forEach(items => {
+          product.push(items)
+        })
+      })
+      this.totalProduct = product.length
+      this.itemProductPreview = product.slice(0, 2)
+      this.totalOrderTimeout = 0
+      this.submitProgress = 0
+      this.submitStatus = true
+      this.submitPercentage = 0
+    },
+    orderPickupSuccess() {
+      this.$swal({
+        html: `<span class="text-[16px] w-[564px]">
+          Pastikan <b>paket anda siap</b> untuk dipickup. Jam penjemputan yang kamu pilih <b>hanyalah estimasi</b>, kurir akan datang dan menghubungi di kisaran jam tersebut</span>`,
+        imageUrl: iconSuccess,
+        confirmButtonText: 'Oke',
+        confirmButtonClass: 'btn btn-primary',
+      }).then(result => {
+        if (result.isConfirmed) {
+          this.$router.push('/history-pickup')
+        }
+        this.resetField()
+      })
+    },
+    addOrderError(data) {
+      const availableOrderError = this.itemOrderError.find(
+        items => items.order_id === data.order_id,
+      )
+      if (!availableOrderError) {
+        this.itemOrderError.push(data)
+      }
+    },
+    setProgressSubmit(index) {
+      this.submitPercentage = Math.floor(
+        ((index + 1) * 100) / this.order.length,
+      )
+      this.submitProgress += 1
+    },
     async submitPickup() {
       this.submitStatus = true
       this.$bvModal.show('modalSubmitPickup')
-      let startIndex = 0
+      let indexSubmit = 0
       if (this.submitProgress > 0) {
-        startIndex = this.submitProgress - this.totalOrderTimeout
+        indexSubmit = this.submitProgress - this.totalOrderTimeout
       }
-      for (let index = startIndex; index < this.order.length; index += 1) {
+      for (let index = indexSubmit; index < this.order.length; index += 1) {
         try {
           const submit = await this.$http_komship.post(`/v3/pickup/${this.profile.partner_id}/store`, {
             partner_name: this.profile.user_fullname,
@@ -354,58 +405,47 @@ export default {
             order: this.order[index].order_id,
             token: this.token,
           })
-          const { code } = submit.data
-          if (code === 200) {
-            if (this.itemOrderError.length > 0) {
-              this.itemOrderError = this.itemOrderError.filter(items => items.order_id !== this.order[index].order_id)
-            }
-            this.submitPercentage = Math.floor(((index + 1) * 100) / this.order.length)
-            this.submitProgress += 1
+          const { data } = submit
+          if (data.code === 200) {
+            this.setProgressSubmit(index)
             this.totalOrderTimeout = 0
-            if (index === this.order.length - 1 && this.itemOrderError.length < 1) {
+            if (index + 1 >= this.order.length && this.itemOrderError.length > 0) {
               this.$bvModal.hide('modalSubmitPickup')
-              this.submitPercentage = 0
-              this.$swal({
-                html: `<span class="text-[16px] w-[564px]">
-                  Pastikan <b>paket anda siap</b> untuk dipickup. Jam penjemputan yang kamu pilih <b>hanyalah estimasi</b>, kurir akan datang dan menghubungi di kisaran jam tersebut</span>`,
-                imageUrl: iconSuccess,
-                confirmButtonText: 'Oke',
-                confirmButtonClass: 'btn btn-primary',
-              }).then(result => {
-                if (result.isConfirmed) {
-                  this.$router.push('/history-pickup')
-                }
-              })
-            } else if (index === this.order.length - 1 && this.itemOrderError.length > 0) {
+              this.orderPickupError()
+            } else if (index + 1 >= this.order.length) {
               this.$bvModal.hide('modalSubmitPickup')
-              this.$bvModal.show('modalOrderError')
-              const product = []
-              this.order = this.itemOrderError
-              this.order.forEach(element => {
-                element.product.forEach(items => {
-                  product.push(items)
-                })
-              })
-              this.totalProduct = product.length
-              this.itemProductPreview = product.slice(0, 2)
+              this.orderPickupSuccess()
             }
-          } else if (code === 500 || code === 1002) {
-            this.itemOrderError.push(this.order[index])
+          } else if (data.code === 500 || data.code === 1002) {
+            this.addOrderError(this.order[index])
+            this.setProgressSubmit(index)
+            this.totalOrderTimeout = 0
+            if (index + 1 >= this.order.length) {
+              this.$bvModal.hide('modalSubmitPickup')
+              this.orderPickupError()
+            }
           } else {
-            this.itemOrderError.push(this.order[index])
+            this.addOrderError(this.order[index])
+            this.setProgressSubmit(index)
             this.totalOrderTimeout += 1
             if (this.totalOrderTimeout >= 3) {
               this.submitStatus = false
               break
+            } else if (index + 1 >= this.order.length) {
+              this.$bvModal.hide('modalSubmitPickup')
+              this.orderPickupError()
             }
           }
         } catch (error) {
-          console.log(error)
-          this.itemOrderError.push(this.order[index])
+          this.addOrderError(this.order[index])
+          this.setProgressSubmit(index)
           this.totalOrderTimeout += 1
           if (this.totalOrderTimeout >= 3) {
             this.submitStatus = false
             break
+          } else if (index + 1 >= this.order.length) {
+            this.$bvModal.hide('modalSubmitPickup')
+            this.orderPickupError()
           }
         }
       }

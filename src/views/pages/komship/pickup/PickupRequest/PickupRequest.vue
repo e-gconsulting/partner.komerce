@@ -590,6 +590,7 @@
       hide-footer
       centered
       size="xl"
+      @hide="itemOrderError = []"
     >
       <img
         src="@/assets/images/icons/warning.svg"
