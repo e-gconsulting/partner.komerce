@@ -476,14 +476,14 @@
       </b-row>
 
       <b-row
-        :class="buttonOtpIsClick ? 'cursor-not-allowed mb-1' : 'cursor-pointer mb-1'"
+        class="mb-1"
         @click="sendOtpSMS"
       >
         <b-col
           cols="12"
         >
           <b-card
-            class="mb-0 wrapper__send__otp"
+            :class="buttonSMSOtpIsClick ? 'cursor-not-allowed mb-0 wrapper__send__otp' : 'cursor-pointer mb-0 wrapper__send__otp'"
             :style="loadingOtpSms ? 'background: #FFECE9;' : ''"
           >
             <b-row class="align-items-center">
@@ -517,14 +517,13 @@
       </b-row>
 
       <b-row
-        :class="buttonOtpIsClick && messageErrorPhoneUser ? 'cursor-not-allowed' : 'cursor-pointer'"
         @click="sendOtpWA"
       >
         <b-col
           cols="12"
         >
           <b-card
-            :class="messageErrorPhoneUser ? 'cursor-not-allowed wrapper__otp__wa' : 'cursor-pointer wrapper__send__otp'"
+            :class="messageErrorPhoneUser || buttonWAOtpIsClick ? 'cursor-not-allowed wrapper__otp__wa' : 'cursor-pointer wrapper__send__otp'"
             :style="loadingOtpWa ? 'background: #FFECE9;' : ''"
           >
             <b-row class="align-items-center">
@@ -698,7 +697,7 @@
           class="text-primary btn-icon"
           variant="flat-primary"
           size="sm"
-          :disabled="buttonOtpIsClick"
+          :disabled="otpMode === 'sms' ? buttonSMSOtpIsClick : buttonWAOtpIsClick"
           @click="resendOtp(otpMode)"
         ><strong>Kirim ulang</strong></b-button>
       </b-row>
@@ -855,7 +854,8 @@ export default {
       otpConfirmation: '',
       loadingResendOtp: false,
       errorCheckOtp: false,
-      buttonOtpIsClick: false,
+      buttonWAOtpIsClick: false,
+      buttonSMSOtpIsClick: false,
     }
   },
   mounted() {
@@ -1249,11 +1249,30 @@ export default {
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
     sendOtpSMS() {
-      if (this.buttonOtpIsClick === false) {
-        this.buttonOtpIsClick = true
+      if (this.buttonSMSOtpIsClick === false) {
+        this.countSubmit += 1
+        if (this.countSubmit === 2) {
+          this.countOtp = 120
+        }
+        if (this.countSubmit === 3) {
+          this.countOtp = 240
+        }
+        if (this.countSubmit === 4) {
+          this.countOtp = 480
+        }
+        if (this.countSubmit === 5) {
+          this.countOtp = 960
+        }
+        if (this.countSubmit === 6) {
+          this.countOtp = 1920
+        }
+        if (this.countSubmit === 7) {
+          this.countOtp = 60
+          this.countSubmit = 1
+        }
+        this.buttonSMSOtpIsClick = true
         this.otpMode = 'sms'
         this.loadingOtpSms = true
-        this.countSubmit += 1
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneUser)
@@ -1263,7 +1282,7 @@ export default {
           this.countDownTimerOtp()
           this.$refs['modal-verification-submit'].hide()
           this.$refs['modal-verification-OTP'].show()
-          this.buttonOtpIsClick = false
+          this.buttonSMSOtpIsClick = false
         }).catch(err => {
           this.loadingOtpSms = false
           this.$toast({
@@ -1275,25 +1294,25 @@ export default {
               variant: 'danger',
             },
           }, 2000)
-          this.buttonOtpIsClick = false
+          this.buttonSMSOtpIsClick = false
         })
       }
     },
     sendOtpWA() {
-      if (this.buttonOtpIsClick === false && !this.messageErrorPhoneUser) {
-        this.buttonOtpIsClick = true
+      if (this.buttonWAOtpIsClick === false && !this.messageErrorPhoneUser) {
+        this.buttonWAOtpIsClick = true
         this.otpMode = 'wa'
         this.loadingOtpWa = true
-        this.countSubmit += 1
         const formData = new FormData()
         formData.append('no_hp', this.phoneUser)
         this.$http_komship.post('/v1/user/send/otp/wa', formData).then(response => {
+          this.countOtp = response.data.data.expired_at
           this.countDownTimerOtp()
           this.loadingOtpWa = false
           this.loadingResendOtp = false
           this.$refs['modal-verification-submit'].hide()
           this.$refs['modal-verification-OTP'].show()
-          this.buttonOtpIsClick = false
+          this.buttonWAOtpIsClick = false
         }).catch(err => {
           this.loadingOtpWa = false
           this.$toast({
@@ -1305,30 +1324,34 @@ export default {
               variant: 'danger',
             },
           }, 2000)
-          this.buttonOtpIsClick = false
+          this.buttonWAOtpIsClick = false
         })
       }
     },
     resendOtp(mode) {
-      this.countSubmit += 1
-      if (this.countSubmit === 2) {
-        this.countOtp = 120
-      }
-      if (this.countSubmit === 3) {
-        this.countOtp = 240
-      }
-      if (this.countSubmit === 4) {
-        this.countOtp = 480
-      }
-      if (this.countSubmit === 5) {
-        this.countOtp = 960
-      }
-      if (this.countSubmit === 6) {
-        this.countOtp = 1920
-      }
-      if (this.countSubmit === 7) {
-        this.countOtp = 60
-        this.countSubmit = 1
+      if (this.otpMode === 'sms') {
+        this.countSubmit += 1
+        if (this.countSubmit === 2) {
+          this.countOtp = 120
+        }
+        if (this.countSubmit === 3) {
+          this.countOtp = 240
+        }
+        if (this.countSubmit === 4) {
+          this.countOtp = 480
+        }
+        if (this.countSubmit === 5) {
+          this.countOtp = 960
+        }
+        if (this.countSubmit === 6) {
+          this.countOtp = 1920
+        }
+        if (this.countSubmit === 7) {
+          this.countOtp = 60
+          this.countSubmit = 1
+        }
+      } else {
+        this.countOtp = 0
       }
       this.loadingResendOtp = true
       if (mode === 'sms') {
@@ -1339,24 +1362,28 @@ export default {
       }
     },
     changeMethodOtp() {
-      if (this.countSubmit === 2) {
-        this.countOtp = 120
-      }
-      if (this.countSubmit === 3) {
-        this.countOtp = 240
-      }
-      if (this.countSubmit === 4) {
-        this.countOtp = 480
-      }
-      if (this.countSubmit === 5) {
-        this.countOtp = 960
-      }
-      if (this.countSubmit === 6) {
-        this.countOtp = 1920
-      }
-      if (this.countSubmit === 7) {
-        this.countOtp = 60
-        this.countSubmit = 1
+      if (this.otpMode === 'sms') {
+        if (this.countSubmit === 2) {
+          this.countOtp = 120
+        }
+        if (this.countSubmit === 3) {
+          this.countOtp = 240
+        }
+        if (this.countSubmit === 4) {
+          this.countOtp = 480
+        }
+        if (this.countSubmit === 5) {
+          this.countOtp = 960
+        }
+        if (this.countSubmit === 6) {
+          this.countOtp = 1920
+        }
+        if (this.countSubmit === 7) {
+          this.countOtp = 60
+          this.countSubmit = 1
+        }
+      } else {
+        this.countOtp = 0
       }
       this.otpMode = ''
       this.otpConfirmation = ''
@@ -1440,24 +1467,26 @@ export default {
       this.$refs['modal-verification-submit'].hide()
     },
     closeCheckVerification() {
-      if (this.countSubmit === 2) {
-        this.countOtp = 120
-      }
-      if (this.countSubmit === 3) {
-        this.countOtp = 240
-      }
-      if (this.countSubmit === 4) {
-        this.countOtp = 480
-      }
-      if (this.countSubmit === 5) {
-        this.countOtp = 960
-      }
-      if (this.countSubmit === 6) {
-        this.countOtp = 1920
-      }
-      if (this.countSubmit === 7) {
-        this.countOtp = 60
-        this.countSubmit = 1
+      if (this.otpMode === 'sms') {
+        if (this.countSubmit === 2) {
+          this.countOtp = 120
+        }
+        if (this.countSubmit === 3) {
+          this.countOtp = 240
+        }
+        if (this.countSubmit === 4) {
+          this.countOtp = 480
+        }
+        if (this.countSubmit === 5) {
+          this.countOtp = 960
+        }
+        if (this.countSubmit === 6) {
+          this.countOtp = 1920
+        }
+        if (this.countSubmit === 7) {
+          this.countOtp = 60
+          this.countSubmit = 1
+        }
       }
       this.otpMode = ''
       this.otpConfirmation = ''
