@@ -702,7 +702,10 @@
         ><strong>Kirim ulang</strong></b-button>
       </b-row>
 
-      <b-row class="justify-content-center align-items-center mb-2">
+      <b-row
+        v-if="otpSubmit > 0"
+        class="justify-content-center align-items-center mb-2"
+      >
         <b-button
           class="text-primary btn-icon"
           variant="flat-primary"
@@ -850,12 +853,14 @@ export default {
       messageErrorPhoneUser: false,
       loadingOtpSms: false,
       loadingOtpWa: false,
-      otpMode: 'sms',
+      otpMode: '',
       otpConfirmation: '',
       loadingResendOtp: false,
       errorCheckOtp: false,
       buttonWAOtpIsClick: false,
       buttonSMSOtpIsClick: false,
+      otpSubmit: 0,
+      otpSubmitSms: 0,
     }
   },
   mounted() {
@@ -1159,6 +1164,7 @@ export default {
       this.formRekening.splice(index, 1)
     },
     countDownTimerOtp() {
+      if (this.countOtp === 0) this.otpSubmit += 1
       if (this.countOtp > 0) {
         setTimeout(() => {
           this.countOtp -= 1
@@ -1184,7 +1190,8 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data
-        this.phoneUser = data.user_phone
+        // this.phoneUser = data.user_phone
+        this.phoneUser = '085600473598'
         this.phoneNumber = data.user_phone
         this.validateProfile = data
         await this.$http_komship.post(`/v1/check-wa?phone_no=${this.phoneUser}`)
@@ -1250,7 +1257,10 @@ export default {
     },
     sendOtpSMS() {
       if (this.buttonSMSOtpIsClick === false) {
-        this.countSubmit += 1
+        if (this.countSubmit === 0) this.countSubmit += 1
+        if (this.countSubmit === 1) {
+          this.countOtp = 60
+        }
         if (this.countSubmit === 2) {
           this.countOtp = 120
         }
@@ -1273,6 +1283,9 @@ export default {
         this.buttonSMSOtpIsClick = true
         this.otpMode = 'sms'
         this.loadingOtpSms = true
+        if (this.otpSubmit === 1) {
+          this.otpSubmit += 1
+        }
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneUser)
@@ -1308,6 +1321,7 @@ export default {
         this.$http_komship.post('/v1/user/send/otp/wa', formData).then(response => {
           this.countOtp = response.data.data.expired_at
           this.countDownTimerOtp()
+          this.otpSubmit += 1
           this.loadingOtpWa = false
           this.loadingResendOtp = false
           this.$refs['modal-verification-submit'].hide()
@@ -1382,9 +1396,12 @@ export default {
           this.countOtp = 60
           this.countSubmit = 1
         }
-      } else {
+      }
+      if (this.otpMode === 'wa') {
         this.countOtp = 0
       }
+      console.log(this.countOtp)
+      this.otpSubmit = 0
       this.otpMode = ''
       this.otpConfirmation = ''
       this.errorCheckOtp = false
