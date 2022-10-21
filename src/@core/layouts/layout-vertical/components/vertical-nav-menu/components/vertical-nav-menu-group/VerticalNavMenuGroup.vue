@@ -32,9 +32,11 @@
         {{ item.tag }}
       </b-badge>
     </b-link>
-    <b-collapse
+    <b-button
       v-model="isOpen"
-      class="menu-content"
+      class="menu-content btn-icon"
+      variant="flat-primary"
+      style="background: none!important;"
       tag="ul"
     >
       <component
@@ -44,7 +46,7 @@
         ref="groupChild"
         :item="child"
       />
-    </b-collapse>
+    </b-button>
   </li>
 </template>
 
