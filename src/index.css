@@ -56,3 +56,7 @@
 .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).day:hover, .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).month:hover, .vdp-datepicker__calendar .cell:not(.blank):not(.disabled).year:hover{
     border: #F95031 !important;
 }
+
+.collapse {
+    visibility: unset;
+}
