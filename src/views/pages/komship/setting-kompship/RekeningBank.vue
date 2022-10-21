@@ -663,7 +663,7 @@
         class="justify-content-center mb-2 mx-1 mt-1"
       >
         <small class="text-center">
-          Kode OTP yang kamu masukkan <strong class="text-primary">salah</strong> harap cek kode OTP di SMS kamu kemudian masukkan kembali
+          Kode OTP yang kamu masukkan <strong class="text-primary">salah</strong> harap cek kode OTP di {{ otpMode === 'sms' ? 'SMS' : 'WhatsApp' }} kamu kemudian masukkan kembali
         </small>
       </b-row>
 
@@ -703,7 +703,7 @@
       </b-row>
 
       <b-row
-        v-if="otpSubmit > 0"
+        v-if="otpSubmit > 1"
         class="justify-content-center align-items-center mb-2"
       >
         <b-button
@@ -860,7 +860,6 @@ export default {
       buttonWAOtpIsClick: false,
       buttonSMSOtpIsClick: false,
       otpSubmit: 0,
-      otpSubmitSms: 0,
     }
   },
   mounted() {
@@ -901,7 +900,6 @@ export default {
       })
     },
     sendOtpAgain() {
-      this.countSubmit += 1
       if (this.countOtp < 2) {
         this.countOtp = 60
         const formData = new FormData()
@@ -937,7 +935,7 @@ export default {
       this.$http_komship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
           this.errorCheckOtp = false
-          this.$http_komship.post('/v1/bank-account/store',
+          this.$http_komship.post('/v2/bank-account/store',
             {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
@@ -955,12 +953,29 @@ export default {
                   variant: 'danger',
                 },
               }, 2000)
-            } else {
+            }
+            if (responseStore.data.code === 1001) {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Failed',
+                  icon: 'AlertCircleIcon',
+                  text: responseStore.data.message,
+                  variant: 'danger',
+                },
+              }, 2000)
+            }
+            if (responseStore.data.code === 200) {
               this.loadingSubmit = false
               this.getBank()
               this.fieldActionAddRekening = false
-              this.$refs['modal-verification-submit'].hide()
+              this.getBank()
+              this.$refs['modal-verification-OTP'].hide()
+              this.$refs['success-add-rekening'].show()
               this.visibilityPin = 'password'
+              this.bankName = ''
+              this.accountNo = ''
+              this.accountName = ''
             }
           }).catch(() => {
             this.$toast({
@@ -986,6 +1001,20 @@ export default {
           this.loadingSubmit = false
           this.errorConfirmOtp = true
           this.errorCheckOtp = true
+        }
+      }).catch(err => {
+        if (err.response.data.message === 'Failed to verification OTP.') {
+          this.errorCheckOtp = true
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
         }
       })
     },
@@ -1164,7 +1193,6 @@ export default {
       this.formRekening.splice(index, 1)
     },
     countDownTimerOtp() {
-      if (this.countOtp === 0) this.otpSubmit += 1
       if (this.countOtp > 0) {
         setTimeout(() => {
           this.countOtp -= 1
@@ -1190,8 +1218,7 @@ export default {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(async response => {
         const { data } = response.data
-        // this.phoneUser = data.user_phone
-        this.phoneUser = '085600473598'
+        this.phoneUser = data.user_phone
         this.phoneNumber = data.user_phone
         this.validateProfile = data
         await this.$http_komship.post(`/v1/check-wa?phone_no=${this.phoneUser}`)
@@ -1257,42 +1284,20 @@ export default {
     },
     sendOtpSMS() {
       if (this.buttonSMSOtpIsClick === false) {
-        if (this.countSubmit === 0) this.countSubmit += 1
-        if (this.countSubmit === 1) {
-          this.countOtp = 60
-        }
-        if (this.countSubmit === 2) {
-          this.countOtp = 120
-        }
-        if (this.countSubmit === 3) {
-          this.countOtp = 240
-        }
-        if (this.countSubmit === 4) {
-          this.countOtp = 480
-        }
-        if (this.countSubmit === 5) {
-          this.countOtp = 960
-        }
-        if (this.countSubmit === 6) {
-          this.countOtp = 1920
-        }
-        if (this.countSubmit === 7) {
-          this.countOtp = 60
-          this.countSubmit = 1
-        }
         this.buttonSMSOtpIsClick = true
         this.otpMode = 'sms'
         this.loadingOtpSms = true
-        if (this.otpSubmit === 1) {
-          this.otpSubmit += 1
-        }
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneUser)
+        formData.append('activity', 'BANK ACCOUNT')
         this.$http_komship.post('/v1/partner/sms/otp', formData).then(response => {
           this.loadingOtpSms = false
           this.loadingResendOtp = false
-          this.countDownTimerOtp()
+          this.countOtp = response.data.data.expired_at
+          if (this.countOtp === 1) this.countOtp = 0
+          this.otpSubmit = response.data.data.check_request_otp
+          if (this.countOtp > 0) this.countDownTimerOtp()
           this.$refs['modal-verification-submit'].hide()
           this.$refs['modal-verification-OTP'].show()
           this.buttonSMSOtpIsClick = false
@@ -1318,10 +1323,12 @@ export default {
         this.loadingOtpWa = true
         const formData = new FormData()
         formData.append('no_hp', this.phoneUser)
+        formData.append('activity', 'BANK ACCOUNT')
         this.$http_komship.post('/v1/user/send/otp/wa', formData).then(response => {
           this.countOtp = response.data.data.expired_at
-          this.countDownTimerOtp()
-          this.otpSubmit += 1
+          this.otpSubmit = response.data.data.check_request_otp
+          if (this.countOtp === 1) this.countOtp = 0
+          if (this.countOtp > 0) this.countDownTimerOtp()
           this.loadingOtpWa = false
           this.loadingResendOtp = false
           this.$refs['modal-verification-submit'].hide()
@@ -1343,30 +1350,8 @@ export default {
       }
     },
     resendOtp(mode) {
-      if (this.otpMode === 'sms') {
-        this.countSubmit += 1
-        if (this.countSubmit === 2) {
-          this.countOtp = 120
-        }
-        if (this.countSubmit === 3) {
-          this.countOtp = 240
-        }
-        if (this.countSubmit === 4) {
-          this.countOtp = 480
-        }
-        if (this.countSubmit === 5) {
-          this.countOtp = 960
-        }
-        if (this.countSubmit === 6) {
-          this.countOtp = 1920
-        }
-        if (this.countSubmit === 7) {
-          this.countOtp = 60
-          this.countSubmit = 1
-        }
-      } else {
-        this.countOtp = 0
-      }
+      this.errorCheckOtp = false
+      this.otpConfirmation = ''
       this.loadingResendOtp = true
       if (mode === 'sms') {
         this.sendOtpSMS()
@@ -1376,32 +1361,8 @@ export default {
       }
     },
     changeMethodOtp() {
-      if (this.otpMode === 'sms') {
-        if (this.countSubmit === 2) {
-          this.countOtp = 120
-        }
-        if (this.countSubmit === 3) {
-          this.countOtp = 240
-        }
-        if (this.countSubmit === 4) {
-          this.countOtp = 480
-        }
-        if (this.countSubmit === 5) {
-          this.countOtp = 960
-        }
-        if (this.countSubmit === 6) {
-          this.countOtp = 1920
-        }
-        if (this.countSubmit === 7) {
-          this.countOtp = 60
-          this.countSubmit = 1
-        }
-      }
-      if (this.otpMode === 'wa') {
-        this.countOtp = 0
-      }
-      console.log(this.countOtp)
-      this.otpSubmit = 0
+      this.errorCheckOtp = false
+      this.countOtp = 0
       this.otpMode = ''
       this.otpConfirmation = ''
       this.errorCheckOtp = false
@@ -1411,6 +1372,7 @@ export default {
       this.$refs['modal-verification-OTP'].hide()
     },
     checkOtp: _.debounce(function () {
+      this.errorCheckOtp = false
       if (this.otpMode === 'sms') {
         if (this.otpConfirmation.length === 6) {
           this.submitRekening()
@@ -1421,7 +1383,7 @@ export default {
           const formData = new FormData()
           formData.append('otp', this.otpConfirmation)
           this.$http_komship.post('/v1/user/send/otp/wa/check', formData).then(response => {
-            this.$http_komship.post('/v1/bank-account/store',
+            this.$http_komship.post('/v2/bank-account/store',
               {
                 bank_name: this.fieldAddBankName,
                 account_name: this.fieldAddAccountName,
@@ -1439,12 +1401,30 @@ export default {
                     variant: 'danger',
                   },
                 }, 2000)
-              } else {
+              }
+              if (responseStore.data.code === 1001) {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    icon: 'AlertCircleIcon',
+                    text: responseStore.data.message,
+                    variant: 'danger',
+                  },
+                }, 2000)
+              }
+              if (responseStore.data.code === 200) {
+                this.loadingSubmit = false
+                this.getBank()
+                this.fieldActionAddRekening = false
                 this.getBank()
                 this.fieldActionAddRekening = false
                 this.$refs['modal-verification-OTP'].hide()
                 this.$refs['success-add-rekening'].show()
                 this.visibilityPin = 'password'
+                this.bankName = ''
+                this.accountNo = ''
+                this.accountName = ''
               }
             }).catch(err => {
               this.$toast({
@@ -1478,33 +1458,15 @@ export default {
     closePopupSuccess() {
       this.$refs['success-add-rekening'].hide()
       this.fieldActionAddRekening = false
+      this.bankName = ''
+      this.accountNo = ''
+      this.accountName = ''
       this.getBank()
     },
     closeVerification() {
       this.$refs['modal-verification-submit'].hide()
     },
     closeCheckVerification() {
-      if (this.otpMode === 'sms') {
-        if (this.countSubmit === 2) {
-          this.countOtp = 120
-        }
-        if (this.countSubmit === 3) {
-          this.countOtp = 240
-        }
-        if (this.countSubmit === 4) {
-          this.countOtp = 480
-        }
-        if (this.countSubmit === 5) {
-          this.countOtp = 960
-        }
-        if (this.countSubmit === 6) {
-          this.countOtp = 1920
-        }
-        if (this.countSubmit === 7) {
-          this.countOtp = 60
-          this.countSubmit = 1
-        }
-      }
       this.otpMode = ''
       this.otpConfirmation = ''
       this.errorCheckOtp = false
