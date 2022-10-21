@@ -1,7 +1,5 @@
 <template>
-  <b-card-actions
-    ref="formCard"
-    no-actions
+  <b-card
   >
 
     <b-row class="align-items-center">
@@ -1478,7 +1476,7 @@
       </b-row>
     </b-modal>
 
-  </b-card-actions>
+  </b-card>
 </template>
 
 <script>
@@ -1499,9 +1497,9 @@ import {
   BSpinner,
   BOverlay,
   BPopover,
+  BCard,
 } from 'bootstrap-vue'
 import Ripple from 'vue-ripple-directive'
-import BCardActions from '@/@core/components/b-card-actions/BCardActions.vue'
 import draggable from 'vuedraggable'
 import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
@@ -1518,7 +1516,7 @@ export default {
     // BFormFile,
     BForm,
     BButton,
-    BCardActions,
+    BCard,
     BFormTextarea,
     // BTable,
     // BFormCheckbox,
