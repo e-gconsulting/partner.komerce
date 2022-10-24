@@ -998,6 +998,7 @@ export default {
         .get('xendit/disbursementbankAvailable')
         .then(({ data }) => {
           this.banks = data.data
+          this.loading = false
         })
         .catch(() => {
           this.$toast(
@@ -1012,8 +1013,6 @@ export default {
             },
             { timeout: 2500 },
           )
-        })
-        .finally(() => {
           this.loading = false
         })
     },
