@@ -307,7 +307,7 @@ export default {
     },
     searchProvince: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadProvince(search).finally(() => loading(false))
+      that.loadProvince(search).then(() => loading(false))
     }, 500),
     loadProvince(search) {
       return this.$http.get(`/v1/partner/province-city?search=${search}`)

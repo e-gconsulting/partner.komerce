@@ -1232,7 +1232,7 @@ export default {
     },
     searchOrigin: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadOrigin(search).finally(() => loading(false))
+      that.loadOrigin(search).then(() => loading(false))
     }, 500),
     loadOrigin(search) {
       return this.$http_komship

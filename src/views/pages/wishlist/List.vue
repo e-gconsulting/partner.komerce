@@ -511,8 +511,6 @@ export default {
       this.$http.delete(endpoint)
         .then(() => {
           this.deletedIds.push(data.id)
-        })
-        .finally(() => {
           this.loading = false
         })
     },
