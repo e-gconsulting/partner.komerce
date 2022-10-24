@@ -8,384 +8,110 @@
     rounded="sm"
   >
     <b-card>
-      <h3 class="text-black ml-50">
-        <strong>Pengaturan Alamat Penjemputan</strong>
+      <h3 class="text-black ml-50 mb-2">
+        <strong>Gudangku</strong>
       </h3>
+
+      <b-img
+        v-if="!formAddAddress && warehouseItems.length > 0"
+        v-b-modal="'warehouse-options'"
+        src="@/assets/images/icons/add-circle.svg"
+        class="cursor-pointer button__add__warehouse"
+      />
+
       <b-row
-        v-for="(data, index) in dataAddress"
-        :key="index + 1"
-        class="mt-3 ml-50"
+        v-if="formAddAddress === false && editMode === false"
+        class="h-[600px] justify-content-center align-items-center"
       >
         <b-col
-          cols="11"
-          class="border"
+          v-if="warehouseItems.length > 0"
+          cols="12"
+          class="px-0"
         >
-          <b-row class="d-flex mt-50 mb-1">
-            <b-col md="6">
-              <h4 class="text-black">
-                <strong>Alamat {{ index + 1 }}</strong>
-              </h4>
-            </b-col>
-            <b-col
-              md="6"
-              class="d-flex justify-content-end align-items-center"
-            >
-              <span
-                v-if="data.is_default === 1"
-                class="text-primary mr-50"
+          <b-table
+            :items="warehouseItems"
+            :fields="warehouseFields"
+            responsive
+          >
+            <template #cell(name)="data">
+              <div
+                id="warehouseKompack"
+                class="d-flex align-items-center"
+                style="min-width: 200px!important;"
               >
-                <strong>Alamat Utama</strong>
-              </span>
-              <b-button
-                v-if="editMode === true"
-                variant="flat-dark"
-                class="btn-icon"
-                @click="changeEditMode"
+                <b-img
+                  :src="data.item.image_logo_url"
+                  class="mr-50"
+                />
+                <span class="text-black">{{ data.value }}</span>
+              </div>
+              <b-popover
+                v-if="data.item.warehouse_type === 'Mitra Kompack'"
+                triggers="hover"
+                target="warehouseKompack"
+                placement="top"
+                custom-class="my-popover-class"
               >
-                <feather-icon icon="EditIcon" />
-              </b-button>
+                Mitra Gudang Kompack
+              </b-popover>
+            </template>
+            <template #cell(city)="data">
+              {{ data.value }}
+            </template>
+            <template #cell(pic_name)="data">
+              {{ data.value }}
+            </template>
+            <template #cell(product_total)="data">
+              {{ data.value }}
+            </template>
+            <template #cell(action)="data">
               <b-button
-                v-else
-                variant="flat-dark"
+                v-if="data.item.warehouse_type !== 'Mitra Kompack'"
+                variant="flat-info"
                 class="btn-icon"
                 @click="editAddress(data)"
               >
-                <feather-icon icon="EditIcon" />
+                Lihat Detail
               </b-button>
+              <div
+                v-if="data.item.is_default === 1"
+                class="d-flex align-items-center ml-50"
+              >
+                <b-img
+                  src="@/assets/images/icons/verify-warehouse.svg"
+                  class="mr-50"
+                />
+                <span class="text-primary">[Utama]</span>
+              </div>
+            </template>
+          </b-table>
+        </b-col>
+        <div v-if="warehouseItems.length === 0">
+          <b-row class="justify-content-center">
+            <b-img
+              v-b-modal="'warehouse-options'"
+              class="cursor-pointer"
+              src="@/assets/images/warehouse/icons/plus-icon.svg"
+            />
+          </b-row>
+          <b-row class="justify-content-center mb-50">
+            <h4 class="text-black ml-50">
+              Tambah Gudang
+            </h4>
+          </b-row>
+          <b-row class="justify-content-center">
+            <b-col
+              cols="7"
+              class="text-center"
+            >
+              <span class="text-muted">
+                Kamu belum memiliki alamat atau gudang yang terdaftar. Silahkan daftarkan alamat/gudang untuk alamat penjemputan
+              </span>
             </b-col>
           </b-row>
-          <validation-observer
-            ref="formRulesEdit"
-            #default="{invalid}"
-          >
-            <b-form>
-              <b-row>
-                <b-col
-                  cols="12"
-                  class="mb-1 ml-16 pl-50"
-                >
-                  <b-row>
-                    <b-col cols="9">
-                      <b-form-group label-cols-md="4">
-                        <template #label>
-                          <h4 class="text-black">
-                            Nama Tempat<span class="text-primary">*</span>
-                          </h4>
-                        </template>
-                        <validation-provider
-                          #default="{errors}"
-                          name="Nama Alamat"
-                          rules="required"
-                        >
-                          <div v-if="editMode === true && editIdAddress === data.address_id">
-                            <b-form-input
-                              v-model="addressName"
-                              :state="errors.length > 0 ? false : null"
-                            />
-                          </div>
-                          <div v-else>
-                            <b-form-input
-                              v-model="data.address_name"
-                              disabled
-                            />
-                          </div>
-                          <small class="text-danger">{{ errors[0] }}</small>
-                        </validation-provider>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-col>
-                <b-col
-                  cols="12"
-                  class="mb-1 ml-16 pl-50"
-                >
-                  <b-row>
-                    <b-col cols="9">
-                      <b-form-group label-cols-md="4">
-                        <template #label>
-                          <h4 class="text-black">
-                            Kelurahan/Kecamatan<span class="text-primary">*</span>
-                          </h4>
-                        </template>
-                        <div
-                          v-if="
-                            editMode === true &&
-                              editIdAddress === data.address_id
-                          "
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Kelurahan/Kecamatan"
-                            rules="required"
-                          >
-                            <div
-                              v-for="(dataOrigin, indexOrigin) in tes"
-                              :key="indexOrigin + 1"
-                            >
-                              <v-select
-                                v-if="dataOrigin.id === data.destination_id"
-                                v-model="originValue"
-                                :options="itemsOriginEdit"
-                                label="label"
-                                :state="errors.length > 0 ? false : null"
-                                @search="onSearchOrigin"
-                              />
-                            </div>
-                            <v-select
-                              v-if="handleOldOrigin === true"
-                              v-model="originValue"
-                              :options="itemsOriginEdit"
-                              label="label"
-                              :state="errors.length > 0 ? false : null"
-                              @search="onSearchOrigin"
-                            />
-                            <small class="text-primary">{{ errors[0] }}</small>
-                          </validation-provider>
-                        </div>
-                        <div v-else>
-                          <div
-                            v-for="(dataOrigin, indexOrigin) in tes"
-                            :key="indexOrigin + 1"
-                          >
-                            <div v-if="dataOrigin.id !== undefined">
-                              <v-select
-                                v-if="dataOrigin.id === data.destination_id"
-                                v-model="dataOrigin.label"
-                                label="label"
-                                disabled
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-col>
-                <b-col
-                  cols="12"
-                  class="mb-3 ml-16 pl-50"
-                >
-                  <b-row>
-                    <b-col cols="9">
-                      <b-form-group label-cols-md="4">
-                        <template #label>
-                          <h4 class="text-black">
-                            Alamat Detail<span class="text-primary">*</span>
-                          </h4>
-                          <small>
-                            Alamat ini akan jadi petunjuk kurir saat mau jemput
-                            barang. Pastikan kamu isi dengan detail ya.
-                          </small>
-                        </template>
-                        <div
-                          v-if="
-                            editMode === true &&
-                              editIdAddress === data.address_id
-                          "
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="Alamat Detail"
-                            rules="required"
-                          >
-                            <b-form-textarea
-                              v-model="addressDetail"
-                              placeholder="Alamat Detail"
-                              rows="3"
-                              :state="errors.length > 0 ? false : null"
-                              :formatter="formatDetailAddress"
-                              @keypress="validateInputDetail"
-                            />
-                            <b-row class="justify-content-between">
-                              <small class="text-primary ml-1 mt-50">{{
-                                errors[0]
-                              }}</small>
-                              <small class="mr-1 mt-50">
-                                <small
-                                  v-if="messageErrorLengthAddress"
-                                  class="text-primary"
-                                >
-                                  *hindari menggunakan simbol (/) (=) (:) (;)
-                                </small>
-                                {{ addressDetail.length }}/85
-                              </small>
-                            </b-row>
-                          </validation-provider>
-                        </div>
-                        <div v-else>
-                          <b-form-textarea
-                            v-model="data.address_detail"
-                            placeholder="Alamat Detail"
-                            disabled
-                            rows="3"
-                          />
-                        </div>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-col>
-                <b-col
-                  cols="12"
-                  class="mb-2"
-                >
-                  <h4 class="text-black">
-                    <strong>
-                      Penanggung Jawab
-                    </strong>
-                  </h4>
-                </b-col>
-                <b-col
-                  cols="12"
-                  class="mb-1 ml-16 pl-50"
-                >
-                  <b-row>
-                    <b-col cols="9">
-                      <b-form-group label-cols-md="4">
-                        <template #label>
-                          <h4 class="text-black">
-                            Nama
-                          </h4>
-                        </template>
-                        <div v-if="editMode === true && editIdAddress === data.address_id">
-                          <b-form-input
-                            v-model="picName"
-                            :formatter="formatName"
-                            @keypress="validateInputName"
-                          />
-                          <b-row class="justify-content-end">
-                            <small class="mr-1 mt-50">
-                              <small
-                                v-if="messageErrorLengthName"
-                                class="text-primary"
-                              >
-                                *hindari menggunakan simbol (/) (=) (:) (;)
-                              </small>
-                              {{ picName.length }}/30
-                            </small>
-                          </b-row>
-                        </div>
-                        <div v-else>
-                          <b-form-input
-                            v-model="data.pic"
-                            disabled
-                          />
-                        </div>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-col>
-                <b-col
-                  cols="12"
-                  class="mb-1 ml-16 pl-50"
-                >
-                  <b-row>
-                    <b-col cols="9">
-                      <b-form-group label-cols-md="4">
-                        <template #label>
-                          <h4 class="text-black">
-                            No. HP<span class="text-primary">*</span>
-                          </h4>
-                          <small>
-                            Kurir yang jemput akan menghubungi nomor ini
-                          </small>
-                        </template>
-                        <div
-                          v-if="
-                            editMode === true &&
-                              editIdAddress === data.address_id
-                          "
-                        >
-                          <validation-provider
-                            #default="{errors}"
-                            name="No. HP"
-                            rules="required"
-                          >
-                            <b-form-input
-                              v-model="phoneUser"
-                              :state="errors.length > 0 ? false : null"
-                              type="number"
-                              @input="formatEditPhoneUser"
-                              @keypress="validateEditInputPhone"
-                            />
-                            <b-row class="justify-content-between">
-                              <small class="text-primary ml-1 mt-50">{{
-                                errors[0]
-                              }}</small>
-                              <small class="mr-1 mt-50">
-                                <small
-                                  v-if="messageErrorPhone"
-                                  class="text-primary"
-                                >
-                                  *minimal 9 digit dan hanya berupa angka.
-                                </small>
-                              </small>
-                            </b-row>
-                          </validation-provider>
-                        </div>
-                        <div v-else>
-                          <b-form-input
-                            v-model="data.phone"
-                            disabled
-                          />
-                        </div>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
-                </b-col>
-                <b-col
-                  v-if="editMode === true && editIdAddress === data.address_id"
-                  md="12"
-                  class="ml-16 pl-50"
-                >
-                  <b-form-group label-cols-md="4">
-                    <b-form-checkbox
-                      v-model="isDefault"
-                      @change="changeDefaultAddress"
-                    >
-                      <span class="text-black">Jadikan sebagai alamat utama</span>
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <transition name="fade">
-                  <b-col
-                    v-if="
-                      editMode === true && editIdAddress === data.address_id
-                    "
-                    md="12"
-                    class="d-flex justify-content-end mt-1 pb-1"
-                  >
-                    <b-button
-                      v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                      type="submit"
-                      variant="outline-primary"
-                      class="mr-1"
-                      @click.prevent="confirmDelete(data)"
-                    >
-                      Hapus
-                    </b-button>
-                    <b-button
-                      v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                      type="reset"
-                      variant="primary"
-                      class="mr-1"
-                      :disabled="invalid || messageErrorPhone === true"
-                      @click.prevent="submitUpdateAddress"
-                    >
-                      <b-spinner
-                        v-if="loadingSubmit"
-                        variant="light"
-                        small
-                      />
-                      Simpan
-                    </b-button>
-                  </b-col>
-                </transition>
-              </b-row>
-            </b-form>
-          </validation-observer>
-        </b-col>
+        </div>
       </b-row>
+
       <transition name="fade">
         <b-row
           v-if="formAddAddress === true"
@@ -658,24 +384,293 @@
         </b-row>
       </transition>
 
-      <b-row class="mt-1">
-        <b-col md="10">
-          <div class="demo-inline-spacing">
-            <b-button
-              v-b-modal="'warehouse-options'"
-              block
-              variant="outline-primary"
+      <!-- Edit -->
+      <transition name="fade">
+        <b-row
+          v-if="editMode"
+          class="mt-3 ml-50"
+        >
+          <b-col
+            cols="11"
+            class="border"
+          >
+            <b-row class="d-flex mt-50 mb-1">
+              <b-col
+                cols="12"
+                class="mb-1"
+              >
+                <div
+                  class="cursor-pointer"
+                  @click="goBack"
+                >
+                  <feather-icon
+                    icon="ChevronLeftIcon"
+                    size="25"
+                    style="color: black;"
+                  />
+                </div>
+              </b-col>
+              <b-col md="6">
+                <h4 class="text-black">
+                  <strong>Edit Alamat</strong>
+                </h4>
+              </b-col>
+            </b-row>
+            <validation-observer
+              ref="formRulesEdit"
+              #default="{invalid}"
             >
-              <feather-icon
-                icon="PlusIcon"
-                class="mr-50"
-                style="display: inline-block"
-              />
-              <span class="align-middle">Tambahkan Gudang</span>
-            </b-button>
-          </div>
-        </b-col>
-      </b-row>
+              <b-form class="">
+                <b-row>
+                  <b-col
+                    cols="12"
+                    class="mb-1 ml-16 pl-50"
+                  >
+                    <b-row>
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
+                          <template #label>
+                            <h4 class="text-black">
+                              Nama Tempat<span class="text-primary">*</span>
+                            </h4>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="Nama Alamat"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="addressName"
+                              placeholder="Contoh: Gudang Jawa Barat"
+                              :state="errors.length > 0 ? false : null"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+
+                  <b-col
+                    cols="12"
+                    class="mb-1 ml-16 pl-50"
+                  >
+                    <b-row>
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
+                          <template #label>
+                            <h4 class="text-black">
+                              Kelurahan/Kecamatan<span class="text-primary">*</span>
+                            </h4>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="Kelurahan/Kecamatan"
+                            rules="required"
+                          >
+                            <v-select
+                              v-model="originValue"
+                              :options="itemsOriginEdit"
+                              label="label"
+                              :state="errors.length > 0 ? false : null"
+                              placeholder="Masukkan Kelurahan/Kecamatan"
+                              @search="onSearchOrigin"
+                            />
+                            <small class="text-danger">{{ errors[0] }}</small>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+                  <b-col
+                    cols="12"
+                    class="mb-3 ml-16 pl-50"
+                  >
+                    <b-row>
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
+                          <template #label>
+                            <h4 class="text-black">
+                              Alamat Detail<span class="text-primary">*</span>
+                            </h4>
+                            <small>
+                              Alamat ini akan jadi petunjuk kurir saat mau
+                              jemput barang. Pastikan kamu isi dengan detail ya.
+                            </small>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="Alamat Detail"
+                            rules="required"
+                          >
+                            <b-form-textarea
+                              v-model="addressDetail"
+                              placeholder="Contoh: Jl. Raya Tamansari, Kompleks Karangwuni, Desa, Dusun I, Tamansari, Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355"
+                              rows="3"
+                              :state="errors.length > 0 ? false : null"
+                              :formatter="formatDetailAddress"
+                              @keypress="validateInputDetail"
+                            />
+                            <b-row class="justify-content-between">
+                              <small class="text-primary ml-1 mt-50">{{
+                                errors[0]
+                              }}</small>
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorLengthAddress"
+                                  class="text-primary"
+                                >
+                                  *hindari menggunakan simbol (/) (=) (:) (;)
+                                </small>
+                                <!-- {{ addressDetail.length }}/85 -->
+                              </small>
+                            </b-row>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+                  <b-col
+                    cols="12"
+                    class="mb-2"
+                  >
+                    <h4 class="text-black">
+                      <strong>
+                        Penanggung Jawab
+                      </strong>
+                    </h4>
+                  </b-col>
+                  <b-col
+                    cols="12"
+                    class="mb-1 ml-16 pl-50"
+                  >
+                    <b-row>
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
+                          <template #label>
+                            <h4 class="text-black">
+                              Nama
+                            </h4>
+                          </template>
+                          <b-form-input
+                            v-model="picName"
+                            placeholder="Masukkan Nama Penanggung Jawab Gudang"
+                            :formatter="formatName"
+                            @keypress="validateInputName"
+                          />
+                          <b-row class="justify-content-end">
+                            <small class="mr-1 mt-50">
+                              <small
+                                v-if="messageErrorLengthName"
+                                class="text-primary"
+                              >
+                                *hindari menggunakan simbol (/) (=) (:) (;)
+                              </small>
+                              <!-- {{ picName.length }}/30 -->
+                            </small>
+                          </b-row>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+                  <b-col
+                    cols="12"
+                    class="ml-16 pl-50"
+                  >
+                    <b-row>
+                      <b-col cols="9">
+                        <b-form-group label-cols-md="4">
+                          <template #label>
+                            <h4 class="text-black">
+                              No. HP<span class="text-primary">*</span>
+                            </h4>
+                            <small>
+                              Kurir yang jemput akan menghubungi nomor ini
+                            </small>
+                          </template>
+                          <validation-provider
+                            #default="{errors}"
+                            name="No. HP"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="phoneUser"
+                              placeholder="Masukkan Nomor HP Penanggung Jawab Gudang"
+                              type="number"
+                              :state="errors.length > 0 ? false : null"
+                              @input="formatEditPhoneUser"
+                              @keypress="validateEditInputPhone"
+                            />
+                            <b-row class="justify-content-end">
+                              <small class="text-primary ml-1 mt-50">{{
+                                errors[0]
+                              }}</small>
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorPhone"
+                                  class="text-primary"
+                                >
+                                  *minimal 9 digit dan hanya berupa angka.
+                                </small>
+                              </small>
+                            </b-row>
+                          </validation-provider>
+                        </b-form-group>
+                      </b-col>
+                    </b-row>
+                  </b-col>
+
+                  <b-col
+                    md="12"
+                    class="ml-16 pl-50"
+                  >
+                    <b-form-group label-cols-md="4">
+                      <b-form-checkbox
+                        v-model="isDefault"
+                        @change="changeDefaultAddress"
+                      >
+                        <span class="text-black">Jadikan sebagai alamat utama</span>
+                      </b-form-checkbox>
+                    </b-form-group>
+                  </b-col>
+
+                  <transition name="fade">
+                    <b-col
+                      md="12"
+                      class="d-flex justify-content-end mt-1 pb-1"
+                    >
+                      <b-button
+                        v-ripple.400="'rgba(255, 255, 255, 0.15)'"
+                        type="submit"
+                        variant="outline-primary"
+                        class="mr-1"
+                        @click.prevent="confirmDelete(editIdAddress)"
+                      >
+                        Hapus
+                      </b-button>
+                      <b-button
+                        v-ripple.400="'rgba(186, 191, 199, 0.15)'"
+                        type="reset"
+                        variant="primary"
+                        class="mr-1"
+                        :disabled="invalid || messageErrorPhone === true"
+                        @click.prevent="submitUpdateAddress"
+                      >
+                        <b-spinner
+                          v-if="loadingSubmit"
+                          variant="light"
+                          small
+                        />
+                        Simpan
+                      </b-button>
+                    </b-col>
+                  </transition>
+                </b-row>
+              </b-form>
+            </validation-observer>
+          </b-col>
+        </b-row>
+      </transition>
     </b-card>
 
     <!-- confirm Delete Address -->
@@ -870,6 +865,7 @@
         </b-row>
       </div>
     </b-modal>
+
   </b-overlay>
 </template>
 
@@ -900,19 +896,13 @@ export default {
     BCard,
     BRow,
     BCol,
-    BForm,
-    BFormGroup,
-    BFormInput,
-    BFormTextarea,
-    vSelect,
     BButton,
     BOverlay,
-    BFormCheckbox,
-    ValidationProvider,
-    ValidationObserver,
-    BSpinner,
     BModal,
     BImg,
+    vSelect,
+    ValidationProvider,
+    ValidationObserver,
   },
   directives: {
     Ripple,
@@ -960,6 +950,81 @@ export default {
       messageErrorLengthAddress: false,
       messageErrorLengthName: false,
       messageErrorPhone: false,
+
+      warehouseItems: [],
+      warehouseFields: [
+        {
+          key: 'name',
+          label: 'Nama Gudang',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        },
+        {
+          key: 'city',
+          label: 'Kota/Kabupaten',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        },
+        {
+          key: 'pic_name',
+          label: 'Penanggung Jawab',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        },
+        {
+          key: 'product_total',
+          label: 'Produk',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        },
+        {
+          key: 'action',
+          label: 'Aksi',
+          tdClass: 'bg-white',
+          tdStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+            verticalAlign: 'text-top',
+          },
+          thStyle: {
+            backgroundColor: 'white',
+            borderBottom: '0px',
+          },
+        },
+      ],
+      items: [],
     }
   },
   mounted() {
@@ -969,13 +1034,13 @@ export default {
     getAddress() {
       this.loading = true
       this.$http_komship
-        .get('/v1/address')
+        .get('/v1/komship/warehouse')
         .then(async response => {
           const { data } = response.data
-          data.forEach(this.myLoop)
+          this.items = data
           this.dataAddress = data
           this.loading = false
-          return this.dataAddress
+          this.warehouseItems = data
         })
         .catch(() => {
           this.loading = false
@@ -986,36 +1051,6 @@ export default {
                 title: 'Gagal',
                 icon: 'AlertCircleIcon',
                 text: 'Gagal load data, silahkan coba lagi',
-                variant: 'danger',
-              },
-            },
-            2000,
-          )
-        })
-    },
-    myLoop(data) {
-      this.$http_komship
-        .get(`/v1/destination?destination_id=${data.destination_id}`)
-        .then(response => {
-          if (response.data.data !== null) {
-            this.tes.push(response.data.data)
-            const seen = new Set()
-
-            this.tes = this.tes.filter(el => {
-              const duplicate = seen.has(el.id)
-              seen.add(el.id)
-              return !duplicate
-            })
-          }
-        })
-        .catch(() => {
-          this.$toast(
-            {
-              component: ToastificationContent,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal load data, silahkan coba lagi!',
                 variant: 'danger',
               },
             },
@@ -1119,7 +1154,7 @@ export default {
     submitUpdateAddress() {
       this.loadingSubmit = true
       // eslint-disable-next-line dot-notation
-      this.$refs['formRulesEdit'][0].validate().then(success => {
+      this.$refs['formRulesEdit'].validate().then(success => {
         if (success) {
           const formData = new FormData()
           formData.append('_method', 'put')
@@ -1173,26 +1208,28 @@ export default {
     },
     editAddress(data) {
       this.editMode = true
-      this.editIdAddress = data.address_id
-      this.addressName = data.address_name
-      this.addressDetail = data.address_detail
-      // eslint-disable-next-line array-callback-return
-      this.tes.map(items => {
-        if (items.id === data.destination_id) {
-          this.originValue = items
-        }
-      })
-      if (data.destination_id === 0) {
-        this.handleOldOrigin = true
-        this.originValue = null
+      if (this.warehouseItems[data.index].warehouse_type === 'Mitra Kompack') {
+        this.editIdAddress = this.warehouseItems[data.index].mitra_id
+      } else {
+        this.editIdAddress = this.warehouseItems[data.index].id
       }
-      this.picName = data.pic
-      this.phoneUser = data.phone
-      if (data.is_default === 0) {
+      this.addressName = this.warehouseItems[data.index].name
+      this.addressDetail = this.warehouseItems[data.index].detail_address
+      this.picName = this.warehouseItems[data.index].pic_name
+      this.phoneUser = this.warehouseItems[data.index].pic_phone
+      if (this.warehouseItems[data.index].is_default === 0) {
         this.isDefault = false
       } else {
         this.isDefault = true
       }
+      this.$http_komship
+        .get(`/v1/destination?destination_id=${this.warehouseItems[data.index].destination_id}`)
+        .then(response => {
+          if (response.data.data !== null) {
+            console.log(response.data.data)
+            this.originValue = response.data.data
+          }
+        })
     },
     confirmDelete(data) {
       this.dataDelete = data
@@ -1201,13 +1238,14 @@ export default {
     deleteAddress() {
       if (this.dataDelete.is_default !== 1) {
         this.$http_komship
-          .delete(`/v1/address/delete/${this.dataDelete.address_id}`)
+          .delete(`/v1/address/delete/${this.dataDelete}`)
           .then(response => {
             this.$refs['modal-confirm-delete-address'].hide()
             this.getAddress()
             if (response.data.code === 400) {
               this.$refs['modal-validate-address-stilluse'].show()
             }
+            this.editMode = false
           })
           .catch(() => {
             this.$toast({
@@ -1338,6 +1376,9 @@ export default {
         window.open('https://kompack.id/', '_blank')
       }
     },
+    goBack() {
+      this.editMode = false
+    },
   },
 }
 </script>
@@ -1349,5 +1390,16 @@ export default {
 }
 #partnerWarehouse:hover .kompack-logo {
   filter: grayscale(0);
+}
+
+.button__add__warehouse {
+  position: fixed;
+  right: 85px;
+  bottom: 60px;
+  z-index: 99;
+}
+
+.my-popover-class .arrow:after {
+  border-top-color: red !important;
 }
 </style>
