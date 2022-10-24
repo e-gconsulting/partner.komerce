@@ -989,6 +989,7 @@ export default {
               this.fieldAddAccountNo = ''
               this.fieldAddAccountName = ''
               this.otpConfirmation = ''
+              this.countOtp = 0
             }
           }).catch(() => {
             this.$toast({
@@ -1439,6 +1440,7 @@ export default {
                 this.fieldAddAccountNo = ''
                 this.fieldAddAccountName = ''
                 this.otpConfirmation = ''
+                this.countOtp = 0
               }
             }).catch(err => {
               this.$toast({
