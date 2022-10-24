@@ -199,7 +199,7 @@
               >
                 <img
                   :src="orderData.shipment_image_path"
-                  style="width: 45px"
+                  style="width:20%; height: 100%;"
                 ><span
                   class="my-auto"
                   style="margin-left:5px"

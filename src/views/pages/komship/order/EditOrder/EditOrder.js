@@ -256,7 +256,7 @@ export default {
       }
     },
     searchDestination: _.debounce((loading, search, that) => {
-      that.getDestination(search).finally(() => {})
+      that.getDestination(search)
     }, 500),
     async getDestination(search) {
       await this.$http_komship.get('v1/destination', {

@@ -96,16 +96,19 @@
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
-            <div class="d-flex">
+            <div
+              class="d-flex"
+              style="min-width:160px!important"
+            >
               <div v-if="data.item.product[0].product_image === null">
                 <img
-                  class="w-[50px] h-[50px]"
+                  class="image-product"
                   :src="imageNull"
                 >
               </div>
               <div v-else>
                 <img
-                  class="w-[50px] h-[50px]"
+                  class="image-product"
                   :src="data.item.product[0].product_image"
                   @error="setImageDefault"
                 >
@@ -125,22 +128,26 @@
                 x{{ data.item.product[0].qty }}
               </div>
             </div>
-            <div v-if="data.item.product.length > 1">
+            <div
+              v-if="data.item.product.length > 1"
+              style="min-width:160px!important"
+            >
               <b-collapse :id="'collapse-'+data.item.order_id">
                 <div
                   v-for="item in data.item.product.slice(1)"
                   :key="item.order_id"
                   class="d-flex mt-1"
+                  style="min-width:160px!important"
                 >
                   <div v-if="item.product_image === null">
                     <img
-                      class="w-[50px] h-[50px]"
+                      class="image-product"
                       :src="imageNull"
                     >
                   </div>
                   <div v-else>
                     <img
-                      class="w-[50px] h-[50px]"
+                      class="image-product"
                       :src="item.product_image"
                       @error="setImageDefault"
                     >
@@ -639,5 +646,11 @@ export default {
   margin-top: 2%;
   margin-left: 2%;
   border-radius: 6px;
+}
+.image-product {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
 </style>

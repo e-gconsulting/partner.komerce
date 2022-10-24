@@ -307,7 +307,7 @@ export default {
     },
     searchProvince: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadProvince(search).finally(() => loading(false))
+      that.loadProvince(search).then(() => loading(false))
     }, 500),
     loadProvince(search) {
       return this.$http.get(`/v1/partner/province-city?search=${search}`)
@@ -405,15 +405,15 @@ export default {
         this.labelSubmit = await 'Simpan'
         this.nameValidator = 'username'
       } else if (data === 'noHP') {
-        this.modalTitle = await 'Password Komship'
-        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalTitle = await 'Password Akun Komerce'
+        this.modalSubtitle = await 'Masukkan Password Akun Komerce-mu untuk mengganti nomor HP'
         this.modalFormLabel = await 'Masukkan Pasword'
         this.modalEditFormInputType = await 'password'
         this.labelSubmit = 'Konfirmasi'
         this.nameValidator = 'password'
       } else if (data === 'email') {
-        this.modalTitle = await 'Password Komship'
-        this.modalSubtitle = await 'Masukkan Password Komshipmu untuk mengganti nomor HP'
+        this.modalTitle = await 'Password Akun Komerce'
+        this.modalSubtitle = await 'Masukkan Password Akun Komerce-mu untuk mengganti email'
         this.modalFormLabel = await 'Masukkan Pasword'
         this.modalEditFormInputType = await 'password'
         this.labelSubmit = await 'Konfirmasi'

@@ -535,10 +535,8 @@ export default {
                   variant: 'danger',
                 },
               })
+              this.loading = false
             })
-        })
-        .finally(() => {
-          this.loading = false
         })
     },
     resendEmailVerification() {
@@ -573,9 +571,9 @@ export default {
     getPartnerProfile(userId) {
       return this.$http
         .get(`/user/partner/get-profile/${userId}`)
-        .then(response => response.data.data[0])
-        .finally(() => {
+        .then(response => {
           this.loading = false
+          return response.data.data[0]
         })
     },
     getAccessKomship(id) {
@@ -594,8 +592,6 @@ export default {
           // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
           secureLocalStorage.clearItem(useJwt.jwtConfig.storageTokenKeyName)
           localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
-        })
-        .finally(() => {
           this.loading = false
         })
     },
