@@ -336,6 +336,7 @@
                       :filterable="true"
                       :state="errors.length > 0 ? false : null"
                       placeholder="Ketik untuk mencari..."
+                      @input="checkBank"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
                   </validation-provider>
@@ -355,8 +356,10 @@
                     <b-form-input
                       v-model="fieldAddAccountNo"
                       :state="errors.length > 0 ? false:null"
+                      @input="checkBank"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
+                    <small v-if="messageSameNoBank !== ''" class="text-danger">{{ messageSameNoBank }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -374,8 +377,10 @@
                     <b-form-input
                       v-model="fieldAddAccountName"
                       :state="errors.length > 0 ? false:null"
+                      @input="checkBank"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
+                    <small v-if="messageSameNameBank !== ''" class="text-danger">{{ messageSameNameBank }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -398,6 +403,7 @@
                   type="reset"
                   variant="primary"
                   class="mr-1"
+                  :disabled="checkValidBank"
                   @click.prevent="submitVerification"
                 >
                   <b-spinner
@@ -860,6 +866,12 @@ export default {
       buttonWAOtpIsClick: false,
       buttonSMSOtpIsClick: false,
       otpSubmit: 0,
+
+      partnerId: null,
+
+      checkValidBank: false,
+      messageSameNameBank: '',
+      messageSameNoBank: '',
     }
   },
   mounted() {
@@ -931,7 +943,7 @@ export default {
         this.errorConfirmOtp = false
       }
       const formData = new FormData()
-      formData.append('otp', this.dataPin)
+      formData.append('otp', this.otpConfirmation)
       this.$http_komship.post('/v1/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
           this.errorCheckOtp = false
@@ -973,9 +985,10 @@ export default {
               this.$refs['modal-verification-OTP'].hide()
               this.$refs['success-add-rekening'].show()
               this.visibilityPin = 'password'
-              this.bankName = ''
-              this.accountNo = ''
-              this.accountName = ''
+              this.fieldAddBankName = ''
+              this.fieldAddAccountNo = ''
+              this.fieldAddAccountName = ''
+              this.otpConfirmation = ''
             }
           }).catch(() => {
             this.$toast({
@@ -1199,6 +1212,7 @@ export default {
           this.countDownTimerOtp()
         }, 1000)
       }
+      if (this.countOtp === 0) this.otpSubmit += 1
     },
     // Handle OTP
     handleOnComplete(value) {
@@ -1295,7 +1309,7 @@ export default {
           this.loadingOtpSms = false
           this.loadingResendOtp = false
           this.countOtp = response.data.data.expired_at
-          if (this.countOtp === 1) this.countOtp = 0
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
           this.otpSubmit = response.data.data.check_request_otp
           if (this.countOtp > 0) this.countDownTimerOtp()
           this.$refs['modal-verification-submit'].hide()
@@ -1327,7 +1341,7 @@ export default {
         this.$http_komship.post('/v1/user/send/otp/wa', formData).then(response => {
           this.countOtp = response.data.data.expired_at
           this.otpSubmit = response.data.data.check_request_otp
-          if (this.countOtp === 1) this.countOtp = 0
+          if (this.countOtp === 1 || this.countOtp === -1) this.countOtp = 0
           if (this.countOtp > 0) this.countDownTimerOtp()
           this.loadingOtpWa = false
           this.loadingResendOtp = false
@@ -1422,9 +1436,10 @@ export default {
                 this.$refs['modal-verification-OTP'].hide()
                 this.$refs['success-add-rekening'].show()
                 this.visibilityPin = 'password'
-                this.bankName = ''
-                this.accountNo = ''
-                this.accountName = ''
+                this.fieldAddBankName = ''
+                this.fieldAddAccountNo = ''
+                this.fieldAddAccountName = ''
+                this.otpConfirmation = ''
               }
             }).catch(err => {
               this.$toast({
@@ -1458,9 +1473,10 @@ export default {
     closePopupSuccess() {
       this.$refs['success-add-rekening'].hide()
       this.fieldActionAddRekening = false
-      this.bankName = ''
-      this.accountNo = ''
-      this.accountName = ''
+      this.fieldAddBankName = ''
+      this.fieldAddAccountNo = ''
+      this.fieldAddAccountName = ''
+      this.otpConfirmation = ''
       this.getBank()
     },
     closeVerification() {
@@ -1474,6 +1490,36 @@ export default {
       this.loadingOtpSms = false
       this.$refs['modal-verification-OTP'].hide()
     },
+    checkBank: _.debounce(function () {
+      if (this.fieldAddBankName !== '' && this.fieldAddAccountNo !== '' && this.fieldAddAccountName !== '') {
+        this.checkValidBank = true
+        this.loadingSubmit = true
+        const formData = new FormData()
+        formData.append('bank_name', this.fieldAddBankName)
+        formData.append('account_name', this.fieldAddAccountName)
+        formData.append('account_no', this.fieldAddAccountNo)
+        formData.append('user_id', this.$store.state?.auth?.userData.id)
+        this.$http.post('/v1/bank/check', formData)
+          .then(response => {
+            this.loadingSubmit = false
+            this.checkValidBank = false
+            this.messageSameNoBank = ''
+            this.messageSameNameBank = ''
+          }).catch(err => {
+            if (err.response.data.message === 'Nomor Rekening Sudah digunakan') {
+              this.messageSameNoBank = err.response.data.message
+              this.messageSameNameBank = ''
+              this.checkValidBank = true
+            }
+            if (err.response.data.message === 'Nama telah digunakan sebelumnya') {
+              this.messageSameNameBank = err.response.data.message
+              this.messageSameNoBank = ''
+              this.checkValidBank = true
+            }
+            this.loadingSubmit = false
+          })
+      }
+    }, 1000),
   },
 }
 </script>
