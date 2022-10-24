@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <b-card class="text-[#222222]">
     <header class="d-flex mb-2">
