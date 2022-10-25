@@ -13,7 +13,7 @@
       </h3>
 
       <b-img
-        v-if="!formAddAddress && warehouseItems.length > 0"
+        v-if="!formAddAddress && warehouseItems.length > 0 && editMode === false"
         v-b-modal="'warehouse-options'"
         src="@/assets/images/icons/add-circle.svg"
         class="cursor-pointer button__add__warehouse"
