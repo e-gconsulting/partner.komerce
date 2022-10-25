@@ -28,79 +28,85 @@
           </div>
         </div>
         <template>
-          <b-card
-            img-src="/assets/images/logo/komship-bw.png"
-            img-alt=""
-            img-left
-            border-variant="light"
-          >
-            <b-card-text>
-              <h3>Gudang Jaya</h3>
-            </b-card-text>
-            <b-card-text>
-              12/3/2022
-            </b-card-text>
-          </b-card>
+          <div>
+            <b-card
+              no-body
+              class="overflow-hidden"
+              style="max-width: 350px;"
+            >
+              <b-row no-gutters>
+                <b-col md="6">
+                  <b-card-img
+                    src="https://picsum.photos/400/400/?image=20"
+                    alt="Image"
+                    class="rounded-0"
+                  />
+                </b-col>
+                <b-col md="6">
+                  <b-card-body title="Horizontal Card">
+                    <b-card-text>
+                      This is a wider card with supporting text as a natural lead-in to additional content.
+                      This content is a little bit longer.
+                    </b-card-text>
+                  </b-card-body>
+                </b-col>
+              </b-row>
+            </b-card>
+          </div>
         </template>
         <template>
-          <b-card
-            img-src="/assets/images/logo/komship-bw.png"
-            img-alt=""
-            img-left
-            border-variant="light"
-          >
-            <b-card-text>
-              <h3>Gudang Jaya</h3>
-            </b-card-text>
-            <b-card-text>
-              12/3/2022
-            </b-card-text>
-          </b-card>
+          <div>
+            <b-card
+              no-body
+              class="overflow-hidden"
+              style="max-width: 350px;"
+            >
+              <b-row no-gutters>
+                <b-col md="6">
+                  <b-card-img
+                    src="https://picsum.photos/400/400/?image=20"
+                    alt="Image"
+                    class="rounded-0"
+                  />
+                </b-col>
+                <b-col md="6">
+                  <b-card-body title="Horizontal Card">
+                    <b-card-text>
+                      This is a wider card with supporting text as a natural lead-in to additional content.
+                      This content is a little bit longer.
+                    </b-card-text>
+                  </b-card-body>
+                </b-col>
+              </b-row>
+            </b-card>
+          </div>
         </template>
         <template>
-          <b-card
-            img-src="/assets/images/logo/komship-bw.png"
-            img-alt=""
-            img-left
-            border-variant="light"
-          >
-            <b-card-text>
-              <h3>Gudang Jaya</h3>
-            </b-card-text>
-            <b-card-text>
-              12/3/2022
-            </b-card-text>
-          </b-card>
-        </template>
-        <template>
-          <b-card
-            img-src="/assets/images/logo/komship-bw.png"
-            img-alt=""
-            img-left
-            border-variant="light"
-          >
-            <b-card-text>
-              <h3>Gudang Jaya</h3>
-            </b-card-text>
-            <b-card-text>
-              12/3/2022
-            </b-card-text>
-          </b-card>
-        </template>
-        <template>
-          <b-card
-            img-src="/assets/images/logo/komship-bw.png"
-            img-alt=""
-            img-left
-            border-variant="light"
-          >
-            <b-card-text>
-              <h3>Gudang Jaya</h3>
-            </b-card-text>
-            <b-card-text>
-              12/3/2022
-            </b-card-text>
-          </b-card>
+          <div>
+            <b-card
+              no-body
+              class="overflow-hidden"
+              style="max-width: 350px;"
+            >
+              <b-row no-gutters>
+                <b-col md="6">
+                  <b-card-img
+                    src="https://picsum.photos/400/400/?image=20"
+                    alt="Image"
+                    class="rounded-0"
+                  />
+                </b-col>
+                <b-col md="6">
+                  <b-card-body title="Horizontal Card">
+                    <b-card-text>
+                      This is a wider card with supporting text as a natural lead-in to additional content.
+                      This content is a little bit longer.
+                    </b-card-text>
+                  </b-card-body>
+                </b-col>
+              </b-row>
+            </b-card>
+          </div>
         </template>
       </b-card>
     </b-overlay>
