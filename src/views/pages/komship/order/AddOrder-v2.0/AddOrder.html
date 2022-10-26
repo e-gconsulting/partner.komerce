@@ -273,34 +273,28 @@
         <div class="d-flex md:-mt-4">
           <div v-if="returnInsight.percenatge_return_jne" class="d-flex py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
             <img src="@/assets/images/logo/jne.svg" class="my-auto" style="height: 90%;">
-            <b-badge class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_jne.percentage)">
+            <b-badge v-if="returnInsight.percenatge_return_jne.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_jne.percentage)">
               {{ `${returnInsight.percenatge_return_jne.percentage}% | ${returnInsight.percenatge_return_jne.retur}/${returnInsight.percenatge_return_jne.total}`}}
             </b-badge>
-          </div>
-          <div v-if="returnInsight.percenatge_return_sicepat.is_cod === 0" class="d-flex align-items-center mr-1">
-            <b-badge class="px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <b-badge v-if="returnInsight.percenatge_return_jne.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
               <span>Tidak tercover COD</span>
             </b-badge>
           </div>
           <div v-if="returnInsight.percenatge_return_sicepat" class="d-flex ml-1 py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
             <img src="@/assets/images/logo/sicepat.svg" class="my-auto" style="height: 90%;">
-            <b-badge class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sicepat.percentage)">
+            <b-badge v-if="returnInsight.percenatge_return_sicepat.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_sicepat.percentage)">
               {{ `${returnInsight.percenatge_return_sicepat.percentage}% | ${returnInsight.percenatge_return_sicepat.retur}/${returnInsight.percenatge_return_sicepat.total}`}}
             </b-badge>
-          </div>
-          <div v-if="returnInsight.percenatge_return_sicepat.is_cod === 0" class="d-flex align-items-center mr-1">
-            <b-badge class="px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <b-badge v-if="returnInsight.percenatge_return_sicepat.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
               <span>Tidak tercover COD</span>
             </b-badge>
           </div>
           <div v-if="returnInsight.percenatge_return_idexpress" class="d-flex ml-1 py-[5px] px-1" style="background-color:#F8F8F8;border-radius:10px;height: 30px;">
             <img src="@/assets/images/logo/idexpress.svg" class="my-auto" style="height: 90%;">
-            <b-badge class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_idexpress.percentage)">
+            <b-badge v-if="returnInsight.percenatge_return_idexpress.is_cod === 1" class="ml-1 px-1" :class="getColorReturnInsight(returnInsight.percenatge_return_idexpress.percentage)">
               {{ `${returnInsight.percenatge_return_idexpress.percentage}% | ${returnInsight.percenatge_return_idexpress.retur}/${returnInsight.percenatge_return_idexpress.total}`}}
             </b-badge>
-          </div>
-          <div v-if="returnInsight.percenatge_return_idexpress.is_cod === 0" class="d-flex align-items-center">
-            <b-badge class="px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
+            <b-badge v-if="returnInsight.percenatge_return_idexpress.is_cod === 0" class="ml-1 px-1 text-dark" style="background: #C2C2C2!important; border-radius: 10px;">
               <span>Tidak tercover COD</span>
             </b-badge>
           </div>
