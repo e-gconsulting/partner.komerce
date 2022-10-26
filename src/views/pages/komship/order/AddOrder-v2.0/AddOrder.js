@@ -325,11 +325,12 @@ export default {
     },
     async getReturnInsight() {
       if (this.profile.partner_is_return_insight && this.destination !== null) {
-        await this.$http_komship.get('/v1/feature/returnInsight', {
-          params: { city_name: this.destination.city_name },
+        await this.$http_komship.get('/v2/feature/returnInsight', {
+          params: { destination_id: this.destination.id },
         })
           .then(result => {
             const { data } = result.data
+            console.log(data)
             this.returnInsight = data
             this.showReturnInsight = true
           }).catch(err => {
@@ -404,7 +405,7 @@ export default {
     async getDestination() {
       this.destinationList = []
       await this.$http_komship
-        .get('v1/destination', {
+        .get('/v1/destination', {
           params: { search: this.destinationLabel },
         })
         .then(res => {
