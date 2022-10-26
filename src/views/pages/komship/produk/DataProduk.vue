@@ -1,10 +1,8 @@
 <template>
   <div class="pb-1">
-    <b-card-actions
+    <b-card
       ref="formCard"
       :title="$route.meta.name.singular"
-      no-actions
-      no-body
     >
       <b-tabs
         v-model="tabIndex"
@@ -23,25 +21,24 @@
           <draft-produk />
         </b-tab>
       </b-tabs>
-    </b-card-actions>
+    </b-card>
   </div>
 </template>
 
 <script>
 import {
-  BTabs, BTab,
+  BTabs, BTab, BCard,
 } from 'bootstrap-vue'
-import BCardActions from '@core/components/b-card-actions/BCardActions.vue'
 import AllProduk from './AllProduk.vue'
 import DraftProduk from './DraftProduk.vue'
 
 export default {
   components: {
-    BCardActions,
     BTabs,
     BTab,
     AllProduk,
     DraftProduk,
+    BCard,
   },
   data() {
     const tabs = ['semua', 'draft']

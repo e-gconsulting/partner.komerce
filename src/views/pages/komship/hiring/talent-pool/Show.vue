@@ -615,8 +615,6 @@ export default {
           }
 
           if (data.photo_profile_url) this.imageInitialFile = data.photo_profile_url
-        })
-        .finally(() => {
           this.$refs.formCard.showLoading = false
         })
     },
@@ -645,9 +643,9 @@ export default {
         .then(async response => {
           const { data } = response.data.data
           this.experienceItems = data
+          this.loadingExperience = false
         })
-        .catch(() => {})
-        .finally(() => {
+        .catch(() => {
           this.loadingExperience = false
         })
     },
@@ -665,9 +663,9 @@ export default {
         .then(async response => {
           const { data } = response.data.data
           this.trainingProgramItems = data
+          this.loadingTrainingProgram = false
         })
-        .catch(() => {})
-        .finally(() => {
+        .catch(() => {
           this.loadingTrainingProgram = false
         })
     },
@@ -704,7 +702,7 @@ export default {
     },
     searchPosition: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadPositions(search).finally(() => loading(false))
+      that.loadPositions(search).then(() => loading(false))
     }, 500),
     loadPositions(search) {
       return this.$http.post('/position/pagination', {}, {
@@ -729,7 +727,7 @@ export default {
     },
     searchWorkingSpace: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadWorkingSpaces(search).finally(() => loading(false))
+      that.loadWorkingSpaces(search).then(() => loading(false))
     }, 500),
     loadWorkingSpaces(search) {
       return this.$http.post('/office/pagination', {}, {
@@ -754,7 +752,7 @@ export default {
     },
     searchPartner: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadPartners(search).finally(() => loading(false))
+      that.loadPartners(search).then(() => loading(false))
     }, 500),
     loadPartners(search) {
       return this.$http.get('/user/partner/pagination', {
@@ -782,7 +780,7 @@ export default {
     },
     searchStaff: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadStaffs(search).finally(() => loading(false))
+      that.loadStaffs(search).then(() => loading(false))
     }, 500),
     loadStaffs(search) {
       return this.$http.get('/staff', {
@@ -918,6 +916,7 @@ export default {
         const { data } = response.data.data
         this.total = response.data.data.total
         this.wishlistItems = data
+        this.loadingWishlist = false
       }).catch(() => {
         this.$toast({
           component: ToastificationContent,
@@ -928,7 +927,6 @@ export default {
             variant: 'danger',
           },
         })
-      }).finally(() => {
         this.loadingWishlist = false
       })
     },
