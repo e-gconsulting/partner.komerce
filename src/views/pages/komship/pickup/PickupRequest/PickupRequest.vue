@@ -168,13 +168,13 @@
           <div class="d-flex">
             <div v-if="data.item.product_image === null">
               <img
-                class="w-[50px] h-[50px]"
+                style="width: 30%;"
                 :src="imageNull"
               >
             </div>
             <div v-else>
               <img
-                class="w-[50px] h-[50px]"
+                style="width: 30%;"
                 :src="data.item.product_image"
                 @error="setImageDefault"
               >
@@ -332,7 +332,7 @@
           >
             <img
               :src="data.item.shipment_image_path"
-              class="w-[45px]"
+              style="width:20%; height: 20%;"
             ><span class="my-auto">{{ getShippingLabel(data.item.shipping_type) }}</span>
           </div>
         </template>
@@ -347,7 +347,7 @@
               </div>
               <div v-else>
                 <img
-                  class="w-[50px] h-[50px]"
+                  style="width:50%;"
                   :src="data.item.product[0].product_image"
                   @error="setImageDefault"
                 >
@@ -568,10 +568,13 @@
           block
           @click="submitPickup"
         >
-          <img
-            src="@/assets/images/icons/refresh-2.svg"
-            class="m-auto"
-          >
+          <div class="d-flex justify-center my-auto">
+            <img
+              src="@/assets/images/icons/refresh-2.svg"
+              class="my-auto"
+            >
+            <span class="ml-[6px] text-[16px] my-auto">Submit Ulang</span>
+          </div>
         </b-button>
       </div>
     </b-modal>
@@ -581,6 +584,7 @@
       hide-footer
       centered
       size="xl"
+      @hide="itemOrderError = []"
     >
       <img
         src="@/assets/images/icons/warning.svg"
@@ -614,7 +618,7 @@
           >
             <img
               :src="data.item.shipment_image_path"
-              class="w-[45px]"
+              style="width: 30%;height: 30%;"
             ><span class="my-auto">{{ getShippingLabel(data.item.shipping_type) }}</span>
           </div>
         </template>
@@ -623,13 +627,13 @@
             <div class="d-flex">
               <div v-if="data.item.product[0].product_image === null">
                 <img
-                  class="w-[50px] h-[50px]"
+                  style="width: 30%;"
                   :src="imageNull"
                 >
               </div>
               <div v-else>
                 <img
-                  class="w-[50px] h-[50px]"
+                  style="width: 30%;"
                   :src="data.item.product[0].product_image"
                   @error="setImageDefault"
                 >

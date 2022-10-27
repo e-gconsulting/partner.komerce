@@ -125,7 +125,7 @@
           >
             <img
               :src="data.item.shipment_image_path"
-              style="width:45px"
+              style="width:20%; height: 20%;"
             ><span class="my-auto">{{ shippingTypeLabel(data.item.shipping_type) }}</span>
           </div>
           <span

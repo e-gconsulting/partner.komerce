@@ -302,22 +302,22 @@
                 </b-row>
               </b-col>
               <b-col id="filter__month__chart" cols="6">
-                <div class="d-flex justify-content-end">
-                  <div class="mr-1">
+                <b-row class="justify-content-end">
+                  <b-col cols="6">
                     <b-form-select
                       v-model="paymentMethodsChart"
                       :options="filterChartOptions"
                       @change="fetchDataChart"
                     />
-                  </div>
-                  <div>
+                  </b-col>
+                  <b-col cols="6" class="p-0">
                     <flat-pickr
                       v-model="chartDateItem"
                       :config="configDateChart"
                       @input="chartDateFilter"
                     />
-                  </div>
-                </div>
+                  </b-col>
+                </b-row>
               </b-col>
               <b-col id="filter__month__chart__download" cols="6">
                 <div class="d-flex justify-content-end">

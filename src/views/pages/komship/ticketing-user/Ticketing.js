@@ -502,7 +502,7 @@ export default
     },
     searchResi: _.debounce((loading, search, that) => {
       loading(true)
-      that.loadResi(search).finally(() => loading(false))
+      that.loadResi(search).then(() => loading(false))
     }, 500),
     loadResi(search) {
       return this.$http_komship.get(`/v1/ticket-partner/check-resi/${search}`)
