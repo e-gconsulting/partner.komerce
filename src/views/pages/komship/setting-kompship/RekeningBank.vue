@@ -989,6 +989,7 @@ export default {
               this.fieldAddAccountNo = ''
               this.fieldAddAccountName = ''
               this.otpConfirmation = ''
+              this.countOtp = 0
             }
           }).catch(() => {
             this.$toast({
@@ -1165,6 +1166,7 @@ export default {
         .get('xendit/disbursementbankAvailable')
         .then(({ data }) => {
           this.banks = data.data
+          this.loading = false
         })
         .catch(() => {
           this.$toast(
@@ -1179,8 +1181,6 @@ export default {
             },
             { timeout: 2500 },
           )
-        })
-        .finally(() => {
           this.loading = false
         })
     },
@@ -1440,6 +1440,7 @@ export default {
                 this.fieldAddAccountNo = ''
                 this.fieldAddAccountName = ''
                 this.otpConfirmation = ''
+                this.countOtp = 0
               }
             }).catch(err => {
               this.$toast({

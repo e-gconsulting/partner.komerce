@@ -531,8 +531,6 @@ export default {
           }
 
           this.deletedIds.push(this.getId(data.item))
-        })
-        .finally(() => {
           this.loading = false
         })
     },
