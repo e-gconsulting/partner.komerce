@@ -27,64 +27,111 @@
             </button>
           </div>
         </div>
-        <template>
-          <div>
+        <div class="card">
+          <div class="card-body">
             <b-card
-              no-body
-              class="overflow-hidden"
-              style="max-width: 350px;"
+              img-src="@/assets/images/Gudang.png"
+              img-alt="Card image"
+              img-left
+              class="mb-3"
             >
-              <b-row no-gutters>
-                <b-col md="6">
-                  <b-card-img
-                    src="https://picsum.photos/400/400/?image=20"
-                    alt="Image"
-                    class="rounded-1"
+              <b-card
+                img-src="@/assets/images/avatars/Avatar.png"
+                img-alt="Card image"
+                img-left
+                rounded
+                class="mb-2"
+              >
+                <b-card-text>
+                  <b-icon-image-profile />
+                  <b-card-text
+                    title="Gudang"
+                    :poppins-hidden="show ? 'true' : null"
+                    text-color:bold
                   />
-                </b-col>
-              </b-row>
-            </b-card>
-
-          </div>
-        </template>
-        <template>
-          <div>
-            <b-card
-              no-body
-              class="overflow-hidden"
-              style="max-width: 350px;"
-            >
-              <b-row no-gutters>
-                <b-col md="6">
-                  <b-card-img
-                    src="https://picsum.photos/400/400/?image=20"
-                    alt="Image"
-                    class="rounded-1"
-                  />
-                </b-col>
-              </b-row>
+                </b-card-text>{{ gudang }}</b-card>
+              <b-card-text>
+                <v-bind>Kota :</v-bind>
+              </b-card-text>
+              <b-card-text>
+                <v-bind>Owner :</v-bind>
+              </b-card-text>
+              <b-card-text>
+                <v-bind>Deskripsi :</v-bind>
+              </b-card-text>
             </b-card>
           </div>
-        </template>
-        <template>
-          <div>
+        </div>
+        <div class="card">
+          <div class="card-body">
             <b-card
-              no-body
-              class="overflow-hidden"
-              style="max-width: 350px;"
+              img-src="@/assets/images/Gudang.png"
+              img-alt="Card image"
+              img-left
+              class="mb-3"
             >
-              <b-row no-gutters>
-                <b-col md="6">
-                  <b-card-img
-                    src="https://picsum.photos/400/400/?image=20"
-                    alt="Image"
-                    class="rounded-1"
-                  />
-                </b-col>
-              </b-row>
+              <b-card
+                img-src="@/assets/images/avatars/Avatar.png"
+                img-alt="Card image"
+                img-left
+                rounded
+                class="mb-2"
+              >
+                <b-card-text-right>
+                  <b-badge
+                    variant="success"
+                    right
+                  >
+                    Tersedia
+                  </b-badge>
+                </b-card-text-right>{{ gudang }}</b-card>
+              <b-card-text>
+                <v-bind>Kota :</v-bind>
+              </b-card-text>
+              <b-card-text>
+                <v-bind>Owner :</v-bind>
+              </b-card-text>
+              <b-card-text>
+                <v-bind>Deskripsi :</v-bind>
+              </b-card-text>
             </b-card>
           </div>
-        </template>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <b-card
+              img-src="@/assets/images/Gudang.png"
+              img-alt="Card image"
+              img-left
+              class="mb-3"
+            >
+              <b-card
+                img-src="@/assets/images/avatars/Avatar.png"
+                img-alt="Card image"
+                img-left
+                rounded
+                class="mb-2"
+              >
+                <b-card-text>
+                  <b-icon-image-profile />
+                  <b-card-text
+                    title="Gudang"
+                    :poppins-hidden="show ? 'true' : null"
+                    text-color:bold
+                  />
+                </b-card-text>{{ gudang }}</b-card>
+              <b-card-text>
+                <v-bind>Kota :</v-bind>
+              </b-card-text>
+              <b-card-text>
+                <v-bind>Owner :</v-bind>
+              </b-card-text>
+              <b-card-text>
+                <v-bind>Deskripsi :</v-bind>
+              </b-card-text>
+            </b-card>
+          </div>
+        </div>
       </b-card>
     </b-overlay>
   </div>
@@ -92,6 +139,16 @@
 
 <script>
 export default {
+  filters: {
+    dateCell(value) {
+      const dt = new Date(value)
+
+      return dt.getDate()
+    },
+    date(val) {
+      return val ? val.toLocaleString() : ''
+    },
+  },
   data() {
     return {
       show: false,
