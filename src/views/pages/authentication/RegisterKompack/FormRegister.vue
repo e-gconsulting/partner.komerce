@@ -22,21 +22,33 @@
           <label class="label-register">Email</label>
           <small
             v-if="email === ''"
-            class="text-primary"
+            class="text-danger"
           >Alamat Email tidak boleh kosong ya</small>
           <small
             v-else-if="emailValid === false"
-            class="text-primary"
+            class="text-danger"
           >Alamat Email tidak sesuai format</small>
           <small
-            v-else-if="emailAlready"
+            v-else-if="emailAvailable"
             class="text-[#828282]"
           >Lanjutkan mengisi form dibawah ini</small>
+          <p
+            v-else-if="emailKompack"
+            class="text-[#828282] text-[14px] mt-1"
+          >Akun Kamu telah terdaftar di layanan Komerce Kompack.
+            Silahkan "Masuk" untuk melanjutkan.</p>
           <div
-            v-else-if="isExistingAccount"
+            v-else-if="emailManagement"
+            class="text-danger"
+          >
+            <small>Maaf email kamu tidak memiliki hak akses untuk masuk karena telah terdaftar di role lain.</small><br>
+            <small>Kamu dapat menggunakan email lain untuk mendaftar sebagai partner kompack</small>
+          </div>
+          <div
+            v-else-if="emailKomship"
             class="text-[14px] text-[#222222] mt-1"
           >
-            <p>Halo {{ email }},
+            <p>Halo <span class="font-semibold">{{ fullnameExisting }}</span>,
               <br>Kamu sudah menggunakan layanan lain di Komerce.
             </p>
             <p>
@@ -45,7 +57,7 @@
             </p>
           </div>
         </b-col>
-        <template v-if="!isExistingAccount">
+        <template v-if="emailAvailable !== false || !emailValid">
           <b-col
             xl="8"
             cols="11"
@@ -154,6 +166,7 @@
           </b-col>
         </template>
         <b-col
+          v-if="!emailKompack && !emailManagement"
           xl="8"
           cols="11"
           class="mb-1"
@@ -190,9 +203,23 @@
               class="mr-[5px]"
               small
             />
-            <span class="text-[16px] font-bold">Daftar</span>
+            <span
+              v-if="emailKompack"
+              class="text-[16px] font-bold"
+            >Masuk</span>
+            <span
+              v-else-if="emailManagement"
+              class="text-[16px] font-bold"
+            >Oke Saya Mengerti</span>
+            <span
+              v-else
+              class="text-[16px] font-bold"
+            >Daftar</span>
           </b-button>
-          <p class="text-[16px] text-center">
+          <p
+            v-if="!emailKompack && !emailManagement"
+            class="text-[16px] text-center"
+          >
             Sudah punya akun ?&nbsp;
             <router-link
               to="login"
@@ -212,7 +239,11 @@ export default {
     return {
       email: null,
       emailValid: null,
-      emailAlready: null,
+      emailAvailable: null,
+      emailKompack: null,
+      emailKomship: null,
+      emailManagement: null,
+      fullnameExisting: null,
       fullName: null,
       fullNameValid: null,
       phoneNumber: null,
@@ -224,7 +255,6 @@ export default {
       confirmPasswordMatch: null,
       confirmPasswordVisible: null,
       terms: null,
-      isExistingAccount: null,
       loadingSubmit: false,
     }
   },
@@ -234,16 +264,29 @@ export default {
       this.emailValid = email.toLowerCase()
         // eslint-disable-next-line no-useless-escape
         .match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/) != null
-      if (!this.emailValid) return
-      await this.$http_kompack.get('/kompack/register/check-email', {
-        params: { email: this.email },
-      }).then(result => {
-        const { data } = result
-        this.emailAlready = data.code === 200
-        this.isExistingAccount = data.code !== 200
-      }).catch(err => {
-        console.error(err)
-      })
+      if (this.emailValid) {
+        this.checkEmail(email, this)
+      }
+    },
+    checkEmail: _.debounce((email, that) => {
+      that.searchEmail(email)
+    }, 500),
+    async searchEmail(email) {
+      try {
+        const checkEmail = await this.$http_kompack.get('/kompack/register/check-email', {
+          params: { email },
+        })
+        const { data } = checkEmail
+        if (data.code === 1010) {
+          this.fullnameExisting = data.data.full_name
+        }
+        this.emailAvailable = data.code === 200
+        this.emailKompack = data.code === 1009
+        this.emailKomship = data.code === 1010
+        this.emailManagement = data.code === 1011
+      } catch (error) {
+        console.error(error)
+      }
     },
     validatePhoneNumber(evt) {
       const charCode = (evt.which) ? evt.which : evt.keyCode
@@ -267,30 +310,50 @@ export default {
         && this.terms === true
       ) return true
       if (
-        this.isExistingAccount
+        this.emailKomship
         && this.terms === true
       ) return true
+      if (this.emailKompack) return true
+      if (this.emailManagement) return true
       return false
     },
-    async submitRegister() {
-      let submit
-      this.loadingSubmit = true
-      if (this.isExistingAccount) {
-        submit = await this.$http_kompack.post('/kompack/register/existing', {
+    async registerExistingAccount() {
+      try {
+        const submit = await this.$http_kompack.post('/kompack/register/existing', {
           email: this.email,
         })
-      } else {
-        submit = await this.$http_kompack.post('/kompack/register', {
+        const { data } = submit
+        this.loadingSubmit = false
+        this.$emit('submit-register', data.code === 200)
+      } catch (error) {
+        this.loadingSubmit = false
+        console.error(error)
+      }
+    },
+    async registerGlobalAccount() {
+      try {
+        const submit = await this.$http_kompack.post('/kompack/register', {
           email: this.email,
           full_name: this.fullName,
           no_hp: this.phoneNumber,
           password: this.password,
           password_confirmation: this.confirmPassword,
         })
+        const { data } = submit
+        this.loadingSubmit = false
+        this.$emit('submit-register', data.code === 200)
+      } catch (error) {
+        this.loadingSubmit = false
+        console.error(error)
       }
-      const { data } = submit
-      this.loadingSubmit = false
-      this.$emit('submit-register', data.code === 200)
+    },
+    async submitRegister() {
+      this.loadingSubmit = true
+      if (this.emailAvailable) return this.registerGlobalAccount()
+      if (this.emailKomship) return this.registerExistingAccount()
+      if (this.emailKompack) return this.$router.push('/login')
+      if (this.emailManagement) return this.$router.go()
+      return false
     },
   },
 }
