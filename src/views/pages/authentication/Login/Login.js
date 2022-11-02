@@ -409,7 +409,7 @@ export default {
       }
       if (this.isKompack) {
         // hit endpoint
-        this.$http.post('/register/resend-email', {
+        this.$http_kompack.post('/register/resend-email', {
           params: { email: this.emailProfile },
         })
           .then(() => {
