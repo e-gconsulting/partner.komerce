@@ -633,7 +633,9 @@
                               <small class="text-primary ml-1 mt-50">{{
                                 errors[0]
                               }}</small>
-                              <small class="mr-1 mt-50">
+                            </b-row>
+                            <b-row>
+                              <small class="ml-1 mt-50">
                                 <small
                                   v-if="messageErrorPhone"
                                   class="text-primary"
