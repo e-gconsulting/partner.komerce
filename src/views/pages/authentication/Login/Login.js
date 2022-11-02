@@ -73,6 +73,8 @@ export default {
       // Mode Page
       modeVerificationEmail: false,
       modeLogin: true,
+      isKompack: null,
+      emailProfile: null,
     }
   },
   setup() {
@@ -148,6 +150,8 @@ export default {
           console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
+          this.isKompack = data.is_kompack === 1
+          this.emailProfile = data.email
 
           if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
@@ -403,28 +407,41 @@ export default {
       if (this.countTimerEmail !== 60) {
         this.countTimerEmail = 60
       }
-
-      this.$http
-        .get(`/resend_verification_email/${this.userId}`)
-        .then(() => {
-          this.error = ''
-          this.loadingResendVerification = false
-          this.modeLogin = false
-          this.modeVerificationEmail = true
-          this.countDownTimer()
+      if (this.isKompack) {
+        // hit endpoint
+        this.$http_kompack.post('/register/resend-email', {
+          params: { email: this.emailProfile },
         })
-        .catch(() => {
-          this.loadingResendVerification = false
-          this.$toast({
-            component: ToastificationContentVue,
-            props: {
-              title: 'Gagal',
-              text: 'Gagal untuk login, silahkan coba lagi!',
-              icon: 'AlertCircleIcon',
-              variant: 'danger',
-            },
+          .then(() => {
+            this.error = ''
+            this.loadingResendVerification = false
+            this.modeLogin = false
+            this.modeVerificationEmail = true
+            this.countDownTimer()
           })
-        })
+      } else {
+        this.$http
+          .get(`/resend_verification_email/${this.userId}`)
+          .then(() => {
+            this.error = ''
+            this.loadingResendVerification = false
+            this.modeLogin = false
+            this.modeVerificationEmail = true
+            this.countDownTimer()
+          })
+          .catch(() => {
+            this.loadingResendVerification = false
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk login, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
     getPartnerProfile(userId) {
       return this.$http
