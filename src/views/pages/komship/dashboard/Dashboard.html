@@ -1009,6 +1009,7 @@
                 label="text"
                 :reduce="items => items.value"
                 :options="rekTujuanOptions"
+                @input="setRekening(selectedRekTujuan)"
               >
                 <span v-if="rekTujuanOptions.length === 0" slot="no-options">
                   Anda belum menambahkan rekening bank
@@ -1094,7 +1095,7 @@
           </p>
           <p class="h-text-dark font-weight-bold">
             Saldo sebesar {{ nominal }} akan segera dikirim ke rekening atas
-            nama {{ rekening.nama }} - {{ rekening.bank }} dalam 1x24 jam
+            nama {{ rekeningDisplay.account_name }} - {{ rekeningDisplay.bank_name }} dalam 1x24 jam
           </p>
         </div>
         <div v-if="stepNow === 2 && status===false" class="text-center">
