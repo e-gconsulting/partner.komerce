@@ -164,7 +164,16 @@ export default {
               // eslint-disable-next-line operator-linebreak
               this.error =
                 'Email Kamu belum terverifikasi'
+
+              // tambahkan disini function kompack
               this.showResendEmailVerification = true
+              if (this.isKompack) {
+                this.$http.post('/register/resend-email', {
+                  params: { email: this.emailProfile },
+                })
+              } else {
+                this.$http.get(`/resend_verification_email/${this.userId}`)
+              }
               this.logout()
               return
             }
