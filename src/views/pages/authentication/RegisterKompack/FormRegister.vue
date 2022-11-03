@@ -273,7 +273,7 @@ export default {
     }, 500),
     async searchEmail(email) {
       try {
-        const checkEmail = await this.$http_kompack.get('/kompack/register/check-email', {
+        const checkEmail = await this.$http.get('/kompack/register/check-email', {
           params: { email },
         })
         const { data } = checkEmail
@@ -319,7 +319,7 @@ export default {
     },
     async registerExistingAccount() {
       try {
-        const submit = await this.$http_kompack.post('/kompack/register/existing', {
+        const submit = await this.$http.post('/kompack/register/existing', {
           email: this.email,
         })
         const { data } = submit
@@ -332,7 +332,7 @@ export default {
     },
     async registerGlobalAccount() {
       try {
-        const submit = await this.$http_kompack.post('/kompack/register', {
+        const submit = await this.$http.post('/kompack/register', {
           email: this.email,
           full_name: this.fullName,
           no_hp: this.phoneNumber,
