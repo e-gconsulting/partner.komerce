@@ -341,6 +341,8 @@ export default {
       haveGamification: true,
       gamificationIsExpired: false,
 
+      rekeningDisplay: {},
+      bankItems: [],
     }
   },
   computed: {
@@ -1111,6 +1113,26 @@ export default {
       this.loadProfile()
       this.$refs['popup-success-claim-kompoint'].hide()
       window.location.reload()
+    },
+    setRekening(data) {
+      const find = this.bankItems.find(item => item.bank_account_id === data)
+      this.rekeningDisplay = find
+    },
+    loadBank() {
+      this.$http_komship.get('v1/bank-account').then(response => {
+        const { data } = response.data
+        this.bankItems = data
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        }, 2000)
+      })
     },
   },
 }
