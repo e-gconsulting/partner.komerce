@@ -1017,6 +1017,7 @@ export default {
           this.gamificationIsExpired = data.is_expired
           this.gamificationIsFinished = data.is_finish
           this.haveGamification = true
+          if (data.is_claim === 1) this.haveGamification = false
           this.navigationItem.push({
             label: 'Verification',
             value: data.is_verification,
