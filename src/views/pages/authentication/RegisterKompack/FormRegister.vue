@@ -273,7 +273,7 @@ export default {
     }, 500),
     async searchEmail(email) {
       try {
-        const checkEmail = await this.$http.get('/kompack/register/check-email', {
+        const checkEmail = await this.$http_komship.get('/kompack/v1/register/check-email', {
           params: { email },
         })
         const { data } = checkEmail
