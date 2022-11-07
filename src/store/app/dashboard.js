@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { getField, updateField } from 'vuex-map-fields'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import {
   axiosKomship,
   formatYmd,
@@ -11,6 +12,9 @@ import {
 } from '@/store/helpers'
 
 export default {
+  components: {
+    ToastificationContent,
+  },
   namespaced: true,
   state: {
     saldo: 0,
@@ -28,6 +32,11 @@ export default {
     optionsChart: ['COD', 'Transfer Bank'],
     startDateChart: formatYmd(last7),
     endDateChart: formatYmd(today),
+    loadingCurrentSaldo: true,
+    loadingOrderSummary: true,
+    loadingProductTerlaris: true,
+    loadingTopAdminOrder: true,
+    loadingCustomerLoyal: true,
     // startDateChart: '2021-10-02',
     // endDateChart: '2021-11-31',
   },
@@ -124,6 +133,21 @@ export default {
         }
       })
     },
+    UPDATE_STATE_CURRENT_SALDO_LOADING(state, data) {
+      state.loadingCurrentSaldo = data
+    },
+    UPDATE_STATE_ORDER_SUMMARY_LOADING(state, data) {
+      state.loadingOrderSummary = data
+    },
+    UPDATE_STATE_PRODUCT_TERLARIS_LOADING(state, data) {
+      state.loadingProductTerlaris = data
+    },
+    UPDATE_STATE_TOP_ADMIN_ORDER_LOADING(state, data) {
+      state.loadingTopAdminOrder = data
+    },
+    UPDATE_STATE_CUSTOMER_LOYAL_LOADING(state, data) {
+      state.loadingCustomerLoyal = data
+    },
   },
   actions: {
     async init({ dispatch }) {
@@ -135,28 +159,51 @@ export default {
       dispatch('getPartnerIncomeGraph')
     },
     async getBalanceSummary({ commit, rootState }) {
+      commit('UPDATE_STATE_CURRENT_SALDO_LOADING', true)
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
           'v1/dashboard/partner/balanceSummary',
         )
         commit('UPDATE_ِِBALANCE_SUMMARY', response.data.data)
+        commit('UPDATE_STATE_CURRENT_SALDO_LOADING', false)
       } catch (e) {
-        console.error(e)
+        commit('UPDATE_STATE_CURRENT_SALDO_LOADING', false)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: e,
+            variant: 'danger',
+          },
+        })
       }
     },
     async getOrderSummary({ commit, rootState }) {
+      commit('UPDATE_STATE_ORDER_SUMMARY_LOADING', true)
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
           'v1/dashboard/partner/orderSummary',
         )
         commit('UPDATE_ORDER_SUMMARY', response.data.data)
+        commit('UPDATE_STATE_ORDER_SUMMARY_LOADING', false)
       } catch (e) {
-        console.error(e)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: e,
+            variant: 'danger',
+          },
+        })
+        commit('UPDATE_STATE_ORDER_SUMMARY_LOADING', false)
       }
     },
     async getTopAdminOrders({ commit, rootState }) {
+      commit('UPDATE_STATE_TOP_ADMIN_ORDER_LOADING', true)
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
@@ -168,11 +215,22 @@ export default {
           },
         )
         commit('UPDATE_TOP_ADMIN_ORDERS', response.data.data)
+        commit('UPDATE_STATE_TOP_ADMIN_ORDER_LOADING', false)
       } catch (e) {
-        console.error(e)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: e,
+            variant: 'danger',
+          },
+        })
+        commit('UPDATE_STATE_TOP_ADMIN_ORDER_LOADING', false)
       }
     },
     async getCustomerLoyal({ commit, rootState }) {
+      commit('UPDATE_STATE_CUSTOMER_LOYAL_LOADING', true)
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
@@ -184,11 +242,22 @@ export default {
           },
         )
         commit('UPDATE_CUSTOMER_LOYALS', response.data.data)
+        commit('UPDATE_STATE_CUSTOMER_LOYAL_LOADING', false)
       } catch (e) {
-        console.error(e)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: e,
+            variant: 'danger',
+          },
+        })
+        commit('UPDATE_STATE_CUSTOMER_LOYAL_LOADING', false)
       }
     },
     async getProdukTerlarises({ commit, rootState, getters }) {
+      commit('UPDATE_STATE_PRODUCT_TERLARIS_LOADING', true)
       try {
         const partnerId = rootState.auth.userData.partner_detail.id
         const response = await axiosKomship(partnerId).get(
@@ -202,8 +271,18 @@ export default {
           },
         )
         commit('UPDATE_PRODUK_TERLARISES', response.data.data)
+        commit('UPDATE_STATE_PRODUCT_TERLARIS_LOADING', false)
       } catch (e) {
-        console.error(e)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: e,
+            variant: 'danger',
+          },
+        })
+        commit('UPDATE_STATE_PRODUCT_TERLARIS_LOADING', false)
       }
     },
     async getPartnerIncomeGraph({
@@ -224,7 +303,15 @@ export default {
         )
         commit('UPDATE_PARTNER_INCOME_GRAPH', response.data.data)
       } catch (e) {
-        console.error(e)
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: e,
+            variant: 'danger',
+          },
+        })
       }
     },
   },

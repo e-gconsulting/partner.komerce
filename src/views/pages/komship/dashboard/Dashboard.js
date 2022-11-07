@@ -163,7 +163,7 @@ export default {
       dataProfile: true,
 
       perluTindakLanjut: 0,
-      notification: null,
+      notification: [],
 
       loadingConfirmationPin: false,
 
@@ -333,6 +333,10 @@ export default {
 
       rekeningDisplay: {},
       bankItems: [],
+
+      loadingDataChart: false,
+
+      loadingTopAdmin: true,
     }
   },
   computed: {
@@ -351,6 +355,12 @@ export default {
       'customerLoyals',
       'produkTerlarises',
       'optionsChart',
+      'loadingCurrentSaldo',
+      'loadingOrderSummary',
+      'loadingProductTerlaris',
+      'loadingTopAdminOrder',
+      'loadingTopAdminOrder',
+      'loadingCustomerLoyal',
     ]),
     ...mapGetters('dashboard', ['partnerIncomeGraph']),
     ...mapFields('saldo', [
@@ -362,13 +372,26 @@ export default {
     ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
   },
   async mounted() {
+    await this.fetchDataChart()
     await this.$http_komship
       .post('v1/my-profile', {
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       })
-      .then(response => {
+      .then(async response => {
         const { data } = response.data
-        this.fetchTicketPartnerCount()
+        await this.$store.dispatch('dashboard/init')
+        await this.$store.dispatch('saldo/getBankAccount')
+        await this.fetchTicketPartnerCount()
+        if (localStorage.getItem('notifSession')) {
+          try {
+            this.notification = JSON.parse(localStorage.getItem('notifSession'))
+          } catch (e) {
+            localStorage.removeItem('notifSession')
+            this.checkNotification()
+          }
+        } else {
+          await this.checkNotification()
+        }
         if (data) {
           if (!data.is_onboarding) {
             this.$bvModal.show('ModalOnBoarding')
@@ -377,22 +400,6 @@ export default {
           }
         }
       })
-    if (localStorage.getItem('notifSession')) {
-      try {
-        this.notification = JSON.parse(localStorage.getItem('notifSession'))
-      } catch (e) {
-        localStorage.removeItem('notifSession')
-        this.checkNotification()
-      }
-    } else {
-      await this.checkNotification()
-    }
-    this.fetchDataChart()
-    this.loadBank()
-  },
-  beforeMount() {
-    this.$store.dispatch('dashboard/init')
-    this.$store.dispatch('saldo/getBankAccount')
   },
   methods: {
     fetchTicketPartnerCount() {
@@ -902,6 +909,7 @@ export default {
       this.$refs['modal-error-pin'].hide()
     },
     fetchDataChart() {
+      this.loadingDataChart = true
       if (this.startDateChart === '' && this.endDateChart === '') {
         const now = new Date()
 
@@ -950,9 +958,13 @@ export default {
                   categories: data.data_days.map(item => item.day),
                 },
               }
+              this.loadingDataChart = false
             } else {
               this.seriesRevenue = []
+              this.loadingDataChart = false
             }
+          }).catch(err => {
+            this.loadingDataChart = false
           })
       }
     },
@@ -997,8 +1009,9 @@ export default {
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
     },
-    setRekening(data) {
-      const find = this.bankItems.find(item => item.bank_account_id === data)
+    async setRekening(data) {
+      await this.loadBank()
+      const find = await this.bankItems.find(item => item.bank_account_id === data)
       this.rekeningDisplay = find
     },
     loadBank() {
