@@ -91,7 +91,7 @@ export default {
   watch: {
     $route: {
       handler(to, from) {
-        if (to?.name !== from?.name && this.item.title === 'Kendala') {
+        if (to?.meta.resource !== from?.meta.resource && this.item.title === 'Kendala') {
           this.$http_komship.get('/v1/ticket-partner/count/need-followup').then(response => {
             this.followUp = response.data.data.need_followup ?? 0
           })
