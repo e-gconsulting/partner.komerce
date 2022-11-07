@@ -73,9 +73,9 @@
           <label class="mt-1">Gudang</label>
           <v-select
             v-model="addressId"
-            :options="addressList"
-            :reduce="(option) => option.address_id"
-            label="address_name"
+            :options="filterWarehouses"
+            :reduce="(option) => option.id"
+            label="name"
           >
             <span
               slot="no-options"
@@ -84,7 +84,7 @@
           </v-select>
           <label class="mt-1">Produk</label>
           <v-select
-            :options="productList"
+            :options="filterProducts"
             :reduce="(option) => option.product_name"
             label="product_name"
           >
@@ -415,6 +415,12 @@ export default {
   directives: {
     'b-toggle': VBToggle,
   },
+  props: {
+    filterItem: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
       profile: JSON.parse(localStorage.userData),
@@ -460,7 +466,7 @@ export default {
       loadTable: false,
       formSearch: null,
       paymentMethod: [],
-      productList: [],
+      productList: this.filterItem.products,
       customerName: [],
       startDate: '',
       endDate: '',
@@ -469,11 +475,19 @@ export default {
       pageOptions: [50, 100, 200],
       totalItems: 0,
       addressId: null,
-      addressList: [],
+      addressList: this.filterItem.warehouses,
       totalKirim: null,
       totalProblem: null,
       isProblem: false,
     }
+  },
+  computed: {
+    filterProducts() {
+      return this.filterItem.products
+    },
+    filterWarehouses() {
+      return this.filterItem.warehouses
+    },
   },
   watch: {
     currentPage: {
@@ -488,8 +502,6 @@ export default {
       .catch(error => {
         console.error(error)
       })
-    this.getProduct()
-    this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -572,33 +584,6 @@ export default {
       this.paymentMethod = null
       return this.fetchData()
     },
-    getProduct() {
-      this.$http_komship.get(`v1/partner-product/${this.profile.partner_detail.id}`)
-        .then(response => {
-          const { data } = response.data
-          this.productList = data
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    async getAddress() {
-      setTimeout(async () => {
-        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
-          .then(res => {
-            const { data } = res.data
-            this.addressList = data
-          })
-      }, 800)
-    },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
         return 'Reguler'
@@ -634,7 +619,6 @@ export default {
       }
     },
     handleDateTransfer(value) {
-      console.log(value)
       return moment(value).format('DD MMMM YYYY - hh.mm')
     },
   },
