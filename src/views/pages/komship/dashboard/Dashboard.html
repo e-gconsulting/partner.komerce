@@ -51,6 +51,82 @@
       >
       saldo.
     </div>
+
+    <!-- Navigation Kompoint -->
+    <b-card v-if="haveGamification" class="mt-[2rem]">
+      <b-row class="ml-50 mb-1">
+        <span class="text-black">Ambil tantangan buat selesaikan <strong>pickup pertamamu</strong> dalam <strong>24 jam</strong> dan dapatin saldo ongkir <strong>50.000</strong></span>
+      </b-row>
+      <b-row :class="claimAvailable ? 'ml-50 mb-4' : 'ml-50'">
+        <b-col cols="9">
+          <div class="d-flex">
+            <div v-for="(item, index) in navigationItem" :key="index+1" class="mr-2" style="text-align: center;">
+              <div class="d-flex align-items-center">
+                <div>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z" :stroke="index > 0 ? '#C2C2C2' : '#34A853'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M7.75 11.9999L10.58 14.8299L16.25 9.16992" :stroke="item.value === 0 ? '#C2C2C2' : '#34A853'" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>              
+                </div>
+                <div>
+                  <div>
+                    <svg width="87" height="47" viewBox="0 0 87 47" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19.5 0H73L87 23.5L73 47H19.5L32.5 23.5L19.5 0Z" :fill="item.value === 0 ? '#C2C2C2' : '#FBBC05'"/>
+                      <path d="M0 0L12.5 0L26 23.5L12.5 47H0L12.5 23.5L0 0Z" :fill="item.value === 0 ? '#C2C2C2' : '#FBBC05'"/>
+                      <circle cx="53" cy="23" r="15.5" fill="white" stroke="#F8ECC8"/>
+                      <path :d="item.number" :fill="item.value === 0 ? '#C2C2C2' : 'black'"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div :class="item.label === 'Setting Ekspedisi' ? 'ml-[0.25rem]' : 'ml-1'"
+              :style="item.label === 'Setting Gudang' ? 'margin-left: 0.5rem!important' : ''">
+                <span :class="item.value === 0 ? 'text-[#C2C2C2]' : 'text-[#FBBC05]'">
+                  {{ item.label }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </b-col>
+        <b-col
+        cols="3">
+          <b-row :class="claimAvailable ? 'align-items-center justify-content-center' : 'align-items-center'">
+            <div class="mr-1">
+              <b-img src="@/assets/images/kompoint/thropy__icon.svg" />
+            </div>
+            <div v-if="!gamificationIsExpired">
+              <h5 class="text-black">
+                <strong>
+                  50.000 KomPoints
+                </strong>
+              </h5>
+              <b-button
+                class="btn-icon border-0"
+                :style="claimIsActive ? 'min-width: 130px; border-radius: 20px; background: #FBBC05!important;' : 'min-width: 130px; border-radius: 20px; background: #E2E2E2!important; cursor: not-allowed;'"
+                size="sm"
+                @click="claimPoint"
+              >
+                <span :style="claimIsActive ? 'color: white;' : 'color: #C2C2C2;'">Claim</span>
+              </b-button>
+            </div>
+          </b-row>
+        </b-col>
+      </b-row>
+      <b-row v-if="claimAvailable" class="position-relative mb-1">
+        <b-col cols="12" class="p-0">
+          <div style="background: #FCBEBE; height: 14px; width: 100%;" />
+        </b-col>
+        <div class="bg-[#E31A1A] p-50 d-flex justify-content-center align-items-center" style="min-width: 260px; border-radius: 41px;position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 9;
+        transform: translate(-50%, -50%);">
+          <b-img src="@/assets/images/kompoint/timer-pause.svg" class="mr-1" />
+          <span ref="countdown__gamification" class="text-white" />
+        </div>
+      </b-row>
+    </b-card>
+  
     <h1 class="mb-2 h-text-xl">
       Dashboard
     </h1>
@@ -1197,6 +1273,63 @@
       <b-button class="btn-icon" variant="primary" @click="handleTryAgain">
         Coba lagi
       </b-button>
+    </b-row>
+  </b-modal>
+
+  <!-- Modal Success Claim Kompoints -->
+  <b-modal
+    ref="popup-success-claim-kompoint"
+    hide-footer
+    no-close-on-esc
+    no-close-on-backdrop
+    hide-header
+    centered
+  >
+    <b-row class="justify-content-end">
+      <b-button
+        class="btn-icon"
+        variant="flat-dark"
+        size="sm"
+        @click="closeSuccessClaim"
+      >
+        <b-img src="@/assets/images/icons/close-circle.svg" />
+      </b-button>
+    </b-row>
+
+    <b-row class="justify-content-center text-center mb-1">
+      <h4 class="text-black">
+        <strong>
+          Yeay, Selamat!!!
+          </strong>
+      </h4>
+    </b-row>
+
+    <b-row class="justify-content-center text-center mx-3">
+      <span class="text-black">
+        Kamu mendapatkan 50.000 KomPoints
+Gunakan point untuk menghemat saldo kamu dalam bertransaksi di Komship
+      </span>
+    </b-row>
+
+    <b-row>
+      <lottie-animation
+        path="animation/claim__success__animation.json"
+        :width="300"
+        :height="300"
+      />
+    </b-row>
+
+    <b-row class="justify-content-center">
+      <b-col cols="10">
+        <b-button
+          block
+          class="btn-icon border-0 mb-1"
+          style="background: #FBBC05!important;"
+          @click="closeSuccessClaim"
+        >
+          <span class="text-white">Selanjutnya</span>
+        </b-button>
+      </b-col>
     </b-row>
   </b-modal>
 </div>

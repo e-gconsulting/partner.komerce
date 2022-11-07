@@ -1,9 +1,11 @@
 <template>
   <div class="modalOnboarding">
-    <img
-      src="@/assets/images/svg/imgstep3.svg"
-      alt="imgstep2"
-    >
+    <b-row class="justify-content-center">
+      <img
+        src="@/assets/images/svg/imgstep3.svg"
+        alt="imgstep2"
+      >
+    </b-row>
     <div class="step3-text">
       <h5 style="margin: 0;">
         Tambah Produk
