@@ -1014,9 +1014,11 @@ export default {
           this.haveGamification = true
           const { data } = response.data
           this.gamificationExpiredAt = data.expired_at
-          this.gamificationIsExpired = data.is_expired
           this.gamificationIsFinished = data.is_finish
           this.haveGamification = true
+          if (data.is_claim === 1) this.haveGamification = false
+          if (data.is_finish === 1) this.gamificationIsExpired = false
+          if (data.is_finish === 0 && data.is_expired === true) this.gamificationIsExpired = true
           this.navigationItem.push({
             label: 'Verification',
             value: data.is_verification,
@@ -1052,7 +1054,6 @@ export default {
           if (findItem === undefined) this.claimIsActive = true
           this.timer()
         }).catch(err => {
-          console.log(err.response)
           if (err.response.data.message === 'partner does not have gamification data!') {
             this.haveGamification = false
             this.gamificationIsFinished = null
