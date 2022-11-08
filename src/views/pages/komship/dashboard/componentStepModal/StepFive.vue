@@ -1,11 +1,11 @@
 <template>
   <div class="modalOnboarding">
-    <div style="display: flex; justify-content: end;">
+    <b-row class="justify-content-end">
       <img
         src="@/assets/images/svg/imgstep6.svg"
         alt="imgstep2"
       >
-    </div>
+    </b-row>
     <div class="step2-text">
       <h5>Ayo Mulai Pakai Komship</h5>
       <br>

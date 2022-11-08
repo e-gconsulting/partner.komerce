@@ -1312,6 +1312,7 @@ export default {
         cart: this.cartId,
         custom_label_id: this.customLabel,
         order_notes: this.orderNotes,
+        is_whatsapp: this.isWhatsapp === 'valid' ? 1 : 0,
       }
     },
     handleCustomLabel(items) {
