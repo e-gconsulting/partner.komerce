@@ -39,7 +39,7 @@
             <i v-if="lastUpdated && !loadingDraft" class="text-info text-sm my-auto ml-1">Tersimpan {{ lastUpdated }}</i>
         </b-col>
         <b-col lg="2" class="d-flex justify-end">
-            <b-button variant="primary" class="ml-auto" @click="onSubmitSheets()">
+            <b-button variant="primary" class="ml-auto" @click="onSubmitSheets()" :disabled="disableSubmit">
                 Submit
             </b-button>
         </b-col>
