@@ -60,9 +60,9 @@
           <label class="mt-1">Gudang</label>
           <v-select
             v-model="addressId"
-            :options="addressList"
-            :reduce="(option) => option.address_id"
-            label="address_name"
+            :options="filterWarehouses"
+            :reduce="(option) => option.id"
+            label="name"
           >
             <span
               slot="no-options"
@@ -72,7 +72,7 @@
           <label class="mt-1">Produk</label>
           <v-select
             v-model="productFilter"
-            :options="productList"
+            :options="filterProducts"
             label="product_name"
             @input="getProduct()"
           >
@@ -306,6 +306,12 @@ export default {
   components: {
     vSelect, flatPickr, LottieAnimation,
   },
+  props: {
+    filterItem: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
       profile: JSON.parse(localStorage.userData),
@@ -333,7 +339,7 @@ export default {
       loadingTable: false,
       formSearch: null,
       paymentMethod: [],
-      productList: [],
+      productList: this.filterItem.products,
       productFilter: null,
       customerName: null,
       startDate: '',
@@ -342,14 +348,20 @@ export default {
       offset: 0,
       totalItems: 0,
       addressId: null,
-      addressList: [],
+      addressList: this.filterItem.warehouses,
       isLastOrder: false,
     }
   },
+  computed: {
+    filterProducts() {
+      return this.filterItem.products
+    },
+    filterWarehouses() {
+      return this.filterItem.warehouses
+    },
+  },
   mounted() {
     this.fetchData()
-    this.getProduct()
-    this.getAddress()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -461,32 +473,6 @@ export default {
       this.customerName = null
       this.paymentMethod = null
       return this.fetchData()
-    },
-    getProduct() {
-      this.$http_komship.get(`v1/partner-product/${this.profile.partner_detail.id}`)
-        .then(response => {
-          const { data } = response.data
-          this.productList = data
-        }).catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    async getAddress() {
-      setTimeout(async () => {
-        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
-          .then(res => {
-            const { data } = res.data
-            this.addressList = data
-          })
-      }, 800)
     },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {

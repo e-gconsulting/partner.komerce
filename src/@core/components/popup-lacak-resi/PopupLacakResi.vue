@@ -226,7 +226,7 @@ export default {
   },
   methods: {
     formatDate(value) {
-      return moment(value).format('DD MMMM YYYY - hh:mm')
+      return moment(value).format('DD MMMM YYYY - HH:mm')
     },
   },
 }
