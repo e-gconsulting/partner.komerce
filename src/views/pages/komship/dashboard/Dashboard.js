@@ -338,7 +338,7 @@ export default {
       claimAvailable: true,
       claimIsActive: false,
 
-      haveGamification: true,
+      haveGamification: false,
       gamificationIsExpired: false,
       gamificationCanClaim: false,
       gamificationCantClaim: false,
