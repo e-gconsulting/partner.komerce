@@ -121,6 +121,12 @@
           <span v-if="data.item.transaction_type === 'withdrawal'">
             Penarikan Saldo
           </span>
+          <span
+            v-if="data.item.transaction_type === 'kompoints'"
+            class="text-black"
+          >
+            Rewards Kompoints
+          </span>
           <span v-if="data.item.transaction_type === 'orderku_done'">
             Orderan COD (
             <span

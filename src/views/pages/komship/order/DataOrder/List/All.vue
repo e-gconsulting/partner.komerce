@@ -106,18 +106,22 @@
       :busy="loadingTable"
     >
       <template #cell(order_date)="data">
-        <p class="font-bold text-[14px] text-[#222222] mb-0">
-          {{ formatDate(data.item.order_date) }}
-        </p>
-        <p class="font-semibold text-[12px] text-[#828282] mb-0">
-          {{ formatTime(data.item.order_date) }}
-        </p>
-        <span class="d-flex text-secondary font-normal">
-          <img
-            src="@/assets/images/icons/warehouse.svg"
-            class="mr-[5px]"
-          >{{ data.item.warehouse_name }}
-        </span>
+        <div
+          style="min-width:150px!important;"
+        >
+          <p class="font-bold text-[14px] text-[#222222] mb-0">
+            {{ formatDate(data.item.order_date) }}
+          </p>
+          <p class="font-semibold text-[12px] text-[#828282] mb-0">
+            {{ formatTime(data.item.order_date) }}
+          </p>
+          <span class="d-flex text-secondary font-normal">
+            <img
+              src="@/assets/images/icons/warehouse.svg"
+              class="mr-[5px]"
+            >{{ data.item.warehouse_name }}
+          </span>
+        </div>
       </template>
       <template #cell(customer_name)="data">
         <span class="font-bold">{{ data.item.customer_name }}</span><br>

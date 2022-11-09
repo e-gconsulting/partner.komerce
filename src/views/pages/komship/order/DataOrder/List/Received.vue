@@ -114,7 +114,11 @@
       :busy="loadingTable"
     >
       <template #cell(order_date)="data">
-        {{ moment(data.item.order_date) }}
+        <div
+          style="min-width:150px!important;"
+        >
+          {{ moment(data.item.order_date) }}
+        </div>
       </template>
       <template #cell(customer_name)="data">
         <span class="font-bold">{{ data.item.customer_name }}</span><br>
