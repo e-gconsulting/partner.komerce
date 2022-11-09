@@ -82,14 +82,14 @@
             />
           </svg>
 
-          <span
+          <small
             id="popover-kompoints"
             class="text-black ml-50"
           >
             <strong>
-              KomPoint : <span class="text-warning">{{ profile.user_kompoints }}</span>
+              KomPoints : <small class="text-warning"><strong>{{ formatPrice(profile.user_kompoints) }}</strong></small>
             </strong>
-          </span>
+          </small>
 
           <b-popover
             target="popover-kompoints"
@@ -163,7 +163,7 @@
                 class="text-black ml-50"
               >
                 <strong>
-                  KomPoint : <span class="text-warning">{{ profile.user_kompoints }}</span>
+                  KomPoints : <span class="text-warning">{{ formatPrice(profile.user_kompoints) }}</span>
                 </strong>
               </span>
             </div>
@@ -318,6 +318,10 @@ export default {
 
       // Redirect to login page
       this.$router.push({ name: 'auth-login' })
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
   },
 }

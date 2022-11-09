@@ -137,9 +137,28 @@
           hover
           @row-selected="handleToDetail"
         >
+          <template #head(customer_name)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(total_order)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(total_pcs)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(customer_address)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(total_spent)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(last_order)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+
           <template #head(customer_phone)="data">
             <b-row class="align-items-center">
-              {{ data.label }}
+              <span class="text-black">{{ data.label }}</span>
               <b-img
                 id="infoNo"
                 src="@/assets/images/icons/info-circle.svg"
@@ -169,10 +188,19 @@
             </div>
           </template>
           <template #cell(total_spent)="data">
-            Rp. {{ formatRupiah(data.item.total_spent) }}
+            <div style="min-width: 150px!important;">
+              Rp. {{ formatRupiah(data.item.total_spent) }}
+            </div>
           </template>
           <template #cell(last_order)="data">
-            {{ formatDate(data.item.last_order) }}
+            <div style="min-width: 150px!important;">
+              {{ formatDate(data.item.last_order) }}
+            </div>
+          </template>
+          <template #cell(customer_address)="data">
+            <div style="min-width: 190px!important;">
+              {{ data.value }}
+            </div>
           </template>
         </BTable>
         <BRow>
@@ -420,9 +448,11 @@ export default {
       },
     },
   },
+  created() {
+    this.getCustomer()
+  },
   mounted() {
     this.getCustomerGrowth()
-    this.getCustomer()
     this.getProvince()
   },
   methods: {
@@ -485,6 +515,7 @@ export default {
           })
           this.totalRows = res.data.data.total
           this.isLoading = false
+          this.$forceUpdate()
         })
         .catch(err => {
           this.$toast(

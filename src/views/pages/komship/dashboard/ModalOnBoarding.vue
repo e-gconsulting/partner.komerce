@@ -302,6 +302,8 @@
             >
               <b-spinner
                 v-if="loadingOnboarding"
+                small
+                class="mr-50"
               />
               Mulai Sekarang <b-img
                 src="@/assets/images/NewOnboarding/arrow-right.svg"
@@ -316,6 +318,7 @@
 </template>
 
 <script>
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import Welcome from './componentStepModal/Welcome.vue'
 import Stepper from './componentStepModal/Stepper.vue'
 
@@ -350,6 +353,8 @@ export default {
         },
       ],
       loadContentOnboarding: false,
+
+      loadingOnboarding: false,
     }
   },
   methods: {
@@ -365,6 +370,7 @@ export default {
     },
     updateProfileOnBoarding() {
       this.disabledOnboardingMulai = false
+      this.loadingOnboarding = true
       this.$http_komship
         .put('/v1/partner/onboarding/update', {})
         .then(resp => {
@@ -373,11 +379,24 @@ export default {
               .then(() => {
                 this.loadingOnboarding = false
                 window.location.reload()
+              }).catch(() => {
+                this.loadingOnboarding = false
+                window.location.reload()
               })
           }
         })
-        .catch(() => {
+        .catch(err => {
           this.disabledOnboardingMulai = false
+          this.loadingOnboarding = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
     handleNextStepOnboarding() {
