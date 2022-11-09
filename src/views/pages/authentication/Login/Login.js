@@ -135,10 +135,6 @@ export default {
     },
     getUser(userData) {
       this.userId = userData.id
-      console.log('userData ', userData)
-      // eslint-disable-next-line no-param-reassign
-      // if (userData.email_verified_at !== null) userData.email_verified_at = null
-
       this.$http
         .post('/user/get-profile', {
           user_id: this.userId,
@@ -147,10 +143,9 @@ export default {
           let ability = []
 
           let { data } = response.data
-          console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
-          this.isKompack = data.is_kompack === 1
+          this.isKompack = data.is_kompack
           this.emailProfile = data.email
 
           if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
@@ -164,16 +159,7 @@ export default {
               // eslint-disable-next-line operator-linebreak
               this.error =
                 'Email Kamu belum terverifikasi'
-
-              // tambahkan disini function kompack
               this.showResendEmailVerification = true
-              if (this.isKompack) {
-                this.$http.post('/register/resend-email', {
-                  params: { email: this.emailProfile },
-                })
-              } else {
-                this.$http.get(`/resend_verification_email/${this.userId}`)
-              }
               this.logout()
               return
             }
@@ -416,11 +402,8 @@ export default {
       if (this.countTimerEmail !== 60) {
         this.countTimerEmail = 60
       }
-      if (this.isKompack) {
-        // hit endpoint
-        this.$http_kompack.post('/register/resend-email', {
-          params: { email: this.emailProfile },
-        })
+      if (this.isKompack === 1) {
+        this.$http_komship.post(`/kompack/v1/register/resend-email?email=${this.emailProfile}`)
           .then(() => {
             this.error = ''
             this.loadingResendVerification = false
@@ -428,7 +411,20 @@ export default {
             this.modeVerificationEmail = true
             this.countDownTimer()
           })
-      } else {
+          .catch(() => {
+            this.loadingResendVerification = false
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk login, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
+      if (this.isKompack === 0) {
         this.$http
           .get(`/resend_verification_email/${this.userId}`)
           .then(() => {
