@@ -340,6 +340,8 @@ export default {
 
       haveGamification: true,
       gamificationIsExpired: false,
+      gamificationCanClaim: false,
+      gamificationCantClaim: false,
 
       rekeningDisplay: {},
       bankItems: [],
@@ -1017,8 +1019,14 @@ export default {
           this.gamificationIsFinished = data.is_finish
           this.haveGamification = true
           if (data.is_claim === 1) this.haveGamification = false
-          if (data.is_finish === 1) this.gamificationIsExpired = false
-          if (data.is_finish === 0 && data.is_expired === true) this.gamificationIsExpired = true
+          if (data.is_finish === 1) {
+            this.gamificationCanClaim = true
+            this.gamificationCantClaim = false
+          }
+          if (data.is_finish === 0 && data.is_expired === true) {
+            this.gamificationIsExpired = true
+            this.gamificationCantClaim = true
+          }
           this.navigationItem.push({
             label: 'Verification',
             value: data.is_verification,
