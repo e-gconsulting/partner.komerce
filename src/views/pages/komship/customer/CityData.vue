@@ -20,7 +20,7 @@
             v-model="rangkingCity"
             :options="rangkingCityOptions"
             class="mb-50 mb-md-0"
-            @change="changeData"
+            @change="ChangeData(rangkingCity)"
           />
         </b-col>
       </b-row>
@@ -89,6 +89,12 @@ export default {
     BCard,
     BOverlay,
   },
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       loading: false,
@@ -155,14 +161,24 @@ export default {
   },
   mounted() {
     this.getData()
-    this.changeData()
   },
   methods: {
-    changeData() {
+    getData() {
+      this.city = this.data.city
+      this.data.city.forEach(this.myArray)
+      this.series = [
+        {
+          data: this.getPercentage(this.data.city),
+        },
+      ]
+      this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories)
+      return this.city
+    },
+    ChangeData(e) {
       this.loading = false
       this.$http_komship.get('/v1/customers/ranking-customers', {
         params: {
-          is_lifetime: this.rangkingCity,
+          is_lifetime: e,
         },
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
@@ -170,33 +186,6 @@ export default {
         const { data } = response.data
         this.city = data.city
 
-        this.loading = false
-        data.city.forEach(this.myArray)
-        this.series = [
-          {
-            data: this.getPercentage(data.city),
-          },
-        ]
-        return this.city
-      }).catch(() => {
-        this.loading = false
-        this.series = [
-          {
-            data: [],
-          },
-        ]
-      })
-    },
-    getData() {
-      this.loading = true
-      this.$http_komship.get('/v1/customers/ranking-customers', {
-        params: {
-          is_lifetime: this.rangkingCity,
-        },
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        this.city = data.city
         this.loading = false
         data.city.forEach(this.myArray)
         this.series = [

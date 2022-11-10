@@ -19,7 +19,7 @@
             v-model="rangkingProvince"
             :options="rangkingProvinceOptions"
             class="mb-50 mb-md-0"
-            @change="changeData"
+            @change="changeData(rangkingProvince)"
           />
         </b-col>
 
@@ -90,6 +90,12 @@ export default {
     BFormSelect,
     BCard,
     BOverlay,
+  },
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -163,45 +169,27 @@ export default {
   },
   mounted() {
     this.getData()
-    this.changeData()
   },
   methods: {
-    changeData() {
+    getData() {
+      this.province = this.data.province
+      this.data.province.forEach(this.myArray)
+      this.series = [
+        {
+          data: this.getPercentage(this.data.province),
+        },
+      ]
+      return this.province
+    },
+    changeData(e) {
       this.loading = true
       this.$http_komship.get('/v1/customers/ranking-customers', {
         params: {
-          is_lifetime: this.rangkingProvince,
+          is_lifetime: e,
         },
         headers: { Authorization: `Bearer ${useJwt.getToken()}` },
       }).then(response => {
         this.chartOptions.xaxis.categories.splice(0, this.chartOptions.xaxis.categories.length)
-        const { data } = response.data
-        this.province = data.province
-        this.loading = false
-        data.province.forEach(this.myArray)
-        this.series = [
-          {
-            data: this.getPercentage(data.province),
-          },
-        ]
-        return this.province
-      }).catch(() => {
-        this.loading = false
-        this.series = [
-          {
-            data: [],
-          },
-        ]
-      })
-    },
-    getData() {
-      this.loading = true
-      this.$http_komship.get('/v1/customers/ranking-customers', {
-        params: {
-          is_lifetime: this.rangkingProvince,
-        },
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
         const { data } = response.data
         this.province = data.province
         this.loading = false

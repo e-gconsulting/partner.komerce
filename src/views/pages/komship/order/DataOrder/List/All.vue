@@ -52,9 +52,9 @@
           <label class="mt-1">Gudang</label>
           <v-select
             v-model="addressId"
-            :options="addressList"
-            :reduce="(option) => option.address_id"
-            label="address_name"
+            :options="filterWarehouses"
+            :reduce="(option) => option.id"
+            label="name"
           >
             <span
               slot="no-options"
@@ -64,7 +64,7 @@
           <label class="mt-1">Produk</label>
           <v-select
             v-model="productName"
-            :options="productList"
+            :options="filterProducts"
             :reduce="(option) => option.product_name"
             label="product_name"
           >
@@ -106,18 +106,22 @@
       :busy="loadingTable"
     >
       <template #cell(order_date)="data">
-        <p class="font-bold text-[14px] text-[#222222] mb-0">
-          {{ formatDate(data.item.order_date) }}
-        </p>
-        <p class="font-semibold text-[12px] text-[#828282] mb-0">
-          {{ formatTime(data.item.order_date) }}
-        </p>
-        <span class="d-flex text-secondary font-normal">
-          <img
-            src="@/assets/images/icons/warehouse.svg"
-            class="mr-[5px]"
-          >{{ data.item.warehouse_name }}
-        </span>
+        <div
+          style="min-width:150px!important;"
+        >
+          <p class="font-bold text-[14px] text-[#222222] mb-0">
+            {{ formatDate(data.item.order_date) }}
+          </p>
+          <p class="font-semibold text-[12px] text-[#828282] mb-0">
+            {{ formatTime(data.item.order_date) }}
+          </p>
+          <span class="d-flex text-secondary font-normal">
+            <img
+              src="@/assets/images/icons/warehouse.svg"
+              class="mr-[5px]"
+            >{{ data.item.warehouse_name }}
+          </span>
+        </div>
       </template>
       <template #cell(customer_name)="data">
         <span class="font-bold">{{ data.item.customer_name }}</span><br>
@@ -351,6 +355,12 @@ export default {
   components: {
     flatPickr, LottieAnimation, vSelect,
   },
+  props: {
+    filterItem: {
+      type: Object,
+      default: () => {},
+    },
+  },
   data() {
     return {
       profile: JSON.parse(localStorage.userData),
@@ -378,21 +388,27 @@ export default {
       loadingTable: false,
       formSearch: null,
       paymentMethod: [],
-      productList: [],
+      productList: this.filterItem.products,
       productName: [],
       startDate: '',
       endDate: '',
       limit: 50,
       offset: 0,
       addressId: null,
-      addressList: [],
+      addressList: this.filterItem.warehouses,
       isLastOrder: false,
     }
   },
-  mounted() {
-    this.fetchData()
-    this.getProduct()
-    this.getAddress()
+  computed: {
+    filterProducts() {
+      return this.filterItem.products
+    },
+    filterWarehouses() {
+      return this.filterItem.warehouses
+    },
+  },
+  async mounted() {
+    await this.fetchData()
   },
   created() {
     window.addEventListener('click', async e => {
@@ -504,32 +520,6 @@ export default {
       this.productName = null
       this.paymentMethod = null
       this.fetchData()
-    },
-    getProduct() {
-      this.$http_komship.get(`v1/partner-product/${this.profile.partner_detail.id}`)
-        .then(response => {
-          const { data } = response.data
-          this.productList = data
-        }).catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Gagal',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          })
-        })
-    },
-    async getAddress() {
-      setTimeout(async () => {
-        await this.$http_komship.get(`/v1/address?partner_id=${this.profile.partner_detail.id}`)
-          .then(res => {
-            const { data } = res.data
-            this.addressList = data
-          })
-      }, 800)
     },
     shippingTypeLabel(value) {
       if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
