@@ -11,10 +11,12 @@
         />
       </div>
       <form-register
-        v-if="registersuccess === false"
-        @submit-register="registersuccess = $event"
+        v-if="registersuccess === false && registerexisting === false"
+        @submit-register="registersuccess = true"
+        @submit-existing="registerexisting = true"
       />
-      <verify-register v-else />
+      <verify-register v-if="registersuccess === true" />
+      <success-verify v-if="registerexisting === true" />
     </b-col>
     <b-col
       lg="6"
@@ -26,12 +28,15 @@
 <script>
 const FormRegister = () => import('./FormRegister.vue')
 const VerifyRegister = () => import('./VerifyRegister.vue')
+const SuccessVerify = () => import('./SuccessVerify.vue')
 
 export default {
-  components: { FormRegister, VerifyRegister },
+  components: { FormRegister, VerifyRegister, SuccessVerify },
+
   data() {
     return {
       registersuccess: false,
+      registerexisting: false,
     }
   },
 }
