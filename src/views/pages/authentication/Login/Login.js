@@ -23,6 +23,7 @@ import ToastificationContentVue from '@/@core/components/toastification/Toastifi
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
+import { NoSpace } from '@/libs/helpers'
 
 export default {
   directives: {
@@ -75,6 +76,7 @@ export default {
       modeLogin: true,
       isKompack: null,
       emailProfile: null,
+      NoSpace,
     }
   },
   setup() {
@@ -217,7 +219,7 @@ export default {
               ]
               break
             case 'PARTNER':
-              if (userData.is_komship === 0) {
+              if (userData.is_komship === 1) {
                 ability = [
                   { action: 'manage', subject: 'Komship TalentPool' },
                   { action: 'manage', subject: 'Komship Wishlist' },

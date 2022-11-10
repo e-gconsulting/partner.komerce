@@ -313,6 +313,10 @@ export default {
       this.$router.push({ name: 'auth-login' })
     },
     formatPrice(value) {
+      if (value === undefined) {
+        const val = 0
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
