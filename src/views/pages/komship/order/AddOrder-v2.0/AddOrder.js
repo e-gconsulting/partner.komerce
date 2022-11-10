@@ -893,7 +893,7 @@ export default {
       })
     },
     validateRekening() {
-      if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
+      if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0 && this.profile.partner_is_mutation_bank === true) {
         this.$swal({
           title:
             '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
