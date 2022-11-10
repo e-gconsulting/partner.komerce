@@ -1130,7 +1130,6 @@ export default {
       }
     },
     closeSuccessClaim() {
-      this.loadProfile()
       this.$refs['popup-success-claim-kompoint'].hide()
       window.location.reload()
     },

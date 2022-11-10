@@ -178,6 +178,59 @@
             </b-button>
           </div>
         </template>
+
+        <template #cell(customer_name)="data">
+          <h5 class="text-top">
+            <strong>
+              {{ data.item.customer_name }}
+            </strong>
+          </h5>
+          <b-row
+            v-if="data.item.shipping === 'JNE'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/assets/images/expedisi/logo-jne.png"
+              width="40"
+              class="ml-1"
+            />
+            <span class="ml-50">
+              <strong>
+                Reguler
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'SICEPAT'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo__sicepat.svg"
+              width="60"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ getService(data.item.shipping_type) }}
+              </strong>
+            </span>
+          </b-row>
+          <b-row
+            v-if="data.item.shipping === 'IDEXPRESS'"
+            class="align-items-center"
+          >
+            <b-img
+              src="@/@core/assets/image/icons/logo-idexpress.svg"
+              width="40"
+              class="ml-1"
+            />
+            <span class="text-black ml-50">
+              <strong>
+                {{ getService(data.item.shipping_type) }}
+              </strong>
+            </span>
+          </b-row>
+        </template>
       </b-table>
     </b-overlay>
     <b-modal
