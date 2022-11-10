@@ -3,7 +3,10 @@
     <h4><strong class="text-black text-2xl">Pelanggan</strong></h4>
     <BCard class="card-graphic mt-1">
       <div class="flex justify-between mb-1">
-        <h5><strong style="color: #000000" class="text-xl">Grafik Pertumbuhan Pelanggan</strong></h5>
+        <h5><strong
+          style="color: #000000"
+          class="text-xl"
+        >Grafik Pertumbuhan Pelanggan</strong></h5>
         <BButton
           size="sm"
           variant="outline-primary"
@@ -19,7 +22,10 @@
               wrapper-class="border-solid border-slate-200 rounded w-auto"
               calendar-class="w-full ml-[-22em]"
             />
-            <b-img src="@/assets/images/icons/arrow-down-light.svg" class="w-3" />
+            <b-img
+              src="@/assets/images/icons/arrow-down-light.svg"
+              class="w-3"
+            />
           </BRow>
         </BButton>
       </div>
@@ -47,11 +53,14 @@
           <strong class="text-[24px] ml-1 font-bold text-black">{{ totalRows }}</strong>
         </div>
         <BRow class="mr-0">
-          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+          <BCol
+            class="mb-[5px] text-center pl-0 pr-0"
+            md="auto"
+          >
             <BButton
+              id="download"
               class="mr-1"
               style="padding: 5px 1rem"
-              id="download"
               variant="primary"
               size="sm"
               @click="getDownloadContact"
@@ -64,7 +73,10 @@
               </BRow>
             </BButton>
           </BCol>
-          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+          <BCol
+            class="mb-[5px] text-center pl-0 pr-0"
+            md="auto"
+          >
             <BDropdown
               variant="outline-danger"
               :text="handleTextDropdown(provinceName)"
@@ -78,14 +90,17 @@
               <BDropdownItem
                 v-for="(items, index) in provinces"
                 :key="index"
-                @click="filterDataByProvince(items.province_name)"
                 v-model="provinceName"
+                @click="filterDataByProvince(items.province_name)"
               >
                 {{ items.province_name }}
               </BDropdownItem>
             </BDropdown>
           </BCol>
-          <BCol class="mb-[5px] text-center pl-0 pr-0" md="auto">
+          <BCol
+            class="mb-[5px] text-center pl-0 pr-0"
+            md="auto"
+          >
             <BInputGroup class="input-group-merge">
               <BInputGroupPrepend is-text>
                 <feather-icon icon="SearchIcon" />
@@ -94,8 +109,8 @@
                 v-model="search"
                 size="md"
                 placeholder="Nama pelanggan"
-                @input="searchData"
                 style="padding: 8px 1rem"
+                @input="searchData"
               />
             </BInputGroup>
           </BCol>
@@ -119,25 +134,73 @@
           class="mt-1"
           selectable
           :select-mode="selectMode"
-          @row-selected="handleToDetail"
           hover
+          @row-selected="handleToDetail"
         >
+          <template #head(customer_name)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(total_order)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(total_pcs)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(customer_address)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(total_spent)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+          <template #head(last_order)="data">
+            <span class="text-black">{{ data.label }}</span>
+          </template>
+
+          <template #head(customer_phone)="data">
+            <b-row class="align-items-center">
+              <span class="text-black">{{ data.label }}</span>
+              <b-img
+                id="infoNo"
+                src="@/assets/images/icons/info-circle.svg"
+                class="ml-50"
+              />
+              <b-popover
+                triggers="hover"
+                target="infoNo"
+                placement="topright"
+              >Akan ada icon penanda jika nomor HP pelanggan terdaftar di WhatsApp</b-popover>
+            </b-row>
+          </template>
           <template #cell(customer_phone)="data">
-            <div class="flex items-center">
-              <img
-                src="@/assets/images/icons/whatsapp.svg"
+            <div
+              class="flex items-center"
+              @mouseover="handleHoverButtonWa(data)"
+              @mouseleave="handleLeaveHoverButtonWa(data)"
+              @click="handlePhone(data)"
+            >
+              <b-img
+                v-if="data.item.is_whatsapp === 1"
+                :src="data.item.wa_icon"
                 alt="Komerce"
                 style="cursor: pointer"
-                @click="handlePhone(data.item.customer_phone)"
-              >
-              <span class="text-black ml-[2px]">{{ data.value }}</span>
+              />
+              <span :class="`text-[${data.item.text_color}] ml-[2px]`">{{ data.value }}</span>
             </div>
           </template>
           <template #cell(total_spent)="data">
-            Rp. {{ formatRupiah(data.item.total_spent) }}
+            <div style="min-width: 150px!important;">
+              Rp. {{ formatRupiah(data.item.total_spent) }}
+            </div>
           </template>
           <template #cell(last_order)="data">
-            {{ formatDate(data.item.last_order) }}
+            <div style="min-width: 150px!important;">
+              {{ formatDate(data.item.last_order) }}
+            </div>
+          </template>
+          <template #cell(customer_address)="data">
+            <div style="min-width: 190px!important;">
+              {{ data.value }}
+            </div>
           </template>
         </BTable>
         <BRow>
@@ -385,9 +448,11 @@ export default {
       },
     },
   },
+  created() {
+    this.getCustomer()
+  },
   mounted() {
     this.getCustomerGrowth()
-    this.getCustomer()
     this.getProvince()
   },
   methods: {
@@ -439,11 +504,18 @@ export default {
       Object.assign(params, { total_per_page: this.totalPerPage })
       Object.assign(params, { page: this.currentPage })
       await this.$http_komship.get('/v2/customers', { params })
-        .then(res => {
+        .then(async res => {
           const { data } = res.data.data
           this.items = data
+          // eslint-disable-next-line array-callback-return
+          await this.items.map((item, index) => {
+            // eslint-disable-next-line global-require
+            if (item.is_whatsapp === 0) Object.assign(this.items[index], { wa_icon: require('@/assets/images/icons/icon-wa-notactive.svg') })
+            Object.assign(this.items[index], { text_color: 'black' })
+          })
           this.totalRows = res.data.data.total
           this.isLoading = false
+          this.$forceUpdate()
         })
         .catch(err => {
           this.$toast(
@@ -508,8 +580,10 @@ export default {
           this.isLoading = false
         })
     },
-    handlePhone(value) {
-      window.open(`https://wa.me/62${value.substring(1)}`, '_blank')
+    handlePhone(data) {
+      if (data.item.is_whatsapp === 1) {
+        window.open(`https://wa.me/62${data.item.customer_phone.substring(1)}`, '_blank')
+      }
     },
     formatRupiah(value) {
       const data = new Intl.NumberFormat('id-ID').format(value)
@@ -546,6 +620,26 @@ export default {
       this.$router.push({
         path: `/info-customer/detail-customer/${idCustomer}`,
       })
+    },
+    handleHoverButtonWa(data) {
+      if (data.item.is_whatsapp === 1) {
+        // eslint-disable-next-line global-require, no-param-reassign
+        data.item.wa_icon = require('@/assets/images/icons/whatsapp.svg')
+        this.$forceUpdate()
+      }
+      // eslint-disable-next-line no-param-reassign
+      data.item.text_color = '#34A770'
+      this.$forceUpdate()
+    },
+    handleLeaveHoverButtonWa(data) {
+      if (data.item.is_whatsapp === 1) {
+        // eslint-disable-next-line global-require, no-param-reassign
+        data.item.wa_icon = require('@/assets/images/icons/icon-wa-notactive.svg')
+        this.$forceUpdate()
+      }
+      // eslint-disable-next-line no-param-reassign
+      data.item.text_color = 'black'
+      this.$forceUpdate()
     },
   },
 }

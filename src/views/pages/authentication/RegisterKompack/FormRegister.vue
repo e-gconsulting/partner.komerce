@@ -273,7 +273,7 @@ export default {
     }, 500),
     async searchEmail(email) {
       try {
-        const checkEmail = await this.$http.get('/kompack/register/check-email', {
+        const checkEmail = await this.$http_komship.get('/kompack/v1/register/check-email', {
           params: { email },
         })
         const { data } = checkEmail
@@ -319,12 +319,17 @@ export default {
     },
     async registerExistingAccount() {
       try {
-        const submit = await this.$http.post('/kompack/register/existing', {
+        const submit = await this.$http_komship.post('/kompack/v1/register/existing', {
           email: this.email,
         })
         const { data } = submit
         this.loadingSubmit = false
-        this.$emit('submit-register', data.code === 200)
+        if (data.message === 'Successfully Sent Verification Register Kompack Partner Existing.') {
+          this.$emit('submit-register')
+        }
+        if (data.message === 'Successfully activate kompack.') {
+          this.$emit('submit-existing')
+        }
       } catch (error) {
         this.loadingSubmit = false
         console.error(error)
@@ -332,7 +337,7 @@ export default {
     },
     async registerGlobalAccount() {
       try {
-        const submit = await this.$http.post('/kompack/register', {
+        const submit = await this.$http_komship.post('/kompack/v1/register', {
           email: this.email,
           full_name: this.fullName,
           no_hp: this.phoneNumber,
