@@ -173,7 +173,7 @@
           </template>
           <template #cell(customer_phone)="data">
             <div
-              class="flex items-center"
+              class="d-flex align-items-center"
               @mouseover="handleHoverButtonWa(data)"
               @mouseleave="handleLeaveHoverButtonWa(data)"
               @click="handlePhone(data)"
@@ -183,8 +183,9 @@
                 :src="data.item.wa_icon"
                 alt="Komerce"
                 style="cursor: pointer"
+                class="mr-50"
               />
-              <span :class="`text-[${data.item.text_color}] ml-[2px]`">{{ data.value }}</span>
+              <span :class="`text-[${data.item.text_color}]`">{{ data.value }}</span>
             </div>
           </template>
           <template #cell(total_spent)="data">
@@ -510,7 +511,7 @@ export default {
           // eslint-disable-next-line array-callback-return
           await this.items.map((item, index) => {
             // eslint-disable-next-line global-require
-            if (item.is_whatsapp === 0) Object.assign(this.items[index], { wa_icon: require('@/assets/images/icons/icon-wa-notactive.svg') })
+            Object.assign(this.items[index], { wa_icon: require('@/assets/images/icons/icon-wa-notactive.svg') })
             Object.assign(this.items[index], { text_color: 'black' })
           })
           this.totalRows = res.data.data.total
