@@ -405,9 +405,7 @@ export default {
     async getDestination() {
       this.destinationList = []
       await this.$http_komship
-        .get('/v1/destination', {
-          params: { search: this.destinationLabel },
-        })
+        .get(`/v3/landingpage/destination?search=${this.destinationLabel}`)
         .then(res => {
           const { data } = res.data.data
           this.destinationList = data
