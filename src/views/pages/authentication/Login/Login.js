@@ -217,47 +217,50 @@ export default {
               ]
               break
             case 'PARTNER':
-              ability = [
-                { action: 'manage', subject: 'Komship TalentPool' },
-                { action: 'manage', subject: 'Komship Wishlist' },
-                { action: 'manage', subject: 'PartnerProfile' },
-                { action: 'read', subject: 'Dashboard Komship' },
-                { action: 'manage', subject: 'Customer' },
-                { action: 'manage', subject: 'Produk' },
-                // { action: 'manage', subject: 'Gudang' },
-                { action: 'manage', subject: 'Tambah Produk' },
-                { action: 'manage', subject: 'Data Produk' },
-                { action: 'manage', subject: 'Order' },
-                { action: 'manage', subject: 'Tambah Order' },
-                { action: 'manage', subject: 'Data Order' },
-                { action: 'manage', subject: 'Pickup' },
-                { action: 'manage', subject: 'Ajukan Pickup' },
-                { action: 'manage', subject: 'History Pickup' },
-                { action: 'manage', subject: 'Keuangan' },
-                { action: 'manage', subject: 'Penghasilan' },
-                { action: 'manage', subject: 'Saldo' },
-                { action: 'manage', subject: 'Setting Komship' },
-                { action: 'manage', subject: 'Setting Profile' },
-                { action: 'manage', subject: 'Setting Access Account' },
-                { action: 'manage', subject: 'Setting Pickup Address' },
-                { action: 'manage', subject: 'Setting Rekening Bank' },
-                { action: 'manage', subject: 'Setting PIN' },
-                { action: 'manage', subject: 'Setting Ekspedisi' },
-                { action: 'manage', subject: 'Hiring' },
-                { action: 'manage', subject: 'Fitur Pendukung' },
-
-                // Komplace
-                // { action: 'manage', subject: 'Dashboard Komplace' },
-                // { action: 'manage', subject: 'Monitoring' },
-                // { action: 'manage', subject: 'Manajemen Admin' },
-                // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
-              ]
-              // KOMPACK
-              if (userData.is_kompack === 1) {
-                ability.push({ action: 'manage', subject: 'Gudang' })
-              }
-              if (userData.is_kompack === 0) {
-                ability.push({ action: 'manage', subject: 'Gudang Komship' })
+              if (userData.is_komship === 0) {
+                ability = [
+                  { action: 'manage', subject: 'Komship TalentPool' },
+                  { action: 'manage', subject: 'Komship Wishlist' },
+                  { action: 'manage', subject: 'PartnerProfile' },
+                  { action: 'read', subject: 'Dashboard Komship' },
+                  { action: 'manage', subject: 'Customer' },
+                  { action: 'manage', subject: 'Produk' },
+                  // { action: 'manage', subject: 'Gudang' },
+                  { action: 'manage', subject: 'Tambah Produk' },
+                  { action: 'manage', subject: 'Data Produk' },
+                  { action: 'manage', subject: 'Order' },
+                  { action: 'manage', subject: 'Tambah Order' },
+                  { action: 'manage', subject: 'Data Order' },
+                  { action: 'manage', subject: 'Pickup' },
+                  { action: 'manage', subject: 'Ajukan Pickup' },
+                  { action: 'manage', subject: 'History Pickup' },
+                  { action: 'manage', subject: 'Keuangan' },
+                  { action: 'manage', subject: 'Penghasilan' },
+                  { action: 'manage', subject: 'Saldo' },
+                  { action: 'manage', subject: 'Setting Komship' },
+                  { action: 'manage', subject: 'Setting Profile' },
+                  { action: 'manage', subject: 'Setting Access Account' },
+                  { action: 'manage', subject: 'Setting Pickup Address' },
+                  { action: 'manage', subject: 'Setting Rekening Bank' },
+                  { action: 'manage', subject: 'Setting PIN' },
+                  { action: 'manage', subject: 'Setting Ekspedisi' },
+                  { action: 'manage', subject: 'Hiring' },
+                  { action: 'manage', subject: 'Fitur Pendukung' },
+                  // Komplace
+                  // { action: 'manage', subject: 'Dashboard Komplace' },
+                  // { action: 'manage', subject: 'Monitoring' },
+                  // { action: 'manage', subject: 'Manajemen Admin' },
+                  // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
+                ]
+                // KOMPACK
+                if (userData.is_kompack === 1) {
+                  ability.push({ action: 'manage', subject: 'Gudang' })
+                }
+                if (userData.is_kompack === 0) {
+                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                }
+              } else {
+                ability = []
               }
               break
             case 'SDM':
