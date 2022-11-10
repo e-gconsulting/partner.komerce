@@ -405,7 +405,7 @@
         :title-link-class="linkClass(0)"
         lazy
       >
-        <all />
+        <all :filter-item="filterProductWarehouse" />
       </b-tab>
       <b-tab
         :title-link-class="linkClass(1)"
@@ -414,7 +414,7 @@
         <template slot="title">
           <span>{{ totalAjukan }} | Order Dibuat</span>
         </template>
-        <created />
+        <created :filter-item="filterProductWarehouse" />
       </b-tab>
       <b-tab
         :title-link-class="linkClass(2)"
@@ -423,7 +423,7 @@
         <template slot="title">
           {{ totalPacking }} | Dipacking
         </template>
-        <packing />
+        <packing :filter-item="filterProductWarehouse" />
       </b-tab>
       <b-tab
         :title-link-class="linkClass(3)"
@@ -456,21 +456,21 @@
             </div>
           </div>
         </template>
-        <send />
+        <send :filter-item="filterProductWarehouse" />
       </b-tab>
       <b-tab
         title="Diterima"
         :title-link-class="linkClass(4)"
         lazy
       >
-        <received />
+        <received :filter-item="filterProductWarehouse" />
       </b-tab>
       <b-tab
         title="Retur"
         :title-link-class="linkClass(5)"
         lazy
       >
-        <retur />
+        <retur :filter-item="filterProductWarehouse" />
       </b-tab>
     </b-tabs>
   </b-card>
@@ -555,6 +555,7 @@ export default {
         startDate: this.$moment().subtract(0, 'days').startOf('day').toDate(),
         endDate: today,
       },
+      filterProductWarehouse: {},
     }
   },
   watch: {
@@ -577,8 +578,26 @@ export default {
       deep: true,
     },
   },
-  created() {
-    this.fetchData()
+  async created() {
+    await this.fetchData()
+    await this.$http_komship.get('/v1/list/filter-product')
+      .then(async response => {
+        this.filterProductWarehouse = await response.data.data
+      }).catch(err => {
+        this.filterProductWarehouse = {
+          warehouses: [],
+          products: [],
+        }
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        })
+      })
   },
   methods: {
     linkClass(tabs) {

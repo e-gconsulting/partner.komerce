@@ -242,6 +242,7 @@ import {
 import { initialAbility } from '@/libs/acl/config'
 import useJwt from '@/auth/jwt/useJwt'
 import { avatarText } from '@core/utils/filter'
+import { mapState } from 'vuex'
 import useAppConfig from '@core/app-config/useAppConfig'
 import { computed } from '@vue/composition-api'
 import { isUserLoggedIn } from '@/auth/utils'
@@ -256,7 +257,6 @@ export default {
   data() {
     return {
       avatarText,
-      profile: [],
     }
   },
   setup() {
@@ -299,16 +299,9 @@ export default {
       }
       return str
     },
-  },
-  mounted() {
-    this.$http_komship
-      .post('v1/my-profile', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      })
-      .then(response => {
-        const { data } = response.data
-        this.profile = data
-      })
+    ...mapState('dashboard', [
+      'profile',
+    ]),
   },
   methods: {
     logout() {
@@ -320,6 +313,10 @@ export default {
       this.$router.push({ name: 'auth-login' })
     },
     formatPrice(value) {
+      if (value === undefined) {
+        const val = 0
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
       const val = value
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
