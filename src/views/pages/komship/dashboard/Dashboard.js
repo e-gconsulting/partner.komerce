@@ -163,7 +163,7 @@ export default {
       dataProfile: true,
 
       perluTindakLanjut: 0,
-      notification: null,
+      notification: [],
 
       loadingConfirmationPin: false,
 
@@ -338,13 +338,17 @@ export default {
       claimAvailable: true,
       claimIsActive: false,
 
-      haveGamification: true,
+      haveGamification: false,
       gamificationIsExpired: false,
       gamificationCanClaim: false,
       gamificationCantClaim: false,
 
       rekeningDisplay: {},
       bankItems: [],
+
+      loadingDataChart: false,
+
+      loadingTopAdmin: true,
     }
   },
   computed: {
@@ -363,6 +367,13 @@ export default {
       'customerLoyals',
       'produkTerlarises',
       'optionsChart',
+      'loadingCurrentSaldo',
+      'loadingOrderSummary',
+      'loadingProductTerlaris',
+      'loadingTopAdminOrder',
+      'loadingTopAdminOrder',
+      'loadingCustomerLoyal',
+      'profile',
     ]),
     ...mapGetters('dashboard', ['partnerIncomeGraph']),
     ...mapFields('saldo', [
@@ -374,7 +385,11 @@ export default {
     ...mapGetters('saldo', ['rekenings', 'rekening', 'rekTujuanOptions']),
   },
   async mounted() {
-    await this.loadProfile()
+    await this.$store.dispatch('dashboard/init')
+    await this.$store.dispatch('saldo/getBankAccount')
+    await this.fetchTicketPartnerCount()
+    await this.fetchDataChart()
+    await this.getGamificationList()
     if (localStorage.getItem('notifSession')) {
       try {
         this.notification = JSON.parse(localStorage.getItem('notifSession'))
@@ -385,29 +400,15 @@ export default {
     } else {
       await this.checkNotification()
     }
+    if (this.profile) {
+      if (!this.profile.is_onboarding) {
+        this.$bvModal.show('ModalOnBoarding')
+      } else {
+        this.loadingOnboarding = false
+      }
+    }
   },
   methods: {
-    loadProfile() {
-      this.$http_komship
-        .post('v1/my-profile', {
-          headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-        })
-        .then(response => {
-          const { data } = response.data
-          this.fetchTicketPartnerCount()
-          this.fetchDataChart()
-          this.getGamificationList()
-          this.$store.dispatch('dashboard/init')
-          this.$store.dispatch('saldo/getBankAccount')
-          if (data) {
-            if (!data.is_onboarding) {
-              this.$bvModal.show('ModalOnBoarding')
-            } else {
-              this.loadingOnboarding = false
-            }
-          }
-        })
-    },
     fetchTicketPartnerCount() {
       this.$http_komship
         .get('/v1/ticket-partner/count')
@@ -915,6 +916,7 @@ export default {
       this.$refs['modal-error-pin'].hide()
     },
     fetchDataChart() {
+      this.loadingDataChart = true
       if (this.startDateChart === '' && this.endDateChart === '') {
         const now = new Date()
 
@@ -963,9 +965,13 @@ export default {
                   categories: data.data_days.map(item => item.day),
                 },
               }
+              this.loadingDataChart = false
             } else {
               this.seriesRevenue = []
+              this.loadingDataChart = false
             }
+          }).catch(err => {
+            this.loadingDataChart = false
           })
       }
     },
@@ -1014,7 +1020,6 @@ export default {
       this.$http_komship.get('/v1/gamifaction/list')
         .then(response => {
           if (response.data.code === 200) {
-            this.haveGamification = true
             const { data } = response.data
             this.gamificationExpiredAt = data.expired_at
             this.gamificationIsFinished = data.is_finish
@@ -1129,8 +1134,9 @@ export default {
       this.$refs['popup-success-claim-kompoint'].hide()
       window.location.reload()
     },
-    setRekening(data) {
-      const find = this.bankItems.find(item => item.bank_account_id === data)
+    async setRekening(data) {
+      await this.loadBank()
+      const find = await this.bankItems.find(item => item.bank_account_id === data)
       this.rekeningDisplay = find
     },
     loadBank() {

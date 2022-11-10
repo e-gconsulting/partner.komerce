@@ -35,6 +35,7 @@ export default {
       totalOrder: null,
       submitProgress: 0,
       submitProgressStatus: true,
+      disableSubmit: false,
     }
   },
   async mounted() {
@@ -722,6 +723,7 @@ export default {
       }
     },
     onSubmitSheets() {
+      this.disableSubmit = true
       this.$swal({
         title: '<span class="font-weight-bold h4">Semua data yang kamu masukan di Speadsheet akan menjadi Order</span>',
         imageUrl: iconWarning,
@@ -734,7 +736,11 @@ export default {
         if (result.isConfirmed) {
           await this.saveSheets()
           this.submitSheets()
+        } else {
+          this.disableSubmit = false
         }
+      }).catch(() => {
+        this.disableSubmit = false
       })
     },
     async submitSheets() {
