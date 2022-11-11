@@ -95,6 +95,7 @@
               <b-img src="@/assets/images/kompoint/thropy__icon.svg" />
             </div>
             <div v-if="gamificationIsExpired === true">
+            <div v-if="gamificationCanClaim || haveGamification || gamificatinCantClaim">
               <h5 class="text-black">
                 <strong>
                   50.000 KomPoints
@@ -1303,11 +1304,17 @@
           </strong>
       </h4>
     </b-row>
-
     <b-row class="justify-content-center text-center mx-3">
       <span class="text-black">
         Kamu mendapatkan 50.000 KomPoints
 Gunakan point untuk menghemat saldo kamu dalam bertransaksi di Komship
+    <b-row class="justify-content-center text-center mx-1">
+      <span class="text-black">
+        Kamu mendapatkan 50.000 KomPoints
+        <br>
+Gunakan point untuk menghemat saldo kamu dalam
+<br>
+bertransaksi di Komship
       </span>
     </b-row>
 
