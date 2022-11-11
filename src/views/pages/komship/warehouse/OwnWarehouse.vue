@@ -1403,7 +1403,7 @@ export default {
         this.$refs['warehouse-options'].hide()
         this.addAddress()
       } else {
-        window.open('search-gudang')
+        window.open('https://kompack.id/', '_blank')
       }
     },
     goBack() {

@@ -18,6 +18,15 @@ export default [
     },
   },
   {
+    path: '/gudangku',
+    name: 'gudangku-kompack',
+    component: () => import('@/views/pages/kompack/gudang/gudangku/MitraWarehouse.vue'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
+  {
     path: '/Ajukan-Inbound',
     name: 'Ajukan-Inbound',
     component: () => import('@/views/pages/kompack/gudang/AjukanInbound'),
