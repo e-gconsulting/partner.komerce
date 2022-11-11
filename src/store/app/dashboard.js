@@ -37,6 +37,7 @@ export default {
     loadingProductTerlaris: true,
     loadingTopAdminOrder: true,
     loadingCustomerLoyal: true,
+    profile: [],
     // startDateChart: '2021-10-02',
     // endDateChart: '2021-11-31',
   },
@@ -148,6 +149,9 @@ export default {
     UPDATE_STATE_CUSTOMER_LOYAL_LOADING(state, data) {
       state.loadingCustomerLoyal = data
     },
+    UPDATE_ِِMY_PROFILE(state, myProfile) {
+      state.profile = myProfile
+    },
   },
   actions: {
     async init({ dispatch }) {
@@ -157,6 +161,7 @@ export default {
       dispatch('getCustomerLoyal')
       dispatch('getProdukTerlarises')
       dispatch('getPartnerIncomeGraph')
+      dispatch('getProfile')
     },
     async getBalanceSummary({ commit, rootState }) {
       commit('UPDATE_STATE_CURRENT_SALDO_LOADING', true)
@@ -169,15 +174,7 @@ export default {
         commit('UPDATE_STATE_CURRENT_SALDO_LOADING', false)
       } catch (e) {
         commit('UPDATE_STATE_CURRENT_SALDO_LOADING', false)
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: e,
-            variant: 'danger',
-          },
-        })
+        console.error(e)
       }
     },
     async getOrderSummary({ commit, rootState }) {
@@ -190,15 +187,7 @@ export default {
         commit('UPDATE_ORDER_SUMMARY', response.data.data)
         commit('UPDATE_STATE_ORDER_SUMMARY_LOADING', false)
       } catch (e) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: e,
-            variant: 'danger',
-          },
-        })
+        console.error(e)
         commit('UPDATE_STATE_ORDER_SUMMARY_LOADING', false)
       }
     },
@@ -217,15 +206,7 @@ export default {
         commit('UPDATE_TOP_ADMIN_ORDERS', response.data.data)
         commit('UPDATE_STATE_TOP_ADMIN_ORDER_LOADING', false)
       } catch (e) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: e,
-            variant: 'danger',
-          },
-        })
+        console.error(e)
         commit('UPDATE_STATE_TOP_ADMIN_ORDER_LOADING', false)
       }
     },
@@ -244,15 +225,7 @@ export default {
         commit('UPDATE_CUSTOMER_LOYALS', response.data.data)
         commit('UPDATE_STATE_CUSTOMER_LOYAL_LOADING', false)
       } catch (e) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: e,
-            variant: 'danger',
-          },
-        })
+        console.error(e)
         commit('UPDATE_STATE_CUSTOMER_LOYAL_LOADING', false)
       }
     },
@@ -273,15 +246,7 @@ export default {
         commit('UPDATE_PRODUK_TERLARISES', response.data.data)
         commit('UPDATE_STATE_PRODUCT_TERLARIS_LOADING', false)
       } catch (e) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: e,
-            variant: 'danger',
-          },
-        })
+        console.error(e)
         commit('UPDATE_STATE_PRODUCT_TERLARIS_LOADING', false)
       }
     },
@@ -303,15 +268,17 @@ export default {
         )
         commit('UPDATE_PARTNER_INCOME_GRAPH', response.data.data)
       } catch (e) {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Failure',
-            icon: 'AlertCircleIcon',
-            text: e,
-            variant: 'danger',
-          },
-        })
+        console.error(e)
+      }
+    },
+    async getProfile({ commit, rootState }) {
+      try {
+        const response = await axiosKomship().post(
+          'v1/my-profile',
+        )
+        commit('UPDATE_ِِMY_PROFILE', response.data.data)
+      } catch (e) {
+        console.error(e)
       }
     },
   },

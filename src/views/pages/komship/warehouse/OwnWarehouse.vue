@@ -1304,7 +1304,7 @@ export default {
     }, 500),
     loadOrigin(search) {
       return this.$http_komship
-        .get(`/v1/destination?search=${search}`)
+        .get(`/v3/landingpage/destination?search=${search}`)
         .then(response => {
           this.itemsOriginEdit = response.data.data.data
         })

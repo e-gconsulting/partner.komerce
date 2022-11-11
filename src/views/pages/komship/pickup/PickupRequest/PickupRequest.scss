@@ -46,3 +46,9 @@
 .custom-control-label::before{
   border: 1px solid #828282;
 }
+
+.images__product__orderan {
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+}
