@@ -109,7 +109,6 @@ export default {
             this.emailverifikasi = 'Belum ada akun yang menggunakan email ini.'
           } else {
             this.showResendEmailVerification = true
-            // this.$router.push({ name: 'auth-login' })
           }
         }).catch(() => {
           this.loading = false
@@ -128,17 +127,17 @@ export default {
             email: this.usernameEmail,
           })
             .then(response => {
-              if (response.data.code === 400) {
-                this.error = response.data.message
-                this.loading = false
-                this.emailverifikasi = 'Belum ada akun yang menggunakan email ini.'
-              } else {
+              if (response.data.code === 200) {
                 this.dismissSecs = 60
                 this.showResendEmailVerification = true
                 this.$nextTick(() => this.countDownChanged())
-                // this.$router.push({ name: 'auth-login' })
               }
-            }).catch(() => {
+            }).catch(error => {
+              if (error.response.data.code === 400) {
+                this.error = error.response.data.message
+                this.loading = false
+                this.emailverifikasi = 'Belum ada akun yang menggunakan email ini.'
+              }
               this.loading = false
             })
         }
