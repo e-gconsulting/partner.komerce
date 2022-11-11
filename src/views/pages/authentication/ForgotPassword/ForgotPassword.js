@@ -6,6 +6,7 @@ import {
 import { required, forgotpasswordEmail } from '@validations'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { $themeConfig } from '@themeConfig'
+import { NoSpace } from '@/libs/helpers'
 
 export default {
   directives: {
@@ -42,12 +43,11 @@ export default {
         required: 'Mohon masukan email.',
       },
       password: '',
-      // validation
+
       required,
       forgotpasswordEmail,
 
-      // validation rules
-      // email,
+      NoSpace,
     }
   },
   setup() {
