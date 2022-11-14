@@ -20,19 +20,16 @@
       style="margin: auto;"
       alt="imgstep1"
     >
-    <div class="modalOnboarding__step1--wrapperNavStep">
+    <div class="modalOnboarding__step1--wrapperNavStep d-flex justify-content-end">
       <b-button
-        variant="contained-primary"
-        class="modalOnboarding__step1--navBtn"
+        variant="primary"
+        class="d-flex align-items-center justify-content-center btn-icon"
         @click="step(2)"
       >
-        <div class="my-0 mr-1 modalOnboarding__step1--navBtnText">
-          Mulai Membaca
-        </div>
-        <img
-          src="@/assets/images/svg/arrow-right.svg"
-          alt=""
-        >
+        Mulai Membaca <b-img
+          src="@/assets/images/NewOnboarding/arrow-right.svg"
+          class="ml-50"
+        />
       </b-button>
     </div>
   </div>

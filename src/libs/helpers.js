@@ -18,4 +18,29 @@ export const kirimEmailConfig = {
   token: process.env.VUE_APP_KIRIMEMAIL_TOKEN,
   username: process.env.VUE_APP_KIRIMEMAIL_USERNAME,
 }
+export const NoSpace = e => {
+  const charCode = e.which ? e.which : e.keyCode
+  if (charCode === 32) {
+    e.preventDefault()
+  }
+  return true
+}
+export const isNumber = evt => {
+  const charCode = evt.which ? evt.which : evt.keyCode
+  if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 48) {
+    evt.preventDefault()
+  }
+  return true
+}
+export const isAlphabet = e => {
+  const char = String.fromCharCode(e.keyCode)
+  if (/^[A-Za-z]+$/.test(char)) {
+    return true
+  }
+  if (/\s/.test(char)) {
+    return true
+  }
+  e.preventDefault()
+  return false
+}
 Vue.prototype.$moment = moment

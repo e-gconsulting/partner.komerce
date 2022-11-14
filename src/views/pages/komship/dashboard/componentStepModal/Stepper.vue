@@ -4,12 +4,14 @@
       <v-stepper-step
         :complete="data > 1"
         step="1"
+        class="text-white"
       />
       <v-divider v-bind="data > 1 && {class: 'activeDivider'}" />
 
       <v-stepper-step
         :complete="data > 2"
         step="2"
+        class="text-white"
       >
         2
       </v-stepper-step>
@@ -18,6 +20,7 @@
       <v-stepper-step
         :complete="data > 3"
         step="3"
+        class="text-white"
       >
         3
       </v-stepper-step>
@@ -26,12 +29,16 @@
       <v-stepper-step
         :complete="data > 4"
         step="4"
+        class="text-white"
       >
         4
       </v-stepper-step>
       <v-divider v-bind="data > 4 && {class: 'activeDivider'}" />
 
-      <v-stepper-step step="5">
+      <v-stepper-step
+        step="5"
+        class="text-white"
+      >
         5
       </v-stepper-step>
     </v-stepper-header>
@@ -42,8 +49,12 @@
         class="step2"
       >
         <StepOne :data="data" />
-        <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-right-circle @click="data = 2" />
+        <div class="d-flex justify-content-end">
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-right.svg"
+            class="cursor-pointer"
+            @click="data = 2"
+          />
         </div>
       </v-stepper-content>
 
@@ -52,9 +63,17 @@
         class="step3"
       >
         <StepTwo />
-        <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle @click="data = 1" />
-          <b-icon-arrow-right-circle @click="data = 3" />
+        <div class="d-flex justify-content-end">
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-left.svg"
+            class="cursor-pointer"
+            @click="data = 1"
+          />
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-right.svg"
+            class="cursor-pointer"
+            @click="data = 3"
+          />
         </div>
       </v-stepper-content>
 
@@ -63,9 +82,17 @@
         class="step4"
       >
         <StepThree />
-        <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle @click="data = 2" />
-          <b-icon-arrow-right-circle @click="data = 4" />
+        <div class="d-flex justify-content-end">
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-left.svg"
+            class="cursor-pointer"
+            @click="data = 2"
+          />
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-right.svg"
+            class="cursor-pointer"
+            @click="data = 4"
+          />
         </div>
       </v-stepper-content>
 
@@ -74,9 +101,17 @@
         class="step5"
       >
         <StepFour />
-        <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle @click="data = 3" />
-          <b-icon-arrow-right-circle @click="data = 5" />
+        <div class="d-flex justify-content-end">
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-left.svg"
+            class="cursor-pointer"
+            @click="data = 3"
+          />
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-right.svg"
+            class="cursor-pointer"
+            @click="data = 5"
+          />
         </div>
       </v-stepper-content>
 
@@ -85,9 +120,17 @@
         class="step6"
       >
         <StepFive />
-        <div class="modalOnboarding__step1--wrapperNavStep">
-          <b-icon-arrow-left-circle @click="data = 4" />
-          <b-icon-arrow-right-circle @click="handle('endsteponboarding')" />
+        <div class="d-flex justify-content-end">
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-left.svg"
+            class="cursor-pointer"
+            @click="data = 4"
+          />
+          <b-img
+            src="@/assets/images/NewOnboarding/arrow-circle-right.svg"
+            class="cursor-pointer"
+            @click="handle('endsteponboarding')"
+          />
         </div>
       </v-stepper-content>
     </v-stepper-items>

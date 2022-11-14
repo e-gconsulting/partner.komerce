@@ -405,9 +405,7 @@ export default {
     async getDestination() {
       this.destinationList = []
       await this.$http_komship
-        .get('/v1/destination', {
-          params: { search: this.destinationLabel },
-        })
+        .get(`/v3/landingpage/destination?search=${this.destinationLabel}`)
         .then(res => {
           const { data } = res.data.data
           this.destinationList = data
@@ -893,7 +891,7 @@ export default {
       })
     },
     validateRekening() {
-      if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0) {
+      if (this.paymentMethod === 'BANK TRANSFER' && this.totalRekening === 0 && this.profile.partner_is_mutation_bank === true) {
         this.$swal({
           title:
             '<span class="font-weight-bold h4">Kamu belum menambahkan rekening, silahkan tambahkan rekening terlebih dahulu.</span>',
@@ -1312,6 +1310,7 @@ export default {
         cart: this.cartId,
         custom_label_id: this.customLabel,
         order_notes: this.orderNotes,
+        is_whatsapp: this.isWhatsapp === 'valid' ? 1 : 0,
       }
     },
     handleCustomLabel(items) {

@@ -1,10 +1,12 @@
 <template>
   <div class="modalOnboarding">
-    <img
-      src="@/assets/images/svg/imgstep2.svg"
-      alt="imgstep2"
-      style="margin: auto;"
-    >
+    <b-row class="justify-content-center">
+      <img
+        src="@/assets/images/svg/imgstep2.svg"
+        alt="imgstep2"
+        style="margin: auto;"
+      >
+    </b-row>
     <div class="step2-text">
       <h5>Pengaturan</h5>
       <br>

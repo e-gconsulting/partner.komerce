@@ -21,7 +21,7 @@
 
       <b-row
         v-if="formAddAddress === false && editMode === false"
-        class="h-[600px] justify-content-center align-items-center"
+        :class="warehouseItems.length > 0 ? '' : 'h-[600px] justify-content-center align-items-center'"
       >
         <b-col
           v-if="warehouseItems.length > 0"
@@ -130,7 +130,6 @@
             </b-row>
             <validation-observer
               ref="formRulesAdd"
-              #default="{invalid}"
             >
               <b-form class="">
                 <b-row>
@@ -188,7 +187,10 @@
                               placeholder="Masukkan Kelurahan/Kecamatan"
                               @search="onSearchOrigin"
                             />
-                            <small class="text-danger">{{ errors[0] }}</small>
+                            <small
+                              v-if="errors[0]"
+                              class="text-danger"
+                            >*Kelurahan/Kecamatan harus diisi</small>
                           </validation-provider>
                         </b-form-group>
                       </b-col>
@@ -261,15 +263,26 @@
                         <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
-                              Nama
+                              Nama<span class="text-primary">*</span>
                             </h4>
                           </template>
-                          <b-form-input
-                            v-model="fieldAddPicName"
-                            placeholder="Masukkan Nama Penanggung Jawab Gudang"
-                            :formatter="formatName"
-                            @keypress="validateInputName"
-                          />
+                          <validation-provider
+                            #default="{errors}"
+                            name="PIC"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="fieldAddPicName"
+                              placeholder="Masukkan Nama Penanggung Jawab Gudang"
+                              :state="errors.length > 0 ? false : null"
+                              :formatter="formatName"
+                              @keypress="validateInputName"
+                            />
+                            <small
+                              v-if="errors[0]"
+                              class="text-primary mt-50"
+                            >*Nama Penanggung Jawab harus diisi</small>
+                          </validation-provider>
                           <b-row class="justify-content-end">
                             <small class="mr-1 mt-50">
                               <small
@@ -313,11 +326,13 @@
                               @input="formatPhoneUser"
                               @keypress="validateInputPhone"
                             />
-                            <b-row class="justify-content-end">
+                            <b-row>
                               <small class="text-primary ml-1 mt-50">{{
                                 errors[0]
                               }}</small>
-                              <small class="mr-1 mt-50">
+                            </b-row>
+                            <b-row>
+                              <small class="ml-1 mt-50">
                                 <small
                                   v-if="messageErrorPhone"
                                   class="text-primary"
@@ -365,7 +380,7 @@
                         type="reset"
                         variant="primary"
                         class="mr-1"
-                        :disabled="invalid || messageErrorPhone === true"
+                        :disabled="messageErrorPhone === true"
                         @click.prevent="submitAddress"
                       >
                         <b-spinner
@@ -418,7 +433,6 @@
             </b-row>
             <validation-observer
               ref="formRulesEdit"
-              #default="{invalid}"
             >
               <b-form class="">
                 <b-row>
@@ -476,7 +490,10 @@
                               placeholder="Masukkan Kelurahan/Kecamatan"
                               @search="onSearchOrigin"
                             />
-                            <small class="text-danger">{{ errors[0] }}</small>
+                            <small
+                              v-if="errors[0]"
+                              class="text-danger"
+                            >*Kelurahan/Kecamatan harus diisi</small>
                           </validation-provider>
                         </b-form-group>
                       </b-col>
@@ -549,26 +566,37 @@
                         <b-form-group label-cols-md="4">
                           <template #label>
                             <h4 class="text-black">
-                              Nama
+                              Nama<span class="text-primary">*</span>
                             </h4>
                           </template>
-                          <b-form-input
-                            v-model="picName"
-                            placeholder="Masukkan Nama Penanggung Jawab Gudang"
-                            :formatter="formatName"
-                            @keypress="validateInputName"
-                          />
-                          <b-row class="justify-content-end">
-                            <small class="mr-1 mt-50">
-                              <small
-                                v-if="messageErrorLengthName"
-                                class="text-primary"
-                              >
-                                *hindari menggunakan simbol (/) (=) (:) (;)
+                          <validation-provider
+                            #default="{errors}"
+                            name="PIC"
+                            rules="required"
+                          >
+                            <b-form-input
+                              v-model="picName"
+                              placeholder="Masukkan Nama Penanggung Jawab Gudang"
+                              :formatter="formatName"
+                              :state="errors.length > 0 ? false : null"
+                              @keypress="validateInputName"
+                            />
+                            <small
+                              v-if="errors[0]"
+                              class="text-primary mt-50"
+                            >*Nama Penanggung Jawab harus diisi</small>
+                            <b-row class="justify-content-end">
+                              <small class="mr-1 mt-50">
+                                <small
+                                  v-if="messageErrorLengthName"
+                                  class="text-primary"
+                                >
+                                  *hindari menggunakan simbol (/) (=) (:) (;)
+                                </small>
+                                {{ picName.length }}/30
                               </small>
-                              <!-- {{ picName.length }}/30 -->
-                            </small>
-                          </b-row>
+                            </b-row>
+                          </validation-provider>
                         </b-form-group>
                       </b-col>
                     </b-row>
@@ -601,11 +629,13 @@
                               @input="formatEditPhoneUser"
                               @keypress="validateEditInputPhone"
                             />
-                            <b-row class="justify-content-end">
+                            <b-row>
                               <small class="text-primary ml-1 mt-50">{{
                                 errors[0]
                               }}</small>
-                              <small class="mr-1 mt-50">
+                            </b-row>
+                            <b-row>
+                              <small class="ml-1 mt-50">
                                 <small
                                   v-if="messageErrorPhone"
                                   class="text-primary"
@@ -653,7 +683,7 @@
                         type="reset"
                         variant="primary"
                         class="mr-1"
-                        :disabled="invalid || messageErrorPhone === true"
+                        :disabled="messageErrorPhone === true"
                         @click.prevent="submitUpdateAddress"
                       >
                         <b-spinner
@@ -1274,7 +1304,7 @@ export default {
     }, 500),
     loadOrigin(search) {
       return this.$http_komship
-        .get(`/v1/destination?search=${search}`)
+        .get(`/v3/landingpage/destination?search=${search}`)
         .then(response => {
           this.itemsOriginEdit = response.data.data.data
         })

@@ -43,6 +43,7 @@
                 :state="errors.length > 0 ? false : null"
                 name="login-email"
                 placeholder="john@mail.com"
+                @keypress="NoSpace($event)"
               />
               <small class="text-primary">{{ errors[0] }}</small>
               <b-col>
@@ -111,6 +112,7 @@
                   :type="passwordFieldType"
                   name="login-password"
                   placeholder="Password"
+                  @keypress="NoSpace($event)"
                 />
                 <b-input-group-append is-text>
                   <feather-icon

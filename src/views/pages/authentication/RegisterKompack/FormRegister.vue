@@ -18,6 +18,7 @@
             required
             @keyup="validateEmail"
             @change="validateForm"
+            @keypress="NoSpace($event)"
           />
           <label class="label-register">Email</label>
           <small
@@ -71,6 +72,7 @@
               required
               @keyup="() => fullNameValid = fullName.length >= 3"
               @change="validateForm"
+              @keypress="isAlphabet($event)"
             />
             <label class="label-register">Nama</label>
             <small
@@ -120,6 +122,7 @@
               required
               @keyup="() => passwordValid = password.length >= 8"
               @change="validateForm"
+              @keypress="NoSpace($event)"
             />
             <label class="label-register">Password</label>
             <feather-icon
@@ -151,6 +154,7 @@
               required
               @keyup="() => confirmPasswordMatch = confirmPassword == password"
               @change="validateForm"
+              @keypress="NoSpace($event)"
             />
             <label class="label-register">Konfirmasi Password</label>
             <feather-icon
@@ -234,6 +238,8 @@
   </div>
 </template>
 <script>
+import { NoSpace, isAlphabet } from '@/libs/helpers'
+
 export default {
   data() {
     return {
@@ -256,6 +262,8 @@ export default {
       confirmPasswordVisible: null,
       terms: null,
       loadingSubmit: false,
+      NoSpace,
+      isAlphabet,
     }
   },
   methods: {
@@ -273,7 +281,7 @@ export default {
     }, 500),
     async searchEmail(email) {
       try {
-        const checkEmail = await this.$http_kompack.get('/kompack/register/check-email', {
+        const checkEmail = await this.$http_komship.get('/kompack/v1/register/check-email', {
           params: { email },
         })
         const { data } = checkEmail
@@ -319,12 +327,17 @@ export default {
     },
     async registerExistingAccount() {
       try {
-        const submit = await this.$http_kompack.post('/kompack/register/existing', {
+        const submit = await this.$http_komship.post('/kompack/v1/register/existing', {
           email: this.email,
         })
         const { data } = submit
         this.loadingSubmit = false
-        this.$emit('submit-register', data.code === 200)
+        if (data.message === 'Successfully Sent Verification Register Kompack Partner Existing.') {
+          this.$emit('submit-register')
+        }
+        if (data.message === 'Successfully activate kompack.') {
+          this.$emit('submit-existing')
+        }
       } catch (error) {
         this.loadingSubmit = false
         console.error(error)
@@ -332,7 +345,7 @@ export default {
     },
     async registerGlobalAccount() {
       try {
-        const submit = await this.$http_kompack.post('/kompack/register', {
+        const submit = await this.$http_komship.post('/kompack/v1/register', {
           email: this.email,
           full_name: this.fullName,
           no_hp: this.phoneNumber,

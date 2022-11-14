@@ -23,6 +23,7 @@ import ToastificationContentVue from '@/@core/components/toastification/Toastifi
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
+import { NoSpace } from '@/libs/helpers'
 
 export default {
   directives: {
@@ -73,6 +74,9 @@ export default {
       // Mode Page
       modeVerificationEmail: false,
       modeLogin: true,
+      isKompack: null,
+      emailProfile: null,
+      NoSpace,
     }
   },
   setup() {
@@ -133,10 +137,6 @@ export default {
     },
     getUser(userData) {
       this.userId = userData.id
-      console.log('userData ', userData)
-      // eslint-disable-next-line no-param-reassign
-      // if (userData.email_verified_at !== null) userData.email_verified_at = null
-
       this.$http
         .post('/user/get-profile', {
           user_id: this.userId,
@@ -145,9 +145,10 @@ export default {
           let ability = []
 
           let { data } = response.data
-          console.log(data)
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
+          this.isKompack = data.is_kompack
+          this.emailProfile = data.email
 
           if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
@@ -218,47 +219,50 @@ export default {
               ]
               break
             case 'PARTNER':
-              ability = [
-                { action: 'manage', subject: 'Komship TalentPool' },
-                { action: 'manage', subject: 'Komship Wishlist' },
-                { action: 'manage', subject: 'PartnerProfile' },
-                { action: 'read', subject: 'Dashboard Komship' },
-                { action: 'manage', subject: 'Customer' },
-                { action: 'manage', subject: 'Produk' },
-                // { action: 'manage', subject: 'Gudang' },
-                { action: 'manage', subject: 'Tambah Produk' },
-                { action: 'manage', subject: 'Data Produk' },
-                { action: 'manage', subject: 'Order' },
-                { action: 'manage', subject: 'Tambah Order' },
-                { action: 'manage', subject: 'Data Order' },
-                { action: 'manage', subject: 'Pickup' },
-                { action: 'manage', subject: 'Ajukan Pickup' },
-                { action: 'manage', subject: 'History Pickup' },
-                { action: 'manage', subject: 'Keuangan' },
-                { action: 'manage', subject: 'Penghasilan' },
-                { action: 'manage', subject: 'Saldo' },
-                { action: 'manage', subject: 'Setting Komship' },
-                { action: 'manage', subject: 'Setting Profile' },
-                { action: 'manage', subject: 'Setting Access Account' },
-                { action: 'manage', subject: 'Setting Pickup Address' },
-                { action: 'manage', subject: 'Setting Rekening Bank' },
-                { action: 'manage', subject: 'Setting PIN' },
-                { action: 'manage', subject: 'Setting Ekspedisi' },
-                { action: 'manage', subject: 'Hiring' },
-                { action: 'manage', subject: 'Fitur Pendukung' },
-
-                // Komplace
-                // { action: 'manage', subject: 'Dashboard Komplace' },
-                // { action: 'manage', subject: 'Monitoring' },
-                // { action: 'manage', subject: 'Manajemen Admin' },
-                // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
-              ]
-              // KOMPACK
-              if (userData.is_kompack === 1) {
-                ability.push({ action: 'manage', subject: 'Gudang' })
-              }
-              if (userData.is_kompack === 0) {
-                ability.push({ action: 'manage', subject: 'Gudang Komship' })
+              if (userData.is_komship === 1) {
+                ability = [
+                  { action: 'manage', subject: 'Komship TalentPool' },
+                  { action: 'manage', subject: 'Komship Wishlist' },
+                  { action: 'manage', subject: 'PartnerProfile' },
+                  { action: 'read', subject: 'Dashboard Komship' },
+                  { action: 'manage', subject: 'Customer' },
+                  { action: 'manage', subject: 'Produk' },
+                  // { action: 'manage', subject: 'Gudang' },
+                  { action: 'manage', subject: 'Tambah Produk' },
+                  { action: 'manage', subject: 'Data Produk' },
+                  { action: 'manage', subject: 'Order' },
+                  { action: 'manage', subject: 'Tambah Order' },
+                  { action: 'manage', subject: 'Data Order' },
+                  { action: 'manage', subject: 'Pickup' },
+                  { action: 'manage', subject: 'Ajukan Pickup' },
+                  { action: 'manage', subject: 'History Pickup' },
+                  { action: 'manage', subject: 'Keuangan' },
+                  { action: 'manage', subject: 'Penghasilan' },
+                  { action: 'manage', subject: 'Saldo' },
+                  { action: 'manage', subject: 'Setting Komship' },
+                  { action: 'manage', subject: 'Setting Profile' },
+                  { action: 'manage', subject: 'Setting Access Account' },
+                  { action: 'manage', subject: 'Setting Pickup Address' },
+                  { action: 'manage', subject: 'Setting Rekening Bank' },
+                  { action: 'manage', subject: 'Setting PIN' },
+                  { action: 'manage', subject: 'Setting Ekspedisi' },
+                  { action: 'manage', subject: 'Hiring' },
+                  { action: 'manage', subject: 'Fitur Pendukung' },
+                  // Komplace
+                  // { action: 'manage', subject: 'Dashboard Komplace' },
+                  // { action: 'manage', subject: 'Monitoring' },
+                  // { action: 'manage', subject: 'Manajemen Admin' },
+                  // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
+                ]
+                // KOMPACK
+                if (userData.is_kompack === 1) {
+                  ability.push({ action: 'manage', subject: 'Gudang' })
+                }
+                if (userData.is_kompack === 0) {
+                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                }
+              } else {
+                ability = []
               }
               break
             case 'SDM':
@@ -403,28 +407,51 @@ export default {
       if (this.countTimerEmail !== 60) {
         this.countTimerEmail = 60
       }
-
-      this.$http
-        .get(`/resend_verification_email/${this.userId}`)
-        .then(() => {
-          this.error = ''
-          this.loadingResendVerification = false
-          this.modeLogin = false
-          this.modeVerificationEmail = true
-          this.countDownTimer()
-        })
-        .catch(() => {
-          this.loadingResendVerification = false
-          this.$toast({
-            component: ToastificationContentVue,
-            props: {
-              title: 'Gagal',
-              text: 'Gagal untuk login, silahkan coba lagi!',
-              icon: 'AlertCircleIcon',
-              variant: 'danger',
-            },
+      if (this.isKompack === 1) {
+        this.$http_komship.post(`/kompack/v1/register/resend-email?email=${this.emailProfile}`)
+          .then(() => {
+            this.error = ''
+            this.loadingResendVerification = false
+            this.modeLogin = false
+            this.modeVerificationEmail = true
+            this.countDownTimer()
           })
-        })
+          .catch(() => {
+            this.loadingResendVerification = false
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk login, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
+      if (this.isKompack === 0) {
+        this.$http
+          .get(`/resend_verification_email/${this.userId}`)
+          .then(() => {
+            this.error = ''
+            this.loadingResendVerification = false
+            this.modeLogin = false
+            this.modeVerificationEmail = true
+            this.countDownTimer()
+          })
+          .catch(() => {
+            this.loadingResendVerification = false
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk login, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
     getPartnerProfile(userId) {
       return this.$http

@@ -35,7 +35,7 @@ jobs:
           name: dist-folder
           path: ./dist/
       - name: Deploy to devkompack.partner.komerce.my.id
-        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with: 
           server: ${{ secrets.ftp_server_testing }}
           username: ${{ secrets.ftp_username_testing }}
