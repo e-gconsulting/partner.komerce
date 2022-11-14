@@ -9,16 +9,16 @@ export default [
     },
   },
   {
-    path: '/gudangku',
+    path: '/gudangku-kompack',
     name: 'gudangku-kompack',
-    component: () => import('@/views/pages/komship/warehouse/OwnWarehouse.vue'),
+    component: () => import('@/views/pages/komship/warehouse/PrivateWarehouse.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
     },
   },
   {
-    path: '/gudangku',
+    path: '/gudangku-kompack',
     name: 'gudangku-kompack',
     component: () => import('@/views/pages/kompack/gudang/gudangku/MitraWarehouse.vue'),
     meta: {
