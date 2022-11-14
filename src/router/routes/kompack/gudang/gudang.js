@@ -11,7 +11,7 @@ export default [
   {
     path: '/gudangku-kompack',
     name: 'gudangku-kompack',
-    component: () => import('@/views/pages/komship/warehouse/PrivateWarehouse.vue'),
+    component: () => import('@/views/pages/kompack/gudang/gudangku/PrivateWarehouse.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
@@ -20,7 +20,7 @@ export default [
   {
     path: '/gudangku-kompack',
     name: 'gudangku-kompack',
-    component: () => import('@/views/pages/kompack/gudang/gudangku/MitraWarehouse.vue'),
+    component: () => import('@/views/pages/kompack/gudang/gudangku//MitraWarehouse.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',

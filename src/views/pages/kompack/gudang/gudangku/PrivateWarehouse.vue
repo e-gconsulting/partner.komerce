@@ -55,8 +55,7 @@
               @click="selectWarehouse('MitraWarehouse')"
             >
               <b-img
-                src="@/assets/images/banner/kompack-warehouse.svg"
-                class="m-auto grayscale"
+                src="@/assets/images/banner/MitraGudang.png"
               /><br>
               <p class="text-[14px] text-[#626262] text-center d-flex">
                 Mitra Gudang&nbsp;
@@ -77,9 +76,9 @@
 export default {
   methods: {
     selectWarehouse(option) {
-      if (option === 'privateWarehouse') return this.$router.push('/gudang-pribadi')
-      window.open('https://kompack.id/', '_blank')
-      return true
+      if (option === 'MitraWarehouse') return this.$router.push('/search-gudang')
+      // if (option === 'privateWarehouse') return this.$router.push('/search-gudang')
+      return ''
     },
   },
 }
