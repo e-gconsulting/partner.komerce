@@ -1,5 +1,5 @@
 <div>
-  <div v-if="!loadingOnboarding" class="container p-0">
+  <div class="container p-0">
     <div v-if="notification.length > 0">
       <b-alert
         v-for="notif in notification"
@@ -133,832 +133,813 @@
     </h1>
     <div class="row">
       <div class="col-12 col-md-4 mb-1">
-        <div class="card h-100">
-          <div class="card-header mb-8 pb-0">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Saldo
+        <div :class="loadingCurrentSaldo ? 'card h-100 d-flex justify-content-center align-items-center' : 'card h-100'">
+            <b-spinner v-if="loadingCurrentSaldo" variant="primary" />
+              <div v-if="loadingCurrentSaldo === false" class="card-header mb-8 pb-0">
+                <div class="d-flex align-items-center">
+                  <div class="first-card-header-text me-8 mb-0">
+                    Saldo
+                  </div>
+                  <img id="infoSaldo" src="@/assets/images/icons/info-circle.svg" />
+                  <b-popover
+                    triggers="hover"
+                    target="infoSaldo"
+                    placement="bottomleft"
+                    >Saldo kamu saat ini.</b-popover
+                  >
+                </div>
               </div>
-              <img id="infoSaldo" src="@/assets/images/icons/info-circle.svg" />
-              <b-popover
-                triggers="hover"
-                target="infoSaldo"
-                placement="bottomleft"
-                >Saldo kamu saat ini.</b-popover
+              <div v-if="loadingCurrentSaldo === false" class="card-body h-text-xl pb-0 mb-0">
+                {{ formatRupiah(saldo) }}
+              </div>
+              <div
+                v-if="loadingCurrentSaldo === false"
+                class="
+                  card-footer
+                  d-flex
+                  justify-content-around
+                  bg-orange
+                  text-white
+                  rounded-16
+                  py-9
+                "
               >
-            </div>
+                <a
+                  class="
+                    d-flex
+                    flex-column
+                    justify-content-center
+                    align-items-center
+                  "
+                  @click="showTopUpModal()"
+                >
+                  <img src="@/assets/images/icons/send-square.svg" alt="Top Up" />
+                  <p class="saldo-texts mb-0">
+                    Top Up
+                  </p>
+                </a>
+                <a
+                  class="
+                    d-flex
+                    flex-column
+                    justify-content-center
+                    align-items-center
+                  "
+                  @click="showModal()"
+                >
+                  <img
+                    src="@/assets/images/icons/receive-square.svg"
+                    alt="Tarik Saldo"
+                  />
+                  <p class="h-text-xs mb-0">Tarik Saldo</p>
+                </a>
+                <a
+                  href="/keuangan/saldo/detail"
+                  class="
+                    d-flex
+                    text-reset
+                    flex-column
+                    justify-content-center
+                    align-items-center
+                  "
+                >
+                  <img src="@/assets/images/icons/document-text.svg" alt="Detail" />
+                  <p class="h-text-xs mb-0">Detail</p>
+                </a>
+              </div>
           </div>
-          <div class="card-body h-text-xl pb-0 mb-0">
-            {{ formatRupiah(saldo) }}
-          </div>
-          <div
-            class="
-              card-footer
-              d-flex
-              justify-content-around
-              bg-orange
-              text-white
-              rounded-16
-              py-9
-            "
-          >
-            <a
-              class="
-                d-flex
-                flex-column
-                justify-content-center
-                align-items-center
-              "
-              @click="showTopUpModal()"
-            >
-              <img src="@/assets/images/icons/send-square.svg" alt="Top Up" />
-              <p class="saldo-texts mb-0">
-                Top Up
-              </p>
-            </a>
-            <a
-              class="
-                d-flex
-                flex-column
-                justify-content-center
-                align-items-center
-              "
-              @click="showModal()"
-            >
-              <img
-                src="@/assets/images/icons/receive-square.svg"
-                alt="Tarik Saldo"
-              />
-              <p class="h-text-xs mb-0">Tarik Saldo</p>
-            </a>
-            <a
-              href="/keuangan/saldo/detail"
-              class="
-                d-flex
-                text-reset
-                flex-column
-                justify-content-center
-                align-items-center
-              "
-            >
-              <img src="@/assets/images/icons/document-text.svg" alt="Detail" />
-              <p class="h-text-xs mb-0">Detail</p>
-            </a>
-          </div>
-        </div>
       </div>
       <div class="col-12 col-md-4 mb-1">
-        <div class="card h-100">
-          <div class="card-header mb-8 pb-0">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Saldo Pending
-              </div>
-              <img
-                id="infoSaldoPending"
-                src="@/assets/images/icons/info-circle.svg"
-              />
-              <b-popover
-                triggers="hover"
-                target="infoSaldoPending"
-                placement="bottomleft"
-                >Saldo Pending merupakan saldo yang akan kamu terima ketika
-                orderan yang statusnya dikirim telah berubah menjadi
-                diterima.</b-popover
-              >
-            </div>
-            <b-button
-              variant="flat-dark"
-              class="btn-icon"
-              size="sm"
-              tag="router-link"
-              :to="{ name: $route.meta.routeToOrder, query: { tab: 'dikirim' } }"
+          <div class="card h-100">
+            <b-overlay
+              variant="light"
+              :show="loadingCurrentSaldo"
+              spinner-variant="primary"
+              blur="0"
+              opacity=".5"
+              rounded="sm"
             >
-              <img
-                src="@/assets/images/icons/arrow-square-right.svg"
-                alt="Arrow Right"
-              />
-            </b-button>
-          </div>
-          <div class="card-body">
-            <span class="h-text-xl pb-0 mb-0"
-              >{{ formatRupiah(saldoPending) }}</span
-            >
-            <b-row v-if="saldoPendingOnProblem !== 0">
-              <div class="ml-1">
-                <span
-                  >Dari nilai tersebut,
-                  <strong class="text-primary"
-                    >{{ formatRupiah(saldoPendingOnProblem) }},-</strong
+              <div class="card-header mb-8 pb-0">
+                <div class="d-flex align-items-center">
+                  <div class="first-card-header-text me-8 mb-0">
+                    Saldo Pending
+                  </div>
+                  <img
+                    id="infoSaldoPending"
+                    src="@/assets/images/icons/info-circle.svg"
+                  />
+                  <b-popover
+                    triggers="hover"
+                    target="infoSaldoPending"
+                    placement="bottomleft"
+                    >Saldo Pending merupakan saldo yang akan kamu terima ketika
+                    orderan yang statusnya dikirim telah berubah menjadi
+                    diterima.</b-popover
                   >
-                  nya perlu dimonitor</span
+                </div>
+                <b-button
+                  variant="flat-dark"
+                  class="btn-icon"
+                  size="sm"
+                  tag="router-link"
+                  :to="{ name: $route.meta.routeToOrder, query: { tab: 'dikirim' } }"
                 >
+                  <img
+                    src="@/assets/images/icons/arrow-square-right.svg"
+                    alt="Arrow Right"
+                  />
+                </b-button>
               </div>
-            </b-row>
+              <div class="card-body">
+                <span class="h-text-xl pb-0 mb-0"
+                  >{{ formatRupiah(saldoPending) }}</span
+                >
+                <b-row v-if="saldoPendingOnProblem !== 0">
+                  <div class="ml-1">
+                    <span
+                      >Dari nilai tersebut,
+                      <strong class="text-primary"
+                        >{{ formatRupiah(saldoPendingOnProblem) }},-</strong
+                      >
+                      nya perlu dimonitor</span
+                    >
+                  </div>
+                </b-row>
+              </div>
+            </b-overlay>
           </div>
-        </div>
       </div>
       <div class="col-12 mb-1 md:mb-0 col-md-4">
-        <div class="card h-100">
-          <div class="card-header mb-8 pb-0">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Penghematan Ongkir
+          <div class="card h-100">
+            <b-overlay
+              variant="light"
+              :show="loadingCurrentSaldo"
+              spinner-variant="primary"
+              blur="0"
+              opacity=".5"
+              rounded="sm"
+            >
+              <div class="card-header mb-8 pb-0">
+                <div class="d-flex align-items-center">
+                  <div class="first-card-header-text me-8 mb-0">
+                    Penghematan Ongkir
+                  </div>
+                </div>
               </div>
-            </div>
+              <div class="card-body pb-0 mb-0">
+                <div class="h-text-xl pb-0 mb-0">
+                  {{ formatRupiah(cashback) }}
+                </div>
+                <p class="mb-0">
+                  Total diskon ongkir yang kamu dapetin sejak pake Komship
+                </p>
+              </div>
+            </b-overlay>
           </div>
-          <div class="card-body pb-0 mb-0">
-            <div class="h-text-xl pb-0 mb-0">
-              {{ formatRupiah(cashback) }}
-            </div>
-            <p class="mb-0">
-              Total diskon ongkir yang kamu dapetin sejak pake Komship
-            </p>
-          </div>
-        </div>
       </div>
     </div>
     <b-row>
       <b-col cols="12" md="6" class="mt-2">
-        <div id="chart__revenue" class="card h-100">
+        <b-overlay
+          variant="light"
+          :show="loadingDataChart"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
+        >
+          <div id="chart__revenue" class="card h-100">
 
-          <!-- Tooltip download -->
-          <div id="id__tooltip__chart__download" class="tooltip__chart__download">
-            <div class="ml-1 mt-1">
-              <span class="text-black">{{ dateTooltipDownload }}</span>
-            </div>
-            <b-row class="align-items-center ml-2 pr-1">
-              <div class="mr-1 mt-1">
-                <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="6" cy="6.5" r="6" fill="#FBBC05"/>
-                </svg>
+            <!-- Tooltip download -->
+            <div id="id__tooltip__chart__download" class="tooltip__chart__download">
+              <div class="ml-1 mt-1">
+                <span class="text-black">{{ dateTooltipDownload }}</span>
               </div>
-              <span>{{ formatRupiah(totalProfitTooltipDownload) }}</span>
-            </b-row>
-            <b-row class="align-items-center ml-2 mt-50 mb-1 pr-1">
-              <div class="mr-1 mt-1">
-                <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="6" cy="6.5" r="6" fill="#47AEE4"/>
-                </svg>
-              </div>
-              <span>{{ totalOrderTooltipDownload }} Orderan</span>
-            </b-row>
-          </div>
-
-          <b-row class="justify-content-between ml-1 mt-2">
-            <b-col cols="8" class="align-items-start d-flex">
-              <div id="title__chart__tooltip__download" class="first-card-header-text me-8 mb-0 text-black" style="margin-top: -20px">
-                Performa Omset & Orderan
-              </div>
-              <span id="title__chart__tooltip" class="first-card-header-text me-8 mb-0 text-black">
-                Performa Omset & Orderan
-              </span>
-              <span class="align-self-center">
-                <img
-                id="infoPenghasilan"
-                src="@/assets/images/icons/info-circle.svg"
-              />
-              </span>
-              <b-popover
-                triggers="hover"
-                target="infoPenghasilan"
-                placement="bottomleft"
-                >ini adalah performa omset dan orderan (customer yang beli)
-                bulan ini, belum termasuk paket retur. Untuk penghasilan bersih,
-                next akan kami tampilkan pada menu khusus laporan
-                keuangan.</b-popover
-              >
-            </b-col>
-            <b-col cols="4" class="align-items-end align-self-center d-flex">
-              <span
-                class="px-1 py-50"
-                style="background-color: #F4F4F4; border-radius: 8px;"
-              >
-                <b-img src="@/assets/images/logo/komship-logo.svg" />
-              </span>
-              <span>
-                <b-button id="tooltip__download__icon" class="btn-icon" variant="flat-dark" @click="downloadChart">
-                  <b-img style="width: 30px;" src="@/assets/images/icons/icon-telegram.svg" />
-                </b-button>
-                <b-popover
-                triggers="hover"
-                target="tooltip__download__icon"
-                placement="bottomleft"
-                >share statistik order ini</b-popover>
-              </span>
-            </b-col>
-          </b-row>
-          <div class="position-relative card-body">
-            <b-row>
-              <b-col cols="6" class="pl-50">
-                <b-row
-                  class="mr-1 py-1"
-                  style="background: #FBA63C;
-                  box-shadow: 4px 8px 18px rgba(0, 0, 0, 0.08);
-                  border-radius: 0px 8px 8px 0px;"
-                >
-                  <div class="ml-2 mr-1 mt-50">
-                    <small class="text-white">Total Omset</small>
-                    <p class="text-white">
-                      <strong>
-                        {{ formatRupiah(totalRevenueChart) }}
-                      </strong>
-                    </p>
-                  </div>
-                  <div class="mt-50 mr-1">
-                    <b-img src="@/assets/images/line-new-chart.svg" />
-                  </div>
-                  <div class="mt-50">
-                    <small class="text-white">Total Orderan</small>
-                    <p class="text-white">
-                      <strong>
-                        {{ totalOrderanChart }}
-                      </strong>
-                    </p>
-                  </div>
-                </b-row>
-              </b-col>
-              <b-col id="filter__month__chart" cols="6">
-                <b-row class="justify-content-end">
-                  <b-col cols="6">
-                    <b-form-select
-                      v-model="paymentMethodsChart"
-                      :options="filterChartOptions"
-                      @change="fetchDataChart"
-                    />
-                  </b-col>
-                  <b-col cols="6" class="p-0">
-                    <flat-pickr
-                      v-model="chartDateItem"
-                      :config="configDateChart"
-                      @input="chartDateFilter"
-                    />
-                  </b-col>
-                </b-row>
-              </b-col>
-              <b-col id="filter__month__chart__download" cols="6">
-                <div class="d-flex justify-content-end">
-                  <div class="mr-1">
-                    <b-form-select
-                      v-model="paymentMethodsChart"
-                      :options="filterChartOptions"
-                      @change="fetchDataChart"
-                    />
-                  </div>
-                  <div>
-                    <p style="border: 1px solid #E2E2E2;
-                    border-radius: 8px; padding-bottom: 15px;" class="px-2 text-center">
-                      {{ viewDateTooltipDownload }}
-                    </p>
-                  </div>
+              <b-row class="align-items-center ml-2 pr-1">
+                <div class="mr-1 mt-1">
+                  <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="6" cy="6.5" r="6" fill="#FBBC05"/>
+                  </svg>
                 </div>
+                <span>{{ formatRupiah(totalProfitTooltipDownload) }}</span>
+              </b-row>
+              <b-row class="align-items-center ml-2 mt-50 mb-1 pr-1">
+                <div class="mr-1 mt-1">
+                  <svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="6" cy="6.5" r="6" fill="#47AEE4"/>
+                  </svg>
+                </div>
+                <span>{{ totalOrderTooltipDownload }} Orderan</span>
+              </b-row>
+            </div>
+
+            <b-row class="justify-content-between ml-1 mt-2">
+              <b-col cols="8" class="align-items-start d-flex">
+                <div id="title__chart__tooltip__download" class="first-card-header-text me-8 mb-0 text-black" style="margin-top: -20px">
+                  Performa Omset & Orderan
+                </div>
+                <span id="title__chart__tooltip" class="first-card-header-text me-8 mb-0 text-black">
+                  Performa Omset & Orderan
+                </span>
+                <span class="align-self-center">
+                  <img
+                  id="infoPenghasilan"
+                  src="@/assets/images/icons/info-circle.svg"
+                />
+                </span>
+                <b-popover
+                  triggers="hover"
+                  target="infoPenghasilan"
+                  placement="bottomleft"
+                  >ini adalah performa omset dan orderan (customer yang beli)
+                  bulan ini, belum termasuk paket retur. Untuk penghasilan bersih,
+                  next akan kami tampilkan pada menu khusus laporan
+                  keuangan.</b-popover
+                >
+              </b-col>
+              <b-col cols="4" class="align-items-end align-self-center d-flex">
+                <span
+                  class="px-1 py-50"
+                  style="background-color: #F4F4F4; border-radius: 8px;"
+                >
+                  <b-img src="@/assets/images/logo/komship-logo.svg" />
+                </span>
+                <span>
+                  <b-button id="tooltip__download__icon" class="btn-icon" variant="flat-dark" @click="downloadChart">
+                    <b-img style="width: 30px;" src="@/assets/images/icons/icon-telegram.svg" />
+                  </b-button>
+                  <b-popover
+                  triggers="hover"
+                  target="tooltip__download__icon"
+                  placement="bottomleft"
+                  >share statistik order ini</b-popover>
+                </span>
               </b-col>
             </b-row>
-            <!-- <v-select
-              v-model="selectedChart"
-              label="Square"
-              dir="ltr"
-              class="select-chart position-absolute"
-              :options="optionsChart"
-              :clearable="false"
-              @input="handleChangeChart"
-            /> -->
-            <!-- <ChartPenghasilan
-              :datasets="partnerIncomeGraph.datasets"
-              :labels="partnerIncomeGraph.labels"
-              class="mt-1"
-            /> -->
-            <VueApexcharts
-              ref="myChart"
-              width="100%"
-              type="area"
-              :options="options"
-              :series="seriesRevenue"
-            />
+            <div class="position-relative card-body">
+              <b-row>
+                <b-col cols="6" class="pl-50">
+                  <b-row
+                    class="mr-1 py-1"
+                    style="background: #FBA63C;
+                    box-shadow: 4px 8px 18px rgba(0, 0, 0, 0.08);
+                    border-radius: 0px 8px 8px 0px;"
+                  >
+                    <div class="ml-2 mr-1 mt-50">
+                      <small class="text-white">Total Omset</small>
+                      <p class="text-white">
+                        <strong>
+                          {{ formatRupiah(totalRevenueChart) }}
+                        </strong>
+                      </p>
+                    </div>
+                    <div class="mt-50 mr-1">
+                      <b-img src="@/assets/images/line-new-chart.svg" />
+                    </div>
+                    <div class="mt-50">
+                      <small class="text-white">Total Orderan</small>
+                      <p class="text-white">
+                        <strong>
+                          {{ totalOrderanChart }}
+                        </strong>
+                      </p>
+                    </div>
+                  </b-row>
+                </b-col>
+                <b-col id="filter__month__chart" cols="6">
+                  <b-row class="justify-content-end">
+                    <b-col cols="6">
+                      <b-form-select
+                        v-model="paymentMethodsChart"
+                        :options="filterChartOptions"
+                        @change="fetchDataChart"
+                      />
+                    </b-col>
+                    <b-col cols="6" class="p-0">
+                      <flat-pickr
+                        v-model="chartDateItem"
+                        :config="configDateChart"
+                        @input="chartDateFilter"
+                      />
+                    </b-col>
+                  </b-row>
+                </b-col>
+                <b-col id="filter__month__chart__download" cols="6">
+                  <div class="d-flex justify-content-end">
+                    <div class="mr-1">
+                      <b-form-select
+                        v-model="paymentMethodsChart"
+                        :options="filterChartOptions"
+                        @change="fetchDataChart"
+                      />
+                    </div>
+                    <div>
+                      <p style="border: 1px solid #E2E2E2;
+                      border-radius: 8px; padding-bottom: 15px;" class="px-2 text-center">
+                        {{ viewDateTooltipDownload }}
+                      </p>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <!-- <v-select
+                v-model="selectedChart"
+                label="Square"
+                dir="ltr"
+                class="select-chart position-absolute"
+                :options="optionsChart"
+                :clearable="false"
+                @input="handleChangeChart"
+              /> -->
+              <!-- <ChartPenghasilan
+                :datasets="partnerIncomeGraph.datasets"
+                :labels="partnerIncomeGraph.labels"
+                class="mt-1"
+              /> -->
+              <VueApexcharts
+                ref="myChart"
+                width="100%"
+                type="area"
+                :options="options"
+                :series="seriesRevenue"
+              />
+            </div>
           </div>
-        </div>
+        </b-overlay>
       </b-col>
       <b-col cols="12" md="6" class="mt-2">
-        <div class="card">
-          <div class="row my-24 mx-16">
-            <div class="col-4">
-              <div
-                class="
-                  border-gray
-                  d-flex
-                  flex-column
-                  justify-content-between
-                  rounded-16
-                  p-12
-                  h-100
-                "
-              >
-                <p class="mb-0 order-head-text">
-                  Orderan Perlu Dikirim
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <p class="mb-0 order-body-text">
-                    {{ formatRibuan(orderanPerluDikirim) }}
-                  </p>
-                  <b-button
-                    class="btn-icon"
-                    variant="flat-dark"
-                    size="sm"
-                    tag="router-link"
-                    :to="{ name: $route.meta.routeToOrder, query: { tab: 'order-dibuat' } }"
-                  >
-                    <img
-                      src="@/assets/images/icons/arrow-right-2.svg"
-                      alt="Arrow Right"
-                    />
-                  </b-button>
-                </div>
-              </div>
-            </div>
-            <div class="col-4">
-              <div
-                class="
-                  border-gray
-                  d-flex
-                  flex-column
-                  justify-content-between
-                  rounded-16
-                  p-12
-                  h-100
-                "
-              >
-                <div class="d-flex justify-content-start">
+        <b-overlay
+          variant="light"
+          :show="loadingOrderSummary"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
+        >
+          <div class="card">
+            <div class="row my-24 mx-16">
+              <div class="col-4">
+                <div
+                  class="
+                    border-gray
+                    d-flex
+                    flex-column
+                    justify-content-between
+                    rounded-16
+                    p-12
+                    h-100
+                  "
+                >
                   <p class="mb-0 order-head-text">
-                    Orderan Retur
+                    Orderan Perlu Dikirim
                   </p>
-                  <img
-                    id="infoRetur"
-                    src="@/assets/images/icons/info-circle.svg"
-                  />
-                  <b-popover
-                    triggers="hover"
-                    target="infoRetur"
-                    placement="bottomleft"
-                    >Orderan retur selama 7 hari terakhir.</b-popover
-                  >
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <p class="mb-0 order-body-text">
-                    {{ formatRibuan(orderanRetur) }}
-                  </p>
-                  <b-button
-                    variant="flat-dark"
-                    class="btn-icon"
-                    size="sm"
-                    tag="router-link"
-                    :to="{ name: $route.meta.routeToOrder, query: { tab: 'retur' } }"
-                  >
-                    <img
-                      src="@/assets/images/icons/arrow-right-2.svg"
-                      alt="Arrow Right"
-                    />
-                  </b-button>
-                </div>
-              </div>
-            </div>
-            <div class="col-4">
-              <div
-                class="
-                  border-gray
-                  d-flex
-                  flex-column
-                  justify-content-between
-                  rounded-16
-                  p-12
-                  h-100
-                "
-              >
-                <p class="mb-0 order-head-text">
-                  Kendala Perlu Ditangani
-                  <img
-                    id="infoProblem"
-                    src="@/assets/images/icons/info-circle.svg"
-                    class="d-inline-block"
-                  />
-                  <b-popover
-                    triggers="hover"
-                    target="infoProblem"
-                    placement="bottomleft"
-                    >Jumlah kendala pengiriman yang segera kamu harus tanggapi
-                    sekarang juga</b-popover
-                  >
-                </p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <p class="mb-0 order-body-text">
-                    {{ perluTindakLanjut }}
-                  </p>
-                  <b-button
-                    class="btn-icon"
-                    variant="flat-dark"
-                    size="sm"
-                    tag="router-link"
-                    :to="{ name: $route.meta.routeToTicket }"
-                  >
-                    <img
-                      src="@/assets/images/icons/arrow-right-2.svg"
-                      alt="Arrow Right"
-                    />
-                  </b-button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card mb-0 topAdminOrder">
-          <div class="card-header">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Top Admin Order
-              </div>
-              <img
-                id="infoTopAdmin"
-                src="@/assets/images/icons/info-circle.svg"
-              />
-              <b-popover
-                triggers="hover"
-                target="infoTopAdmin"
-                placement="bottomleft"
-                >Top Admin Order merupakan orang yang menginputkan order paling
-                banyak berdasarkan nilai orderan</b-popover
-              >
-            </div>
-          </div>
-          <div class="card-body">
-            <ul class="list-group list-group-flush">
-              <li
-                v-for="topAdminOrder in topAdminOrders"
-                :key="topAdminOrders.indexOf(topAdminOrder)"
-                class="list-group-item px-0"
-              >
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <b-avatar :src="topAdminOrder.photo" />
-                    <p class="list-text-1 h-text-dark ml-2 mb-0">
-                      {{ topAdminOrder.name }}
+                  <div class="d-flex justify-content-between align-items-center">
+                    <p class="mb-0 order-body-text">
+                      {{ formatRibuan(orderanPerluDikirim) }}
                     </p>
-                  </div>
-                  <div class="right">
-                    <p class="list-text-2 text-green mb-0">
-                      {{ formatRupiah(topAdminOrder.totalDana) }}
-                    </p>
-                    <p class="list-text-3 mb-0">
-                      {{ topAdminOrder.totalProduk }}pcs
-                    </p>
+                    <b-button
+                      class="btn-icon"
+                      variant="flat-dark"
+                      size="sm"
+                      tag="router-link"
+                      :to="{ name: $route.meta.routeToOrder, query: { tab: 'order-dibuat' } }"
+                    >
+                      <img
+                        src="@/assets/images/icons/arrow-right-2.svg"
+                        alt="Arrow Right"
+                      />
+                    </b-button>
                   </div>
                 </div>
-              </li>
-            </ul>
+              </div>
+              <div class="col-4">
+                <div
+                  class="
+                    border-gray
+                    d-flex
+                    flex-column
+                    justify-content-between
+                    rounded-16
+                    p-12
+                    h-100
+                  "
+                >
+                  <div class="d-flex justify-content-start">
+                    <p class="mb-0 order-head-text">
+                      Orderan Retur
+                    </p>
+                    <img
+                      id="infoRetur"
+                      src="@/assets/images/icons/info-circle.svg"
+                    />
+                    <b-popover
+                      triggers="hover"
+                      target="infoRetur"
+                      placement="bottomleft"
+                      >Orderan retur selama 7 hari terakhir.</b-popover
+                    >
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <p class="mb-0 order-body-text">
+                      {{ formatRibuan(orderanRetur) }}
+                    </p>
+                    <b-button
+                      variant="flat-dark"
+                      class="btn-icon"
+                      size="sm"
+                      tag="router-link"
+                      :to="{ name: $route.meta.routeToOrder, query: { tab: 'retur' } }"
+                    >
+                      <img
+                        src="@/assets/images/icons/arrow-right-2.svg"
+                        alt="Arrow Right"
+                      />
+                    </b-button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-4">
+                <!-- <div
+                  v-if="perluTindakLanjut > 0"
+                  class="
+                    border-gray
+                    d-flex
+                    flex-column
+                    justify-content-center
+                    align-items-center
+                    rounded-16
+                    p-12
+                    h-100
+                    blink__ticket
+                  "
+                  style="background: #E31A1AB2; position: absolute;
+                  min-width: 87%;"
+                >
+                  <b-img src="@/assets/images/info-circle.svg" width="25px" />
+                </div> -->
+                <div
+                  class="
+                    border-gray
+                    d-flex
+                    flex-column
+                    justify-content-between
+                    rounded-16
+                    p-12
+                    h-100
+                  "
+                  style="position: relative;"
+                >
+                  <div v-if="perluTindakLanjut > 0" style="background: #E31A1AB2; width: 100%;
+                  height: 100%; position: absolute; left: 0%;
+    top: 0; border-radius: 16px;" class="d-flex
+                    justify-content-center
+                    align-items-center
+                    blink__ticket ">
+                    <b-img src="@/assets/images/info-circle.svg" width="25px" />
+                  </div>
+                  <p class="mb-0 order-head-text" style="z-index: 9;">
+                    Kendala Perlu Ditangani
+                    <img
+                      id="infoProblem"
+                      src="@/assets/images/icons/info-circle.svg"
+                      class="d-inline-block"
+                    />
+                    <b-popover
+                      triggers="hover"
+                      target="infoProblem"
+                      placement="bottomleft"
+                      style="z-index: 99;"
+                      >Jumlah kendala pengiriman yang segera kamu harus tanggapi
+                      sekarang juga</b-popover
+                    >
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <p class="mb-0 order-body-text">
+                      {{ perluTindakLanjut }}
+                    </p>
+                    <b-button
+                      class="btn-icon"
+                      variant="flat-dark"
+                      size="sm"
+                      style="z-index: 99;"
+                      tag="router-link"
+                      :to="{ name: $route.meta.routeToTicket }"
+                    >
+                      <img
+                        src="@/assets/images/icons/arrow-right-2.svg"
+                        alt="Arrow Right"
+                      />
+                    </b-button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        </b-overlay>
+          <div :class="loadingTopAdminOrder ? 'card mb-0 topAdminOrder d-flex justify-content-center align-items-center' : 'card mb-0 topAdminOrder'">
+            <b-spinner v-if="loadingTopAdminOrder" variant="primary" />
+            <div v-if="!loadingTopAdminOrder" class="card-header">
+              <div class="d-flex align-items-center">
+                <div class="first-card-header-text me-8 mb-0">
+                  Top Admin Order
+                </div>
+                <img
+                  id="infoTopAdmin"
+                  src="@/assets/images/icons/info-circle.svg"
+                />
+                <b-popover
+                  triggers="hover"
+                  target="infoTopAdmin"
+                  placement="bottomleft"
+                  >Top Admin Order merupakan orang yang menginputkan order paling
+                  banyak berdasarkan nilai orderan</b-popover
+                >
+              </div>
+            </div>
+            <div v-if="!loadingTopAdminOrder" class="card-body">
+              <ul class="list-group list-group-flush">
+                <li
+                  v-for="topAdminOrder in topAdminOrders"
+                  :key="topAdminOrders.indexOf(topAdminOrder)"
+                  class="list-group-item px-0"
+                >
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                      <b-avatar :src="topAdminOrder.photo" />
+                      <p class="list-text-1 h-text-dark ml-2 mb-0">
+                        {{ topAdminOrder.name }}
+                      </p>
+                    </div>
+                    <div class="right">
+                      <p class="list-text-2 text-green mb-0">
+                        {{ formatRupiah(topAdminOrder.totalDana) }}
+                      </p>
+                      <p class="list-text-3 mb-0">
+                        {{ topAdminOrder.totalProduk }}pcs
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
       </b-col>
     </b-row>
     <div class="row">
       <div class="col-12 col-md-6 mt-2">
-        <div class="card h-100 mb-0">
-          <div class="card-header pb-0">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Produk Terlaris
+        <b-overlay
+          variant="light"
+          :show="loadingProductTerlaris"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
+        >
+          <div class="card h-100 mb-0">
+            <div class="card-header pb-0">
+              <div class="d-flex align-items-center">
+                <div class="first-card-header-text me-8 mb-0">
+                  Produk Terlaris
+                </div>
+                <img
+                  id="infoProdukTerlaris"
+                  src="@/assets/images/icons/info-circle.svg"
+                />
+                <b-popover
+                  triggers="hover"
+                  target="infoProdukTerlaris"
+                  placement="bottomleft"
+                  >Produk Terlaris merupakan produk kamu yang paling banyak di
+                  order.</b-popover
+                >
               </div>
-              <img
-                id="infoProdukTerlaris"
-                src="@/assets/images/icons/info-circle.svg"
-              />
-              <b-popover
-                triggers="hover"
-                target="infoProdukTerlaris"
-                placement="bottomleft"
-                >Produk Terlaris merupakan produk kamu yang paling banyak di
-                order.</b-popover
+              <div class="w-25 ml-auto">
+                <flat-pickr
+                  v-model="selectedProdukTerlaris"
+                  :config="configDateChart"
+                  @input="handleChangeProdukTerlaris"
+                />
+              </div>
+              <b-button
+                variant="flat-dark"
+                class="btn-icon"
+                size="sm"
+                tag="router-link"
+                :to="{ name: $route.meta.routeToDataProduct}"
               >
+                <img
+                  src="@/assets/images/icons/arrow-square-right.svg"
+                  alt="Arrow Right"
+                />
+              </b-button>
             </div>
-            <div class="w-25 ml-auto">
-              <flat-pickr
-                v-model="selectedProdukTerlaris"
-                :config="configDateChart"
-                @input="handleChangeProdukTerlaris"
-              />
-            </div>
-            <b-button
-              variant="flat-dark"
-              class="btn-icon"
-              size="sm"
-              tag="router-link"
-              :to="{ name: $route.meta.routeToDataProduct}"
-            >
-              <img
-                src="@/assets/images/icons/arrow-square-right.svg"
-                alt="Arrow Right"
-              />
-            </b-button>
-          </div>
-          <div class="card-body">
-            <table class="table table-light">
-              <thead>
-                <tr>
-                  <th>No</th>
-                  <th class="px-0">Produk</th>
-                  <th class="text-center">Terjual</th>
-                </tr>
-              </thead>
-              <tbody v-if="produkTerlarises.length > 0">
-                <tr v-for="(items, index) in produkTerlarises">
-                  <td class="align-top">{{ index + 1 }}</td>
-                  <td class="px-0">
-                    <b-row>
-                      <div style="width:18%;">
-                        <img
-                        v-if="items.photo === null"
-                        :src="require('@/assets/images/avatars/image-null.png')"
-                        class="image-product">
-                        <img
-                        v-else
-                        :src="items.photo"
-                        class="image-product">
-                      </div>
-                      <div class="px-1" style="width:82%;">
-                        <span class="my-auto">{{ items.name }}</span><br>
-                        <b-row v-if="items.variants.length > 0" v-b-toggle="`collapseVariant${index}`" class="text-center rounded-pill py-[5px] mt-[5px]" role="button">
-                          <div v-for="options in items.variants" :style="`width:${91 / items.variants.length}%`">
-                            {{ options.variant_name}}
-                          </div>
-                          <div style="width:7%;" class="bg-white text-black rounded-circle">
-                            <b-icon-chevron-down class="when-closed" />
-                            <b-icon-chevron-up class="when-open" />
-                          </div>
-                        </b-row>
-                        <span v-else class="font-bold text-muted">&mdash;</span>
-                        <b-collapse :id="`collapseVariant${index}`" class="bg-light mx-[-1rem] p-1">
-                          <div v-if="items.variants.length === 3">
-                            <div v-for="option in items.options" class="d-flex">
-                              <div class="text-center" style="width:30.33%;">
-                                {{ option.option_name }}
-                              </div>
-                              <div style="width:69.66%">
-                                <div v-for="child in option.option_child" class="d-flex">
-                                  <div class="text-center" style="width:46%;">
-                                    {{ child.option_name }}
-                                  </div>
-                                  <div style="width:46%">
-                                    <p v-for="child2 in child.option_child" class="text-center mb-[8px]">
-                                      {{ child2.option_name }}
-                                    </p>
-                                  </div>
-                                  <div style="width:8%">
-                                    <p v-for="child2 in child.option_child" class="d-flex justify-content-center mb-[8px]">
-                                      {{ child2.total_sold }}
-                                    </p>
+            <div class="card-body">
+              <table class="table table-light">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th class="px-0">Produk</th>
+                    <th class="text-center">Terjual</th>
+                  </tr>
+                </thead>
+                <tbody v-if="produkTerlarises.length > 0">
+                  <tr v-for="(items, index) in produkTerlarises">
+                    <td class="align-top">{{ index + 1 }}</td>
+                    <td class="px-0">
+                      <b-row>
+                        <div style="width:18%;">
+                          <img
+                          v-if="items.photo === null"
+                          :src="require('@/assets/images/avatars/image-null.png')"
+                          class="image-product">
+                          <img
+                          v-else
+                          :src="items.photo"
+                          class="image-product">
+                        </div>
+                        <div class="px-1" style="width:82%;">
+                          <span class="my-auto">{{ items.name }}</span><br>
+                          <b-row v-if="items.variants.length > 0" v-b-toggle="`collapseVariant${index}`" class="text-center rounded-pill py-[5px] mt-[5px]" role="button">
+                            <div v-for="options in items.variants" :style="`width:${91 / items.variants.length}%`">
+                              {{ options.variant_name}}
+                            </div>
+                            <div style="width:7%;" class="bg-white text-black rounded-circle">
+                              <b-icon-chevron-down class="when-closed" />
+                              <b-icon-chevron-up class="when-open" />
+                            </div>
+                          </b-row>
+                          <span v-else class="font-bold text-muted">&mdash;</span>
+                          <b-collapse :id="`collapseVariant${index}`" class="bg-light mx-[-1rem] p-1">
+                            <div v-if="items.variants.length === 3">
+                              <div v-for="option in items.options" class="d-flex">
+                                <div class="text-center" style="width:30.33%;">
+                                  {{ option.option_name }}
+                                </div>
+                                <div style="width:69.66%">
+                                  <div v-for="child in option.option_child" class="d-flex">
+                                    <div class="text-center" style="width:46%;">
+                                      {{ child.option_name }}
+                                    </div>
+                                    <div style="width:46%">
+                                      <p v-for="child2 in child.option_child" class="text-center mb-[8px]">
+                                        {{ child2.option_name }}
+                                      </p>
+                                    </div>
+                                    <div style="width:8%">
+                                      <p v-for="child2 in child.option_child" class="d-flex justify-content-center mb-[8px]">
+                                        {{ child2.total_sold }}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div v-else-if="items.variants.length === 2">
-                            <div v-for="option in items.options" class="d-flex">
-                              <div class="text-center" style="width:30.33%;">
-                                {{ option.option_name }}
-                              </div>
-                              <div style="width:69.66%">
-                                <div v-for="child in option.option_child" class="d-flex mb-[8px]">
-                                  <div class="text-center" style="width:92%;">
-                                    {{ child.option_name }}
-                                  </div>
-                                  <div style="width:8%">
-                                    <p class="d-flex justify-content-center mb-[8px]">
-                                      {{ child.total_sold }}
-                                    </p>
+                            <div v-else-if="items.variants.length === 2">
+                              <div v-for="option in items.options" class="d-flex">
+                                <div class="text-center" style="width:30.33%;">
+                                  {{ option.option_name }}
+                                </div>
+                                <div style="width:69.66%">
+                                  <div v-for="child in option.option_child" class="d-flex mb-[8px]">
+                                    <div class="text-center" style="width:92%;">
+                                      {{ child.option_name }}
+                                    </div>
+                                    <div style="width:8%">
+                                      <p class="d-flex justify-content-center mb-[8px]">
+                                        {{ child.total_sold }}
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div v-else>
-                            <div v-for="option in items.options" class="d-flex mb-[8px]">
-                              <div class="text-center" style="width:92%;">
-                                {{ option.option_name }}
-                              </div>
-                              <div style="width:8%;">
-                                <p class="d-flex justify-content-center mb-[8px]">
-                                  {{ option.total_sold }}
-                                </p>
+                            <div v-else>
+                              <div v-for="option in items.options" class="d-flex mb-[8px]">
+                                <div class="text-center" style="width:92%;">
+                                  {{ option.option_name }}
+                                </div>
+                                <div style="width:8%;">
+                                  <p class="d-flex justify-content-center mb-[8px]">
+                                    {{ option.total_sold }}
+                                  </p>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </b-collapse>
+                          </b-collapse>
+                        </div>
+                      </b-row>
+                    </td>
+                    <td class="text-center align-top">
+                      <p class="mb-[8px]">{{ items.total_sold }}</p>
+                      <div v-if="items.percentage >= 0" class="d-flex justify-content-center">
+                        <b-badge
+                        class="text-success"
+                        style="background-color:#DCF3EB;"
+                        pill>+{{ items.percentage }}%</b-badge>
+                        <div class="ml-[5px]">
+                          <img
+                            src="@/assets/images/icons/arrow-going-up-alt.svg"
+                            alt="arrow-going-up-alt"
+                          />
+                        </div>
                       </div>
-                    </b-row>
-                  </td>
-                  <td class="text-center align-top">
-                    <p class="mb-[8px]">{{ items.total_sold }}</p>
-                    <div v-if="items.percentage >= 0" class="d-flex justify-content-center">
-                      <b-badge
-                      class="text-success"
-                      style="background-color:#DCF3EB;"
-                      pill>+{{ items.percentage }}%</b-badge>
-                      <div class="ml-[5px]">
-                        <img
-                          src="@/assets/images/icons/arrow-going-up-alt.svg"
-                          alt="arrow-going-up-alt"
-                        />
+                      <div v-else class="d-flex justify-content-center">
+                        <b-badge
+                        class="text-danger"
+                        style="background-color:#FFEDED;"
+                        pill>{{ items.percentage }}%</b-badge>
+                        <div class="ml-[5px]">
+                          <img
+                            src="@/assets/images/icons/arrow-going-down-alt.svg"
+                            alt="arrow-going-down-alt"
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div v-else class="d-flex justify-content-center">
-                      <b-badge
-                      class="text-danger"
-                      style="background-color:#FFEDED;"
-                      pill>{{ items.percentage }}%</b-badge>
-                      <div class="ml-[5px]">
-                        <img
-                          src="@/assets/images/icons/arrow-going-down-alt.svg"
-                          alt="arrow-going-down-alt"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-              <tbody v-else>
-                <tr>
-                  <td colspan="3" class="text-center p-2">Belum ada produk terjual</td>
-                </tr>
-              </tbody>
-            </table>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <td colspan="3" class="text-center p-2">Belum ada produk terjual</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        </b-overlay>
       </div>
       <div class="col-12 col-md-6 mt-2">
-        <div class="card h-100 mb-0">
-          <div class="card-header">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Customer Loyal
-              </div>
-              <img
-                id="infoCustomerLoyal"
-                src="@/assets/images/icons/info-circle.svg"
-              />
-              <b-popover
-                triggers="hover"
-                target="infoCustomerLoyal"
-                placement="bottomleft"
-                >Customer Loyal merupakan customer yang sering melakukan
-                order.</b-popover
-              >
-            </div>
-            <b-button
-              variant="flat-dark"
-              class="btn-icon"
-              size="sm"
-              tag="router-link"
-              :to="{ name: $route.meta.routeToTopCustomer}"
-            >
-              <img
-                src="@/assets/images/icons/arrow-square-right.svg"
-                alt="Arrow Right"
-              />
-            </b-button>
-          </div>
-          <div class="card-body">
-            <ul class="list-group list-group-flush">
-              <li
-                v-for="customerLoyal in customerLoyals"
-                :key="customerLoyals.indexOf(customerLoyal)"
-                class="list-group-item px-0"
-              >
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <p class="list-text-1 h-text-dark mb-0">
-                      {{ customerLoyal.name }}
-                    </p>
-                    <p class="saldo-texts mb-0">
-                      {{ customerLoyal.location }}
-                    </p>
-                  </div>
-                  <div class="right">
-                    <p class="list-text-2 h-text-dark mb-0">
-                      {{ customerLoyal.totalProduk }}
-                    </p>
-                    <p class="list-text-3 mb-0">
-                      {{ formatRupiah(customerLoyal.totalDana) }},-
-                    </p>
-                  </div>
+        <b-overlay
+          variant="light"
+          :show="loadingCustomerLoyal"
+          spinner-variant="primary"
+          blur="0"
+          opacity=".5"
+          rounded="sm"
+        >
+          <div class="card h-100 mb-0">
+            <div class="card-header">
+              <div class="d-flex align-items-center">
+                <div class="first-card-header-text me-8 mb-0">
+                  Customer Loyal
                 </div>
-              </li>
-            </ul>
+                <img
+                  id="infoCustomerLoyal"
+                  src="@/assets/images/icons/info-circle.svg"
+                />
+                <b-popover
+                  triggers="hover"
+                  target="infoCustomerLoyal"
+                  placement="bottomleft"
+                  >Customer Loyal merupakan customer yang sering melakukan
+                  order.</b-popover
+                >
+              </div>
+              <b-button
+                variant="flat-dark"
+                class="btn-icon"
+                size="sm"
+                tag="router-link"
+                :to="{ name: $route.meta.routeToTopCustomer}"
+              >
+                <img
+                  src="@/assets/images/icons/arrow-square-right.svg"
+                  alt="Arrow Right"
+                />
+              </b-button>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li
+                  v-for="customerLoyal in customerLoyals"
+                  :key="customerLoyals.indexOf(customerLoyal)"
+                  class="list-group-item px-0"
+                >
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <p class="list-text-1 h-text-dark mb-0">
+                        {{ customerLoyal.name }}
+                      </p>
+                      <p class="saldo-texts mb-0">
+                        {{ customerLoyal.location }}
+                      </p>
+                    </div>
+                    <div class="right">
+                      <p class="list-text-2 h-text-dark mb-0">
+                        {{ customerLoyal.totalProduk }}
+                      </p>
+                      <p class="list-text-3 mb-0">
+                        {{ formatRupiah(customerLoyal.totalDana) }},-
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
           </div>
-        </div>
+        </b-overlay>
       </div>
     </div>
-    <!-- <div :class="'row' + (blurred ? ' position-relative' : '')">
-      <div :class="'col-12 col-md-7 mt-2 pt-1' + (blurred ? ' blurry' : '')">
-        <div class="card h-100 mb-0">
-          <div class="card-header flex-nowrap">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Performa Customer Service
-              </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
-            </div>
-            <date-range-picker
-              ref="picker"
-              v-model="dateRange"
-              :locale-data="locale"
-              :ranges="ranges"
-              class="w-25"
-            >
-              <template
-                v-slot:input="pickers"
-                style="min-width: 350px;"
-              >
-                <div class="d-flex justify-content-between align-items-center">
-                  <span>{{ getRange(pickers.startDate, pickers.endDate) }}</span>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    class="bi bi-chevron-down"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
-                    />
-                  </svg>
-                </div>
-              </template>
-            </date-range-picker>
-          </div>
-          <div class="card-body">
-            <ChartPerforma
-              :series-prop="series"
-              :categories-prop="categories"
-            />
-          </div>
-        </div>
-      </div>
-      <div :class="'col-12 col-md-5 mt-2 pt-1' + (blurred ? ' blurry' : '')">
-        <div class="card h-100 mb-0">
-          <div class="card-header">
-            <div class="d-flex align-items-center">
-              <div class="first-card-header-text me-8 mb-0">
-                Top Customer Service
-              </div>
-              <img
-                src="@/assets/images/icons/info-circle.svg"
-                alt="Info"
-              >
-            </div>
-          </div>
-          <div class="card-body">
-            <ul class="list-group list-group-flush">
-              <li
-                v-for="topCustomerService in topCustomerServices"
-                :key="topCustomerServices.indexOf(topCustomerService)"
-                class="list-group-item px-0"
-              >
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="d-flex align-items-center">
-                    <img
-                      src="@/assets/images/icons/profile-placehold.svg"
-                      alt="Photo"
-                    >
-                    <p class="list-text-1 h-text-dark ml-2 mb-0">
-                      {{ topCustomerService.name }}
-                    </p>
-                  </div>
-                  <div class="right">
-                    <p class="list-text-2 text-green mb-0">
-                      {{ formatRupiah(topCustomerService.totalDana) }}
-                    </p>
-                    <p class="list-text-3 mb-0">
-                      {{ topCustomerService.totalProduk }}pcs
-                    </p>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div
-        v-if="blurred"
-        class="position-absolute pos-center text-center"
-      >
-        <p class="h3 font-weight-bolder mb-2">
-          Yuk, Hiring Talent Komerce agar kamu<br>dapat menggunakan fitur ini!
-        </p>
-        <button class="btn btn-outline-primary">Tutup</button>
-      </div>
-    </div> -->
     <b-modal
       id="modalTopUp"
       centered
@@ -1116,11 +1097,6 @@
             <p class="text-center h-text-dark font-weight-bold mb-2">
               Mohon verifikasi identitas kamu dengan memasukan PIN
             </p>
-            <!-- <PincodeInput
-              v-model="pin"
-              :length="6"
-              class="font-weight-bold h-text-dark"
-            /> -->
             <b-row class="justify-content-center mb-1">
               <CodeInput
                 v-model="pin"
@@ -1246,9 +1222,6 @@
         </b-row>
       </div>
     </b-modal>
-  </div>
-  <div v-else class="d-flex justify-content-center">
-    <b-spinner variant="primary" label="Loading..." />
   </div>
   <!-- MODAL ONBOARDING -->
   <modal-onboarding></modal-onboarding>

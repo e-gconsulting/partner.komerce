@@ -18,6 +18,7 @@
             required
             @keyup="validateEmail"
             @change="validateForm"
+            @keypress="NoSpace($event)"
           />
           <label class="label-register">Email</label>
           <small
@@ -71,6 +72,7 @@
               required
               @keyup="() => fullNameValid = fullName.length >= 3"
               @change="validateForm"
+              @keypress="isAlphabet($event)"
             />
             <label class="label-register">Nama</label>
             <small
@@ -120,6 +122,7 @@
               required
               @keyup="() => passwordValid = password.length >= 8"
               @change="validateForm"
+              @keypress="NoSpace($event)"
             />
             <label class="label-register">Password</label>
             <feather-icon
@@ -151,6 +154,7 @@
               required
               @keyup="() => confirmPasswordMatch = confirmPassword == password"
               @change="validateForm"
+              @keypress="NoSpace($event)"
             />
             <label class="label-register">Konfirmasi Password</label>
             <feather-icon
@@ -234,6 +238,8 @@
   </div>
 </template>
 <script>
+import { NoSpace, isAlphabet } from '@/libs/helpers'
+
 export default {
   data() {
     return {
@@ -256,6 +262,8 @@ export default {
       confirmPasswordVisible: null,
       terms: null,
       loadingSubmit: false,
+      NoSpace,
+      isAlphabet,
     }
   },
   methods: {

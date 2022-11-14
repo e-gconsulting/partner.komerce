@@ -168,13 +168,13 @@
           <div class="d-flex">
             <div v-if="data.item.product_image === null">
               <img
-                style="width: 30%;"
+                class="images__product__orderan"
                 :src="imageNull"
               >
             </div>
             <div v-else>
               <img
-                style="width: 30%;"
+                class="images__product__orderan"
                 :src="data.item.product_image"
                 @error="setImageDefault"
               >
@@ -332,22 +332,22 @@
           >
             <img
               :src="data.item.shipment_image_path"
-              style="width:20%; height: 20%;"
+              class="images__product__orderan"
             ><span class="my-auto">{{ getShippingLabel(data.item.shipping_type) }}</span>
           </div>
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
-            <div class="d-flex">
+            <div class="d-flex mt-1">
               <div v-if="data.item.product[0].product_image === null">
                 <img
-                  class="w-[50px] h-[50px]"
+                  class="images__product__orderan"
                   :src="imageNull"
                 >
               </div>
               <div v-else>
                 <img
-                  style="width:50%;"
+                  class="images__product__orderan"
                   :src="data.item.product[0].product_image"
                   @error="setImageDefault"
                 >
@@ -393,13 +393,13 @@
                 >
                   <div v-if="item.product_image === null">
                     <img
-                      class="w-[50px] h-[50px]"
+                      class="images__product__orderan"
                       :src="imageNull"
                     >
                   </div>
                   <div v-else>
                     <img
-                      class="w-[50px] h-[50px]"
+                      class="images__product__orderan"
                       :src="item.product_image"
                       @error="setImageDefault"
                     >
@@ -618,22 +618,22 @@
           >
             <img
               :src="data.item.shipment_image_path"
-              style="width: 30%;height: 30%;"
+              class="images__product__orderan"
             ><span class="my-auto">{{ getShippingLabel(data.item.shipping_type) }}</span>
           </div>
         </template>
         <template #cell(product)="data">
           <div v-if="data.item.product[0]">
-            <div class="d-flex">
+            <div class="d-flex mt-1">
               <div v-if="data.item.product[0].product_image === null">
                 <img
-                  style="width: 30%;"
+                  class="images__product__orderan"
                   :src="imageNull"
                 >
               </div>
               <div v-else>
                 <img
-                  style="width: 30%;"
+                  class="images__product__orderan"
                   :src="data.item.product[0].product_image"
                   @error="setImageDefault"
                 >
@@ -679,13 +679,13 @@
                 >
                   <div v-if="item.product_image === null">
                     <img
-                      class="w-[50px] h-[50px]"
+                      class="images__product__orderan"
                       :src="imageNull"
                     >
                   </div>
                   <div v-else>
                     <img
-                      class="w-[50px] h-[50px]"
+                      class="images__product__orderan"
                       :src="item.product_image"
                       @error="setImageDefault"
                     >
