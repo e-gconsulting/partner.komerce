@@ -353,7 +353,6 @@ export default {
         },
       ],
       loadContentOnboarding: false,
-
       loadingOnboarding: false,
     }
   },
