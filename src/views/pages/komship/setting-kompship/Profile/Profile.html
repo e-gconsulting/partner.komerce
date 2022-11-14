@@ -170,6 +170,8 @@
                     placeholder="Email"
                     :state="errors.length > 0 ? false:null"
                     style="background: white; border: 1.5px solid #F3F3F3 !important; color: #C0C0C0"
+                    onpaste="return false"
+                    @keypress="NoSpace($event)"
                     disabled
                   />
                   <template #append>

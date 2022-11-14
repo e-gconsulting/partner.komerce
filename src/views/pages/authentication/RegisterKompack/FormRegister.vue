@@ -120,6 +120,7 @@
               class="input-register mb-[3px]"
               :class="passwordValid === false ? 'is-invalid' : ''"
               required
+              onpaste="return false"
               @keyup="() => passwordValid = password.length >= 8"
               @change="validateForm"
               @keypress="NoSpace($event)"
@@ -152,6 +153,7 @@
               class="input-register mb-[3px]"
               :class="confirmPasswordMatch === false ? 'is-invalid' : ''"
               required
+              onpaste="return false"
               @keyup="() => confirmPasswordMatch = confirmPassword == password"
               @change="validateForm"
               @keypress="NoSpace($event)"
