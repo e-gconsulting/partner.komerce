@@ -227,7 +227,6 @@ export default {
                   { action: 'read', subject: 'Dashboard Komship' },
                   { action: 'manage', subject: 'Customer' },
                   { action: 'manage', subject: 'Produk' },
-                  // { action: 'manage', subject: 'Gudang' },
                   { action: 'manage', subject: 'Tambah Produk' },
                   { action: 'manage', subject: 'Data Produk' },
                   { action: 'manage', subject: 'Order' },
@@ -248,11 +247,6 @@ export default {
                   { action: 'manage', subject: 'Setting Ekspedisi' },
                   { action: 'manage', subject: 'Hiring' },
                   { action: 'manage', subject: 'Fitur Pendukung' },
-                  // Komplace
-                  // { action: 'manage', subject: 'Dashboard Komplace' },
-                  // { action: 'manage', subject: 'Monitoring' },
-                  // { action: 'manage', subject: 'Manajemen Admin' },
-                  // { action: 'manage', subject: 'Pengaturan Akun Komplace' },
                 ]
                 // KOMPACK
                 if (userData.is_kompack === 1) {
@@ -262,7 +256,9 @@ export default {
                   ability.push({ action: 'manage', subject: 'Gudang Komship' })
                 }
               } else {
-                ability = []
+                ability = [
+                  { action: 'manage', subject: 'komtim' },
+                ]
               }
               break
             case 'SDM':
@@ -382,7 +378,7 @@ export default {
           this.$store.commit('auth/UPDATE_USER_DATA', data)
 
           this.$router
-            .go(getHomeRouteForLoggedInUser(role))
+            .go(getHomeRouteForLoggedInUser(role, userData.is_komship))
             .then(() => {})
             .catch(error => {
               this.$refs.loginForm.setErrors(error.response.data.error)

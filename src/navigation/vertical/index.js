@@ -58,6 +58,9 @@ import notification from './notification'
 // Kompack Admin
 import kompackpartner from './kompack/partner'
 
+// komtim
+import komtim from './komtim'
+
 // Array of sections
 export default [
   ...dashboard,
@@ -80,5 +83,6 @@ export default [
 
   ...tiket,
   ...notification,
+  ...komtim,
 
 ]
