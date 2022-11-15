@@ -42,7 +42,7 @@
             v-else-if="emailManagement"
             class="text-danger"
           >
-            <small>Maaf email kamu tidak memiliki hak akses untuk masuk karena telah terdaftar di role lain.</small><br>
+            <small>Maaf email kamu tidak memiliki hak akses untuk masuk karena telah terdaftar di {{ MessageRole }}.</small><br>
             <small>Kamu dapat menggunakan email lain untuk mendaftar sebagai partner kompack</small>
           </div>
           <div
@@ -264,6 +264,8 @@ export default {
       confirmPasswordVisible: null,
       terms: null,
       loadingSubmit: false,
+      role: null,
+      MessageRole: null,
       NoSpace,
       isAlphabet,
     }
@@ -287,6 +289,7 @@ export default {
           params: { email },
         })
         const { data } = checkEmail
+        console.log(data)
         if (data.code === 1010) {
           this.fullnameExisting = data.data.full_name
         }
@@ -294,6 +297,8 @@ export default {
         this.emailKompack = data.code === 1009
         this.emailKomship = data.code === 1010
         this.emailManagement = data.code === 1011
+        this.role = data.data.role_id
+        this.validateRole()
       } catch (error) {
         console.error(error)
       }
@@ -369,6 +374,23 @@ export default {
       if (this.emailKompack) return this.$router.push('/login')
       if (this.emailManagement) return this.$router.go()
       return false
+    },
+    validateRole() {
+      if (this.role === 1) {
+        this.MessageRole = 'admin Komerce'
+      }
+      if (this.role === 2) {
+        this.MessageRole = 'manajemen Komerce'
+      }
+      if (this.role === 3) {
+        this.MessageRole = 'SDM Komerce'
+      }
+      if (this.role === 5) {
+        this.MessageRole = 'talent global'
+      }
+      if (this.role === 6) {
+        this.MessageRole = 'mitra Komerce'
+      }
     },
   },
 }
