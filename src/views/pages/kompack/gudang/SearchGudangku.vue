@@ -64,7 +64,7 @@
         </div>
         <div class="card">
           <div class="card-body">
-            <b-card
+            <b-card-text
               img-src="@/assets/images/Gudang.png"
               img-alt="Card image"
               img-left
@@ -77,14 +77,14 @@
                 rounded
                 class="mb-2"
               >
-                <b-card-text-right>
+                <b-card-text-left>
                   <b-badge
                     variant="success"
-                    right
+                    left
                   >
                     Tersedia
                   </b-badge>
-                </b-card-text-right>{{ gudang }}</b-card>
+                </b-card-text-left>{{ gudang }}</b-card>
               <b-card-text>
                 <v-bind>Kota :</v-bind>
               </b-card-text>
@@ -119,7 +119,7 @@
                     :poppins-hidden="show ? 'true' : null"
                     text-color:bold
                   />
-                </b-card-text>{{ gudang }}</b-card>
+                </b-card-text>Gudang</b-card>
               <b-card-text>
                 <v-bind>Kota :</v-bind>
               </b-card-text>
