@@ -135,7 +135,6 @@
                 </b-button>
               </div>
             </b-form-group>
-
             <!-- checkbox -->
             <b-form-group v-if="false">
               <b-form-checkbox
