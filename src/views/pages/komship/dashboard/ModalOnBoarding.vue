@@ -298,6 +298,7 @@
               v-if="stepOnboarding === 5"
               variant="primary"
               class="d-flex align-items-center justify-content-center btn-icon ml-1"
+              :disabled="buttonStartIsDisabled"
               @click="updateProfileOnBoarding"
             >
               <b-spinner
@@ -355,6 +356,7 @@ export default {
       loadContentOnboarding: false,
 
       loadingOnboarding: false,
+      buttonStartIsDisabled: false,
     }
   },
   methods: {
@@ -369,6 +371,7 @@ export default {
       }
     },
     updateProfileOnBoarding() {
+      this.buttonStartIsDisabled = true
       this.disabledOnboardingMulai = false
       this.loadingOnboarding = true
       this.$http_komship
@@ -378,9 +381,11 @@ export default {
             this.$http_komship.post('/v1/gamifaction/start')
               .then(() => {
                 this.loadingOnboarding = false
+                this.buttonStartIsDisabled = false
                 window.location.reload()
               }).catch(() => {
                 this.loadingOnboarding = false
+                this.buttonStartIsDisabled = false
                 window.location.reload()
               })
           }
@@ -397,6 +402,7 @@ export default {
               variant: 'danger',
             },
           }, 2000)
+          this.buttonStartIsDisabled = false
         })
     },
     handleNextStepOnboarding() {

@@ -359,7 +359,10 @@
                       @input="checkBank"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
-                    <small v-if="messageSameNoBank !== ''" class="text-danger">{{ messageSameNoBank }}</small>
+                    <small
+                      v-if="messageSameNoBank !== ''"
+                      class="text-danger"
+                    >{{ messageSameNoBank }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -380,7 +383,10 @@
                       @input="checkBank"
                     />
                     <small class="text-danger">{{ errors[0] }}</small>
-                    <small v-if="messageSameNameBank !== ''" class="text-danger">{{ messageSameNameBank }}</small>
+                    <small
+                      v-if="messageSameNameBank !== ''"
+                      class="text-danger"
+                    >{{ messageSameNameBank }}</small>
                   </validation-provider>
                 </b-form-group>
               </b-col>
@@ -754,6 +760,110 @@
         </b-button>
       </b-row>
     </b-modal>
+
+    <!-- Check Rekening -->
+    <b-modal
+      ref="popup-check-rekening"
+      hide-footer
+      hide-header
+      no-close-on-backdrop
+      no-close-on-esc
+      centered
+    >
+      <b-row class="justify-content-end">
+        <b-button
+          class="btn-icon"
+          variant="flat-dark"
+          size="sm"
+          @click="closeCheckRek"
+        >
+          <b-img src="@/assets/images/icons/close-circle.svg" />
+        </b-button>
+      </b-row>
+
+      <b-row class="justify-content-center text-center mb-1">
+        <h3 class="text-black">
+          <strong>
+            Rekeningmu udah terdaftar di akun lain
+          </strong>
+        </h3>
+      </b-row>
+
+      <b-row class="text-[#626262] justify-content-center mb-1">
+        <b-col cols="11">
+          <span>
+            Akun Komerce-mu yang lain masih ada tanggungan
+            <br>
+            saldo minus yakni;
+          </span>
+        </b-col>
+      </b-row>
+
+      <b-row class="justify-content-center mb-1">
+        <b-col cols="11">
+          <table class="w-full">
+            <tr>
+              <th class="px-1 py-50 border__table__check__rek">
+                <span class="text-black">Email</span>
+              </th>
+              <th class="px-1 py-50 border__table__check__rek">
+                <span class="text-black">Kewajiban Top Up</span>
+              </th>
+            </tr>
+            <tr
+              v-for="(item, index) in banksDataMinus"
+              :key="index+1"
+            >
+              <td class="px-1 py-50 border__table__check__rek">
+                <span class="text-primary"><strong>{{ item.email }}</strong></span>
+              </td>
+              <td class="px-1 py-50 border__table__check__rek">
+                <span class="text-primary"><strong>-Rp{{ formatNumber(item.saldo) }},-</strong></span>
+              </td>
+            </tr>
+          </table>
+        </b-col>
+      </b-row>
+
+      <b-row class="text-[#626262] justify-content-center mb-1">
+        <b-col cols="11">
+          <span>
+            Lunasi dulu buat lanjut tambah rekening.
+          </span>
+        </b-col>
+      </b-row>
+
+      <b-row class="text-[#626262] justify-content-center mb-1">
+        <b-col cols="11">
+          <span>
+            <strong>
+              Sertakan juga alasanmu pake akun baru ini :
+            </strong>
+          </span>
+        </b-col>
+      </b-row>
+
+      <b-row class="text-[#626262] justify-content-center mb-1">
+        <b-col cols="11">
+          <b-form-textarea
+            v-model="reasonCreateRekening"
+            rows="3"
+          />
+        </b-col>
+      </b-row>
+
+      <b-row class="justify-content-center mb-1">
+        <b-button
+          :class="reasonCreateRekening === '' ? 'cursor-not-allowed' : ''"
+          :style="reasonCreateRekening === '' ? 'background: #C2C2C2; min-width: 120px; border-radius: 10px;' : 'background: #F95031!important; min-width: 120px; border-radius: 10px; border: 0!important;'"
+          :disabled="reasonCreateRekening === ''"
+          @click="submitAccount"
+        >
+          Submit
+        </b-button>
+      </b-row>
+
+    </b-modal>
   </b-overlay>
 </template>
 
@@ -872,6 +982,10 @@ export default {
       checkValidBank: false,
       messageSameNameBank: '',
       messageSameNoBank: '',
+
+      banksDataMinus: [],
+      reasonCreateRekening: '',
+      buttonSubmitIsDisabled: false,
     }
   },
   mounted() {
@@ -879,7 +993,6 @@ export default {
     this.getBank()
     this.loadBanks()
     this.getProfile()
-    this.$refs['modal-pin'].show()
     this.changeAttr()
   },
   methods: {
@@ -952,6 +1065,7 @@ export default {
               bank_name: this.fieldAddBankName,
               account_name: this.fieldAddAccountName,
               account_no: this.fieldAddAccountNo,
+              note: this.reasonCreateRekening,
             }, {
               headers: { Authorization: `Bearer ${useJwt.getToken()}` },
             }).then(responseStore => {
@@ -1502,25 +1616,44 @@ export default {
         formData.append('user_id', this.$store.state?.auth?.userData.id)
         this.$http.post('/v1/bank/check', formData)
           .then(response => {
+            console.log(response)
             this.loadingSubmit = false
             this.checkValidBank = false
             this.messageSameNoBank = ''
             this.messageSameNameBank = ''
           }).catch(err => {
-            if (err.response.data.message === 'Nomor Rekening Sudah digunakan') {
-              this.messageSameNoBank = err.response.data.message
+            if (err.response.data.code === 1001) {
+              if (err.response.data.message === 'Nomor Rekening Sudah digunakan') {
+                this.messageSameNoBank = err.response.data.message
+                this.messageSameNameBank = ''
+                this.checkValidBank = true
+              }
+              if (err.response.data.message === 'Nama telah digunakan sebelumnya') {
+                this.messageSameNameBank = err.response.data.message
+                this.messageSameNoBank = ''
+                this.checkValidBank = true
+              }
+            }
+            if (err.response.data.code === 1002) {
+              this.messageSameNoBank = ''
               this.messageSameNameBank = ''
               this.checkValidBank = true
-            }
-            if (err.response.data.message === 'Nama telah digunakan sebelumnya') {
-              this.messageSameNameBank = err.response.data.message
-              this.messageSameNoBank = ''
-              this.checkValidBank = true
+              console.log(err.response.data)
+              this.banksDataMinus = err.response.data.data
+              this.$refs['popup-check-rekening'].show()
             }
             this.loadingSubmit = false
           })
       }
     }, 1000),
+    closeCheckRek() {
+      this.$refs['popup-check-rekening'].hide()
+    },
+    submitAccount() {
+      this.$refs['modal-verification-submit'].show()
+      this.$refs['popup-check-rekening'].hide()
+    },
+    formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
   },
 }
 </script>
@@ -1567,6 +1700,10 @@ export default {
 
   [dir] .wrapper__otp__wa {
     background: #C2C2C2;
+  }
+
+  [dir] .border__table__check__rek {
+    border: 1px solid #E2E2E2;
   }
 
 </style>

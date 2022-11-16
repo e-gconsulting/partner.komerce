@@ -349,6 +349,7 @@ export default {
       loadingDataChart: false,
 
       loadingTopAdmin: true,
+      nominalPossible: false,
     }
   },
   computed: {
@@ -495,6 +496,7 @@ export default {
         this.$bvModal.show('modal-notif-rekTujuanBlmAda')
         this.changeAttr()
       } else {
+        this.loadBank()
         this.$bvModal.show('modal-keuangan')
         this.changeAttr()
       }
@@ -1134,7 +1136,6 @@ export default {
       window.location.reload()
     },
     async setRekening(data) {
-      await this.loadBank()
       const find = await this.bankItems.find(item => item.bank_account_id === data)
       this.rekeningDisplay = find
     },
@@ -1154,5 +1155,11 @@ export default {
         }, 2000)
       })
     },
+    checkWithdraw: _.debounce(function () {
+      this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '')}`)
+        .then(response => {
+          console.log(response)
+        })
+    }, 1000),
   },
 }
