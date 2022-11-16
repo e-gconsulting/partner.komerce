@@ -350,6 +350,10 @@ export default {
 
       loadingTopAdmin: true,
       nominalPossible: false,
+      maxWithdraw: 0,
+      remainingSaldo: 0,
+      withdrawPossibilites: 0,
+      isCheckSaldo: false,
     }
   },
   computed: {
@@ -497,6 +501,7 @@ export default {
         this.changeAttr()
       } else {
         this.loadBank()
+        this.isCheckSaldo = false
         this.$bvModal.show('modal-keuangan')
         this.changeAttr()
       }
@@ -1159,7 +1164,38 @@ export default {
       this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '')}`)
         .then(response => {
           console.log(response)
+          this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
+          this.remainingSaldo = this.formatPrice(response.data.data.remaining_saldo)
+          this.withdrawPossibilites = response.data.data.withdraw_possibilites
+          this.isCheckSaldo = true
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
         })
     }, 1000),
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    validateWithdraw() {
+      let result = false
+      if (!this.selectedRekTujuan) {
+        result = true
+      }
+      if (this.bankItems === []) {
+        result = true
+      }
+      if (this.withdrawPossibilites === 0) {
+        result = true
+      }
+      return result
+    },
   },
 }
