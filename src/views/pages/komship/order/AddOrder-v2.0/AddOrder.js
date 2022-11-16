@@ -371,8 +371,10 @@ export default {
       }
     },
     async autofillByCustomer(customer) {
+      console.log(customer)
       this.customerId = customer.customer_id
       this.customerPhone = `${toInteger(customer.phone)}`
+      this.customerName = customer.name
       if (customer.subdistrict_name !== '') {
         this.destination = await this.$http_komship.get('v1/destination', {
           params: { search: customer.subdistrict_name === '-' ? customer.district_name : customer.subdistrict_name },
