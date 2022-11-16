@@ -10,7 +10,7 @@
       Silahkan verifikasi melalui email yang telah kami kirimkan
     </p>
     <router-link
-      to="login"
+      to="auth-login"
       class="text-[16px] font-semibold"
     >
       Masuk

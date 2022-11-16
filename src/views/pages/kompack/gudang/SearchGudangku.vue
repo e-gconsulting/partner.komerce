@@ -1,302 +1,97 @@
 <template>
-  <b-col class="pl-0 pr-0">
-    <b-form>
-      <b-row>
-        <b-col cols="12">
-          <b-form-group>
-            <b-row class="d-flex justify-content-end align-items-center mt-2 mr-50 wrapper__filter__data__product">
-              <b-col
-                md="3"
-                class="text-center"
-              >
-                <b-input-group class="input-group-merge">
-                  <b-input-group-prepend is-text>
-                    <feather-icon icon="SearchIcon" />
-                  </b-input-group-prepend>
-                  <b-form-input
-                    v-model="searchProduct"
-                    placeholder="Example"
-                    @input="getProduct"
-                  />
-                </b-input-group>
-              </b-col>
-              <b-col md="auto">
-                <b-dropdown
-                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                  right
-                  no-caret
-                  variant="primary"
-                >
-                  <template
-                    #button-content
-                  >
-                    <feather-icon icon="SlidersIcon" />
-                  </template>
-                  <b-dropdown-form
-                    style="width: 417px;"
-                  >
-                    <b-form @submit.prevent>
-                      <b-row>
-                        <b-col
-                          cols="12"
-                          class="ml-50"
-                        >
-                          <b-form-group
-                            label="Stok"
-                          >
-                            <div class="d-flex justify-content-center align-items-center">
-                              <b-form-input
-                                v-model="stockFrom"
-                                class=""
-                              />
-                              <b-button
-                                class="btn-icon"
-                                variant="flat-dark"
-                                disabled
-                              >
-                                <feather-icon
-                                  icon="MinusIcon"
-                                />
-                              </b-button>
-                              <b-form-input
-                                v-model="stockTo"
-                                class="mr-1"
-                              />
-                            </div>
-                          </b-form-group>
-                        </b-col>
-                        <b-col
-                          cols="12"
-                          class="ml-50 mt-50"
-                        >
-                          <b-form-group
-                            label="Terjual"
-                          >
-                            <div class="d-flex justify-content-center align-items-center">
-                              <b-form-input
-                                v-model="soldFrom"
-                                class=""
-                              />
-                              <b-button
-                                class="btn-icon"
-                                variant="flat-dark"
-                                disabled
-                              >
-                                <feather-icon
-                                  icon="MinusIcon"
-                                />
-                              </b-button>
-                              <b-form-input
-                                v-model="soldTo"
-                                class="mr-1"
-                              />
-                            </div>
-                          </b-form-group>
-                        </b-col>
-                        <!-- submit and reset -->
-                        <b-col
-                          cols="12"
-                          class="ml-50 mt-1"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                            type="reset"
-                            variant="outline-primary"
-                            class="mr-1"
-                            @click="resetFilter"
-                          >
-                            Reset
-                          </b-button>
-                          <b-button
-                            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                            type="submit"
-                            variant="primary"
-                            @click="getProduct"
-                          >
-                            Terapkan
-                          </b-button>
-                        </b-col>
-                      </b-row>
-                    </b-form>
-                  </b-dropdown-form>
-                </b-dropdown>
-              </b-col>
-            </b-row>
-
-            <!-- Mobile -->
-            <b-row class="d-flex justify-content-end align-items-center mt-2 mx-50 wrapper__filter__data__product__mobile">
-              <b-col
-                cols="8"
-                class="text-center"
-              >
-                <b-input-group class="input-group-merge">
-                  <b-input-group-prepend is-text>
-                    <feather-icon icon="SearchIcon" />
-                  </b-input-group-prepend>
-                  <b-form-input
-                    v-model="searchProduct"
-                    placeholder="Example"
-                    @input="getProduct"
-                  />
-                </b-input-group>
-              </b-col>
-              <b-col cols="4">
-                <b-dropdown
-                  v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                  right
-                  no-caret
-                  variant="primary"
-                >
-                  <template
-                    #button-content
-                  >
-                    <feather-icon icon="SlidersIcon" />
-                  </template>
-                  <b-dropdown-form
-                    class="wrapper__form__filter__data__product__mobile"
-                    style="width: 417px;"
-                  >
-                    <b-form @submit.prevent>
-                      <b-row>
-                        <b-col
-                          cols="12"
-                          class="ml-50"
-                        >
-                          <b-form-group
-                            label="Stok"
-                          >
-                            <div class="d-flex justify-content-center align-items-center">
-                              <b-form-input
-                                v-model="stockFrom"
-                                class=""
-                              />
-                              <b-button
-                                class="btn-icon"
-                                variant="flat-dark"
-                                disabled
-                              >
-                                <feather-icon
-                                  icon="MinusIcon"
-                                />
-                              </b-button>
-                              <b-form-input
-                                v-model="stockTo"
-                                class="mr-1"
-                              />
-                            </div>
-                          </b-form-group>
-                        </b-col>
-                        <b-col
-                          cols="12"
-                          class="ml-50 mt-50"
-                        >
-                          <b-form-group
-                            label="Terjual"
-                          >
-                            <div class="d-flex justify-content-center align-items-center">
-                              <b-form-input
-                                v-model="soldFrom"
-                                class=""
-                              />
-                              <b-button
-                                class="btn-icon"
-                                variant="flat-dark"
-                                disabled
-                              >
-                                <feather-icon
-                                  icon="MinusIcon"
-                                />
-                              </b-button>
-                              <b-form-input
-                                v-model="soldTo"
-                                class="mr-1"
-                              />
-                            </div>
-                          </b-form-group>
-                        </b-col>
-                        <!-- submit and reset -->
-                        <b-col
-                          cols="12"
-                          class="ml-50 mt-1"
-                        >
-                          <b-button
-                            v-ripple.400="'rgba(186, 191, 199, 0.15)'"
-                            type="reset"
-                            variant="outline-primary"
-                            class="mr-1"
-                            @click="resetFilter"
-                          >
-                            Reset
-                          </b-button>
-                          <b-button
-                            v-ripple.400="'rgba(255, 255, 255, 0.15)'"
-                            type="submit"
-                            variant="primary"
-                            @click="getProduct"
-                          >
-                            Terapkan
-                          </b-button>
-                        </b-col>
-                      </b-row>
-                    </b-form>
-                  </b-dropdown-form>
-                </b-dropdown>
-              </b-col>
-            </b-row>
-          </b-form-group>
-        </b-col>
-      </b-row>
-    </b-form>
-    <b-row class="mt-1">
-      <b-col
-        cols="12"
-        class=""
-      >
-        <b-overlay
-          variant="light"
-          :show="loading"
-          spinner-variant="primary"
-          blur="0"
-          opacity=".5"
-          rounded="sm"
+  <div>
+    <b-card body>
+      <div class="d-flex align-items-center">
+        <b-button
+          variant="primary"
+          size="sm"
+          class="mr-1 rounded-lg p-0"
+          @click="$router.go(-1)"
         >
-          <!-- Desktop -->
-          <b-container
-            class="table-list-product"
-            fluid
+          <feather-icon
+            size="2x"
+            icon="ChevronLeftIcon"
+          />
+        </b-button>
+        <h4 class="my-0">
+          Search Gudang
+        </h4>
+      </div>
+      <b-row>
+        <b-col lg="3" />
+        <b-col lg="3" />
+        <b-col lg="3" />
+        <b-col
+          sm="12"
+          lg="3"
+          class="d-flex"
+        >
+          <b-input-group class="input-group-merge mr-1">
+            <b-input-group-prepend is-text>
+              <feather-icon icon="SearchIcon" />
+            </b-input-group-prepend>
+            <b-form-input
+              id="field-search-for-tbl"
+              v-model="search"
+              placeholder="Search"
+              @input="searching()"
+            />
+          </b-input-group>
+        </b-col>
+        <b-col
+          lg="12"
+          class="mt-2"
+        >
+          <div
+            v-for="item in items"
+            :key="item.id"
+            class="border rounded-lg p-1 my-1"
           >
-            <b-row>
+            <b-row class="">
               <b-col
-                cols="3"
-              >
-                <strong class="ml-2">
-                  Nama Produk
-                </strong>
+                lg="1"
+              ><img
+                src="@/assets/images/logo/logo.png"
+                alt="logo"
+              ></b-col>
+              <b-col class="font-bold align-self-center">
+                <div class="mb-1">
+                  {{ item.name }}
+                </div>
+                <div>{{ item.approved_date }}</div>
               </b-col>
-              <b-col cols="3">
-                <strong class="ml-2">
-                  Variasi
-                </strong>
+            </b-row>
+            <b-row class="mt-1">
+              <b-col lg="2">
+                <p>Sektor Bisnis</p>
+                <p>Tipe Bisnis</p>
               </b-col>
-              <b-col cols="2">
-                <strong class="ml-2">
-                  Harga
-                </strong>
+              <b-col lg="5">
+                <p>{{ item.business_sector }}</p>
+                <p>{{ item.business_type }}</p>
               </b-col>
-              <b-col cols="2">
-                <strong class="ml-2">
-                  Stock
-                </strong>
+              <b-col lg="2">
+                <p>Jumlah Produk</p>
+                <p>Total Terjual</p>
               </b-col>
-              <b-col cols="1">
-                <strong>
-                  Terjual
-                </strong>
+              <b-col lg="1">
+                <p>{{ item.product_total }}</p>
+                <p>{{ item.total_sold }}</p>
               </b-col>
-              <b-col cols="1">
-                <strong class="ml-2">
-                  Aksi
-                </strong>
+              <b-col lg="2">
+                <b-button
+                  class="mb-1"
+                  size="sm"
+                  variant="primary"
+                  @click="search(item)"
+                >Lihat Stock
+                </b-button>
+                <b-button
+                  size="sm"
+                  variant="outline-primary"
+                  @click="chat(item.number_phone)"
+                >Chat Partner
+                </b-button>
               </b-col>
             </b-row>
             <hr style="height:1px; background-color:#828282; color: #828282; opacity: 0.5;">
@@ -818,14 +613,12 @@
           >
             Batal
           </b-button>
+          </div>
         </b-col>
-      </template>
-
-    </b-modal>
-
-  </b-col>
+      </b-row>
+    </b-card>
+  </div>
 </template>
-
 <script>
 import {
   BRow,
@@ -1021,23 +814,11 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
-* {
-  font-family: Poppins;
+<style lang="scss" scoped>
+p {
+  font-weight: 500;
+  color: #000000
 }
-
-[dir] .background-table-variant {
-  background: #FFF;
-}
-
-@media only screen and (max-width: 922px) {
-    [dir] .table-list-product {
-        display: none;
-    }
-}
-
 @media only screen and (min-width: 923px) {
     [dir] .table-list-product {
         display: inline-block;
@@ -1079,7 +860,9 @@ export default {
   }
   [dir] .wrapper__form__filter__data__product__mobile {
     width: 270px!important;
+.rounded {
+  &-lg {
+    border-radius: 16px !important;
   }
 }
-
 </style>
