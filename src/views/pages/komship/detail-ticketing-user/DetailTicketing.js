@@ -195,6 +195,7 @@ export default {
           this.ticketNo = data.ticket_no
           this.ticketType = data.ticket_type
           this.customerName = data.customer_name
+          this.customerPhone = data.customer_phone
           this.description = data.description
           this.seller = data.partner_name
           this.ekspedisi = data.shipping
@@ -663,9 +664,6 @@ export default {
       } else {
         window.open(`https://api.whatsapp.com/send?phone=62${this.customerPhone}`, '_blank')
       }
-    },
-    fetchCustomerPhone(data) {
-      this.customerPhone = data
     },
     openPopupClaimRetur() {
       this.$refs['popup-claim-retur'].show()

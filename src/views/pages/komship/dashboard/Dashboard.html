@@ -1147,10 +1147,10 @@
           </p>
           <p class="h-text-dark font-weight-bold">
             Saldo sebesar {{ nominal }} akan segera dikirim ke rekening atas
-            nama {{ rekeningDisplay.account_name }} - {{ rekeningDisplay.bank_name }} dalam 1x24 jam
+            nama {{ rekening.nama }} - {{ rekening.bank }} dalam 1x24 jam
           </p>
         </div>
-        <div v-if="stepNow === 2 && status===false" class="text-center">
+        <div v-if="stepNow === 2 && status === false" class="text-center">
           <b-row class="justify-content-center">
             <img
               src="@/assets/images/icons/fail.svg"
