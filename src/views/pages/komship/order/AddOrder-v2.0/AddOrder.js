@@ -371,6 +371,7 @@ export default {
       }
     },
     async autofillByCustomer(customer) {
+      console.log(customer)
       this.customerId = customer.customer_id
       this.customerPhone = `${toInteger(customer.phone)}`
       this.customerName = customer.name
