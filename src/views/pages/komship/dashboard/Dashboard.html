@@ -1025,16 +1025,16 @@
         <div v-if="stepNow === 0">
           <form
             ref="form1"
-            class="row align-items-center"
+            class="row align-items-center justify-content-center"
             @submit.stop.prevent="handleSubmit(1)"
           >
-            <div class="col-5 mb-1">
+            <div class="col-12 mb-50">
               <p class="h-text-sm h-text-dark mb-0">
                 Nominal
               </p>
             </div>
             <b-form-group
-              class="col-7 mb-1"
+              class="col-12 mb-1"
               invalid-feedback="Nominal is required"
               :state="nominalState"
             >
@@ -1048,15 +1048,24 @@
                 :state="nominalState"
                 @keyup="formatCurrency(false, 'nominal-input')"
                 @blur="formatCurrency(true, 'nominal-input')"
+                @input="checkWithdraw"
               />
+              <b-row class="mt-1">
+                <b-col cols="12">
+                  <small class="text-primary">*maksimal penarikan Rp8.250.000,-</small>
+                </b-col>
+                <b-col cols="12">
+                  <small class="text-black">Sisa saldo : <strong>Rp150.000,-</strong> misal ditarik</small>
+                </b-col>
+              </b-row>
             </b-form-group>
-            <div class="col-5 mb-1">
+            <div class="col-12 mb-50">
               <p class="h-text-sm h-text-dark mb-0">
                 Rekening Tujuan
               </p>
             </div>
             <b-form-group
-              class="col-7 mb-1"
+              class="col-12 mb-1"
               invalid-feedback="Rekening tujuan is required"
               :state="rekTujuanState"
             >
@@ -1073,22 +1082,31 @@
                 </span>
               </v-select>
             </b-form-group>
-            <div class="col-12 text-right mt-3">
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                @click="closeModal()"
-              >
-                Batal
-              </button>
-              <button
-                type="submit"
-                class="btn btn-primary ml-2"
-                :disabled="!selectedRekTujuan"
-              >
-                Ajukan Penarikan
-              </button>
-            </div>
+            <b-col cols="12" class="align-self-start">
+              <span class="text-black">Pastikan Rekening yang kamu pilih sudah benar</span>
+            </b-col>
+            <b-row class="justify-content-center w-full mt-2">
+              <b-col cols="6">
+                <b-button
+                  type="button"
+                  variant="outline-primary"
+                  block
+                  @click="closeModal()"
+                >
+                  Batal
+                </b-button>
+              </b-col>
+              <b-col cols="6">
+                <b-button
+                  type="submit"
+                  variant="primary"
+                  block
+                  :disabled="!selectedRekTujuan && bankItems === [] && !nominalPossible"
+                >
+                  Ajukan Penarikan
+                </b-button>
+              </b-col>
+            </b-row>
           </form>
         </div>
         <div v-if="stepNow === 1">

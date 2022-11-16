@@ -297,7 +297,7 @@ export default {
         })
     },
     getAddress() {
-      this.$http_komship.get('/v1/address').then(async response => {
+      this.$http_komship.get('/v2/address').then(async response => {
         const { data } = response.data
         this.addressList = data
         this.addressLength = data.length
