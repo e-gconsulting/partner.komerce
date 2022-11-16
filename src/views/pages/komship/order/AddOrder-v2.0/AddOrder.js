@@ -371,8 +371,10 @@ export default {
       }
     },
     async autofillByCustomer(customer) {
+      console.log(customer)
       this.customerId = customer.customer_id
       this.customerPhone = `${toInteger(customer.phone)}`
+      this.customerName = customer.name
       if (customer.subdistrict_name !== '') {
         this.destination = await this.$http_komship.get('v1/destination', {
           params: { search: customer.subdistrict_name === '-' ? customer.district_name : customer.subdistrict_name },
@@ -402,9 +404,9 @@ export default {
     searchDestination: _.debounce((loading, search, that) => {
       that.getDestination(search)
     }, 1000),
-    async getDestination() {
+    getDestination: _.debounce(function () {
       this.destinationList = []
-      await this.$http_komship
+      this.$http_komship
         .get(`/v3/landingpage/destination?search=${this.destinationLabel}`)
         .then(res => {
           const { data } = res.data.data
@@ -414,7 +416,7 @@ export default {
         .catch(err => {
           this.loadingSearchDestination = false
         })
-    },
+    }, 1000),
     async getProduct() {
       await this.$http_komship
         .get(`v1/partner-product/${this.profile.partner_id}`)

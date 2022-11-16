@@ -211,7 +211,7 @@
             />
             <span class="text-black ml-50">
               <strong>
-                {{ getService(data.item.shipping_type) }}
+                {{ data.item.shipping_type }}
               </strong>
             </span>
           </b-row>
@@ -226,7 +226,7 @@
             />
             <span class="text-black ml-50">
               <strong>
-                {{ getService(data.item.shipping_type) }}
+                {{ data.item.shipping_type }}
               </strong>
             </span>
           </b-row>
