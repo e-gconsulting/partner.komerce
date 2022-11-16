@@ -297,7 +297,7 @@ export default {
         })
     },
     getAddress() {
-      this.$http_komship.get('/v1/address').then(async response => {
+      this.$http_komship.get('/v2/address').then(async response => {
         const { data } = response.data
         this.addressList = data
         this.addressLength = data.length
@@ -373,6 +373,7 @@ export default {
     async autofillByCustomer(customer) {
       this.customerId = customer.customer_id
       this.customerPhone = `${toInteger(customer.phone)}`
+      this.customerName = customer.name
       if (customer.subdistrict_name !== '') {
         this.destination = await this.$http_komship.get('v1/destination', {
           params: { search: customer.subdistrict_name === '-' ? customer.district_name : customer.subdistrict_name },
