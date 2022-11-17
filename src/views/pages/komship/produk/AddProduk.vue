@@ -904,6 +904,7 @@
                           @keyup="formatPriceInput($event)"
                           @keypress="validateInputPrice($event)"
                           @paste="handlePastePrice"
+                          @input="setPriceStockProduct"
                         />
                       </b-input-group>
                       <small
@@ -959,6 +960,7 @@
                           @keyup="formatStock($event)"
                           @keypress="validateInputStock($event)"
                           @paste="handlePasteStock"
+                          @input="setPriceStockProduct"
                         />
                       </b-input-group>
                       <small
@@ -2579,6 +2581,9 @@ export default {
           })
         })
       }
+      this.validateSubmitButton()
+    },
+    setPriceStockProduct() {
       this.validateSubmitButton()
     },
   },
