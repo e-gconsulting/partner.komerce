@@ -1427,7 +1427,7 @@ export default {
         this.customerPhone = this.customerPhonePaste
       }
       this.customerPhonePasteMode = false
-      this.checkWhatsapp()
+      // this.checkWhatsapp()
       this.getCustomerReputation()
     }, 1000),
     validateInputAddressDetail(e) {
