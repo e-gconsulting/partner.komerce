@@ -69,7 +69,7 @@ export default {
         if (success) {
           this.loading = true
           // eslint-disable-next-line
-          this.$http_kompack.post('/v1/reset-password', {
+          this.$http.post('/v1/partner/reset-password', {
             code: this.$route.query.code,
             password: this.passwordNew,
           })

@@ -22,6 +22,7 @@ import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import PincodeInput from 'vue-pincode-input'
+import { NoSpace } from '@/libs/helpers'
 
 export default {
   components: {
@@ -143,6 +144,7 @@ export default {
       nameValidator: '',
 
       usernameExist: false,
+      NoSpace,
     }
   },
   mounted() {

@@ -2,7 +2,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 import { required, email } from '@validations'
-import { kirimEmailConfig } from '@/libs/helpers'
+import { NoSpace } from '@/libs/helpers'
 import {
   BCol,
   BNavbarBrand,
@@ -70,6 +70,7 @@ export default {
       serviceIsKomship: false,
 
       messageValidateNo: '',
+      NoSpace,
     }
   },
   computed: {
