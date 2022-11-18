@@ -9,6 +9,24 @@ export default [
     },
   },
   {
+    path: '/search-gudang/detail/:id',
+    name: 'detail-gudang-search',
+    component: () => import('@/views/pages/kompack/gudang/DetailSearchGudang.vue'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/search-gudang/detail/submission/:id',
+    name: 'detail-gudang-search',
+    component: () => import('@/views/pages/kompack/gudang/AjukanBerlanggananGudang.vue'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
+  {
     path: '/gudangku-kompack',
     name: 'gudangku-kompack',
     component: () => import('@/views/pages/kompack/gudang/gudangku/PrivateWarehouse.vue'),

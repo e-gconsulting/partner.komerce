@@ -89,8 +89,8 @@ export default {
         },
       })
     },
-    fetchData() {
-      this.$http_kompack(`/kompack/warehouse/information/${this.$route.params.id}`)
+    async fetchData() {
+      await this.$http_kompack(`/kompack/warehouse/information/${this.$route.params.id}`)
         .then(({ data }) => {
           this.detailInfo = { ...data.data }
           this.imagesone = data.data.image_warehouse[0].image_url
@@ -100,6 +100,7 @@ export default {
           })
         })
         .catch(() => {
+          this.isLoadingPage = false
           this.$toast({
             component: ToastificationContentVue,
             props: {
