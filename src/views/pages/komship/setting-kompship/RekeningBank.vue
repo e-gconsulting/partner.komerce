@@ -887,6 +887,7 @@ import {
   BOverlay,
   BSpinner,
 } from 'bootstrap-vue'
+import { mapState } from 'vuex'
 // import vSelect from 'vue-select'
 import Ripple from 'vue-ripple-directive'
 import { heightTransition } from '@core/mixins/ui/transition'
@@ -987,6 +988,9 @@ export default {
       reasonCreateRekening: '',
       buttonSubmitIsDisabled: false,
     }
+  },
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   mounted() {
     this.showModal()
@@ -1342,42 +1346,27 @@ export default {
       this.editMode = false
     },
     async getProfile() {
-      await this.$http_komship.post('v1/my-profile', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(async response => {
-        const { data } = response.data
-        this.phoneUser = data.user_phone
-        this.phoneNumber = data.user_phone
-        this.validateProfile = data
-        await this.$http_komship.post(`/v1/check-wa?phone_no=${this.phoneUser}`)
-          .then(res => {
-            this.messageErrorPhoneUser = false
-          })
-          .catch(error => {
-            this.messageErrorPhoneUser = true
-            if (error.response.data.code !== 1001) {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Failure',
-                  icon: 'AlertCircleIcon',
-                  text: error,
-                  variant: 'danger',
-                },
-              })
-            }
-          })
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+      this.phoneUser = this.profile.user_phone
+      this.phoneNumber = this.profile.user_phone
+      this.validateProfile = this.profile
+      await this.$http_komship.post(`/v1/check-wa?phone_no=${this.phoneUser}`)
+        .then(res => {
+          this.messageErrorPhoneUser = false
+        })
+        .catch(error => {
+          this.messageErrorPhoneUser = true
+          if (error.response.data.code !== 1001) {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: error,
+                variant: 'danger',
+              },
+            })
+          }
+        })
     },
     handleClosePopupOtp() {
       this.$refs['modal-verification-submit'].hide()

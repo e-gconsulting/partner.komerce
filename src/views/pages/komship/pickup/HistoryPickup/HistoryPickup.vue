@@ -95,6 +95,7 @@ import {
   BCol,
   BButton,
 } from 'bootstrap-vue'
+import { mapState } from 'vuex'
 import HistoryPickupTable from './HistoryPickupTable.vue'
 import HistoryPickupDetails from './HistoryPickupDetails.vue'
 
@@ -132,6 +133,9 @@ export default {
       totalRows: 0,
       totalPerPage: 50,
     }
+  },
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   watch: {
     currentPage: {
@@ -175,22 +179,12 @@ export default {
     },
     async reload() {
       this.loading = true
-      await this.getProfile()
       await this.getPickup()
     },
     async openDetailView(data) {
       if (data) {
         await this.getPickupDetail(data.id)
       }
-    },
-    getProfile() {
-      return this.$http_komship.post('v1/my-profile').then(response => {
-        const { data } = response.data
-        this.profile = data
-      }).catch(() => {
-        this.loading = false
-        // handle error
-      })
     },
     getPickup() {
       this.loading = true
