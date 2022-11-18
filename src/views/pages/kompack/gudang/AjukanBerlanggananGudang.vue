@@ -1,4 +1,3 @@
-import { BFormCheckbox } from 'bootstrap-vue';
 <template>
   <div class="card p-3">
     <div class="d-flex flex-row justify-content-between align-items-center">
@@ -6,7 +5,7 @@ import { BFormCheckbox } from 'bootstrap-vue';
       <div class="d-flex flex-row">
         <b-button
           variant="outline-primary"
-          @click="$router.go(-1)"
+          @click="$bvModal.show('modal-canceled-submission')"
         >
           Batalkan
         </b-button>
@@ -215,6 +214,81 @@ import { BFormCheckbox } from 'bootstrap-vue';
         </b-overlay>
       </div>
     </div>
+    <!-- modal -->
+    <b-modal
+      id="modal-canceled-submission"
+      hide-footer
+      hide-header
+      modal-class="modal-dark"
+      centered
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@/assets/images/icons/warning.svg"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-2">
+        <h4 class="text-black">
+          <strong>
+            Batalkan Pengajuan
+          </strong>
+        </h4>
+        <p class="text-black">
+          Kamu yakin mau batalin pengajuan berlangganan ?
+        </p>
+      </b-col>
+      <div class="d-flex justify-content-center">
+        <b-button
+          variant="outline-primary"
+          class="font-bold mr-1"
+          @click="$bvModal.hide('modal-canceled-submission')"
+        >Tidak</b-button>
+        <b-button
+          variant="primary"
+          class="font-bold"
+          style="width: 100px;"
+          @click="$router.go(-1)"
+        >Ya</b-button>
+      </div>
+
+    </b-modal>
+    <b-modal
+      id="modal-success-submission"
+      hide-footer
+      hide-header
+      modal-class="modal-dark"
+      centered
+    >
+
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-3"
+      >
+        <b-img
+          width="100"
+          src="@core/assets/image/icon-popup-success.png"
+        />
+      </b-col>
+
+      <b-col class="text-center mt-2 mb-3">
+        <h4>
+          <medium>
+            Pengajuanmu berhasil dikirim.
+          </medium>
+        </h4>
+        <h6 class="text-black">
+          <strong>
+            Pengajuan berlangganan akan segera dikonfrmasi selambat-lambatnya 2x24 jam.
+          </strong>
+        </h6>
+      </b-col>
+    </b-modal>
   </div>
 </template>
 
@@ -228,7 +302,9 @@ import {
   BInputGroupPrepend,
   BFormCheckbox,
   BFormInput,
+  BModal,
 } from 'bootstrap-vue'
+import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
@@ -239,6 +315,7 @@ export default {
     BFormInput,
     BFormSelect,
     BFormCheckbox,
+    BModal,
   },
   data() {
     return {
@@ -337,25 +414,53 @@ export default {
         product_id: val.id,
         packing_material: val.packing_material,
       }))
-
-      // eslint-disable-next-line no-unused-expressions
-      this.formdata = {
-        partner_id: this.user.userData.partner_detail.id,
-        warehouse_id: this.warehouseDetail.id,
-        submission_type: 1,
-        product,
-      }
-
-      console.log(this.warehouseDetail)
-    //   await this.$http_komship.post(
-    //     '/v1/komship/submission', this.formdata,
-    //   )
-    //     .then(async response => {
-    //       this.loading = false
-    //     })
-    //     .catch(err => {
-    //       this.loading = false
-    //     })
+      await this.$http_komship.post(
+        '/v1/komship/submission', {
+          partner_id: this.user.userData.partner_detail.id,
+          warehouse_id: this.warehouseDetail.id,
+          submission_type: 1,
+          product,
+        },
+      )
+        .then(async response => {
+          if (response.data.code === 1009) {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Menunggu Persetujuan Pengajuan Sebelumnya',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            }, 2000)
+          }
+          if (response.data.code === 1001) {
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: 'Silahkan Pilih Produk',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            }, 2000)
+          }
+          if (response.data.code === 200) {
+            this.$bvModal.show('modal-success-submission')
+          }
+        })
+        .catch(err => {
+          this.loading = false
+          this.$toast({
+            component: ToastificationContentVue,
+            props: {
+              title: 'Galat',
+              text: err,
+              icon: 'AlertCircleIcon',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
     },
   },
 }

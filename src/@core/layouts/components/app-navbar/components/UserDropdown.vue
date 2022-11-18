@@ -81,15 +81,11 @@
               fill="#FBBC05"
             />
           </svg>
-          <span
           <small
             id="popover-kompoints"
             class="text-black ml-50"
           >
             <strong>
-              KomPoint : <span class="text-warning">{{ profile.user_kompoints }}</span>
-            </strong>
-          </span>
               KomPoints : <small class="text-warning"><strong>{{ formatPrice(profile.user_kompoints) }}</strong></small>
             </strong>
           </small>
@@ -165,7 +161,6 @@
                 class="text-black ml-50"
               >
                 <strong>
-                  KomPoint : <span class="text-warning">{{ profile.user_kompoints }}</span>
                   KomPoints : <span class="text-warning">{{ formatPrice(profile.user_kompoints) }}</span>
                 </strong>
               </span>
