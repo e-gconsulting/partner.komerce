@@ -12,12 +12,12 @@ import {
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import '@core/scss/vue/libs/vue-select.scss'
 import { toInteger } from 'lodash'
+import { mapState } from 'vuex'
 
 export default {
   components: { vSelect, BFormTextarea },
   data() {
     return {
-      profile: [],
       dateOrder: moment().format('YYYY-MM-DD'),
       address: [],
       addressList: [],
@@ -153,6 +153,9 @@ export default {
       weightProduct: null,
     }
   },
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
   mounted() {
     window.addEventListener('click', e => {
       const inputCustomer = document.getElementById('inputCustomer')
@@ -167,37 +170,19 @@ export default {
       }
     })
   },
-  created() {
+  async created() {
     this.$forceUpdate()
-    this.$http_komship
-      .post('v1/my-profile')
-      .then(res => {
-        this.profile = res.data.data
-        if (this.profile.partner_is_customer_reputation === true) {
-          this.isCustomerReputation = true
-        } else {
-          this.isCustomerReputation = false
-        }
-      })
-      .then(async () => {
-        await this.checkExpedition()
-        await this.getAddress()
-        await this.getProduct()
-        await this.addToCart()
-        await this.getRekening()
-        await this.getCustomLabel()
-      })
-      .catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        })
-      })
+    if (this.profile.partner_is_customer_reputation === true) {
+      this.isCustomerReputation = await true
+    } else {
+      this.isCustomerReputation = await false
+    }
+    await this.checkExpedition()
+    await this.getAddress()
+    await this.getProduct()
+    await this.addToCart()
+    await this.getRekening()
+    await this.getCustomLabel()
     if (
       localStorage.getItem('productSelected')
       && localStorage.productHistory
@@ -297,7 +282,7 @@ export default {
         })
     },
     getAddress() {
-      this.$http_komship.get('/v1/address').then(async response => {
+      this.$http_komship.get('/v2/address').then(async response => {
         const { data } = response.data
         this.addressList = data
         this.addressLength = data.length
@@ -371,8 +356,10 @@ export default {
       }
     },
     async autofillByCustomer(customer) {
+      console.log(customer)
       this.customerId = customer.customer_id
       this.customerPhone = `${toInteger(customer.phone)}`
+      this.customerName = customer.name
       if (customer.subdistrict_name !== '') {
         this.destination = await this.$http_komship.get('v1/destination', {
           params: { search: customer.subdistrict_name === '-' ? customer.district_name : customer.subdistrict_name },
@@ -402,9 +389,9 @@ export default {
     searchDestination: _.debounce((loading, search, that) => {
       that.getDestination(search)
     }, 1000),
-    async getDestination() {
+    getDestination: _.debounce(function () {
       this.destinationList = []
-      await this.$http_komship
+      this.$http_komship
         .get(`/v3/landingpage/destination?search=${this.destinationLabel}`)
         .then(res => {
           const { data } = res.data.data
@@ -414,7 +401,7 @@ export default {
         .catch(err => {
           this.loadingSearchDestination = false
         })
-    },
+    }, 1000),
     async getProduct() {
       await this.$http_komship
         .get(`v1/partner-product/${this.profile.partner_id}`)

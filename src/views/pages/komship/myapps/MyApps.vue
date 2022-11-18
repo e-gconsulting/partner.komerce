@@ -94,6 +94,8 @@
   </b-card>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
   data() {
     return {
@@ -104,20 +106,15 @@ export default {
       isKomchat: false,
     }
   },
-  created() {
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
+  mounted() {
     this.getProfile()
   },
   methods: {
     async getProfile() {
-      await this.$http_komship.post('v1/my-profile')
-        .then(res => {
-          const { data } = res.data
-          this.profile = data
-          this.isKomship = data.is_komship === 1
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      this.isKomship = this.profile.is_komship === 1
     },
   },
 }

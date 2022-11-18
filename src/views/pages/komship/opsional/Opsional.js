@@ -10,6 +10,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import Ripple from 'vue-ripple-directive'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -26,7 +27,6 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
-      profile: [],
       quickType: null,
       orderMassal: null,
       returnInsight: null,
@@ -63,35 +63,30 @@ export default {
       customerReputation: null,
     }
   },
-  created() {
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
+  mounted() {
     this.getProfile()
   },
   methods: {
     getProfile() {
-      this.$http_komship.post('v1/my-profile')
-        .then(res => {
-          const { data } = res.data
-          this.profile = data
-          this.quickType = data.partner_is_allowed_edit
-          this.mutationBank = data.partner_is_mutation_bank
-          this.customLabel = data.partner_is_custom_label
-          this.orderMassal = data.partner_is_mass_order
-          this.returnInsight = data.partner_is_return_insight
-          this.orderNotes = data.partner_is_order_notes
-          this.notifWA = data.partner_is_notification_whatsapp
-          this.customerReputation = data.partner_is_customer_reputation
-          this.isGetting = true
-          this.getCustomLabel()
-        })
-        .catch(err => {
-          console.log(err)
-          this.isGetting = true
-        })
+      this.quickType = this.profile.partner_is_allowed_edit
+      this.mutationBank = this.profile.partner_is_mutation_bank
+      this.customLabel = this.profile.partner_is_custom_label
+      this.orderMassal = this.profile.partner_is_mass_order
+      this.returnInsight = this.profile.partner_is_return_insight
+      this.orderNotes = this.profile.partner_is_order_notes
+      this.notifWA = this.profile.partner_is_notification_whatsapp
+      this.customerReputation = this.profile.partner_is_customer_reputation
+      this.isGetting = true
+      this.getCustomLabel()
     },
     setQuickType() {
       this.$http.post(`/user/partner/setting/isAllowedEdit/${this.profile.partner_id}`, { is_allowed_edit: this.quickType })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
             this.getProfile()
             this.$toast({
               component: ToastificationContent,
@@ -107,8 +102,9 @@ export default {
     },
     setOrderMassal() {
       this.$http.post(`/user/partner/setting/isMassOrder/${this.profile.partner_id}`, { is_mass_order: this.orderMassal ? 1 : 0 })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
             this.getProfile()
             this.$toast({
               component: ToastificationContent,
@@ -156,8 +152,9 @@ export default {
     },
     setMutationBank() {
       this.$http.post(`user/partner/setting/isMutationBank/${this.profile.partner_id}`, { is_mutation_bank: this.mutationBank ? '1' : '0' })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
             this.getProfile()
             this.$toast({
               component: ToastificationContent,
