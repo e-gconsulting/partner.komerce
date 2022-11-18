@@ -8,12 +8,12 @@ import { toInteger } from 'lodash'
 import imageNull from '@/assets/images/avatars/image-null.png'
 import iconWarning from '@/assets/images/icons/warning.svg'
 import iconSuccess from '@/assets/images/icons/success.svg'
+import { mapState } from 'vuex'
 
 export default {
   components: { flatPickr, LottieAnimation },
   data() {
     return {
-      profile: [],
       address: null,
       pickupDate: '',
       pickupTime: '',
@@ -89,7 +89,10 @@ export default {
       totalOrderTimeout: 0,
     }
   },
-  async created() {
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
+  async mounted() {
     await this.getParamsData()
     await this.getAddressList()
     await this.getVehicleList()
@@ -149,13 +152,8 @@ export default {
         this.getCurrentDate()
       }
     },
-    async getVehicleList() {
-      await this.$http_komship.post('v1/my-profile')
-        .then(res => {
-          const { data } = res.data
-          this.profile = data
-          this.vehicleList = data.vehicle
-        })
+    getVehicleList() {
+      this.vehicleList = this.profile.vehicle
     },
     async getAddressList() {
       this.loading = true

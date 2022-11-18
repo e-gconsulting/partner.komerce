@@ -4,16 +4,18 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
   async mounted() {
-    await this.$http_komship.post('/v1/my-profile').then(res => {
-      const { data } = res.data
-      if (data.partner_is_mass_order) {
-        this.$router.push('/method-order')
-      } else {
-        this.$router.push('/add-order')
-      }
-    })
+    if (this.profile.partner_is_mass_order) {
+      this.$router.push('/method-order')
+    } else {
+      this.$router.push('/add-order')
+    }
   },
 }
 </script>
