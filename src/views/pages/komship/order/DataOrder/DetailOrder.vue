@@ -562,6 +562,7 @@ import {
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import HistoryShippingOrder from '@core/components/popup-lacak-resi/HistoryShippingOrder.vue'
+import { mapState } from 'vuex'
 import EditOrder from '../EditOrder/EditOrder.vue'
 
 export default {
@@ -571,7 +572,6 @@ export default {
   directives: { VBModal },
   data() {
     return {
-      profile: {},
       orderData: [],
       statusOrder: null,
       statusOrderMobile: null,
@@ -601,14 +601,12 @@ export default {
       valuePromiseModal: null,
     }
   },
-  async created() {
-    const profile = await this.$http_komship.post('v1/my-profile')
-    const dataProfile = await profile.data.data
-    this.profile = await dataProfile
-    this.fetchData()
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   mounted() {
     this.idEditOrder = this.$route.params.order_id
+    this.fetchData()
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),

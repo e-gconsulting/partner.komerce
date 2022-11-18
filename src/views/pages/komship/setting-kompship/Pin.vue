@@ -826,6 +826,7 @@ import {
 import VueOtpInput from '@bachdgvn/vue-otp-input'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -864,6 +865,9 @@ export default {
 
       pinFromOtp: '',
     }
+  },
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   mounted() {
     this.showModal()
@@ -1121,22 +1125,7 @@ export default {
       this.dataPin = null
     },
     getProfile() {
-      this.$http_komship.post('v1/my-profile', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        this.emailUser = data.user_email.replace(`${data.user_email.substr(3, 7)}`, '****')
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+      this.emailUser = this.profile.user_email.replace(`${this.profile.user_email.substr(3, 7)}`, '****')
     },
     handleForgotCreateNewPin() {
       this.$refs['modal-forgot-no-pin'].hide()
