@@ -72,10 +72,22 @@
               variant="btn btn-outline-primary"
               @click="kirimpribadi()"
             >
-            <img
+              <img
                 src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg"
               >
               Dikirim Sendiri
+            </b-button>
+          </div>
+        </div>
+        <div class="d-flex flex-row justify-content-between align-items-center">
+          <div><h5>Stok Produk</h5></div>
+          <div class="d-flex flex-row">
+            <b-button
+              class="ml-1"
+              variant="btn btn-outline-success"
+              @click="addProduk()"
+            >
+              Tambah Produk
             </b-button>
           </div>
         </div>
@@ -268,11 +280,9 @@
     </b-modal>
   </div>
 </template>
-
 <script lang="ts">
 import {
   BButton,
-  BSpinner,
   BFormSelect,
   BInputGroup,
   BInputGroupPrepend,
@@ -310,133 +320,6 @@ export default {
         product: [],
       },
     }
-  },
-  mounted() {
-    this.getDetailWarehouse()
-    this.getBahanList()
-  },
-  methods: {
-    async getDetailWarehouse() {
-      this.loading = true
-      await this.$http_komship(
-        `/v1/komship/warehouse/information/${this.$route.params.id}`,
-      )
-        .then(async response => {
-          this.warehouseDetail = response.data.data
-          await this.getProductList()
-        })
-        .catch(err => {
-          this.loading = false
-        })
-    },
-    async getBahanList() {
-      await this.$http_komship(
-        '/v1/select-option/packing',
-      )
-        .then(async response => {
-          this.optionBahanList = response.data.data
-        })
-        .catch(err => {
-          this.loading = false
-        })
-    },
-    async getProductList() {
-      await this.$http_komship(
-        `/v1/komship/submission/product?name=${this.searchProduct}`,
-      )
-        .then(async response => {
-          const { data } = response.data
-          const newData = await data.map(val => ({
-            ...val, selected: false, packing_material: null,
-          }))
-          this.productList = newData
-
-          this.loading = false
-        })
-        .catch(err => {
-          this.loading = false
-        })
-    },
-    selectItemOneEvent(product, e) {
-      // eslint-disable-next-line no-param-reassign
-      const objIndex = this.productList.findIndex((obj => obj.id === product.id))
-
-      // eslint-disable-next-line no-param-reassign
-      this.productList[objIndex].selected = e
-    },
-    async getsearchProduct() {
-      this.getProductList()
-    },
-    async selectItemEvent() {
-      this.selected = []
-      if (!this.selectAll) {
-        // eslint-disable-next-line guard-for-in, no-restricted-syntax
-        for (const i in this.items) {
-          this.selected.push(this.items[i].id)
-        }
-      }
-    },
-
-    selectBahanEvent(product, e) {
-      const objIndex = this.productList.findIndex((obj => obj.id === product.id))
-
-      // eslint-disable-next-line no-param-reassign
-      this.productList[objIndex].packing_material = e
-    },
-
-    async submitBerlangganan() {
-      const product = await this.productList.filter(x => x.selected === true).map(val => ({
-        product_id: val.id,
-        packing_material: val.packing_material,
-      }))
-      await this.$http_komship.post(
-        '/v1/komship/submission', {
-          partner_id: this.user.userData.partner_detail.id,
-          warehouse_id: this.warehouseDetail.id,
-          submission_type: 1,
-          product,
-        },
-      )
-        .then(async response => {
-          if (response.data.code === 1009) {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Galat',
-                text: 'Menunggu Persetujuan Pengajuan Sebelumnya',
-                icon: 'AlertCircleIcon',
-                variant: 'danger',
-              },
-            }, 2000)
-          }
-          if (response.data.code === 1001) {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Galat',
-                text: 'Silahkan Pilih Produk',
-                icon: 'AlertCircleIcon',
-                variant: 'danger',
-              },
-            }, 2000)
-          }
-          if (response.data.code === 200) {
-            this.$bvModal.show('modal-success-submission')
-          }
-        })
-        .catch(err => {
-          this.loading = false
-          this.$toast({
-            component: ToastificationContentVue,
-            props: {
-              title: 'Galat',
-              text: err,
-              icon: 'AlertCircleIcon',
-              variant: 'danger',
-            },
-          }, 2000)
-        })
-    },
   },
 }
 </script>
