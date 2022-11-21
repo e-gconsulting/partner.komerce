@@ -1165,7 +1165,6 @@ export default {
     checkWithdraw: _.debounce(function () {
       this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '')}`)
         .then(response => {
-          console.log(response)
           this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
           this.remainingSaldo = this.formatPrice(response.data.data.remaining_saldo)
           this.nominalReturFinish = this.formatPrice(response.data.data.retur_when_finish_value)

@@ -52,3 +52,9 @@
   object-position: center center;
   width: 50px!important;
 }
+
+@media (max-width: 576px) {
+  .container__pickup__mobile {
+    padding: 0px!important;
+  }
+}

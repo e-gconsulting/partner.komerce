@@ -148,20 +148,6 @@
     background-color: #e9ecef !important;
   }
 
-[dir] .wrapper__filter__ticket__mobile {
-    display: none;
-}
-
-@media only screen and (max-width: 600px) {
-    [dir] .wrapper__filter__ticket__mobile {
-        display: inline-block;
-    }
-
-    [dir] .wrapper__filter__ticket {
-        display: none;
-    }
-}
-
 [dir] .when-closed {
   display: inline-block;
 }
@@ -174,3 +160,12 @@
     :not(.collapsed) > .when-closed {
         display: none;
     }
+
+@media (max-width: 576px) {
+  .wrapper__filter__ticket__mobile {
+    width: 100%!important;
+  }
+  .box__content__status__mobile {
+    height: 130px!important;
+  }
+}

@@ -293,19 +293,6 @@ export default
     },
   },
   computed: {
-    computedClassFilter() {
-      let result = '12'
-      if (window.screen.width >= 600) {
-        result = 'auto'
-      }
-      return result
-    },
-    computedClassTypeSearch() {
-      return window.screen.width >= 600 ? 'pr-0' : 'pr-0 mb-1'
-    },
-    computedClassAnyFilter() {
-      return window.screen.width >= 600 ? 'auto' : '12 mb-1'
-    },
     ...mapState('dashboard', ['profile']),
   },
   created() {
@@ -387,7 +374,6 @@ export default
           if (response.data.code !== 400) {
             const { data } = response.data.data
             this.itemsTicket = data
-            console.log(this.itemsTicket, 'fetchtiket')
             this.totalRows = response.data.data.total
             this.loadingDataTable = false
           } else {

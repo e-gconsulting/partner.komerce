@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-v-html -->
 <template>
   <b-card id="main">
-    <b-card-header class="text-[22px] font-semibold">
+    <b-card-header class="text-[22px] font-semibold text-black">
       Pengaturan Ekspedisi
     </b-card-header>
     <b-card-body>
@@ -39,11 +39,12 @@
           <b-card-body class="text-[16px]">
             <b-row>
               <b-col md="6">
-                <p class="font-bold text-[18px]">
+                <p class="font-bold text-[18px] text-black">
                   Diskon Ongkir
                 </p>
                 <ul
                   v-if="items.desc"
+                  class="text-black"
                 >
                   <li
                     v-for="listDiscount in items.desc.discount"
@@ -53,10 +54,13 @@
                 </ul>
               </b-col>
               <b-col md="6">
-                <p class="font-bold text-[18px]">
+                <p class="font-bold text-[18px] text-black">
                   Rekomendasi
                 </p>
-                <p v-html="items.desc.recomend" />
+                <p
+                  class="text-black"
+                  v-html="items.desc.recomend"
+                />
               </b-col>
             </b-row>
           </b-card-body>
