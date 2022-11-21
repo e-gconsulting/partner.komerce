@@ -1605,7 +1605,6 @@ export default {
         formData.append('user_id', this.$store.state?.auth?.userData.id)
         this.$http.post('/v1/bank/check', formData)
           .then(response => {
-            console.log(response)
             this.loadingSubmit = false
             this.checkValidBank = false
             this.messageSameNoBank = ''
@@ -1627,7 +1626,6 @@ export default {
               this.messageSameNoBank = ''
               this.messageSameNameBank = ''
               this.checkValidBank = true
-              console.log(err.response.data)
               this.banksDataMinus = err.response.data.data
               this.$refs['popup-check-rekening'].show()
             }
