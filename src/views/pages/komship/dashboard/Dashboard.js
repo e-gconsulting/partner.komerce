@@ -309,6 +309,7 @@ export default {
         altInput: true,
         altFormat: 'j/n/Y',
         dateFormat: 'Y-m-d',
+        disableMobile: true,
         plugins: [
           new MonthMode({
             shorthand: true, // defaults to false
