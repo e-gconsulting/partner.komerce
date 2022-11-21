@@ -315,7 +315,6 @@ export default {
         })
           .then(result => {
             const { data } = result.data
-            console.log(data)
             this.returnInsight = data
             this.showReturnInsight = true
           }).catch(err => {
@@ -356,7 +355,6 @@ export default {
       }
     },
     async autofillByCustomer(customer) {
-      console.log(customer)
       this.customerId = customer.customer_id
       this.customerPhone = `${toInteger(customer.phone)}`
       this.customerName = customer.name

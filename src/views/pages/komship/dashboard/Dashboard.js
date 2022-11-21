@@ -1156,11 +1156,6 @@ export default {
         }, 2000)
       })
     },
-    checkWithdraw: _.debounce(function () {
-      this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '')}`)
-        .then(response => {
-          console.log(response)
-        })
-    }, 1000),
+    
   },
 }
