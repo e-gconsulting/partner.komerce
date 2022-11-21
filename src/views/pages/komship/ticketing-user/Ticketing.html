@@ -276,6 +276,16 @@
                     </div>
                 </b-row>
             </b-button>
+            <b-popover target="popoverJenisTicket" triggers="focus" placement="bottom">
+                <div class="p-50" v-for="(item, index) in ticketTypeItems" :key="index+1">
+                    <b-form-checkbox v-model="item.onCheck" class="custom-control-primary mb-1"
+                        @change="filterByTicketType(item)">
+                        <span class="text-black">
+                            {{ item.name }}
+                        </span>
+                    </b-form-checkbox>
+                </div>
+            </b-popover>
         </b-col>
 
         <b-col cols="12" md="auto" class="mb-1">
@@ -298,6 +308,52 @@
                     </div>
                 </b-row>
             </b-button>
+            <b-popover target="popoverStatusTicket" triggers="focus" placement="bottom">
+                <div class="p-50" v-for="(items, index) in ticketStatusItems" :key="index+1">
+                    <b-form-checkbox v-if="items.label !== 'Selesai'" v-model="items.onCheck"
+                        class="custom-control-primary mb-1" @change="filterTicketByStatus(items)">
+                        <span class="text-black">
+                            {{ items.label }}
+                        </span>
+                    </b-form-checkbox>
+                    <b-row v-if="items.label === 'Selesai'">
+                        <b-form-checkbox v-model="items.onCheck" class="custom-control-primary mb-1 ml-1"
+                            @change="filterTicketByStatus(items)" />
+                        <span class="text-black" v-b-toggle.collapse-status-ticket-done>
+                            Selesai
+                            <feather-icon class="when-closed" icon="ChevronDownIcon" size="20" />
+                            <feather-icon class="when-opened" icon="ChevronUpIcon" size="20" />
+                        </span>
+                    </b-row>
+                    <b-row v-if="items.label === 'Selesai'">
+                        <b-collapse id="collapse-status-ticket-done" class="ml-3">
+                            <b-row v-for="(statusChild, index) in items.childs" :key="index+1">
+                                <b-form-checkbox v-model="statusChild.onCheck" class="custom-control-primary mb-1 ml-1"
+                                    @change="filterTicketOrderStatus(statusChild)" />
+                                <span v-if="statusChild.label === 'Diterima'" class="text-black">
+                                    {{ statusChild.label }}
+                                </span>
+                                <span v-if="statusChild.label === 'Retur'" class="text-black"
+                                    v-b-toggle.collapse-status-ticket-retur>
+                                    {{ statusChild.label }}
+                                    <feather-icon class="when-closed" icon="ChevronDownIcon" size="20" />
+                                    <feather-icon class="when-opened" icon="ChevronUpIcon" size="20" />
+                                </span>
+                            </b-row>
+                            <b-collapse id="collapse-status-ticket-retur" class="ml-3">
+                                <b-row>
+                                    <b-form-checkbox v-model="filterClaimRetur.onCheck"
+                                        class="custom-control-primary mb-1 ml-1"
+                                        @change="filterTicketOrderStatus('diclaim')" />
+                                    <span class="text-black">
+                                        Di-<i>Claim</i>
+                                    </span>
+                                </b-row>
+                            </b-collapse>
+                        </b-collapse>
+                    </b-row>
+                </div>
+            </b-popover>
         </b-col>
 
         <b-col class="mb-1" cols="12" md="auto">
