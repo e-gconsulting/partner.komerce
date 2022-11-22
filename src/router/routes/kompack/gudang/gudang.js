@@ -47,7 +47,16 @@ export default [
   {
     path: '/ajukan-inbound',
     name: 'ajukan-inbound',
-    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/ajukaninbound.vue'),
+    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/AjukanInbound.vue'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/tambah-produk',
+    name: 'tambah-produk',
+    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/TambahProduk.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',

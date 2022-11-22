@@ -1,97 +1,9 @@
 <template>
   <div class="card p-3">
     <div class="d-flex flex-row justify-content-between align-items-center">
-      <div><h3>Ajukan Inbound</h3></div>
-      <div class="d-flex flex-row">
-        <b-button
-          class="ml-1"
-          variant="secondary"
-          @click="submitBerlangganan()"
-        >
-          Ajukan Inbound
-        </b-button>
+      <div>
+        <h3>Tambah Stok Produk</h3>
       </div>
-    </div>
-    <div class="card-custom d-flex flex-col mt-2 px-3 py-2">
-      <div class="d-flex flex-row justify-content-between">
-        <div class="d-flex flex-row align-items-center">
-          <div class="ml-0 mt-0 d-flex flex-col text-dark">
-            <h5>Data Inbound</h5>
-          </div>
-        </div>
-        <div />
-      </div>
-      <form>
-        <div class="form-group row">
-          <label
-            for="dikirim"
-            class="col-sm-2 col-form-label"
-          >Dikirim dari</label>
-          <div class="col-sm-10">
-            <input
-              id="inputgudang"
-              type="input"
-              class="form-control"
-              placeholder="Masukan Alamat Pengirim"
-            >
-          </div>
-        </div>
-        <div class="form-group row">
-          <label
-            for="kirimke"
-            class="col-sm-2 col-form-label"
-          > Kirim Ke</label>
-          <div class="col-sm-10">
-            <select
-              id="jenisgudang"
-              class="form-control"
-            >
-              <option>Pilih Mitra Gudang</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="col-sm-12">
-            <b-button
-              class="ml-100"
-              variant="btn btn-outline-primary"
-              @click="kirimekpedisi()"
-            >
-              <img
-                src="https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg"
-              >
-              Dikirim Ekpedisi
-            </b-button>
-            &nbsp;
-            <b-button
-              class="ml-100"
-              variant="btn btn-outline-primary"
-              @click="kirimpribadi()"
-            >
-              <img
-                src="https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg"
-              >
-              Dikirim Sendiri
-            </b-button>
-          </div>
-        </div>
-        <div class="d-flex flex-row justify-content-between align-items-center">
-          <div><h5>Stok Produk</h5></div>
-          <div class="d-flex flex-row">
-            <b-button
-              class="ml-1"
-              variant="btn btn-outline-success"
-              @click="addProduk()"
-            >
-              Tambah Produk
-            </b-button>
-          </div>
-        </div>
-      </form>
     </div>
     <div class="mt-3">
       <div class="d-flex justify-content-end">
@@ -122,9 +34,9 @@
                   </b-form-checkbox></label>
               </th>
               <th>Nama Produk</th>
-              <th>Volume</th>
-              <th>Harga Barang</th>
-              <th>Bahan Packing</th>
+              <th>SKU Produk</th>
+              <th>Variasi</th>
+              <th>Stok Produk</th>
             </tr>
           </thead>
           <tbody>
@@ -159,9 +71,9 @@
                 </div>
               </div></td>
               <td><div class="d-flex flex-column">
-                <div>P: {{ i.product_lenght }} cm</div>
-                <div>L: {{ i.product_width }} cm</div>
-                <div>T: {{ i.product_height }} cm</div>
+                <div>Merah: {{ i.product_lenght }} S</div>
+                <div>Merah: {{ i.product_width }} M</div>
+                <div>Merah: {{ i.product_height }} S</div>
               </div>
               </td>
               <td>{{ i.range_price }}</td>
@@ -451,22 +363,22 @@ export default {
 }
 </script>
 
-  <style lang="scss">
-  .card-custom {
-    border-radius: 12px;
-    border: 1px solid #e2e2e2;
-  }
-  .badge-custom {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 4px 8px;
-    gap: 5px;
-    background: #dff3ff;
-    border-radius: 4px;
-  }
-  .input-group {
-    height: 40px;
-    min-width: 300px;
-  }
-  </style>
+    <style lang="scss">
+    .card-custom {
+      border-radius: 12px;
+      border: 1px solid #e2e2e2;
+    }
+    .badge-custom {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 4px 8px;
+      gap: 5px;
+      background: #dff3ff;
+      border-radius: 4px;
+    }
+    .input-group {
+      height: 40px;
+      min-width: 300px;
+    }
+    </style>
