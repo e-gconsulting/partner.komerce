@@ -1602,6 +1602,7 @@ export default {
       addVariantOptionIsActive: false,
 
       empty: [],
+      newUser: true,
     }
   },
   computed: {},
