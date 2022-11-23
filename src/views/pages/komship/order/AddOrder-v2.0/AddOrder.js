@@ -151,6 +151,9 @@ export default {
       destinationLabel: '',
 
       weightProduct: null,
+
+      soldBy: null,
+      soldByList: [],
     }
   },
   computed: {
@@ -169,6 +172,7 @@ export default {
         this.destinationList = []
       }
     })
+    console.log(this.profile)
   },
   async created() {
     this.$forceUpdate()
@@ -183,6 +187,7 @@ export default {
     await this.addToCart()
     await this.getRekening()
     await this.getCustomLabel()
+    await this.getSalesTrackingList()
     if (
       localStorage.getItem('productSelected')
       && localStorage.productHistory
@@ -1263,6 +1268,11 @@ export default {
       } else {
         this.isValidate = false
       }
+      if (this.soldBy === null) {
+        this.isValidate = false
+      } else {
+        this.isValidate = true
+      }
       this.formData = {
         date: this.dateOrder,
         tariff_code: this.destination.value,
@@ -1297,6 +1307,7 @@ export default {
         order_notes: this.orderNotes,
         is_whatsapp: this.isWhatsapp === 'valid' ? 1 : 0,
       }
+      if (this.profile.partner_is_tracking_sales) Object.assign(this.formData, { tracking_sales_id: this.soldBy.id })
     },
     handleCustomLabel(items) {
       this.customLabel = items
@@ -1543,6 +1554,22 @@ export default {
       this.destinationLabel = items.label
       this.getReturnInsight()
       this.destinationList = []
+    },
+    getSalesTrackingList() {
+      this.$http_komship.get('/v1/tracking-sales/list')
+        .then(response => {
+          this.soldByList = response.data.data
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.message,
+              variant: 'danger',
+            },
+          })
+        })
     },
   },
 }
