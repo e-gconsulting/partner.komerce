@@ -1256,7 +1256,6 @@ export default {
         .get(`/v1/destination?destination_id=${this.warehouseItems[data.index].destination_id}`)
         .then(response => {
           if (response.data.data !== null) {
-            console.log(response.data.data)
             this.originValue = response.data.data
           }
         })

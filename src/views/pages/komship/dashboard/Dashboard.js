@@ -309,6 +309,7 @@ export default {
         altInput: true,
         altFormat: 'j/n/Y',
         dateFormat: 'Y-m-d',
+        disableMobile: true,
         plugins: [
           new MonthMode({
             shorthand: true, // defaults to false
@@ -349,6 +350,7 @@ export default {
       loadingDataChart: false,
 
       loadingTopAdmin: true,
+      nominalPossible: false,
     }
   },
   computed: {
@@ -495,6 +497,7 @@ export default {
         this.$bvModal.show('modal-notif-rekTujuanBlmAda')
         this.changeAttr()
       } else {
+        this.loadBank()
         this.$bvModal.show('modal-keuangan')
         this.changeAttr()
       }
@@ -1134,7 +1137,6 @@ export default {
       window.location.reload()
     },
     async setRekening(data) {
-      await this.loadBank()
       const find = await this.bankItems.find(item => item.bank_account_id === data)
       this.rekeningDisplay = find
     },

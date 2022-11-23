@@ -184,14 +184,15 @@
     <!-- End Create PIN -->
     <!-- =========================================================================================== -->
 
-    <h4>
+    <h4 class="text-black">
       <strong>Pengaturan PIN</strong>
     </h4>
 
-    <b-row class="mt-3 ">
+    <b-row class="mt-3 align-items-center">
       <b-col
-        cols="8"
-        class="d-flex align-items-center ml-1"
+        cols="12"
+        md="8"
+        class="d-flex align-items-center ml-1 mb-1"
       >
 
         <b-row class="d-flex align-items-center">
@@ -201,7 +202,7 @@
             class="mr-1"
             src="@core/assets/image/icon-on-page-pin.png"
           />
-          <div class="mt-50">
+          <div class="mt-50 pr-1">
             <h4>
               <strong>PIN</strong>
             </h4>
@@ -212,7 +213,8 @@
         </b-row>
       </b-col>
       <b-col
-        cols="auto"
+        cols="12"
+        md="auto"
       >
         <b-row>
           <b-button
@@ -826,6 +828,7 @@ import {
 import VueOtpInput from '@bachdgvn/vue-otp-input'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -864,6 +867,9 @@ export default {
 
       pinFromOtp: '',
     }
+  },
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   mounted() {
     this.showModal()
@@ -937,7 +943,6 @@ export default {
       this.$http_komship.put('/v1/pin/update', {
         pin: this.dataPin,
       }).then(response => {
-        console.log(response)
         this.$refs['forgot-confirm-new-pin-email'].hide()
         this.$refs['modal-success-changed-pin'].show()
       }).catch(err => {
@@ -1121,22 +1126,7 @@ export default {
       this.dataPin = null
     },
     getProfile() {
-      this.$http_komship.post('v1/my-profile', {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
-      }).then(response => {
-        const { data } = response.data
-        this.emailUser = data.user_email.replace(`${data.user_email.substr(3, 7)}`, '****')
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+      this.emailUser = this.profile.user_email.replace(`${this.profile.user_email.substr(3, 7)}`, '****')
     },
     handleForgotCreateNewPin() {
       this.$refs['modal-forgot-no-pin'].hide()

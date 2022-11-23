@@ -1337,7 +1337,7 @@
       </div>
     </b-modal>
     <b-modal
-      id="modalOnboarding"
+      id="modalOnboardingProduct"
       hide-header
       hide-footer
       size="lg"
@@ -1348,9 +1348,9 @@
           src="@/assets/images/icons/close-circle.svg"
           class="absolute top-[10px] right-[10px]"
           style="cursor:pointer"
-          @click="$bvModal.hide('modalOnboarding')"
+          @click="$bvModal.hide('modalOnboardingProduct')"
         />
-        <p class="text-[20px] font-semibold text-center mb-2">
+        <p class="text-[20px] font-semibold text-center mb-2 text-black">
           Jangan dipikir input produk itu <span class="text-primary">lama</span> dan <span class="text-primary">ribet</span>
         </p>
         <div class="mb-2">
@@ -1360,7 +1360,7 @@
             class="mx-auto"
           />
         </div>
-        <p class="text-[16px] mb-1">🛒 Ga harus langsung semua diinput, bisa coba yang <b class="text-primary">paling sering laku</b><br>
+        <p class="text-[16px] mb-1 text-black">🛒 Ga harus langsung semua diinput, bisa coba yang <b class="text-primary">paling sering laku</b><br>
           📝 Kalau lagi gabut, bisa isi dulu <b class="text-primary">kolom yang wajib</b>, sisanya dilengkapi pas senggang aja</p>
         <div class="d-flex justify-content-center mb-2">
           <b-button
@@ -1372,7 +1372,7 @@
           </b-button>
         </div>
         <p
-          class="text-[12px] mx-auto text-center"
+          class="text-[12px] mx-auto text-center text-black"
           style="max-width: 620px"
         >
           *abis input produk, produknya jadi otomatis muncul pas bikin orderan dan label pengiriman, lalu jadi keluar data varian produk terlaris dan juga pelanggan terloyal, jadi...., semangat yaa...
@@ -1602,6 +1602,7 @@ export default {
       addVariantOptionIsActive: false,
 
       empty: [],
+      newUser: true,
     }
   },
   computed: {},
@@ -1781,12 +1782,12 @@ export default {
         .then(res => {
           const { data } = res.data
           if (data.length < 1 && this.newUser === true) {
-            this.$bvModal.show('modalOnboarding')
+            this.$bvModal.show('modalOnboardingProduct')
           }
         })
     },
     dissmissNewUser() {
-      this.$bvModal.hide('modalOnboarding')
+      this.$bvModal.hide('modalOnboardingProduct')
       localStorage.setItem('newUser', false)
     },
     async checkProductName() {

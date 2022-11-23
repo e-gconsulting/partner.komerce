@@ -564,3 +564,9 @@ input.vue-pincode-input {
 	-webkit-animation-timing-function:ease-in-out;
 	-webkit-animation-direction: alternate;
 }
+
+@media(max-width: 576px) {
+  .wrapper__claim__point__mobile {
+    text-align: center!important;
+  }
+}
