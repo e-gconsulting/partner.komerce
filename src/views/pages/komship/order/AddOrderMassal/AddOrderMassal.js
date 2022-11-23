@@ -36,6 +36,7 @@ export default {
       submitProgress: 0,
       submitProgressStatus: true,
       disableSubmit: false,
+      adminList: [],
     }
   },
   async mounted() {
@@ -112,6 +113,7 @@ export default {
           if (this.profile.partner_is_order_notes) {
             this.dataSheets = data.map(items => ({
               order_date: items.order_date,
+              tracking_sales_name: items.tracking_sales_name,
               address: items.address,
               customer_name: items.customer_name,
               customer_phone_number: items.customer_phone_number,
@@ -128,6 +130,7 @@ export default {
           } else {
             this.dataSheets = data.map(items => ({
               order_date: items.order_date,
+              tracking_sales_name: items.tracking_sales_name,
               address: items.address,
               customer_name: items.customer_name,
               customer_phone_number: items.customer_phone_number,
@@ -154,6 +157,7 @@ export default {
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
           this.sourceShipment = data.shipments
+          this.adminList = data.tracking_sales
           this.allVariant = data.variant
           const { variant } = data
           this.sourceVariant = ['-']
@@ -220,18 +224,19 @@ export default {
       })
       this.columnNumber = ({
         order_date: 0,
-        address: 1,
-        customer_name: 2,
-        customer_phone_number: 3,
-        zip_code: 4,
-        customer_address: 5,
-        product: 6,
-        variant: 7,
-        order_notes: profile.partner_is_order_notes ? 8 : null,
-        qty: profile.partner_is_order_notes ? 9 : 8,
-        payment_method: profile.partner_is_order_notes ? 10 : 9,
-        expedition: profile.partner_is_order_notes ? 11 : 10,
-        grandtotal: profile.partner_is_order_notes ? 12 : 11,
+        sales_tracking: 1,
+        address: 2,
+        customer_name: 3,
+        customer_phone_number: 4,
+        zip_code: 5,
+        customer_address: 6,
+        product: 7,
+        variant: 8,
+        order_notes: profile.partner_is_order_notes ? 9 : null,
+        qty: profile.partner_is_order_notes ? 10 : 9,
+        payment_method: profile.partner_is_order_notes ? 11 : 10,
+        expedition: profile.partner_is_order_notes ? 12 : 11,
+        grandtotal: profile.partner_is_order_notes ? 13 : 12,
       })
       const { columnNumber } = this
       if (profile.partner_is_order_notes) {
@@ -248,6 +253,9 @@ export default {
               textReset: 'HAPUS',
               textUpdate: 'OK',
             },
+          },
+          {
+            type: 'dropdown', title: 'Terjual Oleh', source: this.adminList,
           },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
@@ -288,6 +296,9 @@ export default {
               textReset: 'HAPUS',
               textUpdate: 'OK',
             },
+          },
+          {
+            type: 'dropdown', title: 'Terjual Oleh', source: this.adminList,
           },
           {
             type: 'dropdown', title: 'Kirim Dari', source: this.sourceAddress,
@@ -526,6 +537,7 @@ export default {
           return pasteData
         },
       })
+      if (!profile.partner_is_tracking_sales) this.table.hideColumn(1)
       this.$refs.loadingPage.hide()
     },
     addRows() {
@@ -573,6 +585,7 @@ export default {
       let rowNumber = 1
       this.dataSheets = sheets.map(items => ({
         order_date: items[columnNumber.order_date] || items.order_date || '',
+        tracking_sales_name: items[columnNumber.tracking_sales_name] || items.tracking_sales_name || '',
         address: items[columnNumber.address] || items.address || '',
         customer_name: items[columnNumber.customer_name] || items.customer_name || '',
         customer_phone_number: items[columnNumber.customer_phone_number] || items.customer_phone_number || '',
@@ -668,6 +681,7 @@ export default {
     getDataSubmit() {
       const dataFilter = this.dataSheets.filter(
         items => items.order_date
+          || items.sales_tracking
           || items.address
           || items.customer_name
           || items.customer_phone_number
@@ -682,6 +696,7 @@ export default {
       )
       this.dataSubmit = dataFilter.map(items => ({
         order_date: items.order_date !== '' ? moment(items.order_date).format('YYYY-MM-DD') : '',
+        tracking_sales_name: items.tracking_sales_name,
         address: items.address,
         customer_name: items.customer_name,
         customer_phone_number: items.customer_phone_number,

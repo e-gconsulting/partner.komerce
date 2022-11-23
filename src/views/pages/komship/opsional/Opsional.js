@@ -10,6 +10,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate'
 import { required } from '@validations'
 import { heightTransition } from '@core/mixins/ui/transition'
 import Ripple from 'vue-ripple-directive'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -26,7 +27,6 @@ export default {
   mixins: [heightTransition],
   data() {
     return {
-      profile: [],
       quickType: null,
       orderMassal: null,
       returnInsight: null,
@@ -61,37 +61,45 @@ export default {
       indexIdentity: 1,
 
       customerReputation: null,
+      salesTracking: null,
+      editAdminSalesTracking: false,
+      addSalesTrackingMode: false,
+      adminSalesTrackingItem: [],
+      errorInputAdmin: false,
+      nameAdmin: '',
+      editAdminSalesTrackingItems: {},
+      adminNameEdit: '',
+      idEditAdmin: null,
+      deleteItemAdmin: {},
+      loadingListAdminSalesTracking: false,
+      loadingAddAdminSalesTracking: false,
     }
   },
-  created() {
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
+  mounted() {
     this.getProfile()
   },
   methods: {
     getProfile() {
-      this.$http_komship.post('v1/my-profile')
-        .then(res => {
-          const { data } = res.data
-          this.profile = data
-          this.quickType = data.partner_is_allowed_edit
-          this.mutationBank = data.partner_is_mutation_bank
-          this.customLabel = data.partner_is_custom_label
-          this.orderMassal = data.partner_is_mass_order
-          this.returnInsight = data.partner_is_return_insight
-          this.orderNotes = data.partner_is_order_notes
-          this.notifWA = data.partner_is_notification_whatsapp
-          this.customerReputation = data.partner_is_customer_reputation
-          this.isGetting = true
-          this.getCustomLabel()
-        })
-        .catch(err => {
-          console.log(err)
-          this.isGetting = true
-        })
+      this.quickType = this.profile.partner_is_allowed_edit
+      this.mutationBank = this.profile.partner_is_mutation_bank
+      this.customLabel = this.profile.partner_is_custom_label
+      this.orderMassal = this.profile.partner_is_mass_order
+      this.returnInsight = this.profile.partner_is_return_insight
+      this.orderNotes = this.profile.partner_is_order_notes
+      this.notifWA = this.profile.partner_is_notification_whatsapp
+      this.customerReputation = this.profile.partner_is_customer_reputation
+      this.salesTracking = this.profile.partner_is_tracking_sales
+      this.isGetting = true
+      this.getCustomLabel()
     },
     setQuickType() {
       this.$http.post(`/user/partner/setting/isAllowedEdit/${this.profile.partner_id}`, { is_allowed_edit: this.quickType })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
             this.getProfile()
             this.$toast({
               component: ToastificationContent,
@@ -107,8 +115,9 @@ export default {
     },
     setOrderMassal() {
       this.$http.post(`/user/partner/setting/isMassOrder/${this.profile.partner_id}`, { is_mass_order: this.orderMassal ? 1 : 0 })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
             this.getProfile()
             this.$toast({
               component: ToastificationContent,
@@ -124,8 +133,10 @@ export default {
     },
     setReturnInsight() {
       this.$http_komship.post('/v1/setting/settingIsReturnInsight', { is_return_insight: this.returnInsight ? 1 : 0 })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
+            this.getProfile()
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -140,8 +151,10 @@ export default {
     },
     setOrderNotes() {
       this.$http_komship.post('/v1/setting/settingIsOrderNotes', { is_order_notes: this.orderNotes ? 1 : 0 })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
+            this.getProfile()
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -156,8 +169,9 @@ export default {
     },
     setMutationBank() {
       this.$http.post(`user/partner/setting/isMutationBank/${this.profile.partner_id}`, { is_mutation_bank: this.mutationBank ? '1' : '0' })
-        .then(res => {
+        .then(async res => {
           if (res.data.code === 200) {
+            await this.$store.dispatch('dashboard/getProfile')
             this.getProfile()
             this.$toast({
               component: ToastificationContent,
@@ -180,7 +194,9 @@ export default {
         this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
           is_custom_label: 1,
         })
-          .then(response => {
+          .then(async response => {
+            await this.$store.dispatch('dashboard/getProfile')
+            this.getProfile()
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -207,7 +223,9 @@ export default {
       const post = () => {
         this.$http_komship.post('/v1/setting/isNotificationWhatsapp', {
           is_nofitication_whatsapp: this.notifWA ? '1' : '0',
-        }).then(() => {
+        }).then(async () => {
+          await this.$store.dispatch('dashboard/getProfile')
+          this.getProfile()
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -254,7 +272,9 @@ export default {
       this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
         is_custom_label: 0,
       })
-        .then(response => {
+        .then(async response => {
+          await this.$store.dispatch('dashboard/getProfile')
+          this.getProfile()
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -313,7 +333,6 @@ export default {
           }
           this.loadingWrapperCustom = false
         }).catch(err => {
-          console.log(err)
           this.loadingWrapperCustom = false
         })
     },
@@ -497,7 +516,9 @@ export default {
       const formData = new FormData()
       formData.append('is_customer_reputation', value)
       this.$http_komship.post('/v1/setting/settingIsCustomerReputation', formData)
-        .then(response => {
+        .then(async response => {
+          await this.$store.dispatch('dashboard/getProfile')
+          this.getProfile()
           this.$toast({
             component: ToastificationContent,
             props: {
@@ -525,6 +546,183 @@ export default {
 
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
+    },
+    setSalesTracking() {
+      this.$http_komship.post('/v1/setting/settingIsTrackingSales', {
+        is_tracking_sales: this.salesTracking ? 1 : 0,
+      }).then(async response => {
+        await this.$store.dispatch('dashboard/getProfile')
+        await this.getProfile()
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Sukses',
+            icon: 'CheckIcon',
+            text: this.salesTracking ? 'Fitur Pendukung Pelacakan Penjualan berhasil diaktifkan' : 'Fitur Pendukung Pelacakan Penjualan berhasil dinonaktifkan',
+            variant: 'success',
+          },
+        }, 2000)
+      }).catch(err => {
+        if (err.response.data.message === 'Please Store Tracking Sales!') {
+          this.$refs['popup-sales-tracking'].show()
+        } else {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        }
+      })
+    },
+    addSalesTracking() {
+      this.$refs['popup-sales-tracking'].hide()
+      this.$refs['popup-add-sales-tracking'].show()
+      this.getListAdminSalesTracking()
+    },
+    handleClosePopupSalesTracking() {
+      this.$refs['popup-sales-tracking'].hide()
+      this.salesTracking = false
+    },
+    handleCloseAddSalesTracking() {
+      this.$refs['popup-add-sales-tracking'].hide()
+    },
+    handleClosePopupDeleteSalesTracking() {
+      this.$refs['popup-delete-sales-tracking'].hide()
+    },
+    checkValidInputAdmin() {
+      if (this.nameAdmin === '') this.errorInputAdmin = true
+      if (this.nameAdmin !== '') this.errorInputAdmin = false
+    },
+    submitAdminSalesTracking() {
+      this.loadingAddAdminSalesTracking = true
+      this.$http_komship.post('/v1/tracking-sales/store', {
+        name: this.nameAdmin,
+      }).then(async response => {
+        await this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Sukses',
+            icon: 'CheckIcon',
+            text: 'kamu berhasil menambahkan Admin',
+            variant: 'success',
+          },
+        }, 2000)
+        await this.getListAdminSalesTracking()
+        if (this.adminSalesTrackingItem.length === 0) {
+          await this.setSalesTracking()
+          this.$refs['popup-add-sales-tracking'].hide()
+        }
+        this.addSalesTrackingMode = false
+        this.loadingAddAdminSalesTracking = false
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+        this.loadingAddAdminSalesTracking = false
+      })
+    },
+    handleEditAdminSalesTracking(data) {
+      this.editAdminSalesTracking = true
+      this.editAdminSalesTrackingItems = data
+      this.adminNameEdit = data.name
+      this.idEditAdmin = data.id
+    },
+    handleSubmitEditAdminSalesTracking() {
+      this.loadingAddAdminSalesTracking = true
+      this.$http_komship.put(`/v1/tracking-sales/update/${this.editAdminSalesTrackingItems.id}`, {
+        name: this.adminNameEdit,
+      }).then(async response => {
+        await this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Sukses',
+            icon: 'CheckIcon',
+            text: 'kamu berhasil edit Admin',
+            variant: 'success',
+          },
+        }, 2000)
+        await this.getListAdminSalesTracking()
+        this.editAdminSalesTracking = false
+        this.loadingAddAdminSalesTracking = false
+      }).catch(err => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: err,
+            variant: 'danger',
+          },
+        }, 2000)
+        this.loadingAddAdminSalesTracking = false
+      })
+    },
+    setAdminNameEdit(data) {
+      this.adminNameEdit = data
+      if (data === '') this.errorInputAdmin = true
+      if (data !== '') this.errorInputAdmin = false
+    },
+    getListAdminSalesTracking() {
+      this.loadingListAdminSalesTracking = true
+      this.$http_komship.get('/v1/tracking-sales/list')
+        .then(response => {
+          this.adminSalesTrackingItem = response.data.data
+          this.loadingListAdminSalesTracking = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingListAdminSalesTracking = false
+        })
+    },
+    handleFormAddAdminSalesTracking() {
+      this.addSalesTrackingMode = true
+    },
+    handleDeleteAdminSalesTracking(data) {
+      this.deleteItemAdmin = data
+      this.$refs['popup-delete-sales-tracking'].show()
+    },
+    deleteAdminSalesTracking() {
+      this.$http_komship.delete(`/v1/tracking-sales/delete/${this.deleteItemAdmin.id}`)
+        .then(async () => {
+          await this.getListAdminSalesTracking()
+          await this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Sukses',
+              icon: 'CheckIcon',
+              text: 'kamu berhasil menghapus Admin',
+              variant: 'success',
+            },
+          }, 2000)
+          this.$refs['popup-delete-sales-tracking'].hide()
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
     },
   },
 }

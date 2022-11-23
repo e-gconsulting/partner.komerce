@@ -3,7 +3,7 @@
     <p class="font-bold text-[24px]">
       Pengajuan Pickup
     </p>
-    <b-container class="font-bold text-[16px] py-3 px-4">
+    <b-container class="font-bold text-[16px] py-3 px-4 container__pickup__mobile">
       <p class="text-[20px]">
         Penjemputan
       </p>
@@ -116,7 +116,7 @@
         <b-col md="5">
           <b-button
             :variant="vehicle === 'MOTOR' ? 'outline-primary active' : 'outline-light'"
-            class="rounded-lg border border-[#828282]"
+            class="rounded-lg border border-[#828282] mr-1 mb-1"
             :disabled="!vehicleList.includes('MOTOR')"
             @click="vehicle = 'MOTOR'"
           >
@@ -125,7 +125,7 @@
           </b-button>
           <b-button
             :variant="vehicle === 'MOBIL' ? 'outline-primary active' : 'outline-light'"
-            class="rounded-lg border border-[#828282] ml-1 px-1"
+            class="rounded-lg border border-[#828282] mr-1 px-1 mb-1"
             :disabled="!vehicleList.includes('MOBIL')"
             @click="vehicle = 'MOBIL'"
           >
@@ -134,7 +134,7 @@
           </b-button>
           <b-button
             :variant="vehicle === 'TRUCK' ? 'outline-primary active' : 'outline-light'"
-            class="rounded-lg border border-[#828282] ml-1 px-2"
+            class="rounded-lg border border-[#828282] mr-1 px-2 mb-1"
             :disabled="!vehicleList.includes('TRUCK')"
             @click="vehicle = 'TRUCK'"
           >

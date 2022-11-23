@@ -74,3 +74,9 @@
   color: #626262;
   font-weight: 600;
 }
+
+@media (min-width: 576px) {
+  .wrapper__history__retur__mobile {
+    margin-left: 1rem!important;
+  }
+}

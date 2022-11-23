@@ -12,12 +12,12 @@ import {
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import '@core/scss/vue/libs/vue-select.scss'
 import { toInteger } from 'lodash'
+import { mapState } from 'vuex'
 
 export default {
   components: { vSelect, BFormTextarea },
   data() {
     return {
-      profile: [],
       dateOrder: moment().format('YYYY-MM-DD'),
       address: [],
       addressList: [],
@@ -151,7 +151,13 @@ export default {
       destinationLabel: '',
 
       weightProduct: null,
+
+      soldBy: null,
+      soldByList: [],
     }
+  },
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   mounted() {
     window.addEventListener('click', e => {
@@ -166,38 +172,22 @@ export default {
         this.destinationList = []
       }
     })
+    console.log(this.profile)
   },
-  created() {
+  async created() {
     this.$forceUpdate()
-    this.$http_komship
-      .post('v1/my-profile')
-      .then(res => {
-        this.profile = res.data.data
-        if (this.profile.partner_is_customer_reputation === true) {
-          this.isCustomerReputation = true
-        } else {
-          this.isCustomerReputation = false
-        }
-      })
-      .then(async () => {
-        await this.checkExpedition()
-        await this.getAddress()
-        await this.getProduct()
-        await this.addToCart()
-        await this.getRekening()
-        await this.getCustomLabel()
-      })
-      .catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan refresh halaman!',
-            variant: 'danger',
-          },
-        })
-      })
+    if (this.profile.partner_is_customer_reputation === true) {
+      this.isCustomerReputation = await true
+    } else {
+      this.isCustomerReputation = await false
+    }
+    await this.checkExpedition()
+    await this.getAddress()
+    await this.getProduct()
+    await this.addToCart()
+    await this.getRekening()
+    await this.getCustomLabel()
+    await this.getSalesTrackingList()
     if (
       localStorage.getItem('productSelected')
       && localStorage.productHistory
@@ -330,7 +320,6 @@ export default {
         })
           .then(result => {
             const { data } = result.data
-            console.log(data)
             this.returnInsight = data
             this.showReturnInsight = true
           }).catch(err => {
@@ -1279,6 +1268,11 @@ export default {
       } else {
         this.isValidate = false
       }
+      if (this.soldBy === null) {
+        this.isValidate = false
+      } else {
+        this.isValidate = true
+      }
       this.formData = {
         date: this.dateOrder,
         tariff_code: this.destination.value,
@@ -1313,6 +1307,7 @@ export default {
         order_notes: this.orderNotes,
         is_whatsapp: this.isWhatsapp === 'valid' ? 1 : 0,
       }
+      if (this.profile.partner_is_tracking_sales) Object.assign(this.formData, { tracking_sales_id: this.soldBy.id })
     },
     handleCustomLabel(items) {
       this.customLabel = items
@@ -1559,6 +1554,22 @@ export default {
       this.destinationLabel = items.label
       this.getReturnInsight()
       this.destinationList = []
+    },
+    getSalesTrackingList() {
+      this.$http_komship.get('/v1/tracking-sales/list')
+        .then(response => {
+          this.soldByList = response.data.data
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.message,
+              variant: 'danger',
+            },
+          })
+        })
     },
   },
 }

@@ -22,6 +22,7 @@ import { heightTransition } from '@core/mixins/ui/transition'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import useJwt from '@/auth/jwt/useJwt'
 import PincodeInput from 'vue-pincode-input'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -145,6 +146,9 @@ export default {
       usernameExist: false,
     }
   },
+  computed: {
+    ...mapState('dashboard', ['profile']),
+  },
   mounted() {
     this.loadProfile()
     this.loadPartnerCategory()
@@ -194,7 +198,7 @@ export default {
           if (this.cityCodeValue !== null) {
             formData.append('city_code', this.cityCodeValue)
           }
-          this.$http.post('/user/partner/update-profile-komship', formData).then(() => {
+          this.$http.post('/user/partner/update-profile-komship', formData).then(async () => {
             this.$toast({
               component: ToastificationContent,
               props: {
@@ -205,6 +209,7 @@ export default {
               },
             })
             this.loadingSubmit = false
+            await this.$store.dispatch('dashboard/getProfile')
             this.loadProfile()
           }).catch(err => {
             this.loadingSubmit = false
@@ -225,46 +230,30 @@ export default {
     },
     loadProfile() {
       this.fieldLogoBusiness.push({ logo: '' })
-      this.loading = true
-      this.$http_komship.post('/v1/my-profile').then(response => {
-        const { data } = response.data
-        this.id = data.user_id
-        this.fullname = data.user_fullname
-        this.username = data.user_name
-        if (data.user_gender === 'Laki-laki') {
-          this.jenisKelamin = 1
-        }
-        if (data.user_gender === 'Perempuan') {
-          this.jenisKelamin = 2
-        }
-        this.noHP = data.user_phone
-        this.phoneBusiness = data.partner_no_hp_business
-        this.emailUser = data.user_email
-        this.address = data.user_address
-        if (data.partner_business_logo) this.imageInitialFile = data.partner_business_logo
-        this.nameBusiness = data.partner_business_name
-        if (data.user_address_default !== null) {
-          this.location = data.user_address_default.detail_address
-        }
-        if (data.address_partner_business) {
-          this.cityCode = data.address_partner_business
-          this.loadAllProvince()
-        }
-        if (data.partner_business_name === 'null') this.sektorBusiness = ''
-        this.typeBusiness = data.partner_business_type_id
-        this.loading = false
-      }).catch(err => {
-        this.loading = false
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load profile, silahkan coba lagi',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+      this.id = this.profile.user_id
+      this.fullname = this.profile.user_fullname
+      this.username = this.profile.user_name
+      if (this.profile.user_gender === 'Laki-laki') {
+        this.jenisKelamin = 1
+      }
+      if (this.profile.user_gender === 'Perempuan') {
+        this.jenisKelamin = 2
+      }
+      this.noHP = this.profile.user_phone
+      this.phoneBusiness = this.profile.partner_no_hp_business
+      this.emailUser = this.profile.user_email
+      this.address = this.profile.user_address
+      if (this.profilepartner_business_logo) this.imageInitialFile = this.profile.partner_business_logo
+      this.nameBusiness = this.profile.partner_business_name
+      if (this.profile.user_address_default !== null) {
+        this.location = this.profile.user_address_default.detail_address
+      }
+      if (this.profile.address_partner_business) {
+        this.cityCode = this.profile.address_partner_business
+        this.loadAllProvince()
+      }
+      if (this.profile.partner_business_name === 'null') this.sektorBusiness = ''
+      this.typeBusiness = this.profile.partner_business_type_id
     },
     loadPartnerCategory() {
       this.$http.post('/partnerCategory').then(response => {
@@ -660,11 +649,12 @@ export default {
         this.modalEditFormInputType = 'password'
       }
     },
-    closeSuccessVerification() {
+    async closeSuccessVerification() {
       this.messageErrorEmail = null
       this.successConfirmPassword = false
       this.formInputEditItem = ''
       this.$refs['modal-success-verification'].hide()
+      await this.$store.dispatch('dashboard/getProfile')
       this.loadProfile()
     },
     formatPhone: _.debounce(function () {
