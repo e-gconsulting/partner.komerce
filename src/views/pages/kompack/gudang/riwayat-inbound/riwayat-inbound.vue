@@ -7,25 +7,18 @@
         class="mr-1 rounded-lg p-0"
         @click="$router.go(-1)"
       >
-        <feather-icon
-          size="2x"
-          icon="ChevronLeftIcon"
-        />
+        <feather-icon size="2x" icon="ChevronLeftIcon" />
       </b-button>
-      <br>
+      <br />
       <h4 class="my-0">
-        Riwayat Inbound
+        Riwayat Inbound jadgaudgaus
       </h4>
     </div>
-    <b-table
-      small
-      :fields="fields"
-      :items="items"
-      responsive="sm"
-    >
+    <b-table small :fields="fields" :items="items" responsive="sm">
       <!-- A custom formatted column -->
       <template #cell(name)="data">
-        <b class="text-info">{{ data.value.last.toUpperCase() }}</b>,
+        <b class="text-info">{{ data.value.last.toUpperCase() }}</b
+        >,
         <b class="text-info">{{ items.Kota }}</b>
       </template>
 
@@ -47,14 +40,8 @@
       </template>
     </b-table>
     <div class="">
-      <b-button
-        variant="primary"
-        class="rounded-pill p-1"
-      >
-        <feather-icon
-          icon="PlusIcon"
-          size="35"
-        />
+      <b-button variant="primary" class="rounded-pill p-1">
+        <feather-icon icon="PlusIcon" size="35" />
       </b-button>
     </div>
   </b-card>
@@ -82,5 +69,4 @@ export default {
 }
 </script>
 
-<style>
-</style>
+<style></style>
