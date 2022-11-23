@@ -36,6 +36,34 @@
         </b-form-datepicker>
       </b-col>
     </b-row>
+    <b-row v-if="profile.partner_is_tracking_sales" class="mb-1">
+      <b-col
+        md="3"
+        class="my-auto"
+      >
+        <span class="text-lg">Terjual Oleh</span>
+      </b-col>
+      <b-col md="4">
+        <v-select
+          v-model="soldBy"
+          label="name"
+          :options="soldByList"
+        >
+          <span
+            v-if="soldByList.length === 0"
+            slot="no-options"
+          >
+            Belum ada admin, tambahkan dahulu.
+          </span>
+          <span
+            v-else
+            slot="no-options"
+          >
+            Sedang Memuat ...
+          </span>
+        </v-select>
+      </b-col>
+    </b-row>
     <b-row class="mb-1">
       <b-col
         md="3"
