@@ -634,38 +634,38 @@
       no-close-on-esc
       centered
     >
-      <b-row class="my-2 justify-content-center">
-        <b-img src="@/assets/images/icons/warning.svg" />
-      </b-row>
+        <b-row class="my-2 justify-content-center">
+          <b-img src="@/assets/images/icons/warning.svg" />
+        </b-row>
 
-      <b-row class="justify-content-center mb-2">
-        <b-col class="text-center" cols="10">
-          <span class="text-black">
-            <strong>Fitur Pelacakan Penjualan tidak bisa diaktifkan, kamu harus menambahkan admin minimal 1 admin untuk mengaktifkan fitur ini</strong>
-          </span>
-        </b-col>
-      </b-row>
+        <b-row class="justify-content-center mb-2">
+          <b-col class="text-center" cols="10">
+            <span class="text-black">
+              <strong>Fitur Pelacakan Penjualan tidak bisa diaktifkan, kamu harus menambahkan admin minimal 1 admin untuk mengaktifkan fitur ini</strong>
+            </span>
+          </b-col>
+        </b-row>
 
-      <b-row class="justify-content-center mb-2">
-        <b-col cols="5">
-          <b-button
-            variant="outline-primary"
-            block
-            @click="handleClosePopupSalesTracking"
-          >
-            Oke
-          </b-button>
-        </b-col>
-        <b-col cols="5">
-          <b-button
-            variant="primary"
-            block
-            @click="addSalesTracking"
-          >
-            Tambah Admin
-          </b-button>
-        </b-col>
-      </b-row>
+        <b-row class="justify-content-center mb-2">
+          <b-col cols="5">
+            <b-button
+              variant="outline-primary"
+              block
+              @click="handleClosePopupSalesTracking"
+            >
+              Oke
+            </b-button>
+          </b-col>
+          <b-col cols="5">
+            <b-button
+              variant="primary"
+              block
+              @click="addSalesTracking"
+            >
+              Tambah Admin
+            </b-button>
+          </b-col>
+        </b-row>
     </b-modal>
 
      <!-- Popoup Add Sales Tracking -->
@@ -704,69 +704,81 @@
       </b-col>
      </b-row>
 
-     <b-row v-for="(item, index) in adminSalesTrackingItem" :key="index+1" class="justify-content-center mb-2">
-      <!-- List -->
-      <b-col cols="10" class="mb-2">
-        <div class="p-2" style="border: 1px solid #E2E2E2;
-        border-radius: 8px;">
-          <b-row class="mb-2 justify-content-between">
-            <b-col cols="auto">
-              <span class="text-black">Admin {{ index + 1 }}</span>
-            </b-col>
-            <b-col cols="auto" class="d-flex align-items-center">
-              <div>
-                <b-button
-                  v-if="editAdminSalesTracking && idEditAdmin === item.id"
-                  variant="primary"
-                  class="btn-icon mr-50"
-                  size="sm"
-                  @click="handleSubmitEditAdminSalesTracking"
-                >
-                  <span class="text-white">Simpan</span>
-                </b-button>
-                <b-img
-                  v-else
-                  class="mr-50 cursor-pointer"
-                  src="@/assets/images/icons/edit.svg"
-                  @click="handleEditAdminSalesTracking(item)"
-                />
-              </div>
-              <div>
-                <b-img
-                  src="@/assets/images/icons/trash.svg"
-                  class="cursor-pointer"
-                  @click="handleDeleteAdminSalesTracking(item)"
-                />
-              </div>
-            </b-col>
-          </b-row>
-          <b-row class="align-items-center">
-            <b-col cols="3">
-              <span class="text-black">Nama</span>
-            </b-col>
-            <b-col cols="9">
-              <b-form-input
-                v-if="editAdminSalesTracking && idEditAdmin === item.id"
-                v-model="item.name"
-                class="bg-white"
-                @input="setAdminNameEdit(item.name)"
-              />
-              <b-form-input
-                v-else
-                v-model="item.name"
-                disabled
-                class="bg-white cursor-not-allowed"
-              />
-              <small v-if="errorInputAdmin" class="text-primary">
-                Nama ini harus diisi*
-               </small>
-            </b-col>
-          </b-row>
-        </div>
-      </b-col>
-     </b-row>
-    
-    <b-row class="justify-content-center mb-2">
+     <b-overlay
+        :show="loadingListAdminSalesTracking"
+        spinner-variant="primary"
+        variant="light" blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
+        <b-row v-for="(item, index) in adminSalesTrackingItem" :key="index+1" class="justify-content-center mb-2">
+          <!-- List -->
+          <b-col cols="10" class="mb-2">
+            <div class="p-2" style="border: 1px solid #E2E2E2;
+            border-radius: 8px;">
+              <b-row class="mb-2 justify-content-between">
+                <b-col cols="auto">
+                  <span class="text-black">Admin {{ index + 1 }}</span>
+                </b-col>
+                <b-col cols="auto" class="d-flex align-items-center">
+                  <div>
+                    <b-button
+                      v-if="editAdminSalesTracking && idEditAdmin === item.id"
+                      variant="primary"
+                      :class="errorInputAdmin ? 'btn-icon mr-50 d-flex align-items-center cursor-not-allowed' : 'btn-icon mr-50 d-flex align-items-center'"
+                      size="sm"
+                      :disabled="errorInputAdmin"
+                      @click="handleSubmitEditAdminSalesTracking"
+                    >
+                      <span class="text-white mr-50">Simpan</span>
+                      <b-spinner
+                        v-if="loadingAddAdminSalesTracking"
+                        small
+                      />
+                    </b-button>
+                    <b-img
+                      v-else
+                      class="mr-50 cursor-pointer"
+                      src="@/assets/images/icons/edit.svg"
+                      @click="handleEditAdminSalesTracking(item)"
+                    />
+                  </div>
+                  <div>
+                    <b-img
+                      src="@/assets/images/icons/trash.svg"
+                      class="cursor-pointer"
+                      @click="handleDeleteAdminSalesTracking(item)"
+                    />
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row class="align-items-center">
+                <b-col cols="3">
+                  <span class="text-black">Nama</span>
+                </b-col>
+                <b-col cols="9">
+                  <b-form-input
+                    v-if="editAdminSalesTracking && idEditAdmin === item.id"
+                    v-model="item.name"
+                    class="bg-white"
+                    @input="setAdminNameEdit(item.name)"
+                  />
+                  <b-form-input
+                    v-else
+                    v-model="item.name"
+                    disabled
+                    class="bg-white cursor-not-allowed"
+                  />
+                  <small v-if="editAdminSalesTracking && idEditAdmin === item.id && errorInputAdmin" class="text-primary">
+                    Nama ini harus diisi*
+                  </small>
+                </b-col>
+              </b-row>
+            </div>
+          </b-col>
+        </b-row>
+        
+        <b-row class="justify-content-center mb-2">
        <!-- Add -->
        <b-col v-if="addSalesTrackingMode" cols="10" class="mb-2">
          <div class="p-2" style="border: 1px solid #E2E2E2;
@@ -779,11 +791,16 @@
                <div>
                  <b-button
                    variant="primary"
-                   :class="errorInputAdmin ? 'btn-icon mr-50 cursor-not-allowed' : 'btn-icon mr-50'"
+                   :class="errorInputAdmin ? 'btn-icon mr-50 cursor-not-allowed d-flex align-items-center' : 'btn-icon mr-50 d-flex align-items-center'"
                    size="sm"
+                   :disabled="errorInputAdmin"
                    @click="submitAdminSalesTracking"
                  >
-                   <span class="text-white">Simpan</span>
+                   <span class="text-white mr-50">Simpan</span>
+                   <b-spinner
+                    v-if="loadingAddAdminSalesTracking"
+                    small
+                   />
                  </b-button>
                </div>
                <div>
@@ -807,7 +824,8 @@
            </b-row>
          </div>
        </b-col>
-     </b-row>
+        </b-row>
+     </b-overlay>
 
      <b-row class="justify-content-center mb-2">
        <b-button

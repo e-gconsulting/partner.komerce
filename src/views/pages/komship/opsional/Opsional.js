@@ -71,6 +71,8 @@ export default {
       adminNameEdit: '',
       idEditAdmin: null,
       deleteItemAdmin: {},
+      loadingListAdminSalesTracking: false,
+      loadingAddAdminSalesTracking: false,
     }
   },
   computed: {
@@ -596,6 +598,7 @@ export default {
       if (this.nameAdmin !== '') this.errorInputAdmin = false
     },
     submitAdminSalesTracking() {
+      this.loadingAddAdminSalesTracking = true
       this.$http_komship.post('/v1/tracking-sales/store', {
         name: this.nameAdmin,
       }).then(async response => {
@@ -614,6 +617,7 @@ export default {
           this.$refs['popup-add-sales-tracking'].hide()
         }
         this.addSalesTrackingMode = false
+        this.loadingAddAdminSalesTracking = false
       }).catch(err => {
         this.$toast({
           component: ToastificationContent,
@@ -624,6 +628,7 @@ export default {
             variant: 'danger',
           },
         }, 2000)
+        this.loadingAddAdminSalesTracking = false
       })
     },
     handleEditAdminSalesTracking(data) {
@@ -633,6 +638,7 @@ export default {
       this.idEditAdmin = data.id
     },
     handleSubmitEditAdminSalesTracking() {
+      this.loadingAddAdminSalesTracking = true
       this.$http_komship.put(`/v1/tracking-sales/update/${this.editAdminSalesTrackingItems.id}`, {
         name: this.adminNameEdit,
       }).then(async response => {
@@ -647,6 +653,7 @@ export default {
         }, 2000)
         await this.getListAdminSalesTracking()
         this.editAdminSalesTracking = false
+        this.loadingAddAdminSalesTracking = false
       }).catch(err => {
         this.$toast({
           component: ToastificationContent,
@@ -657,15 +664,20 @@ export default {
             variant: 'danger',
           },
         }, 2000)
+        this.loadingAddAdminSalesTracking = false
       })
     },
     setAdminNameEdit(data) {
       this.adminNameEdit = data
+      if (data === '') this.errorInputAdmin = true
+      if (data !== '') this.errorInputAdmin = false
     },
     getListAdminSalesTracking() {
+      this.loadingListAdminSalesTracking = true
       this.$http_komship.get('/v1/tracking-sales/list')
         .then(response => {
           this.adminSalesTrackingItem = response.data.data
+          this.loadingListAdminSalesTracking = false
         }).catch(err => {
           this.$toast({
             component: ToastificationContent,
@@ -676,6 +688,7 @@ export default {
               variant: 'danger',
             },
           }, 2000)
+          this.loadingListAdminSalesTracking = false
         })
     },
     handleFormAddAdminSalesTracking() {
