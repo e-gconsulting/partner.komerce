@@ -58,9 +58,9 @@
         <span class="text-black">Ambil tantangan buat selesaikan <strong>pickup pertamamu</strong> dalam <strong>24 jam</strong> dan dapatin saldo ongkir <strong>50.000</strong></span>
       </b-row>
       <b-row :class="claimAvailable ? 'ml-50 mb-4' : 'ml-50'">
-        <b-col cols="9">
-          <div class="d-flex">
-            <div v-for="(item, index) in navigationItem" :key="index+1" class="mr-2" style="text-align: center;">
+        <b-col cols="6" md="9">
+          <b-row>
+            <b-col cols="auto"  v-for="(item, index) in navigationItem" :key="index+1" class="mb-1" style="text-align: center;">
               <div class="d-flex align-items-center">
                 <div>
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -85,16 +85,16 @@
                   {{ item.label }}
                 </span>
               </div>
-            </div>
-          </div>
+            </b-col>
+          </b-row>
         </b-col>
         <b-col
-        cols="3">
+        cols="6" md="3">
           <b-row :class="claimAvailable ? 'align-items-center justify-content-center' : 'align-items-center'">
-            <div class="mr-1">
+            <div class="mr-1 mb-1">
               <b-img src="@/assets/images/kompoint/thropy__icon.svg" />
             </div>
-            <div v-if="gamificationCanClaim || haveGamification || gamificatinCantClaim">
+            <div v-if="gamificationCanClaim || haveGamification || gamificatinCantClaim" class="wrapper__claim__point__mobile">
               <h5 class="text-black">
                 <strong>
                   50.000 KomPoints
