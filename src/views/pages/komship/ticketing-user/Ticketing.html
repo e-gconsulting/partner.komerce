@@ -733,8 +733,8 @@
                                     </span>
                                 </template>
                                 <validation-provider #default="{errors}" name="Jenis Tiket" rules="required">
-                                    <v-select v-model="ticketType" :options="jenisTicketItems"
-                                        :state="errors.length > 0 ? false:null" />
+                                    <v-select v-model="ticketType" :options="jenisTicketItems" label="name"
+                                        :state="errors.length > 0 ? false:null" @input="setPlaceholderDescription"/>
                                     <small class="text-primary">{{ errors[0] }}</small>
                                 </validation-provider>
                             </b-form-group>
@@ -751,7 +751,7 @@
                                 </template>
                                 <validation-provider #default="{errors}" name="Deskripsi" rules="required">
                                     <b-form-textarea v-model="description" rows="3"
-                                        :state="errors.length > 0 ? false:null" />
+                                        :state="errors.length > 0 ? false:null" :placeholder="placeholderDescriptionTicket" />
                                     <small class="text-primary">{{ errors[0] }}</small>
                                 </validation-provider>
                             </b-form-group>
