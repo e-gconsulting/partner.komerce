@@ -584,7 +584,7 @@ export default {
       let rowNumber = 1
       this.dataSheets = sheets.map(items => ({
         order_date: items[columnNumber.order_date] || items.order_date || '',
-        tracking_sales_name: items[columnNumber.sales_tracking] || items.sales_tracking || '',
+        tracking_sales_name: items[columnNumber.tracking_sales_name] || items.tracking_sales_name || '',
         address: items[columnNumber.address] || items.address || '',
         customer_name: items[columnNumber.customer_name] || items.customer_name || '',
         customer_phone_number: items[columnNumber.customer_phone_number] || items.customer_phone_number || '',
