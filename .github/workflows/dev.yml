@@ -1,9 +1,7 @@
 name: cd
 on:
   push:
-    branches: [ development-kompack ]
-  schedule:
-    - cron: "0 1 22 03 *"
+    branches: [ development ]
   workflow_dispatch:
 
 jobs:
