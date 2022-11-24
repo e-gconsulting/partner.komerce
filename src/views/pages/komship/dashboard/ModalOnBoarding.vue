@@ -51,7 +51,8 @@
         spinner-variant="primary"
         blur="0"
         opacity=".5"
-        rounded="sm">
+        rounded="sm"
+      >
         <b-row
           class="mb-5"
         >
@@ -76,6 +77,7 @@
                   >{{ item.value }}</span>
                   <b-img
                     v-if="stepOnboarding > item.value"
+                    class="stepper__onboarding__mobile"
                     src="@/assets/images/NewOnboarding/tick-circle.svg"
                     style="position: absolute;
                   top: 50%;
@@ -86,16 +88,19 @@
                   <div>
                     <b-img
                       v-if="stepOnboarding >= item.value"
+                      class="stepper__onboarding__mobile"
                       src="@/assets/images/NewOnboarding/wrapper__stepper.svg"
                     />
                     <b-img
                       v-if="stepOnboarding < item.value"
+                      class="stepper__onboarding__mobile"
                       src="@/assets/images/NewOnboarding/wrapper__stepper__inactive.svg"
                     />
                   </div>
                 </div>
                 <span
                   v-if="index !== stepItem.length - 1"
+                  class="process__stepper__onboarding__mobile"
                   :style="stepOnboarding <= item.value ? 'width: 130px; height: 2px; background: #E2E2E2;' : 'width: 130px; height: 2px; background: #F95031;'"
                 />
               </b-row>
@@ -103,27 +108,27 @@
             <b-img
               v-if="stepOnboarding + 1 === 2"
               src="@/assets/images/svg/imgstep2.svg"
-              class="wrapper__image__stepper"
+              class="wrapper__image__stepper wrapper__image__stepper__mobile"
             />
             <b-img
               v-if="stepOnboarding + 1 === 3"
               src="@/assets/images/svg/imgstep3.svg"
-              class="wrapper__image__stepper"
+              class="wrapper__image__stepper wrapper__image__stepper__mobile"
             />
             <b-img
               v-if="stepOnboarding + 1 === 4"
               src="@/assets/images/svg/imgstep4.svg"
-              class="wrapper__image__stepper"
+              class="wrapper__image__stepper wrapper__image__stepper__mobile"
             />
             <b-img
               v-if="stepOnboarding + 1 === 5"
               src="@/assets/images/svg/imgstep5.svg"
-              class="wrapper__image__stepper"
+              class="wrapper__image__stepper wrapper__image__stepper__mobile"
             />
             <b-img
               v-if="stepOnboarding + 1 === 6"
               src="@/assets/images/svg/imgstep6.svg"
-              class="wrapper__image__stepper__last"
+              class="wrapper__image__stepper__last wrapper__image__stepper__mobile"
             />
 
             <!--Waves Container-->
@@ -174,109 +179,111 @@
 
           </div>
         </b-row>
-        <b-row class="mx-3 mb-1">
-          <h1 class="text-black mb-1 mt-3">
-            <strong>
-              {{ getTitle() }}
-            </strong>
-          </h1>
-          <span
-            v-if="stepOnboarding === 1"
-            class="text-black"
-            style="font-size: 15px;"
-          >
-            kamu bisa langsung lengkapi data-data di menu pengaturan seperti <strong><i>data profile</i></strong>, <strong><i>alamat pickup</i></strong>, <strong><i>aktifkan ekspedisi</i></strong>, <strong><i>rekening bank</i></strong>, dll data tersebut <strong><i>wajib diisi</i></strong> serta merta agar proses seperti menambahkan order atau <strong><i>menarik penghasilan</i></strong> lancar kedepannya.
-          </span>
-          <b-col
-            v-if="stepOnboarding === 2"
-            cols="12"
-            class="pl-0"
-          >
-            <span
-              class="text-black"
-              style="font-size: 15px;"
-            >
-              Mengapa perlu menambahkan Produk?
-            </span>
-            <ul
-              class="text-black ml-1 my-50"
-              style="font-size: 15px; list-style: initial;"
-            >
-              <li>
-                Agar kamu dapat menganalisa mana <strong>produk dan varian yang paling laku</strong> yang udah kamu jual selama ini.
-              </li>
-              <li>
-                Agar kamu <strong>tidak perlu input ulang</strong> produkmu saat menambahkan order.
-              </li>
-              <li>
-                Agar detail produk muncul di <strong>label pengiriman</strong>.
-              </li>
-            </ul>
-            <span
-              class="text-black"
-              style="font-size: 15px;"
-            >
-              Karena keuntungan kedepannya yang <strong>sangat banyak</strong>, jadi bersemangatlah input produk yuk kak!
-            </span>
-          </b-col>
-          <b-col
-            v-if="stepOnboarding === 3"
-            cols="12"
-            class="pl-0"
-          >
-            <p
-              class="text-black"
-              style="font-size: 15px;"
-            >
-              Saatnya mulai masuk-masukin <strong>data order</strong> nih ke Komship. Data yang dimasukin standar aja seperti nama customer, alamat, belinya apa, dikirim dari mana, jumlahnya berapa, COD atau bukan, dll.
-            </p>
-            <p
-              class="text-black"
-              style="font-size: 15px;"
-            >
-              Untuk <strong>orderan jenis COD</strong> kamu bisa mempercepat proses input dengan mengaktifkan fitur pendukung <strong>"input cepat"</strong> agar dapat cukup masukin <strong>nilai COD/nilai transaksi</strong> aja.
-            </p>
-          </b-col>
-          <b-col
-            v-if="stepOnboarding === 4"
-            cols="12"
-            class="pl-0"
-          >
-            <p
-              class="text-black mb-50"
-              style="font-size: 15px;"
-            >
-              Setelah berhasil input semua <strong>orderan yang mau dikirim</strong>, saatnya <strong>ajukan pickup</strong>. Kakak tinggal pickup orderan dari <strong>gudang-gudang yang kakak pilih</strong>. Setelah ajukan pickup berhasil, nomor <strong>resi akan keluar otomatis</strong> dan untuk pengajuan pertama kali biasanya akan ada kurir ekspedisi akan mengontak nomor HP yang kakak cantumkan pada pengaturan <strong>penanggung jawab gudang</strong>.
-            </p>
-            <p
-              class="text-black"
-              style="font-size: 15px;"
-            >
-              Label pengiriman untuk dicetak ada pada menu <strong>riwayat pickup</strong>.
-            </p>
-          </b-col>
-          <b-col
-            v-if="stepOnboarding === 5"
-            cols="12"
-            class="pl-0"
-          >
-            <h5 class="text-black">
+        <b-row class="mb-1">
+          <b-col>
+            <h1 class="text-black mb-1 mt-3">
               <strong>
-                Hore... Kamu telah melewati sesi onboarding. Selamat!
+                {{ getTitle() }}
               </strong>
-            </h5>
-            <p
-              class="text-black mb-50"
-              style="font-size: 15px;"
-            >
-              Pantaulah <strong>status pengiriman</strong> dari mulai order <i>dibuat, dipacking, dikirim dan diterima</i> pada menu <strong>Data Order</strong>. Kamu juga bisa lacak status pengiriman di menu detail order.
-            </p>
-            <p
+            </h1>
+            <span
+              v-if="stepOnboarding === 1"
               class="text-black"
               style="font-size: 15px;"
             >
-              Jika mengalami kesulitan, jangan ragu untuk bertanya ke Customer Support kami melalui live chat ya...
-            </p>
+              kamu bisa langsung lengkapi data-data di menu pengaturan seperti <strong><i>data profile</i></strong>, <strong><i>alamat pickup</i></strong>, <strong><i>aktifkan ekspedisi</i></strong>, <strong><i>rekening bank</i></strong>, dll data tersebut <strong><i>wajib diisi</i></strong> serta merta agar proses seperti menambahkan order atau <strong><i>menarik penghasilan</i></strong> lancar kedepannya.
+            </span>
+            <b-col
+              v-if="stepOnboarding === 2"
+              cols="12"
+              class="pl-0"
+            >
+              <span
+                class="text-black"
+                style="font-size: 15px;"
+              >
+                Mengapa perlu menambahkan Produk?
+              </span>
+              <ul
+                class="text-black ml-1 my-50"
+                style="font-size: 15px; list-style: initial;"
+              >
+                <li>
+                  Agar kamu dapat menganalisa mana <strong>produk dan varian yang paling laku</strong> yang udah kamu jual selama ini.
+                </li>
+                <li>
+                  Agar kamu <strong>tidak perlu input ulang</strong> produkmu saat menambahkan order.
+                </li>
+                <li>
+                  Agar detail produk muncul di <strong>label pengiriman</strong>.
+                </li>
+              </ul>
+              <span
+                class="text-black"
+                style="font-size: 15px;"
+              >
+                Karena keuntungan kedepannya yang <strong>sangat banyak</strong>, jadi bersemangatlah input produk yuk kak!
+              </span>
+            </b-col>
+            <b-col
+              v-if="stepOnboarding === 3"
+              cols="12"
+              class="pl-0"
+            >
+              <p
+                class="text-black"
+                style="font-size: 15px;"
+              >
+                Saatnya mulai masuk-masukin <strong>data order</strong> nih ke Komship. Data yang dimasukin standar aja seperti nama customer, alamat, belinya apa, dikirim dari mana, jumlahnya berapa, COD atau bukan, dll.
+              </p>
+              <p
+                class="text-black"
+                style="font-size: 15px;"
+              >
+                Untuk <strong>orderan jenis COD</strong> kamu bisa mempercepat proses input dengan mengaktifkan fitur pendukung <strong>"input cepat"</strong> agar dapat cukup masukin <strong>nilai COD/nilai transaksi</strong> aja.
+              </p>
+            </b-col>
+            <b-col
+              v-if="stepOnboarding === 4"
+              cols="12"
+              class="pl-0"
+            >
+              <p
+                class="text-black mb-50"
+                style="font-size: 15px;"
+              >
+                Setelah berhasil input semua <strong>orderan yang mau dikirim</strong>, saatnya <strong>ajukan pickup</strong>. Kakak tinggal pickup orderan dari <strong>gudang-gudang yang kakak pilih</strong>. Setelah ajukan pickup berhasil, nomor <strong>resi akan keluar otomatis</strong> dan untuk pengajuan pertama kali biasanya akan ada kurir ekspedisi akan mengontak nomor HP yang kakak cantumkan pada pengaturan <strong>penanggung jawab gudang</strong>.
+              </p>
+              <p
+                class="text-black"
+                style="font-size: 15px;"
+              >
+                Label pengiriman untuk dicetak ada pada menu <strong>riwayat pickup</strong>.
+              </p>
+            </b-col>
+            <b-col
+              v-if="stepOnboarding === 5"
+              cols="12"
+              class="pl-0"
+            >
+              <h5 class="text-black">
+                <strong>
+                  Hore... Kamu telah melewati sesi onboarding. Selamat!
+                </strong>
+              </h5>
+              <p
+                class="text-black mb-50"
+                style="font-size: 15px;"
+              >
+                Pantaulah <strong>status pengiriman</strong> dari mulai order <i>dibuat, dipacking, dikirim dan diterima</i> pada menu <strong>Data Order</strong>. Kamu juga bisa lacak status pengiriman di menu detail order.
+              </p>
+              <p
+                class="text-black"
+                style="font-size: 15px;"
+              >
+                Jika mengalami kesulitan, jangan ragu untuk bertanya ke Customer Support kami melalui live chat ya...
+              </p>
+            </b-col>
           </b-col>
         </b-row>
         <b-row class="justify-content-end align-items-center pr-3 pb-1">
@@ -543,6 +550,20 @@ export default {
   }
   h1 {
     font-size:24px;
+  }
+}
+
+@media (max-width: 576px) {
+  .stepper__onboarding__mobile {
+    width: 30px;
+  }
+
+  .process__stepper__onboarding__mobile {
+    width: 40px!important;
+  }
+
+  .wrapper__image__stepper__mobile {
+    width: 140px;
   }
 }
 

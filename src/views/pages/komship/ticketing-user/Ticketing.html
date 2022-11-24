@@ -13,7 +13,7 @@
         ">
         <b-row class="mx-50 my-2 justify-content-center w-100">
             <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__0" style="
+                <div class="d-flex mb-1 box__content__status__0 box__content__status__mobile" style="
                         background: #FF9845;
                         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
                         height: 110px;
@@ -43,7 +43,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="
+                <div class="box__content__status__mobile" style="
                     background: #CF762F;
                     width: 20px;
                     height: 110px;
@@ -53,7 +53,7 @@
             </b-col>
 
             <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__1" style="
+                <div class="d-flex mb-1 box__content__status__1 box__content__status__mobile" style="
                         background: #F65A5C;
                         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
                         border-top-left-radius: 12px;
@@ -83,7 +83,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="
+                <div class="box__content__status__mobile" style="
                     background: #C8484A;
                     width: 20px;
                     height: 110px;
@@ -93,7 +93,7 @@
             </b-col>
 
             <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__2" style="
+                <div class="d-flex mb-1 box__content__status__2 box__content__status__mobile" style="
                         background: #50A0FF;
                         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
                         border-top-left-radius: 12px;
@@ -123,7 +123,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="
+                <div class="box__content__status__mobile" style="
                     background: #3E85D9;
                     width: 20px;
                     height: 110px;
@@ -133,7 +133,7 @@
             </b-col>
 
             <b-col cols="12" md="3" class="d-flex">
-                <div class="d-flex mb-1 box__content__status__3" style="
+                <div class="d-flex mb-1 box__content__status__3 box__content__status__mobile" style="
                         background: #2CCA98;
                         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.12);
                         border-top-left-radius: 12px;
@@ -174,7 +174,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="
+                <div class="box__content__status__mobile" style="
                     background: #28B48B;
                     width: 20px;
                     height: 110px;
@@ -186,7 +186,7 @@
     </div>
 
     <b-row class="justify-content-end mb-1">
-        <b-col>
+        <b-col class="mb-1">
             <b-button style="background-color: #08A0F7 !important; border: none;" @click="showModalCreateTicket">
                 <b-row class="align-items-center justify-content-between">
                     Buat Tiket
@@ -196,7 +196,7 @@
                 </b-row>
             </b-button>
         </b-col>
-        <b-col md="4" :class="computedClassTypeSearch">
+        <b-col cols="12" md="auto" class="mb-1">
             <b-input-group class="input-group-merge">
                 <b-input-group-prepend is-text>
                     <feather-icon icon="SearchIcon" />
@@ -205,9 +205,9 @@
             </b-input-group>
         </b-col>
 
-        <b-col :md="computedClassFilter">
+        <b-col cols="12" md="auto">
             <b-button id="popoverStatus" v-ripple.400="'rgba(113, 102, 240, 0.15)'" variant="flat-dark" style="border: 1px solid #C2C2C2;
-                border-radius: 8px;">
+                border-radius: 8px;" class="wrapper__filter__ticket__mobile">
                 <b-row class="align-items-center justify-content-between">
                     {{ searchType.label }}
                     <div class="ml-3">
@@ -226,10 +226,10 @@
     </b-row>
 
     <b-row class="justify-content-end mb-2">
-        <b-col md="auto" class="pr-0">
+        <b-col cols="12" md="auto" class="mb-1">
             <b-button id="popoverFilterEkspedisi" v-ripple.400="'rgba(113, 102, 240, 0.15)'" variant="flat-dark" style="border: 1px solid #C2C2C2;
-                border-radius: 8px;">
-                <b-row class="align-items-center justify-content-evenly">
+                border-radius: 8px;" class="wrapper__filter__ticket__mobile">
+                <b-row class="align-items-center justify-content-between">
                     <div>
                         <span>
                             Ekspedisi
@@ -257,30 +257,10 @@
                 </div>
             </b-popover>
         </b-col>
-        <b-col :md="computedClassAnyFilter" class="pr-0">
-            <b-button id="popoverJenisTicket" class="wrapper__filter__ticket" v-ripple.400="'rgba(113, 102, 240, 0.15)'"
+        <b-col cols="12" md="auto" class="mb-1">
+            <b-button id="popoverJenisTicket" class="wrapper__filter__ticket__mobile" v-ripple.400="'rgba(113, 102, 240, 0.15)'"
                 variant="flat-dark" style="border: 1px solid #C2C2C2;
                 border-radius: 8px;">
-                <b-row class="align-items-center justify-content-evenly">
-                    <div>
-                        <span>
-                            Jenis Tiket
-                        </span>
-                    </div>
-                    <div class="mx-1">
-                        <span v-if="filterTicketType.length > 0"
-                            class="text-primary">({{ filterTicketType.length }})</span>
-                    </div>
-                    <div>
-                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                    </div>
-                </b-row>
-            </b-button>
-
-            <!-- Mobile -->
-            <b-button id="popoverJenisTicket" class="wrapper__filter__ticket__mobile"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'" variant="flat-dark" style="border: 1px solid #C2C2C2;
-                border-radius: 8px;" block>
                 <b-row class="align-items-center justify-content-between">
                     <div>
                         <span>
@@ -308,8 +288,8 @@
             </b-popover>
         </b-col>
 
-        <b-col :md="computedClassAnyFilter" class="pr-0">
-            <b-button id="popoverStatusTicket" class="wrapper__filter__ticket"
+        <b-col cols="12" md="auto" class="mb-1">
+            <b-button id="popoverStatusTicket" class="wrapper__filter__ticket__mobile"
                 v-ripple.400="'rgba(113, 102, 240, 0.15)'" variant="flat-dark" style="border: 1px solid #C2C2C2;
                 border-radius: 8px;">
                 <b-row class="align-items-center justify-content-between">
@@ -324,27 +304,6 @@
                         </span>
                     </div>
                     <div>
-                        <b-img src="@/assets/images/icons/arrow-filter.svg" />
-                    </div>
-                </b-row>
-            </b-button>
-
-            <!-- Mobile -->
-            <b-button id="popoverStatusTicket" class="wrapper__filter__ticket__mobile"
-                v-ripple.400="'rgba(113, 102, 240, 0.15)'" variant="flat-dark" style="border: 1px solid #C2C2C2;
-                border-radius: 8px;" block>
-                <b-row class="align-items-center justify-content-between">
-                    <div>
-                        <span>
-                            Status Tiket
-                        </span>
-                    </div>
-                    <div class="mx-1">
-                        <span v-if="countFilterStatus > 0" class="text-primary">
-                            ({{ countFilterStatus }})
-                        </span>
-                    </div>
-                    <div class="ml-3">
                         <b-img src="@/assets/images/icons/arrow-filter.svg" />
                     </div>
                 </b-row>
@@ -397,7 +356,7 @@
             </b-popover>
         </b-col>
 
-        <b-col class="pr-0 mb-1" md="2">
+        <b-col class="mb-1" cols="12" md="auto">
             <date-range-picker ref="picker" v-model="dateRange" :locale-data="locale" :ranges="ranges" :opens="'left'"
                 class="w-100">
                 <template v-slot:input="picker" style="min-width: 350px">
@@ -413,7 +372,7 @@
             </date-range-picker>
         </b-col>
 
-        <b-col md="2" class="mb-1">
+        <b-col cols="12" md="auto" class="mb-1">
             <date-range-picker ref="picker" v-model="dateRangeUpdate" :locale-data="locale" :ranges="ranges"
                 :opens="'left'" class="w-100">
                 <template v-slot:input="picker" style="min-width: 350px">
@@ -609,8 +568,8 @@
             </b-table>
         </b-row>
 
-        <b-row>
-            <b-col cols="12" class="d-flex justify-content-between">
+        <b-row class="justify-content-between mt-50 align-items-center">
+            <b-col cols="12" md="auto" class="mb-1">
                 <div class="bg-light d-flex justify-content-center align-items-center p-50 rounded">
                     <span class="text-black mr-50">
                         List per halaman:
@@ -620,7 +579,8 @@
                         {{ page }}
                     </b-button>
                 </div>
-
+            </b-col>
+            <b-col cols="12" md="auto">
                 <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="totalPerPage" first-number
                     last-number class="pagination-primary">
                     <template #prev-text>
@@ -773,8 +733,8 @@
                                     </span>
                                 </template>
                                 <validation-provider #default="{errors}" name="Jenis Tiket" rules="required">
-                                    <v-select v-model="ticketType" :options="jenisTicketItems"
-                                        :state="errors.length > 0 ? false:null" />
+                                    <v-select v-model="ticketType" :options="jenisTicketItems" label="name"
+                                        :state="errors.length > 0 ? false:null" @input="setPlaceholderDescription"/>
                                     <small class="text-primary">{{ errors[0] }}</small>
                                 </validation-provider>
                             </b-form-group>
@@ -791,7 +751,7 @@
                                 </template>
                                 <validation-provider #default="{errors}" name="Deskripsi" rules="required">
                                     <b-form-textarea v-model="description" rows="3"
-                                        :state="errors.length > 0 ? false:null" />
+                                        :state="errors.length > 0 ? false:null" :placeholder="placeholderDescriptionTicket" />
                                     <small class="text-primary">{{ errors[0] }}</small>
                                 </validation-provider>
                             </b-form-group>

@@ -15,31 +15,38 @@
       </h3>
     </header>
     <main class="mx-auto max-w-[93%]">
-      <header class="d-flex justify-between">
-        <h4 class="text-[16px] text-[#222222] font-semibold my-auto">
-          Penjemputan
-        </h4>
-        <b-button
-          variant="primary"
-          class="d-flex rounded-lg mb-1"
-          :to="`/detail-orderan-pickup/${$route.params.order_data_id}`"
+      <b-row class="justify-content-between align-items-center">
+        <b-col
+          cols="auto"
+          class="mb-1"
         >
-          <span class="font-semibold mr-[6px]">Label Pengiriman</span>
-          <b-icon-chevron-right />
-        </b-button>
-      </header>
+          <h4 class="text-[16px] text-[#222222] font-semibold my-auto">
+            Penjemputan
+          </h4>
+        </b-col>
+        <b-col cols="auto">
+          <b-button
+            variant="primary"
+            class="d-flex rounded-lg mb-1"
+            :to="`/detail-orderan-pickup/${$route.params.order_data_id}`"
+          >
+            <span class="font-semibold mr-[6px]">Label Pengiriman</span>
+            <b-icon-chevron-right />
+          </b-button>
+        </b-col>
+      </b-row>
       <hr style="border:1px solid #C2C2C2"><br>
       <b-row class="mb-1">
         <b-col
-          cols="4"
-          lg="3"
+          cols="12"
+          md="3"
         >
           <span class="text-[16px] font-semibold">Alamat</span>
         </b-col>
         <b-col
-          cols="8"
-          lg="9"
-          class="p-0"
+          cols="12"
+          md="9"
+          class="p-0 wrapper__info__pickup__mobile"
         >
           <span class="text-[16px] font-semibold">{{ address.address_name }}</span><br>
           <span class="text-[14px] font-medium text-[#828282]">{{ address.address_detail }}</span>
@@ -47,45 +54,45 @@
       </b-row>
       <b-row class="mb-1">
         <b-col
-          cols="4"
-          lg="3"
+          cols="12"
+          md="3"
         >
           <span class="text-[16px] font-semibold">Tanggal</span>
         </b-col>
         <b-col
-          cols="8"
-          lg="9"
-          class="p-0"
+          cols="12"
+          md="9"
+          class="p-0 wrapper__info__pickup__mobile"
         >
           <span class="text-[14px] font-medium text-[#828282]">{{ formatDate(pickupDate) }}</span>
         </b-col>
       </b-row>
       <b-row class="mb-1">
         <b-col
-          cols="4"
-          lg="3"
+          cols="12"
+          md="3"
         >
           <span class="text-[16px] font-semibold">Waktu Jemput</span>
         </b-col>
         <b-col
-          cols="8"
-          lg="9"
-          class="p-0"
+          cols="12"
+          md="9"
+          class="p-0 wrapper__info__pickup__mobile"
         >
           <span class="text-[14px] font-medium text-[#828282]">{{ pickupTime }}</span>
         </b-col>
       </b-row>
       <b-row class="mb-1">
         <b-col
-          cols="4"
-          lg="3"
+          cols="12"
+          md="3"
         >
           <span class="text-[16px] font-semibold">Kendaraan</span>
         </b-col>
         <b-col
           cols="8"
           lg="9"
-          class="p-0"
+          class="p-0 wrapper__info__pickup__mobile"
         >
           <b-button
             v-if="vehicle === 'MOBIL'"
@@ -120,8 +127,11 @@
         class="mt-3 rounded"
         style="border:1px solid #E2E2E2"
       >
-        <div class="d-flex justify-between mb-1">
-          <div class="d-flex my-auto">
+        <b-row class="justify-content-between mb-1">
+          <b-col
+            cols="auto"
+            class="d-flex my-auto"
+          >
             <span class="text-[14px] font-semibold">Packing List</span>
             <img
               id="infoPackingList"
@@ -139,36 +149,43 @@
                 Berfungsi untuk mempercepat tim gudang menyiapkan jenis & jumlah produk yang akan dipacking
               </p>
             </b-popover>
-          </div>
-          <button
-            id="btnDownload"
-            class="btn btn-sm btn-download"
-            @click="downloadPackingList"
-            @mouseover="buttonDownload = true"
-            @mouseleave="buttonDownload = false"
+          </b-col>
+          <b-col
+            cols="auto"
+            class="mt-1"
           >
-            <span class="my-auto mr-[5px]">Download</span>
-            <img
-              v-if="buttonDownload"
-              src="@/assets/images/icons/telegram-white.svg"
+            <button
+              id="btnDownload"
+              class="btn btn-sm btn-download"
+              @click="downloadPackingList"
+              @mouseover="buttonDownload = true"
+              @mouseleave="buttonDownload = false"
             >
-            <img
-              v-else
-              src="@/assets/images/icons/telegram.svg"
+              <span class="my-auto mr-[5px]">Download</span>
+              <img
+                v-if="buttonDownload"
+                src="@/assets/images/icons/telegram-white.svg"
+              >
+              <img
+                v-else
+                src="@/assets/images/icons/telegram.svg"
+              >
+            </button>
+            <b-popover
+              target="btnDownload"
+              variant="primary"
+              triggers="hover"
+              placement="bottom"
             >
-          </button>
-          <b-popover
-            target="btnDownload"
-            variant="primary"
-            triggers="hover"
-            placement="bottom"
-          >
-            <p class="text-[12px] text-[#828282] font-medium mb-0">
-              Download & Share Packing List
-            </p>
-          </b-popover>
-        </div>
-        <table class="table border text-[14px]">
+              <p class="text-[12px] text-[#828282] font-medium mb-0">
+                Download & Share Packing List
+              </p>
+            </b-popover>
+          </b-col>
+        </b-row>
+        <table
+          class="table border text-[14px] table-responsive"
+        >
           <thead>
             <tr>
               <th colspan="2">
@@ -433,5 +450,12 @@ export default {
   background-color: #F95031;
   color: #FFFFFF;
   border: 1px solid #F95031;
+}
+
+@media (max-width: 576px) {
+  .wrapper__info__pickup__mobile {
+    padding-right: 1rem!important;
+    padding-left: 1rem!important;
+  }
 }
 </style>

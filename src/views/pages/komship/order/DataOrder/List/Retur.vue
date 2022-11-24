@@ -224,7 +224,7 @@
           >
             Retur Diterima
           </b-badge>
-          <span v-else>-</span>
+          <span v-if="data.item.is_retur !== 1 && data.item.is_retur !== 2">-</span>
         </template>
         <template #cell(grand_total)="data">
           <span class="d-flex">
