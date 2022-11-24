@@ -12,6 +12,7 @@ import {
 import { togglePasswordVisibility } from '@core/mixins/ui/forms'
 // import store from '@/store/index'
 import { $themeConfig } from '@themeConfig'
+import { NoSpace } from '@/libs/helpers'
 
 export default {
   components: {
@@ -41,6 +42,7 @@ export default {
       successChanged: false,
       // validation rules
       passwordFieldType: 'password',
+      NoSpace,
     }
   },
   setup() {

@@ -144,6 +144,9 @@
           :select-mode="selectMode"
           @row-selected="handleToDetail"
         >
+          <template #head(customer_phone)="data">
+            <b-row class="align-items-center">
+              {{ data.label }}
           <template #head(customer_name)="data">
             <span class="text-black">{{ data.label }}</span>
           </template>

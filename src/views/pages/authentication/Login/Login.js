@@ -1,213 +1,3 @@
-<template>
-  <div class="auth-wrapper auth-v1 px-2">
-    <b-row class="auth-inner m-0">
-      <b-col
-        cols="12"
-        class="d-flex justify-content-center"
-      >
-        <b-img
-          src="@/@core/assets/image/logo-komerce-new-tag.png"
-        />
-      </b-col>
-
-      <b-card :class="modeLogin === true ? 'text-white mt-2' : 'd-none'">
-        <b-card-title class="mb-1 text-center">
-          Masuk
-        </b-card-title>
-        <b-card-text class="mb-2 text-center text-black">
-          Silahkan masuk dan memulai kemudahan mengelola e-commerce dalam 1 tempat.
-        </b-card-text>
-        <!-- form -->
-        <validation-observer
-          ref="loginForm"
-          #default="{invalid}"
-        >
-          <b-form
-            class="auth-login-form mt-2"
-            @submit.prevent="login"
-          >
-
-            <b-form-group
-              label="Username atau Email"
-              label-for="login-email"
-            >
-              <validation-provider
-                #default="{ errors }"
-                label="Username atau Email"
-                vid="email"
-                rules="required"
-                :custom-messages="custommessages1"
-              >
-                <b-form-input
-                  id="login-email"
-                  v-model="usernameEmail"
-                  :state="errors.length > 0 ? false : null"
-                  name="login-email"
-                  placeholder="john@mail.com"
-                />
-                <small class="text-primary">{{ errors[0] }}</small>
-                <b-col>
-                  <b-row
-                    v-if="!!error"
-                    class="align-items-center justify-content-between mt-50"
-                  >
-                    <small
-                      class="text-primary"
-                    >
-                      <strong>
-                        {{ error }}
-                      </strong>
-                    </small>
-                    <b-button
-                      v-if="showResendEmailVerification"
-                      class="ml-50 btn-icon"
-                      variant="flat-primary"
-                      size="sm"
-                      @click="resendEmailVerification"
-                    >
-                      <b-spinner
-                        v-if="loadingResendVerification"
-                        small
-                      />
-                      <strong>
-                        Kirim Ulang
-                      </strong>
-                    </b-button>
-                  </b-row>
-                  <b-row
-                    v-if="messageResendEmailVerification !== ''"
-                    class="align-items-center mt-50"
-                  >
-                    <small
-                      class="text-primary"
-                    >
-                      <strong>
-                        {{ messageResendEmailVerification }}
-                      </strong>
-                    </small>
-                  </b-row>
-                </b-col>
-              </validation-provider>
-            </b-form-group>
-
-            <!-- forgot password -->
-            <b-form-group>
-              <label for="login-password">Password</label>
-              <validation-provider
-                #default="{ errors }"
-                name="Password"
-                vid="password"
-                rules="required"
-                :custom-messages="custommessages"
-              >
-                <b-input-group
-                  class="input-group-merge"
-                  :class="errors.length > 0 ? 'is-invalid' : null"
-                >
-                  <b-form-input
-                    id="login-password"
-                    v-model="password"
-                    :state="errors.length > 0 ? false : null"
-                    class="form-control-merge"
-                    :type="passwordFieldType"
-                    name="login-password"
-                    placeholder="Password"
-                  />
-                  <b-input-group-append is-text>
-                    <feather-icon
-                      class="cursor-pointer"
-                      :icon="passwordToggleIcon"
-                      @click="togglePasswordVisibility"
-                    />
-                  </b-input-group-append>
-                </b-input-group>
-                <small class="text-danger">{{ errors[0] }}</small>
-              </validation-provider>
-              <div class="d-flex justify-content-left text-left">
-                <b-button
-                  tag="router-link"
-                  :to="{ name: 'auth-forgot-password' }"
-                  variant="flat-primary"
-                  size="sm"
-                  class="btn-icon"
-                >
-                  <small style="margin-right:10px;">Lupa Password?</small>
-                </b-button>
-              </div>
-            </b-form-group>
-
-            <!-- checkbox -->
-            <b-form-group v-if="false">
-              <b-form-checkbox
-                id="remember-me"
-                v-model="status"
-                name="checkbox-1"
-              >
-                Remember Me
-              </b-form-checkbox>
-            </b-form-group>
-
-            <!-- submit buttons -->
-            <b-button
-              type="submit"
-              variant="primary"
-              block
-              :disabled="invalid || loading"
-            >
-              <b-spinner
-                v-if="loading"
-                small
-              />
-              Masuk
-            </b-button>
-          </b-form>
-        </validation-observer>
-
-        <!-- </b-col> -->
-      </b-card>
-
-      <b-card :class="modeVerificationEmail === true ? 'mt-2 p-1' : 'd-none'">
-        <b-card-title class="mb-1 text-center">
-          <h3 class="text-black">
-            <strong>
-              Verifikasi Email
-            </strong>
-          </h3>
-        </b-card-title>
-        <b-card-text class="mb-1 text-center text-black">
-          Cek email kamu, verifikasi telah dikirimkan.
-          Belum menerima? {{ countTimerEmail === 0 ? 'Kirim ulang (60 detik)' : '' }}
-        </b-card-text>
-        <b-row class="justify-content-center mb-1">
-          <small>Mohon tunggu {{ countTimerEmail }} detik untuk mengirim ulang.</small>
-        </b-row>
-
-        <b-row class="justify-content-center mb-1">
-          <b-button
-            :variant="countTimerEmail === 0 ? 'flat-primary' : 'flat-dark'"
-            size="sm"
-            :disabled="countTimerEmail !== 0"
-            class="btn-icon"
-            @click="resendEmailVerification"
-          >
-            Kirim Ulang
-          </b-button>
-        </b-row>
-
-        <b-button
-          variant="primary"
-          block
-          @click="handleChangeModePage"
-        >
-          Kembali Masuk
-        </b-button>
-      </b-card>
-    </b-row>
-  </div>
-
-</template>
-
-<script>
 /* eslint-disable global-require */
 import { ValidationProvider, ValidationObserver } from 'vee-validate'
 import {
@@ -233,7 +23,7 @@ import ToastificationContentVue from '@/@core/components/toastification/Toastifi
 import store from '@/store/index'
 import { getHomeRouteForLoggedInUser } from '@/auth/utils'
 import { $themeConfig } from '@themeConfig'
-import secureLocalStorage from '@/libs/secureLocalstorage'
+import { NoSpace } from '@/libs/helpers'
 
 export default {
   directives: {
@@ -247,7 +37,7 @@ export default {
     BFormGroup,
     BCard,
     BCardTitle,
-    // BLink,
+    BLink,
     BCardText,
     BInputGroup,
     BInputGroupAppend,
@@ -284,8 +74,9 @@ export default {
       // Mode Page
       modeVerificationEmail: false,
       modeLogin: true,
-
-      fcmToken: '',
+      isKompack: null,
+      emailProfile: null,
+      NoSpace,
     }
   },
   setup() {
@@ -346,9 +137,6 @@ export default {
     },
     getUser(userData) {
       this.userId = userData.id
-      // eslint-disable-next-line no-param-reassign
-      // if (userData.email_verified_at !== null) userData.email_verified_at = null
-
       this.$http
         .post('/user/get-profile', {
           user_id: this.userId,
@@ -359,14 +147,16 @@ export default {
           let { data } = response.data
           data = Array.isArray(data) ? data[0] : data
           const role = data.role_name.toUpperCase()
+          this.isKompack = data.is_kompack
+          this.emailProfile = data.email
 
-          if (!['PARTNER', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
+          if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
             return
           }
 
-          if (['PARTNER'].includes(role)) {
+          if (['PARTNER', 'SDM'].includes(role)) {
             if (!userData.email_verified_at) {
               // eslint-disable-next-line operator-linebreak
               this.error =
@@ -378,37 +168,103 @@ export default {
           }
 
           switch (role) {
-            case 'PARTNER':
+            case 'ADMIN':
               ability = [
-                { action: 'manage', subject: 'Komship TalentPool' },
-                { action: 'manage', subject: 'Komship Wishlist' },
-                { action: 'manage', subject: 'PartnerProfile' },
-                { action: 'read', subject: 'Dashboard Komship' },
-                { action: 'manage', subject: 'Customer' },
-                { action: 'manage', subject: 'Produk' },
-                { action: 'manage', subject: 'Tambah Produk' },
-                { action: 'manage', subject: 'Data Produk' },
-                { action: 'manage', subject: 'Order' },
-                { action: 'manage', subject: 'Tambah Order' },
-                { action: 'manage', subject: 'Data Order' },
-                { action: 'manage', subject: 'Pickup' },
-                { action: 'manage', subject: 'Ajukan Pickup' },
-                { action: 'manage', subject: 'History Pickup' },
-                { action: 'manage', subject: 'Keuangan' },
-                { action: 'manage', subject: 'Penghasilan' },
-                { action: 'manage', subject: 'Saldo' },
-                { action: 'manage', subject: 'Setting Komship' },
-                { action: 'manage', subject: 'Setting Profile' },
-                { action: 'manage', subject: 'Setting Access Account' },
-                { action: 'manage', subject: 'Setting Pickup Address' },
-                { action: 'manage', subject: 'Setting Rekening Bank' },
-                { action: 'manage', subject: 'Setting PIN' },
-                { action: 'manage', subject: 'Setting Ekspedisi' },
-                { action: 'manage', subject: 'Hiring' },
-                { action: 'manage', subject: 'Fitur Pendukung' },
-                { action: 'manage', subject: 'Gudang' },
-                { action: 'manage', subject: 'Gudangku' },
-                { action: 'manage', subject: 'Aplikasiku' },
+                { action: 'read', subject: 'Dashboard' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Management' },
+                { action: 'manage', subject: 'MasterData' },
+                { action: 'manage', subject: 'Partner' },
+                { action: 'manage', subject: 'Position' },
+                { action: 'manage', subject: 'Talent' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Division' },
+                { action: 'manage', subject: 'Invoice' },
+                { action: 'manage', subject: 'Assignment' },
+                { action: 'manage', subject: 'JobRoleSetting' },
+
+                // Komship
+                { action: 'manage', subject: 'Komship' },
+                { action: 'manage', subject: 'Dashboard Komship Admin' },
+                { action: 'manage', subject: 'Pencairan' },
+                { action: 'manage', subject: 'Pendapatan' },
+                { action: 'manage', subject: 'Membership Komship' },
+                { action: 'manage', subject: 'Perkembangan Partner' },
+                { action: 'manage', subject: 'Data Partner' },
+                { action: 'manage', subject: 'Arsip Partner' },
+                { action: 'manage', subject: 'Data Layanan' },
+                { action: 'manage', subject: 'Ekspedisi' },
+                { action: 'manage', subject: 'Biaya Ekspedisi' },
+                { action: 'manage', subject: 'Performa' },
+              ]
+              // KOMPACK
+              if (userData.is_kompack === 1) {
+                ability.push({ action: 'manage', subject: 'Kompack-Admin' })
+              }
+              break
+            case 'MANAGEMENT':
+              ability = [
+                { action: 'read', subject: 'Dashboard' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Management' },
+                { action: 'manage', subject: 'MasterData' },
+                { action: 'manage', subject: 'Partner' },
+                { action: 'manage', subject: 'Position' },
+                { action: 'manage', subject: 'Talent' },
+                { action: 'manage', subject: 'Training' },
+                { action: 'manage', subject: 'Division' },
+                { action: 'manage', subject: 'Invoice' },
+                { action: 'manage', subject: 'Assignment' },
+                { action: 'manage', subject: 'JobRoleSetting' },
+              ]
+              break
+            case 'PARTNER':
+              if (userData.is_komship === 1) {
+                ability = [
+                  { action: 'manage', subject: 'Komship TalentPool' },
+                  { action: 'manage', subject: 'Komship Wishlist' },
+                  { action: 'manage', subject: 'PartnerProfile' },
+                  { action: 'read', subject: 'Dashboard Komship' },
+                  { action: 'manage', subject: 'Customer' },
+                  { action: 'manage', subject: 'Produk' },
+                  { action: 'manage', subject: 'Tambah Produk' },
+                  { action: 'manage', subject: 'Data Produk' },
+                  { action: 'manage', subject: 'Order' },
+                  { action: 'manage', subject: 'Tambah Order' },
+                  { action: 'manage', subject: 'Data Order' },
+                  { action: 'manage', subject: 'Pickup' },
+                  { action: 'manage', subject: 'Ajukan Pickup' },
+                  { action: 'manage', subject: 'History Pickup' },
+                  { action: 'manage', subject: 'Keuangan' },
+                  { action: 'manage', subject: 'Penghasilan' },
+                  { action: 'manage', subject: 'Saldo' },
+                  { action: 'manage', subject: 'Setting Komship' },
+                  { action: 'manage', subject: 'Setting Profile' },
+                  { action: 'manage', subject: 'Setting Access Account' },
+                  { action: 'manage', subject: 'Setting Pickup Address' },
+                  { action: 'manage', subject: 'Setting Rekening Bank' },
+                  { action: 'manage', subject: 'Setting PIN' },
+                  { action: 'manage', subject: 'Setting Ekspedisi' },
+                  { action: 'manage', subject: 'Hiring' },
+                  { action: 'manage', subject: 'Fitur Pendukung' },
+                ]
+                // KOMPACK
+                if (userData.is_kompack === 1) {
+                  ability.push({ action: 'manage', subject: 'Gudang' })
+                }
+                if (userData.is_kompack === 0) {
+                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                }
+              } else {
+                ability = [
+                  { action: 'manage', subject: 'komtim' },
+                ]
+              }
+              break
+            case 'SDM':
+              ability = [
+                { action: 'read', subject: 'TalentHome' },
+                { action: 'manage', subject: 'TalentProfile' },
               ]
               break
             case 'KOMSHIP MEMBER':
@@ -522,7 +378,7 @@ export default {
           this.$store.commit('auth/UPDATE_USER_DATA', data)
 
           this.$router
-            .go(getHomeRouteForLoggedInUser(role))
+            .go(getHomeRouteForLoggedInUser(role, userData.is_komship))
             .then(() => {})
             .catch(error => {
               this.$refs.loginForm.setErrors(error.response.data.error)
@@ -535,8 +391,10 @@ export default {
                   variant: 'danger',
                 },
               })
-              this.loading = false
             })
+        })
+        .finally(() => {
+          this.loading = false
         })
     },
     resendEmailVerification() {
@@ -545,35 +403,58 @@ export default {
       if (this.countTimerEmail !== 60) {
         this.countTimerEmail = 60
       }
-
-      this.$http
-        .get(`/resend_verification_email/${this.userId}`)
-        .then(() => {
-          this.error = ''
-          this.loadingResendVerification = false
-          this.modeLogin = false
-          this.modeVerificationEmail = true
-          this.countDownTimer()
-        })
-        .catch(() => {
-          this.loadingResendVerification = false
-          this.$toast({
-            component: ToastificationContentVue,
-            props: {
-              title: 'Gagal',
-              text: 'Gagal untuk login, silahkan coba lagi!',
-              icon: 'AlertCircleIcon',
-              variant: 'danger',
-            },
+      if (this.isKompack === 1) {
+        this.$http_komship.post(`/kompack/v1/register/resend-email?email=${this.emailProfile}`)
+          .then(() => {
+            this.error = ''
+            this.loadingResendVerification = false
+            this.modeLogin = false
+            this.modeVerificationEmail = true
+            this.countDownTimer()
           })
-        })
+          .catch(() => {
+            this.loadingResendVerification = false
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk login, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
+      if (this.isKompack === 0) {
+        this.$http
+          .get(`/resend_verification_email/${this.userId}`)
+          .then(() => {
+            this.error = ''
+            this.loadingResendVerification = false
+            this.modeLogin = false
+            this.modeVerificationEmail = true
+            this.countDownTimer()
+          })
+          .catch(() => {
+            this.loadingResendVerification = false
+            this.$toast({
+              component: ToastificationContentVue,
+              props: {
+                title: 'Gagal',
+                text: 'Gagal untuk login, silahkan coba lagi!',
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
+            })
+          })
+      }
     },
     getPartnerProfile(userId) {
       return this.$http
         .get(`/user/partner/get-profile/${userId}`)
-        .then(response => {
+        .then(response => response.data.data[0])
+        .finally(() => {
           this.loading = false
-          return response.data.data[0]
         })
     },
     getAccessKomship(id) {
@@ -590,8 +471,10 @@ export default {
         .then(() => {
           // Remove userData from localStorage
           // ? You just removed token from localStorage. If you like, you can also make API call to backend to blacklist used token
-          secureLocalStorage.clearItem(useJwt.jwtConfig.storageTokenKeyName)
+          localStorage.removeItem(useJwt.jwtConfig.storageTokenKeyName)
           localStorage.removeItem(useJwt.jwtConfig.storageRefreshTokenKeyName)
+        })
+        .finally(() => {
           this.loading = false
         })
     },
@@ -609,8 +492,3 @@ export default {
     },
   },
 }
-</script>
-
-<style lang="scss">
-@import '~@core/scss/vue/pages/page-auth.scss';
-</style>

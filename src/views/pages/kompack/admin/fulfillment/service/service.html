@@ -1,0 +1,23 @@
+<b-card no-body class="p-1">
+  <h3 class="text-black font-extrabold">Fulfillment Service </h3>
+  <b-table
+    striped
+    hover
+    :items="items"
+    :fields="fields"
+    class="mt-1"
+  >
+    <template #cell(name)="data">
+      <div class="d-grid">
+        <h5 class="text-black">{{ data.item.name }}</h5>
+        <span class="text-gray-500">{{ data.item.loc }}</span>
+      </div>
+    </template>
+    <template #cell(rincian)="data">
+      <span
+        class="text-blue-500 font-extrabold"
+        @click="() => {}"
+      >Detail</span>
+    </template>
+  </b-table>
+</b-card>

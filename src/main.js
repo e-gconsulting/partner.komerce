@@ -71,6 +71,9 @@ require('@/assets/scss/style.scss')
 
 Vue.config.productionTip = false
 
+const endpointAssets = endpoint => `https://storage.googleapis.com/komerce/${endpoint}`
+
+Vue.prototype.$assets = endpointAssets
 new Vue({
   router,
   store,
