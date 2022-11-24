@@ -537,6 +537,7 @@ export default {
           return pasteData
         },
       })
+      if (!profile.partner_is_tracking_sales) this.table.hideColumn(1)
       this.$refs.loadingPage.hide()
     },
     addRows() {

@@ -24,7 +24,6 @@ import {
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
-import { clientKeyMidtrans } from '@/libs/helpers'
 
 export default {
   components: {
@@ -71,7 +70,6 @@ export default {
         'Jumlah Penarikan',
         'Rincian',
       ],
-      clientKey: clientKeyMidtrans,
       snapToken: '31f5ef26-5121-44e9-97b5-f469039bf6cf',
       modalTitle: null,
       stepNow: 0,
@@ -85,18 +83,6 @@ export default {
       loadingSubmitTopup: false,
       fieldwidth: '',
       fieldheight: '',
-    }
-  },
-  mounted() {
-    if (!window.snapScriptLoaded) {
-      const snapScriptEl = document.createElement('script')
-      snapScriptEl.setAttribute(
-        'src',
-        'https://app.sandbox.midtrans.com/snap/snap.js',
-      )
-      snapScriptEl.setAttribute('data-client-key', this.clientKey)
-      document.head.appendChild(snapScriptEl)
-      window.snapScriptLoaded = 1
     }
   },
   computed: {
