@@ -1268,10 +1268,12 @@ export default {
       } else {
         this.isValidate = false
       }
-      if (this.soldBy === null) {
-        this.isValidate = false
-      } else {
-        this.isValidate = true
+      if (this.profile.partner_is_tracking_sales) {
+        if (this.soldBy === null) {
+          this.isValidate = false
+        } else {
+          this.isValidate = true
+        }
       }
       this.formData = {
         date: this.dateOrder,
