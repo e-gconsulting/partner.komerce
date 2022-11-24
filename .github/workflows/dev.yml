@@ -42,4 +42,4 @@ jobs:
           password: ${{ secrets.ftp_password_testing }}
           port: ${{ secrets.port_21 }}
           local-dir: ./dist/
-          server-dir: /devkompack.partner.komerce.my.id/
+          server-dir: /dev.partner.komerce.my.id/
