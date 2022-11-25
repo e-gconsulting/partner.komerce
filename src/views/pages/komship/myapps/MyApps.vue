@@ -99,7 +99,6 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      profile: null,
       isKomship: false,
       isKompack: false,
       isKomtim: false,
