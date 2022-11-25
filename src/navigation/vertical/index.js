@@ -37,7 +37,7 @@ import dashboard from './dashboard'
 import dashboardKompship from './dashboard-kompship'
 import produk from './produk'
 import order from './order'
-import gudangkomship from './gudang-komship'
+// import gudangkomship from './gudang-komship'
 import gudangkompack from './gudang-kompack'
 import pickup from './pickup'
 import customer from './customer'
@@ -70,7 +70,7 @@ export default [
   ...dashboardKompship,
   ...order,
   ...produk,
-  ...gudangkomship,
+  // ...gudangkomship,
   ...gudangkompack,
   ...pickup,
   ...customer,
