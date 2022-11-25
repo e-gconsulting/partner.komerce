@@ -1,13 +1,19 @@
 <template>
   <div class="border pt-1 -mt-4">
-    <div class="d-flex flex-row space-x-3 float-right mb-2">
+    <div class="d-flex flex-row space-x-3 float-right mb-2 px-1">
       <BFormSelect
         v-model="partnerList"
         :options="options"
+        style="width: 250%"
       />
-      <div class="">
+      <BFormSelect
+        v-model="date"
+        :options="dateList"
+        style="width: 250%"
+      />
+      <!-- <div class="">
         date
-      </div>
+      </div> -->
     </div>
     <div class="">
       <b-table
@@ -43,7 +49,7 @@
             <b-img
               :src="shippingMethods('img', data.item.shipping)"
             />
-            <div class="">
+            <div class="mt-0.5">
               {{ shippingMethods('text', data.item.shipping) }}
             </div>
           </div>
@@ -86,18 +92,26 @@
 <script>
 import { mapState } from 'vuex'
 import moment from 'moment'
-import secureLocalStorage from '@/libs/secureLocalstorage'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   name: 'RiwayatInbound',
   data() {
     return {
+      // filter
       partnerList: '',
+      date: '',
 
       options: [
         {
           value: '',
           text: 'Semua Gudang',
+        },
+      ],
+      dateList: [
+        {
+          value: '',
+          text: 'Tanggal',
         },
       ],
 
@@ -137,6 +151,7 @@ export default {
 
   created() {
     this.fetchRiwayatInbound()
+    console.log('list', this.inbound)
   },
 
   methods: {
@@ -147,11 +162,24 @@ export default {
         .then(() => {
           this.items = this.inbound
         })
+        .catch(() => {
+          this.loading = false
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
     },
 
     detail(data) {
-      // console.log(data)
-
       const { id } = data
 
       this.$router.push({
@@ -163,9 +191,9 @@ export default {
     shippingMethods(part, shipping) {
       if (part === 'img') {
         if (shipping != null) {
-          return 'https://storage.googleapis.com/komerce/assets/dikirimekpedisi.svg'
+          return 'https://storage.googleapis.com/komerce/assets/menggunakan-ekspedisi-orange.svg'
         }
-        return 'https://storage.googleapis.com/komerce/assets/ekpedisidikirim-pribadi.svg'
+        return 'https://storage.googleapis.com/komerce/assets/dikirim-sendiri-orange.svg'
       }
       if (shipping != null) {
         return shipping
