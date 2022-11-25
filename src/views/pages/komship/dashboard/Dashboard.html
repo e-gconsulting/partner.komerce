@@ -1051,7 +1051,7 @@
                 @input="checkWithdraw"
               />
               <b-row v-if="isCheckSaldo" class="mt-1">
-                <b-col cols="12">
+                <b-col v-if="idealBalance !== 0" cols="12">
                   <small class="text-primary">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
                 </b-col>
                 <b-col cols="12">
@@ -1059,11 +1059,23 @@
                 </b-col>
               </b-row>
             </b-form-group>
-            <b-col v-if="isCheckSaldo" cols="12">
-              <div class="p-1" style="background: #FFF2E2;">
-              <small>Maaf, kami batasi max penarikannya agar nyisa senilai <small class="text-black">total<br>ongkir</small> orderan yang udah diputuskan Retur tapi masih OTW<br>yakni <small class="text-primary"><strong>Rp. {{ nominalReturFinish }},-</strong></small> biar ga minus.
-              <br><br>
-              Di Komship, enaknya tuh klo Retur barang <small class="text-black">udah balik</small> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <small class="text-black">diclaim</small> pula.</small>
+            <b-col v-if="isCheckSaldo" cols="12" class="mb-1">
+              <div v-if="idealBalance !== 0" class="p-1 mb-2" style="background: #FFF2E2;">
+               <small>Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <strong class="text-primary">Rp. {{ idealBalance }},-</strong> buat menghindari minus.</small>
+              </div>
+              <div class="p-1" style="border-radius: 10px; border: dotted">
+                <b-row>
+                  <b-col cols="12" class="mb-2">
+                    <small>
+                        Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya belum sampai ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total potensi pendapatanmu yang akan diterima dari orderan yang berstatus DIKIRIM yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
+                    </small>
+                      </b-col>
+                    <b-col cols="12">
+                    <small>
+                      Di Komship, enaknya tuh klo Retur barang udah balik lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa diclaim pula.
+                    </small>
+                  </b-col>
+               </b-row>
               </div>
             </b-col>
             <div class="col-12 mb-50">

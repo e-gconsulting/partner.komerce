@@ -356,6 +356,9 @@ export default {
       withdrawPossibilites: 0,
       nominalReturFinish: 0,
       isCheckSaldo: false,
+      idealBalance: 0,
+      potencyIncome: 0,
+      potencyRetur: 0,
     }
   },
   computed: {
@@ -1168,6 +1171,9 @@ export default {
           this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
           this.remainingSaldo = this.formatPrice(response.data.data.remaining_saldo)
           this.nominalReturFinish = this.formatPrice(response.data.data.retur_when_finish_value)
+          this.idealBalance = this.formatPrice(response.data.data.ideal_balance)
+          this.potencyIncome = this.formatPrice(response.data.data.potency_income)
+          this.potencyRetur = this.formatPrice(response.data.data.potency_retur)
           this.withdrawPossibilites = response.data.data.withdraw_possibilites
           this.isCheckSaldo = true
         }).catch(err => {
