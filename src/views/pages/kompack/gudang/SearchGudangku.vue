@@ -217,17 +217,8 @@
       >
         <div v-if="listGudang[0] === undefined">
           <div class="text-center">
-            <div class="d-flex flex-row justify-center my-1">
-              <img
-                src="@/assets/images/data-kosong.svg"
-                alt="data-kosong"
-              >
-            </div>
             <div class="text-xl font-semibold my-2">
-              <p>Data Tidak Ditemukan</p>
-            </div>
-            <div class="mb-3">
-              <p>Tenang, kamu bisa cari dengan kata kunci yang lain kok</p>
+              <p>Tidak ada data untuk ditampilkan</p>
             </div>
           </div>
         </div>
