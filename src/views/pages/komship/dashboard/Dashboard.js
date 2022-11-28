@@ -1171,7 +1171,7 @@ export default {
         }, 2000)
       })
     },
-    checkWithdraw: _.debounce(function () {
+    checkWithdraw: _.debounce(async function () {
       if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) < 10000) {
         this.minWithdraw = true
         this.isCheckSaldo = false
@@ -1184,7 +1184,7 @@ export default {
         this.loadingLoadDataWithdraw = true
         this.isMaxWithdraw = false
         this.minWithdraw = false
-        this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
+        await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
           .then(response => {
             this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
             this.remainingSaldo = this.formatPrice(response.data.data.remaining_saldo)
@@ -1226,9 +1226,9 @@ export default {
       }
       return result
     },
-    getMaxWithdraw() {
+    async getMaxWithdraw() {
       this.loadingLoadDataWithdraw = true
-      this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
+      await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
         .then(response => {
           this.maxValueWithdraw = response.data.data.maximum_withdraw_nominal
           this.loadingLoadDataWithdraw = false
