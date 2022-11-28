@@ -1053,7 +1053,7 @@
                 data-type="currency"
                 required
                 :placeholder="`minimal Rp10.000,-, maksimal Rp${formatPrice(maxValueWithdraw)},-`"
-                class="h-text-sm h-text-dark"
+                :class="minWithdraw || isMaxWithdraw || isCheckSaldo ? 'h-text-sm h-text-dark not__valid__nominal__wrapper' : 'h-text-sm h-text-dark'"
                 :state="nominalState"
                 @keyup="formatCurrency(false, 'nominal-input')"
                 @blur="formatCurrency(true, 'nominal-input')"
