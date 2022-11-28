@@ -1009,6 +1009,14 @@
       no-close-on-backdrop
       no-close-on-esc
     >
+      <b-overlay
+        variant="light"
+        :show="loadingLoadDataWithdraw"
+        spinner-variant="primary"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
       <a href="#" @click="closeModal()">
         <img
           src="@/assets/images/icons/close-circle.svg"
@@ -1044,13 +1052,24 @@
                 type="tel"
                 data-type="currency"
                 required
-                class="h-text-sm h-text-dark"
+                :placeholder="`minimal Rp10.000,-, maksimal Rp${formatPrice(maxValueWithdraw)},-`"
+                :class="minWithdraw || isMaxWithdraw || isCheckSaldo ? 'h-text-sm h-text-dark not__valid__nominal__wrapper' : 'h-text-sm h-text-dark'"
                 :state="nominalState"
                 @keyup="formatCurrency(false, 'nominal-input')"
                 @blur="formatCurrency(true, 'nominal-input')"
                 @input="checkWithdraw"
               />
-              <b-row v-if="isCheckSaldo" class="mt-1">
+              <b-row v-if="minWithdraw" class="mt-50">
+                <b-col cols="12">
+                  <small class="text-primary">*Minimal penarikan Rp10.000</small>
+                </b-col>
+              </b-row>
+              <b-row v-if="isMaxWithdraw" class="mt-50">
+                <b-col cols="12">
+                  <small class="text-primary">*Saldo kamu tidak mencukupi</small>
+                </b-col>
+              </b-row>
+              <b-row v-if="isCheckSaldo" class="mt-50">
                 <b-col v-if="idealBalance !== 0" cols="12">
                   <small class="text-primary">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
                 </b-col>
@@ -1061,18 +1080,22 @@
             </b-form-group>
             <b-col v-if="isCheckSaldo" cols="12" class="mb-1">
               <div v-if="idealBalance !== 0" class="p-1 mb-2" style="background: #FFF2E2;">
-               <small>Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <strong class="text-primary">Rp. {{ idealBalance }},-</strong> buat menghindari minus.</small>
+               <small><strong>Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <strong class="text-primary">Rp. {{ idealBalance }},-</strong> buat menghindari minus.</strong></small>
               </div>
               <div class="p-1" style="border-radius: 10px; border: dotted">
                 <b-row>
                   <b-col cols="12" class="mb-2">
                     <small>
-                        Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya belum sampai ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total potensi pendapatanmu yang akan diterima dari orderan yang berstatus DIKIRIM yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
+                      <strong>
+                        Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya <span class="text-black">belum sampai</span> ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total <span class="text-black">potensi pendapatanmu</span> yang akan diterima dari orderan yang berstatus <span class="text-black">DIKIRIM</span> yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
+                      </strong>
                     </small>
                       </b-col>
                     <b-col cols="12">
                     <small>
-                      Di Komship, enaknya tuh klo Retur barang udah balik lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa diclaim pula.
+                      <strong>
+                        Di Komship, enaknya tuh klo Retur barang <span class="text-black">udah balik</span> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <span class="text-black">diclaim</span> pula.
+                      </strong>
                     </small>
                   </b-col>
                </b-row>
@@ -1204,6 +1227,7 @@
           </p>
         </div>
       </div>
+      </b-overlay>
     </b-modal>
     <!-- modal after topup -->
     <b-modal ref="modal-after-topup" hide-footer hide-header centered>

@@ -552,6 +552,11 @@ input.vue-pincode-input {
   background-color: #ff6a3a !important;
 }
 
+.not__valid__nominal__wrapper {
+  background: #FFEDED!important;
+  border-color: #E31A1A!important;
+}
+
 @-webkit-keyframes blinker {
   from {opacity: 1.0;}
   to {opacity: 0.0;}
