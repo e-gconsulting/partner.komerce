@@ -18,7 +18,7 @@
         variant="primary"
         size="sm"
         class="mr-1 rounded-lg p-0"
-        @click="isEdit = false"
+        @click="cancelEdit()"
       >
         <feather-icon
           size="2x"
@@ -29,13 +29,15 @@
         Detail Inbound
       </h4>
     </div>
-    <div class="d-flex flex-row-reverse">
+    <div
+      v-if="detail.status !== `Dibatalkan`"
+      class="d-flex flex-row-reverse"
+    >
       <div v-if="isEdit === true">
         <b-button
           variant="outline-primary"
           class="px-3"
-          @click="console.log('simpan');
-          "
+          @click="console('simpan')"
         >Simpan</b-button>
       </div>
       <div
@@ -152,11 +154,10 @@
           <h5 class="text-black font-bold">
             Data Product</h5>
           <b-button
-          v-if="isEdit === true"
+            v-if="isEdit === true"
             variant="outline-primary"
             class="px-3"
-            @click="console.log('tambah produk');
-            "
+            @click="console('tambah')"
           >Tambah Produk</b-button>
         </div>
         <BTable
@@ -196,6 +197,74 @@
             </div>
           </template>
           <template #cell(jumlah)="data">
+            <div class="space-y-3">
+
+              <div
+                v-for="i in data.item.variant"
+                :key="i.variant_id"
+                class="d-flex justify-center"
+              >
+                <b-button
+                  v-if="isEdit==true"
+                  variant="outline-primary"
+                  class="p-0"
+                  style="border-radius:50%;width:25px;height:25px"
+                  size="sm"
+                  :disabled="i.total_inbound <= 1"
+                  @click="setQuantity('minus', detailInbound.products.map(object => object.id).indexOf(data.item.id), data.item.variant.map(object => object.variant_id).indexOf(i.variant_id))"
+                >
+                  <span class="font-bold text-lg">-</span>
+                </b-button>
+                <span
+                  class="text-lg"
+                  style="margin: 0 10px"
+                >{{ i.total_inbound }}</span>
+                <b-button
+                  v-if="isEdit==true"
+                  variant="outline-primary"
+                  class="p-0"
+                  style="border-radius:50%;width:25px;height:25px"
+                  size="sm"
+                  @click="setQuantity('plus', detailInbound.products.map(object => object.id).indexOf(data.item.id), data.item.variant.map(object => object.variant_id).indexOf(i.variant_id))"
+                >
+                  <span class="font-bold text-lg">+</span>
+                </b-button>
+              </div>
+            </div>
+            <div
+              v-if="data.item.total_inbound !== 0"
+              class=""
+            >
+              <b-button
+                v-if="isEdit==true"
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                :disabled="data.item.total_inbound <= 1"
+                @click="data.item.total_inbound -= 1"
+              >
+                <span class="font-bold text-lg">-</span>
+              </b-button>
+              <span
+                class="text-lg"
+                style="margin: 0 10px"
+              >{{ data.item.total_inbound }}</span>
+              <!-- <span>{{ data.item.id }}</span> -->
+              <b-button
+                v-if="isEdit==true"
+                variant="outline-primary"
+                class="p-0"
+                style="border-radius:50%;width:25px;height:25px"
+                size="sm"
+                @click="data.item.total_inbound +=1"
+              >
+                <span class="font-bold text-lg">+</span>
+              </b-button>
+            </div>
+          </template>
+
+          <!-- <template #cell(jumlah)="data">
             <div class="text-black">
               <div
                 v-if="data.item.total_inbound === 0"
@@ -220,8 +289,10 @@
                 </div>
               </div>
             </div>
-          </template>
+          </template> -->
         </BTable>
+        <!-- <span>{{ detailInbound.products[0].variant[0].total_inbound + 1 }}</span> -->
+        <!-- <span>{{ detailInbound.products[0] }}</span> -->
       </div>
       <div
         v-if="!Array.isArray(history) && isEdit === false"
@@ -326,10 +397,28 @@ export default {
     // console.log(`products ${this.$route.params.id}`, this.detailInbound.products)
     // console.log(`history ${this.$route.params.id}`, this.detailInbound.history_shipping)
 
-    console.log(this.isEdit)
+    // console.log('tes')
   },
 
   methods: {
+
+    cancelEdit() {
+      this.isEdit = false
+      this.fetchDetailInbound()
+    },
+
+    console(value) {
+      console.log(value)
+    },
+
+    setQuantity(status, product, index) {
+      if (status === 'plus') {
+        this.detailInbound.products[product].variant[index].total_inbound += 1
+      } else if (status === 'minus') {
+        this.detailInbound.products[product].variant[index].total_inbound -= 1
+      }
+    },
+
     fetchDetailInbound() {
       this.$store
         .dispatch('riwayatPengajuan/getDetailInbound', {
@@ -412,7 +501,6 @@ export default {
       }).then(result => {
         if (result.value) {
           this.batalkanInbound(data)
-          // console.log(data)
         }
       })
     },

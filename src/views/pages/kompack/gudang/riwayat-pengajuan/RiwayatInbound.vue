@@ -1,15 +1,17 @@
 <template>
   <div class="border pt-1 -mt-4">
     <div class="d-flex flex-row space-x-3 float-right mb-2 px-1">
-      <BFormSelect
+      <!-- <BFormSelect
         v-model="partnerList"
         :options="options"
         style="width: 250%"
-      />
-      <BFormSelect
-        v-model="date"
-        :options="dateList"
-        style="width: 250%"
+      /> -->
+      <DateRangePicker
+        ref="picker"
+        v-model="dateRange"
+        :locale-data="locale"
+        :ranges="ranges"
+        :opens="'left'"
       />
       <!-- <div class="">
         date
@@ -22,6 +24,8 @@
         :fields="fields"
         :items="items"
         responsive="sm"
+        empty-text="Tidak ada data untuk ditampilkan."
+        :show-empty="!loading"
       >
         <template #cell(tanggal_pengajuan)="data">
           {{ formatDate(data.item.inbound_date) }}
@@ -91,16 +95,39 @@
 
 <script>
 import { mapState } from 'vuex'
+// import { axiosKomship } from '../helpers'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import DateRangePicker from 'vue2-daterange-picker'
+import { last7, today, firstDateOfMonth } from '@/store/helpers'
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   name: 'RiwayatInbound',
+  components: { DateRangePicker },
   data() {
     return {
       // filter
       partnerList: '',
       date: '',
+      dateRange: {
+        startDate: last7,
+        endDate: today,
+      },
+      locale: {
+        format: 'dd/mm/yyyy',
+        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+      },
+      ranges: {
+        'Hari ini': [today, today],
+        '2 Hari terakhir': [last7, today],
+        '7 Hari Terakhir': [last7, today],
+        'Bulan ini': [firstDateOfMonth, today],
+        'Semua ': [firstDateOfMonth, today],
+      },
+
+      loading: false,
 
       options: [
         {
@@ -156,6 +183,13 @@ export default {
 
   methods: {
 
+    async getData() {
+      const params = {
+        start_date: this.formatDateFilter(this.dateRange.startDate),
+        end_date: this.formatDateFilter(this.dateRange.endDate),
+      }
+    },
+
     fetchRiwayatInbound() {
       this.$store
         .dispatch('riwayatPengajuan/getListInbound')
@@ -210,6 +244,9 @@ export default {
     },
     formatDate(value) {
       return moment(value).format('DD MMMM YYYY')
+    },
+    formatDateFilter(value) {
+      return moment(value).format('YYYY-MM-DD')
     },
   },
 }
