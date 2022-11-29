@@ -12,7 +12,51 @@
         :locale-data="locale"
         :ranges="ranges"
         :opens="'left'"
-      />
+      >
+        <template
+          v-slot:input="picker"
+          style="min-width: 350px"
+        >
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="mr-1">
+              <span
+                v-if="
+                  formatDateFilter(picker.startDate) === formatDateFilter(today)
+                "
+                style="color: #828282 !important"
+              >
+                Hari ini
+              </span>
+              <span
+                v-else-if="
+                  formatDateFilter(picker.startDate) === formatDateFilter(last7)
+                "
+                style="color: #828282 !important"
+              >
+                7 Hari Terakhir
+              </span>
+              <span
+                v-else-if="
+                  formatDateFilter(picker.startDate) ===
+                    formatDateFilter(firstDateOfMonth) &&
+                    formatDateFilter(picker.endDate) === formatDateFilter(today)
+                "
+                style="color: #828282 !important"
+              >
+                Bulan ini
+              </span>
+              <span
+                v-else
+                style="color: #828282 !important"
+              > Semua </span>
+            </div>
+            <img
+              src="@/assets/images/icons/calendar.png"
+              alt="KOmerce"
+            >
+          </div>
+        </template>
+      </DateRangePicker>
       <!-- <div class="">
         date
       </div> -->
@@ -101,13 +145,17 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import DateRangePicker from 'vue2-daterange-picker'
 import { last7, today, firstDateOfMonth } from '@/store/helpers'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import { komshipAxiosIns } from '@/libs/axios'
 
 export default {
   name: 'RiwayatInbound',
   components: { DateRangePicker },
   data() {
     return {
+      firstDateOfMonth,
+      last7,
       // filter
+      partnerId: this.$store.state.auth.userData,
       partnerList: '',
       date: '',
       dateRange: {
@@ -175,10 +223,18 @@ export default {
   computed: {
     ...mapState('riwayatPengajuan', ['inbound']),
   },
+  watch: {
+    dateRange: {
+      handler() {
+        this.getData()
+      },
+    },
+  },
 
   created() {
     this.fetchRiwayatInbound()
     console.log('list', this.inbound)
+    this.getData()
   },
 
   methods: {
@@ -188,6 +244,15 @@ export default {
         start_date: this.formatDateFilter(this.dateRange.startDate),
         end_date: this.formatDateFilter(this.dateRange.endDate),
       }
+      const url = '/v1/komship/inbound'
+      await komshipAxiosIns.get(url, { params })
+        .then(res => {
+          const { data } = res.data
+          console.log(data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     },
 
     fetchRiwayatInbound() {

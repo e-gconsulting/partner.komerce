@@ -140,73 +140,73 @@
           <template #head(customer_phone)="data">
             <b-row class="align-items-center">
               {{ data.label }}
-          <template #head(customer_name)="data">
-            <span class="text-black">{{ data.label }}</span>
-          </template>
-          <template #head(total_order)="data">
-            <span class="text-black">{{ data.label }}</span>
-          </template>
-          <template #head(total_pcs)="data">
-            <span class="text-black">{{ data.label }}</span>
-          </template>
-          <template #head(customer_address)="data">
-            <span class="text-black">{{ data.label }}</span>
-          </template>
-          <template #head(total_spent)="data">
-            <span class="text-black">{{ data.label }}</span>
-          </template>
-          <template #head(last_order)="data">
-            <span class="text-black">{{ data.label }}</span>
-          </template>
+              <template #head(customer_name)="data">
+                <span class="text-black">{{ data.label }}</span>
+              </template>
+              <template #head(total_order)="data">
+                <span class="text-black">{{ data.label }}</span>
+              </template>
+              <template #head(total_pcs)="data">
+                <span class="text-black">{{ data.label }}</span>
+              </template>
+              <template #head(customer_address)="data">
+                <span class="text-black">{{ data.label }}</span>
+              </template>
+              <template #head(total_spent)="data">
+                <span class="text-black">{{ data.label }}</span>
+              </template>
+              <template #head(last_order)="data">
+                <span class="text-black">{{ data.label }}</span>
+              </template>
 
-          <template #head(customer_phone)="data">
-            <b-row class="align-items-center">
-              <span class="text-black">{{ data.label }}</span>
-              <b-img
-                id="infoNo"
-                src="@/assets/images/icons/info-circle.svg"
-                class="ml-50"
-              />
-              <b-popover
-                triggers="hover"
-                target="infoNo"
-                placement="topright"
-              >Akan ada icon penanda jika nomor HP pelanggan terdaftar di WhatsApp</b-popover>
-            </b-row>
-          </template>
-          <template #cell(customer_phone)="data">
-            <div
-              class="d-flex align-items-center"
-              @mouseover="handleHoverButtonWa(data)"
-              @mouseleave="handleLeaveHoverButtonWa(data)"
-              @click="handlePhone(data)"
-            >
-              <b-img
-                v-if="data.item.is_whatsapp === 1"
-                :src="data.item.wa_icon"
-                alt="Komerce"
-                style="cursor: pointer"
-                class="mr-50"
-              />
-              <span :class="`text-[${data.item.text_color}]`">{{ data.value }}</span>
-            </div>
-          </template>
-          <template #cell(total_spent)="data">
-            <div style="min-width: 150px!important;">
-              Rp. {{ formatRupiah(data.item.total_spent) }}
-            </div>
-          </template>
-          <template #cell(last_order)="data">
-            <div style="min-width: 150px!important;">
-              {{ formatDate(data.item.last_order) }}
-            </div>
-          </template>
-          <template #cell(customer_address)="data">
-            <div style="min-width: 190px!important;">
-              {{ data.value }}
-            </div>
-          </template>
-        </BTable>
+              <template #head(customer_phone)="data">
+                <b-row class="align-items-center">
+                  <span class="text-black">{{ data.label }}</span>
+                  <b-img
+                    id="infoNo"
+                    src="@/assets/images/icons/info-circle.svg"
+                    class="ml-50"
+                  />
+                  <b-popover
+                    triggers="hover"
+                    target="infoNo"
+                    placement="topright"
+                  >Akan ada icon penanda jika nomor HP pelanggan terdaftar di WhatsApp</b-popover>
+                </b-row>
+              </template>
+              <template #cell(customer_phone)="data">
+                <div
+                  class="d-flex align-items-center"
+                  @mouseover="handleHoverButtonWa(data)"
+                  @mouseleave="handleLeaveHoverButtonWa(data)"
+                  @click="handlePhone(data)"
+                >
+                  <b-img
+                    v-if="data.item.is_whatsapp === 1"
+                    :src="data.item.wa_icon"
+                    alt="Komerce"
+                    style="cursor: pointer"
+                    class="mr-50"
+                  />
+                  <span :class="`text-[${data.item.text_color}]`">{{ data.value }}</span>
+                </div>
+              </template>
+              <template #cell(total_spent)="data">
+                <div style="min-width: 150px!important;">
+                  Rp. {{ formatRupiah(data.item.total_spent) }}
+                </div>
+              </template>
+              <template #cell(last_order)="data">
+                <div style="min-width: 150px!important;">
+                  {{ formatDate(data.item.last_order) }}
+                </div>
+              </template>
+              <template #cell(customer_address)="data">
+                <div style="min-width: 190px!important;">
+                  {{ data.value }}
+                </div>
+              </template>
+            </b-row></template></BTable>
         <BRow>
           <BCol
             cols="12"
