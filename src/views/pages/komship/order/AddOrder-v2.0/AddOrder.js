@@ -344,7 +344,9 @@ export default {
       }
       return null
     },
-    async searchCustomer() {
+    async searchCustomer(event) {
+      const text = event.target.value
+      this.customerName = text.replace(/[^A-Za-z]/g, '')
       this.customerList = []
       if (this.customerName !== '') {
         this.customerList = await this.$http_komship.get('v1/customer', {
