@@ -172,7 +172,6 @@ export default {
         this.destinationList = []
       }
     })
-    console.log(this.profile)
   },
   async created() {
     this.$forceUpdate()
@@ -1572,6 +1571,10 @@ export default {
             },
           })
         })
+    },
+    formatText(event) {
+      const text = event.target.value
+      this.customerAddress = text.replace(/[^A-Za-z]/g, '')
     },
   },
 }
