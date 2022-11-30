@@ -1176,10 +1176,6 @@ export default {
         this.minWithdraw = true
         this.isCheckSaldo = false
         this.isMaxWithdraw = false
-      } else if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > this.maxValueWithdraw) {
-        this.isMaxWithdraw = true
-        this.minWithdraw = false
-        this.isCheckSaldo = false
       } else {
         this.loadingLoadDataWithdraw = true
         this.isMaxWithdraw = false
@@ -1192,9 +1188,16 @@ export default {
             this.potencyIncome = this.formatPrice(response.data.data.potency_income)
             this.potencyRetur = this.formatPrice(response.data.data.potency_retur)
             this.withdrawPossibilites = response.data.data.withdraw_possibilites
-            if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.ideal_balance) {
-              this.isCheckSaldo = true
-            } else {
+            if (response.data.data.ideal_balance !== 0) {
+              if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.maximum_withdraw_nominal && Number(this.nominal.replace(/[^0-9,-]+/g, '')) < response.data.data.balance) {
+                this.isCheckSaldo = true
+                this.isMaxWithdraw = false
+                this.minWithdraw = false
+              }
+            }
+            if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.balance) {
+              this.isMaxWithdraw = true
+              this.minWithdraw = false
               this.isCheckSaldo = false
             }
             this.loadingLoadDataWithdraw = false

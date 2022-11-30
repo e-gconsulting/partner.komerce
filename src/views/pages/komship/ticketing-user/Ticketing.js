@@ -314,7 +314,7 @@ export default
     })
     this.getProfile()
     this.getJenisTicket()
-    this.fetchTicketUnread()
+    this.fetchUnreadTicketAll()
   },
   methods: {
     getProfile() {
@@ -322,13 +322,15 @@ export default
         this.$bvModal.show('ModalComponent')
       }
     },
-    fetchTicketAll() {
+    async fetchTicketAll() {
       this.loadingDataTable = true
       const params = {}
-      this.$http_komship.get('/v1/ticket-partner/list', {
+      if (this.unreadMode) Object.assign(params, { unread: this.unreadMode })
+      await this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
-        .then(response => {
+        .then(async response => {
+          await this.fetchUnreadTicketAll()
           if (response.data.code !== 400) {
             const { data } = response.data.data
             this.itemsTicket = data
@@ -373,7 +375,7 @@ export default
       Object.assign(params, { page: this.currentPage })
       if (this.orderStatusFilterItem.length > 0) Object.assign(params, { order_status: this.orderStatusFilterItem.join() })
       if (this.filterClaimReturValue !== null) Object.assign(params, { is_claim_retur: this.filterClaimReturValue })
-      Object.assign(params, { unread: this.unreadMode })
+      if (this.unreadMode) Object.assign(params, { unread: this.unreadMode })
       await this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
@@ -608,6 +610,7 @@ export default
       this.fetchTicket()
     }, 1000),
     async clearFilter() {
+      this.unreadMode = false
       this.ticketStatus = []
       this.filterTicketType = []
       this.filterEkspedisi = []
@@ -926,7 +929,9 @@ export default
       Object.assign(params, { page: this.currentPage })
       if (this.orderStatusFilterItem.length > 0) Object.assign(params, { order_status: this.orderStatusFilterItem.join() })
       if (this.filterClaimReturValue !== null) Object.assign(params, { is_claim_retur: this.filterClaimReturValue })
-      this.$http_komship.get('/v1/ticket-partner/total-unread')
+      this.$http_komship.get('/v1/ticket-partner/total-unread', {
+        params,
+      })
         .then(response => {
           this.totalUnread = response.data.data.total
         })
@@ -947,10 +952,34 @@ export default
     filterUnread() {
       if (this.unreadMode) {
         this.unreadMode = false
+        this.fetchTicketAll()
       } else {
         this.unreadMode = true
+        this.fetchTicketAll()
       }
-      this.fetchTicket()
+    },
+    fetchUnreadTicketAll() {
+      this.loadingDataTable = true
+      const params = {}
+      this.$http_komship.get('/v1/ticket-partner/total-unread', {
+        params,
+      })
+        .then(response => {
+          this.totalUnread = response.data.data.total
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.data.message,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
     },
   },
 }
