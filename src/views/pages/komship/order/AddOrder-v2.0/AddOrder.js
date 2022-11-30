@@ -346,7 +346,7 @@ export default {
     },
     async searchCustomer(event) {
       const text = event.target.value
-      this.customerName = text.replace(/[^A-Za-z]/g, '')
+      this.customerName = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
       this.customerList = []
       if (this.customerName !== '') {
         this.customerList = await this.$http_komship.get('v1/customer', {
@@ -1576,7 +1576,7 @@ export default {
     },
     formatText(event) {
       const text = event.target.value
-      this.customerAddress = text.replace(/[^A-Za-z]/g, '')
+      this.customerAddress = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
     },
   },
 }
