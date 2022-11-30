@@ -571,7 +571,10 @@
                 type="submit"
                 value="Submit"
                 class="btn btn-primary d-block m-auto"
+                :class="isDisableSubmitWithdraw ? 'btn btn-primary d-block m-auto cursor-not-allowed' : 'btn btn-primary d-block m-auto'"
+                :disabled="isDisableSubmitWithdraw"
               >
+               <b-spinner v-if="loadingConfirmationPin" small />
                 Konfirmasi
               </button>
               <button
