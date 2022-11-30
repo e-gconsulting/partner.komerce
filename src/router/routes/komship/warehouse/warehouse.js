@@ -9,7 +9,7 @@ export default [
       name: pageName.singular,
       routeEdit: 'edit-pickup',
       routeAdd: 'add-pickup',
-      resource: 'Gudang',
+      resource: 'Gudang Komship',
       action: 'manage',
       breadcrumb: [
         {

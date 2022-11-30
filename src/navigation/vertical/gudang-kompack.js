@@ -8,7 +8,7 @@ export default [
       {
         title: 'Cari Gudang',
         icon: 'None',
-        resource: 'Gudang',
+        resource: 'Gudang Kompack',
         route: 'search-gudang',
         action: 'manage',
       },
@@ -22,14 +22,14 @@ export default [
       {
         title: 'Ajukan Inbound',
         icon: 'None',
-        resource: 'Gudang',
+        resource: 'Gudang Kompack',
         route: 'ajukaninbound',
         action: 'manage',
       },
       {
         title: 'Riwayat Inbound',
         icon: 'None',
-        resource: 'Gudang',
+        resource: 'Gudang Kompack',
         route: 'riwayatinbound',
         action: 'manage',
       },
