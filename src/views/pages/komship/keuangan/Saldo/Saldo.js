@@ -99,6 +99,8 @@ export default {
       isMaxWithdraw: false,
       maxValueWithdraw: 0,
       loadingSubmitTopUp: false,
+      loadingConfirmationPin: false,
+      isDisableSubmitWithdraw: false,
     }
   },
   computed: {
@@ -261,10 +263,14 @@ export default {
           })
           break
         case 2:
+          this.loadingConfirmationPin = true
+          this.isDisableSubmitWithdraw = true
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
             const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
             if (!response.data.data.is_match) {
+              this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
               throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
             }
             responseReq.then(val => {
@@ -275,6 +281,8 @@ export default {
                 this.modalTitle = null
                 this.status = data.status
               })
+              this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
             }).catch(e => {
               if (e.response.status === 400) {
                 this.$swal({
@@ -296,6 +304,8 @@ export default {
                   }
                 })
               }
+              this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
             })
 
             this.visibilityPin = 'number'
@@ -314,6 +324,8 @@ export default {
               },
               buttonsStyling: false,
             })
+            this.loadingConfirmationPin = false
+            this.isDisableSubmitWithdraw = false
           }
           break
         default:

@@ -721,7 +721,7 @@ export default {
     handleResendOtp() {
       this.loadingOtp = true
       const formData = new FormData()
-      formData.append('phone_number', this.formInputEditItem)
+      formData.append('phone_number', this.fieldNewNumber)
       this.$http_komship.post('/v1/partner/sms/otp', formData)
         .then(response => {
           this.$refs['modal-edit'].hide()
