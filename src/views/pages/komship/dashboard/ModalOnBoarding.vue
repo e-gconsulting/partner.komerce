@@ -361,7 +361,6 @@ export default {
         },
       ],
       loadContentOnboarding: false,
-
       loadingOnboarding: false,
       buttonStartIsDisabled: false,
     }

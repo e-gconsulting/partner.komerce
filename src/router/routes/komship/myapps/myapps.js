@@ -5,7 +5,7 @@ export default [
     component: () => import('@/views/pages/komship/myapps/MyApps.vue'),
     meta: {
       name: 'aplikasiku',
-      resource: 'Aplikasiku',
+      resource: 'Gudang',
       action: 'manage',
     },
   },

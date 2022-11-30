@@ -351,6 +351,20 @@ export default {
 
       loadingTopAdmin: true,
       nominalPossible: false,
+      maxWithdraw: 0,
+      remainingSaldo: 0,
+      withdrawPossibilites: 0,
+      nominalReturFinish: 0,
+      isCheckSaldo: false,
+      idealBalance: 0,
+      potencyIncome: 0,
+      potencyRetur: 0,
+      loadingLoadDataWithdraw: false,
+      minWithdraw: false,
+      isMaxWithdraw: false,
+      maxValueWithdraw: 0,
+
+      isDisableSubmitWithdraw: false,
     }
   },
   computed: {
@@ -491,13 +505,16 @@ export default {
     formatNumber(n) {
       return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
-    showModal() {
+    async showModal() {
       this.resetModal()
       if (this.rekTujuanOptions.length === 0) {
         this.$bvModal.show('modal-notif-rekTujuanBlmAda')
         this.changeAttr()
       } else {
-        this.loadBank()
+        this.loadingLoadDataWithdraw = true
+        await this.loadBank()
+        this.isCheckSaldo = false
+        await this.getMaxWithdraw()
         this.$bvModal.show('modal-keuangan')
         this.changeAttr()
       }
@@ -554,10 +571,12 @@ export default {
           break
         case 2:
           this.loadingConfirmationPin = true
+          this.isDisableSubmitWithdraw = true
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
             if (!response.data.data.is_match) {
               this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
               this.$refs['modal-error-pin'].show()
               this.changeAttr()
             } else {
@@ -573,6 +592,7 @@ export default {
                     this.status = data.status
                   })
                   this.loadingConfirmationPin = false
+                  this.isDisableSubmitWithdraw = false
                 })
                 .catch(e => {
                   if (e.response.data.code === 400) {
@@ -593,6 +613,7 @@ export default {
                     })
                   }
                   this.loadingConfirmationPin = false
+                  this.isDisableSubmitWithdraw = false
                 })
             }
 
@@ -616,6 +637,7 @@ export default {
               })
             }
             this.loadingConfirmationPin = false
+            this.isDisableSubmitWithdraw = false
           }
           break
         default:
@@ -1155,6 +1177,86 @@ export default {
           },
         }, 2000)
       })
+    },
+    checkWithdraw: _.debounce(async function () {
+      if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) < 10000) {
+        this.minWithdraw = true
+        this.isCheckSaldo = false
+        this.isMaxWithdraw = false
+      } else {
+        this.loadingLoadDataWithdraw = true
+        this.isMaxWithdraw = false
+        this.minWithdraw = false
+        await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
+          .then(response => {
+            this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
+            this.remainingSaldo = this.formatPrice(response.data.data.balance - Number(this.nominal.replace(/[^0-9,-]+/g, '')))
+            this.idealBalance = this.formatPrice(response.data.data.ideal_balance)
+            this.potencyIncome = this.formatPrice(response.data.data.potency_income)
+            this.potencyRetur = this.formatPrice(response.data.data.potency_retur)
+            this.withdrawPossibilites = response.data.data.withdraw_possibilites
+            if (response.data.data.ideal_balance !== 0) {
+              if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.maximum_withdraw_nominal && Number(this.nominal.replace(/[^0-9,-]+/g, '')) < response.data.data.balance) {
+                this.isCheckSaldo = true
+                this.isMaxWithdraw = false
+                this.minWithdraw = false
+              }
+            }
+            if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.balance) {
+              this.isMaxWithdraw = true
+              this.minWithdraw = false
+              this.isCheckSaldo = false
+            }
+            this.loadingLoadDataWithdraw = false
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+            this.loadingLoadDataWithdraw = false
+          })
+      }
+    }, 1000),
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    validateWithdraw() {
+      let result = false
+      if (!this.selectedRekTujuan) {
+        result = true
+      }
+      if (this.bankItems === []) {
+        result = true
+      }
+      if (this.withdrawPossibilites === 0) {
+        result = true
+      }
+      return result
+    },
+    async getMaxWithdraw() {
+      this.loadingLoadDataWithdraw = true
+      await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
+        .then(response => {
+          this.maxValueWithdraw = response.data.data.maximum_withdraw_nominal
+          this.loadingLoadDataWithdraw = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingLoadDataWithdraw = false
+        })
     },
   },
 }

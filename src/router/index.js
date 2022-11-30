@@ -25,6 +25,12 @@ import myapps from './routes/komship/myapps/index'
 import ticketing from './routes/komship/ticketing/index'
 import warehouse from './routes/komship/warehouse/index'
 
+// kompack
+import gudang from './routes/kompack/gudang/index'
+
+// komtim
+import komtim from './routes/komtim/komtim'
+
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -49,6 +55,8 @@ const router = new VueRouter({
     ...ticketing,
     ...warehouse,
     ...wishlist,
+    ...gudang,
+    ...komtim,
     {
       path: '*',
       redirect: 'error-404',
@@ -80,11 +88,13 @@ router.beforeEach((to, _, next) => {
     (!canNavigate(to) && isLoggedIn && !to.meta.preventRedirect)
   ) {
     const userData = getUserData()
+    const isKomship = getUserData()
 
     next(
       getHomeRouteForLoggedInUser(
         // eslint-disable-next-line comma-dangle
-        userData ? userData.role_name.toUpperCase() : null
+        userData ? userData.role_name.toUpperCase() : null,
+        isKomship ? userData.is_komship : null,
         // eslint-disable-next-line comma-dangle
       )
     )

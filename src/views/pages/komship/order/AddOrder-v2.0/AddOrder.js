@@ -172,7 +172,6 @@ export default {
         this.destinationList = []
       }
     })
-    console.log(this.profile)
   },
   async created() {
     this.$forceUpdate()
@@ -345,7 +344,9 @@ export default {
       }
       return null
     },
-    async searchCustomer() {
+    async searchCustomer(event) {
+      const text = event.target.value
+      this.customerName = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
       this.customerList = []
       if (this.customerName !== '') {
         this.customerList = await this.$http_komship.get('v1/customer', {
@@ -1268,10 +1269,12 @@ export default {
       } else {
         this.isValidate = false
       }
-      if (this.soldBy === null) {
-        this.isValidate = false
-      } else {
-        this.isValidate = true
+      if (this.profile.partner_is_tracking_sales) {
+        if (this.soldBy === null) {
+          this.isValidate = false
+        } else {
+          this.isValidate = true
+        }
       }
       this.formData = {
         date: this.dateOrder,
@@ -1570,6 +1573,10 @@ export default {
             },
           })
         })
+    },
+    formatText(event) {
+      const text = event.target.value
+      this.customerAddress = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
     },
   },
 }

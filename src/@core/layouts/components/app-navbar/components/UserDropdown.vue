@@ -81,7 +81,6 @@
               fill="#FBBC05"
             />
           </svg>
-
           <small
             id="popover-kompoints"
             class="text-black ml-50"
@@ -90,7 +89,6 @@
               KomPoints : <small class="text-warning"><strong>{{ formatPrice(profile.user_kompoints) }}</strong></small>
             </strong>
           </small>
-
           <b-popover
             target="popover-kompoints"
             triggers="hover"
@@ -313,8 +311,11 @@ export default {
       this.$router.push({ name: 'auth-login' })
     },
     formatPrice(value) {
-      const val = value
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      let val = 0
+      if (value !== undefined) {
+        val = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      }
+      return val
     },
   },
 }
