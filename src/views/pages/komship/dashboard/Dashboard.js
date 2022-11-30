@@ -351,6 +351,8 @@ export default {
 
       loadingTopAdmin: true,
       nominalPossible: false,
+
+      isDisableSubmitWithdraw: false,
     }
   },
   computed: {
@@ -554,10 +556,12 @@ export default {
           break
         case 2:
           this.loadingConfirmationPin = true
+          this.isDisableSubmitWithdraw = true
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
             if (!response.data.data.is_match) {
               this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
               this.$refs['modal-error-pin'].show()
               this.changeAttr()
             } else {
@@ -573,6 +577,7 @@ export default {
                     this.status = data.status
                   })
                   this.loadingConfirmationPin = false
+                  this.isDisableSubmitWithdraw = false
                 })
                 .catch(e => {
                   if (e.response.data.code === 400) {
@@ -593,6 +598,7 @@ export default {
                     })
                   }
                   this.loadingConfirmationPin = false
+                  this.isDisableSubmitWithdraw = false
                 })
             }
 
@@ -616,6 +622,7 @@ export default {
               })
             }
             this.loadingConfirmationPin = false
+            this.isDisableSubmitWithdraw = false
           }
           break
         default:
