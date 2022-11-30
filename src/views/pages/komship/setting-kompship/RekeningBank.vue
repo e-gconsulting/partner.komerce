@@ -1034,7 +1034,9 @@ export default {
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneNumber)
-        this.$http_komship.post('/v1/partner/sms/otp', formData, {
+        formData.append('session', 'rekening')
+        formData.append('activity', 'BANK ACCOUNT')
+        this.$http_komship.post('/v2/partner/sms/otp', formData, {
           headers: { Authorization: `Bearer ${useJwt.getToken()}` },
         }).then(() => {}).catch(() => {
           this.$toast({
@@ -1061,7 +1063,8 @@ export default {
       }
       const formData = new FormData()
       formData.append('otp', this.otpConfirmation)
-      this.$http_komship.post('/v1/partner/sms/otp/verification', formData).then(response => {
+      formData.append('session', 'rekening')
+      this.$http_komship.post('/v2/partner/sms/otp/verification', formData).then(response => {
         if (response.data.code === 200) {
           this.errorCheckOtp = false
           this.$http_komship.post('/v2/bank-account/store',
@@ -1407,8 +1410,9 @@ export default {
         const formData = new FormData()
         formData.append('_method', 'post')
         formData.append('phone_number', this.phoneUser)
+        formData.append('session', 'rekening')
         formData.append('activity', 'BANK ACCOUNT')
-        this.$http_komship.post('/v1/partner/sms/otp', formData).then(response => {
+        this.$http_komship.post('/v2/partner/sms/otp', formData).then(response => {
           this.loadingOtpSms = false
           this.loadingResendOtp = false
           this.countOtp = response.data.data.expired_at
