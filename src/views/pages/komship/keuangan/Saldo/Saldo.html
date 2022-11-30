@@ -438,46 +438,47 @@
   </b-modal>
   <b-modal
     id="modal-keuangan"
-    body-class="px-2 py-2"
+    body-class="p-1"
     hide-header
     hide-footer
     centered
-    :no-close-on-esc="stepNow === 2"
-    :no-close-on-backdrop="stepNow === 2"
+    no-close-on-backdrop
+    no-close-on-esc
   >
-    <a
-      v-if="stepNow !== 2"
-      href="#"
-      @click="closeModal()"
+    <b-overlay
+      variant="light"
+      :show="loadingLoadDataWithdraw"
+      spinner-variant="primary"
+      blur="0"
+      opacity=".5"
+      rounded="sm"
     >
+    <a href="#" @click="closeModal()">
       <img
         src="@/assets/images/icons/close-circle.svg"
         height="18"
         width="18"
         alt="close"
         class="float-right"
-      >
+      />
     </a>
     <div class="p-1">
-      <p
-        id="modal-title"
-        class="text-center h-text-lg mb-2"
-      >
+      <p id="modal-title" class="text-center h-text-lg mb-2">
         {{ modalTitle }}
       </p>
       <div v-if="stepNow === 0">
         <form
           ref="form1"
-          class="row align-items-center"
+          class="row align-items-center justify-content-center"
           @submit.stop.prevent="handleSubmit(1)"
         >
-          <div class="col-5 mb-1">
+          <div class="col-12 mb-50">
             <p class="h-text-sm h-text-dark mb-0">
               Nominal
             </p>
           </div>
           <b-form-group
-            class="col-7 mb-1"
+            class="col-12 mb-1"
             invalid-feedback="Nominal is required"
             :state="nominalState"
           >
@@ -486,68 +487,114 @@
               v-model="nominal"
               type="tel"
               data-type="currency"
-              autocomplete="off"
               required
-              class="h-text-sm h-text-dark"
+              :placeholder="`minimal Rp10.000,-, maksimal Rp${formatPrice(maxValueWithdraw)},-`"
+              :class="minWithdraw || isMaxWithdraw || isCheckSaldo ? 'h-text-sm h-text-dark not__valid__nominal__wrapper' : 'h-text-sm h-text-dark'"
               :state="nominalState"
               @keyup="formatCurrency(false, 'nominal-input')"
               @blur="formatCurrency(true, 'nominal-input')"
+              @input="checkWithdraw"
             />
+            <b-row v-if="minWithdraw" class="mt-50">
+              <b-col cols="12">
+                <small class="text-primary">*Minimal penarikan Rp10.000</small>
+              </b-col>
+            </b-row>
+            <b-row v-if="isMaxWithdraw" class="mt-50">
+              <b-col cols="12">
+                <small class="text-primary">*Saldo kamu tidak mencukupi</small>
+              </b-col>
+            </b-row>
+            <b-row v-if="isCheckSaldo" class="mt-50">
+              <b-col v-if="idealBalance !== 0" cols="12">
+                <small class="text-primary">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
+              </b-col>
+              <b-col cols="12">
+                <small class="text-black">Sisa saldo : <strong>Rp{{ remainingSaldo }},-</strong> misal ditarik</small>
+              </b-col>
+            </b-row>
           </b-form-group>
-          <div class="col-5 mb-1">
+          <b-col v-if="isCheckSaldo" cols="12" class="mb-1">
+            <div v-if="idealBalance !== 0" class="p-1 mb-2" style="background: #FFF2E2;">
+            <small><strong>Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <strong class="text-primary">Rp. {{ idealBalance }},-</strong> buat menghindari minus.</strong></small>
+            </div>
+            <div class="p-1" style="border-radius: 10px; border: dotted">
+              <b-row>
+                <b-col cols="12" class="mb-2">
+                  <small>
+                    <strong>
+                      Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya <span class="text-black">belum sampai</span> ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total <span class="text-black">potensi pendapatanmu</span> yang akan diterima dari orderan yang berstatus <span class="text-black">DIKIRIM</span> yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
+                    </strong>
+                  </small>
+                    </b-col>
+                  <b-col cols="12">
+                  <small>
+                    <strong>
+                      Di Komship, enaknya tuh klo Retur barang <span class="text-black">udah balik</span> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <span class="text-black">diclaim</span> pula.
+                    </strong>
+                  </small>
+                </b-col>
+            </b-row>
+            </div>
+          </b-col>
+          <div class="col-12 mb-50">
             <p class="h-text-sm h-text-dark mb-0">
               Rekening Tujuan
             </p>
           </div>
           <b-form-group
-            class="col-7 mb-1"
+            class="col-12 mb-1"
             invalid-feedback="Rekening tujuan is required"
             :state="rekTujuanState"
           >
-              <v-select
-                v-model="selectedRekTujuan"
-                class="h-text-sm h-text-dark"
-                label="text"
-                :reduce="items => items.value"
-                :options="rekTujuanOptions"
-              >
-                <span v-if="rekTujuanOptions.length === 0" slot="no-options">
-                  Anda belum menambahkan rekening bank
-                </span>
-              </v-select>
+            <v-select
+              v-model="selectedRekTujuan"
+              class="h-text-sm h-text-dark"
+              label="text"
+              :reduce="items => items.value"
+              :options="rekTujuanOptions"
+              @input="setRekening(selectedRekTujuan)"
+            >
+              <span v-if="rekTujuanOptions.length === 0" slot="no-options">
+                Anda belum menambahkan rekening bank
+              </span>
+            </v-select>
           </b-form-group>
-          <div class="col-12 text-right mt-3">
-            <button
-              type="button"
-              class="btn btn-outline-primary"
-              @click="closeModal()"
-            >
-              Batal
-            </button>
-            <button
-              type="submit"
-              class="btn btn-primary ml-2"
-              :disabled="selectedRekTujuan === null"
-            >
-              Ajukan Penarikan
-            </button>
-          </div>
+          <b-col cols="12" class="align-self-start">
+            <span class="text-black">Pastikan Rekening yang kamu pilih sudah benar</span>
+          </b-col>
+          <b-row class="justify-content-center w-full mt-2">
+            <b-col cols="6">
+              <b-button
+                type="button"
+                variant="outline-primary"
+                block
+                @click="closeModal()"
+              >
+                Batal
+              </b-button>
+            </b-col>
+            <b-col cols="6">
+              <b-button
+                type="submit"
+                variant="primary"
+                block
+                :disabled="validateWithdraw()"
+              >
+                Ajukan Penarikan
+              </b-button>
+            </b-col>
+          </b-row>
         </form>
       </div>
       <div v-if="stepNow === 1">
-        <form
-          ref="form2"
-          @submit.stop.prevent="handleSubmit(2)"
-        >
-          <p class="text-center h-text-dark font-weight-bold mb-3">
+        <form ref="form2" @submit.stop.prevent="handleSubmit(2)">
+          <p class="text-center h-text-dark font-weight-bold mb-2">
             Mohon verifikasi identitas kamu dengan memasukan PIN
           </p>
           <b-row class="justify-content-center mb-1">
             <CodeInput
-              :style="isVisibility ?'-webkit-text-security: disc' : '-webkit-text-security: none'"
               v-model="pin"
-              :fieldWidth ="fieldwidth"
-              :fieldHeight ="fieldheight"
               :loading="false"
               class="input"
               :type="visibilityPin"
@@ -560,11 +607,12 @@
             <b-button
               variant="flat-primary"
               class="btn-icon"
-              @click="toggleVisibilityPin()"
+              @click="toggleVisibilityPin"
             >
               Tampilkan
             </b-button>
           </b-col>
+
           <div class="col-12 mt-2">
             <div class="text-center">
               <button
@@ -588,51 +636,40 @@
           </div>
         </form>
       </div>
-      <div
-        v-if="stepNow === 2 && status===true"
-        class="text-center"
-      >
+      <div v-if="stepNow === 2 && status === true" class="text-center">
         <b-row class="justify-content-center">
           <img
             src="@/assets/images/icons/success.svg"
             alt="success"
             class="text-center"
-          >
+          />
         </b-row>
         <p class="mt-2 h-text-md text-center">
           Penarikan Saldo Berhasil
         </p>
         <p class="h-text-dark font-weight-bold">
-          Saldo sebesar Rp {{ nominal.substring(3) }} akan segera dikirim ke
-          rekening atas nama {{ rekening.nama }} - {{ rekening.bank }} dalam
-          1x24 jam
+          Saldo sebesar {{ nominal }} akan segera dikirim ke rekening atas
+          nama {{ rekening.nama }} - {{ rekening.bank }} dalam 1x24 jam
         </p>
-        <b-button
-          @click="$router.push({ name: 'rincian-penarikan', params: { id: resTarikSaldo.id }})"
-          class="mt-1 btn btn-primary btnpenghasilansuccess"
-        >
-          <h5 class="text-white my-0 px-0 btnpenghasilansuccess__text">Lihat Riwayat Penarikan</h5>
-        </b-button>
       </div>
-      <div
-        v-if="stepNow === 2 && status===false"
-        class="text-center"
-      >
+      <div v-if="stepNow === 2 && status === false" class="text-center">
         <b-row class="justify-content-center">
           <img
             src="@/assets/images/icons/fail.svg"
             alt="fail"
             class="text-center"
-          >
+          />
         </b-row>
         <p class="mt-2 h-text-md text-center">
           Penarikan Saldo Gagal
         </p>
         <p class="h-text-dark font-weight-bold">
-          Maaf, kamu tidak dapat melakukan penarikan saldo dikarenakan nominal penarikan melebihi saldo utama anda.
+          Maaf, kamu tidak dapat melakukan penarikan saldo dikarenakan nominal
+          penarikan melebihi saldo utama anda.
         </p>
       </div>
     </div>
+    </b-overlay>
   </b-modal>
 
   <!-- Modal After TopUp -->
@@ -666,6 +703,29 @@
           :to="{ name: $route.meta.routeToRincianSaldo }"
         >
           Cek Rincian Saldo
+        </b-button>
+      </b-row>
+    </div>
+  </b-modal>
+
+  <b-modal id="modal-notif-rekTujuanBlmAda" hide-footer hide-header centered>
+    <div class="modal-add-pickup-popup-success">
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img src="@/assets/images/icons/warning.svg" />
+      </b-row>
+      <b-row class="text-center px-4 mb-1">
+        <p>
+          Maaf, kamu belum menambahkan rekening untuk penarikan saldo.
+        </p>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-button
+          class="org-button text-center"
+          variant="primary"
+          tag="router-link"
+          :to="{ name: 'kompship-rekening-bank' }"
+        >
+          Tambah Rekening
         </b-button>
       </b-row>
     </div>

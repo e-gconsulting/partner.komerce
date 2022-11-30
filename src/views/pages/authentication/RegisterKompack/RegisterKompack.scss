@@ -1,0 +1,47 @@
+.input-register {
+  border-radius: 8px;
+  border: 1px solid #e2e2e2;
+  box-shadow: unset;
+  height: 48px !important;
+  padding-top: 10px;
+  padding-bottom: 0 !important;
+  color: #222222;
+}
+.Success-Verify {
+  text-align: -webkit-center;
+}
+.btn-success-verify {
+  background-color: #F95031;
+  color: #ffffff;
+  border-radius: 12px
+}
+.label-register {
+  position: absolute;
+  top: 13px;
+  padding-left: 15px;
+  z-index: 99999;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #828282;
+  transition: 0.2s;
+}
+.input-register:focus ~ .label-register,
+.input-register:valid ~ .label-register {
+  top: 5px;
+  font-size: 0.7rem;
+  color: #828282;
+}
+.is-invalid {
+  background-color: #ffeded !important;
+  background-image: unset !important;
+}
+.icon-password {
+  position: absolute;
+  top: 16px;
+  right: 25px;
+}
+@media only screen and (max-width: 991px) {
+  .bg-kompack-register {
+    display: none !important;
+  }
+}

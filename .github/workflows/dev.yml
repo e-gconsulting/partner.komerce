@@ -2,8 +2,6 @@ name: cd
 on:
   push:
     branches: [ development ]
-  schedule:
-    - cron: "0 1 22 03 *"
   workflow_dispatch:
 
 jobs:
@@ -34,7 +32,7 @@ jobs:
         with: 
           name: dist-folder
           path: ./dist/
-      - name: Deploy to dev.partner.komerce.my.id
+      - name: Deploy to devkompack.partner.komerce.my.id
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with: 
           server: ${{ secrets.ftp_server_testing }}

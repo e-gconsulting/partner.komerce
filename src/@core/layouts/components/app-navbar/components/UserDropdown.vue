@@ -81,7 +81,6 @@
               fill="#FBBC05"
             />
           </svg>
-
           <small
             id="popover-kompoints"
             class="text-black ml-50"
@@ -90,7 +89,6 @@
               KomPoints : <small class="text-warning"><strong>{{ formatPrice(profile.user_kompoints) }}</strong></small>
             </strong>
           </small>
-
           <b-popover
             target="popover-kompoints"
             triggers="hover"

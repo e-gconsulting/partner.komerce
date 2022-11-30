@@ -37,6 +37,8 @@ import dashboard from './dashboard'
 import dashboardKompship from './dashboard-kompship'
 import produk from './produk'
 import order from './order'
+// import gudangkomship from './gudang-komship'
+import gudangkompack from './gudang-kompack'
 import pickup from './pickup'
 import customer from './customer'
 import settingKompship from './setting-kompship'
@@ -44,7 +46,6 @@ import keuangan from './keuangan'
 import opsional from './opsional'
 import myapps from './myapps'
 import ticketingUser from './ticketing-user'
-import gudang from './gudang'
 // import hiring from './hiring'
 
 // Komship Admin
@@ -54,15 +55,23 @@ import komship from './komship'
 import tiket from './tiket'
 import notification from './notification'
 
+// Kompack Admin
+import kompackpartner from './kompack/partner'
+
+// komtim
+import komtim from './komtim'
+
 // Array of sections
 export default [
   ...dashboard,
   ...komship,
+  ...kompackpartner,
 
   ...dashboardKompship,
   ...order,
   ...produk,
-  ...gudang,
+  // ...gudangkomship,
+  ...gudangkompack,
   ...pickup,
   ...customer,
   ...keuangan,
@@ -74,5 +83,6 @@ export default [
 
   ...tiket,
   ...notification,
+  ...komtim,
 
 ]
