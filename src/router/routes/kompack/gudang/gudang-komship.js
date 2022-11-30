@@ -4,7 +4,7 @@ export default [
     name: 'gudangku-komship',
     component: () => import('@/views/pages/komship/warehouse/OwnWarehouse.vue'),
     meta: {
-      resource: 'Gudang',
+      resource: 'Gudang Komship',
       action: 'manage',
     },
   },
