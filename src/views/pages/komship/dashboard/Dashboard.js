@@ -1187,13 +1187,16 @@ export default {
         await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
           .then(response => {
             this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
-            this.remainingSaldo = this.formatPrice(response.data.data.remaining_saldo)
-            this.nominalReturFinish = this.formatPrice(response.data.data.retur_when_finish_value)
+            this.remainingSaldo = this.formatPrice(response.data.data.balance - Number(this.nominal.replace(/[^0-9,-]+/g, '')))
             this.idealBalance = this.formatPrice(response.data.data.ideal_balance)
             this.potencyIncome = this.formatPrice(response.data.data.potency_income)
             this.potencyRetur = this.formatPrice(response.data.data.potency_retur)
             this.withdrawPossibilites = response.data.data.withdraw_possibilites
-            this.isCheckSaldo = true
+            if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.ideal_balance) {
+              this.isCheckSaldo = true
+            } else {
+              this.isCheckSaldo = false
+            }
             this.loadingLoadDataWithdraw = false
           }).catch(err => {
             this.$toast({
