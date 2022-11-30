@@ -24,7 +24,7 @@ const axiosAuthKompack = axios.create({
   },
 })
 
-const komshipAxiosIns = axios.create({
+export const komshipAxiosIns = axios.create({
   // You can add your headers here
   headers: {
     Authorization: `Bearer ${token}`,
