@@ -1061,41 +1061,37 @@
               />
               <b-row v-if="minWithdraw" class="mt-50">
                 <b-col cols="12">
-                  <small class="text-primary">*Minimal penarikan Rp10.000</small>
+                  <small class="text-primary" style="font-weight: 500!important;">*Minimal penarikan Rp10.000</small>
                 </b-col>
               </b-row>
               <b-row v-if="isMaxWithdraw" class="mt-50">
                 <b-col cols="12">
-                  <small class="text-primary">*Saldo kamu tidak mencukupi</small>
+                  <small class="text-primary" style="font-weight: 500!important;">*Saldo kamu tidak mencukupi</small>
                 </b-col>
               </b-row>
               <b-row v-if="isCheckSaldo" class="mt-50">
                 <b-col v-if="idealBalance !== 0" cols="12">
-                  <small class="text-primary">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
+                  <small class="text-primary" style="font-weight: 500!important;">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
                 </b-col>
                 <b-col cols="12">
-                  <small class="text-black">Sisa saldo : <strong>Rp{{ remainingSaldo }},-</strong> misal ditarik</small>
+                  <small class="text-black" style="font-weight: 500!important;">Sisa saldo : <small style="font-weight: 500!important;">Rp{{ remainingSaldo }},-</small> misal ditarik</small>
                 </b-col>
               </b-row>
             </b-form-group>
             <b-col v-if="isCheckSaldo" cols="12" class="mb-1">
               <div v-if="idealBalance !== 0" class="p-1 mb-2" style="background: #FFF2E2;">
-               <small><strong>Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <strong class="text-primary">Rp. {{ idealBalance }},-</strong> buat menghindari minus.</strong></small>
+               <small style="font-weight: 500!important;">Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <small class="text-primary" style="font-weight: 500!important;">Rp. {{ idealBalance }},-</small> buat menghindari minus.</small>
               </div>
               <div class="p-1" style="border-radius: 10px; border: dotted">
                 <b-row>
-                  <b-col cols="12" class="mb-2">
-                    <small>
-                      <strong>
-                        Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya <span class="text-black">belum sampai</span> ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total <span class="text-black">potensi pendapatanmu</span> yang akan diterima dari orderan yang berstatus <span class="text-black">DIKIRIM</span> yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
-                      </strong>
+                  <b-col cols="12" class="mb-2" style="text-align: justify;">
+                    <small style="font-weight: 500!important;">
+                        Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya <span class="text-black" style="font-weight: 500!important;">belum sampai</span> ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total <span class="text-black">potensi pendapatanmu</span> yang akan diterima dari orderan yang berstatus <span class="text-black">DIKIRIM</span> yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
                     </small>
-                      </b-col>
-                    <b-col cols="12">
-                    <small>
-                      <strong>
-                        Di Komship, enaknya tuh klo Retur barang <span class="text-black">udah balik</span> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <span class="text-black">diclaim</span> pula.
-                      </strong>
+                  </b-col>
+                  <b-col cols="12" style="text-align: justify;">
+                    <small style="font-weight: 500!important;">
+                        Di Komship, enaknya tuh klo Retur barang <small class="text-black">udah balik</small> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <small class="text-black">diclaim</small> pula.
                     </small>
                   </b-col>
                </b-row>
