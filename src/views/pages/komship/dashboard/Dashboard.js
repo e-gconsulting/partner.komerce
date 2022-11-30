@@ -351,7 +351,6 @@ export default {
 
       loadingTopAdmin: true,
       nominalPossible: false,
-<<<<<<< HEAD
       maxWithdraw: 0,
       remainingSaldo: 0,
       withdrawPossibilites: 0,
@@ -364,10 +363,8 @@ export default {
       minWithdraw: false,
       isMaxWithdraw: false,
       maxValueWithdraw: 0,
-=======
 
       isDisableSubmitWithdraw: false,
->>>>>>> 6f812bbf0a739597470ce7eeccbeeddc647bd9fc
     }
   },
   computed: {
