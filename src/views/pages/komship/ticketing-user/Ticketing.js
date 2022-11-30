@@ -270,6 +270,8 @@ export default
       countFilterStatus: 0,
 
       placeholderDescriptionTicket: '',
+      totalUnread: 0,
+      unreadMode: false,
     }
   },
   watch: {
@@ -312,6 +314,7 @@ export default
     })
     this.getProfile()
     this.getJenisTicket()
+    this.fetchTicketUnread()
   },
   methods: {
     getProfile() {
@@ -350,7 +353,7 @@ export default
           this.loadingDataTable = false
         })
     },
-    fetchTicket() {
+    async fetchTicket() {
       this.loadingDataTable = true
       const params = {}
       if (this.dateRange) {
@@ -370,10 +373,12 @@ export default
       Object.assign(params, { page: this.currentPage })
       if (this.orderStatusFilterItem.length > 0) Object.assign(params, { order_status: this.orderStatusFilterItem.join() })
       if (this.filterClaimReturValue !== null) Object.assign(params, { is_claim_retur: this.filterClaimReturValue })
-      this.$http_komship.get('/v1/ticket-partner/list', {
+      Object.assign(params, { unread: this.unreadMode })
+      await this.$http_komship.get('/v1/ticket-partner/list', {
         params,
       })
-        .then(response => {
+        .then(async response => {
+          await this.fetchTicketUnread()
           if (response.data.code !== 400) {
             const { data } = response.data.data
             this.itemsTicket = data
@@ -792,7 +797,7 @@ export default
     getRowClass(item, type) {
       let result = null
       if (item) {
-        result = item.history_ticket_count_mitra[0] !== undefined ? '' : 'table-secondary'
+        result = item.history_ticket_count_mitra !== null ? '' : 'table-secondary'
       }
       return result
     },
@@ -900,6 +905,52 @@ export default
       if (this.ticketType.id === 14) {
         this.placeholderDescriptionTicket = 'Mohon tuliskan dengan jelas perbedaan alamat SEBELUM dan SESUDAH. Jika ada penambahan ongkir berdasarkan info dari ekspedisi, akan ditagihkan secara manual dengan mengurangi saldo kamu'
       }
+    },
+    fetchTicketUnread() {
+      this.loadingDataTable = true
+      const params = {}
+      if (this.dateRange) {
+        Object.assign(params, { start_date: this.formatDateParams(this.dateRange.startDate) })
+        Object.assign(params, { end_date: this.formatDateParams(this.dateRange.endDate) })
+      }
+      if (this.dateRangeUpdate) {
+        Object.assign(params, { update_start_date: this.formatDateParams(this.dateRangeUpdate.startDate) })
+        Object.assign(params, { update_end_date: this.formatDateParams(this.dateRangeUpdate.endDate) })
+      }
+      if (this.ticketStatus) Object.assign(params, { ticket_status: this.ticketStatus.join() })
+      if (this.search) Object.assign(params, { search: this.search })
+      if (this.searchType) Object.assign(params, { search_type: this.searchType.value })
+      if (this.filterTicketType) Object.assign(params, { ticket_type: this.filterTicketType.join() })
+      if (this.filterEkspedisi) Object.assign(params, { shipping: this.filterEkspedisi.join() })
+      Object.assign(params, { total_per_page: this.totalPerPage })
+      Object.assign(params, { page: this.currentPage })
+      if (this.orderStatusFilterItem.length > 0) Object.assign(params, { order_status: this.orderStatusFilterItem.join() })
+      if (this.filterClaimReturValue !== null) Object.assign(params, { is_claim_retur: this.filterClaimReturValue })
+      this.$http_komship.get('/v1/ticket-partner/total-unread')
+        .then(response => {
+          this.totalUnread = response.data.data.total
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
+    },
+    filterUnread() {
+      if (this.unreadMode) {
+        this.unreadMode = false
+      } else {
+        this.unreadMode = true
+      }
+      this.fetchTicket()
     },
   },
 }

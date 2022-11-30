@@ -187,12 +187,17 @@
 
     <b-row class="justify-content-end mb-1">
         <b-col class="mb-1">
-            <b-button style="background-color: #08A0F7 !important; border: none;" @click="showModalCreateTicket">
+            <b-button class="mr-1" style="background-color: #08A0F7 !important; border: none;" @click="showModalCreateTicket">
                 <b-row class="align-items-center justify-content-between">
                     Buat Tiket
                     <div class="ml-3">
                         <feather-icon icon="PlusIcon" />
                     </div>
+                </b-row>
+            </b-button>
+            <b-button @click="filterUnread" :style="unreadMode ? 'background: white!important; border: 1px solid #C2C2C2!important; color: black!important;' : 'background: #F95031!important; color: white; border: 0;'">
+                <b-row class="align-items-center justify-content-between">
+                    {{ unreadMode ? 'Semua Pesan' : `Pesan Belum Dibaca ${totalUnread}` }}
                 </b-row>
             </b-button>
         </b-col>
@@ -401,22 +406,22 @@
                 head-variant="light" :tbody-tr-class="getRowClass" @row-selected="onRowSelected">
                 <template #cell(ticket_no)="dataNoTicket">
                     <b-row class="justify-content-between" style="min-width: 200px !important">
-                        <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined"
+                        <span v-if="dataNoTicket.item.history_ticket_count_mitra === null"
                             class="text-primary font-light">
                             {{ dataNoTicket.value }}
                         </span>
-                        <span v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined"
+                        <span v-if="dataNoTicket.item.history_ticket_count_mitra !== null"
                             class="text-primary font-bold">
                             {{ dataNoTicket.value }}
                         </span>
-                        <div v-if="dataNoTicket.item.history_ticket_count_mitra[0] !== undefined">
+                        <div v-if="dataNoTicket.item.history_ticket_count_mitra !== null">
                             <b-avatar style="background-color: #08A0F7!important" size="sm">
-                                {{ dataNoTicket.item.history_ticket_count_mitra[0].total_unread_chat }}
+                                {{ dataNoTicket.item.history_ticket_count_mitra.total_unread_chat }}
                             </b-avatar>
                         </div>
                         <div v-if="dataNoTicket.item.last_chat_partner !== null">
                             <b-avatar
-                                v-if="dataNoTicket.item.history_ticket_count_mitra[0] === undefined && dataNoTicket.item.last_chat_partner.type === 'Partner'"
+                                v-if="dataNoTicket.item.history_ticket_count_mitra === null && dataNoTicket.item.last_chat_partner.type === 'Partner'"
                                 variant="primary" size="sm">
                                 <feather-icon icon="ArrowRightIcon" />
                             </b-avatar>
@@ -425,11 +430,11 @@
                 </template>
 
                 <template #cell(no_resi)="dataNomorResi">
-                    <span v-if="dataNomorResi.item.history_ticket_count_mitra[0] === undefined"
+                    <span v-if="dataNomorResi.item.history_ticket_count_mitra === null"
                         class="text-black font-light">
                         {{ dataNomorResi.value }}
                     </span>
-                    <span v-if="dataNomorResi.item.history_ticket_count_mitra[0] !== undefined"
+                    <span v-if="dataNomorResi.item.history_ticket_count_mitra !== null"
                         class="text-black font-bold">
                         {{ dataNomorResi.value }}
                     </span>
@@ -445,22 +450,22 @@
                 </template>
 
                 <template #cell(customer_name)="dataCustomer">
-                    <span v-if="dataCustomer.item.history_ticket_count_mitra[0] === undefined"
+                    <span v-if="dataCustomer.item.history_ticket_count_mitra === null"
                         class="text-black font-light">
                         {{ dataCustomer.value }}
                     </span>
-                    <span v-if="dataCustomer.item.history_ticket_count_mitra[0] !== undefined"
+                    <span v-if="dataCustomer.item.history_ticket_count_mitra !== null"
                         class="text-black font-bold">
                         {{ dataCustomer.value }}
                     </span>
                 </template>
 
                 <template #cell(name)="dataJenisticket">
-                    <span v-if="dataJenisticket.item.history_ticket_count_mitra[0] === undefined"
+                    <span v-if="dataJenisticket.item.history_ticket_count_mitra === null"
                         class="text-black font-light">
                         {{ dataJenisticket.value}}
                     </span>
-                    <span v-if="dataJenisticket.item.history_ticket_count_mitra[0] !== undefined"
+                    <span v-if="dataJenisticket.item.history_ticket_count_mitra !== null"
                         class="text-black font-bold">
                         {{ dataJenisticket.value}}
                     </span>
@@ -469,7 +474,7 @@
                 <template #cell(ticket_status)="dataStatusTicket">
                     <div class="d-flex">
                         <div>
-                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] === undefined"
+                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra === null"
                                 class="font-light">
                                 <span v-if="dataStatusTicket.value === 0" class="font-light" style="color: #AB2900">
                                     Perlu Tindak Lanjut
@@ -479,7 +484,7 @@
                                     {{ convertTicketStatus(dataStatusTicket.value) }}
                                 </span>
                             </div>
-                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra[0] !== undefined"
+                            <div v-if="dataStatusTicket.item.history_ticket_count_mitra !== null"
                                 class="font-bold">
                                 <span v-if="dataStatusTicket.value === 0" class="font-bold" style="color: #AB2900">
                                     Perlu Tindak Lanjut
@@ -509,7 +514,7 @@
                 </template>
 
                 <template #cell(date_created)="dataWaktuDibuat">
-                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] === undefined"
+                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra === null"
                         class="text-black font-light">
                         <b-col cols="12" style="min-width: 200px">
                             <span>
@@ -522,7 +527,7 @@
                             </span>
                         </b-col>
                     </b-row>
-                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra[0] !== undefined"
+                    <b-row v-if="dataWaktuDibuat.item.history_ticket_count_mitra !== null"
                         class="text-black font-bold">
                         <b-col cols="12" style="min-width: 200px">
                             <span>
@@ -538,7 +543,7 @@
                 </template>
 
                 <template #cell(date_updated)="dataWaktuDiupdate">
-                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] === undefined"
+                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra === null"
                         class="text-black font-light">
                         <b-col cols="12" style="min-width: 200px">
                             <span>
@@ -551,7 +556,7 @@
                             </span>
                         </b-col>
                     </b-row>
-                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra[0] !== undefined"
+                    <b-row v-if="dataWaktuDiupdate.item.history_ticket_count_mitra !== null"
                         class="text-black font-bold">
                         <b-col cols="12" style="min-width: 200px">
                             <span>
