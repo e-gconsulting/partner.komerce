@@ -63,9 +63,18 @@ export default [
     },
   },
   {
-    path: '/detail-inbound/:id',
-    name: 'detail-inbound',
+    path: '/detail-riwayat-inbound/:id',
+    name: 'detail-riwayat-inbound',
     component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailInbound'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/detail-riwayat-tambah-product/:id',
+    name: 'detail-riwayat-tambah-product',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailTambahProduct'),
     meta: {
       resource: 'Gudang',
       action: 'manage',

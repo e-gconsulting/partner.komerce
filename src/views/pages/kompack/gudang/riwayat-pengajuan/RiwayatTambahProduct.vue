@@ -1,16 +1,67 @@
 <template>
   <div class="border pt-1 -mt-4">
-    <div class="d-flex flex-row space-x-3 float-right mb-2 px-1">
+    <div class="w-50 d-flex flex-row space-x-3 float-right mb-1 px-1">
       <BFormSelect
         v-model="partnerList"
-        :options="options"
-        style="width: 250%"
+        :options="warehouse"
       />
-      <BFormSelect
-        v-model="date"
-        :options="dateList"
-        style="width: 250%"
-      />
+      <DateRangePicker
+        ref="picker"
+        v-model="dateRange"
+        class="w-100"
+        :locale-data="locale"
+        :ranges="ranges"
+        :opens="'left'"
+      >
+        <template
+          v-slot:input="picker"
+          style="min-width: 350px"
+        >
+          <div class="d-flex justify-content-between align-items-center w-100">
+            <div class="mr-1">
+              <span
+                v-if="
+                  formatDateRange(picker.startDate) === formatDateRange(today) && formatDateRange(picker.endDate) === formatDateRange(today)
+                "
+                style="color: #828282 !important"
+              >
+                Hari ini
+              </span>
+              <span
+                v-else-if="
+                  formatDateRange(picker.startDate) === formatDateRange(last7)
+                "
+                style="color: #828282 !important"
+              >
+                7 Hari Terakhir
+              </span>
+              <span
+                v-else-if="
+                  formatDateRange(picker.startDate) === formatDateRange(last30)
+                "
+                style="color: #828282 !important"
+              >
+                30 Hari Terakhir
+              </span>
+              <span
+                v-else-if="
+                  formatDateRange(picker.startDate) === formatDateRange(firstDateOfMonth) && formatDateRange(picker.endDate) === formatDateRange(lastDateOfMonth)
+                "
+                style="color: #828282 !important"
+              >
+                Bulan ini
+              </span>
+              <span
+                v-else
+                style="color: #828282 !important"
+              > Custom </span>
+            </div>
+            <div class="padding-arrow">
+              <b-img src="@/assets/images/icons/arrow-filter.svg" />
+            </div>
+          </div>
+        </template>
+      </DateRangePicker>
       <!-- <div class="">
         date
       </div> -->
@@ -22,6 +73,8 @@
         :fields="fields"
         :items="items"
         responsive="sm"
+        empty-text="Tidak ada data untuk ditampilkan."
+        :show-empty="!loading"
       >
         <template #cell(tanggal_pengajuan)="data">
           {{ formatDate(data.item.submission_date) }}
@@ -36,7 +89,7 @@
             </div>
             <div class="d-flex flex-column items-start py-1">
               <div class="">
-                {{ data.item.warehouses_name }}
+                {{ data.item.warehouse_name }}
               </div>
               <div class="">
                 {{ data.item.warehouse_city }}
@@ -58,9 +111,11 @@
           <div
             class=""
             style="color: #08A0F7;"
-            @click="detail(data.item)"
+            @click="handleDetail(data.item)"
           >
-            <u>Lihat Detail</u>
+            <button class="outline-none">
+              <u>Lihat Detail</u>
+            </button>
           </div>
         </template>
       </b-table>
@@ -82,15 +137,52 @@
 <script>
 import { mapState } from 'vuex'
 import moment from 'moment'
+import {
+  today, last7, last30, firstDateOfMonth, lastDateOfMonth,
+} from '@/store/helpers'
+import DateRangePicker from 'vue2-daterange-picker'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
   name: 'RiwayatInbound',
+  components: { DateRangePicker },
   data() {
     return {
+
+      // init state
+      warehouse: [
+        {
+          value: '',
+          text: 'Semua Gudang',
+        },
+      ],
+
+      loading: false,
+
       // filter
       partnerList: '',
-      date: '',
+      dateRange: {
+        startDate: today,
+        endDate: today,
+      },
+
+      // for date range
+      today,
+      last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
+      locale: {
+        format: 'dd/mm/yyyy',
+        daysOfWeek: ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'],
+        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+      },
+      ranges: {
+        'Hari ini': [today, today],
+        '7 Hari Terakhir': [last7, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
+      },
 
       options: [
         {
@@ -132,19 +224,36 @@ export default {
   },
 
   computed: {
-    ...mapState('riwayatPengajuan', ['addProduct']),
+    ...mapState('riwayatPengajuan', ['addProduct', 'listWarehouses']),
+  },
+
+  watch: {
+    dateRange: {
+      handler() {
+        this.fetchRiwayatAddProduct()
+      },
+    },
+    partnerList: {
+      handler() {
+        this.fetchRiwayatAddProduct()
+      },
+    },
   },
 
   created() {
     this.fetchRiwayatAddProduct()
-    console.log('list', this.addProduct)
+    this.fetchListWarehouses()
   },
 
   methods: {
 
     fetchRiwayatAddProduct() {
       this.$store
-        .dispatch('riwayatPengajuan/getListAddProduct')
+        .dispatch('riwayatPengajuan/getListAddProduct', {
+          start_date: this.formatDateRange(this.dateRange.startDate),
+          end_date: this.formatDateRange(this.dateRange.endDate),
+          warehouse_id: this.partnerList,
+        })
         .then(() => {
           this.items = this.addProduct
         })
@@ -165,17 +274,40 @@ export default {
         })
     },
 
+    fetchListWarehouses() {
+      this.$store
+        .dispatch('riwayatPengajuan/getListWarehouses')
+        .then(() => {
+          const warehouse = this.warehouse.concat(this.listWarehouses.map(data => ({
+            value: data.warehouse_id,
+            text: data.warehouse_name,
+          })))
+
+          this.warehouse = warehouse
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
     // detail(data) {
     //   const { id } = data
 
     //   this.$router.push({
-    //     path: `/detail-inbound/${id}`,
+    //     path: `/detail-riwayat-inbound/${id}`,
     //   })
     //   localStorage.setItem('dataTes', JSON.stringify(data))
     // },
 
+    handleDetail(data) {
+      const { id } = data
+      this.$router.push({
+        path: `/detail-riwayat-tambah-product/${id}`,
+      })
+    },
+
     statusColor(status) {
-      if (status === 'Proses') {
+      if (status === 'Sedang Diajukan') {
         return 'text-warning'
       } if (status === 'Selesai') {
         return 'text-success'
@@ -185,6 +317,17 @@ export default {
     formatDate(value) {
       return moment(value).format('DD MMMM YYYY')
     },
+
+    formatDateRange(value) {
+      return moment(value).format('YYYY-MM-DD')
+    },
   },
 }
 </script>
+
+<style scoped>
+.padding-arrow {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+</style>

@@ -1,14 +1,14 @@
 <template>
   <div class="border pt-1 -mt-4">
-    <div class="d-flex flex-row space-x-3 float-right mb-2 px-1">
-      <!-- <BFormSelect
+    <div class="w-50 d-flex flex-row space-x-3 float-right mb-1 px-1">
+      <BFormSelect
         v-model="partnerList"
-        :options="options"
-        style="width: 250%"
-      /> -->
+        :options="warehouse"
+      />
       <DateRangePicker
         ref="picker"
         v-model="dateRange"
+        class="w-100"
         :locale-data="locale"
         :ranges="ranges"
         :opens="'left'"
@@ -21,7 +21,7 @@
             <div class="mr-1">
               <span
                 v-if="
-                  formatDateFilter(picker.startDate) === formatDateFilter(today)
+                  formatDateFilter(picker.startDate) === formatDateFilter(today) && formatDateFilter(picker.endDate) === formatDateFilter(today)
                 "
                 style="color: #828282 !important"
               >
@@ -37,9 +37,15 @@
               </span>
               <span
                 v-else-if="
-                  formatDateFilter(picker.startDate) ===
-                    formatDateFilter(firstDateOfMonth) &&
-                    formatDateFilter(picker.endDate) === formatDateFilter(today)
+                  formatDateFilter(picker.startDate) === formatDateFilter(last30)
+                "
+                style="color: #828282 !important"
+              >
+                30 Hari Terakhir
+              </span>
+              <span
+                v-else-if="
+                  formatDateFilter(picker.startDate) === formatDateFilter(firstDateOfMonth) && formatDateFilter(picker.endDate) === formatDateFilter(lastDateOfMonth)
                 "
                 style="color: #828282 !important"
               >
@@ -48,12 +54,11 @@
               <span
                 v-else
                 style="color: #828282 !important"
-              > Semua </span>
+              > Custom </span>
             </div>
-            <img
-              src="@/assets/images/icons/calendar.png"
-              alt="KOmerce"
-            >
+            <div class="padding-arrow">
+              <b-img src="@/assets/images/icons/arrow-filter.svg" />
+            </div>
           </div>
         </template>
       </DateRangePicker>
@@ -118,7 +123,9 @@
             style="color: #08A0F7;"
             @click="detail(data.item)"
           >
-            <u>Lihat Detail</u>
+            <button class="outline-none">
+              <u>Lihat Detail</u>
+            </button>
           </div>
         </template>
       </b-table>
@@ -139,27 +146,31 @@
 
 <script>
 import { mapState } from 'vuex'
-// import { axiosKomship } from '../helpers'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import DateRangePicker from 'vue2-daterange-picker'
-import { last7, today, firstDateOfMonth } from '@/store/helpers'
+import {
+  today, last7, last30, firstDateOfMonth, lastDateOfMonth,
+} from '@/store/helpers'
+import { BFormSelect } from 'bootstrap-vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
-import { komshipAxiosIns } from '@/libs/axios'
 
 export default {
   name: 'RiwayatInbound',
-  components: { DateRangePicker },
+  components: { DateRangePicker, BFormSelect },
   data() {
     return {
-      firstDateOfMonth,
+      today,
       last7,
+      last30,
+      firstDateOfMonth,
+      lastDateOfMonth,
+
       // filter
-      partnerId: this.$store.state.auth.userData,
       partnerList: '',
       date: '',
       dateRange: {
-        startDate: last7,
+        startDate: today,
         endDate: today,
       },
       locale: {
@@ -169,20 +180,27 @@ export default {
       },
       ranges: {
         'Hari ini': [today, today],
-        '2 Hari terakhir': [last7, today],
         '7 Hari Terakhir': [last7, today],
-        'Bulan ini': [firstDateOfMonth, today],
-        'Semua ': [firstDateOfMonth, today],
+        '30 Hari Terakhir': [last30, today],
+        'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
       },
 
       loading: false,
 
-      options: [
+      // options: [
+      //   {
+      //     value: '',
+      //     text: 'Semua Gudang',
+      //   },
+      // ],
+
+      warehouse: [
         {
           value: '',
           text: 'Semua Gudang',
         },
       ],
+
       dateList: [
         {
           value: '',
@@ -221,43 +239,35 @@ export default {
   },
 
   computed: {
-    ...mapState('riwayatPengajuan', ['inbound']),
+    ...mapState('riwayatPengajuan', ['inbound', 'listWarehouses']),
   },
+
   watch: {
     dateRange: {
       handler() {
-        this.getData()
+        this.fetchRiwayatInbound()
+      },
+    },
+    partnerList: {
+      handler() {
+        this.fetchRiwayatInbound()
       },
     },
   },
 
   created() {
     this.fetchRiwayatInbound()
-    console.log('list', this.inbound)
-    this.getData()
+    this.fetchListWarehouses()
   },
 
   methods: {
-
-    async getData() {
-      const params = {
-        start_date: this.formatDateFilter(this.dateRange.startDate),
-        end_date: this.formatDateFilter(this.dateRange.endDate),
-      }
-      const url = '/v1/komship/inbound'
-      await komshipAxiosIns.get(url, { params })
-        .then(res => {
-          const { data } = res.data
-          console.log(data)
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    },
-
     fetchRiwayatInbound() {
       this.$store
-        .dispatch('riwayatPengajuan/getListInbound')
+        .dispatch('riwayatPengajuan/getListInbound', {
+          start_date: this.formatDateFilter(this.dateRange.startDate),
+          end_date: this.formatDateFilter(this.dateRange.endDate),
+          warehouse_id: this.partnerList,
+        })
         .then(() => {
           this.items = this.inbound
         })
@@ -278,11 +288,26 @@ export default {
         })
     },
 
+    fetchListWarehouses() {
+      this.$store
+        .dispatch('riwayatPengajuan/getListWarehouses')
+        .then(() => {
+          const warehouse = this.warehouse.concat(this.listWarehouses.map(data => ({
+            value: data.warehouse_id,
+            text: data.warehouse_name,
+          })))
+
+          this.warehouse = warehouse
+        })
+        .catch(() => {
+          this.loading = false
+        })
+    },
+
     detail(data) {
       const { id } = data
-
       this.$router.push({
-        path: `/detail-inbound/${id}`,
+        path: `/detail-riwayat-inbound/${id}`,
       })
       localStorage.setItem('dataTes', JSON.stringify(data))
     },
@@ -316,3 +341,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.padding-arrow {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+</style>
