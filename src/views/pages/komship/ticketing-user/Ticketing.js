@@ -176,12 +176,7 @@ export default
       itemsNoResi: null,
       noResi: null,
       customerName: '',
-      jenisTicketItems: [
-        {
-          label: 'Permintaan Pengiriman Ulang',
-          value: 5,
-        },
-      ],
+      jenisTicketItems: [],
       ticketTypeItems: [],
       ticketType: null,
       description: '',
@@ -273,6 +268,8 @@ export default
 
       filterClaimReturValue: null,
       countFilterStatus: 0,
+
+      placeholderDescriptionTicket: '',
     }
   },
   watch: {
@@ -291,21 +288,13 @@ export default
         this.fetchTicket()
       },
     },
+    ticketType: {
+      handler() {
+        if (this.ticketType === null) this.placeholderDescriptionTicket = ''
+      },
+    },
   },
   computed: {
-    computedClassFilter() {
-      let result = '12'
-      if (window.screen.width >= 600) {
-        result = 'auto'
-      }
-      return result
-    },
-    computedClassTypeSearch() {
-      return window.screen.width >= 600 ? 'pr-0' : 'pr-0 mb-1'
-    },
-    computedClassAnyFilter() {
-      return window.screen.width >= 600 ? 'auto' : '12 mb-1'
-    },
     ...mapState('dashboard', ['profile']),
   },
   created() {
@@ -322,6 +311,7 @@ export default
       }
     })
     this.getProfile()
+    this.getJenisTicket()
   },
   methods: {
     getProfile() {
@@ -387,7 +377,6 @@ export default
           if (response.data.code !== 400) {
             const { data } = response.data.data
             this.itemsTicket = data
-            console.log(this.itemsTicket, 'fetchtiket')
             this.totalRows = response.data.data.total
             this.loadingDataTable = false
           } else {
@@ -454,7 +443,7 @@ export default
           const formData = new FormData()
           formData.append('no_resi', this.noResi)
           formData.append('customer_name', this.customerName)
-          formData.append('ticket_type', this.ticketType.value)
+          formData.append('ticket_type', this.ticketType.id)
           formData.append('description', this.description)
           if (this.itemsImageInitialFile.length > 1) {
             // eslint-disable-next-line no-plusplus
@@ -887,6 +876,30 @@ export default
 
       await (element === 'modal-open')
       document.querySelectorAll('div.modal-content')[0].removeAttribute('tabindex')
+    },
+    getJenisTicket() {
+      this.$http_komship.get('/v1/ticket-partner/ticket-type-partner/list')
+        .then(response => {
+          this.jenisTicketItems = response.data.data
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
+    setPlaceholderDescription() {
+      if (this.ticketType.id === 5) {
+        this.placeholderDescriptionTicket = 'Mohon tuliskan dengan jelas hari dan jam customer bisa untuk menerima paket di waktu tersebut. Karena kamu udah ngajuin request ini, pastikan customer berkomitmen menerima di waktu tersebut'
+      }
+      if (this.ticketType.id === 14) {
+        this.placeholderDescriptionTicket = 'Mohon tuliskan dengan jelas perbedaan alamat SEBELUM dan SESUDAH. Jika ada penambahan ongkir berdasarkan info dari ekspedisi, akan ditagihkan secara manual dengan mengurangi saldo kamu'
+      }
     },
   },
 }

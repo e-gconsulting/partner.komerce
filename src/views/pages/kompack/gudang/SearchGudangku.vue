@@ -13,9 +13,13 @@
               <feather-icon icon="SearchIcon" />
             </b-input-group-prepend>
             <b-form-input
-              v-model="searchProduct"
+              id="search"
+              v-model="formFilter.search"
+              type="search"
+              class="form-search"
               placeholder="Cari nama gudang atau pemilik"
               @input="getProduct"
+              @change="onChangeSearchProduct()"
             />
           </b-input-group>
         </div>
@@ -35,10 +39,7 @@
               style="width: 417px;"
             >
               <h5>Filter</h5>
-              <b-form
-                @submit="onSubmitFilter"
-                @reset="onReset"
-              >
+              <b-form>
                 <div class="d-flex flex-column">
                   <div class="mt-1">
                     <label for="">Tanggal Bergabung</label>
@@ -171,16 +172,18 @@
                   >
                     <b-form-select
                       id="input-3"
-                      v-model="formFilter.status"
+                      v-model="status"
                       :options="statusList"
-                      label-field="name"
-                      text-field="name"
+                      label-field="text"
+                      text-field="text"
+                      @change="onchangeStatus"
                     />
                   </b-form-group>
-                  <div class="d-flex flex-row justify-content-end">
+                  <div class="d-flex flex-row justify-content-start">
                     <b-button
-                      type="submit"
+                      type="reset"
                       variant="outline-primary"
+                      @click="onReset()"
                     >
                       Submit
                     </b-button>
@@ -188,6 +191,7 @@
                       type="reset"
                       class="ml-1"
                       variant="primary"
+                      @click="onSubmitFilter()"
                     >
                       Terapkan
                     </b-button>
@@ -211,100 +215,109 @@
         opacity=".5"
         rounded="sm"
       >
-        <div
-          v-for="(item) in listGudang"
-          :key="item.id"
-          class="pt-1 pb-1 d-flex flex-row"
-        >
-          <div>
-            <img
-              class="img-gudang"
-              :src="item.image_warehouse? item.image_warehouse : $assets('assets/illustration/image_not_found.svg')"
-              alt=""
-            ></div>
-          <div class="w-100  pl-2 pr-2 d-flex flex-col">
-            <div class="d-flex justify-items-center flex-row">
-              <div>
-                <b-avatar
-                  size="3rem"
-                  variant="info"
-                  :src="item.image_logo_url ? item.image_logo_url : $assets('assets/illustration/image_not_found.svg')"
-                />
-              </div>
-              <div class="d-flex flex-col pl-1">
-                <h5 class="title">
-                  <b>{{ item.name }}</b>
-                </h5>
-                <p>{{ item.join_date }}</p>
-              </div>
-            </div>
-            <div class="d-flex flex-row">
-              <table>
-                <tbody>
-                  <tr valign="top">
-                    <td>
-                      Kota
-                    </td>
-                    <td class="td-divider">
-                      :
-                    </td>
-                    <td>
-                      {{ item.city_name }}
-                    </td>
-                  </tr>
-                  <tr valign="top">
-                    <td>
-                      Owner
-                    </td>
-                    <td class="td-divider">
-                      :
-                    </td>
-                    <td>
-                      {{ item.owner }}
-                    </td>
-                  </tr>
-                  <tr valign="top">
-                    <td>
-                      Deskripsi
-                    </td>
-                    <td class="td-divider">
-                      :
-                    </td>
-                    <td class="desc">
-                      {{ item.description }}
-                    </td>
-                  </tr>
-                  <tr valign="top">
-                    <td />
-                    <td />
-                    <td>
-                      <button
-
-                        tag="router-link"
-                        class="btn btn-link custom-btn"
-                        @click="detailClick(item)"
-                      >
-                        Lihat Detail
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+        <div v-if="listGudang[0] === undefined">
+          <div class="text-center">
+            <div class="text-xl font-semibold my-2">
+              <p>Tidak ada data untuk ditampilkan</p>
             </div>
           </div>
-          <div>
-            <b-badge
-              v-if="item.availability==='Penuh'"
-              variant="danger"
-            >
-              {{ item.availability }}
-            </b-badge>
-            <b-badge
-              v-if="item.availability==='Tersedia'"
-              variant="success"
-            >
-              {{ item.availability }}
-            </b-badge>
+        </div>
+        <div v-else>
+          <div
+            v-for="(item) in listGudang"
+            :key="item.id"
+            class="pt-1 pb-1 d-flex flex-row"
+          >
+            <div>
+              <img
+                class="img-gudang"
+                :src="item.image_warehouse? item.image_warehouse : $assets('assets/illustration/image_not_found.svg')"
+                alt=""
+              ></div>
+            <div class="w-100  pl-2 pr-2 d-flex flex-col">
+              <div class="d-flex justify-items-center flex-row">
+                <div>
+                  <b-avatar
+                    size="3rem"
+                    variant="info"
+                    :src="item.image_logo_url ? item.image_logo_url : $assets('assets/illustration/image_not_found.svg')"
+                  />
+                </div>
+                <div class="d-flex flex-col pl-1">
+                  <h5 class="title">
+                    <b>{{ item.name }}</b>
+                  </h5>
+                  <p>{{ item.join_date }}</p>
+                </div>
+              </div>
+              <div class="d-flex flex-row">
+                <table>
+                  <tbody>
+                    <tr valign="top">
+                      <td>
+                        Kota
+                      </td>
+                      <td class="td-divider">
+                        :
+                      </td>
+                      <td>
+                        {{ item.city_name }}
+                      </td>
+                    </tr>
+                    <tr valign="top">
+                      <td>
+                        Owner
+                      </td>
+                      <td class="td-divider">
+                        :
+                      </td>
+                      <td>
+                        {{ item.owner }}
+                      </td>
+                    </tr>
+                    <tr valign="top">
+                      <td>
+                        Deskripsi
+                      </td>
+                      <td class="td-divider">
+                        :
+                      </td>
+                      <td class="desc">
+                        {{ item.description }}
+                      </td>
+                    </tr>
+                    <tr valign="top">
+                      <td />
+                      <td />
+                      <td>
+                        <button
+
+                          tag="router-link"
+                          class="btn btn-link custom-btn"
+                          @click="detailClick(item)"
+                        >
+                          Lihat Detail
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <b-badge
+                v-if="item.availability==='Penuh'"
+                variant="danger"
+              >
+                {{ item.availability }}
+              </b-badge>
+              <b-badge
+                v-if="item.availability==='Tersedia'"
+                variant="success"
+              >
+                {{ item.availability }}
+              </b-badge>
+            </div>
           </div>
         </div>
         <!-- <div class="d-flex flex-column w-100 justify-content-center align-content-center">
@@ -358,24 +371,29 @@ export default {
   },
   data() {
     return {
+      status: '',
       formFilter: {
-        name: '',
+        search: '',
         start_date: '',
         end_date: '',
         city_name: '',
-        status: null,
         limits: 50,
         offset: 0,
       },
       searchProduct: '',
       loading: false,
       listGudang: [],
-      statusList: [{
-        id: 0,
-        name: 'Penuh',
+      statusList:
+      [{
+        value: null,
+        text: '',
+      },
+      {
+        value: 0,
+        text: 'Penuh',
       }, {
-        id: 1,
-        name: 'Tersedia',
+        value: 1,
+        text: 'Tersedia',
       }],
       today,
       last7,
@@ -412,15 +430,25 @@ export default {
     },
   },
   mounted() {
-    this.getGudangList()
+    const params = {
+      search: this.formFilter.search,
+      start_date: this.formFilter.start_date,
+      end_date: this.formFilter.end_date,
+      city_name: this.formFilter.city_name,
+      status: this.status,
+      limits: 50,
+      offset: 0,
+    }
+    this.getGudangList(params)
   },
   methods: {
-    getGudangList() {
+    onchangeStatus(e) {
+      console.log(e)
+    },
+    getGudangList(params) {
       this.loading = true
       this.$http_komship.get('/v1/komship/warehouse/search', {
-        params: this.params,
-      }, {
-        headers: { Authorization: `Bearer ${useJwt.getToken()}` },
+        params,
       }).then(response => {
         this.loading = false
         this.listGudang = response.data.data
@@ -434,10 +462,33 @@ export default {
     },
 
     onSubmitFilter() {
-
+      const params = {
+        start_date: this.dateRange.startDate,
+        end_date: this.dateRange.endDate,
+        city_name: this.formFilter.city_name,
+        status: this.status,
+        limits: 50,
+        offset: 0,
+      }
+      this.getGudangList(params)
     },
     onReset() {
-
+      const params = {
+        search: '',
+        start_date: '',
+        end_date: '',
+        city_name: '',
+        status: '',
+        limits: 50,
+        offset: 0,
+      }
+      this.getGudangList(params)
+    },
+    onChangeSearchProduct() {
+      const params = {
+        search: this.formFilter.search,
+      }
+      this.getGudangList(params)
     },
     formatDate(d) {
       return moment(d).format('D MMM YYYY')

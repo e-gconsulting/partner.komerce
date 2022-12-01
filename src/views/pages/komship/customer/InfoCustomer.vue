@@ -2,33 +2,37 @@
   <div>
     <h4><strong class="text-black text-2xl">Pelanggan</strong></h4>
     <BCard class="card-graphic mt-1">
-      <div class="flex justify-between mb-1">
-        <h5><strong
-          style="color: #000000"
-          class="text-xl"
-        >Grafik Pertumbuhan Pelanggan</strong></h5>
-        <BButton
-          size="sm"
-          variant="outline-primary"
-          style="padding: 0.4rem 2rem; border: 1px solid #ECE9F1 !important; color: black;"
-          class="cursor-pointer"
-        >
-          <BRow>
-            <Datepicker
-              v-model="filterChart"
-              :format="formatDateFilter"
-              minimum-view="year"
-              name="datepicker"
-              wrapper-class="border-solid border-slate-200 rounded w-auto"
-              calendar-class="w-full ml-[-22em]"
-            />
-            <b-img
-              src="@/assets/images/icons/arrow-down-light.svg"
-              class="w-3"
-            />
-          </BRow>
-        </BButton>
-      </div>
+      <b-row class="justify-content-between mb-1">
+        <b-col cols="auto">
+          <h5><strong
+            style="color: #000000"
+            class="text-xl"
+          >Grafik Pertumbuhan Pelanggan</strong></h5>
+        </b-col>
+        <b-col cols="auto">
+          <BButton
+            size="sm"
+            variant="outline-primary"
+            style="padding: 0.4rem 2rem; border: 1px solid #ECE9F1 !important; color: black;"
+            class="cursor-pointer"
+          >
+            <BRow>
+              <Datepicker
+                v-model="filterChart"
+                :format="formatDateFilter"
+                minimum-view="year"
+                name="datepicker"
+                wrapper-class="border-solid border-slate-200 rounded w-auto"
+                calendar-class="w-full ml-[-22em]"
+              />
+              <b-img
+                src="@/assets/images/icons/arrow-down-light.svg"
+                class="w-3"
+              />
+            </BRow>
+          </BButton>
+        </b-col>
+      </b-row>
       <BOverlay
         :show="isLoading"
         spinner-variant="primary"
@@ -47,75 +51,80 @@
       </BOverlay>
     </BCard>
     <BCard>
-      <div class="flex justify-between">
-        <div class="flex items-center">
+      <b-row class="justify-content-between">
+        <b-col
+          cols="auto"
+          class="flex items-center"
+        >
           <span class="text-[13px] text-black">Total kontak</span>
           <strong class="text-[24px] ml-1 font-bold text-black">{{ totalRows }}</strong>
-        </div>
-        <BRow class="mr-0">
-          <BCol
-            class="mb-[5px] text-center pl-0 pr-0"
-            md="auto"
-          >
-            <BButton
-              id="download"
-              class="mr-1"
-              style="padding: 5px 1rem"
-              variant="primary"
-              size="sm"
-              @click="getDownloadContact"
+        </b-col>
+        <b-col cols="auto">
+          <BRow class="mr-0">
+            <BCol
+              class="mb-[5px] text-center pl-0 pr-0"
+              md="auto"
             >
-              <BRow class="align-items-center justify-content-between">
-                <div class="ml-[10px] mr-[10px] flex items-center">
-                  <b-img src="@/assets/images/svg/document-download.svg" />
-                  <span class="ml-[4px]">Download Data Excel</span>
-                </div>
-              </BRow>
-            </BButton>
-          </BCol>
-          <BCol
-            class="mb-[5px] text-center pl-0 pr-0"
-            md="auto"
-          >
-            <BDropdown
-              variant="outline-danger"
-              :text="handleTextDropdown(provinceName)"
-              menu-class="h-80 overflow-auto"
-              class="dropdown mr-1"
-              size="md"
-            >
-              <BDropdownItem @click="filterDataByProvince()">
-                Semua Provinsi
-              </BDropdownItem>
-              <BDropdownItem
-                v-for="(items, index) in provinces"
-                :key="index"
-                v-model="provinceName"
-                @click="filterDataByProvince(items.province_name)"
+              <BButton
+                id="download"
+                class="mr-1"
+                style="padding: 5px 1rem"
+                variant="primary"
+                size="sm"
+                @click="getDownloadContact"
               >
-                {{ items.province_name }}
-              </BDropdownItem>
-            </BDropdown>
-          </BCol>
-          <BCol
-            class="mb-[5px] text-center pl-0 pr-0"
-            md="auto"
-          >
-            <BInputGroup class="input-group-merge">
-              <BInputGroupPrepend is-text>
-                <feather-icon icon="SearchIcon" />
-              </BInputGroupPrepend>
-              <BFormInput
-                v-model="search"
+                <BRow class="align-items-center justify-content-between">
+                  <div class="ml-[10px] mr-[10px] flex items-center">
+                    <b-img src="@/assets/images/svg/document-download.svg" />
+                    <span class="ml-[4px]">Download Data Excel</span>
+                  </div>
+                </BRow>
+              </BButton>
+            </BCol>
+            <BCol
+              class="mb-[5px] text-center pl-0 pr-0"
+              md="auto"
+            >
+              <BDropdown
+                variant="outline-danger"
+                :text="handleTextDropdown(provinceName)"
+                menu-class="h-80 overflow-auto"
+                class="dropdown mr-1"
                 size="md"
-                placeholder="Nama pelanggan"
-                style="padding: 8px 1rem"
-                @input="searchData"
-              />
-            </BInputGroup>
-          </BCol>
-        </BRow>
-      </div>
+              >
+                <BDropdownItem @click="filterDataByProvince()">
+                  Semua Provinsi
+                </BDropdownItem>
+                <BDropdownItem
+                  v-for="(items, index) in provinces"
+                  :key="index"
+                  v-model="provinceName"
+                  @click="filterDataByProvince(items.province_name)"
+                >
+                  {{ items.province_name }}
+                </BDropdownItem>
+              </BDropdown>
+            </BCol>
+            <BCol
+              class="mb-[5px] text-center pl-0 pr-0"
+              md="auto"
+            >
+              <BInputGroup class="input-group-merge">
+                <BInputGroupPrepend is-text>
+                  <feather-icon icon="SearchIcon" />
+                </BInputGroupPrepend>
+                <BFormInput
+                  v-model="search"
+                  size="md"
+                  placeholder="Nama pelanggan"
+                  style="padding: 8px 1rem"
+                  @input="searchData"
+                />
+              </BInputGroup>
+            </BCol>
+          </BRow>
+        </b-col>
+      </b-row>
       <BOverlay
         :show="isLoading"
         spinner-variant="primary"
@@ -130,11 +139,9 @@
           show-empty
           empty-text="Tidak ada data yang ditampilkan."
           responsive
-          head-variant="light"
           class="mt-1"
           selectable
           :select-mode="selectMode"
-          hover
           @row-selected="handleToDetail"
         >
           <template #head(customer_phone)="data">

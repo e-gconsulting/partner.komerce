@@ -184,14 +184,15 @@
     <!-- End Create PIN -->
     <!-- =========================================================================================== -->
 
-    <h4>
+    <h4 class="text-black">
       <strong>Pengaturan PIN</strong>
     </h4>
 
-    <b-row class="mt-3 ">
+    <b-row class="mt-3 align-items-center">
       <b-col
-        cols="8"
-        class="d-flex align-items-center ml-1"
+        cols="12"
+        md="8"
+        class="d-flex align-items-center ml-1 mb-1"
       >
 
         <b-row class="d-flex align-items-center">
@@ -201,7 +202,7 @@
             class="mr-1"
             src="@core/assets/image/icon-on-page-pin.png"
           />
-          <div class="mt-50">
+          <div class="mt-50 pr-1">
             <h4>
               <strong>PIN</strong>
             </h4>
@@ -212,7 +213,8 @@
         </b-row>
       </b-col>
       <b-col
-        cols="auto"
+        cols="12"
+        md="auto"
       >
         <b-row>
           <b-button
@@ -941,7 +943,6 @@ export default {
       this.$http_komship.put('/v1/pin/update', {
         pin: this.dataPin,
       }).then(response => {
-        console.log(response)
         this.$refs['forgot-confirm-new-pin-email'].hide()
         this.$refs['modal-success-changed-pin'].show()
       }).catch(err => {

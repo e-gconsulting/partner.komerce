@@ -34,7 +34,7 @@
           v-model="shipment"
           :options="listShipment"
           placeholder="Pilih Ekspedisi"
-          class="d-inline-block"
+          class="d-inline-block mb-1"
           style="width:205px"
           @input="getOrderDataByExpedition"
         />
@@ -248,8 +248,8 @@
       <p class="text-center font-bold text-[24px] my-3">
         Pilih Bentuk Print Label
       </p>
-      <b-row class="text-center">
-        <b-col cols="12">
+      <b-row class="justify-content-center">
+        <b-col cols="auto">
           <b-card
             class="card-print-label"
             :class="formatPrint === 'page_1' ? 'active' : ''"
@@ -266,6 +266,8 @@
               Direkomandasikan kertas A4
             </p>
           </b-card>
+        </b-col>
+        <b-col cols="auto">
           <b-card
             class="card-print-label"
             :class="formatPrint === 'page_2' ? 'active' : ''"
@@ -283,6 +285,8 @@
               Direkomandasikan kertas A4
             </p>
           </b-card>
+        </b-col>
+        <b-col cols="auto">
           <b-card
             class="card-print-label"
             :class="formatPrint === 'page_4' ? 'active' : ''"
@@ -302,6 +306,8 @@
               Direkomandasikan kertas A4
             </p>
           </b-card>
+        </b-col>
+        <b-col cols="auto">
           <b-card
             class="card-print-label"
             :class="formatPrint === 'page_5' ? 'active' : ''"
@@ -318,6 +324,8 @@
               Printer Thermal
             </p>
           </b-card>
+        </b-col>
+        <b-col cols="auto">
           <b-card
             class="card-print-label"
             :class="formatPrint === 'page_6' ? 'active' : ''"
@@ -705,5 +713,15 @@ export default {
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
+}
+
+@media (max-width: 576px) {
+  .card-print-label {
+    width: 200px!important;
+  }
+
+  .label-preview {
+    height: 200px!important;
+  }
 }
 </style>
