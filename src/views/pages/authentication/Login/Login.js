@@ -247,13 +247,17 @@ export default {
                   { action: 'manage', subject: 'Setting Ekspedisi' },
                   { action: 'manage', subject: 'Hiring' },
                   { action: 'manage', subject: 'Fitur Pendukung' },
+                  { action: 'manage', subject: 'MyApps' },
                 ]
                 // KOMPACK
                 if (userData.is_kompack === 1) {
+                  ability.push({ action: 'manage', subject: 'Gudang Kompack' })
+                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
                   ability.push({ action: 'manage', subject: 'Gudang' })
                 }
                 if (userData.is_kompack === 0) {
                   ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                  ability.push({ action: 'manage', subject: 'Gudang' })
                 }
               } else {
                 ability = [

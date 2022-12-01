@@ -94,7 +94,7 @@
             <div class="mr-1 mb-1">
               <b-img src="@/assets/images/kompoint/thropy__icon.svg" />
             </div>
-            <div v-if="gamificationCanClaim || haveGamification || gamificatinCantClaim" class="wrapper__claim__point__mobile">
+            <div v-if="gamificationCanClaim || haveGamification || gamificationCantClaim" class="wrapper__claim__point__mobile">
               <h5 class="text-black">
                 <strong>
                   50.000 KomPoints
@@ -108,7 +108,6 @@
               >
                 <span :style="claimIsActive ? 'color: white;' : 'color: #C2C2C2;'">Claim</span>
               </b-button>
-            </div>
             </div>
           </b-row>
         </b-col>
@@ -591,7 +590,7 @@
                 >
                   <div v-if="perluTindakLanjut > 0" style="background: #E31A1AB2; width: 100%;
                   height: 100%; position: absolute; left: 0%;
-                  top: 0; border-radius: 16px;" class="d-flex
+    top: 0; border-radius: 16px;" class="d-flex
                     justify-content-center
                     align-items-center
                     blink__ticket ">
@@ -1010,6 +1009,14 @@
       no-close-on-backdrop
       no-close-on-esc
     >
+      <b-overlay
+        variant="light"
+        :show="loadingLoadDataWithdraw"
+        spinner-variant="primary"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
       <a href="#" @click="closeModal()">
         <img
           src="@/assets/images/icons/close-circle.svg"
@@ -1045,26 +1052,49 @@
                 type="tel"
                 data-type="currency"
                 required
-                class="h-text-sm h-text-dark"
+                :placeholder="`minimal Rp10.000,-, maksimal Rp${formatPrice(maxValueWithdraw)},-`"
+                :class="minWithdraw || isMaxWithdraw || isCheckSaldo ? 'h-text-sm h-text-dark not__valid__nominal__wrapper' : 'h-text-sm h-text-dark'"
                 :state="nominalState"
                 @keyup="formatCurrency(false, 'nominal-input')"
                 @blur="formatCurrency(true, 'nominal-input')"
                 @input="checkWithdraw"
               />
-              <b-row v-if="isCheckSaldo" class="mt-1">
+              <b-row v-if="minWithdraw" class="mt-50">
                 <b-col cols="12">
-                  <small class="text-primary">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
+                  <small class="text-primary" style="font-weight: 500!important;">*Minimal penarikan Rp10.000</small>
+                </b-col>
+              </b-row>
+              <b-row v-if="isMaxWithdraw" class="mt-50">
+                <b-col cols="12">
+                  <small class="text-primary" style="font-weight: 500!important;">*Saldo kamu tidak mencukupi</small>
+                </b-col>
+              </b-row>
+              <b-row v-if="isCheckSaldo" class="mt-50">
+                <b-col v-if="idealBalance !== 0" cols="12">
+                  <small class="text-primary" style="font-weight: 500!important;">*maksimal penarikan Rp{{ maxWithdraw }},-</small>
                 </b-col>
                 <b-col cols="12">
-                  <small class="text-black">Sisa saldo : <strong>Rp{{ remainingSaldo }},-</strong> misal ditarik</small>
+                  <small class="text-black" style="font-weight: 500!important;">Sisa saldo : <small style="font-weight: 500!important;">Rp{{ remainingSaldo }},-</small> misal ditarik</small>
                 </b-col>
               </b-row>
             </b-form-group>
-            <b-col v-if="isCheckSaldo" cols="12">
-              <div class="p-1" style="background: #FFF2E2;">
-              <small>Maaf, kami batasi max penarikannya agar nyisa senilai <small class="text-black">total<br>ongkir</small> orderan yang udah diputuskan Retur tapi masih OTW<br>yakni <small class="text-primary"><strong>Rp. {{ nominalReturFinish }},-</strong></small> biar ga minus.
-              <br><br>
-              Di Komship, enaknya tuh klo Retur barang <small class="text-black">udah balik</small> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <small class="text-black">diclaim</small> pula.</small>
+            <b-col v-if="isCheckSaldo" cols="12" class="mb-1">
+              <div v-if="idealBalance !== 0" class="p-1 mb-2" style="background: #FFF2E2;">
+               <small style="font-weight: 500!important;">Maaf kami batasi maksimal penarikan akunmu agar nyisa saldo setidaknya sebesar <small class="text-primary" style="font-weight: 500!important;">Rp. {{ idealBalance }},-</small> buat menghindari minus.</small>
+              </div>
+              <div class="p-1" style="border-radius: 10px; border: dotted">
+                <b-row>
+                  <b-col cols="12" class="mb-2" style="text-align: justify;">
+                    <small style="font-weight: 500!important;">
+                        Angka ini didapat dari total nilai ongkir berangkat atas orderan yang sudah diputuskan RETUR namun barangnya <span class="text-black" style="font-weight: 500!important;">belum sampai</span> ke gudangmu yakni <strong class="text-primary">-Rp. {{ potencyRetur }},-</strong> total tersebut kami sandingkan dengan total <span class="text-black">potensi pendapatanmu</span> yang akan diterima dari orderan yang berstatus <span class="text-black">DIKIRIM</span> yang pengirimannya sejauh ini belum ada problem yakni <strong class="text-success">Rp. {{ potencyIncome }},-</strong>.
+                    </small>
+                  </b-col>
+                  <b-col cols="12" style="text-align: justify;">
+                    <small style="font-weight: 500!important;">
+                        Di Komship, enaknya tuh klo Retur barang <small class="text-black">udah balik</small> lagi ke gudang baru kita minuskan ongkir berangkat-nya, belum lagi bisa <small class="text-black">diclaim</small> pula.
+                    </small>
+                  </b-col>
+               </b-row>
               </div>
             </b-col>
             <div class="col-12 mb-50">
@@ -1145,7 +1175,7 @@
 
             <div class="col-12 mt-2">
               <div class="text-center">
-                <button type="submit" class="btn btn-primary d-block m-auto">
+                <button type="submit" :class="isDisableSubmitWithdraw ? 'btn btn-primary d-block m-auto cursor-not-allowed' : 'btn btn-primary d-block m-auto'" :disabled="isDisableSubmitWithdraw">
                   <b-spinner v-if="loadingConfirmationPin" small />
                   Konfirmasi
                 </button>
@@ -1193,6 +1223,7 @@
           </p>
         </div>
       </div>
+      </b-overlay>
     </b-modal>
     <!-- modal after topup -->
     <b-modal ref="modal-after-topup" hide-footer hide-header centered>
@@ -1302,18 +1333,14 @@
           </strong>
       </h4>
     </b-row>
-    <b-row class="justify-content-center text-center mx-3">
-      <span class="text-black">
-        Kamu mendapatkan 50.000 KomPoints
-        Gunakan point untuk menghemat saldo kamu dalam bertransaksi di Komship</span>
-    </b-row>
+
     <b-row class="justify-content-center text-center mx-1">
       <span class="text-black">
         Kamu mendapatkan 50.000 KomPoints
         <br>
-        Gunakan point untuk menghemat saldo kamu dalam
-        <br>
-          bertransaksi di Komship
+Gunakan point untuk menghemat saldo kamu dalam
+<br>
+bertransaksi di Komship
       </span>
     </b-row>
 

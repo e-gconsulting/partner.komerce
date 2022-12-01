@@ -534,8 +534,9 @@ export default {
       if (this.editMode === 'noHP') {
         const formData = new FormData()
         formData.append('phone_number', this.formInputEditItem)
+        formData.append('session', 'profile')
         this.fieldNewNumber = this.formInputEditItem
-        this.$http_komship.post('/v1/partner/sms/otp', formData)
+        this.$http_komship.post('/v2/partner/sms/otp', formData)
           .then(response => {
             this.$refs['modal-edit'].hide()
             this.$refs['modal-verification-edit'].show()
@@ -584,7 +585,8 @@ export default {
       this.loadingEdit = true
       const formData = new FormData()
       formData.append('otp', this.otpConfirmation)
-      this.$http_komship.post('/v1/partner/sms/otp/verification', formData)
+      formData.append('session', 'profile')
+      this.$http_komship.post('/v2/partner/sms/otp/verification', formData)
         .then(response => {
           this.submitEditNomer()
         }).catch(err => {
@@ -722,7 +724,8 @@ export default {
       this.loadingOtp = true
       const formData = new FormData()
       formData.append('phone_number', this.formInputEditItem)
-      this.$http_komship.post('/v1/partner/sms/otp', formData)
+      formData.append('session', 'profile')
+      this.$http_komship.post('/v2/partner/sms/otp', formData)
         .then(response => {
           this.$refs['modal-edit'].hide()
           this.$refs['modal-verification-edit'].show()

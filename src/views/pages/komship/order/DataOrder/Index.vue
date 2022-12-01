@@ -483,6 +483,7 @@ import ToastificationContent from '@core/components/toastification/Toastificatio
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import DateRangePicker from 'vue2-daterange-picker'
 import moment from 'moment'
+import axios from 'axios'
 import All from './List/All.vue'
 import Created from './List/Created.vue'
 import Packing from './List/Packing.vue'
@@ -646,7 +647,7 @@ export default {
       this.loading = true
       this.showProgress = true
       this.progressValue = 0
-      this.$http_komship.get(`v1/export/order/${this.profile.partner_detail.id}`, {
+      axios.get(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v1/export/order/${this.profile.partner_detail.id}`, {
         params: formData,
         onDownloadProgress: progressEvent => {
           this.message = 'Sedang mendownload file ...'

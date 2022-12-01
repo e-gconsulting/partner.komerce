@@ -13,8 +13,9 @@ import {
 import { mapState, mapGetters } from 'vuex'
 import vSelect from 'vue-select'
 import DateRangePicker from 'vue2-daterange-picker'
+import '@core/scss/vue/libs/vue-select.scss'
 import CodeInput from 'vue-verification-code-input'
-
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import PopoverInfo from '@/views/components/popover/PopoverInfo.vue'
 import {
@@ -24,7 +25,6 @@ import {
   firstDateOfMonth,
   lastDateOfMonth,
 } from '@/store/helpers'
-import { clientKeyMidtrans } from '@/libs/helpers'
 
 export default {
   components: {
@@ -71,7 +71,6 @@ export default {
         'Jumlah Penarikan',
         'Rincian',
       ],
-      clientKey: clientKeyMidtrans,
       snapToken: '31f5ef26-5121-44e9-97b5-f469039bf6cf',
       modalTitle: null,
       stepNow: 0,
@@ -85,18 +84,23 @@ export default {
       loadingSubmitTopup: false,
       fieldwidth: '',
       fieldheight: '',
-    }
-  },
-  mounted() {
-    if (!window.snapScriptLoaded) {
-      const snapScriptEl = document.createElement('script')
-      snapScriptEl.setAttribute(
-        'src',
-        'https://app.sandbox.midtrans.com/snap/snap.js',
-      )
-      snapScriptEl.setAttribute('data-client-key', this.clientKey)
-      document.head.appendChild(snapScriptEl)
-      window.snapScriptLoaded = 1
+
+      nominalPossible: false,
+      maxWithdraw: 0,
+      remainingSaldo: 0,
+      withdrawPossibilites: 0,
+      nominalReturFinish: 0,
+      isCheckSaldo: false,
+      idealBalance: 0,
+      potencyIncome: 0,
+      potencyRetur: 0,
+      loadingLoadDataWithdraw: false,
+      minWithdraw: false,
+      isMaxWithdraw: false,
+      maxValueWithdraw: 0,
+      loadingSubmitTopUp: false,
+      loadingConfirmationPin: false,
+      isDisableSubmitWithdraw: false,
     }
   },
   computed: {
@@ -181,10 +185,19 @@ export default {
     formatNumber(n) {
       return n.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     },
-    showModal() {
+    async showModal() {
       this.resetModal()
-      this.$bvModal.show('modal-keuangan')
-      this.changeAttr()
+      if (this.rekTujuanOptions.length === 0) {
+        this.$bvModal.show('modal-notif-rekTujuanBlmAda')
+        this.changeAttr()
+      } else {
+        this.loadingLoadDataWithdraw = true
+        await this.loadBank()
+        this.isCheckSaldo = false
+        await this.getMaxWithdraw()
+        this.$bvModal.show('modal-keuangan')
+        this.changeAttr()
+      }
     },
     async changeAttr() {
       const element = document.getElementsByTagName('body')[0].className
@@ -250,10 +263,14 @@ export default {
           })
           break
         case 2:
+          this.loadingConfirmationPin = true
+          this.isDisableSubmitWithdraw = true
           try {
             const response = await this.$store.dispatch('saldo/checkPin')
             const responseReq = this.$store.dispatch('saldo/withdrawalRequest')
             if (!response.data.data.is_match) {
+              this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
               throw { message: 'Maaf pin yang anda masukkan salah' } // eslint-disable-line
             }
             responseReq.then(val => {
@@ -264,6 +281,8 @@ export default {
                 this.modalTitle = null
                 this.status = data.status
               })
+              this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
             }).catch(e => {
               if (e.response.status === 400) {
                 this.$swal({
@@ -285,6 +304,8 @@ export default {
                   }
                 })
               }
+              this.loadingConfirmationPin = false
+              this.isDisableSubmitWithdraw = false
             })
 
             this.visibilityPin = 'number'
@@ -303,6 +324,8 @@ export default {
               },
               buttonsStyling: false,
             })
+            this.loadingConfirmationPin = false
+            this.isDisableSubmitWithdraw = false
           }
           break
         default:
@@ -391,6 +414,106 @@ export default {
     },
     onComplete(v) {
       this.pin = v
+    },
+    async setRekening(data) {
+      const find = await this.bankItems.find(item => item.bank_account_id === data)
+      this.rekeningDisplay = find
+    },
+    loadBank() {
+      this.$http_komship.get('v1/bank-account').then(response => {
+        const { data } = response.data
+        this.bankItems = data
+      }).catch(() => {
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Gagal',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal load data, silahkan refresh halaman!',
+            variant: 'danger',
+          },
+        }, 2000)
+      })
+    },
+    checkWithdraw: _.debounce(async function () {
+      if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) < 10000) {
+        this.minWithdraw = true
+        this.isCheckSaldo = false
+        this.isMaxWithdraw = false
+      } else {
+        this.loadingLoadDataWithdraw = true
+        this.isMaxWithdraw = false
+        this.minWithdraw = false
+        await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
+          .then(response => {
+            this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
+            this.remainingSaldo = this.formatPrice(response.data.data.balance - Number(this.nominal.replace(/[^0-9,-]+/g, '')))
+            this.idealBalance = this.formatPrice(response.data.data.ideal_balance)
+            this.potencyIncome = this.formatPrice(response.data.data.potency_income)
+            this.potencyRetur = this.formatPrice(response.data.data.potency_retur)
+            this.withdrawPossibilites = response.data.data.withdraw_possibilites
+            if (response.data.data.ideal_balance !== 0) {
+              if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.maximum_withdraw_nominal && Number(this.nominal.replace(/[^0-9,-]+/g, '')) < response.data.data.balance) {
+                this.isCheckSaldo = true
+                this.isMaxWithdraw = false
+                this.minWithdraw = false
+              }
+            }
+            if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.balance) {
+              this.isMaxWithdraw = true
+              this.minWithdraw = false
+              this.isCheckSaldo = false
+            }
+            this.loadingLoadDataWithdraw = false
+          }).catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+            this.loadingLoadDataWithdraw = false
+          })
+      }
+    }, 1000),
+    validateWithdraw() {
+      let result = false
+      if (!this.selectedRekTujuan) {
+        result = true
+      }
+      if (this.bankItems === []) {
+        result = true
+      }
+      if (this.withdrawPossibilites === 0) {
+        result = true
+      }
+      return result
+    },
+    formatPrice(value) {
+      const val = value
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    },
+    async getMaxWithdraw() {
+      this.loadingLoadDataWithdraw = true
+      await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
+        .then(response => {
+          this.maxValueWithdraw = response.data.data.maximum_withdraw_nominal
+          this.loadingLoadDataWithdraw = false
+        }).catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingLoadDataWithdraw = false
+        })
     },
   },
 }

@@ -344,6 +344,7 @@
           :formatter="formatAddressDetail"
           @keypress="validateInputAddressDetail"
           rows="4"
+          @keyup="formatText"
         />
         <b-row class="justify-content-end">
           <small class="mr-1 mt-50">
@@ -566,7 +567,7 @@
                 class="p-0"
                 style="border-radius:50%;width:25px;height:25px"
                 size="sm"
-                :disabled="data.item.quantity >= 30 || data.item.stock === 0"
+                :disabled="data.item.quantity >= 150 || data.item.stock === 0"
                 @click="setQuantity('plus',data.index)"
               >
                 <span class="font-bold text-lg">+</span>
