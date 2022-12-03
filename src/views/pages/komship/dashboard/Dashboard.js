@@ -1050,13 +1050,10 @@ export default {
             this.gamificationIsFinished = data.is_finish
             this.haveGamification = true
             if (data.is_claim === 1) this.haveGamification = false
-            if (data.is_finish === 1) {
-              this.gamificationCanClaim = true
-              this.gamificationCantClaim = false
-            }
-            if (data.is_finish === 0 && data.is_expired === true) {
-              this.gamificationIsExpired = true
-              this.gamificationCantClaim = true
+            if (data.is_expired) {
+              this.claimAvailable = false
+            } else {
+              this.claimAvailable = true
             }
             this.navigationItem.push({
               label: 'Verification',
@@ -1090,7 +1087,15 @@ export default {
             })
 
             const findItem = this.navigationItem.find(item => item.value === 0)
-            if (findItem === undefined) this.claimIsActive = true
+            if (findItem === undefined) {
+              if (data.is_finish === 1) {
+                this.claimIsActive = true
+              } else {
+                this.claimIsActive = false
+              }
+            } else {
+              this.claimIsActive = false
+            }
             this.timer()
           }
           if (response.data.code === 1001) {
