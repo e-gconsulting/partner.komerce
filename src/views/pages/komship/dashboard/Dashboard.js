@@ -1048,8 +1048,16 @@ export default {
             const { data } = response.data
             this.gamificationExpiredAt = data.expired_at
             this.gamificationIsFinished = data.is_finish
-            this.haveGamification = true
-            if (data.is_claim === 1) this.haveGamification = false
+            if (data.is_claim === 1) {
+              this.haveGamification = false
+            } else {
+              this.haveGamification = true
+            }
+            if (data.is_finish === 1) {
+              this.claimIsActive = true
+            } else {
+              this.claimIsActive = false
+            }
             if (data.is_expired) {
               this.claimAvailable = false
             } else {
