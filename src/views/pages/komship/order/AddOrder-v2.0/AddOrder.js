@@ -924,7 +924,7 @@ export default {
     getShippingList() {
       this.loadingOptionExpedition = true
       if (this.destination && this.paymentMethod && this.profile && this.address) {
-        this.$http_komship.get('v2/calculate', {
+        this.$http_komship.get('v3/calculate', {
           params: {
             cart: this.cartId.toString(),
             receiver_destination: this.destination.id,
@@ -934,7 +934,7 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          const result = await data.map(items => ({
+          const resultReguler = await data.data_regular.map(items => ({
             label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
             value: items.value,
             image_path: items.image_path,
@@ -943,7 +943,18 @@ export default {
             shipping_type: items.shipping_type,
             shipping_cost: items.shipping_cost,
           }))
-          this.listShipping = result
+          resultReguler.unshift({ label: 'Reguler' })
+          const resultTruck = await data.data_truck.map(items => ({
+            label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
+            value: items.value,
+            image_path: items.image_path,
+            shipment_name: items.shipment_name,
+            label_shipping_type: this.shippingTypeLabel(items.shipping_type),
+            shipping_type: items.shipping_type,
+            shipping_cost: items.shipping_cost,
+          }))
+          resultTruck.unshift({ label: 'Cargo' })
+          this.listShipping = resultReguler.concat(resultTruck)
           this.isShipping = true
           this.loadingOptionExpedition = false
           if (this.shipping !== null) {
@@ -1024,7 +1035,7 @@ export default {
         } else {
           grandTotalNew = null
         }
-        this.$http_komship.get('v2/calculate', {
+        this.$http_komship.get('v3/calculate', {
           params: {
             cart: this.cartId.toString(),
             receiver_destination: this.destination.id,
@@ -1126,7 +1137,8 @@ export default {
         this.loadingWrapperOtherCost = false
       }
     }, 1000),
-    calculateOnExpedition: _.debounce(function (getAdditional) {
+    calculateOnExpedition: _.debounce(function (getAdditional, dataOption) {
+      this.shipping = dataOption
       this.loadingWrapperOtherCost = true
       if (this.shipping && this.cartId.length > 0) {
         this.loadingCalculate = true
@@ -1150,7 +1162,7 @@ export default {
         } else {
           grandTotalNew = null
         }
-        this.$http_komship.get('v2/calculate', {
+        this.$http_komship.get('v3/calculate', {
           params: {
             cart: this.cartId.toString(),
             receiver_destination: this.destination.id,
@@ -1163,7 +1175,7 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          const result = data.find(items => items.value === this.shipping.value)
+          const result = this.shipping.label_shipping_type === 'Reguler' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)

@@ -703,30 +703,51 @@
           md="4"
           class="font-bold"
         >
-          <v-select
-            v-model="shipping"
-            :options="listShipping"
-            placeholder="Opsi Pengiriman"
-            @input="calculateOnExpedition(true)"
-            :loading="loadingOptionExpedition"
-            :disabled="!isShipping"
-          >
-          <template #spinner="{ loading }">
-            <div
-              v-if="loadingOptionExpedition"
-              style="border-left-color: #F95031"
-              class="vs__spinner"
+        <b-button
+          variant="flat-dark"
+          :class="!isShipping ? 'cursor-not-allowed w-full text-left' : 'w-full text-left'"
+          :style="!isShipping ? 'background-color: #f8f8f8;border: 1px solid #d8d6de;' : 'border: 1px solid #d8d6de'"
+          v-b-toggle.collapse-calculate
+          :disabled="!isShipping"
+        >
+          {{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}
+        </b-button>
+        <b-collapse id="collapse-calculate">
+          <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
+            <li
+              v-for="(option, index) in listShipping"
+              :key="index+1"
+              v-b-toggle.collapse-calculate
+              :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-primary d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
+              :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
+              @click="calculateOnExpedition(true, option)"
             >
-              The .vs__spinner class will hide the text for me.
-            </div>
-          </template>
-            <template slot="option" slot-scope="option">
-              <div class="d-flex">
-                <img :src="option.image_path" style="height: 30px!important;" />
-                <span class="my-auto" style="margin-left:5px;">{{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}</span>
-              </div>
-            </template>
-        </v-select>
+              <h4
+                v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
+                class="ml-50"
+              >
+                <strong>{{ option.label }}</strong>
+              </h4>
+              <h4
+                v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
+                class="ml-50"
+              >
+                <strong>{{ option.label }}</strong>
+              </h4>
+              <img
+                v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+                :src="option.image_path" style="height: 30px!important;"
+              />
+              <span
+                v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+                class="my-auto text-black"
+                style="margin-left:5px;"
+              >
+                {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
+              </span>
+            </li>
+          </ul>
+        </b-collapse>
         </b-col>
       </b-row>
     </section>
