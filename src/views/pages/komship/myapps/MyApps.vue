@@ -41,10 +41,9 @@
             :class="!isKompack ? 'grayscale' : ''"
           >
           <b-form-checkbox
-            v-b-tooltip.hover
+            v-model="isKompack"
             switch
             disabled
-            title="Segera Rilis"
           />
         </b-col>
       </b-row>
@@ -114,6 +113,7 @@ export default {
   methods: {
     async getProfile() {
       this.isKomship = this.profile.is_komship === 1
+      this.isKompack = this.$store.state.auth.userData.is_kompack === 1
     },
   },
 }
