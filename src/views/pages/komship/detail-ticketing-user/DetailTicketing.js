@@ -143,6 +143,10 @@ export default {
       orderStatusIsRetur: false,
 
       dataAwb: {},
+
+      reasonValue: '',
+
+      valueRating: 0,
     }
   },
   directives: {
@@ -618,34 +622,39 @@ export default {
       ]
     },
     submitRating(data) {
-      const formData = new FormData()
-      formData.append('ticket_id', this.ticketId)
-      formData.append('user_id', this.userId.partner_detail.id)
-      formData.append('rating', data)
-      this.$http_komship.post('/v1/ticket-partner/rating/store', formData)
-        .then(response => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Success',
-              icon: 'CheckIcon',
-              text: 'berhasil submit review',
-              variant: 'success',
-            },
-          }, 2000)
-          this.fetchDetailTicket()
-        })
-        .catch(err => {
-          this.$toast({
-            component: ToastificationContent,
-            props: {
-              title: 'Failure',
-              icon: 'AlertCircleIcon',
-              text: err,
-              variant: 'danger',
-            },
-          }, 2000)
-        })
+      this.valueRating = data
+      if (data > 3) {
+        const formData = new FormData()
+        formData.append('ticket_id', this.ticketId)
+        formData.append('user_id', this.userId.partner_detail.id)
+        formData.append('rating', data)
+        this.$http_komship.post('/v1/ticket-partner/rating/store', formData)
+          .then(response => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Success',
+                icon: 'CheckIcon',
+                text: 'berhasil submit review',
+                variant: 'success',
+              },
+            }, 2000)
+            this.fetchDetailTicket()
+          })
+          .catch(err => {
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Failure',
+                icon: 'AlertCircleIcon',
+                text: err,
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+      } else {
+        this.$refs['alert-submit-low-rating'].show()
+      }
     },
     applyValueTransaction(data) {
       this.transactionValue = data
@@ -1159,6 +1168,41 @@ export default {
           )
           this.loading = false
         })
+    },
+    submitReasonRating() {
+      const formData = new FormData()
+      formData.append('ticket_id', this.ticketId)
+      formData.append('user_id', this.userId.partner_detail.id)
+      formData.append('rating', this.valueRating)
+      formData.append('feedback', this.reasonValue)
+      this.$http_komship.post('/v1/ticket-partner/rating/store', formData)
+        .then(response => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'berhasil submit review',
+              variant: 'success',
+            },
+          }, 2000)
+          this.fetchDetailTicket()
+          this.$refs['alert-submit-low-rating'].hide()
+        })
+        .catch(err => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
+    closeSubmitLowRating() {
+      this.$refs['alert-submit-low-rating'].hide()
     },
   },
 }
