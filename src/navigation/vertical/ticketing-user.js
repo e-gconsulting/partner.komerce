@@ -7,7 +7,7 @@ export default [
     <path d="M12 6V11" stroke="#222222" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
     `,
-    resource: 'Produk',
+    resource: 'Kendala',
     action: 'manage',
     route: 'ticketing-user',
   },

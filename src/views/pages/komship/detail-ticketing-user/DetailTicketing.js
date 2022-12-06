@@ -623,7 +623,7 @@ export default {
     },
     submitRating(data) {
       this.valueRating = data
-      if (data > 3) {
+      if (data > 2) {
         const formData = new FormData()
         formData.append('ticket_id', this.ticketId)
         formData.append('user_id', this.userId.partner_detail.id)

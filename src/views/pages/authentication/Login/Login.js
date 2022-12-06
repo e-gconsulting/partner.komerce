@@ -248,6 +248,7 @@ export default {
                   { action: 'manage', subject: 'Hiring' },
                   { action: 'manage', subject: 'Fitur Pendukung' },
                   { action: 'manage', subject: 'MyApps' },
+                  { action: 'manage', subject: 'Kendala' },
                 ]
                 // KOMPACK
                 if (userData.is_kompack === 1) {
@@ -276,11 +277,6 @@ export default {
                 { action: 'manage', subject: 'Dashboard Komship' },
               ]
               break
-            case 'TALENT GLOBAL':
-              ability = [
-                { action: 'manage', subject: 'Dashboard Komship' },
-              ]
-              break
             default:
               break
           }
@@ -296,83 +292,62 @@ export default {
 
           if (role === 'TALENT GLOBAL') {
             const itemMember = await this.getAccessKomship(data.id)
-            // eslint-disable-next-line no-plusplus
-            for (let x = 0; x < itemMember.length; x++) {
-              if (itemMember[x].access !== 'No Data Access.') {
-                if (itemMember[x].menu_name === 'ORDER') {
-                  ability.push({ action: 'manage', subject: 'Order' })
-                  // eslint-disable-next-line no-plusplus
-                  for (let y = 0; y < itemMember[x].access.length; y++) {
-                    if (itemMember[x].access[y].access_name === 'View') {
-                      ability.push({ action: 'manage', subject: 'Data Order' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Create') {
-                      ability.push({ action: 'manage', subject: 'Tambah Order' })
-                    }
-                  }
-                }
-                if (itemMember[x].menu_name === 'PRODUCT') {
-                  ability.push({ action: 'manage', subject: 'Produk' })
-                  // eslint-disable-next-line no-plusplus
-                  for (let y = 0; y < itemMember[x].access.length; y++) {
-                    if (itemMember[x].access[y].access_name === 'View') {
-                      ability.push({ action: 'manage', subject: 'Data Produk' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Create') {
-                      ability.push({ action: 'manage', subject: 'Tambah Produk' })
-                    }
-                  }
-                }
-                if (itemMember[x].menu_name === 'PICKUP') {
-                  ability.push({ action: 'manage', subject: 'Pickup' })
-                  // eslint-disable-next-line no-plusplus
-                  for (let y = 0; y < itemMember[x].access.length; y++) {
-                    if (itemMember[x].access[y].access_name === 'Submit Pickup') {
-                      ability.push({ action: 'manage', subject: 'Ajukan Pickup' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Pickup History') {
-                      ability.push({ action: 'manage', subject: 'History Pickup' })
-                    }
-                  }
-                }
-                if (itemMember[x].menu_name === 'FINANCE') {
-                  ability.push({ action: 'manage', subject: 'Keuangan' })
-                  // eslint-disable-next-line no-plusplus
-                  for (let y = 0; y < itemMember[x].access.length; y++) {
-                    if (itemMember[x].access[y].access_name === 'Income Data') {
-                      ability.push({ action: 'manage', subject: 'Penghasilan' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Balance Data') {
-                      ability.push({ action: 'manage', subject: 'Saldo' })
-                    }
-                  }
-                }
-                if (itemMember[x].menu_name === 'SETTING') {
-                  ability.push({ action: 'manage', subject: 'Setting Komship' })
-                  // eslint-disable-next-line no-plusplus
-                  for (let y = 0; y < itemMember[x].access.length; y++) {
-                    if (itemMember[x].access[y].access_name === 'Edit Profile') {
-                      ability.push({ action: 'manage', subject: 'Setting Profile' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Account Access') {
-                      ability.push({ action: 'manage', subject: 'Setting Access Account' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Pickup Address') {
-                      ability.push({ action: 'manage', subject: 'Setting Pickup Address' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Bank Account') {
-                      ability.push({ action: 'manage', subject: 'Setting Rekening Bank' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'PIN') {
-                      ability.push({ action: 'manage', subject: 'Setting PIN' })
-                    }
-                    if (itemMember[x].access[y].access_name === 'Expedition') {
-                      ability.push({ action: 'manage', subject: 'Setting Ekspedisi' })
-                    }
-                  }
+            const menuAccess = itemMember.privilege.filter(item => item.access !== 'No Data Access.')
+            menuAccess.forEach(item => {
+              if (item.menu_name === 'PRODUCT') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
+                const findAccessManage = item.access.find(accessItem => accessItem.access_id === 2)
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Produk' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Produk' })
+                ability.push({ action: 'manage', subject: 'Produk' })
+              }
+              if (item.menu_name === 'ORDER') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
+                const findAccessManage = item.access.find(accessItem => accessItem.access_id === 2)
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Order' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Order' })
+                ability.push({ action: 'manage', subject: 'Order' })
+              }
+              if (item.menu_name === 'DASHBOARD') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
+                if (findAccessView !== undefined) ability.push({ action: 'read', subject: 'Dashboard Komship' })
+              }
+              if (item.menu_name === 'GUDANG') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
+                if (findAccessView !== undefined) {
+                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
+                  ability.push({ action: 'manage', subject: 'Gudang' })
                 }
               }
-            }
+              if (item.menu_name === 'PICKUP') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 6)
+                const findAccessManage = item.access.find(accessItem => accessItem.access_id === 5)
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'History Pickup' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Ajukan Pickup' })
+                ability.push({ action: 'manage', subject: 'Pickup' })
+              }
+              if (item.menu_name === 'FINANCE') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 7)
+                const findAccessManage = item.access.find(accessItem => accessItem.access_id === 8)
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Penghasilan' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Saldo' })
+                ability.push({ action: 'manage', subject: 'Keuangan' })
+              }
+              if (item.menu_name === 'SETTING') {
+                const findAccessBank = item.access.find(accessItem => accessItem.access_id === 12)
+                const findAccessPin = item.access.find(accessItem => accessItem.access_id === 13)
+                const findAccessExpedition = item.access.find(accessItem => accessItem.access_id === 14)
+                if (findAccessBank !== undefined) ability.push({ action: 'manage', subject: 'Setting Rekening Bank' })
+                if (findAccessPin !== undefined) ability.push({ action: 'manage', subject: 'Setting PIN' })
+                if (findAccessExpedition !== undefined) ability.push({ action: 'manage', subject: 'Setting Ekspedisi' })
+                ability.push({ action: 'manage', subject: 'Setting Komship' })
+              }
+              if (item.menu_name === 'KENDALA') {
+                const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Kendala' })
+              }
+            })
+            ability.push({ action: 'manage', subject: 'MyApps' })
           }
 
           data.ability = ability
