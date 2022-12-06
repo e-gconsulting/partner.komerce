@@ -15,6 +15,7 @@ import auth from './auth'
 import menuaccess from './menuaccess'
 import pencairan from './pencairan'
 import kompackAdmin from './kompack/admin'
+import riwayatPengajuan from './app/riwayat_pengajuan'
 
 Vue.use(Vuex)
 const ls = new SecureLS({ isCompression: false })
@@ -33,6 +34,7 @@ export default new Vuex.Store({
     menuaccess,
     pencairan,
     kompackAdmin,
+    riwayatPengajuan,
   },
   plugins: [createPersistedState({
     key: 'vuex-store',
