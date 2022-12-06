@@ -27,7 +27,7 @@ export default [
         action: 'manage',
       },
       {
-        title: 'Riwayat Pengajuans',
+        title: 'Riwayat Pengajuan',
         icon: 'None',
         resource: 'Gudang',
         route: 'riwayat-pengajuan',
