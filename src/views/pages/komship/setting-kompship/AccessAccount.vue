@@ -552,6 +552,13 @@ export default {
     },
     showModal() {
       this.editMode = false
+      this.listAccess.forEach(item => {
+        item.children.forEach(childItem => {
+          // eslint-disable-next-line no-param-reassign
+          childItem.value = false
+        })
+      })
+      this.menuStore = []
       this.$refs['modal-access-account'].show()
     },
     setAccess(data, dataChildren) {
@@ -630,6 +637,13 @@ export default {
       })
     },
     showModalAccessEdit(data) {
+      this.listAccess.forEach(item => {
+        item.children.forEach(childItem => {
+          // eslint-disable-next-line no-param-reassign
+          childItem.value = false
+        })
+      })
+      this.menuStore = []
       this.fullname = data.item.full_name
       this.password = data.item.password
       this.emailUser = data.item.email
