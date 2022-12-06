@@ -98,6 +98,7 @@
       <b-button
         variant="outline-primary"
         class="ml-3"
+        :disabled="listMember.length >= 40"
         @click="showModal"
       >
         Tambah Orang
@@ -203,7 +204,10 @@
 
             <b-col cols="12">
               <b-form-group>
-                <b-form-checkbox>
+                <b-form-checkbox
+                  v-model="allAccess"
+                  @change="setAllAccess"
+                >
                   <h5>
                     <strong>Akses Website</strong>
                   </h5>
@@ -442,12 +446,6 @@ export default {
               access: [10],
             },
             {
-              label: 'Alamat Pickup',
-              value: false,
-              access: [11],
-              isDisable: false,
-            },
-            {
               label: 'Rekening Bank',
               value: false,
               access: [12],
@@ -521,6 +519,8 @@ export default {
       menuMemberList: [],
       listAccessEdit: [],
       idUpdateAccount: null,
+
+      allAccess: false,
     }
   },
   mounted() {
@@ -765,6 +765,26 @@ export default {
             },
           }, 2000)
         })
+    },
+    setAllAccess() {
+      this.menuStore = []
+      if (this.allAccess === true) {
+        this.listAccess.forEach(item => {
+          item.children.forEach(childItem => {
+            // eslint-disable-next-line no-param-reassign
+            childItem.value = true
+            this.setAccess(item, childItem)
+          })
+        })
+      } else {
+        this.listAccess.forEach(item => {
+          item.children.forEach(childItem => {
+            // eslint-disable-next-line no-param-reassign
+            childItem.value = false
+          })
+        })
+        this.menuStore = []
+      }
     },
   },
 
