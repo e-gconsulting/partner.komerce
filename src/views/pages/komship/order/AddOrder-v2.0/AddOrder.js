@@ -1242,6 +1242,12 @@ export default {
       if (value === 'GOKIL') {
         return 'Cargo'
       }
+      if (value === 'JTR18') {
+        return 'Trucking'
+      }
+      if (value === 'Idtruck') {
+        return 'ID Truck'
+      }
       return value
     },
     checkValidation() {
