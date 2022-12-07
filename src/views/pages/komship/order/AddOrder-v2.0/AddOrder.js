@@ -154,6 +154,7 @@ export default {
 
       soldBy: null,
       soldByList: [],
+      collapseCalculate: false,
     }
   },
   computed: {
@@ -965,7 +966,7 @@ export default {
               this.shipping = null
             }
           }
-          this.$root.$emit('bv::toggle::collapse', 'collapse-calculate')
+          this.collapseCalculate = true
         }).catch(err => {
           if (err.response.data.message === 'Please Complete Your Address.') {
             this.$refs['modal-check-address-pickup'].show()
@@ -1139,6 +1140,7 @@ export default {
       }
     }, 1000),
     calculateOnExpedition: _.debounce(function (getAdditional, dataOption) {
+      this.collapseCalculate = false
       this.shipping = dataOption
       this.loadingWrapperOtherCost = true
       if (this.shipping && this.cartId.length > 0) {
