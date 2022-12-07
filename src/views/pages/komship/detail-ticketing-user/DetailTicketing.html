@@ -281,7 +281,6 @@
             </strong>
         </h3>
     </b-row>
-
     <b-overlay :show="loadingDataChat" spinner-variant="primary" variant="light" blur="0" opacity=".5">
         <b-row class="mb-2">
             <b-col cols="12" md="8" class="mb-1">
@@ -294,9 +293,31 @@
                         <b-row class="mx-50" v-for="(messageItem, index) in messages" :key="index+1">
                             <b-col v-if="messageItem.type === 'Mitra'" cols="1">
                                 <b-img v-if="messageItem.image_path !== '' || messageItem.image_path !== null"
-                                    :src="messageItem.image_path" />
+                                    :src="messageItem.image_path" :id="`popover-rating-${index}`" />
                                 <b-img v-if="messageItem.image_path === '' || messageItem.image_path === null"
-                                    src="@/assets/images/avatars/image-null.png" />
+                                    src="@/assets/images/avatars/image-null.png" :id="`popover-rating-${index}`" />
+                                    <b-row class="align-items-center justify-content-center mt-[5px]">
+                                        <svg
+                                            width="17" viewBox="0 0 29 27" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            style="margin-top: -4px!important;">
+                                            <path
+                                                d="M14.5 0L17.7555 10.0193L28.2903 10.0193L19.7674 16.2115L23.0229 26.2307L14.5 20.0385L5.97711 26.2307L9.23257 16.2115L0.709681 10.0193L11.2445 10.0193L14.5 0Z"
+                                                fill="#FBBC05" />
+                                        </svg>
+                                        <span v-if="ratingUser !== null" class="text-black">{{ messageItem.rating_user.rating }}</span>
+                                        <span v-if="ratingUser === null" class="text-black">0</span>
+                                    </b-row>
+                                    <b-popover  
+                                        triggers="hover"
+                                        :target="`popover-rating-${index}`"
+                                        placement="bottomright"
+                                        variant="dark"
+                                        class="bg-dark"
+                                        >
+                                            <small v-if="ratingUser !== null">{{ messageItem.name }} - {{ messageItem.rating_user.rating }} dari {{ messageItem.rating_user.total_votes }} votes</small>
+                                            <small v-if="ratingUser === null">{{ messageItem.name }} - 0 dari 0 votes</small>
+                                    </b-popover>
                             </b-col>
                             <b-col v-if="messageItem.type !== 'Shipping' && messageItem.type !== 'Change Status'" :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''" md="11">
                                 <div v-if="messageItem.message !== null && messageItem.message !== ''">
@@ -941,6 +962,71 @@
             <b-button variant="primary" block @click="handleBackPopupClaimRetur">
                 Kembali
             </b-button>
+        </b-row>
+    </b-modal>
+
+    <b-modal
+        ref="alert-submit-low-rating"
+        hide-header
+        hide-footer
+        centered
+    >
+        <b-row class="justify-content-center my-2">
+            <h3 class="text-black">
+                <strong>
+                    Isian Feedback
+                </strong>
+            </h3>
+        </b-row>
+
+        <b-row class="justify-content-center text-center mb-2">
+            <b-col cols="11">
+                <span class="text-black">
+                    Hai Celine, vote kamu terlalu rendah. Berikan alasan kamu kenapa memilih 2 bintang?
+                </span>
+            </b-col>
+        </b-row>
+
+        <b-row class="justify-content-center mb-1">
+            <b-col
+                cols="12"
+            >
+                <span>
+                    <strong>
+                        Alasan / Masukan
+                    </strong>
+                </span>
+            </b-col>
+            <b-col cols="12">
+                <b-form-textarea
+                    v-model="reasonValue"
+                    rows="4"
+                    placeholder="Kamu wajib memberi alasan ketika mem-voting 2 bintang"
+                />
+            </b-col>
+        </b-row>
+
+        <b-row>
+            <b-col cols="6">
+                <b-button
+                    variant="outline-primary"
+                    block
+                    @click="closeSubmitLowRating"
+                >
+                    Batalkan
+                </b-button>
+            </b-col>
+            <b-col cols="6">
+                <b-button
+                    :variant="reasonValue !== '' ? 'primary' : 'dark'"
+                    block
+                    :class="reasonValue === '' ? 'cursor-not-allowed' : ''"
+                    :disabled="reasonValue === ''"
+                    @click="submitReasonRating"
+                >
+                    Submit
+                </b-button>
+            </b-col>
         </b-row>
     </b-modal>
 </b-card>

@@ -91,3 +91,8 @@
 .popover.b-popover.bs-popover-top .arrow::after, .popover.b-popover.bs-popover-auto[x-placement^=top] .arrow::after {
     border-top-color: #F95031;
 }
+
+.b-popover-dark .popover-body {
+    background:#24292F;
+    color: white;
+}

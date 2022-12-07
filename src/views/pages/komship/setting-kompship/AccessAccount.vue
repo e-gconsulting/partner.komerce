@@ -36,7 +36,7 @@
             empty-text="Tidak ada data untuk ditampilkan."
             :show-empty="!loading"
             :fields="fields"
-            :items="tableProvider"
+            :items="listMember"
             :busy.sync="loading"
           >
 
@@ -73,7 +73,7 @@
                   type="submit"
                   variant="primary"
                   class="mr-1"
-                  @click="editAccess(data)"
+                  @click="showModalAccessEdit(data)"
                 >
                   Edit
                 </b-button>
@@ -98,32 +98,36 @@
       <b-button
         variant="outline-primary"
         class="ml-3"
-        @click="showModalAddAccount"
+        :disabled="listMember.length >= 40"
+        @click="showModal"
       >
         Tambah Orang
       </b-button>
     </b-row>
 
     <b-modal
-      ref="modal-add-account"
+      ref="modal-access-account"
       scrollable
-      :title="editMode ? 'Edit Akses' : 'Tambah Orang'"
+      :title="editMode ? 'Edit Akses Akun' : 'Tambah Akses Akun'"
       ok-only
       ok-title="Simpan"
+      no-close-on-backdrop
+      no-close-on-esc
       cancel-variant="outline-primary"
+      @hide="defaultAccess"
     >
       <validation-observer ref="formRules">
         <b-form>
           <b-row>
 
             <b-col
-              v-if="!editMode"
               cols="10"
             >
               <b-form-group
                 label="Nama"
               >
                 <validation-provider
+                  v-if="!editMode"
                   #default="{errors}"
                   name="Nama"
                   rules="required"
@@ -134,17 +138,22 @@
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
+                <b-form-input
+                  v-else
+                  v-model="fullname"
+                  disabled
+                />
               </b-form-group>
             </b-col>
 
             <b-col
-              v-if="!editMode"
               cols="10"
             >
               <b-form-group
                 label="Email"
               >
                 <validation-provider
+                  v-if="!editMode"
                   #default="{errors}"
                   name="Email"
                   rules="required|email"
@@ -155,6 +164,11 @@
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
+                <b-form-input
+                  v-else
+                  v-model="emailUser"
+                  disabled
+                />
               </b-form-group>
             </b-col>
 
@@ -166,6 +180,7 @@
                 label="Password"
               >
                 <validation-provider
+                  v-if="!editMode"
                   #default="{errors}"
                   name="Password"
                   rules="required"
@@ -176,11 +191,15 @@
                   />
                   <small class="text-primary">{{ errors[0] }}</small>
                 </validation-provider>
+                <b-form-input
+                  v-else
+                  v-model="password"
+                  disabled
+                />
               </b-form-group>
             </b-col>
 
             <b-col
-              v-if="!editMode"
               cols="12"
             >
               <hr>
@@ -189,230 +208,45 @@
             <b-col cols="12">
               <b-form-group>
                 <b-form-checkbox
-                  v-model="allAccessApps"
-                  @change="cekAllApps"
-                >
-                  <h5>
-                    <strong>Akses Aplikasi</strong>
-                  </h5>
-                </b-form-checkbox>
-
-                <b-col
-                  cols="12"
-                  class="mt-1"
-                >
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="addOrderApps"
-                      @change="cekAkses"
-                    >
-                      Tambah Order
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="dataOrderApps"
-                      @change="cekAkses"
-                    >
-                      Data Order
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-              </b-form-group>
-            </b-col>
-
-            <b-col cols="12">
-              <hr>
-            </b-col>
-
-            <b-col cols="12">
-              <b-form-group>
-                <b-form-checkbox
-                  v-model="allAccessWeb"
-                  @change="cekAllWeb"
+                  v-model="allAccess"
+                  @change="setAllAccess"
                 >
                   <h5>
                     <strong>Akses Website</strong>
                   </h5>
                 </b-form-checkbox>
 
-                <p class="mt-50 ml-1">
-                  <strong>Produk</strong>
-                </p>
+                <b-row
+                  v-for="(item, index) in listAccess"
+                  :key="index+1"
+                  class="ml-2"
+                >
+                  <p class="mt-50 ml-1">
+                    <strong>{{ item.label }}</strong>
+                  </p>
 
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="addProdukWeb"
-                      @change="cekAkses"
-                    >
-                      Tambah Produk
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="dataProdukWeb"
-                      @change="cekAkses"
-                    >
-                      Data Produk
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <p class="mt-50 ml-1">
-                  <strong>Orderan</strong>
-                </p>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="addOrderWeb"
-                      @change="cekAkses"
-                    >
-                      Tambah Order
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="dataOrderWeb"
-                      @change="cekAkses"
-                    >
-                      Data Order
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <p class="mt-50 ml-1">
-                  <strong>Pickup</strong>
-                </p>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="ajukanPickup"
-                      @change="cekAkses"
-                    >
-                      Ajukan Pickup
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="historyPickup"
-                      @change="cekAkses"
-                    >
-                      Riwayat Pickup
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <p class="mt-50 ml-1">
-                  <strong>Keuangan</strong>
-                </p>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="penghasilan"
-                      @change="cekAkses"
-                    >
-                      Penghasilan
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="saldo"
-                      @change="cekAkses"
-                    >
-                      Saldo
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <p class="mt-50 ml-1">
-                  <strong>Pengaturan</strong>
-                </p>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="settingProfile"
-                      @change="cekAkses"
-                    >
-                      Edit Profile
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="accessAccount"
-                      @change="cekAkses"
-                    >
-                      Akses Akun
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="addressPickup"
-                      @change="cekAkses"
-                    >
-                      Alamat Pickup
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="settingRekening"
-                      @change="cekAkses"
-                    >
-                      Rekening Bank
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="settingPin"
-                      @change="cekAkses"
-                    >
-                      PIN
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
-
-                <b-col cols="12">
-                  <b-form-group>
-                    <b-form-checkbox
-                      v-model="settingEkspedisi"
-                      @change="cekAkses"
-                    >
-                      Ekspedisi
-                    </b-form-checkbox>
-                  </b-form-group>
-                </b-col>
+                  <b-col
+                    v-for="(children, indexChildren) in item.children"
+                    :key="indexChildren+1"
+                    cols="12"
+                  >
+                    <b-form-group>
+                      <b-form-checkbox
+                        v-if="children.isDisable"
+                        :disabled="children.isDisable"
+                      >
+                        {{ children.label }}
+                      </b-form-checkbox>
+                      <b-form-checkbox
+                        v-else
+                        v-model="children.value"
+                        @change="setAccess(item, children)"
+                      >
+                        {{ children.label }}
+                      </b-form-checkbox>
+                    </b-form-group>
+                  </b-col>
+                </b-row>
 
               </b-form-group>
             </b-col>
@@ -429,8 +263,9 @@
             <b-button
               v-if="!editMode"
               variant="primary"
-              :disabled="checkButtonIsActive()"
-              @click="addAccount"
+              :class="loadingSubmit ? 'cursor-not-allowed' : ''"
+              :disabled="loadingSubmit"
+              @click="submitAccount"
             >
               <b-spinner
                 v-if="loadingSubmit"
@@ -442,8 +277,9 @@
             <b-button
               v-else
               variant="primary"
-              :disabled="checkButtonIsActive()"
-              @click="submitEditAccess"
+              :class="loadingSubmit ? 'cursor-not-allowed' : ''"
+              :disabled="loadingSubmit"
+              @click="submitAccountUpdate"
             >
               <b-spinner
                 v-if="loadingSubmit"
@@ -507,43 +343,146 @@ export default {
       loading: false,
       loadingSubmit: false,
 
-      allAccessApps: false,
-      allAccessWeb: false,
-
-      addOrderApps: false,
-      dataOrderApps: false,
-
-      addProdukWeb: false,
-      dataProdukWeb: false,
-      addOrderWeb: false,
-      dataOrderWeb: false,
-      ajukanPickup: false,
-      historyPickup: false,
-      penghasilan: false,
-      saldo: false,
-      settingProfile: false,
-      accessAccount: false,
-      addressPickup: false,
-      settingRekening: false,
-      settingPin: false,
-      settingEkspedisi: false,
-
-      // Store
-      accessView: 1,
-      accessCreate: 2,
-      accessEdit: 3,
-      accessDelete: 4,
-      accessSubmitPickup: 5,
-      accessPickupHistory: 6,
-      accessIncomeData: 7,
-      accessBalanceData: 8,
-      accessEditProfile: 9,
-      accessHakAccount: 10,
-      accessPickupAddress: 11,
-      accessBankAccount: 12,
-      accessPin: 13,
-      accessEkspedisi: 14,
-      menuPosition: [],
+      listAccess: [
+        {
+          label: 'Dashboard',
+          resLabel: 'DASHBOARD',
+          children: [{
+            value: false,
+            label: 'Dashboard',
+            access: [1, 2, 3, 4],
+            isDisable: false,
+          }],
+        },
+        {
+          label: 'Produk',
+          resLabel: 'PRODUCT',
+          children: [
+            {
+              label: 'Tambah Produk',
+              value: false,
+              access: [2, 3, 4],
+              isDisable: false,
+            },
+            {
+              label: 'Data Produk',
+              value: false,
+              access: [1],
+              isDisable: false,
+            },
+          ],
+        },
+        {
+          label: 'Gudang',
+          resLabel: 'GUDANG',
+          children: [{
+            value: false,
+            label: 'Gudangku',
+            access: [1, 2, 3, 4],
+            isDisable: false,
+          }],
+        },
+        {
+          label: 'Orderan',
+          resLabel: 'ORDER',
+          children: [
+            {
+              label: 'Tambah Order',
+              value: false,
+              access: [2, 3, 4],
+              isDisable: false,
+            },
+            {
+              label: 'Data Order',
+              value: false,
+              access: [1],
+              isDisable: false,
+            },
+          ],
+        },
+        {
+          label: 'Pickup',
+          resLabel: 'PICKUP',
+          children: [
+            {
+              label: 'Ajukan Pickup',
+              value: false,
+              access: [5],
+              isDisable: false,
+            },
+            {
+              label: 'Riwayat Pickup',
+              value: false,
+              access: [6],
+              isDisable: false,
+            },
+          ],
+        },
+        {
+          label: 'Keuangan',
+          resLabel: 'FINANCE',
+          children: [
+            {
+              label: 'Penghasilan',
+              value: false,
+              access: [7],
+              isDisable: false,
+            },
+            {
+              label: 'Saldo',
+              value: false,
+              access: [8],
+              isDisable: false,
+            },
+          ],
+        },
+        {
+          label: 'Pengaturan',
+          resLabel: 'SETTING',
+          children: [
+            {
+              label: 'Edit Profile',
+              value: false,
+              isDisable: true,
+              access: [9],
+            },
+            {
+              label: 'Akses Akun',
+              value: false,
+              isDisable: true,
+              access: [10],
+            },
+            {
+              label: 'Rekening Bank',
+              value: false,
+              access: [12],
+              isDisable: false,
+            },
+            {
+              label: 'PIN',
+              value: false,
+              access: [13],
+              isDisable: false,
+            },
+            {
+              label: 'Ekspedisi',
+              value: false,
+              access: [14],
+              isDisable: false,
+            },
+          ],
+        },
+        {
+          label: 'Kendala',
+          resLabel: 'KENDALA',
+          children: [{
+            value: false,
+            label: 'Kendala',
+            access: [1, 2, 3, 4],
+            isDisable: false,
+          }],
+        },
+      ],
 
       fields: [
         {
@@ -566,16 +505,11 @@ export default {
         },
       ],
 
-      items: [],
-
       name: '',
       username: '',
       password: '',
       fullname: '',
       emailUser: '',
-      noPartner: '',
-      menu: [],
-
       partnerId: JSON.parse(localStorage.getItem('userData')),
 
       editMode: false,
@@ -585,21 +519,33 @@ export default {
       // Validation
       required,
       email,
+
+      maxAccessAccount: false,
+      listMember: [],
+      menuStore: [],
+      menuMemberList: [],
+      listAccessEdit: [],
+      idUpdateAccount: null,
+
+      allAccess: false,
     }
   },
   mounted() {
-    this.getMenuKomship()
+    this.fetchAccessList()
+    this.fetchMemberData()
   },
   methods: {
-    refreshTable() {
-      this.$refs.table.refresh()
+    fetchAccessList() {
+      this.$http.get('/user/partner/get-menu-member')
+        .then(response => {
+          this.menuMemberList = response.data.data
+        })
     },
-    tableProvider() {
-      return this.$http.get(`/user/partner/get-komship-member/${this.partnerId.partner_detail.id}`).then(response => {
+    fetchMemberData() {
+      this.$http.get(`/user/partner/get-komship-member/${this.partnerId.partner_detail.id}`).then(response => {
         const { data } = response.data
-        return data
+        this.listMember = data
       }).catch(() => {
-        this.loadingSubmit = false
         this.$toast({
           component: ToastificationContent,
           props: {
@@ -611,854 +557,147 @@ export default {
         }, 2000)
       })
     },
-    addAccount() {
+    showModal() {
+      this.editMode = false
+      this.listAccess.forEach(item => {
+        item.children.forEach(childItem => {
+          // eslint-disable-next-line no-param-reassign
+          childItem.value = false
+        })
+      })
+      this.menuStore = []
+      this.emailUser = ''
+      this.password = ''
+      this.fullname = ''
+      this.$refs['modal-access-account'].show()
+    },
+    setAccess(data, dataChildren) {
+      const findMenu = this.menuMemberList.find(item => item.name === data.resLabel)
+      if (dataChildren.value === true) {
+        if (findMenu !== undefined) {
+          dataChildren.access.forEach(childItem => {
+            this.menuStore.push({
+              menu_position_id: findMenu.menu_position[0].id,
+              menu_access_id: childItem,
+            })
+          })
+        }
+      } else {
+        // eslint-disable-next-line no-plusplus
+        for (let x = 0; x < dataChildren.access.length; x++) {
+          const findMenuStoreIndex = this.menuStore.findIndex(indexItem => indexItem.menu_position_id === findMenu.menu_position[0].id && dataChildren.access[x] === indexItem.menu_access_id)
+          this.menuStore.splice(findMenuStoreIndex, 1)
+        }
+      }
+    },
+    submitAccount() {
+      this.loadingSubmit = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
-          // Apps
-          if (this.allAccessApps === true || this.addOrderApps === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'Access Application') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-            }
-          }
-          if (this.dataOrderApps === true && this.allAccessApps === false && this.addOrderApps === false) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'Access Application') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-              }
-            }
-          }
-
-          // Web
-          if (this.allAccessWeb === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PRODUCT') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-              if (this.menuPosition[i].name === 'ORDER') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-              if (this.menuPosition[i].name === 'PICKUP') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessSubmitPickup,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupHistory,
-                })
-              }
-              if (this.menuPosition[i].name === 'FINANCE') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessIncomeData,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBalanceData,
-                })
-              }
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEditProfile,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessHakAccount,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupAddress,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBankAccount,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPin,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEkspedisi,
-                })
-              }
-            }
-          }
-
-          if (this.addProdukWeb === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PRODUCT') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-            }
-          }
-
-          if (this.dataProdukWeb === true && this.addProdukWeb === false) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PRODUCT') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-              }
-            }
-          }
-
-          if (this.addOrderWeb === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'ORDER') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-            }
-          }
-
-          if (this.dataOrderWeb === true && this.addOrderWeb === false) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'ORDER') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-              }
-            }
-          }
-
-          if (this.ajukanPickup === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PICKUP') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessSubmitPickup,
-                })
-              }
-            }
-          }
-
-          if (this.historyPickup === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PICKUP') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupHistory,
-                })
-              }
-            }
-          }
-
-          if (this.penghasilan === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'FINANCE') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessIncomeData,
-                })
-              }
-            }
-          }
-
-          if (this.saldo === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'FINANCE') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBalanceData,
-                })
-              }
-            }
-          }
-
-          if (this.settingProfile === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEditProfile,
-                })
-              }
-            }
-          }
-
-          if (this.accessAccount === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessHakAccount,
-                })
-              }
-            }
-          }
-
-          if (this.addressPickup === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupAddress,
-                })
-              }
-            }
-          }
-
-          if (this.settingRekening === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBankAccount,
-                })
-              }
-            }
-          }
-
-          if (this.settingPin === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPin,
-                })
-              }
-            }
-          }
-
-          if (this.settingEkspedisi === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEkspedisi,
-                })
-              }
-            }
-          }
-
-          this.loadingSubmit = true
           this.$http.post('/user/partner/create-account', {
+            email: this.emailUser,
             password: this.password,
             full_name: this.fullname,
-            email: this.emailUser,
-            menu: this.menu,
             partner_id: this.partnerId.partner_detail.id,
-          }).then(response => {
-            const { data } = response
-            if (data.code === 400) {
+            menu: this.menuStore,
+          })
+            .then(response => {
+              const { data } = response
+              if (data.code === 400) {
+                this.loadingSubmit = false
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Failed',
+                    icon: 'AlertCircleIcon',
+                    text: 'Username or Email has already taken!',
+                    variant: 'danger',
+                  },
+                }, 2000)
+              } else {
+                this.$toast({
+                  component: ToastificationContent,
+                  props: {
+                    title: 'Success',
+                    icon: 'CheckIcon',
+                    text: 'Success menambahkan akun',
+                    variant: 'success',
+                  },
+                }, 2000)
+                this.loadingSubmit = false
+                this.$refs['modal-access-account'].hide()
+                this.fetchMemberData()
+              }
               this.loadingSubmit = false
+            }).catch(err => {
               this.$toast({
                 component: ToastificationContent,
                 props: {
-                  title: 'Failed',
+                  title: 'Failure',
                   icon: 'AlertCircleIcon',
-                  text: 'Username or Email has already taken!',
+                  text: err,
                   variant: 'danger',
                 },
               }, 2000)
-            } else {
-              this.$toast({
-                component: ToastificationContent,
-                props: {
-                  title: 'Success',
-                  icon: 'CheckIcon',
-                  text: 'Success menambahkan akun',
-                  variant: 'success',
-                },
-              }, 2000)
               this.loadingSubmit = false
-              this.$refs['modal-add-account'].hide()
-              this.refreshTable()
-            }
-          }).catch(() => {
-            this.loadingSubmit = false
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal menambahkan akses orang, silahkan coba lagi',
-                variant: 'danger',
-              },
-            }, 2000)
-          })
+            })
         } else {
           this.loadingSubmit = false
         }
       })
     },
-    editAccess(data) {
-      this.allAccessApps = false
-      this.allAccessWeb = false
-      this.addOrderApps = false
-      this.dataOrderApps = false
-      this.addProdukWeb = false
-      this.dataProdukWeb = false
-      this.addOrderWeb = false
-      this.dataOrderWeb = false
-      this.ajukanPickup = false
-      this.historyPickup = false
-      this.penghasilan = false
-      this.saldo = false
-      this.settingProfile = false
-      this.accessAccount = false
-      this.addressPickup = false
-      this.settingRekening = false
-      this.settingPin = false
-      this.settingEkspedisi = false
-      this.fullname = ''
-      this.emailUser = ''
-      this.password = ''
-      this.menuAksesEdit = []
-      this.$refs['modal-add-account'].show()
+    showModalAccessEdit(data) {
+      this.menuStore = []
+      this.fullname = data.item.full_name
+      this.password = data.item.password
+      this.emailUser = data.item.email
       this.editMode = true
-      this.idEdit = data.item.user_id
+      this.$refs['modal-access-account'].show()
+      this.idUpdateAccount = data.item.user_id
+      this.listAccessEdit = []
       const params = {
         user_id: data.item.user_id,
       }
       this.$http.get('user/partner/get-menu-komship-member', {
         params,
       }).then(response => {
-        response.data.data.forEach(this.arrayMenuKomship)
-        // eslint-disable-next-line no-plusplus
-        for (let x = 0; x < this.menuAksesEdit.length; x++) {
-          if (this.menuAksesEdit[x].menu_name === 'Access Application') {
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessView) {
-                this.dataOrderApps = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessCreate || this.menuAksesEdit[x].access[y].access_id === this.accessEdit || this.menuAksesEdit[x].access[y].access_id === this.accessDelete) {
-                this.addOrderApps = true
-              }
+        const filterAccess = response.data.data.privilege.filter(item => item.access !== 'No Data Access.')
+        const findListAccess = this.listAccess.map(item => ({
+          filter: filterAccess.find(filterItem => item.resLabel === filterItem.menu_name),
+        }))
+        findListAccess.forEach(item => {
+          if (item.filter !== undefined) this.listAccessEdit.push(item.filter)
+        })
+        this.listAccessEdit.forEach(item => {
+          item.access.forEach(filAccessItem => {
+            this.listAccess.forEach(listItem => {
+              listItem.children.forEach(childItem => {
+                if (listItem.resLabel === item.menu_name) {
+                  if (childItem.access.includes(filAccessItem.access_id)) {
+                    // eslint-disable-next-line no-param-reassign
+                    childItem.value = true
+                  }
+                }
+              })
+            })
+            const checkMenuStore = this.menuStore.find(itemStore => itemStore.menu_position_id === filAccessItem.menu_position_id && itemStore.menu_access_id === filAccessItem.access_id)
+            if (checkMenuStore === undefined) {
+              this.menuStore.push({
+                menu_position_id: filAccessItem.menu_position_id,
+                menu_access_id: filAccessItem.access_id,
+              })
             }
-          }
-          if (this.menuAksesEdit[x].menu_name === 'PRODUCT') {
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessView) {
-                this.dataProdukWeb = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessCreate || this.menuAksesEdit[x].access[y].access_id === this.accessEdit || this.menuAksesEdit[x].access[y].access_id === this.accessDelete) {
-                this.addProdukWeb = true
-              }
-            }
-          }
-          if (this.menuAksesEdit[x].menu_name === 'ORDER') {
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessView) {
-                this.dataOrderWeb = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessCreate || this.menuAksesEdit[x].access[y].access_id === this.accessEdit || this.menuAksesEdit[x].access[y].access_id === this.accessDelete) {
-                this.addOrderWeb = true
-              }
-            }
-          }
-          if (this.menuAksesEdit[x].menu_name === 'PICKUP') {
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessSubmitPickup) {
-                this.ajukanPickup = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessPickupHistory) {
-                this.historyPickup = true
-              }
-            }
-          }
-          if (this.menuAksesEdit[x].menu_name === 'FINANCE') {
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessIncomeData) {
-                this.penghasilan = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessBalanceData) {
-                this.saldo = true
-              }
-            }
-          }
-          if (this.menuAksesEdit[x].menu_name === 'SETTING') {
-            // eslint-disable-next-line no-plusplus
-            for (let y = 0; y < this.menuAksesEdit[x].access.length; y++) {
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessEditProfile) {
-                this.settingProfile = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessHakAccount) {
-                this.accessAccount = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessPickupAddress) {
-                this.addressPickup = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessBankAccount) {
-                this.settingRekening = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessPin) {
-                this.settingPin = true
-              }
-              if (this.menuAksesEdit[x].access[y].access_id === this.accessEkspedisi) {
-                this.settingEkspedisi = true
-              }
-            }
-          }
-          if (this.addProdukWeb === true
-              && this.dataProdukWeb === true
-              && this.addOrderWeb === true
-              && this.dataOrderWeb === true
-              && this.ajukanPickup === true
-              && this.historyPickup === true
-              && this.penghasilan === true
-              && this.saldo === true
-              && this.settingProfile === true
-              && this.accessAccount === true
-              && this.addressPickup === true
-              && this.settingRekening === true
-              && this.settingPin === true
-              && this.settingEkspedisi === true) {
-            this.allAccessWeb = true
-          }
-          if (this.addOrderApps === true && this.dataOrderApps === true) {
-            this.allAccessApps = true
-          }
-        }
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal edit alamat, silahkan coba lagi',
-            variant: 'danger',
-          },
+          })
         })
       })
     },
-    arrayMenuKomship(data) {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < this.menuPosition.length; i++) {
-        if (data.menu_name === this.menuPosition[i].name && data.access !== 'No Data Access.') {
-          this.menuAksesEdit.push(data)
-        }
-      }
-    },
-    submitEditAccess() {
-      this.menu = []
+    submitAccountUpdate() {
+      this.loadingSubmit = true
       this.$refs.formRules.validate().then(success => {
         if (success) {
-          // Apps
-          if (this.allAccessApps === true || this.addOrderApps === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'Access Application') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-            }
-          } else if (this.dataOrderApps === true && this.allAccessApps === false && this.addOrderApps === false) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'Access Application') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-              }
-            }
-          }
-
-          // Web
-          if (this.allAccessWeb === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PRODUCT') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-              if (this.menuPosition[i].name === 'ORDER') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-              if (this.menuPosition[i].name === 'PICKUP') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessSubmitPickup,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupHistory,
-                })
-              }
-              if (this.menuPosition[i].name === 'FINANCE') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessIncomeData,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBalanceData,
-                })
-              }
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEditProfile,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessHakAccount,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupAddress,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBankAccount,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPin,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEkspedisi,
-                })
-              }
-            }
-          }
-
-          if (this.addProdukWeb === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PRODUCT') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-            }
-          }
-
-          if (this.dataProdukWeb === true && this.addProdukWeb === false) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PRODUCT') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-              }
-            }
-          }
-
-          if (this.addOrderWeb === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'ORDER') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessCreate,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEdit,
-                })
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessDelete,
-                })
-              }
-            }
-          }
-
-          if (this.dataOrderWeb === true && this.addOrderWeb === false) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'ORDER') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessView,
-                })
-              }
-            }
-          }
-
-          if (this.ajukanPickup === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PICKUP') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessSubmitPickup,
-                })
-              }
-            }
-          }
-
-          if (this.historyPickup === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'PICKUP') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupHistory,
-                })
-              }
-            }
-          }
-
-          if (this.penghasilan === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'FINANCE') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessIncomeData,
-                })
-              }
-            }
-          }
-
-          if (this.saldo === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'FINANCE') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBalanceData,
-                })
-              }
-            }
-          }
-
-          if (this.settingProfile === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEditProfile,
-                })
-              }
-            }
-          }
-
-          if (this.accessAccount === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessHakAccount,
-                })
-              }
-            }
-          }
-
-          if (this.addressPickup === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPickupAddress,
-                })
-              }
-            }
-          }
-
-          if (this.settingRekening === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessBankAccount,
-                })
-              }
-            }
-          }
-
-          if (this.settingPin === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessPin,
-                })
-              }
-            }
-          }
-
-          if (this.settingEkspedisi === true) {
-            // eslint-disable-next-line no-plusplus
-            for (let i = 0; i < this.menuPosition.length; i++) {
-              if (this.menuPosition[i].name === 'SETTING') {
-                this.menu.push({
-                  menu_position_id: this.menuPosition[i].menu_position[0].id,
-                  menu_access_id: this.accessEkspedisi,
-                })
-              }
-            }
-          }
-
-          this.loadingSubmit = true
           this.$http.put('/user/partner/update-account', {
-            user_id: this.idEdit,
-            menu: this.menu,
+            user_id: this.idUpdateAccount,
+            menu: this.menuStore,
           }).then(response => {
             const { data } = response
             if (data.code === 400) {
@@ -1483,20 +722,20 @@ export default {
                 },
               })
               this.loadingSubmit = false
-              this.$refs['modal-add-account'].hide()
-              this.refreshTable()
+              this.$refs['modal-access-account'].hide()
+              this.fetchMemberData()
             }
-          }).catch(() => {
-            this.loadingSubmit = false
+          }).catch(err => {
             this.$toast({
               component: ToastificationContent,
               props: {
-                title: 'Gagal',
+                title: 'Failure',
                 icon: 'AlertCircleIcon',
-                text: 'Gagal update akses orang, silahkan coba lagi',
+                text: err,
                 variant: 'danger',
               },
             }, 2000)
+            this.loadingSubmit = false
           })
         } else {
           this.loadingSubmit = false
@@ -1533,7 +772,7 @@ export default {
               variant: 'success',
             },
           }, 2000)
-          this.refreshTable()
+          this.fetchMemberData()
         }).catch(() => {
           this.$toast({
             component: ToastificationContent,
@@ -1544,165 +783,35 @@ export default {
               variant: 'danger',
             },
           }, 2000)
-          this.refreshTable()
         })
     },
-    cekAllApps() {
-      if (this.allAccessApps === true) {
-        this.addOrderApps = true
-        this.dataOrderApps = true
-      } else {
-        this.addOrderApps = false
-        this.dataOrderApps = false
-      }
-    },
-    cekAllWeb() {
-      if (this.allAccessWeb === true) {
-        this.addProdukWeb = true
-        this.dataProdukWeb = true
-        this.addOrderWeb = true
-        this.dataOrderWeb = true
-        this.ajukanPickup = true
-        this.historyPickup = true
-        this.penghasilan = true
-        this.saldo = true
-        this.settingProfile = true
-        this.accessAccount = true
-        this.addressPickup = true
-        this.settingRekening = true
-        this.settingPin = true
-        this.settingEkspedisi = true
-      } else {
-        this.addProdukWeb = false
-        this.dataProdukWeb = false
-        this.addOrderWeb = false
-        this.dataOrderWeb = false
-        this.ajukanPickup = false
-        this.historyPickup = false
-        this.penghasilan = false
-        this.saldo = false
-        this.settingProfile = false
-        this.accessAccount = false
-        this.addressPickup = false
-        this.settingRekening = false
-        this.settingPin = false
-        this.settingEkspedisi = false
-      }
-    },
-    cekAkses() {
-      // Apps
-      if (this.allAccessApps === true) {
-        if (this.addOrderApps === false || this.dataOrderApps === false) {
-          this.allAccessApps = false
-        }
-      }
-      if (this.addOrderApps === true && this.dataOrderApps === true) {
-        this.allAccessApps = true
-      }
-
-      // Web
-      if (this.allAccessWeb === true) {
-        if (this.addProdukWeb === false || this.dataProdukWeb === false
-        || this.addOrderWeb === false
-        || this.dataOrderWeb === false
-        || this.ajukanPickup === false
-        || this.historyPickup === false
-        || this.penghasilan === false
-        || this.saldo === false
-        || this.settingProfile === false
-        || this.accessAccount === false
-        || this.addressPickup === false
-        || this.settingRekening === false
-        || this.settingPin === false
-        || this.settingEkspedisi === false) {
-          this.allAccessWeb = false
-        }
-      }
-      if (this.addProdukWeb === true
-        && this.dataProdukWeb === true
-        && this.addOrderWeb === true
-        && this.dataOrderWeb === true
-        && this.ajukanPickup === true
-        && this.historyPickup === true
-        && this.penghasilan === true
-        && this.saldo === true
-        && this.settingProfile === true
-        && this.accessAccount === true
-        && this.addressPickup === true
-        && this.settingRekening === true
-        && this.settingPin === true
-        && this.settingEkspedisi === true) {
-        this.allAccessWeb = true
-      }
-    },
-    showModalAddAccount() {
-      this.editMode = false
-      this.allAccessApps = false
-      this.allAccessWeb = false
-      this.addOrderApps = false
-      this.dataOrderApps = false
-      this.addProdukWeb = false
-      this.dataProdukWeb = false
-      this.addOrderWeb = false
-      this.dataOrderWeb = false
-      this.ajukanPickup = false
-      this.historyPickup = false
-      this.penghasilan = false
-      this.saldo = false
-      this.settingProfile = false
-      this.accessAccount = false
-      this.addressPickup = false
-      this.settingRekening = false
-      this.settingPin = false
-      this.settingEkspedisi = false
-      this.fullname = ''
-      this.emailUser = ''
-      this.password = ''
-      this.$refs['modal-add-account'].show()
-    },
-    getMenuKomship() {
-      this.$http.get('user/partner/get-menu-member').then(response => {
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < response.data.data.length; i++) {
-          this.menuPosition.push({
-            name: response.data.data[i].name,
-            menu_position: response.data.data[i].menu_position,
+    setAllAccess() {
+      this.menuStore = []
+      if (this.allAccess === true) {
+        this.listAccess.forEach(item => {
+          item.children.forEach(childItem => {
+            // eslint-disable-next-line no-param-reassign
+            childItem.value = true
+            this.setAccess(item, childItem)
           })
-        }
-      }).catch(() => {
-        this.$toast({
-          component: ToastificationContent,
-          props: {
-            title: 'Gagal',
-            icon: 'AlertCircleIcon',
-            text: 'Gagal load data, silahkan coba lagi',
-            variant: 'danger',
-          },
-        }, 2000)
-      })
+        })
+      } else {
+        this.listAccess.forEach(item => {
+          item.children.forEach(childItem => {
+            // eslint-disable-next-line no-param-reassign
+            childItem.value = false
+          })
+        })
+        this.menuStore = []
+      }
     },
-    checkButtonIsActive() {
-      let result = true
-      if (this.addProdukWeb === true
-              || this.dataProdukWeb === true
-              || this.addOrderWeb === true
-              || this.dataOrderWeb === true
-              || this.ajukanPickup === true
-              || this.historyPickup === true
-              || this.penghasilan === true
-              || this.saldo === true
-              || this.settingProfile === true
-              || this.accessAccount === true
-              || this.addressPickup === true
-              || this.settingRekening === true
-              || this.settingPin === true
-              || this.settingEkspedisi === true) {
-        result = false
-      }
-      if (this.addOrderApps === true || this.dataOrderApps === true) {
-        result = false
-      }
-      return result
+    defaultAccess() {
+      this.listAccess.forEach(item => {
+        item.children.forEach(childItem => {
+          // eslint-disable-next-line no-param-reassign
+          childItem.value = false
+        })
+      })
     },
   },
 
