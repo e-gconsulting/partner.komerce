@@ -1239,9 +1239,6 @@ export default {
       ) {
         return 'Reguler'
       }
-      if (value === 'GOKIL') {
-        return 'Cargo'
-      }
       if (value === 'JTR18') {
         return 'Trucking'
       }
