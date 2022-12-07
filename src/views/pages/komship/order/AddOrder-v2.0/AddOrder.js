@@ -1050,8 +1050,8 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          const result = data.find(items => items.value === this.shipping.value)
-          const resultDefault = data.find(items => items.shipment_name === this.shipping.shipment_name)
+          const result = this.shipping.label_shipping_type === 'Reguler' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
+          const resultDefault = this.shipping.label_shipping_type === 'Reguler' ? data.data_regular.find(items => items.shipment_name === this.shipping.shipment_name) : data.data_truck.find(items => items.shipment_name === this.shipping.shipment_name)
           if (result !== undefined) {
             if (getAdditional) {
               this.sesuaiNominal = Math.round(result.service_fee)
