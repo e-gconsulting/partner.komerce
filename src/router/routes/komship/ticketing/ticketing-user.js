@@ -6,7 +6,7 @@ export default [
     meta: {
       name: 'ticketing-user',
       routeToDetail: 'detail-ticketing-user',
-      resource: 'Produk',
+      resource: 'Kendala',
       action: 'manage',
     },
   },
@@ -20,7 +20,7 @@ export default [
       routeToDetailOrder: 'detail-ticketing-detail-order',
       routeDetailOrder: 'detail-order',
       navActiveLink: 'ticketing-user',
-      resource: 'Produk',
+      resource: 'Kendala',
       action: 'manage',
     },
   },
@@ -33,7 +33,7 @@ export default [
       editOrder: 'edit-order',
       routeToDataOrder: 'data-order',
       name: 'detail-order',
-      resource: 'Order',
+      resource: 'Kendala',
       action: 'manage',
       breadcrumb: [
         {
