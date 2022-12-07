@@ -1447,7 +1447,6 @@ export default {
         || e.keyCode === 58
         || e.keyCode === 59
       ) {
-        e.preventDefault()
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false
@@ -1588,7 +1587,12 @@ export default {
     },
     formatText(event) {
       const text = event.target.value
-      this.customerAddress = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
+      this.customerAddress = text
+      if (text.match(/[^A-Za-z-0-9_ , - .]/g)) {
+        this.messageErrorAddressDetail = true
+      } else {
+        this.messageErrorAddressDetail = false
+      }
     },
   },
 }

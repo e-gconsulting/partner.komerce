@@ -1151,7 +1151,7 @@
           Submit
         </b-button>
         <b-button
-          v-if="isSubmitOrder === true"
+          v-if="isSubmitOrder === true || messageErrorAddressDetail === true"
           variant="primary"
           class="ml-1"
           :disabled="true"
