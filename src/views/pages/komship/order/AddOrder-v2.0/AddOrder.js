@@ -1140,6 +1140,7 @@ export default {
       }
     }, 1000),
     calculateOnExpedition: _.debounce(function (getAdditional, dataOption) {
+      this.collapseCalculate = false
       this.shipping = dataOption
       this.loadingWrapperOtherCost = true
       if (this.shipping && this.cartId.length > 0) {
