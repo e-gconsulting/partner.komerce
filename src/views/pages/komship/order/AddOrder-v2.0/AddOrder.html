@@ -718,7 +718,7 @@
               v-for="(option, index) in listShipping"
               :key="index+1"
               v-b-toggle.collapse-calculate
-              :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-primary d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
+              :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
               :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
               @click="calculateOnExpedition(true, option)"
             >

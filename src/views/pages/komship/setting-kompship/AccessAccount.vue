@@ -559,6 +559,9 @@ export default {
         })
       })
       this.menuStore = []
+      this.emailUser = ''
+      this.password = ''
+      this.fullname = ''
       this.$refs['modal-access-account'].show()
     },
     setAccess(data, dataChildren) {
@@ -637,12 +640,7 @@ export default {
       })
     },
     showModalAccessEdit(data) {
-      this.listAccess.forEach(item => {
-        item.children.forEach(childItem => {
-          // eslint-disable-next-line no-param-reassign
-          childItem.value = false
-        })
-      })
+      this.allAccess = false
       this.menuStore = []
       this.fullname = data.item.full_name
       this.password = data.item.password
@@ -667,8 +665,13 @@ export default {
           item.access.forEach(filAccessItem => {
             this.listAccess.forEach(listItem => {
               listItem.children.forEach(childItem => {
-                // eslint-disable-next-line no-param-reassign
-                if (listItem.resLabel === item.menu_name && childItem.access.includes(filAccessItem.access_id)) childItem.value = true
+                if (listItem.resLabel === item.menu_name && childItem.access.includes(filAccessItem.access_id)) {
+                  // eslint-disable-next-line no-param-reassign
+                  childItem.value = true
+                } else {
+                  // eslint-disable-next-line no-param-reassign
+                  childItem.value = false
+                }
               })
             })
             const checkMenuStore = this.menuStore.find(itemStore => itemStore.menu_position_id === filAccessItem.menu_position_id && itemStore.menu_access_id === filAccessItem.access_id)

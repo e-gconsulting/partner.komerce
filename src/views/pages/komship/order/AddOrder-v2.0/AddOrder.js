@@ -965,6 +965,7 @@ export default {
               this.shipping = null
             }
           }
+          this.$root.$emit('bv::toggle::collapse', 'collapse-calculate')
         }).catch(err => {
           if (err.response.data.message === 'Please Complete Your Address.') {
             this.$refs['modal-check-address-pickup'].show()
