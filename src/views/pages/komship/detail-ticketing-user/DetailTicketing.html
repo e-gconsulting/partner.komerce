@@ -305,16 +305,18 @@
                                                 d="M14.5 0L17.7555 10.0193L28.2903 10.0193L19.7674 16.2115L23.0229 26.2307L14.5 20.0385L5.97711 26.2307L9.23257 16.2115L0.709681 10.0193L11.2445 10.0193L14.5 0Z"
                                                 fill="#FBBC05" />
                                         </svg>
-                                        <span v-if="messageItem.rating !== null" class="text-black">{{ messageItem.rating.rating }}</span>
-                                        <span v-if="messageItem.rating === null" class="text-black">0</span>
+                                        <span v-if="ratingUser !== null" class="text-black">{{ messageItem.rating_user.rating }}</span>
+                                        <span v-if="ratingUser === null" class="text-black">0</span>
                                     </b-row>
-                                    <b-popover
+                                    <b-popover  
                                         triggers="hover"
                                         :target="`popover-rating-${index}`"
                                         placement="bottomright"
                                         variant="dark"
                                         class="bg-dark"
-                                        ><small>{{ messageItem.name }} - {{ messageItem.rating.rating}} dari {{ messageItem.rating.total_votes }} votes</small>
+                                        >
+                                            <small v-if="ratingUser !== null">{{ messageItem.name }} - {{ messageItem.rating_user.rating }} dari {{ messageItem.rating_user.total_votes }} votes</small>
+                                            <small v-if="ratingUser === null">{{ messageItem.name }} - 0 dari 0 votes</small>
                                     </b-popover>
                             </b-col>
                             <b-col v-if="messageItem.type !== 'Shipping' && messageItem.type !== 'Change Status'" :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''" md="11">
