@@ -559,6 +559,9 @@ export default {
         })
       })
       this.menuStore = []
+      this.emailUser = ''
+      this.password = ''
+      this.fullname = ''
       this.$refs['modal-access-account'].show()
     },
     setAccess(data, dataChildren) {
