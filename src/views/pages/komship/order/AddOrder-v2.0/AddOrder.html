@@ -704,20 +704,18 @@
           class="font-bold"
         >
         <b-button
-          variant="flat-dark"
           :class="!isShipping ? 'cursor-not-allowed w-full text-left' : 'w-full text-left'"
-          :style="!isShipping ? 'background-color: #f8f8f8;border: 1px solid #d8d6de;' : 'border: 1px solid #d8d6de'"
+          :style="!isShipping ? 'background: white!important;border: 1px solid #d8d6de!important;' : 'border: 1px solid #d8d6de!important; background: white!important;'"
           v-b-toggle.collapse-calculate
           :disabled="!isShipping"
         >
-          {{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}
+          <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span>
         </b-button>
-        <b-collapse id="collapse-calculate">
+        <b-collapse id="collapse-calculate" v-model="collapseCalculate">
           <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
             <li
               v-for="(option, index) in listShipping"
               :key="index+1"
-              v-b-toggle.collapse-calculate
               :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
               :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
               @click="calculateOnExpedition(true, option)"
