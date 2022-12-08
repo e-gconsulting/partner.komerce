@@ -1140,7 +1140,7 @@
           Submit & Tambah Order Lagi
         </b-button>
         <b-button
-          v-if="isSubmitOrder === false"
+          v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
           variant="primary"
           class="ml-1"
           :disabled="!isCalculateOnExpedition"
