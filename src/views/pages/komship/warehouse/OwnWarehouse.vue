@@ -847,7 +847,7 @@
               class="border-primary"
               role="button"
               style="height:180px"
-              @click="selectWarehouse('ownWarehouse')"
+              @click="selectWarehouse('ownWarehouse', userData.is_kompack)"
             >
               <b-img
                 src="@/assets/images/banner/private-warehouse.svg"
@@ -864,11 +864,12 @@
               class="border-primary p-0"
               role="button"
               style="height:180px"
-              @click="selectWarehouse('partnerWarehouse')"
+              @click="selectWarehouse('partnerWarehouse', userData.is_kompack)"
             >
               <b-img
                 src="@/assets/images/banner/kompack-warehouse.svg"
-                class="m-auto grayscale"
+                class="m-auto"
+                :class="(userData.is_kompack !== 1) ? `grayscale` : ``"
               /><br>
               <div class="d-flex text-center -m-1">
                 <div class="text-[14px] text-[#626262]">
@@ -881,6 +882,7 @@
                 />
               </div>
               <b-popover
+                v-if="(userData.is_kompack !== 1)"
                 target="partnerWarehouse"
                 variant="primary"
                 triggers="hover"
@@ -939,6 +941,9 @@ export default {
   },
   data() {
     return {
+
+      userData: JSON.parse(localStorage.getItem('userData')),
+
       loading: false,
       loadingSubmit: false,
       isDefault: false,
@@ -1397,8 +1402,17 @@ export default {
         e.preventDefault()
       }
     },
-    selectWarehouse(option) {
-      if (option === 'ownWarehouse') {
+    selectWarehouse(option, kompack) {
+      if (kompack === 1) {
+        if (option === 'ownWarehouse') {
+          this.$refs['warehouse-options'].hide()
+          this.addAddress()
+        } else {
+          this.$router.push({
+            path: '/search-gudang',
+          })
+        }
+      } else if (option === 'ownWarehouse') {
         this.$refs['warehouse-options'].hide()
         this.addAddress()
       } else {
@@ -1415,7 +1429,7 @@ export default {
 <style lang="scss">
 @import '~@core/scss/vue/libs/vue-select.scss';
 .kompack-logo{
-  filter: grayscale(100%);
+  filter: grayscale(0%);
 }
 #partnerWarehouse:hover .kompack-logo {
   filter: grayscale(0);
