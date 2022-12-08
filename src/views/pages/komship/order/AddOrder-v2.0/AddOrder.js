@@ -944,7 +944,7 @@ export default {
             shipping_type: items.shipping_type,
             shipping_cost: items.shipping_cost,
           }))
-          resultReguler.unshift({ label: 'Reguler' })
+          if (data.data_regular.length !== 0) resultReguler.unshift({ label: 'Reguler' })
           const resultTruck = await data.data_truck.map(items => ({
             label: `${items.shipment_name} - ${this.shippingTypeLabel(items.shipping_type)} - Rp${this.formatNumber(items.shipping_cost)}`,
             value: items.value,
@@ -954,7 +954,7 @@ export default {
             shipping_type: items.shipping_type,
             shipping_cost: items.shipping_cost,
           }))
-          resultTruck.unshift({ label: 'Cargo' })
+          if (data.data_truck.length !== 0) resultTruck.unshift({ label: 'Cargo' })
           this.listShipping = resultReguler.concat(resultTruck)
           this.isShipping = true
           this.loadingOptionExpedition = false
@@ -1239,8 +1239,11 @@ export default {
       ) {
         return 'Reguler'
       }
-      if (value === 'GOKIL') {
-        return 'Cargo'
+      if (value === 'JTR18') {
+        return 'Trucking'
+      }
+      if (value === 'Idtruck') {
+        return 'ID Truck'
       }
       return value
     },
