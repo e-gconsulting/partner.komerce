@@ -42,11 +42,7 @@ export default {
       submitProgressStatus: true,
       disableSubmit: false,
       adminList: [],
-      isColAddress: false,
-      isColPhoneNumber: false,
-      isColProduct: false,
-      isColQty: false,
-      totalWeight: 1,
+      totalWeight: false,
     }
   },
   async mounted() {
@@ -214,10 +210,16 @@ export default {
             return source
           }
           this.filterShipment = (instance, cell, c, r, source) => {
-            if (this.isWeights < 5) {
-              return this.sourceShipmentReguler
-            } if (this.isWeights > 5) {
-              return this.sourceShipmentReguler.concat(this.sourceShipmentTruck)
+            const qty = instance.jexcel.getValueFromCoords(c - 2, r)
+            const weightValue = instance.jexcel.getValueFromCoords(c - 5, r)
+            const weight = this.ProductWeight.find(item => item.product_name === weightValue)
+            this.totalWeight = (qty * weight.product_weight) / 1000
+            if (this.totalWeight < 5) {
+              this.sourceShipment = this.sourceShipmentReguler
+              return this.sourceShipment
+            } if (this.totalWeight > 5) {
+              this.sourceShipment = this.sourceShipmentReguler.concat(this.sourceShipmentTruck)
+              return this.sourceShipment
             }
             return source
           }
@@ -297,7 +299,7 @@ export default {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
           {
-            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
+            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipmentReguler, filter: this.filterShipment, readOnly: true,
           },
           {
             type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
@@ -465,21 +467,17 @@ export default {
           } else if (col === `${columnNumber.product}`) {
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.variant}`, row])
             const source = allVariant.find(items => items.product_name === val)
-            const weight = ProductWeight.find(item => item.product_name === val)
             if (source.variant.length > 1) {
               instance.jexcel.setValue(columnName, '')
             } else {
               instance.jexcel.setValue(columnName, '-')
             }
-            if (weight !== undefined) this.isWeights = weight.product_weight
           } else if (col === `${columnNumber.qty}`) {
             if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.qty}`, row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
             }
-            // eslint-disable-next-line operator-assignment
-            this.totalWeight = Number(val) * this.isWeights
           } else if (col === `${columnNumber.payment_method}`) {
             if (val === 'BANK TRANSFER' && saldo <= 0) {
               popupSaldo()
@@ -487,16 +485,13 @@ export default {
               instance.jexcel.setValue(columnName, '')
             }
           }
-          if (col === `${columnNumber.customer_address}` && val !== '') {
-            this.isColAddress = true
-          } else if (col === `${columnNumber.customer_phone_number}` && val !== '') {
-            this.isColPhoneNumber = true
-          } else if (col === `${columnNumber.product}` && val !== '') {
-            this.isColProduct = true
-          } else if (col === `${columnNumber.qty}` && val !== '') {
-            this.isColQty = true
-          }
-          if (this.isColProduct === true && this.isColQty === true && this.isColAddress === true && this.isColPhoneNumber === true && val !== '') {
+          const isColAddress = instance.jexcel.getValueFromCoords(`${columnNumber.customer_address}`, row)
+          const isColPhoneNumber = instance.jexcel.getValueFromCoords(`${columnNumber.customer_phone_number}`, row)
+          const isColProduct = instance.jexcel.getValueFromCoords(`${columnNumber.product}`, row)
+          const isColVariant = instance.jexcel.getValueFromCoords(`${columnNumber.variant}`, row)
+          const isColQty = instance.jexcel.getValueFromCoords(`${columnNumber.qty}`, row)
+
+          if (isColProduct !== '' && isColQty !== '' && isColAddress !== '' && isColPhoneNumber !== '' && isColVariant !== '') {
             instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), false)
           } else {
             instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), true)
