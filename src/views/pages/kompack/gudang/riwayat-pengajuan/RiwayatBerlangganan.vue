@@ -138,7 +138,7 @@ export default {
     handleDetail(data) {
       const { id } = data
       this.$router.push({
-        path: `/detail-riwayat-tambah-product/${id}`,
+        path: `/detail-riwayat-berlangganan/${id}`,
       })
     },
 
