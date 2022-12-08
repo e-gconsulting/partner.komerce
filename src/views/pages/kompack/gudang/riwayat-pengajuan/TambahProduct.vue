@@ -217,7 +217,7 @@ export default {
       isSelected: false,
 
       // warehouse id
-      detail: JSON.parse(localStorage.getItem('dataTes')),
+      detail: JSON.parse(localStorage.getItem('detailInbound')),
     }
   },
 

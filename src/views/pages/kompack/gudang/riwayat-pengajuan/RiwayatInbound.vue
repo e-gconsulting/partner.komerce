@@ -309,7 +309,7 @@ export default {
       this.$router.push({
         path: `/detail-riwayat-inbound/${id}`,
       })
-      localStorage.setItem('dataTes', JSON.stringify(data))
+      localStorage.setItem('detailInbound', JSON.stringify(data))
     },
 
     shippingMethods(part, shipping) {
