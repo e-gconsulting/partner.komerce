@@ -46,7 +46,7 @@ export default {
       isColPhoneNumber: false,
       isColProduct: false,
       isColQty: false,
-      isWeights: 7,
+      totalWeight: 1,
     }
   },
   async mounted() {
@@ -166,7 +166,7 @@ export default {
           this.sourceAddress = data.addresses
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
-          this.ProductWeight = data.products_weight
+          this.ProductWeight = data.product_weight
           this.sourceShipmentReguler = data.shipments.shipment_reguler
           this.sourceShipmentTruck = data.shipments.shipment_truck
           this.adminList = data.tracking_sales
@@ -229,6 +229,7 @@ export default {
       const { profile } = this
       const { saldo } = this
       const { allVariant } = this
+      const { ProductWeight } = this
       let columnTable
       const getSelectedTable = data => {
         this.selectedTable = data
@@ -291,7 +292,7 @@ export default {
             type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
           },
           { type: 'text', title: 'Catatan Order' },
-          { type: 'text', title: 'Kuantitas' },
+          { type: 'text', title: 'Kuantitas', filter: this.getWeight },
           {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
@@ -333,7 +334,7 @@ export default {
           {
             type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
           },
-          { type: 'text', title: 'Kuantitas' },
+          { type: 'text', title: 'Kuantitas', filter: this.getWeight },
           {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
@@ -464,17 +465,21 @@ export default {
           } else if (col === `${columnNumber.product}`) {
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.variant}`, row])
             const source = allVariant.find(items => items.product_name === val)
+            const weight = ProductWeight.find(item => item.product_name === val)
             if (source.variant.length > 1) {
               instance.jexcel.setValue(columnName, '')
             } else {
               instance.jexcel.setValue(columnName, '-')
             }
+            if (weight !== undefined) this.isWeights = weight.product_weight
           } else if (col === `${columnNumber.qty}`) {
             if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.qty}`, row])
               instance.jexcel.setValue(columnName, '')
               popup('Masukkan jumlah kuantitas produk antara 1 - 1000 yaa..')
             }
+            // eslint-disable-next-line operator-assignment
+            this.totalWeight = Number(val) * this.isWeights
           } else if (col === `${columnNumber.payment_method}`) {
             if (val === 'BANK TRANSFER' && saldo <= 0) {
               popupSaldo()
