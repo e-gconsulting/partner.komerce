@@ -53,17 +53,11 @@
           </div>
         </template>
       </b-table>
-      <div class="hidden">
-        <b-button
-          variant="primary"
-          class="rounded-pill p-1"
-        >
-          <feather-icon
-            icon="PlusIcon"
-            size="35"
-          />
-        </b-button>
-      </div>
+      <b-img
+        src="@/assets/images/icons/add-circle.svg"
+        class="cursor-pointer button-add-berlangganan"
+        @click="handleAddBerlangan()"
+      />
     </div>
   </div>
 </template>
@@ -131,6 +125,15 @@ export default {
   },
 
   methods: {
+    console(value) {
+      console.log(value)
+    },
+
+    handleAddBerlangan() {
+      this.$router.push({
+        path: '/search-gudang',
+      })
+    },
 
     handleDetail(data) {
       const { id } = data
@@ -185,3 +188,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.button-add-berlangganan {
+  position: fixed;
+  right: 85px;
+  bottom: 60px;
+  z-index: 99;
+}
+</style>
