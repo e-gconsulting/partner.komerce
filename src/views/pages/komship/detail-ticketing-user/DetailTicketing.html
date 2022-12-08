@@ -308,7 +308,8 @@
                                         <span v-if="messageItem.rating !== null" class="text-black">{{ messageItem.rating.rating }}</span>
                                         <span v-if="messageItem.rating === null" class="text-black">0</span>
                                     </b-row>
-                                    <b-popover  
+                                    <b-popover
+                                        v-if="!messageItem.name.includes('Tim')"  
                                         triggers="hover"
                                         :target="`popover-rating-${index}`"
                                         placement="bottomright"
