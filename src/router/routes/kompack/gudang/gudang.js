@@ -80,4 +80,13 @@ export default [
       action: 'manage',
     },
   },
+  {
+    path: '/detail-riwayat-berlangganan/:id',
+    name: 'detail-riwayat-berlangganan',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailBerlangganan'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
 ]
