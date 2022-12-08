@@ -29,7 +29,7 @@ export default [
       {
         title: 'Riwayat Pengajuan',
         icon: 'None',
-        resource: 'Gudang',
+        resource: 'Gudang Kompack',
         route: 'riwayat-pengajuan',
         action: 'manage',
       },

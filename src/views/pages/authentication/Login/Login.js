@@ -295,18 +295,18 @@ export default {
             const menuAccess = itemMember.privilege.filter(item => item.access !== 'No Data Access.')
             menuAccess.forEach(item => {
               if (item.menu_name === 'PRODUCT') {
+                ability.push({ action: 'manage', subject: 'Produk' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 2)
                 if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Produk' })
                 if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Produk' })
-                ability.push({ action: 'manage', subject: 'Produk' })
               }
               if (item.menu_name === 'ORDER') {
+                ability.push({ action: 'manage', subject: 'Order' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 2)
                 if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Order' })
                 if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Order' })
-                ability.push({ action: 'manage', subject: 'Order' })
               }
               if (item.menu_name === 'DASHBOARD') {
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
@@ -320,34 +320,33 @@ export default {
                 }
               }
               if (item.menu_name === 'PICKUP') {
+                ability.push({ action: 'manage', subject: 'Pickup' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 6)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 5)
                 if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'History Pickup' })
                 if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Ajukan Pickup' })
-                ability.push({ action: 'manage', subject: 'Pickup' })
               }
               if (item.menu_name === 'FINANCE') {
+                ability.push({ action: 'manage', subject: 'Keuangan' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 7)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 8)
                 if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Penghasilan' })
                 if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Saldo' })
-                ability.push({ action: 'manage', subject: 'Keuangan' })
               }
               if (item.menu_name === 'SETTING') {
+                ability.push({ action: 'manage', subject: 'Setting Komship' })
                 const findAccessBank = item.access.find(accessItem => accessItem.access_id === 12)
                 const findAccessPin = item.access.find(accessItem => accessItem.access_id === 13)
                 const findAccessExpedition = item.access.find(accessItem => accessItem.access_id === 14)
                 if (findAccessBank !== undefined) ability.push({ action: 'manage', subject: 'Setting Rekening Bank' })
                 if (findAccessPin !== undefined) ability.push({ action: 'manage', subject: 'Setting PIN' })
                 if (findAccessExpedition !== undefined) ability.push({ action: 'manage', subject: 'Setting Ekspedisi' })
-                ability.push({ action: 'manage', subject: 'Setting Komship' })
               }
               if (item.menu_name === 'KENDALA') {
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
                 if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Kendala' })
               }
             })
-            ability.push({ action: 'manage', subject: 'MyApps' })
           }
 
           data.ability = ability

@@ -111,7 +111,10 @@
       :title="editMode ? 'Edit Akses Akun' : 'Tambah Akses Akun'"
       ok-only
       ok-title="Simpan"
+      no-close-on-backdrop
+      no-close-on-esc
       cancel-variant="outline-primary"
+      @hide="defaultAccess"
     >
       <validation-observer ref="formRules">
         <b-form>
@@ -260,6 +263,8 @@
             <b-button
               v-if="!editMode"
               variant="primary"
+              :class="loadingSubmit ? 'cursor-not-allowed' : ''"
+              :disabled="loadingSubmit"
               @click="submitAccount"
             >
               <b-spinner
@@ -272,6 +277,8 @@
             <b-button
               v-else
               variant="primary"
+              :class="loadingSubmit ? 'cursor-not-allowed' : ''"
+              :disabled="loadingSubmit"
               @click="submitAccountUpdate"
             >
               <b-spinner
@@ -559,6 +566,9 @@ export default {
         })
       })
       this.menuStore = []
+      this.emailUser = ''
+      this.password = ''
+      this.fullname = ''
       this.$refs['modal-access-account'].show()
     },
     setAccess(data, dataChildren) {
@@ -637,12 +647,6 @@ export default {
       })
     },
     showModalAccessEdit(data) {
-      this.listAccess.forEach(item => {
-        item.children.forEach(childItem => {
-          // eslint-disable-next-line no-param-reassign
-          childItem.value = false
-        })
-      })
       this.menuStore = []
       this.fullname = data.item.full_name
       this.password = data.item.password
@@ -650,6 +654,7 @@ export default {
       this.editMode = true
       this.$refs['modal-access-account'].show()
       this.idUpdateAccount = data.item.user_id
+      this.listAccessEdit = []
       const params = {
         user_id: data.item.user_id,
       }
@@ -667,8 +672,12 @@ export default {
           item.access.forEach(filAccessItem => {
             this.listAccess.forEach(listItem => {
               listItem.children.forEach(childItem => {
-                // eslint-disable-next-line no-param-reassign
-                if (listItem.resLabel === item.menu_name && childItem.access.includes(filAccessItem.access_id)) childItem.value = true
+                if (listItem.resLabel === item.menu_name) {
+                  if (childItem.access.includes(filAccessItem.access_id)) {
+                    // eslint-disable-next-line no-param-reassign
+                    childItem.value = true
+                  }
+                }
               })
             })
             const checkMenuStore = this.menuStore.find(itemStore => itemStore.menu_position_id === filAccessItem.menu_position_id && itemStore.menu_access_id === filAccessItem.access_id)
@@ -679,10 +688,6 @@ export default {
               })
             }
           })
-          const itemListAccess = this.listAccess.find(listItem => item.menu_name === listItem.resLabel)
-        })
-        this.listAccessEdit.forEach(item => {
-          const find = this.listAccess.find(accessItem => accessItem.resLabel === item.menu_name)
         })
       })
     },
@@ -799,6 +804,14 @@ export default {
         })
         this.menuStore = []
       }
+    },
+    defaultAccess() {
+      this.listAccess.forEach(item => {
+        item.children.forEach(childItem => {
+          // eslint-disable-next-line no-param-reassign
+          childItem.value = false
+        })
+      })
     },
   },
 

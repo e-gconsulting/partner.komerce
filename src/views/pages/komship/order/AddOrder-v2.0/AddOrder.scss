@@ -75,6 +75,10 @@
   font-weight: 600;
 }
 
+.not-collapsed {
+  background-color: white;
+}
+
 @media (min-width: 576px) {
   .wrapper__history__retur__mobile {
     margin-left: 1rem!important;

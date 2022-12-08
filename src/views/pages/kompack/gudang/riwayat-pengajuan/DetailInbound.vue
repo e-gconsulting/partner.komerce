@@ -379,7 +379,7 @@ export default {
       isEdit: false,
       isTambah: false,
 
-      detail: JSON.parse(localStorage.getItem('dataTes')),
+      detail: JSON.parse(localStorage.getItem('detailInbound')),
 
       fields: [
         {
