@@ -163,8 +163,7 @@ export default {
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
           this.ProductWeight = data.product_weight
-          this.sourceShipmentReguler = data.shipments.shipment_reguler
-          this.sourceShipmentTruck = data.shipments.shipment_truck
+          this.sourceShipment = data.shipments.shipment_reguler.concat(data.shipments.shipment_truck)
           this.adminList = data.tracking_sales
           this.allVariant = data.variant
           const { variant } = data
@@ -215,10 +214,8 @@ export default {
             const weight = this.ProductWeight.find(item => item.product_name === weightValue)
             this.totalWeight = (qty * weight.product_weight) / 1000
             if (this.totalWeight < 5) {
-              this.sourceShipment = this.sourceShipmentReguler
-              return this.sourceShipment
+              return data.shipments.shipment_reguler
             } if (this.totalWeight > 5) {
-              this.sourceShipment = this.sourceShipmentReguler.concat(this.sourceShipmentTruck)
               return this.sourceShipment
             }
             return source
@@ -231,7 +228,6 @@ export default {
       const { profile } = this
       const { saldo } = this
       const { allVariant } = this
-      const { ProductWeight } = this
       let columnTable
       const getSelectedTable = data => {
         this.selectedTable = data
@@ -294,12 +290,12 @@ export default {
             type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
           },
           { type: 'text', title: 'Catatan Order' },
-          { type: 'text', title: 'Kuantitas', filter: this.getWeight },
+          { type: 'text', title: 'Kuantitas' },
           {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
           {
-            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipmentReguler, filter: this.filterShipment, readOnly: true,
+            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
           },
           {
             type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
@@ -336,7 +332,7 @@ export default {
           {
             type: 'dropdown', title: 'Variasi Spesifik', width: 300, source: this.sourceVariant, filter: this.filterVariant,
           },
-          { type: 'text', title: 'Kuantitas', filter: this.getWeight },
+          { type: 'text', title: 'Kuantitas' },
           {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
@@ -465,6 +461,8 @@ export default {
               popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
             }
           } else if (col === `${columnNumber.product}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.variant}`, row])
             const source = allVariant.find(items => items.product_name === val)
             if (source.variant.length > 1) {
@@ -473,6 +471,8 @@ export default {
               instance.jexcel.setValue(columnName, '-')
             }
           } else if (col === `${columnNumber.qty}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.qty}`, row])
               instance.jexcel.setValue(columnName, '')
