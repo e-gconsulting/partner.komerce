@@ -1234,7 +1234,6 @@ export default {
         value === 'REG19'
         || value === 'SIUNT'
         || value === 'STD'
-        || value === 'IDlite'
         || value === 'CTC19'
       ) {
         return 'Reguler'
