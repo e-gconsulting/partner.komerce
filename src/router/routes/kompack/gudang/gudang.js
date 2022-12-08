@@ -54,36 +54,36 @@ export default [
     },
   },
   {
-    path: '/Riwayat-Inbound',
-    name: 'Riwayat-Inbound',
-    component: () => import('@/views/pages/kompack/gudang/riwayat-inbound/riwayat-inbound'),
+    path: '/riwayat-pengajuan',
+    name: 'riwayat-pengajuan',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/RiwayatPengajuan'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
     },
   },
   {
-    path: '/Dikirim-Sendiri',
-    name: 'Riwayat-Inbound',
-    component: () => import('@/views/pages/kompack/gudang/riwayat-inbound/DikirimSendiri'),
+    path: '/detail-riwayat-inbound/:id',
+    name: 'detail-riwayat-inbound',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailInbound'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
     },
   },
   {
-    path: '/Dikirim-Ekspedisi',
-    name: 'Riwayat-Inbound',
-    component: () => import('@/views/pages/kompack/gudang/riwayat-inbound/DikirimEkspedisi'),
+    path: '/detail-riwayat-tambah-product/:id',
+    name: 'detail-riwayat-tambah-product',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailTambahProduct'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
     },
   },
   {
-    path: '/Edit-Data-Produk',
-    name: 'Riwayat-Inbound',
-    component: () => import('@/views/pages/kompack/gudang/riwayat-inbound/EditData'),
+    path: '/detail-riwayat-berlangganan/:id',
+    name: 'detail-riwayat-berlangganan',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailBerlangganan'),
     meta: {
       resource: 'Gudang',
       action: 'manage',

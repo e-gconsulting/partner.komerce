@@ -27,10 +27,10 @@ export default [
         action: 'manage',
       },
       {
-        title: 'Riwayat Inbound',
+        title: 'Riwayat Pengajuan',
         icon: 'None',
         resource: 'Gudang Kompack',
-        route: 'riwayatinbound',
+        route: 'riwayat-pengajuan',
         action: 'manage',
       },
     ],

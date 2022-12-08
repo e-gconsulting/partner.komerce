@@ -281,7 +281,6 @@
             </strong>
         </h3>
     </b-row>
-
     <b-overlay :show="loadingDataChat" spinner-variant="primary" variant="light" blur="0" opacity=".5">
         <b-row class="mb-2">
             <b-col cols="12" md="8" class="mb-1">
@@ -294,9 +293,9 @@
                         <b-row class="mx-50" v-for="(messageItem, index) in messages" :key="index+1">
                             <b-col v-if="messageItem.type === 'Mitra'" cols="1">
                                 <b-img v-if="messageItem.image_path !== '' || messageItem.image_path !== null"
-                                    :src="messageItem.image_path" />
+                                    :src="messageItem.image_path" :id="`popover-rating-${index}`" />
                                 <b-img v-if="messageItem.image_path === '' || messageItem.image_path === null"
-                                    src="@/assets/images/avatars/image-null.png" />
+                                    src="@/assets/images/avatars/image-null.png" :id="`popover-rating-${index}`" />
                                     <b-row class="align-items-center justify-content-center mt-[5px]">
                                         <svg
                                             width="17" viewBox="0 0 29 27" fill="none"
@@ -306,9 +305,19 @@
                                                 d="M14.5 0L17.7555 10.0193L28.2903 10.0193L19.7674 16.2115L23.0229 26.2307L14.5 20.0385L5.97711 26.2307L9.23257 16.2115L0.709681 10.0193L11.2445 10.0193L14.5 0Z"
                                                 fill="#FBBC05" />
                                         </svg>
-                                        <span v-if="messageItem.rating !== null" class="text-black">{{ messageItem.rating.rating }}</span>
-                                        <span v-if="messageItem.rating === null" class="text-black">0</span>
+                                        <span v-if="ratingUser !== null" class="text-black">{{ messageItem.rating_user.rating }}</span>
+                                        <span v-if="ratingUser === null" class="text-black">0</span>
                                     </b-row>
+                                    <b-popover  
+                                        triggers="hover"
+                                        :target="`popover-rating-${index}`"
+                                        placement="bottomright"
+                                        variant="dark"
+                                        class="bg-dark"
+                                        >
+                                            <small v-if="ratingUser !== null">{{ messageItem.name }} - {{ messageItem.rating_user.rating }} dari {{ messageItem.rating_user.total_votes }} votes</small>
+                                            <small v-if="ratingUser === null">{{ messageItem.name }} - 0 dari 0 votes</small>
+                                    </b-popover>
                             </b-col>
                             <b-col v-if="messageItem.type !== 'Shipping' && messageItem.type !== 'Change Status'" :id="messages[messages.length - 1] === messageItem ? 'lastChat' : ''" md="11">
                                 <div v-if="messageItem.message !== null && messageItem.message !== ''">

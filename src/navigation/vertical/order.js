@@ -23,7 +23,7 @@ export default [
       {
         title: 'Data Order',
         icon: 'None',
-        resource: 'Tambah Order',
+        resource: 'Data Order',
         route: 'data-order',
         action: 'manage',
       },
