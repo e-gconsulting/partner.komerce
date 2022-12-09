@@ -210,7 +210,8 @@ export default {
           }
           this.filterShipment = (instance, cell, c, r, source) => {
             const qty = instance.jexcel.getValueFromCoords(c - 2, r)
-            const weightValue = instance.jexcel.getValueFromCoords(c - 5, r)
+            const columnName = jspreadsheet.getColumnNameFromId([7, r])
+            const weightValue = instance.jexcel.getValue(columnName, r)
             const weight = this.ProductWeight.find(item => item.product_name === weightValue)
             this.totalWeight = (qty * weight.product_weight) / 1000
             if (this.totalWeight < 5) {
