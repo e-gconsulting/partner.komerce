@@ -45,9 +45,9 @@ export default [
     },
   },
   {
-    path: '/Ajukan-Inbound',
-    name: 'Ajukan-Inbound',
-    component: () => import('@/views/pages/kompack/gudang/AjukanInbound'),
+    path: '/ajukan-inbound',
+    name: 'ajukan-inbound',
+    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/ajukaninbound.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
