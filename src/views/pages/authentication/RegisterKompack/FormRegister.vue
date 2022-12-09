@@ -289,7 +289,6 @@ export default {
           params: { email },
         })
         const { data } = checkEmail
-        console.log(data)
         if (data.code === 1010) {
           this.fullnameExisting = data.data.full_name
         }
