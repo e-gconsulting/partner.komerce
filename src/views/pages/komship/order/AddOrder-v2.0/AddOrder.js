@@ -218,6 +218,7 @@ export default {
         localStorage.removeItem('paymentHistory')
       }
     }
+    console.log(this.profile)
   },
   methods: {
     formatDate(date) {
@@ -1586,7 +1587,7 @@ export default {
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err.response.message,
+              text: err.response.data.message,
               variant: 'danger',
             },
           })
