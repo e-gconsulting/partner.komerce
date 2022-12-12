@@ -723,7 +723,7 @@ export default {
     handleResendOtp() {
       this.loadingOtp = true
       const formData = new FormData()
-      formData.append('phone_number', this.formInputEditItem)
+      formData.append('phone_number', this.fieldNewNumber)
       formData.append('session', 'profile')
       this.$http_komship.post('/v2/partner/sms/otp', formData)
         .then(response => {
