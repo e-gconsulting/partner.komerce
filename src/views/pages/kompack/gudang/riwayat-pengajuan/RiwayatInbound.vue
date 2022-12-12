@@ -45,6 +45,14 @@
               </span>
               <span
                 v-else-if="
+                  formatDateFilter(picker.startDate) === formatDateFilter(kompackDate) || formatDateFilter(picker.endDate) === formatDateFilter(today)
+                "
+                style="color: #828282 !important"
+              >
+                Semua Tanggal
+              </span>
+              <span
+                v-else-if="
                   formatDateFilter(picker.startDate) === formatDateFilter(firstDateOfMonth) && formatDateFilter(picker.endDate) === formatDateFilter(lastDateOfMonth)
                 "
                 style="color: #828282 !important"
@@ -150,7 +158,7 @@ import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import DateRangePicker from 'vue2-daterange-picker'
 import {
-  today, last7, last30, firstDateOfMonth, lastDateOfMonth,
+  today, last7, last30, firstDateOfMonth, lastDateOfMonth, kompackDate,
 } from '@/store/helpers'
 import { BFormSelect } from 'bootstrap-vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
@@ -160,6 +168,7 @@ export default {
   components: { DateRangePicker, BFormSelect },
   data() {
     return {
+      kompackDate,
       today,
       last7,
       last30,
@@ -170,7 +179,7 @@ export default {
       partnerList: '',
       date: '',
       dateRange: {
-        startDate: today,
+        startDate: kompackDate,
         endDate: today,
       },
       locale: {
@@ -183,6 +192,7 @@ export default {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
         'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
+        'Semua ': [kompackDate, today],
       },
 
       loading: false,
