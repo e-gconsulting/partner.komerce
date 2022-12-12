@@ -1,8 +1,6 @@
 <template>
   <b-card
-    v-if="(isTambah === false)"
     body
-    @clicked="(isTambah = $event)"
   >
     <div class="">
       <b-button
@@ -41,7 +39,7 @@
         <b-button
           variant="outline-primary"
           class="px-3"
-          @click="console('simpan')"
+          @click="handleSave()"
         >Simpan</b-button>
       </div>
       <div
@@ -155,18 +153,12 @@
         :style="!Array.isArray(history) && isEdit === false ? `width: 55%;` : `width: 100%;`"
       >
         <div class="d-flex align-items-center justify-between m-2">
-          <h5 class="text-black font-bold">
-            Data Product</h5>
-          <b-button
-            v-if="isEdit === true"
-            variant="outline-primary"
-            class="px-3"
-            @click="(isTambah = true)"
-          >Tambah Produk</b-button>
+          <div class="text-black font-bold">
+            Data Product</div>
         </div>
         <BTable
           small
-          class="text-center"
+          class="text-left product-table"
           :fields="fields"
           :items="products"
           responsive="sm"
@@ -206,7 +198,7 @@
               <div
                 v-for="i in data.item.variant"
                 :key="i.variant_id"
-                class="d-flex justify-center"
+                class="d-flex"
               >
                 <b-button
                   v-if="isEdit==true"
@@ -303,9 +295,9 @@
         class="border ml-2"
         style="width: 45%;"
       >
-        <h5 class="text-black font-bold m-2">
-          Riwayat Perjalanan :</h5>
-        <div class="d-flex flex-column p-1 border-t text-black">
+        <div class="text-black font-bold m-2">
+          Riwayat Perjalanan :</div>
+        <div class="d-flex flex-column p-1 border-t text-black product-table">
           <div
             v-if="history.status.code === 200"
             class="space-y-7"
@@ -332,8 +324,8 @@
                 </div>
               </div>
               <div class="w-75 d-flex flex-column justify-content-center">
-                <span>{{ item.city_name }}</span>
-                <span>{{ item.manifest_description }}</span>
+                <span :class="item.manifest_code === `5` ? `text-primary` : ``">{{ item.city_name }}</span>
+                <span :class="item.manifest_code === `5` ? `text-primary` : ``">{{ item.manifest_description }}</span>
               </div>
             </div>
           </div>
@@ -354,24 +346,16 @@
       </div>
     </div>
   </b-card>
-  <TambahProductInbound
-    v-else
-    @back="handleBack()"
-  />
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import TambahProductInbound from './TambahProduct.vue'
 // import secureLocalStorage from '@/libs/secureLocalstorage'
 
 export default {
   name: 'RiwayatInbound',
-  components: {
-    TambahProductInbound,
-  },
 
   data() {
     return {
@@ -422,6 +406,9 @@ export default {
 
       products: null,
       history: null,
+
+      body: [],
+      variant: [],
     }
   },
 
@@ -438,10 +425,6 @@ export default {
     cancelEdit() {
       this.isEdit = false
       this.fetchDetailInbound()
-    },
-
-    console(value) {
-      console.log(value)
     },
 
     setQuantity(status, product, index) {
@@ -565,6 +548,66 @@ export default {
         })
     },
 
+    convertToPayLoad() {
+      for (let i = 0; i < this.detailInbound.products.length; i += 1) {
+        if (this.detailInbound.products[i].variant === []) {
+          this.variant = []
+        } else {
+          this.variant = []
+          for (let j = 0; j < this.detailInbound.products[i].variant.length; j += 1) {
+            this.variant.push(
+              {
+                option_id: this.detailInbound.products[i].variant[j].variant_id,
+                total_inbound: this.detailInbound.products[i].variant[j].total_inbound,
+                is_update: 1,
+              },
+            )
+          }
+        }
+        this.body.push(
+          {
+            product_id: this.detailInbound.products[i].id,
+            is_variant: this.detailInbound.products[i].is_variant,
+            total_inbound: this.detailInbound.products[i].total_inbound,
+            is_update: 1,
+            variant: this.variant,
+          },
+        )
+      }
+    },
+
+    handleSave() {
+      this.convertToPayLoad()
+      this.$http_komship.put('/v1/komship/inbound/update', {
+        inbound_id: this.$route.params.id,
+        product: this.body,
+      })
+        .then(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Success',
+              icon: 'CheckIcon',
+              text: 'Success Edit inbound',
+              variant: 'success',
+            },
+          }, 2000)
+          this.fetchDetailInbound()
+          this.isEdit = false
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal Edit inbound, silahkan coba lagi!',
+              variant: 'danger',
+            },
+          }, 2000)
+          this.$router.refresh()
+        })
+    },
+
     handleBack() {
       this.isTambah = !this.isTambah
     },
@@ -586,5 +629,10 @@ export default {
   height: 45px;
   margin: 4px 0px;
   margin-left: 5px;
+}
+
+.product-table{
+  height: 400px;
+  overflow-y: auto;
 }
 </style>
