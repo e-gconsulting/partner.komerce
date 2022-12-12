@@ -45,6 +45,14 @@
               </span>
               <span
                 v-else-if="
+                  formatDateRange(picker.startDate) === formatDateRange(kompackDate) || formatDateRange(picker.endDate) === formatDateRange(today)
+                "
+                style="color: #828282 !important"
+              >
+                Semua Tanggal
+              </span>
+              <span
+                v-else-if="
                   formatDateRange(picker.startDate) === formatDateRange(firstDateOfMonth) && formatDateRange(picker.endDate) === formatDateRange(lastDateOfMonth)
                 "
                 style="color: #828282 !important"
@@ -138,7 +146,7 @@
 import { mapState } from 'vuex'
 import moment from 'moment'
 import {
-  today, last7, last30, firstDateOfMonth, lastDateOfMonth,
+  today, last7, last30, firstDateOfMonth, lastDateOfMonth, kompackDate,
 } from '@/store/helpers'
 import DateRangePicker from 'vue2-daterange-picker'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
@@ -162,11 +170,12 @@ export default {
       // filter
       partnerList: '',
       dateRange: {
-        startDate: '2021-01-01',
+        startDate: kompackDate,
         endDate: today,
       },
 
       // for date range
+      kompackDate,
       today,
       last7,
       last30,
@@ -182,8 +191,7 @@ export default {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
         'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
-        // eslint-disable-next-line quote-props
-        'Semua': ['2021-01-01', lastDateOfMonth],
+        'Semua ': [kompackDate, today],
       },
 
       options: [
