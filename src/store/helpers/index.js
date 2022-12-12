@@ -7,6 +7,9 @@ const axiosKomship = partnerId => {
   return axios
 }
 const axiosKompack = () => Vue.prototype.$http_kompack
+
+const kompackDate = new Date('2021-01-01')
+
 const today = new Date()
 today.setHours(0, 0, 0, 0)
 
@@ -73,6 +76,7 @@ const getDates = (start, end) => {
 export {
   axiosKomship,
   axiosKompack,
+  kompackDate,
   today,
   last7,
   last30,

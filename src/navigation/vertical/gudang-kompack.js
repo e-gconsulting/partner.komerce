@@ -23,7 +23,7 @@ export default [
         title: 'Ajukan Inbound',
         icon: 'None',
         resource: 'Gudang Kompack',
-        route: 'ajukaninbound',
+        route: 'ajukan-inbound',
         action: 'manage',
       },
       {
