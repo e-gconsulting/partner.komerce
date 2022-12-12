@@ -902,10 +902,10 @@ export default
         })
     },
     setPlaceholderDescription() {
-      if (this.ticketType.id === 5) {
+      if (this.ticketType.name === 'Permintaan Pengiriman Ulang') {
         this.placeholderDescriptionTicket = 'Mohon tuliskan dengan jelas hari dan jam customer bisa untuk menerima paket di waktu tersebut. Karena kamu udah ngajuin request ini, pastikan customer berkomitmen menerima di waktu tersebut'
       }
-      if (this.ticketType.id === 14) {
+      if (this.ticketType.name === 'Perubahan Alamat Customer') {
         this.placeholderDescriptionTicket = 'Mohon tuliskan dengan jelas perbedaan alamat SEBELUM dan SESUDAH. Jika ada penambahan ongkir berdasarkan info dari ekspedisi, akan ditagihkan secara manual dengan mengurangi saldo kamu'
       }
     },

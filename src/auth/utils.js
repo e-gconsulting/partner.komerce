@@ -22,8 +22,9 @@ export const getUserData = () => JSON.parse(localStorage.getItem('userData'))
  * @param {String} userRole Role of user
  */
 export const getHomeRouteForLoggedInUser = (userRole, status) => {
+  const path = JSON.parse(localStorage.getItem('userData'))
   if (userRole === 'PARTNER' && status === 1) return '/'
   if (userRole === 'PARTNER' && status === 0) return '/komtim'
-  if (userRole === 'TALENT GLOBAL') return '/'
+  if (userRole === 'TALENT GLOBAL') return path.path
   return { name: 'auth-login' }
 }

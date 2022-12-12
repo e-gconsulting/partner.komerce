@@ -14,6 +14,7 @@
 
 <script>
 import ScrollToTop from '@core/components/scroll-to-top/ScrollToTop.vue'
+import { mapState } from 'vuex'
 
 // This will be populated in `beforeCreate` hook
 import { $themeColors, $themeBreakpoints, $themeConfig } from '@themeConfig'
@@ -24,6 +25,9 @@ import useAppConfig from '@core/app-config/useAppConfig'
 import { useWindowSize, useCssVar } from '@vueuse/core'
 
 import store from '@/store'
+
+import useJwt from '@/auth/jwt/useJwt'
+import secureLocalStorage from '@/libs/secureLocalstorage'
 
 const LayoutVertical = () => import('@/layouts/vertical/LayoutVertical.vue')
 
@@ -48,6 +52,7 @@ export default {
     contentLayoutType() {
       return this.$store.state.appConfig.layout.type
     },
+    ...mapState('dashboard', ['profile']),
   },
   beforeCreate() {
     // Set colors in theme
@@ -119,6 +124,11 @@ export default {
     return {
       skinClasses,
       enableScrollToTop,
+    }
+  },
+  async mounted() {
+    if (localStorage.getItem('userData') && secureLocalStorage.getItem(useJwt.jwtConfig.storageTokenKeyName)) {
+      if (this.profile.partner_id === undefined) await this.$store.dispatch('dashboard/getProfile')
     }
   },
 }

@@ -321,19 +321,31 @@
                       v-if="riwayat.status==='requested'"
                       class="text-warning"
                     >
-                      Perlu Disetujui
+                      Menunggu Persetujuan
                     </div>
                     <div
                       v-if="riwayat.status==='on_review'"
-                      class="text-warning"
+                      class="text-warning d-flex align-items-center"
                     >
-                      Sedang Direview
+                      Sedang Direview <img :id="`onReview-${riwayatPenarikans.indexOf(riwayat)}`" class="ml-50" src="@/assets/images/icons/info-circle.svg" />
+                      <b-popover
+                        triggers="hover"
+                        :target="`onReview-${riwayatPenarikans.indexOf(riwayat)}`"
+                        placement="top"
+                        >{{ riwayat.notes }}</b-popover
+                      >
                     </div>
                     <div
                       v-if="riwayat.status==='rejected'"
-                      class="text-danger"
+                      class="text-danger d-flex align-items-center"
                     >
-                      Ditolak
+                      Ditolak <img :id="`rejected-${riwayatPenarikans.indexOf(riwayat)}`" class="ml-50" src="@/assets/images/icons/info-circle.svg" />
+                      <b-popover
+                        triggers="hover"
+                        :target="`rejected-${riwayatPenarikans.indexOf(riwayat)}`"
+                        placement="top"
+                        >{{ riwayat.notes }}</b-popover
+                      >
                     </div>
                     <div
                       v-if="riwayat.status==='canceled'"

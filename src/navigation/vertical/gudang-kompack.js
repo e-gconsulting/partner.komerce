@@ -16,7 +16,7 @@ export default [
         title: 'Gudangku',
         icon: 'None',
         resource: 'Gudang',
-        route: 'gudangku-komship',
+        route: 'gudangku',
         action: 'manage',
       },
       {
