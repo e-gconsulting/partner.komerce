@@ -218,7 +218,6 @@ export default {
         localStorage.removeItem('paymentHistory')
       }
     }
-    console.log(this.profile)
   },
   methods: {
     formatDate(date) {
@@ -1449,8 +1448,7 @@ export default {
     }, 1000),
     validateInputAddressDetail(e) {
       if (
-        e.keyCode === 47
-        || e.keyCode === 61
+        e.keyCode === 61
         || e.keyCode === 58
         || e.keyCode === 59
       ) {
@@ -1595,7 +1593,15 @@ export default {
     },
     formatText(event) {
       const text = event.target.value
-      this.customerAddress = text.replace(/[^A-Za-z-0-9_ , - .]/g, '')
+      let string = ''
+      for (let x = 0; x < text.length; x++) {
+        if (text.charAt(x) === '/' || text.charAt(x) === '(' || text.charAt(x) === ')') {
+          string += text.charAt(x)
+        } else {
+          string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - .]/g, '')
+        }
+      }
+      this.customerAddress = string
     },
   },
 }
