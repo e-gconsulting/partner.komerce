@@ -162,7 +162,7 @@ export default {
       // filter
       partnerList: '',
       dateRange: {
-        startDate: today,
+        startDate: '2021-01-01',
         endDate: today,
       },
 
@@ -182,6 +182,8 @@ export default {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
         'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
+        // eslint-disable-next-line quote-props
+        'Semua': ['2021-01-01', lastDateOfMonth],
       },
 
       options: [
