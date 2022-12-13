@@ -265,6 +265,7 @@ export default {
             type: 'calendar',
             title: 'Tanggal Order',
             options: {
+              validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
               format: 'YYYY-MM-DD',
               months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
               weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
@@ -308,6 +309,7 @@ export default {
             type: 'calendar',
             title: 'Tanggal Order',
             options: {
+              validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
               format: 'YYYY-MM-DD',
               months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
               weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
@@ -436,6 +438,8 @@ export default {
               popup('Masukkan Nama pembeli dengan benar yaa..')
             }
           } else if (col === `${columnNumber.customer_phone_number}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.customer_phone_number}`, row])
             let phoneNumber = val.replace(/\D/g, '').replace(regexOnlyNumber, '')
             if (phoneNumber.charAt(0) === '6' && phoneNumber.charAt(1) === '2') {
@@ -450,6 +454,8 @@ export default {
               instance.jexcel.setValue(columnName, phoneNumber)
             }
           } else if (col === `${columnNumber.zip_code}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             if (!regexNumber.test(val) || val < 10110 || val > 99974) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.zip_code}`, row])
               instance.jexcel.setValue(columnName, '')
@@ -485,15 +491,20 @@ export default {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.payment_method}`, row])
               instance.jexcel.setValue(columnName, '')
             }
+          } else if (col === `${columnNumber.address}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
           }
-          const isColAddress = instance.jexcel.getValueFromCoords(`${columnNumber.customer_address}`, row)
+          const isColAddress = instance.jexcel.getValueFromCoords(`${columnNumber.address}`, row)
           const isColPhoneNumber = instance.jexcel.getValueFromCoords(`${columnNumber.customer_phone_number}`, row)
           const isColProduct = instance.jexcel.getValueFromCoords(`${columnNumber.product}`, row)
           const isColVariant = instance.jexcel.getValueFromCoords(`${columnNumber.variant}`, row)
           const isColQty = instance.jexcel.getValueFromCoords(`${columnNumber.qty}`, row)
+          const isColZipCode = instance.jexcel.getValueFromCoords(`${columnNumber.zip_code}`, row)
 
-          if (isColProduct !== '' && isColQty !== '' && isColAddress !== '' && isColPhoneNumber !== '' && isColVariant !== '') {
+          if (isColAddress !== '' && isColPhoneNumber !== '' && isColZipCode !== '' && isColProduct !== '' && isColVariant !== '' && isColQty !== '') {
             instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), false)
+            instance.jexcel.setStyle(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), 'background-color', 'white')
           } else {
             instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), true)
           }
