@@ -214,9 +214,9 @@ export default {
             const weightValue = instance.jexcel.getValue(columnName, r)
             const weight = this.ProductWeight.find(item => item.product_name === weightValue)
             this.totalWeight = (qty * weight.product_weight) / 1000
-            if (this.totalWeight < 5) {
+            if (this.totalWeight < 5.1) {
               return data.shipments.shipment_reguler
-            } if (this.totalWeight > 5) {
+            } if (this.totalWeight > 5.1) {
               return this.sourceShipment
             }
             return source
