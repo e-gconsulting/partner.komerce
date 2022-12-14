@@ -352,7 +352,7 @@
               v-if="messageErrorAddressDetail"
               class="text-primary"
             >
-              *hindari menggunakan simbol (/) (=) (:) (;)
+              *hindari menggunakan simbol (=) (:) (;) (") (&) (+)
             </small>
             {{ customerAddress.length }}/185
           </small>
@@ -1140,7 +1140,7 @@
           Submit & Tambah Order Lagi
         </b-button>
         <b-button
-          v-if="isSubmitOrder === false"
+          v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
           variant="primary"
           class="ml-1"
           :disabled="!isCalculateOnExpedition"
@@ -1149,7 +1149,7 @@
           Submit
         </b-button>
         <b-button
-          v-if="isSubmitOrder === true"
+          v-if="isSubmitOrder === true || messageErrorAddressDetail === true"
           variant="primary"
           class="ml-1"
           :disabled="true"

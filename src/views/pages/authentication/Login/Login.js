@@ -298,56 +298,60 @@ export default {
                 ability.push({ action: 'manage', subject: 'Produk' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 2)
-                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Produk' })
-                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Produk' })
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Produk', path: '/produk' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Produk', path: '/add-produk' })
               }
               if (item.menu_name === 'ORDER') {
                 ability.push({ action: 'manage', subject: 'Order' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 2)
-                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Order' })
-                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Order' })
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Data Order', path: '/data-order' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Tambah Order', path: '/add-order' })
               }
               if (item.menu_name === 'DASHBOARD') {
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
-                if (findAccessView !== undefined) ability.push({ action: 'read', subject: 'Dashboard Komship' })
+                if (findAccessView !== undefined) ability.push({ action: 'read', subject: 'Dashboard Komship', path: '/' })
               }
               if (item.menu_name === 'GUDANG') {
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
                 if (findAccessView !== undefined) {
-                  ability.push({ action: 'manage', subject: 'Gudang Komship' })
-                  ability.push({ action: 'manage', subject: 'Gudang' })
+                  ability.push({ action: 'manage', subject: 'Gudang Komship', path: '/gudangku' })
+                  ability.push({ action: 'manage', subject: 'Gudang', path: '/gudangku' })
                 }
               }
               if (item.menu_name === 'PICKUP') {
                 ability.push({ action: 'manage', subject: 'Pickup' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 6)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 5)
-                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'History Pickup' })
-                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Ajukan Pickup' })
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'History Pickup', path: '/history-pickup' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Ajukan Pickup', path: '/ajukan-pickup' })
               }
               if (item.menu_name === 'FINANCE') {
                 ability.push({ action: 'manage', subject: 'Keuangan' })
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 7)
                 const findAccessManage = item.access.find(accessItem => accessItem.access_id === 8)
-                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Penghasilan' })
-                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Saldo' })
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Penghasilan', path: '/keuangan/penghasilan' })
+                if (findAccessManage !== undefined) ability.push({ action: 'manage', subject: 'Saldo', path: '/keuangan/saldo' })
               }
               if (item.menu_name === 'SETTING') {
                 ability.push({ action: 'manage', subject: 'Setting Komship' })
                 const findAccessBank = item.access.find(accessItem => accessItem.access_id === 12)
                 const findAccessPin = item.access.find(accessItem => accessItem.access_id === 13)
                 const findAccessExpedition = item.access.find(accessItem => accessItem.access_id === 14)
-                if (findAccessBank !== undefined) ability.push({ action: 'manage', subject: 'Setting Rekening Bank' })
-                if (findAccessPin !== undefined) ability.push({ action: 'manage', subject: 'Setting PIN' })
-                if (findAccessExpedition !== undefined) ability.push({ action: 'manage', subject: 'Setting Ekspedisi' })
+                if (findAccessBank !== undefined) ability.push({ action: 'manage', subject: 'Setting Rekening Bank', path: '/setting-kompship/rekening-bank' })
+                if (findAccessPin !== undefined) ability.push({ action: 'manage', subject: 'Setting PIN', path: '/setting-kompship/pin' })
+                if (findAccessExpedition !== undefined) ability.push({ action: 'manage', subject: 'Setting Ekspedisi', path: '/setting-kompship/ekspedisi' })
               }
               if (item.menu_name === 'KENDALA') {
                 const findAccessView = item.access.find(accessItem => accessItem.access_id === 1)
-                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Kendala' })
+                if (findAccessView !== undefined) ability.push({ action: 'manage', subject: 'Kendala', path: '/ticketing' })
               }
             })
           }
+          const path = await ability.find(pathItem => pathItem.path !== undefined)
+          if (path !== undefined) Object.assign(data, { path: path.path })
+
+          console.log(data)
 
           data.ability = ability
           this.$ability.update(ability)

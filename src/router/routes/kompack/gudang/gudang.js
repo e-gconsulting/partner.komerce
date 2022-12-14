@@ -45,9 +45,9 @@ export default [
     },
   },
   {
-    path: '/Ajukan-Inbound',
-    name: 'Ajukan-Inbound',
-    component: () => import('@/views/pages/kompack/gudang/AjukanInbound'),
+    path: '/ajukan-inbound',
+    name: 'ajukan-inbound',
+    component: () => import('@/views/pages/kompack/gudang/ajukan-inbound/ajukaninbound.vue'),
     meta: {
       resource: 'Gudang',
       action: 'manage',
@@ -75,6 +75,15 @@ export default [
     path: '/detail-riwayat-tambah-product/:id',
     name: 'detail-riwayat-tambah-product',
     component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailTambahProduct'),
+    meta: {
+      resource: 'Gudang',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/detail-riwayat-berlangganan/:id',
+    name: 'detail-riwayat-berlangganan',
+    component: () => import('@/views/pages/kompack/gudang/riwayat-pengajuan/DetailBerlangganan'),
     meta: {
       resource: 'Gudang',
       action: 'manage',

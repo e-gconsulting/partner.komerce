@@ -16,14 +16,14 @@ export default [
         title: 'Gudangku',
         icon: 'None',
         resource: 'Gudang',
-        route: 'gudangku-komship',
+        route: 'gudangku',
         action: 'manage',
       },
       {
         title: 'Ajukan Inbound',
         icon: 'None',
         resource: 'Gudang Kompack',
-        route: 'ajukaninbound',
+        route: 'ajukan-inbound',
         action: 'manage',
       },
       {
