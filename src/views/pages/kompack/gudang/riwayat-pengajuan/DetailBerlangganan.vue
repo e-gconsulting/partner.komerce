@@ -13,7 +13,7 @@
         />
       </b-button>
       <h4 class="font-bold text-black d-inline-flex mb-0">
-        Pengajuan Tambah Produk
+        Pengajuan Berlangganan
       </h4>
     </div>
     <div class="d-flex flex-column border mt-2 mb-2 p-2 text-black space-y-5">
@@ -259,7 +259,7 @@ import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
-  name: 'DetailRiwayatAddProduct',
+  name: 'DetailRiwayatBerlangganan',
   data() {
     return {
       detail: {},
@@ -287,7 +287,7 @@ export default {
   },
 
   created() {
-    this.fetchDetailAddProduct()
+    this.fetchDetailBerlangganan()
   },
 
   methods: {
@@ -329,7 +329,7 @@ export default {
       }
     },
 
-    fetchDetailAddProduct() {
+    fetchDetailBerlangganan() {
       this.loading = true
       this.$http_komship.get(`/v1/komship/submission/history/${this.$route.params.id}/detail`)
         .then(response => {
@@ -393,7 +393,7 @@ export default {
     confirmBatalkan(data) {
       this.$swal({
         text: 'Anda yakin melakukan pembatalan inbound?',
-        title: 'Batalkan AddProduct',
+        title: 'Batalkan Berlangganan',
         icon: 'warning',
         iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">',
         showCancelButton: true,
@@ -407,7 +407,7 @@ export default {
         buttonsStyling: false,
       }).then(result => {
         if (result.value) {
-          this.batalkanAddProduct(data)
+          this.batalkanBerlangganan(data)
         }
       })
     },
@@ -416,7 +416,7 @@ export default {
       return new Intl.NumberFormat('id-ID').format(value)
     },
 
-    batalkanAddProduct(data) {
+    batalkanBerlangganan(data) {
       this.$http_komship.put(`/v1/komship/inbound/cancel/${data}`)
         .then(() => {
           this.$toast({

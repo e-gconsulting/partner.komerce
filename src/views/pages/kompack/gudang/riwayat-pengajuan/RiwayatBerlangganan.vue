@@ -1,6 +1,15 @@
 <template>
   <div class="border pt-1 -mt-4">
     <div class="pt-5">
+      <b-overlay
+        variant="light"
+        :show="loading"
+        spinner-variant="primary"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+        class="top-20"
+      />
       <b-table
         small
         class="text-center"
@@ -8,7 +17,8 @@
         :items="items"
         responsive="sm"
         empty-text="Tidak ada data untuk ditampilkan."
-        :show-empty="!loading"
+        show-empty
+        :busy="loading"
       >
         <template #cell(tanggal_pengajuan)="data">
           {{ formatDate(data.item.submission_date) }}
@@ -53,17 +63,11 @@
           </div>
         </template>
       </b-table>
-      <div class="hidden">
-        <b-button
-          variant="primary"
-          class="rounded-pill p-1"
-        >
-          <feather-icon
-            icon="PlusIcon"
-            size="35"
-          />
-        </b-button>
-      </div>
+      <b-img
+        src="@/assets/images/icons/add-circle.svg"
+        class="cursor-pointer button-add-berlangganan"
+        @click="handleAddBerlangan()"
+      />
     </div>
   </div>
 </template>
@@ -131,19 +135,26 @@ export default {
   },
 
   methods: {
+    handleAddBerlangan() {
+      this.$router.push({
+        path: '/search-gudang',
+      })
+    },
 
     handleDetail(data) {
       const { id } = data
       this.$router.push({
-        path: `/detail-riwayat-tambah-product/${id}`,
+        path: `/detail-riwayat-berlangganan/${id}`,
       })
     },
 
     fetchRiwayatBerlangganan() {
+      this.loading = true
       this.$store
         .dispatch('riwayatPengajuan/getListBerlangganan')
         .then(() => {
           this.items = this.berlangganan
+          this.loading = false
         })
         .catch(() => {
           this.loading = false
@@ -168,7 +179,7 @@ export default {
     //   this.$router.push({
     //     path: `/detail-riwayat-inbound/${id}`,
     //   })
-    //   localStorage.setItem('dataTes', JSON.stringify(data))
+    //   localStorage.setItem('detailInbound', JSON.stringify(data))
     // },
 
     statusColor(status) {
@@ -185,3 +196,12 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.button-add-berlangganan {
+  position: fixed;
+  right: 85px;
+  bottom: 60px;
+  z-index: 99;
+}
+</style>

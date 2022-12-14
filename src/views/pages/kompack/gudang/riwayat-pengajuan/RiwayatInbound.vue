@@ -45,6 +45,14 @@
               </span>
               <span
                 v-else-if="
+                  formatDateFilter(picker.startDate) === formatDateFilter(kompackDate) || formatDateFilter(picker.endDate) === formatDateFilter(today)
+                "
+                style="color: #828282 !important"
+              >
+                Semua Tanggal
+              </span>
+              <span
+                v-else-if="
                   formatDateFilter(picker.startDate) === formatDateFilter(firstDateOfMonth) && formatDateFilter(picker.endDate) === formatDateFilter(lastDateOfMonth)
                 "
                 style="color: #828282 !important"
@@ -67,6 +75,15 @@
       </div> -->
     </div>
     <div class="">
+      <b-overlay
+        variant="light"
+        :show="loading"
+        spinner-variant="primary"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+        class="top-36"
+      />
       <b-table
         small
         class="text-center"
@@ -74,7 +91,8 @@
         :items="items"
         responsive="sm"
         empty-text="Tidak ada data untuk ditampilkan."
-        :show-empty="!loading"
+        show-empty
+        :busy="loading"
       >
         <template #cell(tanggal_pengajuan)="data">
           {{ formatDate(data.item.inbound_date) }}
@@ -150,7 +168,7 @@ import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import DateRangePicker from 'vue2-daterange-picker'
 import {
-  today, last7, last30, firstDateOfMonth, lastDateOfMonth,
+  today, last7, last30, firstDateOfMonth, lastDateOfMonth, kompackDate,
 } from '@/store/helpers'
 import { BFormSelect } from 'bootstrap-vue'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
@@ -160,6 +178,7 @@ export default {
   components: { DateRangePicker, BFormSelect },
   data() {
     return {
+      kompackDate,
       today,
       last7,
       last30,
@@ -170,7 +189,7 @@ export default {
       partnerList: '',
       date: '',
       dateRange: {
-        startDate: today,
+        startDate: kompackDate,
         endDate: today,
       },
       locale: {
@@ -183,6 +202,7 @@ export default {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
         'Bulan ini': [firstDateOfMonth, lastDateOfMonth],
+        'Semua ': [kompackDate, today],
       },
 
       loading: false,
@@ -262,6 +282,7 @@ export default {
 
   methods: {
     fetchRiwayatInbound() {
+      this.loading = true
       this.$store
         .dispatch('riwayatPengajuan/getListInbound', {
           start_date: this.formatDateFilter(this.dateRange.startDate),
@@ -270,6 +291,7 @@ export default {
         })
         .then(() => {
           this.items = this.inbound
+          this.loading = false
         })
         .catch(() => {
           this.loading = false
@@ -309,7 +331,7 @@ export default {
       this.$router.push({
         path: `/detail-riwayat-inbound/${id}`,
       })
-      localStorage.setItem('dataTes', JSON.stringify(data))
+      localStorage.setItem('detailInbound', JSON.stringify(data))
     },
 
     shippingMethods(part, shipping) {

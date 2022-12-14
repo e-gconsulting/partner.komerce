@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-plusplus */
 import jspreadsheet from 'jspreadsheet-ce'
@@ -22,8 +23,12 @@ export default {
       sourceProduct: null,
       sourceVariant: null,
       sourceShipment: null,
+      sourceShipmentReguler: null,
+      sourceShipmentTruck: null,
+      ProductWeight: null,
       allVariant: null,
       filterVariant: null,
+      filterShipment: null,
       table: null,
       columnNumber: null,
       jumlahBaris: 200,
@@ -37,6 +42,7 @@ export default {
       submitProgressStatus: true,
       disableSubmit: false,
       adminList: [],
+      totalWeight: false,
     }
   },
   async mounted() {
@@ -150,13 +156,14 @@ export default {
         .catch(err => console.log(err))
     },
     async getDropdownSheet() {
-      await this.$http_komship.get('/v1/order/sheet/drop-down')
+      await this.$http_komship.get('/v2/order/sheet/drop-down')
         .then(res => {
           const { data } = JSON.parse(JSON.stringify(res.data))
           this.sourceAddress = data.addresses
           this.sourcePayment = data.payment_method
           this.sourceProduct = data.products
-          this.sourceShipment = data.shipments
+          this.ProductWeight = data.product_weight
+          this.sourceShipment = data.shipments.shipment_reguler.concat(data.shipments.shipment_truck)
           this.adminList = data.tracking_sales
           this.allVariant = data.variant
           const { variant } = data
@@ -198,6 +205,19 @@ export default {
             const dataVariant = variant.find(item => item.product_name === value)
             if (dataVariant) {
               return dataVariant.variant
+            }
+            return source
+          }
+          this.filterShipment = (instance, cell, c, r, source) => {
+            const qty = instance.jexcel.getValueFromCoords(c - 2, r)
+            const columnName = jspreadsheet.getColumnNameFromId([7, r])
+            const weightValue = instance.jexcel.getValue(columnName, r)
+            const weight = this.ProductWeight.find(item => item.product_name === weightValue)
+            this.totalWeight = (qty * weight.product_weight) / 1000
+            if (this.totalWeight < 5.1) {
+              return data.shipments.shipment_reguler
+            } if (this.totalWeight > 5.1) {
+              return this.sourceShipment
             }
             return source
           }
@@ -245,6 +265,7 @@ export default {
             type: 'calendar',
             title: 'Tanggal Order',
             options: {
+              validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
               format: 'YYYY-MM-DD',
               months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
               weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
@@ -276,7 +297,7 @@ export default {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
           {
-            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment,
+            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
           },
           {
             type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
@@ -288,6 +309,7 @@ export default {
             type: 'calendar',
             title: 'Tanggal Order',
             options: {
+              validRange: [moment().format('YYYY-MM-DD'), moment().add(7, 'days').format('YYYY-MM-DD')],
               format: 'YYYY-MM-DD',
               months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Des'],
               weekdays: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
@@ -318,7 +340,7 @@ export default {
             type: 'dropdown', title: 'Metode pembayaran', width: 200, source: this.sourcePayment,
           },
           {
-            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment,
+            type: 'dropdown', title: 'Ekspedisi', source: this.sourceShipment, filter: this.filterShipment, readOnly: true,
           },
           {
             type: 'text', title: 'Nilai Pembayaran', mask: 'Rp #.##', decimal: ',',
@@ -416,6 +438,8 @@ export default {
               popup('Masukkan Nama pembeli dengan benar yaa..')
             }
           } else if (col === `${columnNumber.customer_phone_number}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.customer_phone_number}`, row])
             let phoneNumber = val.replace(/\D/g, '').replace(regexOnlyNumber, '')
             if (phoneNumber.charAt(0) === '6' && phoneNumber.charAt(1) === '2') {
@@ -430,6 +454,8 @@ export default {
               instance.jexcel.setValue(columnName, phoneNumber)
             }
           } else if (col === `${columnNumber.zip_code}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             if (!regexNumber.test(val) || val < 10110 || val > 99974) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.zip_code}`, row])
               instance.jexcel.setValue(columnName, '')
@@ -442,6 +468,8 @@ export default {
               popup('Alamat pembelinya diisi dengan detail dan jelas yaa..')
             }
           } else if (col === `${columnNumber.product}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.variant}`, row])
             const source = allVariant.find(items => items.product_name === val)
             if (source.variant.length > 1) {
@@ -450,6 +478,8 @@ export default {
               instance.jexcel.setValue(columnName, '-')
             }
           } else if (col === `${columnNumber.qty}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
             if (!regexNumber.test(val) || toInteger(val) < 1 || toInteger(val) > 1000) {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.qty}`, row])
               instance.jexcel.setValue(columnName, '')
@@ -461,6 +491,22 @@ export default {
               const columnName = jspreadsheet.getColumnNameFromId([`${columnNumber.payment_method}`, row])
               instance.jexcel.setValue(columnName, '')
             }
+          } else if (col === `${columnNumber.address}`) {
+            const isExpedition = jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row])
+            instance.jexcel.setValue(isExpedition, '')
+          }
+          const isColAddress = instance.jexcel.getValueFromCoords(`${columnNumber.address}`, row)
+          const isColPhoneNumber = instance.jexcel.getValueFromCoords(`${columnNumber.customer_phone_number}`, row)
+          const isColProduct = instance.jexcel.getValueFromCoords(`${columnNumber.product}`, row)
+          const isColVariant = instance.jexcel.getValueFromCoords(`${columnNumber.variant}`, row)
+          const isColQty = instance.jexcel.getValueFromCoords(`${columnNumber.qty}`, row)
+          const isColZipCode = instance.jexcel.getValueFromCoords(`${columnNumber.zip_code}`, row)
+
+          if (isColAddress !== '' && isColPhoneNumber !== '' && isColZipCode !== '' && isColProduct !== '' && isColVariant !== '' && isColQty !== '') {
+            instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), false)
+            instance.jexcel.setStyle(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), 'background-color', 'white')
+          } else {
+            instance.jexcel.setReadOnly(jspreadsheet.getColumnNameFromId([`${columnNumber.expedition}`, row]), true)
           }
         },
         onselection(instance, col, row, cell, val) {
