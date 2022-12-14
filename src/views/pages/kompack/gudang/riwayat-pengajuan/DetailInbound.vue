@@ -482,6 +482,7 @@ export default {
           this.loading = false
         })
         .catch(() => {
+          this.loading = false
           this.$toast({
             component: ToastificationContent,
             props: {
