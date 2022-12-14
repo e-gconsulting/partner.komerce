@@ -1050,8 +1050,8 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          const result = data.find(items => items.value === this.shipping.value)
-          const resultDefault = data.find(items => items.shipment_name === this.shipping.shipment_name)
+          const result = this.shipping.label_shipping_type === 'Reguler' || this.shipping.label_shipping_type === 'IDlite' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
+          const resultDefault = this.shipping.label_shipping_type === 'Reguler' || this.shipping.label_shipping_type === 'IDlite' ? data.data_regular.find(items => items.shipment_name === this.shipping.shipment_name) : data.data_truck.find(items => items.shipment_name === this.shipping.shipment_name)
           if (result !== undefined) {
             if (getAdditional) {
               this.sesuaiNominal = Math.round(result.service_fee)
@@ -1178,7 +1178,8 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          const result = this.shipping.label_shipping_type === 'Reguler' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
+          console.log(this.shipping)
+          const result = this.shipping.label_shipping_type === 'Reguler' || this.shipping.label_shipping_type === 'IDlite' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
             this.bebankanCustomer = Math.round(result.service_fee)
@@ -1234,7 +1235,6 @@ export default {
         value === 'REG19'
         || value === 'SIUNT'
         || value === 'STD'
-        || value === 'IDlite'
         || value === 'CTC19'
       ) {
         return 'Reguler'
@@ -1448,8 +1448,7 @@ export default {
     }, 1000),
     validateInputAddressDetail(e) {
       if (
-        e.keyCode === 47
-        || e.keyCode === 61
+        e.keyCode === 61
         || e.keyCode === 58
         || e.keyCode === 59
       ) {
@@ -1585,7 +1584,7 @@ export default {
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err.response.message,
+              text: err.response.data.message,
               variant: 'danger',
             },
           })
@@ -1593,7 +1592,15 @@ export default {
     },
     formatText(event) {
       const text = event.target.value
-      this.customerAddress = text
+      let string = ''
+      for (let x = 0; x < text.length; x++) {
+        if (text.charAt(x) === '/' || text.charAt(x) === '(' || text.charAt(x) === ')') {
+          string += text.charAt(x)
+        } else {
+          string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - .]/g, '')
+        }
+      }
+      this.customerAddress = string
       if (text.match(/[^A-Za-z-0-9_ , - .]/g)) {
         this.messageErrorAddressDetail = true
       } else {
