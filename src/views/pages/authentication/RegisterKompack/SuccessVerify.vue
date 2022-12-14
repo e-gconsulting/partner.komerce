@@ -16,7 +16,7 @@
       class="btn-success-verify w-4/6 py-1"
     >
       <router-link
-        to="login"
+        :to="{name:'auth-login'}"
         class="text-[16px] font-semibold"
         style="color: #FFFFFF"
       >
