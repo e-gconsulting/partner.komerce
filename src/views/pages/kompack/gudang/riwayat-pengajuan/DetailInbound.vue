@@ -156,12 +156,27 @@
           <div class="text-black font-bold">
             Data Product</div>
         </div>
+        <div
+          v-if="products === null"
+          class="h-50 d-flex justify-content-center align-items-center border-t"
+        >
+          <b-overlay
+            variant="light"
+            :show="loading"
+            spinner-variant="primary"
+            blur="0"
+            opacity=".5"
+            rounded="sm"
+          />
+        </div>
         <BTable
+          v-else
           small
           class="text-left product-table"
           :fields="fields"
           :items="products"
           responsive="sm"
+          :busy="loading"
         >
           <template #cell(nama_produk)="data">
             <div class="my-2 d-flex gap-2 items-center text-black">
@@ -193,12 +208,12 @@
             </div>
           </template>
           <template #cell(jumlah)="data">
-            <div class="space-y-3">
+            <div class="space-y-3 text-center py-1">
 
               <div
                 v-for="i in data.item.variant"
                 :key="i.variant_id"
-                class="d-flex"
+                class="d-flex justify-content-center"
               >
                 <b-button
                   v-if="isEdit==true"
@@ -211,7 +226,14 @@
                 >
                   <span class="font-bold text-lg">-</span>
                 </b-button>
+                <input
+                  v-if="isEdit == true"
+                  v-model="i.total_inbound"
+                  type="number"
+                  class="jumlah-inbound"
+                >
                 <span
+                  v-else
                   class="text-lg"
                   style="margin: 0 10px"
                 >{{ i.total_inbound }}</span>
@@ -242,7 +264,14 @@
               >
                 <span class="font-bold text-lg">-</span>
               </b-button>
+              <input
+                v-if="isEdit == true"
+                v-model="data.item.total_inbound"
+                type="number"
+                class="jumlah-inbound"
+              >
               <span
+                v-else
                 class="text-lg"
                 style="margin: 0 10px"
               >{{ data.item.total_inbound }}</span>
@@ -299,48 +328,63 @@
           Riwayat Perjalanan :</div>
         <div class="d-flex flex-column p-1 border-t text-black product-table">
           <div
-            v-if="history.status.code === 200"
-            class="space-y-7"
+            v-if="history === null"
+            class="h-50 d-flex justify-content-center align-items-center"
           >
+            <b-overlay
+              variant="light"
+              :show="loading"
+              spinner-variant="primary"
+              blur="0"
+              opacity=".5"
+              rounded="sm"
+            />
+          </div>
+          <div v-else>
             <div
-              v-for="item in history.manifest"
-              :key="item.id"
-              class="d-flex"
+              v-if="history.status.code === 200"
+              class="space-y-7"
             >
-              <div class="d-flex flex-column w-25 justify-content-center">
-                <span>{{ formatDateManifest(item.manifest_date) }}</span>
-                <span>{{ formatTimeManifest(item.manifest_time) }} WIB</span>
-              </div>
-              <div class="w-25 d-flex align-items-center justify-content-center">
-                <div class="relative">
-                  <img
-                    :src="ellipseColor(item.manifest_code)"
-                    alt=""
-                  >
-                  <div
-                    v-if="item.manifest_code !== `1`"
-                    class="dash border"
-                  />
+              <div
+                v-for="(item, index) in history.manifest"
+                :key="index"
+                class="d-flex"
+              >
+                <div class="d-flex flex-column w-25 justify-content-center">
+                  <span>{{ formatDateManifest(item.manifest_date) }}</span>
+                  <span>{{ formatTimeManifest(item.manifest_time) }} WIB</span>
+                </div>
+                <div class="w-25 d-flex align-items-center justify-content-center">
+                  <div class="relative">
+                    <img
+                      :src="ellipseColor(item.manifest_code)"
+                      alt=""
+                    >
+                    <div
+                      v-if="item.manifest_code !== `1`"
+                      class="dash border"
+                    />
+                  </div>
+                </div>
+                <div class="w-75 d-flex flex-column justify-content-center">
+                  <span :class="item.manifest_code === `5` ? `text-primary` : ``">{{ item.city_name }}</span>
+                  <span :class="item.manifest_code === `5` ? `text-primary` : ``">{{ item.manifest_description }}</span>
                 </div>
               </div>
-              <div class="w-75 d-flex flex-column justify-content-center">
-                <span :class="item.manifest_code === `5` ? `text-primary` : ``">{{ item.city_name }}</span>
-                <span :class="item.manifest_code === `5` ? `text-primary` : ``">{{ item.manifest_description }}</span>
+            </div>
+            <div
+              v-else
+              class="d-flex justify-content-center flex-column space-y-3"
+            >
+              <img src="https://storage.googleapis.com/komerce/assets/tidak-dapat-tracking.svg">
+              <div class="text-black font-black text-xl text-center mt-3">
+                Ekspedisi yang kamu gunakan belum
+                dapat ditracking melalui Kompack
               </div>
+              <div class="text-center mx-3">
+                kamu dapat melakukan pengecekan riwayat perjalanan melalui website ekspedisi
+                yang kamu gunakan.</div>
             </div>
-          </div>
-          <div
-            v-else
-            class="d-flex justify-content-center flex-column space-y-3"
-          >
-            <img src="https://storage.googleapis.com/komerce/assets/tidak-dapat-tracking.svg">
-            <div class="text-black font-black text-xl text-center mt-3">
-              Ekspedisi yang kamu gunakan belum
-              dapat ditracking melalui Kompack
-            </div>
-            <div class="text-center mx-3">
-              kamu dapat melakukan pengecekan riwayat perjalanan melalui website ekspedisi
-              yang kamu gunakan.</div>
           </div>
         </div>
       </div>
@@ -352,19 +396,18 @@
 import { mapState } from 'vuex'
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
+import { BTable } from 'bootstrap-vue'
 // import secureLocalStorage from '@/libs/secureLocalstorage'
 
 export default {
   name: 'RiwayatInbound',
-
+  components: { BTable },
   data() {
     return {
-
+      loading: true,
       isEdit: false,
       isTambah: false,
-
       detail: JSON.parse(localStorage.getItem('detailInbound')),
-
       fields: [
         {
           key: 'nama_produk',
@@ -393,40 +436,33 @@ export default {
         {
           key: 'jumlah',
           label: 'Jumlah',
-          thClass: 'text-black text-capitalize py-1',
-          class: 'bg-white',
+          thClass: 'text-black text-capitalize py-1 text-center',
+          class: 'bg-white text-center',
           thStyle: {
             textTransform: 'capitalize',
             fontSize: '13px',
             color: 'black',
           },
-          tdClass: 'text-black',
+          tdClass: 'text-black text-center',
         },
       ],
-
       products: null,
       history: null,
-
       body: [],
       variant: [],
     }
   },
-
   computed: {
     ...mapState('riwayatPengajuan', ['detailInbound']),
   },
-
   created() {
     this.fetchDetailInbound()
   },
-
   methods: {
-
     cancelEdit() {
       this.isEdit = false
       this.fetchDetailInbound()
     },
-
     setQuantity(status, product, index) {
       if (status === 'plus') {
         this.detailInbound.products[product].variant[index].total_inbound += 1
@@ -434,8 +470,8 @@ export default {
         this.detailInbound.products[product].variant[index].total_inbound -= 1
       }
     },
-
     fetchDetailInbound() {
+      this.loading = true
       this.$store
         .dispatch('riwayatPengajuan/getDetailInbound', {
           inbound_id: this.$route.params.id,
@@ -443,24 +479,21 @@ export default {
         .then(() => {
           this.products = this.detailInbound.products
           this.history = this.detailInbound.history_shipping
+          this.loading = false
         })
         .catch(() => {
           this.loading = false
-          this.$toast(
-            {
-              component: ToastificationContent,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal load data, silahkan coba lagi',
-                variant: 'danger',
-              },
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal load data, silahkan coba lagi',
+              variant: 'danger',
             },
-            2000,
-          )
+          }, 2000)
         })
     },
-
     shippingMethods(part, shipping) {
       if (part === 'img') {
         if (shipping != null) {
@@ -473,11 +506,11 @@ export default {
       }
       return 'Dikirim Sendiri'
     },
-
     statusColor(status) {
       if (status === 'Proses') {
         return 'text-warning'
-      } if (status === 'Selesai') {
+      }
+      if (status === 'Selesai') {
         return 'text-success'
       }
       return 'text-danger'
@@ -485,7 +518,6 @@ export default {
     formatDate(value) {
       return moment(value).format('DD MMMM YYYY')
     },
-
     formatDateManifest(value) {
       return moment(value).format('DD MMM')
     },
@@ -498,7 +530,6 @@ export default {
       }
       return 'https://storage.googleapis.com/komerce/assets/tracking-elipse.svg'
     },
-
     confirmBatalkan(data) {
       this.$swal({
         text: 'Anda yakin melakukan pembatalan inbound?',
@@ -520,7 +551,6 @@ export default {
         }
       })
     },
-
     batalkanInbound(data) {
       this.$http_komship.put(`/v1/komship/inbound/cancel/${data}`)
         .then(() => {
@@ -547,7 +577,6 @@ export default {
           this.$router.refresh()
         })
     },
-
     convertToPayLoad() {
       for (let i = 0; i < this.detailInbound.products.length; i += 1) {
         if (this.detailInbound.products[i].variant === []) {
@@ -555,27 +584,22 @@ export default {
         } else {
           this.variant = []
           for (let j = 0; j < this.detailInbound.products[i].variant.length; j += 1) {
-            this.variant.push(
-              {
-                option_id: this.detailInbound.products[i].variant[j].variant_id,
-                total_inbound: this.detailInbound.products[i].variant[j].total_inbound,
-                is_update: 1,
-              },
-            )
+            this.variant.push({
+              option_id: this.detailInbound.products[i].variant[j].variant_id,
+              total_inbound: this.detailInbound.products[i].variant[j].total_inbound,
+              is_update: 1,
+            })
           }
         }
-        this.body.push(
-          {
-            product_id: this.detailInbound.products[i].id,
-            is_variant: this.detailInbound.products[i].is_variant,
-            total_inbound: this.detailInbound.products[i].total_inbound,
-            is_update: 1,
-            variant: this.variant,
-          },
-        )
+        this.body.push({
+          product_id: this.detailInbound.products[i].id,
+          is_variant: this.detailInbound.products[i].is_variant,
+          total_inbound: this.detailInbound.products[i].total_inbound,
+          is_update: 1,
+          variant: this.variant,
+        })
       }
     },
-
     handleSave() {
       this.convertToPayLoad()
       this.$http_komship.put('/v1/komship/inbound/update', {
@@ -607,12 +631,10 @@ export default {
           this.$router.refresh()
         })
     },
-
     handleBack() {
       this.isTambah = !this.isTambah
     },
   },
-
 }
 </script>
 
@@ -634,5 +656,16 @@ export default {
 .product-table{
   height: 400px;
   overflow-y: auto;
+}
+
+.jumlah-inbound {
+  width: 15%;
+  border-bottom: solid 2px #e2e2e2 !important;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  margin: 0px 5px;
+  padding: 2px 0px;
+  text-align: center;
 }
 </style>

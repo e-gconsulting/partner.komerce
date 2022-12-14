@@ -75,6 +75,15 @@
       </div> -->
     </div>
     <div class="">
+      <b-overlay
+        variant="light"
+        :show="loading"
+        spinner-variant="primary"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+        class="top-36"
+      />
       <b-table
         small
         class="text-center"
@@ -82,7 +91,8 @@
         :items="items"
         responsive="sm"
         empty-text="Tidak ada data untuk ditampilkan."
-        :show-empty="!loading"
+        show-empty
+        :busy="loading"
       >
         <template #cell(tanggal_pengajuan)="data">
           {{ formatDate(data.item.inbound_date) }}
@@ -272,6 +282,7 @@ export default {
 
   methods: {
     fetchRiwayatInbound() {
+      this.loading = true
       this.$store
         .dispatch('riwayatPengajuan/getListInbound', {
           start_date: this.formatDateFilter(this.dateRange.startDate),
@@ -280,6 +291,7 @@ export default {
         })
         .then(() => {
           this.items = this.inbound
+          this.loading = false
         })
         .catch(() => {
           this.loading = false

@@ -122,14 +122,15 @@
       Daftar Produk
     </div>
     <b-overlay
-      class="mx-1 text-start text-black"
+      class="text-start text-black"
       spinner-variant="primary"
       variant="light"
       blur="0"
       opacity=".5"
       rounded="sm"
+      :show="loading"
     >
-      <b-row class="border-b py-2">
+      <b-row class="border-b py-2 mx-1">
         <b-col cols="4">
           Nama
         </b-col>
@@ -320,10 +321,6 @@ export default {
       return 'status-penuh'
     },
 
-    console(value) {
-      console.log(value)
-    },
-
     setQuantity(status, product, index) {
       if (status === 'plus') {
         this.detailInbound.products[product].variant[index].total_inbound += 1
@@ -333,9 +330,11 @@ export default {
     },
 
     fetchDetailAddProduct() {
+      this.loading = true
       this.$http_komship.get(`/v1/komship/submission/history/${this.$route.params.id}/detail`)
         .then(response => {
           this.detail = response.data.data
+          this.loading = false
         }).catch(() => {
           this.loading = false
           this.$toast(
