@@ -94,6 +94,7 @@ export default {
         id: request.id,
         tanggal: moment(new Date(request.created_at)).format('DD-MM-YYYY'),
         jam: moment(new Date(request.created_at)).format('HH:mm'),
+        notes: request.notes,
         tujuan: {
           nama: request.bank_owner_name,
           bank: request.bank_name,
