@@ -44,6 +44,7 @@
             </b-col>
             <b-col cols="6">
               <v-select
+                key="warehouse_id"
                 v-model="warehouse"
                 :options="listGudang"
                 label="warehouse_name"
@@ -84,6 +85,7 @@
               </b-col>
               <b-col cols="6">
                 <v-select
+                  key="id"
                   v-model="ekspedisi"
                   :options="listEkspedisi"
                   label="name"
@@ -359,7 +361,7 @@
         </b-row>
         <div
           v-for="(item, index) in listProdukEdit"
-          :key="(index+1, item.id)"
+          :key="(index+1)"
         >
           <b-row class="my-2 my-2">
             <b-col cols="1">
