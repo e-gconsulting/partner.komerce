@@ -315,7 +315,7 @@ export default {
     },
     async getReturnInsight() {
       if (this.profile.partner_is_return_insight && this.destination !== null) {
-        await this.$http_komship.get('/v2/feature/returnInsight', {
+        await this.$http_komship.get('/v3/feature/returnInsight', {
           params: { destination_id: this.destination.id },
         })
           .then(result => {
