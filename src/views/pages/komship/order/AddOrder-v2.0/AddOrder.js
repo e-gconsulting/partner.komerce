@@ -1178,7 +1178,6 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          console.log(this.shipping)
           const result = this.shipping.label_shipping_type === 'Reguler' || this.shipping.label_shipping_type === 'IDlite' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
