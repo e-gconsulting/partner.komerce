@@ -1236,7 +1236,7 @@ export default {
         || value === 'SIUNT'
         || value === 'STD'
         || value === 'CTC19'
-        || value === 'DRGREG'
+        || value === 'UDRREG'
       ) {
         return 'Reguler'
       }
@@ -1246,7 +1246,7 @@ export default {
       if (value === 'Idtruck') {
         return 'ID Truck'
       }
-      if (value === 'UDRREG') {
+      if (value === 'DRGREG') {
         return 'Cargo'
       }
       return value
