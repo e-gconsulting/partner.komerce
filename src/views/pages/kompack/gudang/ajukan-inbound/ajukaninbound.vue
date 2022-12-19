@@ -8,7 +8,11 @@
           </h4>
         </b-col>
         <b-col cols="2">
-          <b-button disabled>
+          <b-button
+            :disabled="submitDisabled()"
+            :variant="submitDisabled() ? 'secondary' : 'primary'"
+            @click="submitInbound"
+          >
             Ajukan Inbound
           </b-button>
         </b-col>
@@ -26,6 +30,7 @@
             </b-col>
             <b-col cols="6">
               <b-form-input
+                v-model="addressSender"
                 placeholder="Masukan alamat pengirim"
                 class="rounded-2xl"
               />
@@ -43,6 +48,7 @@
                 :options="listGudang"
                 label="warehouse_name"
                 aria-placeholder="Pilih Mitra Gudang"
+                @input="AddProductDisabled(warehouse)"
               />
             </b-col>
           </b-row>
@@ -93,6 +99,7 @@
               </b-col>
               <b-col cols="6">
                 <b-form-input
+                  v-model="noResi"
                   placeholder="Masukan No Resi"
                   class="rounded-2xl"
                 />
@@ -159,7 +166,9 @@
             </b-col>
             <b-col cols="2">
               <b-button
-                variant="outline-primary"
+                :disabled="disabledAddProduct"
+                :variant="disabledAddProduct ? 'outline-dark': 'outline-primary'"
+                :class="disabledAddProduct ? 'text-second': 'text-primary'"
                 @click="addProduct()"
               >
                 Tambah Produk
@@ -196,7 +205,7 @@
           </b-col>
         </b-row>
         <div
-          v-for="(item, index) in listProduk"
+          v-for="(item, index) in selectedOrder"
           :key="(index+1)"
         >
           <b-row class="my-2">
@@ -315,8 +324,9 @@
               <feather-icon icon="SearchIcon" />
             </b-input-group-prepend>
             <b-form-input
-              class=""
+              v-model="search"
               placeholder="Seach..."
+              @input="searchProduct(listProdukDB, search)"
             />
           </b-input-group>
         </b-col>
@@ -330,9 +340,7 @@
         rounded="sm"
       >
         <b-row class="border-b border-t py-1">
-          <b-col cols="1">
-            <b-form-checkbox />
-          </b-col>
+          <b-col cols="1" />
           <b-col
             cols="3"
             class="text-start"
@@ -350,12 +358,15 @@
           </b-col>
         </b-row>
         <div
-          v-for="(item, index) in listProduk"
-          :key="(index+1)"
+          v-for="(item, index) in listProdukEdit"
+          :key="(index+1, item.id)"
         >
           <b-row class="my-2 my-2">
             <b-col cols="1">
-              <b-form-checkbox />
+              <b-form-checkbox
+                v-model="item.isActive"
+                @input="setData(listProdukEdit)"
+              />
             </b-col>
             <b-col cols="3">
               <b-row class="text-start">
@@ -399,17 +410,20 @@
                   <b-button
                     class="minus-button mr-1"
                     variant="outline-primary"
-                    @click="setQuantity('minus', item.variant.map(object => object.id).indexOf(variant.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id))"
+                    @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
                   >
                     -
                   </b-button>
-                  <div class="align-self-center">
-                    {{ variant.stock }}
-                  </div>
+                  <b-input
+                    v-model="variant.stock"
+                    class="align-self-center text-center input-stock"
+                    style="widht: 10% !important"
+                    @input="inputStock(variant.stock, item)"
+                  />
                   <b-button
                     class="plus-button ml-1"
                     variant="outline-primary"
-                    @click="setQuantity('plus', item.variant.map(object => object.id).indexOf(variant.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id))"
+                    @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
                   >
                     +
                   </b-button>
@@ -423,15 +437,20 @@
                     <b-button
                       class="minus-button mr-1"
                       variant="outline-primary"
+                      @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
                     >
                       -
                     </b-button>
-                    <div class="align-self-center">
-                      {{ itemvariant.stock }}
-                    </div>
+                    <b-input
+                      v-model="itemvariant.stock"
+                      class="align-self-center text-center input-stock"
+                      style="widht: 10% !important"
+                      @input="inputStock(itemvariant.stock, item)"
+                    />
                     <b-button
                       class="plus-button ml-1"
                       variant="outline-primary"
+                      @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
                     >
                       +
                     </b-button>
@@ -443,17 +462,20 @@
                   <b-button
                     class="minus-button mr-1"
                     variant="outline-primary"
-                    @click="reduceTotalStock(item.stock)"
+                    @click="setQuantityNoVariant('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
                   >
                     -
                   </b-button>
-                  <div class="align-self-center">
-                    {{ item.stock }}
-                  </div>
+                  <b-input
+                    v-model="item.stock"
+                    class="align-self-center text-center input-stock"
+                    style="widht: 10% !important"
+                    @input="inputStock(item.stock, item)"
+                  />
                   <b-button
                     class="plus-button ml-1"
                     variant="outline-primary"
-                    @click="addTotalStock(item.stock)"
+                    @click="setQuantityNoVariant('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
                   >
                     +
                   </b-button>
@@ -488,111 +510,52 @@
         </div>
       </b-overlay>
       <b-row class="justify-content-end mr-4 mt-2">
-        <b-button variant="primary">
+        <b-button
+          variant="primary"
+          @click="addStockNow()"
+        >
           Tambah Sekarang
         </b-button>
       </b-row>
     </div>
+    <!-- Modal -->
+    <b-modal
+      id="success-inbound"
+      hide-footer
+      hide-header
+      centered
+      no-close-on-backdrop
+      no-close-on-esc
+      content-class="p-2 rounded-lg"
+    >
+      <div class="text-end -mt-8 -mr-12">
+        <b-button
+          class="bg-transparent"
+          @click="$router.push({ name: 'riwayat-pengajuan' })"
+        >
+          <b-img src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg" />
+        </b-button>
+      </div>
+      <div class="d-grid justify-content-center text-center">
+        <div class="d-flex justify-content-center">
+          <b-img src="https://storage.googleapis.com/komerce/core/icon-popup-success.png" />
+        </div>
+        <h4 class="text-black my-2">
+          Pengajuanmu berhasil dikirim.
+        </h4>
+        <strong class="text-black">Pengajuan inbound akan segera dikonfrmasi selambat-lambatnya 2x24 jam.</strong>
+      </div>
+    </b-modal>
   </b-card>
 </template>
 
-<script>
-import {
-  BCol,
-  BRow,
-  BListGroup,
-  BListGroupItem,
-  BFormSelect,
-  BCard,
-  BOverlay,
-} from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import flatPickr from 'vue-flatpickr-component'
-import { Indonesian } from 'flatpickr/dist/l10n/id'
-import 'flatpickr/dist/themes/light.css'
+<script src="./ajukaninbound.js" />
 
-export default {
-  components: {
-    BCol,
-    BRow,
-    BCard,
-    vSelect,
-    flatPickr,
-    // BOverlay,
-  },
-  data() {
-    return {
-      listGudang: [],
-      listEkspedisi: [],
-      listProduk: [],
-      KirimEkspedisi: false,
-      KirimSendiri: false,
-      warehouse: '',
-      ekspedisi: '',
-      TambahProduct: false,
-      warehouseId: '',
-      TableProduct: false,
-      pickupDate: '',
-      EstimateDate: '',
-      configDate: {
-        wrap: true,
-        altFormat: 'j F Y',
-        altInput: true,
-        minDate: 'today',
-        altInputClass: 'bg-white form-control',
-        locale: Indonesian,
-      },
-    }
-  },
-  mounted() {
-    this.listWarehouse()
-    this.listKurir()
-  },
-  methods: {
-    async listWarehouse() {
-      await this.$http_komship.get('/v1/komship/inbound/warehouses')
-        .then(response => {
-          this.listGudang = response.data.data
-        })
-      this.listProduct()
-    },
-    listKurir() {
-      this.$http_komship.get('/v1/komship/inbound/rajaongkir-shippings')
-        .then(response => {
-          this.listEkspedisi = response.data.data
-        })
-    },
-    listProduct() {
-      this.$http_komship.get('/v1/komship/inbound/36/products')
-        .then(response => {
-          this.listProduk = response.data.data
-        })
-    },
-    Ekspedisi() {
-      this.KirimEkspedisi = true
-      this.KirimSendiri = false
-    },
-    Sendiri() {
-      this.KirimSendiri = true
-      this.KirimEkspedisi = false
-    },
-    addProduct() {
-      this.TambahProduct = !this.TambahProduct
-      this.TableProduct = !this.TambahProduct
-    },
-    setQuantity(status, product, index) {
-      if (status === 'plus') {
-        this.listProduk[product].variant[index].stock += 1
-      } else if (status === 'minus') {
-        this.listProduk[product].variant[index].stock -= 1
-      }
-    },
-  },
-}
-</script>
-  <style lang="scss">
+<style lang="scss">
   @import '@core/scss/vue/libs/vue-select.scss';
-  .minus-button, .plus-button {
+</style>
+<style lang="scss" scoped>
+.minus-button, .plus-button {
     justify-content: center;
     font-size: 20px;
     width: 32px;
@@ -608,6 +571,16 @@ export default {
     border: none;
     font-size: 14px;
   }
+  .bg-transparent{
+    background-color: transparent !important;
+    border: none !important;
+  }
+  .input-stock {
+    width: 15%;
+    border-bottom: solid 2px #e2e2e2 !important;
+    border: none;
+    border-radius: none;
+  }
   [dir] .when-closed {
     display: inline-block;
   }
@@ -618,4 +591,4 @@ export default {
       :not(.collapsed) > .when-closed {
           display: none;
       }
-  </style>
+</style>
