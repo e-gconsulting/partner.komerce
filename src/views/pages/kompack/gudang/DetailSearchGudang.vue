@@ -269,7 +269,7 @@
               <b-button
                 variant="primary"
                 class="text-center py-1 px-2"
-                :disabled="detailInfo.availability === 'Penuh'"
+                :disabled="detailInfo.availability === 'Penuh' || detailInfo.subscribe_status === 1"
                 block
                 @click="redirectToSubmission(detailInfo.subscribe_status)"
               >
