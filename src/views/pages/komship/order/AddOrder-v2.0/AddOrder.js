@@ -315,7 +315,7 @@ export default {
     },
     async getReturnInsight() {
       if (this.profile.partner_is_return_insight && this.destination !== null) {
-        await this.$http_komship.get('/v2/feature/returnInsight', {
+        await this.$http_komship.get('/v3/feature/returnInsight', {
           params: { destination_id: this.destination.id },
         })
           .then(result => {
@@ -1178,7 +1178,6 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          console.log(this.shipping)
           const result = this.shipping.label_shipping_type === 'Reguler' || this.shipping.label_shipping_type === 'IDlite' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
@@ -1236,7 +1235,7 @@ export default {
         || value === 'SIUNT'
         || value === 'STD'
         || value === 'CTC19'
-        || value === 'DRGREG'
+        || value === 'UDRREG'
       ) {
         return 'Reguler'
       }
@@ -1246,9 +1245,11 @@ export default {
       if (value === 'Idtruck') {
         return 'ID Truck'
       }
-      if (value === 'UDRREG') {
+
+      if (value === 'DRGREG') {
         return 'Cargo'
       }
+
       return value
     },
     checkValidation() {

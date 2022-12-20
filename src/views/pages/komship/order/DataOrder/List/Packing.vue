@@ -463,15 +463,9 @@ export default {
       return this.fetchData()
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19' || value === 'DRGREG') {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19' || value === 'UDRREG') {
         return 'Reguler'
-      } if (value === 'GOKIL') {
-        return 'GOKIL'
-      } if (value === 'JTR18') {
-        return 'Trucking'
-      } if (value === 'Idtruck') {
-        return 'ID Truck'
-      } if (value === 'UDRREG') {
+      } if (value === 'GOKIL' || value === 'DRGREG') {
         return 'Cargo'
       }
       return value
