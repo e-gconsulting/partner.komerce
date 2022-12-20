@@ -10,7 +10,7 @@
           Batalkan
         </b-button>
         <b-button
-          :disabled="!checkSelected || !selectProduct"
+          :disabled="!checkSelected"
           class="ml-1"
           variant="primary"
           @click="submitBerlangganan()"
@@ -202,28 +202,18 @@
                 </td>
                 <td>{{ i.range_price }}</td>
                 <td>
-                  <b-form-select
-                    v-model="i.packing_material"
-                    :disabled="i.selected === false"
-                    @change="selectBahanEvent(i, $event)"
-                  >
-                    <template #first>
-                      <b-form-select-option
-                        :value="null"
-                        disabled
-                      >
-                        Pilih bahan packing
-                      </b-form-select-option>
-                    </template>
-                    <b-form-select-option
-                      v-for="option in optionBahanList"
-                      :key="option.id"
-                      :value="option.id"
-                    >
-                      {{ option.name }}
-                      <i class="form-icon" />
-                    </b-form-select-option>
-                  </b-form-select>
+                  <b-col>
+                    <v-select
+                      v-model="i.packing_material"
+                      :disabled="i.selected === false"
+                      class="selected-options"
+                      :options="optionBahanList"
+                      placeholder="Pilih bahan packing"
+                      multiple
+                      label="name"
+                      @change="selectBahanEvent(i, $event)"
+                    />
+                  </b-col>
                 </td>
               </tr>
             </tbody>
@@ -322,6 +312,8 @@ import {
   BFormInput,
   BModal,
 } from 'bootstrap-vue'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
 export default {
@@ -333,6 +325,7 @@ export default {
     // BFormSelect,
     BFormCheckbox,
     BModal,
+    vSelect,
   },
   data() {
     return {
@@ -514,5 +507,31 @@ export default {
 .input-group {
   height: 40px;
   min-width: 300px;
+}
+.vs__selected-options {
+    display: inline;
+    flex-basis: 100%;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    padding: 0 2px;
+    position: relative;
+}
+.vs__selected {
+    display: flex;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+    background-color: transparent;
+    border: 1px solid rgba(60,60,60,.26);
+    border-radius: 4px;
+    color: #333;
+    line-height: 1.4;
+    margin: 4px 2px 0;
+    padding: 0 0.25em;
+    z-index: 0;
+}
+.vs--searchable .vs__dropdown-toggle {
+    cursor: pointer;
 }
 </style>
