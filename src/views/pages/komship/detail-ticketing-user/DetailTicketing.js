@@ -254,7 +254,7 @@ export default {
           } else {
             formData.append('file[]', this.itemsImageInitialFile[0])
           }
-          this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+          this.$http_komship.post('/v2/ticket-partner/store-chat', formData)
             .then(() => {
               fetch('https://fcm.googleapis.com/fcm/send', {
                 method: 'POST',
@@ -309,7 +309,7 @@ export default {
           } else {
             formData.append('file[]', this.itemsImageInitialFile[0])
           }
-          this.$http_komship.post('/v1/ticket-partner/store-chat', formData)
+          this.$http_komship.post('/v2/ticket-partner/store-chat', formData)
             .then(() => {
               this.chatItem = ''
               this.itemsImageInitialFile = []
