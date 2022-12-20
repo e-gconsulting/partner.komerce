@@ -42,7 +42,7 @@
                     <b-form-input
                       id="fullname"
                       v-model="fullname"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.fullname ? false:null"
                       name="fullname"
                       required
@@ -75,7 +75,7 @@
                     <b-form-input
                       id="nomorhp"
                       v-model="nomorHandphone"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.fullname ? false:null"
                       name="nomorhp"
                       type="number"
@@ -109,7 +109,7 @@
                     <b-form-input
                       id="emailUser"
                       v-model="userEmail"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.email ? false:null"
                       required
                       style="height: 50px!important;"
@@ -143,7 +143,7 @@
                     <b-form-input
                       id="password"
                       v-model="userPassword"
-                      class="bg-light"
+                      class="bg-white"
                       :type="passwordFieldTypePassword"
                       :state="errors.length > 0 ? false:null"
                       onpaste="return false"
@@ -180,7 +180,7 @@
                     <b-form-input
                       id="confirm-password"
                       v-model="confirmPassword"
-                      :class="confirmPassword !== confirmPassword ? 'is-invalid' : 'bg-light'"
+                      :class="confirmPassword !== confirmPassword ? 'is-invalid' : 'bg-white'"
                       :type="passwordFieldTypeConfirmPassword"
                       onpaste="return false"
                       :state="errors.length > 0 || submitErrors.password ? false:null"
@@ -199,6 +199,49 @@
                   <b-form-group v-if="confirmPassword !== userPassword">
                     <small class="text-primary">*Pastikan konfirmasi password sama dengan password sebelumnya</small>
                   </b-form-group>
+                </b-col>
+                <b-col
+                  cols="9"
+                  class="mb-1"
+                >
+                  <validation-provider
+                    #default="{ errors }"
+                    name="Kode Kupon"
+                  >
+                    <b-form-input
+                      id="coupon-code"
+                      v-model="couponCode"
+                      :class="couponNotFound || isAffiliate ? 'is-invalid' : 'bg-white'"
+                      required
+                      :formatter="couponCodeFormat"
+                      style="height: 50px!important;"
+                      @input="couponValidation"
+                      @keyup="regexCoupon"
+                    />
+                    <label for="coupon-code">
+                      Kode Kupon (jika ada)
+                    </label>
+                    <b-row v-if="errorCoupon" >
+                      <b-col>
+                        <small class="text-primary">error</small>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="couponCodeLengthError">
+                      <b-col>
+                        <small class="text-primary">Minimal 4 karakter</small>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="couponNotFound">
+                      <b-col>
+                        <small class="text-primary">Kode kupon tidak ditemukan. Pastikan kode kuponmu benar</small>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="isAffiliate">
+                      <b-col>
+                        <small class="text-primary">Kamu sudah terdaftar sebagai afiliator</small>
+                      </b-col>
+                    </b-row>
+                  </validation-provider>
                 </b-col>
 
                 <!-- checkbox -->
@@ -239,7 +282,7 @@
                         type="submit"
                         variant="primary"
                         block
-                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8"
+                        :disabled="invalid || agree === false || confirmPassword !== userPassword || userPassword.length < 8 || nomorHandphone.length < 8 || couponCodeLengthError || couponNotFound || isAffiliate"
                       >
                         <b-spinner
                           v-if="loading"
@@ -280,7 +323,7 @@
                     <b-form-input
                       id="emailUser"
                       v-model="userEmailExisting"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.email ? false:null"
                       required
                       style="height: 50px!important;"
@@ -443,7 +486,7 @@
                     <b-form-input
                       id="fullname"
                       v-model="fullname"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.fullname ? false:null"
                       name="fullname"
                       required
@@ -476,7 +519,7 @@
                     <b-form-input
                       id="nomorhp"
                       v-model="nomorHandphone"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.fullname ? false:null"
                       name="nomorhp"
                       type="number"
@@ -509,7 +552,7 @@
                     <b-form-input
                       id="emailUser"
                       v-model="userEmail"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.email ? false:null"
                       required
                       style="height: 50px!important;"
@@ -543,7 +586,7 @@
                     <b-form-input
                       id="password"
                       v-model="userPassword"
-                      class="bg-light"
+                      class="bg-white"
                       :type="passwordFieldTypePassword"
                       :state="errors.length > 0 ? false:null"
                       required
@@ -580,7 +623,7 @@
                     <b-form-input
                       id="confirm-password"
                       v-model="confirmPassword"
-                      :class="confirmPassword !== confirmPassword ? 'is-invalid' : 'bg-light'"
+                      :class="confirmPassword !== confirmPassword ? 'is-invalid' : 'bg-white'"
                       :type="passwordFieldTypeConfirmPassword"
                       :state="errors.length > 0 || submitErrors.password ? false:null"
                       onpaste="return false"
@@ -670,7 +713,7 @@
                     <b-form-input
                       id="emailUser"
                       v-model="userEmailExisting"
-                      class="bg-light"
+                      class="bg-white"
                       :state="errors.length > 0 || submitErrors.email ? false:null"
                       required
                       style="height: 50px!important;"
