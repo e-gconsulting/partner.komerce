@@ -157,15 +157,15 @@
                     label="Kota"
                     label-for="city_name"
                   >
-                    <b-form-input
+                    <!-- <b-form-input
                       id="city_name"
                       v-model="formFilter.city_name"
                       type="search"
                       placeholder="Masukan Kota"
                       @input="searchCityName()"
                       @search="onSearchDestination()"
-                    />
-                    <!-- <b-form-input
+                    /> -->
+                    <b-form-input
                       v-model="formFilter.city_name"
                       type="search"
                       placeholder="Masukan Kota"
@@ -174,13 +174,12 @@
                     />
                     <datalist id="my-list-id">
                       <option
-                        v-for="size in sizes"
-                        :key="size.id"
-                        label="label"
+                        v-for="city in cityAll"
+                        :key="city.id"
                       >
-                        {{ size }}
+                        {{ city.city_name }}
                       </option>
-                    </datalist> -->
+                    </datalist>
                   </b-form-group>
                   <b-form-group
                     id="input-group-3"
@@ -436,7 +435,7 @@ export default {
         startDate: last7,
         endDate: today,
       },
-      sizes: [],
+      cityAll: [],
     }
   },
 
@@ -475,17 +474,17 @@ export default {
         console.log(err)
       })
     },
-    // getCityList() {
-    //   this.loading = true
-    //   this.$http_komship.get('/v1/komship/warehouse/option/destination')
-    //     .then(response => {
-    //       this.loading = false
-    //       this.sizes = response.data.data
-    //     }).catch(err => {
-    //       this.loading = false
-    //       console.log(err)
-    //     })
-    // },
+    getCityList() {
+      this.loading = true
+      this.$http_komship.get('/v1/komship/warehouse/option/destination')
+        .then(response => {
+          this.loading = false
+          this.cityAll = response.data.data
+        }).catch(err => {
+          this.loading = false
+          console.log(err)
+        })
+    },
     detailClick(item) {
       this.$router.push({ path: `/search-gudang/detail/${item.mitra_id}` })
     },
