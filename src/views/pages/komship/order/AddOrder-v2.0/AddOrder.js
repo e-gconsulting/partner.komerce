@@ -1594,14 +1594,30 @@ export default {
       const text = event.target.value
       let string = ''
       for (let x = 0; x < text.length; x++) {
-        if (text.charAt(x) === '/' || text.charAt(x) === '(' || text.charAt(x) === ')') {
+        if (text.charAt(x) === '='
+        || text.charAt(x) === ';'
+        || text.charAt(x) === '"'
+        || text.charAt(x) === '&'
+        || text.charAt(x) === '*'
+        || text.charAt(x) === '#'
+        || text.charAt(x) === '&'
+        || text.charAt(x) === '%'
+        || text.charAt(x) === '['
+        || text.charAt(x) === ']'
+        || text.charAt(x) === '>'
+        || text.charAt(x) === '<'
+        || text.charAt(x) === '|'
+        || text.charAt(x) === '+'
+        || text.charAt(x) === '?'
+        || text.charAt(x) === '!'
+        || text.charAt(x) === ':') {
           string += text.charAt(x)
         } else {
-          string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - .]/g, '')
+          string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - . / ( )]/g, '')
         }
       }
       this.customerAddress = string
-      if (text.match(/[^A-Za-z-0-9_ , - .]/g)) {
+      if (text.match(/[^A-Za-z-0-9_ , - . / ( )]/g)) {
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false
