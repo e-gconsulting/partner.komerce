@@ -307,14 +307,14 @@ export default
     this.fetchTicketPartnerCount()
     this.fetchTicketType()
     this.fetchDataFirebase()
+    this.getProfile()
+    this.getJenisTicket()
+    this.fetchUnreadTicketAll()
     Notification.requestPermission().then(permission => {
       if (!('permission' in Notification)) {
         Notification.permission = permission
       }
     })
-    this.getProfile()
-    this.getJenisTicket()
-    this.fetchUnreadTicketAll()
   },
   methods: {
     getProfile() {
