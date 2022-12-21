@@ -42,7 +42,8 @@
                   triggers="hover"
                   target="infoTrackingMonth"
                   placement="top"
-                >Saldo kamu saat ini.</b-popover>
+                  variant="dark"
+                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
               </div>
             </b-col>
           </b-row>
@@ -77,7 +78,9 @@
                   triggers="hover"
                   target="infoTracking"
                   placement="top"
-                >Saldo kamu saat ini.</b-popover>
+                  class="bg-dark"
+                  variant="dark"
+                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
               </div>
             </b-col>
           </b-row>
@@ -95,16 +98,19 @@
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
-        <b-button
-          id="buttonFilter"
-          variant="primary"
-          size="sm"
-          class="rounded-lg"
-        >
+        <div style="position: relative;">
           <img
-            src="@/assets/images/icons/filter-icon-kompship.png"
+            id="buttonFilter"
+            src="https://storage.googleapis.com/komerce/assets/svg/filter-icon-orange.svg"
+            class="cursor-pointer"
           >
-        </b-button>
+          <b-badge
+            variant="primary"
+            style="position: absolute; border-radius: 1.358rem; top: -15%; right: 0%;"
+          >
+            {{ totalFilterDataOrder }}
+          </b-badge>
+        </div>
         <b-popover
           id="popoverFilter"
           target="buttonFilter"
@@ -119,6 +125,7 @@
                 class="form-control"
                 placeholder="Mulai Dari"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                @input="setFilterDate"
               />
             </b-col>
             <b-col md="6">
@@ -127,6 +134,7 @@
                 class="form-control"
                 placeholder="Sampai Dengan"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
+                @input="setFilterDate"
               />
             </b-col>
           </b-row>
@@ -136,6 +144,7 @@
             :options="filterWarehouses"
             :reduce="(option) => option.id"
             label="name"
+            @input="setFilterAddress"
           >
             <span
               slot="no-options"
@@ -148,6 +157,7 @@
             :options="filterProducts"
             :reduce="(option) => option.product_name"
             label="product_name"
+            @input="setFilterProduct"
           >
             <span
               slot="no-options"
@@ -158,6 +168,7 @@
           <v-select
             v-model="paymentMethod"
             :options="['COD', 'BANK TRANSFER']"
+            @input="setFilterPayment"
           />
           <b-row class="mx-auto mt-2">
             <b-button
@@ -472,8 +483,8 @@ export default {
       productList: this.filterItem.products,
       productFilter: null,
       customerName: null,
-      startDate: '',
-      endDate: '',
+      startDate: null,
+      endDate: null,
       currentPage: 1,
       perPage: 50,
       pageOptions: [50, 100, 200],
@@ -484,11 +495,14 @@ export default {
       startDateMetric: firstDateOfMonth,
       endDateMetric: lastDateOfMonth,
 
+      productName: '',
+
       percentageRetur: 0,
       returOnProcess: 0,
       totalOrder: 0,
       totalOrderRetur: 0,
       filterMetricLabel: 'Bulan ini',
+      totalFilterDataOrder: 0,
     }
   },
   computed: {
@@ -540,6 +554,7 @@ export default {
           search,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
+          product_name: this.productName,
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
@@ -609,6 +624,34 @@ export default {
           this.totalOrderRetur = message.total_order_retur
         })
     },
+    setFilterDate() {
+      if (this.startDate && this.endDate !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterProduct() {
+      if (this.productName !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterAddress() {
+      if (this.addressId !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterPayment() {
+      if (this.paymentMethod !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
   },
 }
 </script>
@@ -648,5 +691,10 @@ export default {
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
+}
+
+.b-popover-dark .popover-body {
+    background:#24292F;
+    color: white;
 }
 </style>
