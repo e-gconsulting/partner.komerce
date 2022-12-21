@@ -49,7 +49,7 @@ export default {
         } if (name === 'SAP') {
           desc = ({
             discount: [
-              'Reguler (SIUNTUNG) <b>30%</b>',
+              'Reguler <b>35%</b>',
               '<strong>Cargo (SAP Trucking)</strong> Diskon ongkir 5%, untuk orderan yang beratnya lebih dari 5 kg',
             ],
             recomend: 'Ekspedisi Pelopor COD, Kirim COD <strong>luar jawa</strong> bisa diandalkan, dan CS Supportif',
