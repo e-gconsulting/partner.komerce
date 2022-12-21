@@ -2708,7 +2708,7 @@ export default {
           const formData = new FormData()
           formData.append('product_id', this.productId)
           formData.append('image_path', this.imageFile)
-          this.$http_komship.post('/v1/product/update-upload-img-product', formData, {
+          this.$http_komship.post('/v2/product/update-upload-img-product', formData, {
             headers: { Authorization: `Bearer ${useJwt.getToken()}` },
           }).then(() => {
             this.$toast({
