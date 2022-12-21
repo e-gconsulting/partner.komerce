@@ -269,7 +269,7 @@
               <b-button
                 variant="primary"
                 class="text-center py-1 px-2"
-                :disabled="detailInfo.availability === 'Penuh' || detailInfo.subscribe_status === 0"
+                :disabled="detailInfo.availability === 'Penuh' || detailInfo.submission_pending === 1"
                 block
                 @click="redirectToSubmission(detailInfo.subscribe_status)"
               >
@@ -281,7 +281,7 @@
                   Ajukan Langganan Gudang
                 </span>
                 <span
-                  v-else
+                  v-if="detailInfo.subscribe_status === 1"
                   block
                   class="font-bolder"
                   style="font-size: 12px"
@@ -364,7 +364,7 @@ export default {
         this.$router.push({
           path: `/search-gudang/detail/submission/${this.$route.params.id}`,
         })
-      } else {
+      } if (data === 1) {
         this.$router.push({
           path: '/gudangku-kompack',
         })
