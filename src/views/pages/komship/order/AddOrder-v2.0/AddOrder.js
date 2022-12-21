@@ -1451,17 +1451,6 @@ export default {
       this.checkWhatsapp()
       this.getCustomerReputation()
     }, 1000),
-    validateInputAddressDetail(e) {
-      if (
-        e.keyCode === 61
-        || e.keyCode === 58
-        || e.keyCode === 59
-      ) {
-        this.messageErrorAddressDetail = true
-      } else {
-        this.messageErrorAddressDetail = false
-      }
-    },
     validateInputPhoneCustomer(e) {
       if (this.customerPhone.length === 0) {
         if (e.keyCode === 48) {
@@ -1599,7 +1588,12 @@ export default {
       const text = event.target.value
       let string = ''
       for (let x = 0; x < text.length; x++) {
-        if (text.charAt(x) === '/' || text.charAt(x) === '(' || text.charAt(x) === ')') {
+        if (text.charAt(x) === '='
+        || text.charAt(x) === ';'
+        || text.charAt(x) === '"'
+        || text.charAt(x) === '&'
+        || text.charAt(x) === '+'
+        || text.charAt(x) === ':') {
           string += text.charAt(x)
         } else {
           string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - .]/g, '')
@@ -1607,6 +1601,17 @@ export default {
       }
       this.customerAddress = string
       if (text.match(/[^A-Za-z-0-9_ , - .]/g)) {
+        this.messageErrorAddressDetail = true
+      } else {
+        this.messageErrorAddressDetail = false
+      }
+    },
+    validateInputAddressDetail(e) {
+      if (
+        e.keyCode === 61
+        || e.keyCode === 58
+        || e.keyCode === 59
+      ) {
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false
