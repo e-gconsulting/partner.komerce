@@ -2374,7 +2374,7 @@ export default {
           const formData = new FormData()
           formData.append('product_id', response.data.data.product_id)
           formData.append('image_path', this.imageFile)
-          this.$http_komship.post('/v1/product/upload-img-product', formData).then(() => {
+          this.$http_komship.post('/v2/product/upload-img-product', formData).then(() => {
             this.$toast({
               component: ToastificationContentVue,
               props: {

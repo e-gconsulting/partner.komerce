@@ -1,6 +1,91 @@
 <template>
   <div>
-    <b-row class="mb-1 justify-content-end align-items-center">
+    <b-row class="mb-1 justify-content-between align-items-center">
+      <b-col cols="6">
+        <div
+          class="py-2 px-50"
+          style="border: 1px solid #626262; border-radius: 9px;"
+        >
+          <b-row class="mb-2 align-items-center">
+            <b-col cols="5">
+              <span class="text-black">
+                <strong>
+                  Jumlah Retur
+                </strong>
+              </span>
+            </b-col>
+            <b-col cols="7">
+              <div class="d-flex align-items-center">
+                <span class="text-black">
+                  <strong>
+                    : {{ totalOrderRetur }}/{{ totalOrder }}({{ percentageRetur }}%)
+                  </strong>
+                </span>
+                <b-dropdown
+                  :text="filterMetricLabel"
+                  variant="outline-dark"
+                  class="mx-50"
+                  size="sm"
+                >
+                  <b-dropdown-item @click="metricRetur('Bulan ini')">
+                    Bulan ini
+                  </b-dropdown-item>
+                  <b-dropdown-item @click="metricRetur('Bulan lalu')">
+                    Bulan lalu
+                  </b-dropdown-item>
+                </b-dropdown>
+                <img
+                  id="infoTrackingMonth"
+                  src="@/assets/images/icons/info-circle.svg"
+                >
+                <b-popover
+                  triggers="hover"
+                  target="infoTrackingMonth"
+                  placement="top"
+                  variant="dark"
+                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
+              </div>
+            </b-col>
+          </b-row>
+          <b-row class="align-items-center">
+            <b-col cols="5">
+              <span class="text-black">
+                <strong>
+                  Paket dalam Perjalanan
+                </strong>
+              </span>
+            </b-col>
+            <b-col cols="7">
+              <div class="d-flex align-items-center">
+                <span class="text-black">
+                  <strong>
+                    : {{ returOnProcess }}
+                  </strong>
+                </span>
+                <div
+                  style="background: #E31A1A; border-radius: 12px;"
+                  class="px-50 mx-50 text-white"
+                >
+                  <span>
+                    Masih dijalan
+                  </span>
+                </div>
+                <img
+                  id="infoTracking"
+                  src="@/assets/images/icons/info-circle.svg"
+                >
+                <b-popover
+                  triggers="hover"
+                  target="infoTracking"
+                  placement="top"
+                  class="bg-dark"
+                  variant="dark"
+                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
+              </div>
+            </b-col>
+          </b-row>
+        </div>
+      </b-col>
       <b-col
         md="5"
         class="d-flex"
@@ -13,16 +98,19 @@
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
-        <b-button
-          id="buttonFilter"
-          variant="primary"
-          size="sm"
-          class="rounded-lg"
-        >
+        <div style="position: relative;">
           <img
-            src="@/assets/images/icons/filter-icon-kompship.png"
+            id="buttonFilter"
+            src="https://storage.googleapis.com/komerce/assets/svg/filter-icon-orange.svg"
+            class="cursor-pointer"
           >
-        </b-button>
+          <b-badge
+            variant="primary"
+            style="position: absolute; border-radius: 1.358rem; top: -15%; right: 0%;"
+          >
+            {{ totalFilterDataOrder }}
+          </b-badge>
+        </div>
         <b-popover
           id="popoverFilter"
           target="buttonFilter"
@@ -37,6 +125,7 @@
                 class="form-control"
                 placeholder="Mulai Dari"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                @input="setFilterDate"
               />
             </b-col>
             <b-col md="6">
@@ -45,6 +134,7 @@
                 class="form-control"
                 placeholder="Sampai Dengan"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
+                @input="setFilterDate"
               />
             </b-col>
           </b-row>
@@ -54,6 +144,7 @@
             :options="filterWarehouses"
             :reduce="(option) => option.id"
             label="name"
+            @input="setFilterAddress"
           >
             <span
               slot="no-options"
@@ -66,6 +157,7 @@
             :options="filterProducts"
             :reduce="(option) => option.product_name"
             label="product_name"
+            @input="setFilterProduct"
           >
             <span
               slot="no-options"
@@ -76,6 +168,7 @@
           <v-select
             v-model="paymentMethod"
             :options="['COD', 'BANK TRANSFER']"
+            @input="setFilterPayment"
           />
           <b-row class="mx-auto mt-2">
             <b-button
@@ -335,6 +428,10 @@ import {
 } from 'bootstrap-vue'
 import moment from 'moment'
 import vSelect from 'vue-select'
+import {
+  firstDateOfMonth,
+  lastDateOfMonth,
+} from '@/store/helpers'
 import 'vue-select/dist/vue-select.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import flatPickr from 'vue-flatpickr-component'
@@ -386,14 +483,26 @@ export default {
       productList: this.filterItem.products,
       productFilter: null,
       customerName: null,
-      startDate: '',
-      endDate: '',
+      startDate: null,
+      endDate: null,
       currentPage: 1,
       perPage: 50,
       pageOptions: [50, 100, 200],
       totalItems: 0,
       addressId: null,
       addressList: this.filterItem.warehouses,
+      mountTrackingRetur: { name: 'Bulan ini' },
+      startDateMetric: firstDateOfMonth,
+      endDateMetric: lastDateOfMonth,
+
+      productName: '',
+
+      percentageRetur: 0,
+      returOnProcess: 0,
+      totalOrder: 0,
+      totalOrderRetur: 0,
+      filterMetricLabel: 'Bulan ini',
+      totalFilterDataOrder: 0,
     }
   },
   computed: {
@@ -415,6 +524,7 @@ export default {
   },
   mounted() {
     this.fetchData()
+    this.metricRetur('Bulan ini')
   },
   created() {
     window.addEventListener('click', async e => {
@@ -444,6 +554,7 @@ export default {
           search,
           payment_method: this.paymentMethod,
           start_date: this.startDate,
+          product_name: this.productName,
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
@@ -490,6 +601,57 @@ export default {
       this.perPage = totalPage
       this.fetchData()
     },
+    metricRetur(data) {
+      this.filterMetricLabel = data
+      let start = null
+      let end = null
+      if (data === 'Bulan ini') {
+        start = moment(firstDateOfMonth).format('YYYY-MM-DD')
+        end = moment().format('YYYY-MM-DD')
+      } else {
+        const now = new Date()
+        const prevMonthLastDate = new Date(now.getFullYear(), now.getMonth(), 0)
+        const prevMonthFirstDate = new Date(now.getFullYear() - (now.getMonth() > 0 ? 0 : 1), (now.getMonth() - 1 + 12) % 12, 1)
+        start = moment(prevMonthFirstDate).format('YYYY-MM-DD')
+        end = moment(prevMonthLastDate).format('YYYY-MM-DD')
+      }
+      this.$http_komship.get(`/v1/order/metric-retur/${this.profile.partner_detail.id}?start_date=${start}&end_date=${end}`)
+        .then(response => {
+          const { message } = response.data
+          this.percentageRetur = message.percentage_retur
+          this.returOnProcess = message.retur_on_process
+          this.totalOrder = message.total_order
+          this.totalOrderRetur = message.total_order_retur
+        })
+    },
+    setFilterDate() {
+      if (this.startDate && this.endDate !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterProduct() {
+      if (this.productName !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterAddress() {
+      if (this.addressId !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterPayment() {
+      if (this.paymentMethod !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
   },
 }
 </script>
@@ -529,5 +691,10 @@ export default {
   object-position: center center;
   width: 50px!important;
   height: 50px!important;
+}
+
+.b-popover-dark .popover-body {
+    background:#24292F;
+    color: white;
 }
 </style>
