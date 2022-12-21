@@ -10,6 +10,7 @@
           Batalkan
         </b-button>
         <b-button
+          :disabled="!checkSelected"
           class="ml-1"
           variant="primary"
           @click="submitBerlangganan()"
@@ -22,11 +23,12 @@
       <div class="d-flex flex-row justify-content-between">
         <div class="d-flex flex-row align-items-center">
           <div>
-            <b-avatar
-              variant="primary"
-              text="BV"
-              size="4rem"
-            />
+            <img
+              :src="warehouseDetail.image_logo_url"
+              alt="Photo"
+              class="mr-1 border-radius rounded"
+              style="width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover;"
+            >
           </div>
           <div class="ml-1 mt-1 d-flex flex-col">
             <h5>{{ warehouseDetail.warehouse_name }}</h5>
@@ -36,7 +38,7 @@
         <div>
           <div
             class="px-1 bg-blue-100 d-flex aling-items-center rounded-lg"
-            style="padding-top: 8px; padding-bottom: 8px;"
+            style="padding-top: 8px; padding-bottom: 8px"
           >
             <div>
               <svg
@@ -65,7 +67,9 @@
             <div
               v-if="warehouseDetail.partner_verification === 'Terverifikasi'"
               class="text-blue-500 ml-0.5 mt-0.5"
-            >{{ warehouseDetail.partner_verification }}</div>
+            >
+              {{ warehouseDetail.partner_verification }}
+            </div>
           </div>
         </div>
       </div>
@@ -82,7 +86,13 @@
               Status
             </td>
             <td>
-              <b-badge :variant="warehouseDetail.availability === 'Tersedia'?'light-success': 'light-danger'">
+              <b-badge
+                :variant="
+                  warehouseDetail.availability === 'Tersedia'
+                    ? 'light-success'
+                    : 'light-danger'
+                "
+              >
                 {{ warehouseDetail.availability }}
               </b-badge>
             </td>
@@ -120,88 +130,6 @@
         </div>
       </div>
       <div class="d-flex flex-column w-100">
-        <table class="table  table-hover">
-          <thead>
-            <tr>
-              <th>
-                <label class="form-checkbox">
-                  <b-form-checkbox
-                    v-model="selectAll"
-                    @click="selectItemEvent()"
-                  >
-                    <i class="form-icon" />
-                  </b-form-checkbox></label>
-              </th>
-              <th>Nama Produk</th>
-              <th>Volume</th>
-              <th>Harga Barang</th>
-              <th>Bahan Packing</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="i in productList"
-              :key="i.id"
-            >
-              <td>
-                <label class="form-checkbox">
-                  <b-form-checkbox
-                    :id="i.sku"
-                    v-model="i.selected"
-                    @change="selectItemOneEvent(i,$event)"
-                  >
-                    <i class="form-icon" />
-                  </b-form-checkbox></label>
-              </td>
-              <td> <div class="d-flex flex-row align-items-center">
-                <div>
-                  <img
-                    :src="i.image_path"
-                    width="50px"
-                    height="50px"
-                    alt=""
-                  >
-                </div>
-                <div class="d-flex flex-column ml-1">
-                  <div><h5>{{ i.product_name }}</h5></div>
-                  <div class="">
-                    {{ i.sku }}
-                  </div>
-                </div>
-              </div></td>
-              <td><div class="d-flex flex-column">
-                <div>P: {{ i.product_lenght }} cm</div>
-                <div>L: {{ i.product_width }} cm</div>
-                <div>T: {{ i.product_height }} cm</div>
-              </div>
-              </td>
-              <td>{{ i.range_price }}</td>
-              <td>
-                <b-form-select
-                  v-model="i.packing_material"
-                  @change="selectBahanEvent(i,$event)"
-                >
-                  <template #first>
-                    <b-form-select-option
-                      :value="null"
-                      disabled
-                    >
-                      Pilih bahan packing
-                    </b-form-select-option>
-                    <b-form-select-option
-                      v-for="option in optionBahanList"
-                      :key="option.id"
-                      :value="option.id"
-                    >
-                      {{ option.name }}
-                    </b-form-select-option>
-                  </template>
-                </b-form-select>
-              </td>
-            </tr>
-          </tbody>
-
-        </table>
         <b-overlay
           variant="light"
           :show="loading"
@@ -210,7 +138,87 @@
           opacity=".5"
           rounded="sm"
         >
-          <div>Loading</div>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <label class="form-checkbox">
+                    <b-form-checkbox
+                      v-model="selectAll"
+                      @click="selectItemEvent(i, $event)"
+                    >
+                      <i class="form-icon" />
+                    </b-form-checkbox>
+                  </label>
+                </th>
+                <th>Nama Produk</th>
+                <th>Volume</th>
+                <th>Harga Barang</th>
+                <th>Bahan Packing</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="i in productList"
+                :key="i.id"
+              >
+                <td>
+                  <label class="form-checkbox">
+                    <b-form-checkbox
+                      :id="i.sku"
+                      v-model="i.selected"
+                      @change="selectItemOneEvent(i, $event)"
+                    >
+                      <i class="form-icon" />
+                    </b-form-checkbox>
+                  </label>
+                </td>
+                <td>
+                  <div class="d-flex flex-row align-items-center">
+                    <div>
+                      <img
+                        :src="i.image_path"
+                        width="50px"
+                        height="50px"
+                        alt=""
+                      >
+                    </div>
+                    <div class="d-flex flex-column ml-1">
+                      <div>
+                        <h5>{{ i.product_name }}</h5>
+                      </div>
+                      <div class="">
+                        {{ i.sku }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="d-flex flex-column">
+                    <div>P: {{ i.product_lenght }} cm</div>
+                    <div>L: {{ i.product_width }} cm</div>
+                    <div>T: {{ i.product_height }} cm</div>
+                  </div>
+                </td>
+                <td>{{ i.range_price }}</td>
+                <td>
+                  <b-col>
+                    <v-select
+                      v-model="i.packing_material"
+                      :disabled="i.selected === false"
+                      class="selected-options"
+                      :options="optionBahanList"
+                      placeholder="Pilih bahan packing"
+                      text="pilih bahan packing"
+                      multiple
+                      label="name"
+                      @change="selectBahanEvent(i, $event)"
+                    />
+                  </b-col>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </b-overlay>
       </div>
     </div>
@@ -222,7 +230,6 @@
       modal-class="modal-dark"
       centered
     >
-
       <b-col
         md="12"
         class="d-flex justify-content-center pt-3"
@@ -235,9 +242,7 @@
 
       <b-col class="text-center mt-2">
         <h4 class="text-black">
-          <strong>
-            Batalkan Pengajuan
-          </strong>
+          <strong> Batalkan Pengajuan </strong>
         </h4>
         <p class="text-black">
           Kamu yakin mau batalin pengajuan berlangganan ?
@@ -252,11 +257,10 @@
         <b-button
           variant="primary"
           class="font-bold"
-          style="width: 100px;"
+          style="width: 100px"
           @click="$router.go(-1)"
         >Ya</b-button>
       </div>
-
     </b-modal>
     <b-modal
       id="modal-success-submission"
@@ -265,7 +269,13 @@
       modal-class="modal-dark"
       centered
     >
-
+      <b-img
+        role="button"
+        style="cursor:pointer"
+        src="/img/close-circle.3d7067f4.svg"
+        class="absolute right-[1rem] top-[1rem]"
+        @click="$router.go(-1)"
+      />
       <b-col
         md="12"
         class="d-flex justify-content-center pt-3"
@@ -278,13 +288,12 @@
 
       <b-col class="text-center mt-2 mb-3">
         <h4>
-          <medium>
-            Pengajuanmu berhasil dikirim.
-          </medium>
+          <medium> Pengajuanmu berhasil dikirim. </medium>
         </h4>
         <h6 class="text-black">
           <strong>
-            Pengajuan berlangganan akan segera dikonfrmasi selambat-lambatnya 2x24 jam.
+            Pengajuan berlangganan akan segera dikonfrmasi selambat-lambatnya
+            2x24 jam.
           </strong>
         </h6>
       </b-col>
@@ -304,24 +313,28 @@ import {
   BFormInput,
   BModal,
 } from 'bootstrap-vue'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 
 export default {
   components: {
     BButton,
-    BAvatar,
     BInputGroup,
     BInputGroupPrepend,
     BFormInput,
-    BFormSelect,
+    // BFormSelect,
     BFormCheckbox,
     BModal,
+    vSelect,
   },
   data() {
     return {
       loading: false,
       selected: [],
       selectAll: false,
+      checkSelected: false,
+      selectProduct: false,
       productList: [],
       user: this.$store.state.auth,
       searchProduct: '',
@@ -355,9 +368,7 @@ export default {
         })
     },
     async getBahanList() {
-      await this.$http_komship(
-        '/v1/select-option/packing',
-      )
+      await this.$http_komship('/v1/select-option/packing')
         .then(async response => {
           this.optionBahanList = response.data.data
         })
@@ -372,7 +383,9 @@ export default {
         .then(async response => {
           const { data } = response.data
           const newData = await data.map(val => ({
-            ...val, selected: false, packing_material: null,
+            ...val,
+            selected: false,
+            packing_material: null,
           }))
           this.productList = newData
 
@@ -383,8 +396,9 @@ export default {
         })
     },
     selectItemOneEvent(product, e) {
+      this.checkSelected = e
       // eslint-disable-next-line no-param-reassign
-      const objIndex = this.productList.findIndex((obj => obj.id === product.id))
+      const objIndex = this.productList.findIndex(obj => obj.id === product.id)
 
       // eslint-disable-next-line no-param-reassign
       this.productList[objIndex].selected = e
@@ -403,47 +417,55 @@ export default {
     },
 
     selectBahanEvent(product, e) {
-      const objIndex = this.productList.findIndex((obj => obj.id === product.id))
+      this.selectProduct = e
+      const objIndex = this.productList.findIndex(obj => obj.id === product.id)
 
       // eslint-disable-next-line no-param-reassign
       this.productList[objIndex].packing_material = e
     },
 
     async submitBerlangganan() {
-      const product = await this.productList.filter(x => x.selected === true).map(val => ({
-        product_id: val.id,
-        packing_material: val.packing_material,
-      }))
-      await this.$http_komship.post(
-        '/v1/komship/submission', {
+      const product = await this.productList
+        .filter(x => x.selected === true)
+        .map(val => ({
+          product_id: val.id,
+          packing_material: val.packing_material,
+        }))
+      await this.$http_komship
+        .post('/v1/komship/submission', {
           partner_id: this.user.userData.partner_detail.id,
           warehouse_id: this.warehouseDetail.id,
           submission_type: 1,
           product,
-        },
-      )
+        })
         .then(async response => {
           if (response.data.code === 1009) {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Galat',
-                text: 'Menunggu Persetujuan Pengajuan Sebelumnya',
-                icon: 'AlertCircleIcon',
-                variant: 'danger',
+            this.$toast(
+              {
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Galat',
+                  text: 'Menunggu Persetujuan Pengajuan Sebelumnya',
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
               },
-            }, 2000)
+              2000,
+            )
           }
           if (response.data.code === 1001) {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Galat',
-                text: 'Silahkan Pilih Produk',
-                icon: 'AlertCircleIcon',
-                variant: 'danger',
+            this.$toast(
+              {
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Galat',
+                  text: 'Silahkan Pilih Produk',
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
               },
-            }, 2000)
+              2000,
+            )
           }
           if (response.data.code === 200) {
             this.$bvModal.show('modal-success-submission')
@@ -451,15 +473,18 @@ export default {
         })
         .catch(err => {
           this.loading = false
-          this.$toast({
-            component: ToastificationContentVue,
-            props: {
-              title: 'Galat',
-              text: err,
-              icon: 'AlertCircleIcon',
-              variant: 'danger',
+          this.$toast(
+            {
+              component: ToastificationContentVue,
+              props: {
+                title: 'Galat',
+                text: err,
+                icon: 'AlertCircleIcon',
+                variant: 'danger',
+              },
             },
-          }, 2000)
+            2000,
+          )
         })
     },
   },
@@ -483,5 +508,31 @@ export default {
 .input-group {
   height: 40px;
   min-width: 300px;
+}
+.vs__selected-options {
+    display: inline;
+    flex-basis: 100%;
+    -webkit-box-flex: 1;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    padding: 0 2px;
+    position: relative;
+}
+.vs__selected {
+    display: flex;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    align-items: center;
+    background-color: transparent;
+    border: 1px solid rgba(60,60,60,.26);
+    border-radius: 4px;
+    color: #333;
+    line-height: 1.4;
+    margin: 4px 2px 0;
+    padding: 0 0.25em;
+    z-index: 0;
+}
+.vs--searchable .vs__dropdown-toggle {
+    cursor: pointer;
 }
 </style>
