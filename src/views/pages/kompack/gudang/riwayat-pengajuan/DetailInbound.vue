@@ -586,15 +586,18 @@ export default {
           for (let j = 0; j < this.detailInbound.products[i].variant.length; j += 1) {
             this.variant.push({
               option_id: this.detailInbound.products[i].variant[j].variant_id,
-              total_inbound: this.detailInbound.products[i].variant[j].total_inbound,
+              // eslint-disable-next-line radix
+              total_inbound: parseInt(this.detailInbound.products[i].variant[j].total_inbound),
               is_update: 1,
             })
           }
         }
+        this.body = []
         this.body.push({
           product_id: this.detailInbound.products[i].id,
           is_variant: this.detailInbound.products[i].is_variant,
-          total_inbound: this.detailInbound.products[i].total_inbound,
+          // eslint-disable-next-line radix
+          total_inbound: parseInt(this.detailInbound.products[i].total_inbound),
           is_update: 1,
           variant: this.variant,
         })

@@ -73,6 +73,14 @@
               >
                 Lihat Detail
               </b-button>
+              <b-button
+                v-else
+                variant="flat-info"
+                class="btn-icon"
+                @click="handleDetailMitra(data.item.mitra_id)"
+              >
+                Lihat Detail
+              </b-button>
               <div
                 v-if="data.item.is_default === 1"
                 class="d-flex align-items-center ml-50"
@@ -1066,6 +1074,12 @@ export default {
     this.getAddress()
   },
   methods: {
+    handleDetailMitra(id) {
+      this.$router.push({
+        path: `/detail-gudang-kompack/${id}`,
+      })
+    },
+
     getAddress() {
       this.loading = true
       this.$http_komship
