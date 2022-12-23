@@ -63,10 +63,11 @@
                   </strong>
                 </span>
                 <div
-                  style="background: #E31A1A; border-radius: 12px;"
-                  class="px-50 mx-50 text-white"
+                  :style="isRetur ? 'background: #E31A1A; border-radius: 12px;' : 'border: 1px solid #E31A1A; border-radius: 12px;'"
+                  :class="isRetur ? 'px-50 mx-50 cursor-pointer' : 'px-50 mx-50 cursor-pointer'"
+                  @click="fetchIsRetur"
                 >
-                  <span>
+                  <span :class="isRetur ? 'text-white' : 'text-primary'">
                     Masih dijalan
                   </span>
                 </div>
@@ -80,7 +81,7 @@
                   placement="top"
                   class="bg-dark"
                   variant="dark"
-                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
+                >Jumlah retur di bulan tersebut dibandingkan dengan total jumlah paket yang ordernya DIBUAT di bulan tersebut. Jika filter ke bulan lalu, bisa jadi returan masih bisa berubah, karena ada paket yang masih dalam perjalanan belum sampai ke customer s.d awal bulan ini</b-popover>
               </div>
             </b-col>
           </b-row>
@@ -503,6 +504,9 @@ export default {
       totalOrderRetur: 0,
       filterMetricLabel: 'Bulan ini',
       totalFilterDataOrder: 0,
+      filterDateDataOrder: false,
+
+      isRetur: false,
     }
   },
   computed: {
@@ -555,6 +559,7 @@ export default {
           payment_method: this.paymentMethod,
           start_date: this.startDate,
           product_name: this.productName,
+          is_retur: this.isRetur ? 1 : null,
           end_date: this.endDate,
           page: this.currentPage,
           total_per_page: this.perPage,
@@ -625,10 +630,17 @@ export default {
         })
     },
     setFilterDate() {
-      if (this.startDate && this.endDate !== null) {
-        this.totalFilterDataOrder += 1
-      } else {
-        this.totalFilterDataOrder -= 1
+      if (this.startDate !== null) {
+        if (this.endDate !== null && !this.filterDateDataOrder) {
+          this.totalFilterDataOrder += 1
+          this.filterDateDataOrder = true
+        }
+      }
+      if (this.endDate === null) {
+        if (this.startDate === null && this.filterDateDataOrder) {
+          this.totalFilterDataOrder -= 1
+          this.filterDateDataOrder = false
+        }
       }
     },
     setFilterProduct() {
@@ -651,6 +663,10 @@ export default {
       } else {
         this.totalFilterDataOrder -= 1
       }
+    },
+    fetchIsRetur() {
+      this.isRetur = !this.isRetur
+      this.fetchData()
     },
   },
 }

@@ -155,6 +155,9 @@ export default {
       soldBy: null,
       soldByList: [],
       collapseCalculate: false,
+      minimalCustomerName: false,
+      requireCustomerName: false,
+      requireCustomerPhone: false,
     }
   },
   computed: {
@@ -359,6 +362,28 @@ export default {
           console.error(err)
           return []
         })
+      }
+      if (this.minimalCustomerName || this.requireCustomerName) {
+        this.checkValidationCustomerName()
+      }
+    },
+    checkValidationCustomerName() {
+      if (this.customerName.length < 3) {
+        this.minimalCustomerName = true
+      } else {
+        this.minimalCustomerName = false
+      }
+      if (this.customerName === '') {
+        this.requireCustomerName = true
+      } else {
+        this.requireCustomerName = false
+      }
+    },
+    checkValidationCustomerPhone() {
+      if (this.customerPhone === '') {
+        this.requireCustomerPhone = true
+      } else {
+        this.requireCustomerPhone = false
       }
     },
     async autofillByCustomer(customer) {
@@ -1555,7 +1580,7 @@ export default {
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err.response.message,
+              text: err,
               variant: 'danger',
             },
           })
