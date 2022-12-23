@@ -10,9 +10,9 @@
           Batalkan
         </b-button>
         <b-button
-          :disabled="!checkSelected"
+          :disabled="objIndex.length < 1"
           class="ml-1"
-          variant="primary"
+          :variant="objIndex.length < 1 ? 'secondary' : 'primary'"
           @click="submitBerlangganan()"
         >
           Ajukan Layanan
@@ -141,16 +141,7 @@
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>
-                  <label class="form-checkbox">
-                    <b-form-checkbox
-                      v-model="selectAll"
-                      @click="selectItemEvent(i, $event)"
-                    >
-                      <i class="form-icon" />
-                    </b-form-checkbox>
-                  </label>
-                </th>
+                <th />
                 <th>Nama Produk</th>
                 <th>Volume</th>
                 <th>Harga Barang</th>
@@ -229,6 +220,8 @@
       hide-header
       modal-class="modal-dark"
       centered
+      no-close-on-backdrop
+      no-close-on-esc
     >
       <b-col
         md="12"
@@ -268,6 +261,8 @@
       hide-header
       modal-class="modal-dark"
       centered
+      no-close-on-backdrop
+      no-close-on-esc
     >
       <b-img
         role="button"
@@ -347,6 +342,7 @@ export default {
         submission_type: 1,
         product: [],
       },
+      objIndex: [],
     }
   },
   mounted() {
@@ -375,6 +371,7 @@ export default {
         .catch(err => {
           this.loading = false
         })
+      console.log(this.optionBahanList)
     },
     async getProductList() {
       await this.$http_komship(
@@ -398,10 +395,10 @@ export default {
     selectItemOneEvent(product, e) {
       this.checkSelected = e
       // eslint-disable-next-line no-param-reassign
-      const objIndex = this.productList.findIndex(obj => obj.id === product.id)
+      this.objIndex = this.productList.findIndex(obj => obj.id === product.id)
 
       // eslint-disable-next-line no-param-reassign
-      this.productList[objIndex].selected = e
+      this.productList[this.objIndex].selected = e
     },
     async getsearchProduct() {
       this.getProductList()
@@ -425,11 +422,16 @@ export default {
     },
 
     async submitBerlangganan() {
+      // const material = await this.productList
+      //   .filter(x => x.selected === true)
+      //   .map(val => ({
+      //     packingMaterial: val.packing_material,
+      //   }))
       const product = await this.productList
         .filter(x => x.selected === true)
         .map(val => ({
           product_id: val.id,
-          packing_material: val.packing_material,
+          packing_material: val.packing_material.map(x => x.id),
         }))
       await this.$http_komship
         .post('/v1/komship/submission', {
