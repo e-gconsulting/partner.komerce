@@ -267,7 +267,7 @@
       <b-img
         role="button"
         style="cursor:pointer"
-        src="/img/close-circle.3d7067f4.svg"
+        src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
         class="absolute right-[1rem] top-[1rem]"
         @click="$router.go(-1)"
       />
@@ -494,6 +494,10 @@ export default {
 </script>
 
 <style lang="scss">
+*,
+img {
+  user-select: none;
+}
 .card-custom {
   border-radius: 12px;
   border: 1px solid #e2e2e2;
