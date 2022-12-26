@@ -1580,7 +1580,7 @@ export default {
             props: {
               title: 'Failure',
               icon: 'AlertCircleIcon',
-              text: err,
+              text: err.response.message,
               variant: 'danger',
             },
           })
