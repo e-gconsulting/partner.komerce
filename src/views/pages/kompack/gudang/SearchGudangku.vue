@@ -50,8 +50,6 @@
                       :ranges="ranges"
                       :opens="'left'"
                       class="w-100"
-                      @start-selection="setCustomDate"
-                      @finish-selection="setCustomDate"
                       @select="removeCustomDate"
                     >
                       <template
@@ -158,11 +156,20 @@
                     label-for="city_name"
                   >
                     <b-form-input
-                      id="city_name"
                       v-model="formFilter.city_name"
-                      type="text"
+                      type="search"
                       placeholder="Masukan Kota"
+                      list="my-list-id"
+                      @input="getCityList(e)"
                     />
+                    <datalist id="my-list-id">
+                      <option
+                        v-for="city in cityAll"
+                        :key="city.id"
+                      >
+                        {{ city.city_name }}
+                      </option>
+                    </datalist>
                   </b-form-group>
                   <b-form-group
                     id="input-group-3"
@@ -185,10 +192,9 @@
                       variant="outline-primary"
                       @click="onReset()"
                     >
-                      Submit
+                      Reset
                     </b-button>
                     <b-button
-                      type="reset"
                       class="ml-1"
                       variant="primary"
                       @click="onSubmitFilter()"
@@ -359,6 +365,7 @@ import {
   last30,
   firstDateOfMonth,
   lastDateOfMonth,
+  kompackDate,
 } from '@/store/helpers'
 
 export default {
@@ -395,6 +402,7 @@ export default {
         value: 1,
         text: 'Tersedia',
       }],
+      kompackDate,
       today,
       last7,
       last30,
@@ -412,13 +420,14 @@ export default {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
         'Bulan Ini': [firstDateOfMonth, today],
-        'Custom Tanggal': [today, today],
+        'Semua ': [kompackDate, today],
       },
 
       dateRange: {
-        startDate: last7,
+        startDate: kompackDate,
         endDate: today,
       },
+      cityAll: [],
     }
   },
 
@@ -442,7 +451,7 @@ export default {
     this.getGudangList(params)
   },
   methods: {
-    onchangeStatus(e) {
+    onChangeStatus(e) {
       console.log(e)
     },
     getGudangList(params) {
@@ -457,10 +466,20 @@ export default {
         console.log(err)
       })
     },
+    getCityList() {
+      this.loading = true
+      this.$http_komship.get('/v1/komship/warehouse/option/destination')
+        .then(response => {
+          this.loading = false
+          this.cityAll = response.data.data
+        }).catch(err => {
+          this.loading = false
+          console.log(err)
+        })
+    },
     detailClick(item) {
       this.$router.push({ path: `/search-gudang/detail/${item.mitra_id}` })
     },
-
     onSubmitFilter() {
       const params = {
         start_date: this.dateRange.startDate,
@@ -515,6 +534,14 @@ export default {
       }
       return ''
     },
+  },
+  debounceDestination(search) {
+    if (this.debounceTimeout) {
+      clearTimeout(this.debounceTimeout)
+    }
+    this.debounceTimeout = setTimeout(() => {
+      this.getDestination(search)
+    }, 1000)
   },
   getProduct($event) {
 

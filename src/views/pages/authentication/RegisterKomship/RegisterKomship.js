@@ -71,6 +71,12 @@ export default {
 
       messageValidateNo: '',
       NoSpace,
+
+      errorCoupon: false,
+      couponCode: '',
+      couponCodeLengthError: false,
+      couponNotFound: false,
+      isAffiliate: false,
     }
   },
   computed: {
@@ -89,60 +95,127 @@ export default {
       this.serviceTitle = ''
       this.$refs.loginForm.validate().then(success => {
         if (success) {
-          this.error = ''
-          this.$refs.inputkirimemail_email.value = this.userEmail
-          this.$refs.inputkirimemail_full_name.value = this.fullname
-          this.$http_komship.post('/v1/register', {
-            full_name: this.fullname,
-            no_hp: this.nomorHandphone,
-            email: this.userEmail,
-            password: this.userPassword,
-            password_confirmation: this.confirmPassword,
-          }).then(response => {
-            const { data } = response
-            if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
-              this.emailTaken = 'The email has already been taken.'
-              this.loading = false
-              this.modeNewUser = false
-              this.modeExistingUser = true
-              this.userEmailExisting = this.userEmail
-              this.serviceTitle = 'Hiring Talent'
-              this.agree = false
-            } else if (data.message === 'Akun Kamu telah terdaftar Komship') {
-              this.emailTaken = 'The email has already been taken.'
-              this.loading = false
-              this.modeNewUser = false
-              this.modeExistingUser = true
-              this.userEmailExisting = this.userEmail
-              this.serviceTitle = 'Komship'
-              this.agree = false
-              this.serviceIsKomship = true
-            }
+          if (this.couponCode.length > 0) {
+            this.$http_komship_affiliate.get(`/v1/coupon/check-register?coupon_name=${this.couponCode}&member_email=${this.userEmail}`)
+              .then(() => {
+                this.error = ''
+                this.$refs.inputkirimemail_email.value = this.userEmail
+                this.$refs.inputkirimemail_full_name.value = this.fullname
+                this.$http_komship.post('/v1/register', {
+                  full_name: this.fullname,
+                  no_hp: this.nomorHandphone,
+                  email: this.userEmail,
+                  password: this.userPassword,
+                  password_confirmation: this.confirmPassword,
+                }).then(response => {
+                  const { data } = response
+                  if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
+                    this.emailTaken = 'The email has already been taken.'
+                    this.loading = false
+                    this.modeNewUser = false
+                    this.modeExistingUser = true
+                    this.userEmailExisting = this.userEmail
+                    this.serviceTitle = 'Hiring Talent'
+                    this.agree = false
+                  } else if (data.message === 'Akun Kamu telah terdaftar Komship') {
+                    this.emailTaken = 'The email has already been taken.'
+                    this.loading = false
+                    this.modeNewUser = false
+                    this.modeExistingUser = true
+                    this.userEmailExisting = this.userEmail
+                    this.serviceTitle = 'Komship'
+                    this.agree = false
+                    this.serviceIsKomship = true
+                  }
+                  if (data.code !== 400) {
+                    // this.loading = false
+                    // const routeData = this.$router.resolve({ name: 'komship-register-validate' })
+                    // window.open(routeData.href, '_blank')
+                    this.$refs.submitformkirimemail.click()
+                  }
+                  if (data.message === 'Akun Kamu Terdaftar Sebagai Management, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+                  if (data.message === 'Akun Kamu Terdaftar Sebagai Talent, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+                  if (data.message === 'Akun Kamu Terdaftar Sebagai Talent Partner Komship, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+                  if (data.data?.role_id === 3) this.$refs['modal-validate-existing-manajemen'].show()
+                  if (data.data?.role_id === 5) this.$refs['modal-validate-existing-manajemen'].show()
+                  this.loading = false
+                }).catch(() => {
+                  this.$toast({
+                    component: ToastificationContentVue,
+                    props: {
+                      title: 'Gagal',
+                      text: 'Gagal untuk register, silahkan coba lagi!',
+                      icon: 'AlertCircleIcon',
+                      variant: 'danger',
+                    },
+                  }, 2000)
+                  this.loading = false
+                })
+              }).catch(err => {
+                this.loading = false
+                if (err.response.data.message === 'Not found.') {
+                  this.couponNotFound = true
+                }
+                if (err.response.data.code === 409) {
+                  this.isAffiliate = true
+                }
+              })
+          } else {
+            this.error = ''
+            this.$refs.inputkirimemail_email.value = this.userEmail
+            this.$refs.inputkirimemail_full_name.value = this.fullname
+            this.$http_komship.post('/v1/register', {
+              full_name: this.fullname,
+              no_hp: this.nomorHandphone,
+              email: this.userEmail,
+              password: this.userPassword,
+              password_confirmation: this.confirmPassword,
+            }).then(response => {
+              const { data } = response
+              if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
+                this.emailTaken = 'The email has already been taken.'
+                this.loading = false
+                this.modeNewUser = false
+                this.modeExistingUser = true
+                this.userEmailExisting = this.userEmail
+                this.serviceTitle = 'Hiring Talent'
+                this.agree = false
+              } else if (data.message === 'Akun Kamu telah terdaftar Komship') {
+                this.emailTaken = 'The email has already been taken.'
+                this.loading = false
+                this.modeNewUser = false
+                this.modeExistingUser = true
+                this.userEmailExisting = this.userEmail
+                this.serviceTitle = 'Komship'
+                this.agree = false
+                this.serviceIsKomship = true
+              }
 
-            if (data.code !== 400) {
-              // this.loading = false
-              // const routeData = this.$router.resolve({ name: 'komship-register-validate' })
-              // window.open(routeData.href, '_blank')
-              this.$refs.submitformkirimemail.click()
-            }
-            if (data.message === 'Akun Kamu Terdaftar Sebagai Management, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
-            if (data.message === 'Akun Kamu Terdaftar Sebagai Talent, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
-            if (data.message === 'Akun Kamu Terdaftar Sebagai Talent Partner Komship, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
-            if (data.data?.role_id === 3) this.$refs['modal-validate-existing-manajemen'].show()
-            if (data.data?.role_id === 5) this.$refs['modal-validate-existing-manajemen'].show()
-            this.loading = false
-          }).catch(() => {
-            this.$toast({
-              component: ToastificationContentVue,
-              props: {
-                title: 'Gagal',
-                text: 'Gagal untuk register, silahkan coba lagi!',
-                icon: 'AlertCircleIcon',
-                variant: 'danger',
-              },
-            }, 2000)
-            this.loading = false
-          })
+              if (data.code !== 400) {
+                // this.loading = false
+                // const routeData = this.$router.resolve({ name: 'komship-register-validate' })
+                // window.open(routeData.href, '_blank')
+                this.$refs.submitformkirimemail.click()
+              }
+              if (data.message === 'Akun Kamu Terdaftar Sebagai Management, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+              if (data.message === 'Akun Kamu Terdaftar Sebagai Talent, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+              if (data.message === 'Akun Kamu Terdaftar Sebagai Talent Partner Komship, Silahkan Gunakan Email Lain.') this.$refs['modal-validate-existing-manajemen'].show()
+              if (data.data?.role_id === 3) this.$refs['modal-validate-existing-manajemen'].show()
+              if (data.data?.role_id === 5) this.$refs['modal-validate-existing-manajemen'].show()
+              this.loading = false
+            }).catch(() => {
+              this.$toast({
+                component: ToastificationContentVue,
+                props: {
+                  title: 'Gagal',
+                  text: 'Gagal untuk register, silahkan coba lagi!',
+                  icon: 'AlertCircleIcon',
+                  variant: 'danger',
+                },
+              }, 2000)
+              this.loading = false
+            })
+          }
         } else {
           this.loading = false
         }
@@ -210,6 +283,26 @@ export default {
     },
     closeModalValidateManajemen() {
       this.$refs['modal-validate-existing-manajemen'].hide()
+    },
+    couponValidation() {
+      this.couponNotFound = false
+      this.isAffiliate = false
+      if (!this.couponCode.match(/^[a-z0-9]+$/i) && this.couponCode.length > 0) {
+        this.errorCoupon = true
+      } else {
+        this.errorCoupon = false
+      }
+      if (this.couponCode.length < 4 && this.couponCode.length > 0) {
+        this.couponCodeLengthError = true
+      } else {
+        this.couponCodeLengthError = false
+      }
+    },
+    couponCodeFormat(e) {
+      return e.toUpperCase()
+    },
+    regexCoupon(e) {
+      this.couponCode = e.target.value.replace(/[^A-Za-z0-9]/g, '')
     },
   },
 }

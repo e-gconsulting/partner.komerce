@@ -331,7 +331,7 @@ export default {
     statusColor(status) {
       if (status === 'Sedang Diajukan') {
         return 'text-warning'
-      } if (status === 'Selesai') {
+      } if (status === 'Disetujui') {
         return 'text-success'
       }
       return 'text-danger'

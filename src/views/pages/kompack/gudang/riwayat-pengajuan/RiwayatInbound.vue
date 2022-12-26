@@ -186,7 +186,7 @@ export default {
       lastDateOfMonth,
 
       // filter
-      partnerList: '',
+      partnerList: JSON.parse(localStorage.getItem('warehouse_id')) ? JSON.parse(localStorage.getItem('warehouse_id')) : '',
       date: '',
       dateRange: {
         startDate: kompackDate,
@@ -278,6 +278,7 @@ export default {
   created() {
     this.fetchRiwayatInbound()
     this.fetchListWarehouses()
+    localStorage.removeItem('warehouse_id')
   },
 
   methods: {

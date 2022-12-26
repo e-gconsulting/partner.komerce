@@ -1,5 +1,8 @@
 <template>
-  <div class="card p-3">
+  <div
+    id="container"
+    class="card p-3"
+  >
     <div class="d-flex flex-col">
       <div class="d-flex align-items-center">
         <b-button
@@ -13,11 +16,9 @@
             icon="ChevronLeftIcon"
           />
         </b-button>
-        <h4
-          class="my-0"
-        >Informasi Gudang
+        <h4 class="my-0">
+          Informasi Gudang
         </h4>
-
       </div>
       <b-row>
         <b-col lg="6">
@@ -54,7 +55,7 @@
                 >
                   <img
                     :src="dt"
-                    style="height: 100%;"
+                    style="height: 100%"
                     alt="datalogo"
                   >
                 </div>
@@ -76,13 +77,25 @@
           lg="6"
           class="p-x1 mt-1"
         >
-          <div class="d-flex align-items-center justify-content-between containerDetail">
+          <div
+            class="
+              d-flex
+              align-items-center
+              justify-content-between
+              containerDetail
+            "
+          >
             <div class="d-flex align-items-center mb-1">
               <img
                 :src="detailInfo.image_logo_url"
                 alt="Photo"
                 class="mr-1 border-radius"
-                style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;"
+                style="
+                  width: 80px;
+                  height: 80px;
+                  border-radius: 50%;
+                  object-fit: cover;
+                "
               >
               <div class="d-grid">
                 <h5 class="text-black my-0">
@@ -93,7 +106,7 @@
             </div>
             <div
               class="px-1 bg-blue-100 d-flex aling-items-center rounded-lg"
-              style="padding-top: 8px; padding-bottom: 8px;"
+              style="padding-top: 8px; padding-bottom: 8px"
             >
               <div>
                 <svg
@@ -129,9 +142,15 @@
             <b-col cols="4">
               <span class="text-black">Status</span>
             </b-col>
+            <span class="text-black">: </span>
             <b-col>
-              <span class="text-black">: </span>
-              <b-badge :variant="detailInfo.availability === 'Penuh' ? 'light-primary' : 'light-success'">
+              <b-badge
+                :variant="
+                  detailInfo.availability === 'Penuh'
+                    ? 'light-primary'
+                    : 'light-success'
+                "
+              >
                 {{ detailInfo.availability }}
               </b-badge>
             </b-col>
@@ -140,26 +159,52 @@
             <b-col cols="4">
               <span class="text-black">Jumlah Order</span>
             </b-col>
+            <span class="text-black">: </span>
             <b-col>
-              <span class="text-black">: </span>
-              <span class="text-black">{{ detailInfo.total_order }} Order Pengiriman</span>
+              <span
+                class="text-black"
+              >{{ detailInfo.total_order }} Order Pengiriman</span>
             </b-col>
           </b-row>
           <b-row class="mb-1">
             <b-col cols="4">
               <span class="text-black">Owner</span>
             </b-col>
-            <b-col>
-              <span class="text-black">: </span>
-              <span class="text-black">{{ detailInfo.owner }}</span>
+            <span class="text-black">: </span>
+            <b-col class="d-flex">
+              <span class="text-black mr-1">{{ detailInfo.owner }}</span>
+              <div v-if="detailInfo.partner_verification === 'Terverifikasi'">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M10.4902 2.22859L5.50016 4.10859C4.35016 4.53859 3.41016 5.89859 3.41016 7.11859V14.5486C3.41016 15.7286 4.19016 17.2786 5.14016 17.9886L9.44016 21.1986C10.8502 22.2586 13.1702 22.2586 14.5802 21.1986L18.8802 17.9886C19.8302 17.2786 20.6102 15.7286 20.6102 14.5486V7.11859C20.6102 5.88859 19.6702 4.52859 18.5202 4.09859L13.5302 2.22859C12.6802 1.91859 11.3202 1.91859 10.4902 2.22859Z"
+                    stroke="#08A0F7"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M9.0498 11.8697L10.6598 13.4797L14.9598 9.17969"
+                    stroke="#08A0F7"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
             </b-col>
           </b-row>
           <b-row class="mb-1">
             <b-col cols="4">
               <span class="text-black">Mulai Bergabung</span>
             </b-col>
+            <span class="text-black">: </span>
             <b-col>
-              <span class="text-black">: </span>
               <span class="text-black">{{ tglJoinData }}</span>
             </b-col>
           </b-row>
@@ -167,8 +212,8 @@
             <b-col cols="4">
               <span class="text-black">Alamat Gudang</span>
             </b-col>
+            <span class="text-black">: </span>
             <b-col>
-              <span class="text-black">: </span>
               <span class="text-black">{{ detailInfo.detail_address }}</span>
             </b-col>
           </b-row>
@@ -181,11 +226,16 @@
               class="columnChat"
             >
               <b-button
-                variant="outline-primary"
+                :variant="detailInfo.subscribe_status === 0 ? 'outline-secondary' : 'outline-primary'"
                 class="d-flex justify-content-center align-items-center"
-                disabled
+                :disabled="detailInfo.subscribe_status === 0"
+                block
+                @click="waWeb(detailInfo.phone_number)"
               >
-                <span class="mr-1">
+                <span
+                  v-if="detailInfo.subscribe_status === 1"
+                  class="mr-1"
+                >
                   <svg
                     width="21"
                     height="21"
@@ -211,9 +261,16 @@
                     />
                   </svg>
                 </span>
-                <span class="font-bolder">
-                  Chat Mitra Gudang
+                <span
+                  v-if="detailInfo.subscribe_status === 0"
+                  class="mr-1"
+                >
+                  <img
+                    src="https://storage.googleapis.com/komerce/assets/svg/icon-messages-disabled.svg"
+                    alt="icon chat disabled"
+                  >
                 </span>
+                <span class="font-bolder"> Chat Mitra Gudang </span>
               </b-button>
             </b-col>
             <b-col
@@ -222,18 +279,30 @@
               sm="12"
             >
               <b-button
-                variant="primary"
+                :variant="detailInfo.availability === 'Penuh' || detailInfo.submission_pending === 1 ? 'secondary' : 'primary'"
                 class="text-center py-1 px-2"
-                :disabled="detailInfo.availability === 'Penuh'"
-                @click="redirectToSubmission()"
+                :disabled="detailInfo.availability === 'Penuh' || detailInfo.submission_pending === 1"
+                block
+                @click="redirectToSubmission(detailInfo.subscribe_status)"
               >
-                <span class="font-bolder">
+                <span
+                  v-if="detailInfo.subscribe_status === 0"
+                  class="font-bolder"
+                  style="font-size: 12px"
+                >
                   Ajukan Langganan Gudang
+                </span>
+                <span
+                  v-if="detailInfo.subscribe_status === 1"
+                  block
+                  class="font-bolder"
+                  style="font-size: 12px"
+                >
+                  Cek Stock
                 </span>
               </b-button>
             </b-col>
           </b-row>
-
         </b-col>
       </b-row>
       <hr class="border-gray-300 my-2">
@@ -245,14 +314,12 @@
         <span class="text-black mt-1">{{ detailInfo.description }}</span>
       </div>
     </div>
-  </div></template>
+  </div>
+</template>
 
 <script lang="ts">
 import {
-  BButton,
-  BRow,
-  BCol,
-  BBadge,
+  BButton, BRow, BCol, BBadge,
 } from 'bootstrap-vue'
 import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
 import moment from 'moment'
@@ -276,8 +343,12 @@ export default {
     countSlide: {
       handler(newVal, oldVal) {
         this.imagesone = this.imagesothers[newVal]
-        this.$refs[`childOtherbox-${oldVal}`][0].classList.remove('borderActive')
-        this.$refs[`childOtherbox-${newVal}`][0].classList.toggle('borderActive')
+        this.$refs[`childOtherbox-${oldVal}`][0].classList.remove(
+          'borderActive',
+        )
+        this.$refs[`childOtherbox-${newVal}`][0].classList.toggle(
+          'borderActive',
+        )
         if (oldVal > newVal) {
           this.$refs.imgcontainer__childBox.scrollLeft -= 100
         } else {
@@ -296,13 +367,23 @@ export default {
   methods: {
     handleChangeImge(dt, refKey) {
       this.imagesone = dt
-      const [, indexData] = refKey.split('-')
+      const [indexData] = refKey.split('-')
       this.countSlide = parseInt(indexData, 10)
     },
-    redirectToSubmission() {
-      this.$router.push({
-        path: `/search-gudang/detail/submission/${this.$route.params.id}`,
-      })
+    redirectToSubmission(data) {
+      const { subscribe_status } = data
+      if (data === 0) {
+        this.$router.push({
+          path: `/search-gudang/detail/submission/${this.$route.params.id}`,
+        })
+      } if (data === 1) {
+        this.$router.push({
+          path: '/gudangku-kompack',
+        })
+      }
+    },
+    waWeb(e) {
+      window.open(`https://wa.me/62${e}`)
     },
     handleCursor(type) {
       switch (type) {
@@ -336,13 +417,17 @@ export default {
       })
     },
     fetchData() {
-      this.$http_komship(`/v1/komship/warehouse/information/${this.$route.params.id}`)
+      this.$http_komship(
+        `/v1/komship/warehouse/information/${this.$route.params.id}`,
+      )
         .then(({ data }) => {
           this.detailInfo = data.data
           console.log(this.detailInfo)
 
           this.imagesone = data.data.image_warehouse[0].image_url
-          this.imagesothers = [...data.data.image_warehouse].splice(0, 8).map(x => x.image_url)
+          this.imagesothers = [...data.data.image_warehouse]
+            .splice(0, 8)
+            .map(x => x.image_url)
           this.$nextTick(() => {
             this.isLoadingPage = false
           })
@@ -365,88 +450,92 @@ export default {
 
 <style lang="scss" scoped>
 .container__img {
-    margin-top: 1em;
-    display: grid;
-    justify-content: center;
-    grid-row-gap: 1em;
-  }
-  .boxFirst {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 450px;
-    height: 300px;
+  margin-top: 1em;
+  display: grid;
+  justify-content: center;
+  grid-row-gap: 1em;
+}
+.boxFirst {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 450px;
+  height: 300px;
 
-    & > img {
-      border-radius: 8px;
-    }
+  & > img {
+    border-radius: 8px;
   }
-  .container__navimg {
-    display: flex;
-    align-items: center;
-    position: relative;
-  }
-  /*.boxFirst > img {
+}
+.container__navimg {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+/*.boxFirst > img {
     -o-transition: 1s all ease-in-out;
     -ms-transition: 1s all ease-in-out;
     -webkit-transition: 1s all ease-in-out;
     -moz-transition: 1s all ease-in-out;
     transition: 1s all ease-in-out;
   }*/
+.container__childBox {
+  display: -webkit-box;
+  width: 450px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+.childOtherbox {
+  margin-right: 10px;
+  object-fit: cover;
+  border: 1px solid black;
+  border-radius: 8px;
+  width: 80px;
+  height: 80px;
+}
+.childOtherbox > img {
+  border-radius: 8px;
+}
+.borderActive {
+  border-width: 3px;
+}
+.cursorLeftSlide {
+  cursor: pointer;
+  position: absolute;
+  left: -35px;
+}
+.cursorRightSlide {
+  cursor: pointer;
+  position: absolute;
+  right: -30px;
+}
+*,
+img {
+  user-select: none;
+}
+@media only screen and (max-width: 900px) {
+  .columnChat {
+    margin-bottom: 1em;
+  }
+}
+@media only screen and (max-width: 500px) {
   .container__childBox {
-    display: -webkit-box;
-    width: 450px;
-    overflow-x: scroll;
-    overflow-y: hidden;
-  }
-  .childOtherbox {
-    margin-right: 10px;
-    object-fit: cover;
-    border: 1px solid black;
-    border-radius: 8px;
-    width: 80px;
-    height: 80px;
-  }
-  .childOtherbox > img {
-    border-radius: 8px;
-  }
-  .borderActive {
-    border-width: 3px;
+    width: 85vw;
   }
   .cursorLeftSlide {
-    cursor: pointer;
-    position: absolute;
-    left: -35px;
+    left: 0px;
   }
   .cursorRightSlide {
-    cursor: pointer;
-    position: absolute;
-    right: -35px;
+    right: 0px;
   }
-  @media only screen and (max-width: 900px) {
-    .columnChat {
-      margin-bottom: 1em;
-    }
+  .boxFirst {
+    width: 100%;
   }
-  @media only screen and (max-width: 500px) {
-    .container__childBox {
-      width: 85vw;
-    }
-    .cursorLeftSlide {
-      left: 0px;
-    }
-    .cursorRightSlide {
-      right: 0px;
-    }
-    .boxFirst {
-      width: 100%;
-    }
-    .containerDetail {
-      display: grid !important;
-      margin-bottom: 1em;
-      width: 135px;
-    }
+  .containerDetail {
+    display: grid !important;
+    margin-bottom: 1em;
+    width: 135px;
+  }
 }
 </style>

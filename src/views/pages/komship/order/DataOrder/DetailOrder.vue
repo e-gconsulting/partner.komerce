@@ -737,9 +737,9 @@ export default {
       }
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19' || value === 'UDRREG') {
         return 'Reguler'
-      } if (value === 'GOKIL') {
+      } if (value === 'GOKIL' || value === 'DRGREG') {
         return 'Cargo'
       }
       return value

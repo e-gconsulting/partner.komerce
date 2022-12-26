@@ -23,6 +23,7 @@ export default {
             discount: [
               'Berat di atas 500 gram (STD), diskon <b>25%</b>',
               'Berat di bawah 500 gram (IDLite), <b>kurang lebih bayar 1/2-nya</b> ditambah diskon 15%',
+              '<b>Cargo (ID Truck)</b> Diskon ongkir 5%, untuk orderan yang beratnya lebih dari 5 kg',
             ],
             recomend: 'Diskon mantap paket ringan <b><1/2 kg</b> dan <b>antar kota besar retur rendah</b>',
           })
@@ -32,6 +33,7 @@ export default {
             discount: [
               'Reguler <b>25%</b>',
               'Belum tersedia layanan OKE dan YES di Komship',
+              '<b>Cargo (JNE Trucking)</b> Diskon ongkir 5%, untuk orderan yang beratnya lebih dari 5 kg ',
             ],
             recomend: 'Cabang sangat banyak, retur lebih rendah kirim paket ke <b>daerah terpencil</b>',
           })
@@ -43,6 +45,14 @@ export default {
               'Cargo (GOKIL) minimal 10kg, <b>mulai dari</b> Rp. 2.500,- / kg ditambah diskon 5%',
             ],
             recomend: 'Diskon mantap paket reguler >1kg  dan <b>antar kota besar</b> retur rendah',
+          })
+        } if (name === 'SAP') {
+          desc = ({
+            discount: [
+              'Reguler <b>35%</b>',
+              '<strong>Cargo (SAP Trucking)</strong> Diskon ongkir 5%, untuk orderan yang beratnya lebih dari 5 kg',
+            ],
+            recomend: 'Ekspedisi Pelopor COD, Kirim COD <strong>luar jawa</strong> bisa diandalkan, dan CS Supportif',
           })
           return desc
         }
