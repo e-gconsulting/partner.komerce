@@ -452,7 +452,7 @@ export default {
   },
   methods: {
     onChangeStatus(e) {
-      console.log(e)
+      // console.log(e)
     },
     getGudangList(params) {
       this.loading = true
@@ -519,7 +519,6 @@ export default {
       this.titleCustomDate = null
     },
     momentTime(date) {
-      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
         return moment(date).format('HH:mm')

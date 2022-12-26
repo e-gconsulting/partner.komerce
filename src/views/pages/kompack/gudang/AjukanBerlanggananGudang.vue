@@ -371,7 +371,6 @@ export default {
         .catch(err => {
           this.loading = false
         })
-      console.log(this.optionBahanList)
     },
     async getProductList() {
       await this.$http_komship(
