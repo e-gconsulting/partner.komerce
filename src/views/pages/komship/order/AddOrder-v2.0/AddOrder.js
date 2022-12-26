@@ -158,6 +158,9 @@ export default {
       minimalCustomerName: false,
       requireCustomerName: false,
       requireCustomerPhone: false,
+
+      isKomship: 0,
+      isKompack: 0,
     }
   },
   computed: {
@@ -186,7 +189,7 @@ export default {
     }
     await this.checkExpedition()
     await this.getAddress()
-    await this.getProduct()
+    // await this.getProduct()
     await this.addToCart()
     await this.getRekening()
     await this.getCustomLabel()
@@ -221,6 +224,7 @@ export default {
         localStorage.removeItem('paymentHistory')
       }
     }
+    console.log(this.profile)
   },
   methods: {
     formatDate(date) {
@@ -290,14 +294,18 @@ export default {
         })
     },
     getAddress() {
-      this.$http_komship.get('/v2/address').then(async response => {
+      this.$http_komship.get('/v3/address').then(async response => {
         const { data } = response.data
-        this.addressList = data
+        this.addressList = data.map(item => ({
+          ...item,
+          flag: 'https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg',
+        }))
         this.addressLength = data.length
         if (this.addressLength !== 0) {
           const result = data.find(item => item.is_default === 1)
           if (result) {
             this.address = result
+            this.getProduct(this.address)
           } else {
             this.address = data[0]
           }
@@ -432,9 +440,10 @@ export default {
           this.loadingSearchDestination = false
         })
     }, 1000),
-    async getProduct() {
+    async getProduct(address) {
+      console.log(address)
       await this.$http_komship
-        .get(`v1/partner-product/${this.profile.partner_id}`)
+        .get(`v2/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}`)
         .then(response => {
           const { data } = response.data
           this.productList = data
@@ -956,7 +965,7 @@ export default {
             receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
-            partner_address_id: this.address.address_id,
+            partner_address_id: this.address.warehouse_id,
           },
         }).then(async res => {
           const { data } = res.data
@@ -1068,7 +1077,7 @@ export default {
             receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
-            partner_address_id: this.address.address_id,
+            partner_address_id: this.address.warehouse_id,
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
@@ -1196,7 +1205,7 @@ export default {
             receiver_destination: this.destination.id,
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
-            partner_address_id: this.address.address_id,
+            partner_address_id: this.address.warehouse_id,
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
@@ -1324,6 +1333,13 @@ export default {
           this.isValidate = true
         }
       }
+      if (this.address.warehouse_type === 'Private Warehouse') {
+        this.isKomship = 1
+        this.isKompack = 0
+      } else {
+        this.isKomship = 0
+        this.isKompack = 1
+      }
       this.formData = {
         date: this.dateOrder,
         tariff_code: this.destination.value,
@@ -1331,7 +1347,9 @@ export default {
         zip_code: this.destination.zip_code,
         district_name: this.destination.district_name,
         city_name: this.destination.city_name,
-        is_komship: this.profile.is_komship,
+        is_komship: this.isKomship,
+        is_kompack: this.isKompack,
+        tracking_sales_id: this.soldBy,
         customer_id: this.customerId,
         customer_name: this.customerName,
         customer_phone: this.customerPhone,
@@ -1341,7 +1359,7 @@ export default {
         shipping_type: this.shipping.shipping_type,
         payment_method: this.paymentMethod,
         bank: this.bankName,
-        partner_address_id: this.address.address_id,
+        partner_address_id: this.address.warehouse_id,
         bank_account_name: this.bankAccountName,
         bank_account_no: this.bankAccountNo,
         subtotal: this.subTotal,
@@ -1368,7 +1386,7 @@ export default {
       this.checkValidation()
       if (this.isValidate) {
         await this.$http_komship
-          .post(`v1/order/${this.profile.partner_id}/store`, this.formData)
+          .post(`v3/order/${this.profile.partner_id}/store`, this.formData)
           .then(() => {
             this.$swal({
               title:
