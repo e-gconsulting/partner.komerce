@@ -77,6 +77,7 @@ export default {
       couponCodeLengthError: false,
       couponNotFound: false,
       isAffiliate: false,
+      affiliatorId: 0,
     }
   },
   computed: {
@@ -97,16 +98,18 @@ export default {
         if (success) {
           if (this.couponCode.length > 0) {
             this.$http_komship_affiliate.get(`/v1/coupon/check-register?coupon_name=${this.couponCode}&member_email=${this.userEmail}`)
-              .then(() => {
+              .then(res => {
                 this.error = ''
                 this.$refs.inputkirimemail_email.value = this.userEmail
                 this.$refs.inputkirimemail_full_name.value = this.fullname
+                this.affiliatorId = res.data.data.affiliator_id
                 this.$http_komship.post('/v1/register', {
                   full_name: this.fullname,
                   no_hp: this.nomorHandphone,
                   email: this.userEmail,
                   password: this.userPassword,
                   password_confirmation: this.confirmPassword,
+                  affiliator_id: this.affiliatorId,
                 }).then(response => {
                   const { data } = response
                   if (data.message === 'Akun Kamu telah terdaftar Komerce Hiring') {
