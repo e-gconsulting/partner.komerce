@@ -66,7 +66,7 @@ export default {
     fetchData() {
       this.$http_kompack.get('/v1/admin/withdrawal/list')
         .then(({ data }) => {
-          console.log('data', data)
+          // console.log('data', data)
         })
         .catch(e => {
           // handle error

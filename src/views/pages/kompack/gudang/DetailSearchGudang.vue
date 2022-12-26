@@ -422,7 +422,6 @@ export default {
       )
         .then(({ data }) => {
           this.detailInfo = data.data
-          console.log(this.detailInfo)
 
           this.imagesone = data.data.image_warehouse[0].image_url
           this.imagesothers = [...data.data.image_warehouse]
