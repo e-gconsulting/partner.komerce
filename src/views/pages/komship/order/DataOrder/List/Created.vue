@@ -13,16 +13,19 @@
           @input="fetchData(formSearch)"
         />
         <b-icon-search class="icon-search" />
-        <b-button
-          id="buttonFilter"
-          variant="primary"
-          size="sm"
-          class="rounded-lg"
-        >
+        <div style="position: relative;">
           <img
-            src="@/assets/images/icons/filter-icon-kompship.png"
+            id="buttonFilter"
+            src="https://storage.googleapis.com/komerce/assets/svg/filter-icon-orange.svg"
+            class="cursor-pointer"
           >
-        </b-button>
+          <b-badge
+            variant="primary"
+            style="position: absolute; border-radius: 1.358rem; top: -15%; right: 0%;"
+          >
+            {{ totalFilterDataOrder }}
+          </b-badge>
+        </div>
         <b-popover
           id="popoverFilter"
           target="buttonFilter"
@@ -37,6 +40,7 @@
                 class="form-control"
                 placeholder="Mulai Dari"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d',}"
+                @input="setFilterDate"
               />
             </b-col>
             <b-col md="6">
@@ -45,6 +49,7 @@
                 class="form-control"
                 placeholder="Sampai Dengan"
                 :config="{ mode: 'single', altInput: true, altFormat: 'j/n/Y', dateFormat: 'Y-m-d', minDate: startDate}"
+                @input="setFilterDate"
               />
             </b-col>
           </b-row>
@@ -54,6 +59,7 @@
             :options="filterWarehouses"
             :reduce="(option) => option.id"
             label="name"
+            @input="setFilterAddress"
           >
             <span
               slot="no-options"
@@ -66,6 +72,7 @@
             :options="filterProducts"
             :reduce="(option) => option.product_name"
             label="product_name"
+            @input="setFilterProduct"
           >
             <span
               slot="no-options"
@@ -76,6 +83,7 @@
           <v-select
             v-model="paymentMethod"
             :options="['COD', 'BANK TRANSFER']"
+            @input="setFilterPayment"
           />
           <b-row class="mx-auto mt-2">
             <b-button
@@ -363,14 +371,16 @@ export default {
       paymentMethod: [],
       productList: this.filterItem.products,
       productName: [],
-      startDate: '',
-      endDate: '',
+      startDate: null,
+      endDate: null,
       currentPage: 1,
       perPage: 50,
       pageOptions: [50, 100, 200],
       totalItems: 0,
       addressId: null,
       addressList: this.filterItem.warehouses,
+      totalFilterDataOrder: 0,
+      filterDateDataOrder: false,
     }
   },
   computed: {
@@ -457,15 +467,54 @@ export default {
       return this.fetchData()
     },
     shippingTypeLabel(value) {
-      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19') {
+      if (value === 'REG19' || value === 'SIUNT' || value === 'STD' || value === 'IDlite' || value === 'CTC19' || value === 'UDRREG') {
         return 'Reguler'
-      } if (value === 'GOKIL') {
+      } if (value === 'GOKIL' || value === 'DRGREG') {
         return 'Cargo'
       }
       return value
     },
     async setPage(totalPage) {
       this.perPage = totalPage
+      this.fetchData()
+    },
+    setFilterDate() {
+      if (this.startDate !== null) {
+        if (this.endDate !== null && !this.filterDateDataOrder) {
+          this.totalFilterDataOrder += 1
+          this.filterDateDataOrder = true
+        }
+      }
+      if (this.endDate === null) {
+        if (this.startDate === null && this.filterDateDataOrder) {
+          this.totalFilterDataOrder -= 1
+          this.filterDateDataOrder = false
+        }
+      }
+    },
+    setFilterProduct() {
+      if (this.productName !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterAddress() {
+      if (this.addressId !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    setFilterPayment() {
+      if (this.paymentMethod !== null) {
+        this.totalFilterDataOrder += 1
+      } else {
+        this.totalFilterDataOrder -= 1
+      }
+    },
+    fetchIsRetur() {
+      this.isRetur = !this.isRetur
       this.fetchData()
     },
   },

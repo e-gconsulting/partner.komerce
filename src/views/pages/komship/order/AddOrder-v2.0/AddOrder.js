@@ -155,6 +155,9 @@ export default {
       soldBy: null,
       soldByList: [],
       collapseCalculate: false,
+      minimalCustomerName: false,
+      requireCustomerName: false,
+      requireCustomerPhone: false,
     }
   },
   computed: {
@@ -315,7 +318,7 @@ export default {
     },
     async getReturnInsight() {
       if (this.profile.partner_is_return_insight && this.destination !== null) {
-        await this.$http_komship.get('/v2/feature/returnInsight', {
+        await this.$http_komship.get('/v3/feature/returnInsight', {
           params: { destination_id: this.destination.id },
         })
           .then(result => {
@@ -359,6 +362,28 @@ export default {
           console.error(err)
           return []
         })
+      }
+      if (this.minimalCustomerName || this.requireCustomerName) {
+        this.checkValidationCustomerName()
+      }
+    },
+    checkValidationCustomerName() {
+      if (this.customerName.length < 3) {
+        this.minimalCustomerName = true
+      } else {
+        this.minimalCustomerName = false
+      }
+      if (this.customerName === '') {
+        this.requireCustomerName = true
+      } else {
+        this.requireCustomerName = false
+      }
+    },
+    checkValidationCustomerPhone() {
+      if (this.customerPhone === '') {
+        this.requireCustomerPhone = true
+      } else {
+        this.requireCustomerPhone = false
       }
     },
     async autofillByCustomer(customer) {
@@ -1178,7 +1203,6 @@ export default {
           },
         }).then(async res => {
           const { data } = res.data
-          console.log(this.shipping)
           const result = this.shipping.label_shipping_type === 'Reguler' || this.shipping.label_shipping_type === 'IDlite' ? data.data_regular.find(items => items.value === this.shipping.value) : data.data_truck.find(items => items.value === this.shipping.value)
           if (getAdditional) {
             this.sesuaiNominal = Math.round(result.service_fee)
@@ -1236,6 +1260,7 @@ export default {
         || value === 'SIUNT'
         || value === 'STD'
         || value === 'CTC19'
+        || value === 'UDRREG'
       ) {
         return 'Reguler'
       }
@@ -1245,6 +1270,11 @@ export default {
       if (value === 'Idtruck') {
         return 'ID Truck'
       }
+
+      if (value === 'DRGREG') {
+        return 'Cargo'
+      }
+
       return value
     },
     checkValidation() {
@@ -1446,17 +1476,6 @@ export default {
       this.checkWhatsapp()
       this.getCustomerReputation()
     }, 1000),
-    validateInputAddressDetail(e) {
-      if (
-        e.keyCode === 61
-        || e.keyCode === 58
-        || e.keyCode === 59
-      ) {
-        this.messageErrorAddressDetail = true
-      } else {
-        this.messageErrorAddressDetail = false
-      }
-    },
     validateInputPhoneCustomer(e) {
       if (this.customerPhone.length === 0) {
         if (e.keyCode === 48) {
@@ -1618,6 +1637,17 @@ export default {
       }
       this.customerAddress = string
       if (text.match(/[^A-Za-z-0-9_ , - . / ( )]/g)) {
+        this.messageErrorAddressDetail = true
+      } else {
+        this.messageErrorAddressDetail = false
+      }
+    },
+    validateInputAddressDetail(e) {
+      if (
+        e.keyCode === 61
+        || e.keyCode === 58
+        || e.keyCode === 59
+      ) {
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false

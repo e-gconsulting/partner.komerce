@@ -42,6 +42,15 @@ const kompackkomshipAxiosIns = axios.create({
   timeout: 14000,
 })
 
+const affiliateAxiosIns = axios.create({
+  // You can add your headers here
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  baseURL: process.env.VUE_APP_BASE_URL_AFFILIATE,
+  timeout: 12000,
+})
+
 axiosIns.interceptors.response.use(
   response => response,
   error => {
@@ -90,10 +99,23 @@ kompackkomshipAxiosIns.interceptors.response.use(
   }
 )
 
+affiliateAxiosIns.interceptors.response.use(
+  response => response,
+  error => {
+    // Do something with response error
+    if (error?.response?.status === 403) {
+      window.location = '/unauthenticated'
+    }
+    /* eslint-disable comma-dangle */
+    return Promise.reject(error)
+  }
+)
+
 Vue.prototype.$http = axiosIns
 Vue.prototype.$http_kompack = axiosAuthKompack
 Vue.prototype.$http_kompack_kompship = kompackkomshipAxiosIns
 Vue.prototype.$http_komship = komshipAxiosIns
+Vue.prototype.$http_komship_affiliate = affiliateAxiosIns
 
 export { axiosAuthKompack }
 export default axiosIns

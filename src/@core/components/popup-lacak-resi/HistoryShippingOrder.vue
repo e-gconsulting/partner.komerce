@@ -149,15 +149,17 @@ export default {
       this.itemAwb.forEach(items => {
         this.listAwb += '<div class="icon-awb d-inline-block">'
         if (items.status === 'Pickup') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-pickup.svg')}">`
+          this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/resi-pickup.svg">'
         } else if (items.status === 'Process') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-kirim.svg')}">`
+          this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/resi-kirim.svg">'
         } else if (items.status === 'Problem') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-problem.svg')}">`
+          this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/resi-problem.svg">'
         } else if (items.status === 'Delivered') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-terima.svg')}">`
+          this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/resi-terima.svg">'
         } else if (items.status === 'Retur') {
-          this.listAwb += `<img src="${require('@/assets/images/icons/resi-retur.svg')}">`
+          this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/resi-retur.svg">'
+        } else if (items.status === 'Delivery') {
+          this.listAwb += '<img src="https://storage.googleapis.com/komerce/assets/icons/resi-delivery.svg">'
         }
         this.listAwb += '</div>'
         this.listAwb += '<div style="font-size: 16px;display: inline-block;">'

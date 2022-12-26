@@ -461,7 +461,7 @@ export default
             formData.append('file[]', this.itemsImageInitialFile[0])
           }
 
-          this.$http_komship.post('/v1/ticket-partner/store', formData)
+          this.$http_komship.post('/v2/ticket-partner/store', formData)
             .then(() => {
               this.noResi = null
               this.itemsNoResi = null
