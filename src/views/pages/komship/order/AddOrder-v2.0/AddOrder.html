@@ -735,7 +735,7 @@
           </v-select>
         </b-col>
       </b-row>
-      <b-row class="mb-1">
+      <b-row class="mb-1 align-items-center">
         <b-col md="3">
           <label class="text-lg">Ekspedisi</label>
         </b-col>
@@ -754,39 +754,40 @@
         <b-collapse id="collapse-calculate" v-model="collapseCalculate">
           <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
             <li
-              v-for="(option, index) in listShipping"
-              :key="index+1"
-              :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
-              :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
-              @click="option.label !== 'Reguler' && option.label !== 'Cargo' ? calculateOnExpedition(true, option) : ''"
+            v-for="(option, index) in listShipping"
+            :key="index+1"
+            :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
+            :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
+            @click="option.label !== 'Reguler' && option.label !== 'Cargo' ? calculateOnExpedition(true, option) : ''"
             >
-              <h4
-                v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
-                class="ml-50"
+            <h4
+            v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
+            class="ml-50"
               >
                 <strong>{{ option.label }}</strong>
               </h4>
               <h4
-                v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
-                class="ml-50"
+              v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
+              class="ml-50"
               >
-                <strong>{{ option.label }}</strong>
-              </h4>
-              <img
-                v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
-                :src="option.image_path" style="height: 30px!important;"
-              />
-              <span
-                v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
-                class="my-auto text-black"
-                style="margin-left:5px;"
-              >
-                {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
+              <strong>{{ option.label }}</strong>
+            </h4>
+            <img
+            v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+            :src="option.image_path" style="height: 30px!important;"
+            />
+            <span
+            v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+            class="my-auto text-black"
+            style="margin-left:5px;"
+            >
+            {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
               </span>
             </li>
           </ul>
         </b-collapse>
         </b-col>
+        <b-spinner v-if="loadingOptionExpedition" small variant="primary" />
       </b-row>
     </section>
 
