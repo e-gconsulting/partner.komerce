@@ -205,14 +205,12 @@
                   class="mb-1"
                 >
                   <validation-provider
-                    #default="{ errors }"
                     name="Kode Kupon"
                   >
                     <b-form-input
                       id="coupon-code"
                       v-model="couponCode"
                       :class="couponNotFound || isAffiliate ? 'is-invalid' : 'bg-white'"
-                      required
                       :formatter="couponCodeFormat"
                       style="height: 50px!important;"
                       @input="couponValidation"
@@ -238,7 +236,7 @@
                     </b-row>
                     <b-row v-if="isAffiliate">
                       <b-col>
-                        <small class="text-primary">Kamu sudah terdaftar sebagai afiliator</small>
+                        <small class="text-primary">Kamu sudah terdaftar sebagai afiliator, silahkan kosongkan code!</small>
                       </b-col>
                     </b-row>
                   </validation-provider>

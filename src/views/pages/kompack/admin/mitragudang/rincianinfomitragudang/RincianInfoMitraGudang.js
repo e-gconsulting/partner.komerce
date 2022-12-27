@@ -28,7 +28,6 @@ export default {
   watch: {
     countSlide: {
       handler(newVal, oldVal) {
-        console.log(newVal, oldVal)
         this.imagesone = this.imagesothers[newVal]
         this.$refs[`childOtherbox-${oldVal}`][0].classList.remove('borderActive')
         this.$refs[`childOtherbox-${newVal}`][0].classList.toggle('borderActive')

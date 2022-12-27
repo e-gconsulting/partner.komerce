@@ -19,4 +19,22 @@ export default [
       ],
     },
   },
+  {
+    path: '/detail-gudang-kompack/:id',
+    name: 'detail-gudang-kompack',
+    component: () => import('@/views/pages/komship/warehouse/DetailGudangKompack.vue'),
+    meta: {
+      resource: 'Gudang Komship',
+      action: 'manage',
+    },
+  },
+  {
+    path: '/tambah-produk-gudang-kompack/:id',
+    name: 'tambah-produk-gudang-kompack',
+    component: () => import('@/views/pages/komship/warehouse/TambahProdukKompack.vue'),
+    meta: {
+      resource: 'Gudang Komship',
+      action: 'manage',
+    },
+  },
 ]

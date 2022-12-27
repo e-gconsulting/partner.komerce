@@ -226,13 +226,16 @@
               class="columnChat"
             >
               <b-button
-                variant="outline-primary"
+                :variant="detailInfo.subscribe_status === 0 ? 'outline-secondary' : 'outline-primary'"
                 class="d-flex justify-content-center align-items-center"
                 :disabled="detailInfo.subscribe_status === 0"
                 block
                 @click="waWeb(detailInfo.phone_number)"
               >
-                <span class="mr-1">
+                <span
+                  v-if="detailInfo.subscribe_status === 1"
+                  class="mr-1"
+                >
                   <svg
                     width="21"
                     height="21"
@@ -258,6 +261,15 @@
                     />
                   </svg>
                 </span>
+                <span
+                  v-if="detailInfo.subscribe_status === 0"
+                  class="mr-1"
+                >
+                  <img
+                    src="https://storage.googleapis.com/komerce/assets/svg/icon-messages-disabled.svg"
+                    alt="icon chat disabled"
+                  >
+                </span>
                 <span class="font-bolder"> Chat Mitra Gudang </span>
               </b-button>
             </b-col>
@@ -267,9 +279,9 @@
               sm="12"
             >
               <b-button
-                variant="primary"
+                :variant="detailInfo.availability === 'Penuh' || detailInfo.submission_pending === 1 ? 'secondary' : 'primary'"
                 class="text-center py-1 px-2"
-                :disabled="detailInfo.availability === 'Penuh' || detailInfo.subscribe_status === 0"
+                :disabled="detailInfo.availability === 'Penuh' || detailInfo.submission_pending === 1"
                 block
                 @click="redirectToSubmission(detailInfo.subscribe_status)"
               >
@@ -281,7 +293,7 @@
                   Ajukan Langganan Gudang
                 </span>
                 <span
-                  v-else
+                  v-if="detailInfo.subscribe_status === 1"
                   block
                   class="font-bolder"
                   style="font-size: 12px"
@@ -364,7 +376,7 @@ export default {
         this.$router.push({
           path: `/search-gudang/detail/submission/${this.$route.params.id}`,
         })
-      } else {
+      } if (data === 1) {
         this.$router.push({
           path: '/gudangku-kompack',
         })
@@ -410,7 +422,6 @@ export default {
       )
         .then(({ data }) => {
           this.detailInfo = data.data
-          console.log(this.detailInfo)
 
           this.imagesone = data.data.image_warehouse[0].image_url
           this.imagesothers = [...data.data.image_warehouse]

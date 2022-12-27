@@ -50,8 +50,6 @@
                       :ranges="ranges"
                       :opens="'left'"
                       class="w-100"
-                      @start-selection="setCustomDate"
-                      @finish-selection="setCustomDate"
                       @select="removeCustomDate"
                     >
                       <template
@@ -157,14 +155,6 @@
                     label="Kota"
                     label-for="city_name"
                   >
-                    <!-- <b-form-input
-                      id="city_name"
-                      v-model="formFilter.city_name"
-                      type="search"
-                      placeholder="Masukan Kota"
-                      @input="searchCityName()"
-                      @search="onSearchDestination()"
-                    /> -->
                     <b-form-input
                       v-model="formFilter.city_name"
                       type="search"
@@ -375,6 +365,7 @@ import {
   last30,
   firstDateOfMonth,
   lastDateOfMonth,
+  kompackDate,
 } from '@/store/helpers'
 
 export default {
@@ -411,6 +402,7 @@ export default {
         value: 1,
         text: 'Tersedia',
       }],
+      kompackDate,
       today,
       last7,
       last30,
@@ -428,11 +420,11 @@ export default {
         '7 Hari Terakhir': [last7, today],
         '30 Hari Terakhir': [last30, today],
         'Bulan Ini': [firstDateOfMonth, today],
-        'Custom Tanggal': [today, today],
+        'Semua ': [kompackDate, today],
       },
 
       dateRange: {
-        startDate: last7,
+        startDate: kompackDate,
         endDate: today,
       },
       cityAll: [],
@@ -460,7 +452,7 @@ export default {
   },
   methods: {
     onChangeStatus(e) {
-      console.log(e)
+      // console.log(e)
     },
     getGudangList(params) {
       this.loading = true
@@ -527,7 +519,6 @@ export default {
       this.titleCustomDate = null
     },
     momentTime(date) {
-      console.log(date)
       const validDate = moment(date)
       if (validDate.isValid()) {
         return moment(date).format('HH:mm')

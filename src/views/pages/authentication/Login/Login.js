@@ -150,6 +150,12 @@ export default {
           this.isKompack = data.is_kompack
           this.emailProfile = data.email
 
+          if (userData.is_affiliate === 1 && userData.is_komship === 0) {
+            this.error = 'Kamu belum terdaftar atau cek email untuk verikasi'
+            this.logout()
+            return
+          }
+
           if (!['ADMIN', 'MANAGEMENT', 'PARTNER', 'SDM', 'KOMSHIP MEMBER', 'TALENT GLOBAL'].includes(role)) {
             this.error = 'Akun anda tidak memiliki hak akses untuk masuk.'
             this.logout()
@@ -350,8 +356,6 @@ export default {
           }
           const path = await ability.find(pathItem => pathItem.path !== undefined)
           if (path !== undefined) Object.assign(data, { path: path.path })
-
-          console.log(data)
 
           data.ability = ability
           this.$ability.update(ability)

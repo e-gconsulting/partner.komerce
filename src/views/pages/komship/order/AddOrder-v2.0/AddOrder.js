@@ -155,6 +155,9 @@ export default {
       soldBy: null,
       soldByList: [],
       collapseCalculate: false,
+      minimalCustomerName: false,
+      requireCustomerName: false,
+      requireCustomerPhone: false,
     }
   },
   computed: {
@@ -359,6 +362,28 @@ export default {
           console.error(err)
           return []
         })
+      }
+      if (this.minimalCustomerName || this.requireCustomerName) {
+        this.checkValidationCustomerName()
+      }
+    },
+    checkValidationCustomerName() {
+      if (this.customerName.length < 3) {
+        this.minimalCustomerName = true
+      } else {
+        this.minimalCustomerName = false
+      }
+      if (this.customerName === '') {
+        this.requireCustomerName = true
+      } else {
+        this.requireCustomerName = false
+      }
+    },
+    checkValidationCustomerPhone() {
+      if (this.customerPhone === '') {
+        this.requireCustomerPhone = true
+      } else {
+        this.requireCustomerPhone = false
       }
     },
     async autofillByCustomer(customer) {
@@ -1592,15 +1617,26 @@ export default {
         || text.charAt(x) === ';'
         || text.charAt(x) === '"'
         || text.charAt(x) === '&'
+        || text.charAt(x) === '*'
+        || text.charAt(x) === '#'
+        || text.charAt(x) === '&'
+        || text.charAt(x) === '%'
+        || text.charAt(x) === '['
+        || text.charAt(x) === ']'
+        || text.charAt(x) === '>'
+        || text.charAt(x) === '<'
+        || text.charAt(x) === '|'
         || text.charAt(x) === '+'
+        || text.charAt(x) === '?'
+        || text.charAt(x) === '!'
         || text.charAt(x) === ':') {
           string += text.charAt(x)
         } else {
-          string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - .]/g, '')
+          string += text.charAt(x).replace(/[^A-Za-z-0-9_ , - . / ( )]/g, '')
         }
       }
       this.customerAddress = string
-      if (text.match(/[^A-Za-z-0-9_ , - .]/g)) {
+      if (text.match(/[^A-Za-z-0-9_ , - . / ( )]/g)) {
         this.messageErrorAddressDetail = true
       } else {
         this.messageErrorAddressDetail = false
