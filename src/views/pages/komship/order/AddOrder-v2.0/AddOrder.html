@@ -744,12 +744,12 @@
           class="font-bold"
         >
         <b-button
-          :class="!isShipping ? 'cursor-not-allowed w-full text-left' : 'w-full text-left'"
+          :class="!isShipping ? 'cursor-not-allowed w-full text-left d-flex justify-content-between' : 'w-full text-left d-flex justify-content-between'"
           :style="!isShipping ? 'background: white!important;border: 1px solid #d8d6de!important;' : 'border: 1px solid #d8d6de!important; background: white!important;'"
           v-b-toggle.collapse-calculate
           :disabled="!isShipping"
         >
-          <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span>
+          <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span> <b-spinner v-if="loadingOptionExpedition" class="ml-50" small variant="primary" />
         </b-button>
         <b-collapse id="collapse-calculate" v-model="collapseCalculate">
           <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
@@ -787,7 +787,6 @@
           </ul>
         </b-collapse>
         </b-col>
-        <b-spinner v-if="loadingOptionExpedition" small variant="primary" />
       </b-row>
     </section>
 

@@ -993,9 +993,18 @@ export default {
           }
           this.collapseCalculate = true
         }).catch(err => {
-          if (err.response.data.message === 'Please Complete Your Address.') {
+          if (err?.response?.data?.message === 'Please Complete Your Address.') {
             this.$refs['modal-check-address-pickup'].show()
           }
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err,
+              variant: 'danger',
+            },
+          })
           this.loadingOptionExpedition = false
         })
       } else {
