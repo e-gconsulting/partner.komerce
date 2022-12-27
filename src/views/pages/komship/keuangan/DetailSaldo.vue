@@ -401,9 +401,10 @@
             -Rp {{ formatNumber(data.item.amount) }}
           </span>
           <div
-            v-if="data.item.amount_kompoint !== 0"
+            v-if="data.item.amount_kompoint"
             class="d-flex align-items-center mt-50"
           >
+          <div v-if="data.item.amount_kompoint !== 0">
             <span
               v-if="data.item.amount_kompoint.charAt(0) === '-'"
               class="text-primary mr-50"
@@ -468,6 +469,7 @@
                 fill="#FBBC05"
               />
             </svg>
+          </div>
           </div>
         </template>
         <template #cell(saldo)="data">
