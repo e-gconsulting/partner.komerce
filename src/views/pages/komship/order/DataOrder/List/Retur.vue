@@ -43,7 +43,9 @@
                   target="infoTrackingMonth"
                   placement="top"
                   variant="dark"
-                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
+                >
+                  Jumlah retur di bulan tersebut dibandingkan dengan total jumlah paket yang ordernya DIBUAT di bulan tersebut. Jika filter ke bulan lalu, bisa jadi returan masih bisa berubah, karena ada paket yang masih dalam perjalanan belum sampai ke customer s.d awal bulan ini
+                </b-popover>
               </div>
             </b-col>
           </b-row>
@@ -81,7 +83,7 @@
                   placement="top"
                   class="bg-dark"
                   variant="dark"
-                >Jumlah retur di bulan tersebut dibandingkan dengan total jumlah paket yang ordernya DIBUAT di bulan tersebut. Jika filter ke bulan lalu, bisa jadi returan masih bisa berubah, karena ada paket yang masih dalam perjalanan belum sampai ke customer s.d awal bulan ini</b-popover>
+                >Perhatikan yaa, ketika retur sudah terdeteksi sampai di gudang, kamu punya waktu 10 hari jika barang tidak ditemukan, kamu bisa komplain ke ekspedisi untuk klaim</b-popover>
               </div>
             </b-col>
           </b-row>
@@ -505,6 +507,9 @@ export default {
       filterMetricLabel: 'Bulan ini',
       totalFilterDataOrder: 0,
       filterDateDataOrder: false,
+      isFilterProduct: false,
+      isFilterAddress: false,
+      isFilterPayment: false,
 
       isRetur: false,
     }
@@ -587,6 +592,7 @@ export default {
         })
     },
     resetFilter() {
+      this.totalFilterDataOrder = 0
       this.startDate = null
       this.endDate = null
       this.addressId = null
@@ -644,23 +650,32 @@ export default {
       }
     },
     setFilterProduct() {
-      if (this.productName !== null) {
+      if (this.productName !== null && !this.isFilterProduct) {
+        this.isFilterProduct = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.productName === null) {
         this.totalFilterDataOrder -= 1
+        this.isFilterProduct = false
       }
     },
     setFilterAddress() {
-      if (this.addressId !== null) {
+      if (this.addressId !== null && !this.isFilterAddress) {
+        this.isFilterAddress = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.addressId === null) {
+        this.isFilterAddress = false
         this.totalFilterDataOrder -= 1
       }
     },
     setFilterPayment() {
-      if (this.paymentMethod !== null) {
+      if (this.paymentMethod !== null && !this.isFilterPayment) {
+        this.isFilterPayment = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.paymentMethod === null) {
+        this.isFilterPayment = false
         this.totalFilterDataOrder -= 1
       }
     },
