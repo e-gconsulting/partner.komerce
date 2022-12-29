@@ -590,6 +590,10 @@ export default {
           })
           this.loadTable = false
         })
+      this.$http_komship.get(`/v1/order/retur-on-process/${this.profile.partner_detail.id}?start_date=${this.startDate === null ? '' : this.startDate}&end_date=${this.endDate === null ? '' : this.endDate}`)
+        .then(response => {
+          this.returOnProcess = response.data.data.retur_on_process
+        })
     },
     resetFilter() {
       this.totalFilterDataOrder = 0
@@ -628,11 +632,9 @@ export default {
       }
       this.$http_komship.get(`/v1/order/metric-retur/${this.profile.partner_detail.id}?start_date=${start}&end_date=${end}`)
         .then(response => {
-          const { message } = response.data
-          this.percentageRetur = message.percentage_retur
-          this.returOnProcess = message.retur_on_process
-          this.totalOrder = message.total_order
-          this.totalOrderRetur = message.total_order_retur
+          this.percentageRetur = response.data.data.percentage_retur
+          this.totalOrder = response.data.data.total_order
+          this.totalOrderRetur = response.data.data.total_order_retur
         })
     },
     setFilterDate() {
