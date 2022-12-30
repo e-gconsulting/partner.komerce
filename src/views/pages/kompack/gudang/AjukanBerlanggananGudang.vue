@@ -343,6 +343,7 @@ export default {
         product: [],
       },
       objIndex: [],
+      productDb: [],
     }
   },
   mounted() {
@@ -378,6 +379,7 @@ export default {
       )
         .then(async response => {
           const { data } = response.data
+          this.productDb = data
           const newData = await data.map(val => ({
             ...val,
             selected: false,
@@ -393,6 +395,8 @@ export default {
     },
     selectItemOneEvent(product, e) {
       this.checkSelected = e
+      const regex = new RegExp(this.searchProduct, 'i')
+      this.productList = this.productDb.filter(item => regex.test(item.product_name))
       // eslint-disable-next-line no-param-reassign
       this.objIndex = this.productList.findIndex(obj => obj.id === product.id)
 
@@ -400,7 +404,8 @@ export default {
       this.productList[this.objIndex].selected = e
     },
     async getsearchProduct() {
-      this.getProductList()
+      const regex = new RegExp(this.searchProduct, 'i')
+      this.productList = this.productDb.filter(item => regex.test(item.product_name))
     },
     async selectItemEvent() {
       this.selected = []
