@@ -347,6 +347,39 @@
         </div> -->
       </b-overlay>
     </div>
+
+    <!-- POPUP -->
+    <b-modal
+      id="modal-blocker-profile"
+      hide-footer
+      hide-header
+      modal-class="modal-dark"
+      centered
+      no-close-on-backdrop
+      no-close-on-esc
+    >
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-1"
+      >
+        <b-img
+          width="100"
+          src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center px-5 pt-2 text-black">
+        Kamu belum melengkapi profile, yuk lengkapi profilemu terlebih dahulu
+      </b-col>
+      <b-col class="text-center px-5 py-2">
+        <b-btn
+          variant="primary"
+          @click="goToProfile()"
+        >
+          Lengkapi Profile
+        </b-btn>
+      </b-col>
+    </b-modal>
   </div>
 </template>
 
@@ -378,6 +411,9 @@ export default {
   },
   data() {
     return {
+      noHPBisnis: null,
+      partnerBisnis: null,
+
       status: '',
       formFilter: {
         search: '',
@@ -438,6 +474,9 @@ export default {
       },
     },
   },
+  created() {
+    this.fetchMyProfile()
+  },
   mounted() {
     const params = {
       search: this.formFilter.search,
@@ -451,8 +490,20 @@ export default {
     this.getGudangList(params)
   },
   methods: {
-    onChangeStatus(e) {
-      // console.log(e)
+    async fetchMyProfile() {
+      await this.$http_komship.post('/v1/my-profile')
+        .then(response => {
+          this.noHPBisnis = response.data.data.partner_no_hp_business
+          this.partnerBisnis = response.data.data.partner_business_name
+          if (this.noHPBisnis === null) this.$bvModal.show('modal-blocker-profile')
+          if (this.partnerBisnis === null) this.$bvModal.show('modal-blocker-profile')
+        }).catch()
+    },
+
+    goToProfile() {
+      this.$router.push({
+        path: '/setting-kompship/profile',
+      })
     },
     getGudangList(params) {
       this.loading = true
