@@ -1209,7 +1209,7 @@ export default {
             this.potencyRetur = this.formatPrice(response.data.data.potency_retur)
             this.withdrawPossibilites = response.data.data.withdraw_possibilites
             if (response.data.data.ideal_balance !== 0) {
-              if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.maximum_withdraw_nominal && Number(this.nominal.replace(/[^0-9,-]+/g, '')) < response.data.data.balance) {
+              if (Number(this.nominal.replace(/[^0-9,-]+/g, '')) > response.data.data.maximum_withdraw_nominal && Number(this.nominal.replace(/[^0-9,-]+/g, '')) <= response.data.data.balance) {
                 this.isCheckSaldo = true
                 this.isMaxWithdraw = false
                 this.minWithdraw = false
