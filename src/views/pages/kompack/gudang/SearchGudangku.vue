@@ -386,6 +386,7 @@
 <script>
 import DateRangePicker from 'vue2-daterange-picker'
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 import {
   BFormInput, BInputGroup, BFormGroup, BForm, BFormDatepicker,
@@ -497,7 +498,21 @@ export default {
           this.partnerBisnis = response.data.data.partner_business_name
           if (this.noHPBisnis === null) this.$bvModal.show('modal-blocker-profile')
           if (this.partnerBisnis === null) this.$bvModal.show('modal-blocker-profile')
-        }).catch()
+        }).catch(() => {
+          this.loading = false
+          this.$toast(
+            {
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi',
+                variant: 'danger',
+              },
+            },
+            2000,
+          )
+        })
     },
 
     goToProfile() {
