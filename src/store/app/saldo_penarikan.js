@@ -14,6 +14,7 @@ export default {
     statusPenerimaan: '',
     rincianSaldos: [],
     previous_request_withdrawal_date: '',
+    next_request_withdrawal_date: '',
     previous_request_withdrawal_time: '',
     notes: '',
     list_item_rincian_penarikan: [],
@@ -38,9 +39,10 @@ export default {
     UPDATE_DETAIL_SALDO(state, detailSaldo) {
       state.dateStart = moment(new Date(detailSaldo.previous_request_withdrawal_date)).format('YYYY-MM-DD')
       state.notes = detailSaldo.notes
-      state.previous_request_withdrawal_date = moment(detailSaldo.previous_request_withdrawal_date).format('DD MMMM YYYY')
+      state.previous_request_withdrawal_date = moment(detailSaldo.previous_request_withdrawal_date).format('DD MMMM')
+      state.next_request_withdrawal_date = moment(detailSaldo.created_at).format('DD MMMM YYYY')
       state.dateEnd = moment(new Date(detailSaldo.created_at)).format('YYYY-MM-DD')
-      state.timeEnd = moment(detailSaldo.created_at).format('HH:mm')
+      state.timeEnd = moment(detailSaldo.created_at).format('HH:MM')
       state.previous_request_withdrawal_time = moment(detailSaldo.previous_request_withdrawal_date).format('HH:mm')
       state.nominalPenarikan = detailSaldo.nominal
       state.statusPenerimaan = detailSaldo.status
@@ -89,7 +91,6 @@ export default {
       }
     },
     async getRincianSaldo({ commit, state, rootState }, params) {
-      console.log(params)
       state.table.perPage = params
       try {
         const partnerId = rootState.auth.userData.partner_detail.id

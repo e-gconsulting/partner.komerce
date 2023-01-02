@@ -17,7 +17,7 @@
               Rincian Penarikan Saldo
             </p>
             <p class="h-text-sm font-weight-normal text-black">
-              {{ `${indoDate(previous_request_withdrawal_date)}( ${previous_request_withdrawal_time} WIB)` }} - {{ `${indoDate(dateEnd)}( ${timeEnd} WIB)` }}
+              {{ previous_request_withdrawal_date }} - {{ `${next_request_withdrawal_date}( ${timeEnd} WIB)` }}
             </p>
           </div>
         </b-row>
@@ -233,63 +233,217 @@ border-radius: 8px;"
               Biaya COD dari orderan yang menggunakan layanan COD.
             </b-tooltip>
           </template>
-          <template #cell(order_date)="data">
-            {{ moment(data.item.date_transaction) }}
+          <template #cell(date_transaction)="data">
+            <div class="d-flex flex-column">
+              <span class="text-black">
+                {{ moment(new Date(data.item.date_transaction)).format('DD MMMM YYYY') }}
+              </span>
+              <small class="text-black">
+                {{ moment(new Date(data.item.date_transaction)).format('HH:MM') }} WIB
+              </small>
+            </div>
           </template>
           <template #cell(transaction_type)="data">
-            <div v-if="data.item.transaction_type === 'topup'">
+            <div
+              v-if="data.item.transaction_type === 'topup'"
+              class="font-medium text-black"
+            >
               Top UP Saldo
             </div>
             <div v-else-if="data.item.transaction_type === 'withdrawal'">
               Penarikan Saldo
             </div>
             <div v-else-if="data.item.transaction_type === 'shopping'">
-              <div class="text-black text-md">
+              <div class="text-black text-md font-medium">
                 Belanja
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-xs text-secondary font-medium">
                 Keperluan talent
               </div>
             </div>
             <div v-else-if="data.item. transaction_type === 'orderku_done'">
-              <div class="text-black text-md">
+              <div class="text-black text-md font-medium">
                 Orderan COD
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-xs text-secondary font-medium">
                 Diterima
               </div>
+              <b-row>
+                <img
+                  :src="data.item.shipment_image_path"
+                  width="70"
+                >
+                <img
+                  :id="`${data.index}-infoSaldo`"
+                  src="@/assets/images/icons/info-circle.svg"
+                >
+              </b-row>
+              <b-popover
+                triggers="hover"
+                :target="`${data.index}-infoSaldo`"
+                placement="bottomleft"
+              >
+                <b-row class="px-2 align-items-center">
+                  <span class="text-black">
+                    <strong>
+                      Nomor Resi
+                    </strong>
+                    :
+                  </span>
+                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
+                  <b-button
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-dark"
+                    @click="copyResi(data.item.cnote)"
+                  >
+                    <img
+                      id="infoSaldo"
+                      src="@/assets/images/icons/icons-copy.svg"
+                    >
+                  </b-button>
+                </b-row>
+              </b-popover>
             </div>
             <div v-else-if="data.item.transaction_type === 'orderku_ongkir'">
-              <div class="text-black text-md">
+              <div class="text-black text-md font-medium">
                 Orderan Non COD
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-xs text-secondary font-medium">
                 Ongkir
               </div>
+              <b-row>
+                <img
+                  :src="data.item.shipment_image_path"
+                  width="70"
+                >
+                <img
+                  :id="`${data.index}-infoSaldo`"
+                  src="@/assets/images/icons/info-circle.svg"
+                >
+              </b-row>
+              <b-popover
+                triggers="hover"
+                :target="`${data.index}-infoSaldo`"
+                placement="bottomleft"
+              >
+                <b-row class="px-2 align-items-center">
+                  <span class="text-black">
+                    <strong>
+                      Nomor Resi
+                    </strong>
+                    :
+                  </span>
+                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
+                  <b-button
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-dark"
+                    @click="copyResi(data.item.cnote)"
+                  >
+                    <img
+                      id="infoSaldo"
+                      src="@/assets/images/icons/icons-copy.svg"
+                    >
+                  </b-button>
+                </b-row>
+              </b-popover>
             </div>
             <div v-else-if="data.item.transaction_type === 'orderku_cancel'">
-              <div class="text-black text-md">
+              <div class="text-black text-md font-medium">
                 Orderan Non COD
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-xs text-secondary font-medium">
                 Dibatalkan
               </div>
+              <b-row>
+                <img
+                  :src="data.item.shipment_image_path"
+                  width="70"
+                >
+                <img
+                  :id="`${data.index}-infoSaldo`"
+                  src="@/assets/images/icons/info-circle.svg"
+                >
+              </b-row>
+              <b-popover
+                triggers="hover"
+                :target="`${data.index}-infoSaldo`"
+                placement="bottomleft"
+              >
+                <b-row class="px-2 align-items-center">
+                  <span class="text-black">
+                    <strong>
+                      Nomor Resi
+                    </strong>
+                    :
+                  </span>
+                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
+                  <b-button
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-dark"
+                    @click="copyResi(data.item.cnote)"
+                  >
+                    <img
+                      id="infoSaldo"
+                      src="@/assets/images/icons/icons-copy.svg"
+                    >
+                  </b-button>
+                </b-row>
+              </b-popover>
             </div>
             <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method COD)'">
-              <div class="text-black text-md">
+              <div class="text-black text-md font-medium">
                 Orderan COD
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-xs text-secondary font-medium">
                 Retur
               </div>
             </div>
             <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method Bank Transfer)'">
-              <div class="text-black text-md">
+              <div class="text-black text-md font-medium">
                 Orderan Non COD
               </div>
-              <div class="text-xs text-secondary">
+              <div class="text-xs text-secondary font-medium text-black">
                 Retur
               </div>
+              <b-row>
+                <img
+                  :src="data.item.shipment_image_path"
+                  width="70"
+                >
+                <img
+                  :id="`${data.index}-infoSaldo`"
+                  src="@/assets/images/icons/info-circle.svg"
+                >
+              </b-row>
+              <b-popover
+                triggers="hover"
+                :target="`${data.index}-infoSaldo`"
+                placement="bottomleft"
+              >
+                <b-row class="px-2 align-items-center">
+                  <span class="text-black">
+                    <strong>
+                      Nomor Resi
+                    </strong>
+                    :
+                  </span>
+                  <span class="text-black mr-1">{{ data.item.cnote }}</span>
+                  <b-button
+                    class="btn-icon"
+                    size="sm"
+                    variant="flat-dark"
+                    @click="copyResi(data.item.cnote)"
+                  >
+                    <img
+                      id="infoSaldo"
+                      src="@/assets/images/icons/icons-copy.svg"
+                    >
+                  </b-button>
+                </b-row>
+              </b-popover>
             </div>
             <div v-else>
               -
@@ -299,19 +453,21 @@ border-radius: 8px;"
             <span
               v-if="parseInt(data.item.amount) < 0"
               class="
-                    text-primary"
+                    text-primary font-semibold"
             >
               -Rp {{ formatNumber(data.item.amount) }}
             </span>
             <span
               v-else
-              class="text-success"
+              class="text-success font-semibold"
             >
               +Rp {{ formatNumber(data.item.amount) }}
             </span>
           </template>
           <template #cell(saldo)="data">
-            Rp {{ formatNumber(data.item.saldo) }}
+            <span class="font-semibold text-black">
+              Rp {{ formatNumber(data.item.saldo) }}
+            </span>
           </template>
           <template #cell(action)="data">
             <p
@@ -388,6 +544,7 @@ import { mapGetters, mapState } from 'vuex'
 import {
   BTable, BButton, BPagination, BOverlay, BTooltip,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import moment from 'moment'
 
 export default {
@@ -443,9 +600,9 @@ export default {
       joinDate: '',
       lastWithDrawal: '',
       lastWithDrawalId: '',
-      notes: '',
       nominalWithdrawal: 0,
       withdrawalDate: null,
+      moment,
     }
   },
   computed: {
@@ -459,6 +616,7 @@ export default {
       'rincianSaldos',
       'notes',
       'previous_request_withdrawal_date',
+      'next_request_withdrawal_date',
       'previous_request_withdrawal_time',
       'list_item_rincian_penarikan',
       'table',
@@ -481,12 +639,13 @@ export default {
       this.loadTable = false
     }, 1500)
   },
-  mounted() {
-    this.fetchWithdrawal()
+  async mounted() {
+    await this.fetchWithdrawal()
+    console.log(this.list_item_rincian_penarikan)
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
-    moment(date) {
+    moments(date) {
       const validDate = moment(date)
       if (validDate.isValid()) {
         return moment(date).format('DD-MM-YYYY')
@@ -533,7 +692,6 @@ export default {
 
     },
     setPage(totalPage) {
-      console.log(totalPage)
       this.perPage = totalPage
       this.$store.dispatch('saldoPenarikan/getRincianSaldo', totalPage)
     },
@@ -555,6 +713,20 @@ export default {
           const hours = moment(new Date(data.withdrawal_date)).format('HH:MM')
           this.withdrawalDate = `${date} (${hours} WIB)`
         })
+    },
+    copyResi(data) {
+      /* Copy the text inside the text field */
+      navigator.clipboard.writeText(data)
+
+      /* Alert the copied text */
+      this.$toast({
+        component: ToastificationContent,
+        props: {
+          title: ` Resi ${data} berhasil dicopy`,
+          icon: 'AlertCircleIcon',
+          variant: 'warning',
+        },
+      }, 1000)
     },
   },
 }
