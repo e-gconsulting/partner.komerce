@@ -1200,6 +1200,7 @@ export default {
         this.loadingLoadDataWithdraw = true
         this.isMaxWithdraw = false
         this.minWithdraw = false
+        this.isCheckSaldo = false
         await this.$http_komship.get(`/v1/partner/withdrawal/check-possible-withdraw?withdrawal_request_nominal=${this.nominal.replace(/[^0-9,-]+/g, '') === '' ? 0 : this.nominal.replace(/[^0-9,-]+/g, '')}`)
           .then(response => {
             this.maxWithdraw = this.formatPrice(response.data.data.maximum_withdraw_nominal)
