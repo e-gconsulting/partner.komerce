@@ -28,7 +28,7 @@
           <b-button
             variant="primary"
             class="d-flex rounded-lg mb-1"
-            :to="`/detail-orderan-pickup/${$route.params.order_data_id}`"
+            @click="handleToPagePrint"
           >
             <span class="font-semibold mr-[6px]">Label Pengiriman</span>
             <b-icon-chevron-right />
@@ -388,6 +388,10 @@ export default {
           bottom: 20,
         },
       },
+      dateToPrint: {
+        pickupDate: '',
+        pickupTime: '',
+      },
     }
   },
   created() {
@@ -428,12 +432,18 @@ export default {
         this.order = data.data_order
         this.totalQty = data.total_qty
         this.totalOrder = data.total_order
+        this.dateToPrint.pickupDate = data.pickup_date
+        this.dateToPrint.pickupTime = data.pickup_time
+        this.$store.commit('saldo/UPDATE_PICKUP_DATE_TIME', this.dateToPrint)
       } catch (error) {
         console.error(error)
       }
     },
     downloadPackingList() {
       this.$refs.html2Pdf.generatePdf()
+    },
+    handleToPagePrint() {
+      this.$router.push({ path: `/detail-orderan-pickup/${this.$route.params.order_data_id}` })
     },
   },
 }
