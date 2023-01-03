@@ -25,6 +25,10 @@ export default {
     selectedRekTujuan: '',
     nominal: '',
     pin: '',
+    dateToPrint: {
+      pickupDate: '',
+      pickupTime: '',
+    },
   },
   getters: {
     getField,
@@ -106,6 +110,11 @@ export default {
     },
     UPDATE_NOMINAL(state, nominal) {
       state.nominalTopUp = nominal
+    },
+    UPDATE_PICKUP_DATE_TIME(state, pickupDateTime) {
+      state.dateToPrint.pickupDate = pickupDateTime.pickupDate
+      state.dateToPrint.pickupTime = pickupDateTime.pickupTime
+      console.log('pickupDateTime', pickupDateTime)
     },
   },
   actions: {
