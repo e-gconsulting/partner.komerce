@@ -140,7 +140,7 @@ export default {
 <style lang="scss">
   [dir] .wrapper-right-content-verified {
     background-color: #E7E9F2C2;
-    background-image: url('../../../assets/images/pages/verifikasi.svg');
+    background-image: url('https://storage.googleapis.com/komerce/core/bg-verified.svg');
     background-repeat: no-repeat;
   }
 
