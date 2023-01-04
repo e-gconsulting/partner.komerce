@@ -173,11 +173,19 @@
             </div>
           </template>
           <template #cell(bahan_packing)="data">
-            <BFormSelect
-              v-model="data.item.pm"
+            <b-dropdown
+              text="Select Options"
+              class="m-md-2"
               :disabled="disabledPackingOptions(data.item.id)"
-              :options="packingOptions"
-            />
+              variant="outline-dark"
+            >
+              <b-form-checkbox-group
+                v-model="data.item.pm"
+                :options="packingOptions"
+                multiple
+                class="p-1 space-y-3"
+              />
+            </b-dropdown>
           </template>
         </BTable>
       </BOverlay>
@@ -266,10 +274,8 @@
 <script>
 import moment from 'moment'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { BFormSelect } from 'bootstrap-vue'
 
 export default {
-  components: { BFormSelect },
   data() {
     return {
       loading: false,
@@ -279,9 +285,7 @@ export default {
       isSelected: false,
       partnerId: JSON.parse(localStorage.getItem('userData')),
       searchProduct: '',
-      packingOptions: [
-        { value: null, text: 'Pilih bahan packing' },
-      ],
+      packingOptions: [],
       fields: [
         {
           key: 'checkbox',
@@ -329,7 +333,7 @@ export default {
             fontSize: '13px',
             color: 'black',
           },
-          tdClass: 'text-black align-top',
+          tdClass: 'text-black',
         },
         {
           key: 'bahan_packing',
@@ -386,7 +390,7 @@ export default {
         .then(response => {
           const updated = response.data.data.map(item => {
             const newItem = { ...item }
-            newItem.pm = null
+            newItem.pm = []
             return newItem
           })
           this.products = updated
@@ -451,7 +455,7 @@ export default {
     },
     handleDisableTambah() {
       for (let i = 0; i < this.selected.length; i += 1) {
-        if (this.selected[i].pm === null) return true
+        if (this.selected[i].pm.length === 0) return true
       }
       if (this.selected.length === 0) return true
       if (this.products.length === 0) return true

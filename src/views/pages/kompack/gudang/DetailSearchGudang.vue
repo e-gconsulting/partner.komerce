@@ -422,7 +422,6 @@ export default {
       )
         .then(({ data }) => {
           this.detailInfo = data.data
-          console.log(this.detailInfo)
 
           this.imagesone = data.data.image_warehouse[0].image_url
           this.imagesothers = [...data.data.image_warehouse]
@@ -483,7 +482,7 @@ export default {
 .container__childBox {
   display: -webkit-box;
   width: 450px;
-  overflow-x: scroll;
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 .childOtherbox {

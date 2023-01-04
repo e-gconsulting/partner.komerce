@@ -90,6 +90,7 @@
           </v-select>
           <label class="mt-1">Produk</label>
           <v-select
+            v-model="productName"
             :options="filterProducts"
             :reduce="(option) => option.product_name"
             label="product_name"
@@ -480,6 +481,7 @@ export default {
       paymentMethod: [],
       productList: this.filterItem.products,
       customerName: [],
+      productName: null,
       startDate: null,
       endDate: null,
       currentPage: 1,
@@ -493,6 +495,9 @@ export default {
       isProblem: false,
       totalFilterDataOrder: 0,
       filterDateDataOrder: false,
+      isFilterProduct: false,
+      isFilterAddress: false,
+      isFilterPayment: false,
     }
   },
   computed: {
@@ -547,6 +552,7 @@ export default {
           order_status: 'Dikirim',
           search,
           payment_method: this.paymentMethod,
+          product_name: this.productName,
           start_date: this.startDate,
           end_date: this.endDate,
           page: this.currentPage,
@@ -591,9 +597,11 @@ export default {
       this.fetchData()
     },
     resetFilter() {
+      this.totalFilterDataOrder = 0
       this.startDate = null
       this.endDate = null
       this.addressId = null
+      this.productName = null
       this.customerName = null
       this.paymentMethod = null
       return this.fetchData()
@@ -650,23 +658,32 @@ export default {
       }
     },
     setFilterProduct() {
-      if (this.productName !== null) {
+      if (this.productName !== null && !this.isFilterProduct) {
+        this.isFilterProduct = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.productName === null) {
         this.totalFilterDataOrder -= 1
+        this.isFilterProduct = false
       }
     },
     setFilterAddress() {
-      if (this.addressId !== null) {
+      if (this.addressId !== null && !this.isFilterAddress) {
+        this.isFilterAddress = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.addressId === null) {
+        this.isFilterAddress = false
         this.totalFilterDataOrder -= 1
       }
     },
     setFilterPayment() {
-      if (this.paymentMethod !== null) {
+      if (this.paymentMethod !== null && !this.isFilterPayment) {
+        this.isFilterPayment = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.paymentMethod === null) {
+        this.isFilterPayment = false
         this.totalFilterDataOrder -= 1
       }
     },

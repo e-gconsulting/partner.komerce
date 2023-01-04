@@ -205,14 +205,12 @@
                   class="mb-1"
                 >
                   <validation-provider
-                    #default="{ errors }"
                     name="Kode Kupon"
                   >
                     <b-form-input
                       id="coupon-code"
                       v-model="couponCode"
                       :class="couponNotFound || isAffiliate ? 'is-invalid' : 'bg-white'"
-                      required
                       :formatter="couponCodeFormat"
                       style="height: 50px!important;"
                       @input="couponValidation"
@@ -238,7 +236,7 @@
                     </b-row>
                     <b-row v-if="isAffiliate">
                       <b-col>
-                        <small class="text-primary">Kamu sudah terdaftar sebagai afiliator</small>
+                        <small class="text-primary">Kamu sudah terdaftar sebagai afiliator, silahkan kosongkan code!</small>
                       </b-col>
                     </b-row>
                   </validation-provider>
@@ -445,11 +443,11 @@
   <!-- Mobile -->
   <b-col
     cols="12"
-    class="wrapper-register-mobile bg-white h-screen"
+    class="wrapper-register-mobile bg-white px-3 py-2 h-screen"
   >
     <b-navbar-brand class="mt-1">
       <b-img
-        src="@/assets/images/logo/logo-komship-by-komerce.svg"
+        src="https://komship.id/_nuxt/img/new-logo.afb8c2e.svg"
         width="150"
       />
     </b-navbar-brand>
@@ -644,6 +642,48 @@
                   </b-form-group>
                 </b-col>
 
+                <b-col
+                  cols="12"
+                  class="mb-1"
+                >
+                  <validation-provider
+                    name="Kode Kupon"
+                  >
+                    <b-form-input
+                      id="coupon-code"
+                      v-model="couponCode"
+                      :class="couponNotFound || isAffiliate ? 'is-invalid' : 'bg-white'"
+                      :formatter="couponCodeFormat"
+                      style="height: 50px!important;"
+                      @input="couponValidation"
+                      @keyup="regexCoupon"
+                    />
+                    <label for="coupon-code">
+                      Kode Kupon (jika ada)
+                    </label>
+                    <b-row v-if="errorCoupon" >
+                      <b-col>
+                        <small class="text-primary">error</small>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="couponCodeLengthError">
+                      <b-col>
+                        <small class="text-primary">Minimal 4 karakter</small>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="couponNotFound">
+                      <b-col>
+                        <small class="text-primary">Kode kupon tidak ditemukan. Pastikan kode kuponmu benar</small>
+                      </b-col>
+                    </b-row>
+                    <b-row v-if="isAffiliate">
+                      <b-col>
+                        <small class="text-primary">Kamu sudah terdaftar sebagai afiliator, silahkan kosongkan code!</small>
+                      </b-col>
+                    </b-row>
+                  </validation-provider>
+                </b-col>
+
                 <!-- checkbox -->
                 <b-col cols="12">
                   <b-form-group>
@@ -656,7 +696,16 @@
                         :state="errors.length > 0 || submitErrors.agree ? false:null"
                         required
                       >
-                        Saya setuju dengan syarat dan ketentuan Komship
+                      <p class="text-black">
+                        Saya setuju dengan
+                        <a
+                          href="https://komship.id/terms"
+                          target="_blank"
+                          class="text-black underline decoration-1"
+                        >
+                          syarat dan ketentuan Komship
+                        </a>
+                      </p>
                       </b-form-checkbox>
                     </validation-provider>
                   </b-form-group>

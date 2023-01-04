@@ -212,7 +212,7 @@
           <b-row class="justify-content-start m-0">
             <div v-if="requireCustomerPhone">
               <small class="mr-1 text-primary">
-                *wahib diisi ya
+                *wajib diisi ya
               </small>
             </div>
           </b-row>
@@ -399,7 +399,7 @@
               v-if="messageErrorAddressDetail"
               class="text-primary"
             >
-                *Hindari menggunakan simbol (=) (;) (") (&) (+) (:) dan teks non-regular. 
+              *Hindari menggunakan simbol (=) (;) (") (&) (+) (:) dan teks non-regular. 
             </small>
             {{ customerAddress.length }}/185
           </small>
@@ -742,7 +742,7 @@
           </v-select>
         </b-col>
       </b-row>
-      <b-row class="mb-1">
+      <b-row class="mb-1 align-items-center">
         <b-col md="3">
           <label class="text-lg">Ekspedisi</label>
         </b-col>
@@ -751,44 +751,44 @@
           class="font-bold"
         >
         <b-button
-          :class="!isShipping ? 'cursor-not-allowed w-full text-left' : 'w-full text-left'"
+          :class="!isShipping ? 'cursor-not-allowed w-full text-left d-flex justify-content-between' : 'w-full text-left d-flex justify-content-between'"
           :style="!isShipping ? 'background: white!important;border: 1px solid #d8d6de!important;' : 'border: 1px solid #d8d6de!important; background: white!important;'"
           v-b-toggle.collapse-calculate
           :disabled="!isShipping"
         >
-          <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span>
+          <span class="text-black">{{ shipping !== null ? shipping.label : 'Opsi Pengiriman' }}</span> <b-spinner v-if="loadingOptionExpedition" class="ml-50" small variant="primary" />
         </b-button>
         <b-collapse id="collapse-calculate" v-model="collapseCalculate">
           <ul v-if="listShipping" class="mt-2 border" style="border-top-left-radius: 8px; border-top-right-radius: 8px;">
             <li
-              v-for="(option, index) in listShipping"
-              :key="index+1"
-              :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
-              :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
-              @click="option.label !== 'Reguler' && option.label !== 'Cargo' ? calculateOnExpedition(true, option) : ''"
+            v-for="(option, index) in listShipping"
+            :key="index+1"
+            :class="option.label !== 'Reguler' || option.label !== 'Cargo' ? 'btn btn-flat-dark d-flex btn-icon border' : 'px-[0.5rem] py-[1rem] d-flex align-items-center mb-0 ml-50'"
+            :style="option.label === 'Reguler' || option.label === 'Cargo' ? 'background: #E2E2E2;border-top-left-radius: 8px; border-top-right-radius: 8px; margin-left: 0px!important;' : 'border-radius: 0;'"
+            @click="option.label !== 'Reguler' && option.label !== 'Cargo' ? calculateOnExpedition(true, option) : ''"
             >
-              <h4
-                v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
-                class="ml-50"
+            <h4
+            v-if="option.label === 'Reguler' && option.label !== 'Cargo'"
+            class="ml-50"
               >
                 <strong>{{ option.label }}</strong>
               </h4>
               <h4
-                v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
-                class="ml-50"
+              v-if="option.label === 'Cargo' && option.label !== 'Reguler'"
+              class="ml-50"
               >
-                <strong>{{ option.label }}</strong>
-              </h4>
-              <img
-                v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
-                :src="option.image_path" style="height: 30px!important;"
-              />
-              <span
-                v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
-                class="my-auto text-black"
-                style="margin-left:5px;"
-              >
-                {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
+              <strong>{{ option.label }}</strong>
+            </h4>
+            <img
+            v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+            :src="option.image_path" style="height: 30px!important;"
+            />
+            <span
+            v-if="option.label !== 'Reguler' && option.label !== 'Cargo'"
+            class="my-auto text-black"
+            style="margin-left:5px;"
+            >
+            {{ `${option.label_shipping_type} - Rp${formatNumber(option.shipping_cost)}` }}
               </span>
             </li>
           </ul>
@@ -1181,7 +1181,7 @@
       <b-col md="6" class="d-flex justify-center mt-1">
         <b-button
           variant="outline-primary"
-          :disabled="!isCalculateOnExpedition || !minimalCustomerName || !requireCustomerName || customerName === '' || customerPhone === '' || !requireCustomerPhone"
+          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone"
           @click="submit(true)"
         >
           Submit & Tambah Order Lagi
@@ -1190,7 +1190,7 @@
           v-if="isSubmitOrder === false && messageErrorAddressDetail === false"
           variant="primary"
           class="ml-1"
-          :disabled="!isCalculateOnExpedition || !minimalCustomerName || !requireCustomerName || customerName === '' || customerPhone === '' || !requireCustomerPhone"
+          :disabled="!isCalculateOnExpedition || minimalCustomerName || requireCustomerName || customerName === '' || customerPhone === '' || requireCustomerPhone"
           @click="submit(false)"
         >
           Submit
