@@ -17,7 +17,7 @@
               Rincian Penarikan Saldo
             </p>
             <p class="h-text-sm font-weight-normal text-black">
-              {{ previous_request_withdrawal_date }} - {{ `${next_request_withdrawal_date}( ${timeEnd} WIB)` }}
+              {{ lastWithDrawal }} - {{ `${withdrawalDate}` }}
             </p>
           </div>
         </b-row>
@@ -601,7 +601,8 @@ export default {
       lastWithDrawal: '',
       lastWithDrawalId: '',
       nominalWithdrawal: 0,
-      withdrawalDate: null,
+      withdrawalDate: '',
+      timeWithdrawal: '',
       moment,
     }
   },
@@ -641,7 +642,6 @@ export default {
   },
   async mounted() {
     await this.fetchWithdrawal()
-    console.log(this.list_item_rincian_penarikan)
   },
   methods: {
     formatNumber: value => (`${value}`).replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.'),
@@ -709,6 +709,8 @@ export default {
           this.currentBalance = data.current_balance
           this.nominalWithdrawal = data.withdrawal_nominal
           this.bankAccountNo = data.bank_account_no
+          this.lastWithDrawal = moment(new Date(data.last_withdrawal_date)).format('DD MMMM')
+          this.withdrawalDate = data.withdrawal_date
           const date = moment(new Date(data.withdrawal_date)).format('DD MMMM YYYY')
           const hours = moment(new Date(data.withdrawal_date)).format('HH:MM')
           this.withdrawalDate = `${date} (${hours} WIB)`
