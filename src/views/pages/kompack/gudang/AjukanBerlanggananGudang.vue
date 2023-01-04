@@ -352,6 +352,7 @@ export default {
         },
       ],
       wh: JSON.parse(localStorage.getItem('warehouse_id')),
+      idWarehouse: JSON.parse(localStorage.getItem('idWarehouse')),
     }
   },
   created() {
@@ -439,7 +440,7 @@ export default {
 
       const payload = {
         partner_id: this.partnerId.partner_detail.id,
-        warehouse_id: this.wh,
+        warehouse_id: this.idWarehouse,
         submission_type: 2,
         product: dataProduct,
       }
