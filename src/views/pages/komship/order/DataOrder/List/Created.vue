@@ -381,6 +381,9 @@ export default {
       addressList: this.filterItem.warehouses,
       totalFilterDataOrder: 0,
       filterDateDataOrder: false,
+      isFilterProduct: false,
+      isFilterAddress: false,
+      isFilterPayment: false,
     }
   },
   computed: {
@@ -464,6 +467,11 @@ export default {
       this.addressId = null
       this.productName = null
       this.paymentMethod = null
+      this.filterDateDataOrder = false
+      this.isFilterProduct = false
+      this.isFilterAddress = false
+      this.isFilterPayment = false
+      this.totalFilterDataOrder = 0
       return this.fetchData()
     },
     shippingTypeLabel(value) {
@@ -493,23 +501,32 @@ export default {
       }
     },
     setFilterProduct() {
-      if (this.productName !== null) {
+      if (this.productName !== null && !this.isFilterProduct) {
+        this.isFilterProduct = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.productName === null) {
         this.totalFilterDataOrder -= 1
+        this.isFilterProduct = false
       }
     },
     setFilterAddress() {
-      if (this.addressId !== null) {
+      if (this.addressId !== null && !this.isFilterAddress) {
+        this.isFilterAddress = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.addressId === null) {
+        this.isFilterAddress = false
         this.totalFilterDataOrder -= 1
       }
     },
     setFilterPayment() {
-      if (this.paymentMethod !== null) {
+      if (this.paymentMethod !== null && !this.isFilterPayment) {
+        this.isFilterPayment = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.paymentMethod === null) {
+        this.isFilterPayment = false
         this.totalFilterDataOrder -= 1
       }
     },

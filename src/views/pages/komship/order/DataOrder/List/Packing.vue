@@ -378,6 +378,7 @@ export default {
       paymentMethod: [],
       productList: this.filterItem.products,
       customerName: [],
+      productName: null,
       startDate: null,
       endDate: null,
       currentPage: 1,
@@ -388,6 +389,9 @@ export default {
       addressList: this.filterItem.warehouses,
       totalFilterDataOrder: 0,
       filterDateDataOrder: false,
+      isFilterProduct: false,
+      isFilterAddress: false,
+      isFilterPayment: false,
     }
   },
   computed: {
@@ -437,6 +441,7 @@ export default {
           order_status: 'Dipacking',
           search,
           payment_method: this.paymentMethod,
+          product_name: this.productName,
           start_date: this.startDate,
           end_date: this.endDate,
           page: this.currentPage,
@@ -467,9 +472,15 @@ export default {
     resetFilter() {
       this.startDate = null
       this.endDate = null
+      this.productName = null
       this.addressId = null
       this.customerName = null
       this.paymentMethod = null
+      this.filterDateDataOrder = false
+      this.isFilterProduct = false
+      this.isFilterAddress = false
+      this.isFilterPayment = false
+      this.totalFilterDataOrder = 0
       return this.fetchData()
     },
     shippingTypeLabel(value) {
@@ -522,23 +533,32 @@ export default {
       }
     },
     setFilterProduct() {
-      if (this.productName !== null) {
+      if (this.productName !== null && !this.isFilterProduct) {
+        this.isFilterProduct = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.productName === null) {
         this.totalFilterDataOrder -= 1
+        this.isFilterProduct = false
       }
     },
     setFilterAddress() {
-      if (this.addressId !== null) {
+      if (this.addressId !== null && !this.isFilterAddress) {
+        this.isFilterAddress = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.addressId === null) {
+        this.isFilterAddress = false
         this.totalFilterDataOrder -= 1
       }
     },
     setFilterPayment() {
-      if (this.paymentMethod !== null) {
+      if (this.paymentMethod !== null && !this.isFilterPayment) {
+        this.isFilterPayment = true
         this.totalFilterDataOrder += 1
-      } else {
+      }
+      if (this.paymentMethod === null) {
+        this.isFilterPayment = false
         this.totalFilterDataOrder -= 1
       }
     },
