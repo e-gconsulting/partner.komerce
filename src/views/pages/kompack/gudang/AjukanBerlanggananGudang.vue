@@ -1,221 +1,200 @@
 <template>
-  <div class="card p-3">
-    <div class="d-flex flex-row justify-content-between align-items-center">
-      <div><h3>Ajukan Berlangganan</h3></div>
-      <div class="d-flex flex-row">
-        <b-button
+  <BCard body>
+    <div class="d-flex justify-between">
+      <h4 class="font-bold text-black d-inline-flex mb-0">
+        Ajukan Berlangganan
+      </h4>
+      <div class="space-x-4">
+        <BButton
           variant="outline-primary"
-          @click="$bvModal.show('modal-canceled-submission')"
+          @click="confirmBatalkan()"
         >
           Batalkan
-        </b-button>
-        <b-button
-          :disabled="objIndex.length < 1"
-          class="ml-1"
-          :variant="objIndex.length < 1 ? 'secondary' : 'primary'"
-          @click="submitBerlangganan()"
+        </BButton>
+        <BButton
+          variant="primary"
+          :disabled="handleDisableTambah()"
+          @click="onFinish"
         >
           Ajukan Layanan
-        </b-button>
+        </BButton>
       </div>
     </div>
-    <div class="card-custom d-flex flex-col mt-2 px-3 py-2">
-      <div class="d-flex flex-row justify-content-between">
-        <div class="d-flex flex-row align-items-center">
-          <div>
-            <img
-              :src="warehouseDetail.image_logo_url"
+    <div class="border mt-2 p-2">
+      <div class="d-flex justify-between">
+        <div class="d-flex flex-row items-center">
+          <div class="mr-1">
+            <b-img
+              :src="detail.image_logo_url"
               alt="Photo"
               class="mr-1 border-radius rounded"
-              style="width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover;"
-            >
-          </div>
-          <div class="ml-1 mt-1 d-flex flex-col">
-            <h5>{{ warehouseDetail.warehouse_name }}</h5>
-            <p>{{ warehouseDetail.join_date }}</p>
-          </div>
-        </div>
-        <div>
-          <div
-            class="px-1 bg-blue-100 d-flex aling-items-center rounded-lg"
-            style="padding-top: 8px; padding-bottom: 8px"
-          >
-            <div>
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M10.4902 2.22859L5.50016 4.10859C4.35016 4.53859 3.41016 5.89859 3.41016 7.11859V14.5486C3.41016 15.7286 4.19016 17.2786 5.14016 17.9886L9.44016 21.1986C10.8502 22.2586 13.1702 22.2586 14.5802 21.1986L18.8802 17.9886C19.8302 17.2786 20.6102 15.7286 20.6102 14.5486V7.11859C20.6102 5.88859 19.6702 4.52859 18.5202 4.09859L13.5302 2.22859C12.6802 1.91859 11.3202 1.91859 10.4902 2.22859Z"
-                  stroke="#08A0F7"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M9.0498 11.8697L10.6598 13.4797L14.9598 9.17969"
-                  stroke="#08A0F7"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <div
-              v-if="warehouseDetail.partner_verification === 'Terverifikasi'"
-              class="text-blue-500 ml-0.5 mt-0.5"
-            >
-              {{ warehouseDetail.partner_verification }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <table class="w-100 mt-2">
-        <tbody>
-          <tr>
-            <td width="20%">
-              Kota
-            </td>
-            <td width="20%">
-              {{ warehouseDetail.city_name }}
-            </td>
-            <td width="30%">
-              Status
-            </td>
-            <td>
-              <b-badge
-                :variant="
-                  warehouseDetail.availability === 'Tersedia'
-                    ? 'light-success'
-                    : 'light-danger'
-                "
-              >
-                {{ warehouseDetail.availability }}
-              </b-badge>
-            </td>
-          </tr>
-          <tr>
-            <td width="20%">
-              Owner
-            </td>
-            <td width="20%">
-              {{ warehouseDetail.owner }}
-            </td>
-            <td width="20%">
-              Alamat gudang
-            </td>
-            <td width="30%">
-              {{ warehouseDetail.detail_address }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="mt-3">
-      <div class="d-flex justify-content-end">
-        <div class="mb-2">
-          <b-input-group class="input-group-merge">
-            <b-input-group-prepend is-text>
-              <feather-icon icon="SearchIcon" />
-            </b-input-group-prepend>
-            <b-form-input
-              v-model="searchProduct"
-              placeholder="Cari nama produk"
-              @input="getsearchProduct()"
+              style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
             />
-          </b-input-group>
+          </div>
+          <div class="d-flex flex-column items-start text-black">
+            <div class="font-bold">
+              {{ detail.warehouse_name }}
+            </div>
+            <div class="">
+              {{ formatDate(detail.join_date) }}
+            </div>
+          </div>
+        </div>
+        <div class="verified-badge gap-2">
+          <img
+            class=""
+            src="https://storage.googleapis.com/komerce/assets/verified-shield.svg"
+            alt=""
+          >
+          <div class="">
+            Terverifikasi
+          </div>
         </div>
       </div>
-      <div class="d-flex flex-column w-100">
-        <b-overlay
-          variant="light"
-          :show="loading"
-          spinner-variant="primary"
-          blur="0"
-          opacity=".5"
-          rounded="sm"
-        >
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th />
-                <th>Nama Produk</th>
-                <th>Volume</th>
-                <th>Harga Barang</th>
-                <th>Bahan Packing</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr
-                v-for="i in productList"
-                :key="i.id"
-              >
-                <td>
-                  <label class="form-checkbox">
-                    <b-form-checkbox
-                      :id="i.sku"
-                      v-model="i.selected"
-                      @change="selectItemOneEvent(i, $event)"
-                    >
-                      <i class="form-icon" />
-                    </b-form-checkbox>
-                  </label>
-                </td>
-                <td>
-                  <div class="d-flex flex-row align-items-center">
-                    <div>
-                      <img
-                        :src="i.image_path"
-                        width="50px"
-                        height="50px"
-                        alt=""
-                      >
-                    </div>
-                    <div class="d-flex flex-column ml-1">
-                      <div>
-                        <h5>{{ i.product_name }}</h5>
-                      </div>
-                      <div class="">
-                        {{ i.sku }}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="d-flex flex-column">
-                    <div>P: {{ i.product_lenght }} cm</div>
-                    <div>L: {{ i.product_width }} cm</div>
-                    <div>T: {{ i.product_height }} cm</div>
-                  </div>
-                </td>
-                <td>{{ i.range_price }}</td>
-                <td>
-                  <b-col>
-                    <v-select
-                      v-model="i.packing_material"
-                      :disabled="i.selected === false"
-                      class="selected-options"
-                      :options="optionBahanList"
-                      placeholder="Pilih bahan packing"
-                      text="pilih bahan packing"
-                      multiple
-                      label="name"
-                      @change="selectBahanEvent(i, $event)"
-                    />
-                  </b-col>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </b-overlay>
+      <div class="mt-2 text-black space-y-4">
+        <div class="d-flex">
+          <div class="w-50 d-flex">
+            <div class="w-50 font-bold">
+              Kota
+            </div>
+            <div class="w-50">
+              {{ detail.city_name }}
+            </div>
+          </div>
+          <div class="w-50 d-flex">
+            <div class="w-50 font-bold">
+              Status
+            </div>
+            <div class="w-50">
+              <div class="d-flex">
+                <div :class="handleAvailability(detail.availability)">
+                  {{ detail.availability }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex">
+          <div class="w-50 d-flex">
+            <div class="w-50 font-bold">
+              Owner
+            </div>
+            <div class="w-50">
+              {{ detail.owner }}
+            </div>
+          </div>
+          <div class="w-50 d-flex">
+            <div class="w-50 font-bold">
+              Alamat gudang
+            </div>
+            <div class="w-50">
+              {{ detail.detail_address }}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- modal -->
+    <div class="d-flex justify-end">
+      <b-input-group class="mt-2 w-25 input-group-merge">
+        <b-input-group-prepend is-text>
+          <feather-icon icon="SearchIcon" />
+        </b-input-group-prepend>
+        <b-form-input
+          v-model="searchProduct"
+          placeholder="Cari nama produk"
+          @input="getSearchProduct()"
+        />
+      </b-input-group>
+    </div>
+    <div class="mt-1">
+      <BOverlay
+        :show="loading"
+        spinner-variant="primary"
+        variant="light"
+        blur="0"
+        opacity=".5"
+        rounded="sm"
+      >
+        <BTable
+          ref="selectableTable"
+          :items="products"
+          :fields="fields"
+          empty-text="Tidak ada data yang ditampilkan."
+          responsive
+          :select-mode="`multi`"
+          selectable
+          hover
+          show-empty
+          @row-selected="onRowSelected"
+        >
+          <template #head(checkbox)>
+            <BCheckbox
+              v-model="isSelected"
+              @change="selectAllRows()"
+            />
+          </template>
+          <template #cell(checkbox)="data">
+            <BCheckbox
+              v-model="selected"
+              :value="data.item"
+              @change="select"
+            />
+          </template>
+          <template #cell(nama_produk)="data">
+            <div class="d-flex items-center gap-2 text-black">
+              <b-img
+                :src="data.item.image_path ? data.item.image_path : 'https://storage.googleapis.com/komerce/assets/icons/product-placehold.svg'"
+                fluid
+                class="image-product"
+              />
+              <div class="">
+                <div class="">
+                  {{ data.item.product_name }}
+                </div>
+                <div class="">
+                  SKU : {{ data.item.sku }}
+                </div>
+              </div>
+            </div>
+          </template>
+          <template #cell(volume)="data">
+            <div class="d-flex flex-column">
+              <div class="">
+                P : {{ data.item.product_lenght }} cm
+              </div>
+              <div class="">
+                L : {{ data.item.product_width }} cm
+              </div>
+              <div class="">
+                T : {{ data.item.product_height }} cm
+              </div>
+            </div>
+          </template>
+          <template #cell(harga_barang)="data">
+            <div class="">
+              {{ data.item.range_price }}
+            </div>
+          </template>
+          <template #cell(bahan_packing)="data">
+            <b-dropdown
+              text="Select Options"
+              class="m-md-2"
+              :disabled="disabledPackingOptions(data.item.id)"
+              variant="outline-dark"
+            >
+              <b-form-checkbox-group
+                v-model="data.item.pm"
+                :options="packingOptions"
+                multiple
+                class="p-1 space-y-3"
+              />
+            </b-dropdown>
+          </template>
+        </BTable>
+      </BOverlay>
+    </div>
     <b-modal
-      id="modal-canceled-submission"
+      id="modal-failed-submission"
       hide-footer
       hide-header
       modal-class="modal-dark"
@@ -223,37 +202,35 @@
       no-close-on-backdrop
       no-close-on-esc
     >
+      <b-img
+        role="button"
+        style="cursor:pointer"
+        class="float-right"
+        src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
+        @click="closeModal()"
+      />
       <b-col
         md="12"
         class="d-flex justify-content-center pt-3"
       >
         <b-img
           width="100"
-          src="@/assets/images/icons/warning.svg"
+          src="https://storage.googleapis.com/komerce/assets/elements/transfer-fail.png"
         />
       </b-col>
 
-      <b-col class="text-center mt-2">
-        <h4 class="text-black">
-          <strong> Batalkan Pengajuan </strong>
+      <b-col class="text-center mt-2 mb-3">
+        <h4>
+          <medium>
+            Pengajuanmu gagal dikirim.
+          </medium>
         </h4>
-        <p class="text-black">
-          Kamu yakin mau batalin pengajuan berlangganan ?
-        </p>
+        <h6 class="text-black">
+          <strong>
+            Maaf, kamu tidak bisa melakukan pengajuan tambah produk dikarenakan kamu masih memiliki antrian pengajuan yang belum disetujui
+          </strong>
+        </h6>
       </b-col>
-      <div class="d-flex justify-content-center">
-        <b-button
-          variant="outline-primary"
-          class="font-bold mr-1"
-          @click="$bvModal.hide('modal-canceled-submission')"
-        >Tidak</b-button>
-        <b-button
-          variant="primary"
-          class="font-bold"
-          style="width: 100px"
-          @click="$router.go(-1)"
-        >Ya</b-button>
-      </div>
     </b-modal>
     <b-modal
       id="modal-success-submission"
@@ -267,9 +244,9 @@
       <b-img
         role="button"
         style="cursor:pointer"
+        class="float-right"
         src="https://storage.googleapis.com/komerce/assets/icons/close-circle.svg"
-        class="absolute right-[1rem] top-[1rem]"
-        @click="$router.go(-1)"
+        @click="closeModal()"
       />
       <b-col
         md="12"
@@ -277,267 +254,298 @@
       >
         <b-img
           width="100"
-          src="@core/assets/image/icon-popup-success.png"
+          src="https://storage.googleapis.com/komerce/core/icon-popup-success.png"
         />
       </b-col>
 
       <b-col class="text-center mt-2 mb-3">
         <h4>
-          <medium> Pengajuanmu berhasil dikirim. </medium>
+          <medium>
+            Pengajuanmu berhasil dikirim.
+          </medium>
         </h4>
         <h6 class="text-black">
           <strong>
-            Pengajuan berlangganan akan segera dikonfrmasi selambat-lambatnya
-            2x24 jam.
+            Pengajuan tambah produk akan segera dikonfrmasi selambat-lambatnya 2x24 jam.
           </strong>
         </h6>
       </b-col>
     </b-modal>
-  </div>
+  </BCard>
 </template>
 
-<script lang="ts">
-import {
-  BButton,
-  BSpinner,
-  BAvatar,
-  BFormSelect,
-  BInputGroup,
-  BInputGroupPrepend,
-  BFormCheckbox,
-  BFormInput,
-  BModal,
-} from 'bootstrap-vue'
-import vSelect from 'vue-select'
-import 'vue-select/dist/vue-select.css'
-import ToastificationContentVue from '@/@core/components/toastification/ToastificationContent.vue'
+<script>
+import moment from 'moment'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 
 export default {
-  components: {
-    BButton,
-    BInputGroup,
-    BInputGroupPrepend,
-    BFormInput,
-    // BFormSelect,
-    BFormCheckbox,
-    BModal,
-    vSelect,
-  },
   data() {
     return {
       loading: false,
+      detail: {},
+      products: [],
       selected: [],
-      selectAll: false,
-      checkSelected: false,
-      selectProduct: false,
-      productList: [],
-      user: this.$store.state.auth,
+      isSelected: false,
+      partnerId: JSON.parse(localStorage.getItem('userData')),
       searchProduct: '',
-      selectedBahan: null,
-      warehouseDetail: {},
-      optionBahanList: [],
-      formdata: {
-        partner_id: null,
-        warehouse_id: null,
-        submission_type: 1,
-        product: [],
-      },
-      objIndex: [],
+      packingOptions: [],
+      fields: [
+        {
+          key: 'checkbox',
+          label: '',
+          thClass: 'text-black text-capitalize py-1',
+          class: 'bg-white',
+          thStyle: {
+            textTransform: 'capitalize',
+            fontSize: '13px',
+            color: 'black',
+          },
+          tdClass: 'text-black',
+        },
+        {
+          key: 'nama_produk',
+          label: 'Nama Produk',
+          thClass: 'text-black text-capitalize py-1',
+          class: 'bg-white',
+          thStyle: {
+            textTransform: 'capitalize',
+            fontSize: '13px',
+            color: 'black',
+          },
+          tdClass: 'text-black',
+        },
+        {
+          key: 'volume',
+          label: 'Volume',
+          thClass: 'text-black text-capitalize py-1',
+          class: 'bg-white',
+          thStyle: {
+            textTransform: 'capitalize',
+            fontSize: '13px',
+            color: 'black',
+          },
+          tdClass: 'text-black',
+        },
+        {
+          key: 'harga_barang',
+          label: 'Harga Barang',
+          thClass: 'text-black text-capitalize py-1',
+          class: 'bg-white',
+          thStyle: {
+            textTransform: 'capitalize',
+            fontSize: '13px',
+            color: 'black',
+          },
+          tdClass: 'text-black',
+        },
+        {
+          key: 'bahan_packing',
+          label: 'Bahan Packing',
+          thClass: 'text-black text-capitalize py-1 text-center',
+          class: 'bg-white text-center',
+          thStyle: {
+            textTransform: 'capitalize',
+            fontSize: '13px',
+            color: 'black',
+          },
+          tdClass: 'text-black align-top',
+        },
+      ],
+      wh: JSON.parse(localStorage.getItem('warehouse_id')),
     }
   },
-  mounted() {
-    this.getDetailWarehouse()
-    this.getBahanList()
+  created() {
+    this.fetchDetailGudangKompack()
+    this.fetchProduct()
+    this.fetchPackingOptions()
   },
   methods: {
-    async getDetailWarehouse() {
+    async fetchDetailGudangKompack() {
       this.loading = true
-      await this.$http_komship(
-        `/v1/komship/warehouse/information/${this.$route.params.id}`,
-      )
-        .then(async response => {
-          this.warehouseDetail = response.data.data
-          await this.getProductList()
-        })
-        .catch(err => {
+      await this.$http_komship.get(`/v1/komship/warehouse/information/${this.$route.params.id}`)
+        .then(response => {
+          this.detail = response.data.data
           this.loading = false
+        }).catch(() => {
+          this.loading = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal load data, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
-    async getBahanList() {
-      await this.$http_komship('/v1/select-option/packing')
-        .then(async response => {
-          this.optionBahanList = response.data.data
-        })
-        .catch(err => {
+    async getSearchProduct() {
+      this.fetchProduct()
+    },
+    async fetchProduct() {
+      this.loading = true
+      await this.$http_komship.get('/v1/komship/submission/product', {
+        params: {
+          warehouse_id: this.wh,
+          name: this.searchProduct,
+        },
+      })
+        .then(response => {
+          const updated = response.data.data.map(item => {
+            const newItem = { ...item }
+            newItem.pm = []
+            return newItem
+          })
+          this.products = updated
           this.loading = false
+        }).catch(() => {
+          this.loading = false
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal load data, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
         })
     },
-    async getProductList() {
-      await this.$http_komship(
-        `/v1/komship/submission/product?name=${this.searchProduct}`,
-      )
-        .then(async response => {
-          const { data } = response.data
-          const newData = await data.map(val => ({
-            ...val,
-            selected: false,
-            packing_material: null,
-          }))
-          this.productList = newData
+    async fetchPackingOptions() {
+      await this.$http_komship.get('/v1/select-option/packing')
+        .then(response => {
+          const packing = this.packingOptions.concat(response.data.data.map(data => ({
+            value: data.id,
+            text: data.name,
+          })))
+          this.packingOptions = packing
+        }).catch(() => {
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Gagal',
+              icon: 'AlertCircleIcon',
+              text: 'Gagal load data, silahkan coba lagi',
+              variant: 'danger',
+            },
+          }, 2000)
+        })
+    },
+    async onFinish() {
+      const dataProduct = this.selected.map(product => ({
+        product_id: product.id,
+        packing_material: product.pm,
+      }))
 
-          this.loading = false
-        })
-        .catch(err => {
-          this.loading = false
-        })
-    },
-    selectItemOneEvent(product, e) {
-      this.checkSelected = e
-      // eslint-disable-next-line no-param-reassign
-      this.objIndex = this.productList.findIndex(obj => obj.id === product.id)
-
-      // eslint-disable-next-line no-param-reassign
-      this.productList[this.objIndex].selected = e
-    },
-    async getsearchProduct() {
-      this.getProductList()
-    },
-    async selectItemEvent() {
-      this.selected = []
-      if (!this.selectAll) {
-        // eslint-disable-next-line guard-for-in, no-restricted-syntax
-        for (const i in this.items) {
-          this.selected.push(this.items[i].id)
-        }
+      const payload = {
+        partner_id: this.partnerId.partner_detail.id,
+        warehouse_id: this.wh,
+        submission_type: 2,
+        product: dataProduct,
       }
-    },
 
-    selectBahanEvent(product, e) {
-      this.selectProduct = e
-      const objIndex = this.productList.findIndex(obj => obj.id === product.id)
-
-      // eslint-disable-next-line no-param-reassign
-      this.productList[objIndex].packing_material = e
-    },
-
-    async submitBerlangganan() {
-      // const material = await this.productList
-      //   .filter(x => x.selected === true)
-      //   .map(val => ({
-      //     packingMaterial: val.packing_material,
-      //   }))
-      const product = await this.productList
-        .filter(x => x.selected === true)
-        .map(val => ({
-          product_id: val.id,
-          packing_material: val.packing_material.map(x => x.id),
-        }))
-      await this.$http_komship
-        .post('/v1/komship/submission', {
-          partner_id: this.user.userData.partner_detail.id,
-          warehouse_id: this.warehouseDetail.id,
-          submission_type: 1,
-          product,
-        })
-        .then(async response => {
-          if (response.data.code === 1009) {
-            this.$toast(
-              {
-                component: ToastificationContentVue,
-                props: {
-                  title: 'Galat',
-                  text: 'Menunggu Persetujuan Pengajuan Sebelumnya',
-                  icon: 'AlertCircleIcon',
-                  variant: 'danger',
-                },
-              },
-              2000,
-            )
-          }
-          if (response.data.code === 1001) {
-            this.$toast(
-              {
-                component: ToastificationContentVue,
-                props: {
-                  title: 'Galat',
-                  text: 'Silahkan Pilih Produk',
-                  icon: 'AlertCircleIcon',
-                  variant: 'danger',
-                },
-              },
-              2000,
-            )
-          }
+      await this.$http_komship.post('/v1/komship/submission', payload)
+        .then(response => {
           if (response.data.code === 200) {
             this.$bvModal.show('modal-success-submission')
+            this.fetchProduct()
+          } else {
+            this.$bvModal.show('modal-failed-submission')
+            this.fetchProduct()
           }
         })
-        .catch(err => {
-          this.loading = false
-          this.$toast(
-            {
-              component: ToastificationContentVue,
-              props: {
-                title: 'Galat',
-                text: err,
-                icon: 'AlertCircleIcon',
-                variant: 'danger',
-              },
-            },
-            2000,
-          )
-        })
+        .catch()
+    },
+    handleDisableTambah() {
+      for (let i = 0; i < this.selected.length; i += 1) {
+        if (this.selected[i].pm.length === 0) return true
+      }
+      if (this.selected.length === 0) return true
+      if (this.products.length === 0) return true
+      return false
+    },
+    disabledPackingOptions(data) {
+      for (let i = 0; i < this.selected.length; i += 1) {
+        if (this.selected[i].id === data) return false
+      }
+      return true
+    },
+    onRowSelected(items) {
+      this.selected = items
+    },
+    selectAllRows() {
+      if (this.isSelected) {
+        this.$refs.selectableTable.selectAllRows()
+      }
+      if (!this.isSelected) {
+        this.$refs.selectableTable.clearSelected()
+      }
+    },
+    select(value) {
+      this.selected = value
+      this.isSelected = false
+    },
+    formatDate(value) {
+      return moment(value).format('DD MMMM YYYY')
+    },
+    handleAvailability(status) {
+      if (status === 'Tersedia') {
+        return 'status-tersedia'
+      }
+      return 'status-penuh'
+    },
+    confirmBatalkan() {
+      this.$swal({
+        title: 'Batalkan Pengajuan',
+        text: 'Kamu yakin mau batalin pengajuan berlangganan ?',
+        icon: 'warning',
+        iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Tidak',
+        customClass: {
+          icon: 'border-0 w-50 my-5',
+          confirmButton: 'btn btn-primary mr-1 px-5',
+          cancelButton: 'btn btn-outline-primary px-4',
+        },
+        buttonsStyling: false,
+      }).then(result => {
+        if (result.value) {
+          this.$router.go(-1)
+        }
+      })
+    },
+    closeModal() {
+      this.$router.go(-1)
     },
   },
 }
 </script>
-
-<style lang="scss">
-*,
-img {
-  user-select: none;
-}
-.card-custom {
-  border-radius: 12px;
-  border: 1px solid #e2e2e2;
-}
-.badge-custom {
+<style scoped>
+.verified-badge {
+  background-color: #DFF3FF;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  padding: 4px 8px;
-  gap: 5px;
-  background: #dff3ff;
+  color: #08A0F7;
+  padding: 5px 10px;
   border-radius: 4px;
+ }
+ .status-tersedia {
+  background-color: #DCF3EB;
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: #34A770;
+ }
+ .image-product{
+  object-fit: cover;
+  object-position: center center;
+  width: 50px!important;
+  height: 50px!important;
 }
-.input-group {
-  height: 40px;
-  min-width: 300px;
-}
-.vs__selected-options {
-    display: inline;
-    flex-basis: 100%;
-    -webkit-box-flex: 1;
-    flex-grow: 1;
-    flex-wrap: wrap;
-    padding: 0 2px;
-    position: relative;
-}
-.vs__selected {
-    display: flex;
-    justify-content: space-between;
-    -webkit-box-align: center;
-    align-items: center;
-    background-color: transparent;
-    border: 1px solid rgba(60,60,60,.26);
-    border-radius: 4px;
-    color: #333;
-    line-height: 1.4;
-    margin: 4px 2px 0;
-    padding: 0 0.25em;
-    z-index: 0;
-}
-.vs--searchable .vs__dropdown-toggle {
-    cursor: pointer;
-}
+ .status-penuh {
+  background-color: #FFEDED;
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: #E31A1A;
+ }
 </style>
