@@ -462,12 +462,16 @@ export default {
         })
     },
     resetFilter() {
-      this.totalFilterDataOrder = 0
       this.startDate = null
       this.endDate = null
       this.addressId = null
       this.productName = null
       this.paymentMethod = null
+      this.filterDateDataOrder = false
+      this.isFilterProduct = false
+      this.isFilterAddress = false
+      this.isFilterPayment = false
+      this.totalFilterDataOrder = 0
       return this.fetchData()
     },
     shippingTypeLabel(value) {

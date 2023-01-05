@@ -330,6 +330,17 @@
                         IDExpress
                       </b-form-checkbox>
                     </div>
+                    <div class="my-1">
+                      <b-form-checkbox
+                        id="chcekedIDExpress"
+                        v-model="shipping"
+                        name="chcekedIDExpress"
+                        class="text-left"
+                        value="IDEXPRESS"
+                      >
+                        SAP
+                      </b-form-checkbox>
+                    </div>
                   </div>
                 </b-row>
               </b-col>
@@ -535,7 +546,7 @@ export default {
       loading: false,
       paymentMethod: ['COD', 'BANK TRANSFER'],
       orderStatus: ['Diajukan', 'Dipacking', 'Dikirim', 'Diterima', 'Retur'],
-      shipping: ['JNE', 'SICEPAT', 'IDEXPRESS'],
+      shipping: ['JNE', 'SICEPAT', 'IDEXPRESS', 'SAP'],
       chcekedJNE: false,
       chcekedSiCepat: false,
       chcekedIDExpress: false,
