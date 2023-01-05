@@ -50,7 +50,7 @@ export default {
     UPDATE_RINCIAN_SALDO(state, rincianSaldos) {
       state.list_item_rincian_penarikan = rincianSaldos.data
       state.table.totalRows = rincianSaldos.total
-      state.rincianSaldos = rincianSaldos.data.map(item => ({
+      state.rincianSaldos = rincianSaldos.data?.map(item => ({
         tanggal: moment(new Date(item.order_date)).format('DD-MM-YYYY'),
         jenisOrder: item.order_type || '-',
         retur: false,

@@ -347,22 +347,46 @@
         </b-col>
       </b-row>
       <template #modal-footer>
-        <div class="d-flex justify-end">
-          <b-form-checkbox
-            v-model="printDate"
-            class="font-medium my-auto mr-1"
-          >
-            Tambahkan tanggal cetak di label
-          </b-form-checkbox>
-          <b-button
-            variant="primary"
-            class="my-auto"
-            :disabled="formatPrint === ''"
-            @click="downloadPrintLabel"
-          >
-            <span class="font-semibold">Download Label</span>
-          </b-button>
-        </div>
+        <b-row>
+          <b-col cols="12">
+            <b-row class="justify-content-end align-items-center pb-2 wrapper__handle__print__label">
+              <b-form-checkbox
+                v-model="printDateItem"
+                class="custom-control-primary mr-2"
+              >
+                Tambahkan tanggal cetak di label
+              </b-form-checkbox>
+              <b-button
+                variant="primary"
+                :class="isDownloadActive ? 'mr-3 py-1 px-3 cursor-not-allowed' : 'mr-3 py-1 px-3'"
+                :disabled="isDownloadActive || formatPrint === ''"
+                @click="getPrintLabelBase64"
+              >
+                Download Label
+              </b-button>
+            </b-row>
+          </b-col>
+          <b-col cols="12">
+            <div
+              v-if="percentageDownload !== 0"
+              class="d-flex justify-content-end mr-2"
+            >
+              <div>
+                <b-row class="text-center justify-content-center">
+                  <span>sedang menyiapkan file</span>
+                </b-row>
+                <div class="mr-50">
+                  <b-progress
+                    :value="percentageDownload"
+                    max="100"
+                    variant="primary"
+                    style="min-width: 198px; height: 3px;"
+                  />
+                </div>
+              </div>
+            </div>
+          </b-col>
+        </b-row>
       </template>
     </b-modal>
   </b-card>
@@ -370,9 +394,11 @@
 <script>
 import vSelect from 'vue-select'
 import imageNull from '@/assets/images/avatars/image-null.png'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import axios from 'axios'
 import useJwt from '@core/auth/jwt/useJwt'
 import '@core/scss/vue/libs/vue-select.scss'
+import { mapState } from 'vuex'
 
 const { jwt } = useJwt(axios, {})
 const token = jwt.getToken()
@@ -413,7 +439,15 @@ export default {
       lastOrderData: false,
       formatPrint: '',
       printDate: false,
+      paramsBase64: '',
+      printDateItem: false,
+
+      percentageDownload: 0,
+      isDownloadActive: false,
     }
+  },
+  computed: {
+    ...mapState('saldo', ['dateToPrint']),
   },
   async created() {
     this.getShipment()
@@ -561,6 +595,61 @@ export default {
       } catch (error) {
         console.error(error)
       }
+    },
+    getPrintLabelBase64() {
+      this.isDownloadActive = true
+      const self = this
+      this.loadingButtonPrintLabel = true
+      let percent = null
+      percent = setInterval(() => {
+        if (self.percentageDownload < 100) self.percentageDownload += 1
+        if (self.percentageDownload === 90) self.percentageDownload -= 1
+      }, 500)
+      const formData = new FormData()
+      formData.append('order_id', this.orderIdPrint)
+      formData.append('page', this.formatPrint)
+      if (this.printDateItem) formData.append('print_date', 1)
+      axios.post(`${process.env.VUE_APP_BASE_URL_KOMSHIP}/v2/generate/print-label`, formData).then(response => {
+        try {
+          let result = null
+          const date = `${this.dateToPrint.pickupDate}T${this.dateToPrint.pickupTime}`
+          result = `label-${this.$moment(date).format('YYYY-MM-DD-HH-mm-ss')}`
+          this.percentageDownload = 100
+          clearInterval(percent)
+          const linkSource = `data:application/pdf;base64,${response.data.data.base_64}`
+          const downloadLink = document.createElement('a')
+          const fileName = `${result}.pdf`
+          downloadLink.href = linkSource
+          downloadLink.download = fileName
+          downloadLink.click()
+          this.isDownloadActive = false
+          setTimeout(() => {
+            this.percentageDownload = 0
+            window.open(response.data.data.path, '_blank')
+          }, 1000)
+        } catch (e) {
+          this.percentageDownload = 0
+          this.isDownloadActive = false
+          clearInterval(percent)
+          // eslint-disable-next-line no-alert
+          alert('Pop-up Blocker is enabled! Please add this site to your exception list.')
+        }
+        this.loadingButtonPrintLabel = false
+      }).catch(() => {
+        this.loadingButtonPrintLabel = false
+        this.$toast({
+          component: ToastificationContent,
+          props: {
+            title: 'Failure',
+            icon: 'AlertCircleIcon',
+            text: 'Gagal print label, silahkan coba lagi!',
+            variant: 'danger',
+          },
+        })
+        clearInterval(percent)
+        this.percentageDownload = 0
+        this.isDownloadActive = false
+      })
     },
   },
 }
