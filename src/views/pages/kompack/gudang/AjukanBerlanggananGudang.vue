@@ -13,7 +13,7 @@
         </BButton>
         <BButton
           variant="primary"
-          :disabled="handleDisableTambah()"
+          :disabled="handleDisableTambah() || disabledBtn"
           @click="onFinish"
         >
           Ajukan Layanan
@@ -177,7 +177,7 @@
           </template>
           <template #cell(bahan_packing)="data">
             <b-dropdown
-              text="Select Options"
+              text="Pilih bahan packing"
               class="m-md-2"
               :disabled="disabledPackingOptions(data.item.id)"
               variant="outline-dark"
@@ -353,6 +353,7 @@ export default {
       ],
       wh: JSON.parse(localStorage.getItem('warehouse_id')),
       idWarehouse: JSON.parse(localStorage.getItem('idWarehouse')),
+      disabledBtn: false,
     }
   },
   created() {
@@ -433,6 +434,7 @@ export default {
         })
     },
     async onFinish() {
+      this.disabledBtn = true
       const dataProduct = this.selected.map(product => ({
         product_id: product.id,
         packing_material: product.pm,
@@ -447,6 +449,7 @@ export default {
 
       await this.$http_komship.post('/v1/komship/submission', payload)
         .then(response => {
+          this.disabledBtn = true
           if (response.data.code === 200) {
             this.$bvModal.show('modal-success-submission')
             this.fetchProduct()
@@ -455,7 +458,9 @@ export default {
             this.fetchProduct()
           }
         })
-        .catch()
+        .catch(() => {
+          this.disabledBtn = true
+        })
     },
     handleDisableTambah() {
       for (let i = 0; i < this.selected.length; i += 1) {
