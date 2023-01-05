@@ -198,7 +198,7 @@ border-radius: 8px;"
           responsive
           show-empty
           empty-text="Tidak ada data untuk ditampilkan."
-          :items="list_item_rincian_penarikan"
+          :items="listWithdrawalItem"
           :fields="fields"
         >
           <template #head(shipping_cost)="data">
@@ -236,24 +236,24 @@ border-radius: 8px;"
           <template #cell(date_transaction)="data">
             <div class="d-flex flex-column">
               <span class="text-black">
-                {{ moment(new Date(data.item.date_transaction)).format('DD MMMM YYYY') }}
+                {{ moment(new Date(data.item.created_at)).format('DD MMMM YYYY') }}
               </span>
               <small class="text-black">
-                {{ moment(new Date(data.item.date_transaction)).format('HH:MM') }} WIB
+                {{ moment(new Date(data.item.created_at)).format('HH:MM') }} WIB
               </small>
             </div>
           </template>
           <template #cell(transaction_type)="data">
             <div
-              v-if="data.item.transaction_type === 'topup'"
+              v-if="data.item.description === 'topup'"
               class="font-medium text-black"
             >
               Top UP Saldo
             </div>
-            <div v-else-if="data.item.transaction_type === 'withdrawal'">
+            <div v-else-if="data.item.description === 'withdrawal'">
               Penarikan Saldo
             </div>
-            <div v-else-if="data.item.transaction_type === 'shopping'">
+            <div v-else-if="data.item.description === 'shopping'">
               <div class="text-black text-md font-medium">
                 Belanja
               </div>
@@ -261,7 +261,7 @@ border-radius: 8px;"
                 Keperluan talent
               </div>
             </div>
-            <div v-else-if="data.item. transaction_type === 'orderku_done'">
+            <div v-else-if="data.item.description === 'orderku_done'">
               <div class="text-black text-md font-medium">
                 Orderan COD
               </div>
@@ -270,7 +270,7 @@ border-radius: 8px;"
               </div>
               <b-row>
                 <img
-                  :src="data.item.shipment_image_path"
+                  :src="data.item.shipping_logo"
                   width="70"
                 >
                 <img
@@ -305,7 +305,7 @@ border-radius: 8px;"
                 </b-row>
               </b-popover>
             </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_ongkir'">
+            <div v-else-if="data.item.description === 'orderku_ongkir'">
               <div class="text-black text-md font-medium">
                 Orderan Non COD
               </div>
@@ -314,7 +314,7 @@ border-radius: 8px;"
               </div>
               <b-row>
                 <img
-                  :src="data.item.shipment_image_path"
+                  :src="data.item.shipping_logo"
                   width="70"
                 >
                 <img
@@ -349,7 +349,7 @@ border-radius: 8px;"
                 </b-row>
               </b-popover>
             </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_cancel'">
+            <div v-else-if="data.item.description === 'orderku_cancel'">
               <div class="text-black text-md font-medium">
                 Orderan Non COD
               </div>
@@ -358,7 +358,7 @@ border-radius: 8px;"
               </div>
               <b-row>
                 <img
-                  :src="data.item.shipment_image_path"
+                  :src="data.item.shipping_logo"
                   width="70"
                 >
                 <img
@@ -393,7 +393,7 @@ border-radius: 8px;"
                 </b-row>
               </b-popover>
             </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method COD)'">
+            <div v-else-if="data.item.description === 'orderku_retur (payment_method COD)'">
               <div class="text-black text-md font-medium">
                 Orderan COD
               </div>
@@ -401,7 +401,7 @@ border-radius: 8px;"
                 Retur
               </div>
             </div>
-            <div v-else-if="data.item.transaction_type === 'orderku_retur (payment_method Bank Transfer)'">
+            <div v-else-if="data.item.description === 'orderku_retur (payment_method Bank Transfer)'">
               <div class="text-black text-md font-medium">
                 Orderan Non COD
               </div>
@@ -410,7 +410,7 @@ border-radius: 8px;"
               </div>
               <b-row>
                 <img
-                  :src="data.item.shipment_image_path"
+                  :src="data.item.shipping_logo"
                   width="70"
                 >
                 <img
@@ -451,17 +451,17 @@ border-radius: 8px;"
           </template>
           <template #cell(amount)="data">
             <span
-              v-if="parseInt(data.item.amount) < 0"
+              v-if="parseInt(data.item.nominal) < 0"
               class="
                     text-primary font-semibold"
             >
-              -Rp {{ formatNumber(data.item.amount) }}
+              -Rp {{ formatNumber(data.item.nominal) }}
             </span>
             <span
               v-else
               class="text-success font-semibold"
             >
-              +Rp {{ formatNumber(data.item.amount) }}
+              +Rp {{ formatNumber(data.item.nominal) }}
             </span>
           </template>
           <template #cell(saldo)="data">
@@ -472,14 +472,14 @@ border-radius: 8px;"
           <template #cell(action)="data">
             <p
               v-if="
-                data.item.transaction_type === 'topup' || data.item.transaction_type === 'withdrawal' || data.item.transaction_type === 'shopping' || typeof data.item.order_id=== undefined
+                data.item.description === 'topup' || data.item.description === 'withdrawal' || data.item.description === 'shopping' || typeof data.item.order_id=== undefined
               "
             >
               -
             </p>
             <a
               v-else
-              :href="'/detail-order/' + data.item.order_id"
+              :href="'/data-order/detail-order/' + data.item.order_id"
               class="text-info"
             >
               Lihat Detail
@@ -525,11 +525,11 @@ border-radius: 8px;"
             </b-row>
           </b-col>
           <b-pagination
-            v-model="table.currentPage"
+            v-model="currentPage"
             size="md"
             class="float-right mr-2"
-            :total-rows="table.totalRows"
-            :per-page="table.perPage"
+            :total-rows="totalRows"
+            :per-page="perPage"
             first-number
             last-number
           />
@@ -588,6 +588,7 @@ export default {
       currentPage: 1,
       perPage: 20,
       totalItems: 0,
+      totalRows: 0,
       list: [],
       id: this.$route.params.id,
 
@@ -604,6 +605,7 @@ export default {
       withdrawalDate: '',
       timeWithdrawal: '',
       moment,
+      listWithdrawalItem: [],
     }
   },
   computed: {
@@ -626,9 +628,21 @@ export default {
     ...mapGetters('saldoPenarikan', ['sisaSaldo']),
   },
   watch: {
-    'table.currentPage': {
+    currentPage: {
       handler() {
-        this.$store.dispatch('saldo_penarikan/getRincianSaldo')
+        const params = {
+          withdrawal_id: Number(this.id),
+          total_per_page: this.perPage,
+          page: this.currentPage,
+        }
+        this.$http_komship.get(`/v2/partner/withdrawal/detail/list/${this.$store.state.auth.userData.id}`, {
+          params,
+        })
+          .then(response => {
+            const { data } = response.data.data
+            this.totalRows = response.data.data.total
+            this.listWithdrawalItem = data
+          })
       },
     },
   },
@@ -693,7 +707,19 @@ export default {
     },
     setPage(totalPage) {
       this.perPage = totalPage
-      this.$store.dispatch('saldoPenarikan/getRincianSaldo', totalPage)
+      const params = {
+        withdrawal_id: Number(this.id),
+        total_per_page: this.perPage,
+        page: this.currentPage,
+      }
+      this.$http_komship.get(`/v2/partner/withdrawal/detail/list/${this.$store.state.auth.userData.id}`, {
+        params,
+      })
+        .then(response => {
+          const { data } = response.data.data
+          this.listWithdrawalItem = data
+          this.totalRows = response.data.data.total
+        })
     },
     goBack() {
       window.history.back()
@@ -714,6 +740,19 @@ export default {
           const date = moment(new Date(data.withdrawal_date)).format('DD MMMM YYYY')
           const hours = moment(new Date(data.withdrawal_date)).format('HH:MM')
           this.withdrawalDate = `${date} (${hours} WIB)`
+        })
+      const params = {
+        withdrawal_id: Number(this.id),
+        total_per_page: this.perPage,
+        page: this.currentPage,
+      }
+      this.$http_komship.get(`/v2/partner/withdrawal/detail/list/${this.$store.state.auth.userData.id}`, {
+        params,
+      })
+        .then(response => {
+          const { data } = response.data.data
+          this.listWithdrawalItem = data
+          this.totalRows = response.data.data.total
         })
     },
     copyResi(data) {
