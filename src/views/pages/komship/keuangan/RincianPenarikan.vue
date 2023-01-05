@@ -239,7 +239,7 @@ border-radius: 8px;"
                 {{ moment(new Date(data.item.created_at)).format('DD MMMM YYYY') }}
               </span>
               <small class="text-black">
-                {{ moment(new Date(data.item.created_at)).format('HH:MM') }} WIB
+                {{ moment(new Date(data.item.created_at)).format('HH:mm') }} WIB
               </small>
             </div>
           </template>
