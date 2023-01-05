@@ -441,7 +441,6 @@ export default {
         })
     }, 1000),
     async getProduct(address) {
-      console.log(address)
       await this.$http_komship
         .get(`v2/partner-product/${this.profile.partner_id}?warehouse_type=${address.warehouse_type}&warehouse_id=${address.warehouse_id}`)
         .then(response => {
@@ -1384,6 +1383,7 @@ export default {
         custom_label_id: this.customLabel,
         order_notes: this.orderNotes,
         is_whatsapp: this.isWhatsapp === 'valid' ? 1 : 0,
+        warehouse_id: this.address.warehouse_id,
       }
       if (this.profile.partner_is_tracking_sales) Object.assign(this.formData, { tracking_sales_id: this.soldBy.id })
     },

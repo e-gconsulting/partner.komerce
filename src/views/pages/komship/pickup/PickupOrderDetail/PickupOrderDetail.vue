@@ -497,16 +497,10 @@ export default {
       if (this.orderID !== '' && !this.lastOrderData) {
         this.loading = true
         try {
-          const order = await this.$http_komship.get(`/v1/order/${this.profile.partner_detail.id}`, {
-            params: {
-              order_id: this.orderID,
-              page: this.page,
-              total_per_page: this.limit,
-              shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
-            },
-          })
-          const { data } = order.data.data
+          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`)
+          const { data } = order.data
           this.order.push(...data)
+          console.log(this.order)
           this.page += 1
           this.loading = false
           if (data.length < this.limit) {
