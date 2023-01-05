@@ -177,7 +177,7 @@
           </template>
           <template #cell(bahan_packing)="data">
             <b-dropdown
-              text="Select Options"
+              text="Pilih bahan packing"
               class="m-md-2"
               :disabled="disabledPackingOptions(data.item.id)"
               variant="outline-dark"
