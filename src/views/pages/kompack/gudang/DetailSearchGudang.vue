@@ -482,7 +482,7 @@ export default {
 .container__childBox {
   display: -webkit-box;
   width: 450px;
-  overflow-x: scroll;
+  overflow-x: hidden;
   overflow-y: hidden;
 }
 .childOtherbox {

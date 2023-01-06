@@ -127,7 +127,7 @@
                     is-text
                   >
                     <img
-                      src="@/assets/images/icons/date-picker-icon.svg"
+                      src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
                       @click="$refs.pickupDate.fp.toggle()"
                     >
                   </b-input-group-append>
@@ -152,7 +152,7 @@
                     is-text
                   >
                     <img
-                      src="@/assets/images/icons/date-picker-icon.svg"
+                      src="https://storage.googleapis.com/komerce/assets/icons/date-picker-icon.svg"
                       @click="$refs.EstimateDate.fp.toggle()"
                     >
                   </b-input-group-append>
@@ -213,7 +213,10 @@
           <b-row class="my-2">
             <b-col cols="3">
               <b-row class="text-start ml-3">
-                <b-img src="item.image_path" />
+                <b-img
+                  class="w-14"
+                  :src="item.image_path"
+                />
                 <span class="ml-1">{{ item.product_name }}</span>
               </b-row>
             </b-col>
@@ -308,7 +311,7 @@
           variant="primary"
           size="sm"
           class="mr-1 rounded-lg p-0"
-          @click="addProduct()"
+          @click="back"
         >
           <feather-icon
             size="2x"
@@ -372,7 +375,10 @@
             </b-col>
             <b-col cols="3">
               <b-row class="text-start">
-                <b-img src="item.image_path" />
+                <b-img
+                  class="w-14"
+                  :src="item.image_path"
+                />
                 <span class="ml-1">{{ item.product_name }}</span>
               </b-row>
             </b-col>
@@ -407,80 +413,132 @@
                 <b-row
                   v-for="(variant, indexx) in item.variant.slice(0, 1)"
                   :key="(indexx+1, variant.id)"
-                  class="justify-content-center mb-1"
+                  class="justify-content-center"
                 >
-                  <b-button
-                    class="minus-button mr-1"
-                    variant="outline-primary"
-                    @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                  <b-col
+                    xl="2"
+                    lg="3"
+                    md="3"
                   >
-                    -
-                  </b-button>
-                  <b-input
-                    v-model="variant.stock"
-                    class="align-self-center text-center input-stock"
-                    style="widht: 10% !important"
-                    @input="inputStock(variant.stock, item)"
-                  />
-                  <b-button
-                    class="plus-button ml-1"
-                    variant="outline-primary"
-                    @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                    <b-button
+                      class="minus-button"
+                      variant="outline-primary"
+                      @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                    >
+                      -
+                    </b-button>
+                  </b-col>
+                  <b-col
+                    xl="4"
+                    lg="6"
+                    md="6"
                   >
-                    +
-                  </b-button>
+                    <b-input
+                      v-model="variant.stock"
+                      class="align-self-center text-center input-stock"
+                      @input="inputStock(variant.stock, item)"
+                    />
+                  </b-col>
+                  <b-col
+                    xl="2"
+                    lg="3"
+                    md="3"
+                  >
+                    <b-button
+                      class="plus-button  "
+                      variant="outline-primary"
+                      @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.variant_id).indexOf(variant.variant_id), item)"
+                    >
+                      +
+                    </b-button>
+                  </b-col>
                 </b-row>
                 <b-collapse :id="`variant-${String(index)}`">
                   <b-row
                     v-for="itemvariant in item.variant.slice(1, item.variant.length)"
                     :key="itemvariant.option_id"
-                    class="justify-content-center mb-1"
+                    class="justify-content-center"
                   >
-                    <b-button
-                      class="minus-button mr-1"
-                      variant="outline-primary"
-                      @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                    <b-col
+                      xl="2"
+                      lg="3"
+                      md="3"
                     >
-                      -
-                    </b-button>
-                    <b-input
-                      v-model="itemvariant.stock"
-                      class="align-self-center text-center input-stock"
-                      style="widht: 10% !important"
-                      @input="inputStock(itemvariant.stock, item)"
-                    />
-                    <b-button
-                      class="plus-button ml-1"
-                      variant="outline-primary"
-                      @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                      <b-button
+                        class="minus-button"
+                        variant="outline-primary"
+                        @click="setQuantity('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                      >
+                        -
+                      </b-button>
+                    </b-col>
+                    <b-col
+                      xl="4"
+                      lg="6"
+                      md="6"
                     >
-                      +
-                    </b-button>
+                      <b-input
+                        v-model="itemvariant.stock"
+                        class="align-self-center text-center input-stock"
+
+                        @input="inputStock(itemvariant.stock, item)"
+                      />
+                    </b-col>
+                    <b-col
+                      xl="2"
+                      lg="3"
+                      md="3"
+                    >
+                      <b-button
+                        class="plus-button  "
+                        variant="outline-primary"
+                        @click="setQuantity('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item.variant.map(object => object.option_id).indexOf(itemvariant.option_id), item)"
+                      >
+                        +
+                      </b-button>
+                    </b-col>
                   </b-row>
                 </b-collapse>
               </div>
               <div v-else>
-                <b-row class="justify-content-center mb-1">
-                  <b-button
-                    class="minus-button mr-1"
-                    variant="outline-primary"
-                    @click="setQuantityNoVariant('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                <b-row class="justify-content-center">
+                  <b-col
+                    xl="2"
+                    lg="3"
+                    md="3"
                   >
-                    -
-                  </b-button>
-                  <b-input
-                    v-model="item.stock"
-                    class="align-self-center text-center input-stock"
-                    style="widht: 10% !important"
-                    @input="inputStock(item.stock, item)"
-                  />
-                  <b-button
-                    class="plus-button ml-1"
-                    variant="outline-primary"
-                    @click="setQuantityNoVariant('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                    <b-button
+                      class="minus-button"
+                      variant="outline-primary"
+                      @click="setQuantityNoVariant('minus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                    >
+                      -
+                    </b-button>
+                  </b-col>
+                  <b-col
+                    xl="4"
+                    lg="6"
+                    md="6"
                   >
-                    +
-                  </b-button>
+                    <b-input
+                      v-model="item.stock"
+                      class="align-self-center text-center input-stock"
+                      @input="inputStock(item.stock, item)"
+                    />
+                  </b-col>
+                  <b-col
+                    xl="2"
+                    lg="3"
+                    md="3"
+                  >
+                    <b-button
+                      class="plus-button  "
+                      variant="outline-primary"
+                      @click="setQuantityNoVariant('plus', listProdukEdit.map(object => object.id).indexOf(item.id), item)"
+                    >
+                      +
+                    </b-button>
+                  </b-col>
                 </b-row>
               </div>
             </b-col>
@@ -578,10 +636,10 @@
     border: none !important;
   }
   .input-stock {
-    width: 15%;
     border-bottom: solid 2px #e2e2e2 !important;
     border: none;
-    border-radius: none;
+    border-radius: 0px;
+    padding: 0px;
   }
   [dir] .when-closed {
     display: inline-block;
