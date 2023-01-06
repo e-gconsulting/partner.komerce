@@ -251,7 +251,7 @@
                 <b-row
                   v-for="variant in item.variant.slice(0, 1)"
                   :key="variant.option_id"
-                  class="justify-content-center mb-1"
+                  class="justify-content-center mb-1 h-11"
                 >
                   <div class="align-self-center">
                     {{ variant.stock }}
@@ -261,7 +261,7 @@
                   <b-row
                     v-for="itemvariant in item.variant.slice(1, item.variant.length)"
                     :key="itemvariant.option_id"
-                    class="justify-content-center mb-1"
+                    class="justify-content-center mb-1 h-11"
                   >
                     <div class="align-self-center">
                       {{ itemvariant.stock }}
