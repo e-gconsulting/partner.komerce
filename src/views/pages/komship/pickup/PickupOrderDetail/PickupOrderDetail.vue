@@ -178,7 +178,6 @@
             </b-button>
           </div>
         </template>
-
         <template #cell(customer_name)="data">
           <h5 class="text-top">
             <strong>
@@ -230,6 +229,23 @@
               </strong>
             </span>
           </b-row>
+        </template>
+        <template #cell(warehouse_type)="data">
+          <div>{{ data.item.fulfillment_fee }}</div>
+        </template>
+        <template #head(warehouse_type)>
+          <div>Biaya Fulfillment</div>
+          <div
+            class="d-flex mt-1 text-lowercase"
+            style="place-content: center"
+          >
+            <span>Layanan dari</span>
+            <img
+              class="px-[5px]"
+              src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
+            >
+            <span>Kompack</span>
+          </div>
         </template>
       </b-table>
     </b-overlay>
@@ -531,16 +547,17 @@ export default {
       if (this.orderID !== '' && !this.lastOrderData) {
         this.loading = true
         try {
-          const order = await this.$http_komship.get(`/v1/order/${this.profile.partner_detail.id}`, {
-            params: {
-              order_id: this.orderID,
-              page: this.page,
-              total_per_page: this.limit,
-              shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
-            },
-          })
-          const { data } = order.data.data
+          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`)
+          const { data } = order.data
           this.order.push(...data)
+          const dummyData = [this.order.find(item => item.fulfillment_fee !== 0)]
+          if (dummyData.length === undefined) {
+            this.fieldOrder.push(
+              {
+                key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+              },
+            )
+          }
           this.page += 1
           this.loading = false
           if (data.length < this.limit) {
