@@ -443,7 +443,7 @@ export default {
       const payload = {
         partner_id: this.partnerId.partner_detail.id,
         warehouse_id: this.idWarehouse,
-        submission_type: 2,
+        submission_type: 1,
         product: dataProduct,
       }
 
