@@ -224,7 +224,6 @@ export default {
         localStorage.removeItem('paymentHistory')
       }
     }
-    console.log(this.profile)
   },
   methods: {
     formatDate(date) {
