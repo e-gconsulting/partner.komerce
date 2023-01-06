@@ -606,8 +606,47 @@ export default
       }
       return resultVariant
     },
-    searchTicket: _.debounce(function () {
-      this.fetchTicket()
+    searchTicket: _.debounce(async function () {
+      this.loadingDataTable = true
+      const params = {}
+      if (this.ticketStatus) Object.assign(params, { ticket_status: this.ticketStatus.join() })
+      if (this.search) Object.assign(params, { search: this.search })
+      if (this.searchType) Object.assign(params, { search_type: this.searchType.value })
+      if (this.filterTicketType) Object.assign(params, { ticket_type: this.filterTicketType.join() })
+      if (this.filterEkspedisi) Object.assign(params, { shipping: this.filterEkspedisi.join() })
+      Object.assign(params, { total_per_page: this.totalPerPage })
+      Object.assign(params, { page: this.currentPage })
+      if (this.orderStatusFilterItem.length > 0) Object.assign(params, { order_status: this.orderStatusFilterItem.join() })
+      if (this.filterClaimReturValue !== null) Object.assign(params, { is_claim_retur: this.filterClaimReturValue })
+      if (this.unreadMode) Object.assign(params, { unread: this.unreadMode })
+      await this.$http_komship.get('/v1/ticket-partner/list', {
+        params,
+      })
+        .then(async response => {
+          await this.fetchTicketUnread()
+          if (response.data.code !== 400) {
+            const { data } = response.data.data
+            this.itemsTicket = data
+            this.totalRows = response.data.data.total
+            this.loadingDataTable = false
+          } else {
+            this.itemsTicket = []
+            this.loadingDataTable = false
+          }
+        })
+        .catch(err => {
+          this.itemsTicket = []
+          this.$toast({
+            component: ToastificationContent,
+            props: {
+              title: 'Failure',
+              icon: 'AlertCircleIcon',
+              text: err.response.data.message,
+              variant: 'danger',
+            },
+          }, 2000)
+          this.loadingDataTable = false
+        })
     }, 1000),
     async clearFilter() {
       this.unreadMode = false
