@@ -251,7 +251,7 @@
                 <b-row
                   v-for="variant in item.variant.slice(0, 1)"
                   :key="variant.option_id"
-                  class="justify-content-center mb-1 h-11"
+                  class="justify-content-center h-12"
                 >
                   <div class="align-self-center">
                     {{ variant.stock }}
@@ -261,7 +261,7 @@
                   <b-row
                     v-for="itemvariant in item.variant.slice(1, item.variant.length)"
                     :key="itemvariant.option_id"
-                    class="justify-content-center mb-1 h-11"
+                    class="justify-content-center h-10"
                   >
                     <div class="align-self-center">
                       {{ itemvariant.stock }}
@@ -271,7 +271,7 @@
               </div>
               <div v-else>
                 <b-row class="justify-content-center mb-1">
-                  <div class="align-self-center">
+                  <div class="align-self-center h-10">
                     {{ item.stock }}
                   </div>
                 </b-row>
@@ -413,7 +413,7 @@
                 <b-row
                   v-for="(variant, indexx) in item.variant.slice(0, 1)"
                   :key="(indexx+1, variant.id)"
-                  class="justify-content-center"
+                  class="justify-content-center h-14"
                 >
                   <b-col
                     xl="2"
@@ -457,7 +457,7 @@
                   <b-row
                     v-for="itemvariant in item.variant.slice(1, item.variant.length)"
                     :key="itemvariant.option_id"
-                    class="justify-content-center"
+                    class="justify-content-center h-14"
                   >
                     <b-col
                       xl="2"

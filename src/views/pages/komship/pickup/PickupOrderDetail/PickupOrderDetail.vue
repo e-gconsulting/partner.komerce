@@ -493,6 +493,7 @@ export default {
       ],
       orderID: '',
       order: [],
+      orderDB: [],
       loading: false,
       shipment: 'Semua Ekspedisi',
       listShipment: [],
@@ -599,9 +600,9 @@ export default {
         try {
           const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`)
           const { data } = order.data
+          this.orderDB = data
           this.order.push(...data)
-          const dummyData = [this.order.find(item => item.fulfillment_fee !== 0)]
-          if (dummyData.length === undefined) {
+          if (this.order[0].warehouse_type === 'Mitra Kompack') {
             this.fieldOrder.push(
               {
                 key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
@@ -620,12 +621,11 @@ export default {
       }
     },
     getOrderDataByExpedition() {
-      this.page = 1
-      this.order = []
-      this.listOrderPrint = []
-      this.checklistAllOrder = false
-      this.lastOrderData = false
-      this.getOrderData()
+      this.order = this.orderDB
+      const array = this.order
+      const newArray = array.filter(item => item.shipping === this.shipment)
+      this.order = newArray
+      if (this.shipment === null) { this.order = this.orderDB }
     },
     selectAllOrder() {
       if (this.checklistAllOrder) {
