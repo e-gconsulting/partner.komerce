@@ -114,6 +114,16 @@
               </div>
             </template>
           </BButton>
+          <BButton
+            class="new-button"
+            variant="outline-primary"
+            @click="$router.push({ name: 'pengeluaran-barang' })"
+          >
+            <img
+              class="w-8"
+              src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/directbox-send.svg"
+            >
+          </BButton>
         </div>
       </div>
     </div>
@@ -437,5 +447,8 @@ export default {
   color: #08A0F7;
   padding: 5px 10px;
   border-radius: 4px;
+ }
+ .new-button {
+  padding: 3px;
  }
 </style>
