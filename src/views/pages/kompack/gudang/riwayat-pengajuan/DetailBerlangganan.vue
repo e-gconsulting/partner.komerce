@@ -201,14 +201,7 @@
               </div>
             </b-col>
             <b-col cols="2">
-              <div
-                v-for="(packing, idx) in item.packing_detail"
-                :key="idx"
-                class=""
-              >
-                <!-- eslint-disable-next-line vue/no-parsing-error -->
-                {{ packing.packing_material }}{{ idx < item.packing_detail.length - 1 ? ', ' : '' }}
-              </div>
+              {{ handleMultiplePacking(item.packing_detail) }}
             </b-col>
             <b-col cols="2">
               <div v-if="(item.fulfillment_cost !== null)">
@@ -298,6 +291,10 @@ export default {
   methods: {
     handleChat(number) {
       window.open(`https://wa.me/62${number.substring(1)}`, '_blank')
+    },
+
+    handleMultiplePacking(value) {
+      return value.map(obj => obj.packing_material).join(', ')
     },
 
     handleInfoGudang(id) {

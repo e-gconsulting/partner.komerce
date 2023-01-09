@@ -12,9 +12,9 @@
           Batalkan
         </BButton>
         <BButton
-          variant="primary"
-          :disabled="handleDisableTambah() || disabledBtn"
-          @click="onFinish"
+          :variant="handleVariantButton()"
+          :disabled="handleDisableTambah()"
+          @click.once="onFinish"
         >
           Ajukan Layanan
         </BButton>
@@ -24,11 +24,8 @@
       <div class="d-flex justify-between">
         <div class="d-flex flex-row items-center">
           <div class="mr-1">
-            <b-img
+            <b-avatar
               :src="detail.image_logo_url"
-              alt="Photo"
-              class="mr-1 border-radius rounded"
-              style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
             />
           </div>
           <div class="d-flex flex-column items-start text-black">
@@ -102,7 +99,7 @@
         <b-form-input
           v-model="searchProduct"
           placeholder="Cari nama produk"
-          @input="getSearchProduct()"
+          debounce="500"
         />
       </b-input-group>
     </div>
@@ -116,28 +113,18 @@
         rounded="sm"
       >
         <BTable
+          id="table"
           ref="selectableTable"
           :items="products"
           :fields="fields"
           empty-text="Tidak ada data yang ditampilkan."
           responsive
-          :select-mode="`multi`"
-          selectable
-          hover
           show-empty
-          @row-selected="onRowSelected"
         >
-          <template #head(checkbox)>
-            <BCheckbox
-              v-model="isSelected"
-              @change="selectAllRows()"
-            />
-          </template>
           <template #cell(checkbox)="data">
             <BCheckbox
               v-model="selected"
               :value="data.item"
-              @change="select"
             />
           </template>
           <template #cell(nama_produk)="data">
@@ -177,8 +164,8 @@
           </template>
           <template #cell(bahan_packing)="data">
             <b-dropdown
-              text="Pilih bahan packing"
-              class="m-md-2"
+              :text="handlePackingText(data.item.pm)"
+              class="m-md-2 w-100"
               :disabled="disabledPackingOptions(data.item.id)"
               variant="outline-dark"
             >
@@ -186,7 +173,8 @@
                 v-model="data.item.pm"
                 :options="packingOptions"
                 multiple
-                class="p-1 space-y-3"
+                stacked
+                class="p-1 space-y-3 w-100"
               />
             </b-dropdown>
           </template>
@@ -227,7 +215,7 @@
         </h4>
         <h6 class="text-black">
           <strong>
-            Maaf, kamu tidak bisa melakukan pengajuan tambah produk dikarenakan kamu masih memiliki antrian pengajuan yang belum disetujui
+            Maaf, kamu tidak bisa melakukan pengajuan berlangganan dikarenakan kamu masih memiliki antrian pengajuan yang belum disetujui
           </strong>
         </h6>
       </b-col>
@@ -266,7 +254,7 @@
         </h4>
         <h6 class="text-black">
           <strong>
-            Pengajuan tambah produk akan segera dikonfrmasi selambat-lambatnya 2x24 jam.
+            Pengajuan berlangganan akan segera dikonfrmasi selambat-lambatnya 2x24 jam.
           </strong>
         </h6>
       </b-col>
@@ -285,7 +273,6 @@ export default {
       detail: {},
       products: [],
       selected: [],
-      isSelected: false,
       partnerId: JSON.parse(localStorage.getItem('userData')),
       searchProduct: '',
       packingOptions: [],
@@ -352,16 +339,41 @@ export default {
         },
       ],
       wh: JSON.parse(localStorage.getItem('warehouse_id')),
-      idWarehouse: JSON.parse(localStorage.getItem('idWarehouse')),
-      disabledBtn: false,
+
+      limits: 50,
+      offset: 0,
+      lastData: false,
     }
+  },
+
+  watch: {
+    searchProduct: {
+      handler() {
+        this.fetchProduct()
+      },
+    },
   },
   created() {
     this.fetchDetailGudangKompack()
     this.fetchProduct()
     this.fetchPackingOptions()
   },
+
+  mounted() {
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('table').offsetHeight && !this.loading) {
+        this.fetchNextProduct()
+      }
+    }
+  },
+
   methods: {
+    handlePackingText(pm) {
+      const selectedOption = this.packingOptions.filter(option => pm.includes(option.value))
+      if (selectedOption.length === 1) return selectedOption[0].text
+      if (selectedOption.length > 1) return `${selectedOption.length} terpilih`
+      return 'Pilih bahan packing'
+    },
     async fetchDetailGudangKompack() {
       this.loading = true
       await this.$http_komship.get(`/v1/komship/warehouse/information/${this.$route.params.id}`)
@@ -381,26 +393,39 @@ export default {
           }, 2000)
         })
     },
-    async getSearchProduct() {
-      this.fetchProduct()
-    },
     async fetchProduct() {
+      if (this.searchProduct === '') {
+        this.offset = 0
+      }
       this.loading = true
       await this.$http_komship.get('/v1/komship/submission/product', {
         params: {
           warehouse_id: this.wh,
           name: this.searchProduct,
+          limits: this.searchProduct === '' ? this.limits : null,
+          offset: this.searchProduct === '' ? this.offset : null,
         },
       })
         .then(response => {
-          const updated = response.data.data.map(item => {
+          const { data } = response.data
+          const updated = data.map(item => {
             const newItem = { ...item }
             newItem.pm = []
             return newItem
           })
-          this.products = updated
+          if (updated.length < this.limits) {
+            this.lastData = true
+          } else {
+            this.lastData = false
+          }
+          this.offset = updated.length
           this.loading = false
-        }).catch(() => {
+          this.selected.forEach(obj => {
+            updated[updated.findIndex(item => item.id === obj.id)] = obj
+          })
+          this.products = updated
+        }).catch(err => {
+          console.log(err)
           this.loading = false
           this.$toast({
             component: ToastificationContent,
@@ -413,13 +438,51 @@ export default {
           }, 2000)
         })
     },
+    async fetchNextProduct() {
+      if (!this.lastData) {
+        this.loading = true
+        await this.$http_komship.get('/v1/komship/submission/product', {
+          params: {
+            warehouse_id: this.wh,
+            name: this.searchProduct,
+            limits: this.limits,
+            offset: this.offset,
+          },
+        })
+          .then(response => {
+            const { data } = response.data
+            const updated = data.map(item => {
+              const newItem = { ...item }
+              newItem.pm = []
+              return newItem
+            })
+            this.products.push(...updated)
+            this.offset += data.length
+            if (data.length < this.limits) {
+              this.lastData = true
+            }
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+            this.$toast({
+              component: ToastificationContent,
+              props: {
+                title: 'Gagal',
+                icon: 'AlertCircleIcon',
+                text: 'Gagal load data, silahkan coba lagi',
+                variant: 'danger',
+              },
+            }, 2000)
+          })
+      }
+    },
     async fetchPackingOptions() {
       await this.$http_komship.get('/v1/select-option/packing')
         .then(response => {
-          const packing = this.packingOptions.concat(response.data.data.map(data => ({
+          const packing = response.data.data.map(data => ({
             value: data.id,
             text: data.name,
-          })))
+          }))
           this.packingOptions = packing
         }).catch(() => {
           this.$toast({
@@ -467,29 +530,20 @@ export default {
         if (this.selected[i].pm.length === 0) return true
       }
       if (this.selected.length === 0) return true
-      if (this.products.length === 0) return true
       return false
+    },
+    handleVariantButton() {
+      for (let i = 0; i < this.selected.length; i += 1) {
+        if (this.selected[i].pm.length === 0) return 'secondary'
+      }
+      if (this.selected.length === 0) return 'secondary'
+      return 'primary'
     },
     disabledPackingOptions(data) {
       for (let i = 0; i < this.selected.length; i += 1) {
         if (this.selected[i].id === data) return false
       }
       return true
-    },
-    onRowSelected(items) {
-      this.selected = items
-    },
-    selectAllRows() {
-      if (this.isSelected) {
-        this.$refs.selectableTable.selectAllRows()
-      }
-      if (!this.isSelected) {
-        this.$refs.selectableTable.clearSelected()
-      }
-    },
-    select(value) {
-      this.selected = value
-      this.isSelected = false
     },
     formatDate(value) {
       return moment(value).format('DD MMMM YYYY')
@@ -502,17 +556,16 @@ export default {
     },
     confirmBatalkan() {
       this.$swal({
-        title: 'Batalkan Pengajuan',
-        text: 'Kamu yakin mau batalin pengajuan berlangganan ?',
+        text: 'Kamu yakin ingin membatalkan berlangganan?',
         icon: 'warning',
         iconHtml: '<img src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png">',
         showCancelButton: true,
-        confirmButtonText: 'Ya',
         cancelButtonText: 'Tidak',
+        confirmButtonText: 'Ya',
         customClass: {
           icon: 'border-0 w-50 my-5',
-          confirmButton: 'btn btn-primary mr-1 px-5',
-          cancelButton: 'btn btn-outline-primary px-4',
+          confirmButton: 'btn btn-outline-primary mr-1 px-5',
+          cancelButton: 'btn btn-primary px-4',
         },
         buttonsStyling: false,
       }).then(result => {
@@ -522,7 +575,9 @@ export default {
       })
     },
     closeModal() {
-      this.$router.go(-1)
+      this.$router.push({
+        path: `/search-gudang/detail/${this.$route.params.id}`,
+      })
     },
   },
 }

@@ -39,7 +39,7 @@
         <b-button
           variant="outline-primary"
           class="px-3"
-          @click="handleSave()"
+          @click.once="handleSave()"
         >Simpan</b-button>
       </div>
       <div

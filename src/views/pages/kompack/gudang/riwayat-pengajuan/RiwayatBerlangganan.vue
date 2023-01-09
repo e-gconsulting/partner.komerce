@@ -11,6 +11,7 @@
         class="top-20"
       />
       <b-table
+        id="table"
         small
         class="text-center"
         :fields="fields"
@@ -100,6 +101,10 @@ export default {
         },
       ],
 
+      limit: 25,
+      offset: 0,
+      lastData: false,
+
       fields: [
         {
           key: 'tanggal_pengajuan',
@@ -134,6 +139,14 @@ export default {
     this.fetchRiwayatBerlangganan()
   },
 
+  mounted() {
+    window.onscroll = () => {
+      if ((window.innerHeight + window.scrollY) >= document.getElementById('table').offsetHeight && !this.loading) {
+        this.fetchNextRiwayatBerlangganan()
+      }
+    }
+  },
+
   methods: {
     handleAddBerlangan() {
       this.$router.push({
@@ -151,10 +164,19 @@ export default {
     fetchRiwayatBerlangganan() {
       this.loading = true
       this.$store
-        .dispatch('riwayatPengajuan/getListBerlangganan')
+        .dispatch('riwayatPengajuan/getListBerlangganan', {
+          limit: this.limit,
+          offset: this.offset,
+        })
         .then(() => {
           this.items = this.berlangganan
           this.loading = false
+          this.offset = this.berlangganan.length
+          if (this.berlangganan.length < this.limit) {
+            this.lastData = true
+          } else {
+            this.lastData = false
+          }
         })
         .catch(() => {
           this.loading = false
@@ -171,6 +193,40 @@ export default {
             2000,
           )
         })
+    },
+
+    fetchNextRiwayatBerlangganan() {
+      if (!this.lastData) {
+        this.loading = true
+        this.$store
+          .dispatch('riwayatPengajuan/getListBerlangganan', {
+            limit: this.limit,
+            offset: this.offset,
+          })
+          .then(() => {
+            this.items.push(...this.berlangganan)
+            this.loading = false
+            this.offset += this.berlangganan.length
+            if (this.berlangganan.length < this.limit) {
+              this.lastData = true
+            }
+          })
+          .catch(() => {
+            this.loading = false
+            this.$toast(
+              {
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal load data, silahkan coba lagi',
+                  variant: 'danger',
+                },
+              },
+              2000,
+            )
+          })
+      }
     },
 
     // detail(data) {
