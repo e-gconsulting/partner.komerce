@@ -964,6 +964,7 @@ export default {
             payment_method: this.paymentMethod,
             partner_id: this.profile.partner_id,
             partner_address_id: this.address.warehouse_id,
+            warehouse_type: this.address.warehouse_type,
           },
         }).then(async res => {
           const { data } = res.data
@@ -1088,6 +1089,7 @@ export default {
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
+            warehouse_type: this.address.warehouse_type,
           },
         }).then(async res => {
           const { data } = res.data
@@ -1216,6 +1218,7 @@ export default {
             discount: this.discount,
             additional_cost: this.additionalCost,
             grandtotal: grandTotalNew,
+            warehouse_type: this.address.warehouse_type,
           },
         }).then(async res => {
           const { data } = res.data
