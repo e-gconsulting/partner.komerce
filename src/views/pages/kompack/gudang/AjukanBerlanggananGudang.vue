@@ -505,7 +505,7 @@ export default {
 
       const payload = {
         partner_id: this.partnerId.partner_detail.id,
-        warehouse_id: this.idWarehouse,
+        warehouse_id: this.wh,
         submission_type: 1,
         product: dataProduct,
       }

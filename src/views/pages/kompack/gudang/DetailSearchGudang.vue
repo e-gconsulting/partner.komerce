@@ -377,7 +377,7 @@ export default {
         this.$router.push({
           path: `/search-gudang/detail/submission/${this.$route.params.id}`,
         })
-        localStorage.setItem('idWarehouse', id)
+        localStorage.setItem('warehouse_id', id)
       // eslint-disable-next-line camelcase
       } if (subscribe_status === 1) {
         this.$router.push({
