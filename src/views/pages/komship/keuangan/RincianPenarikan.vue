@@ -568,7 +568,7 @@ export default {
           this.lastWithDrawal = moment(new Date(data.last_withdrawal_date)).format('DD MMMM')
           this.withdrawalDate = data.withdrawal_date
           const date = moment(new Date(data.withdrawal_date)).format('DD MMMM YYYY')
-          const hours = moment(new Date(data.withdrawal_date)).format('HH:MM')
+          const hours = moment(new Date(data.withdrawal_date)).format('HH:mm')
           this.withdrawalDate = `${date} (${hours} WIB)`
         })
       const params = {
