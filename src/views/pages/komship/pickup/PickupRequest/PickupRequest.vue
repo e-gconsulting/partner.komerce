@@ -18,10 +18,10 @@
         >
           <div v-if="address !== null">
             <p class="mb-[8px]">
-              {{ address.address_name }}
+              {{ address.name }}
             </p>
             <p class="mb-0 text-[#828282]">
-              {{ address.address_detail }}
+              {{ address.detail_address }}
             </p>
           </div>
           <div v-else>
@@ -191,9 +191,12 @@
         <template #cell(qty)="data">
           <span class="font-bold">x{{ data.item.qty }}</span>
         </template>
+        <template #cell(fulfillment_cost)="data">
+          <span class="font-bold">{{ data.item.fulfillment_cost }}</span>
+        </template>
       </b-table>
       <hr class="border border-[#C2C2C2]">
-      <b-row class="mt-2">
+      <b-row class="mt-2 justify-content-between">
         <b-col
           md="6"
           class="my-auto"
@@ -212,13 +215,16 @@
           </b-button>
         </b-col>
         <b-col
-          md="6"
-          class="d-flex justify-content-end"
+          md="3"
+          class="justify-content-end"
         >
-          <span
+          <div
             v-if="totalProduct > 0"
             class="text-[16px] font-bold"
-          >Total Produk : {{ totalProduct }}</span>
+          >Total Produk : {{ totalProduct }}</div>
+          <div v-if="totalCost > 0">
+            Total Pembayaran : Rp{{ totalCost }}
+          </div>
         </b-col>
       </b-row>
       <b-alert
@@ -259,7 +265,7 @@
       />
       <div
         v-for="addressItems in addressList"
-        :key="addressItems.address_id"
+        :key="addressItems.id"
         class="items-address"
       >
         <b-form-radio
@@ -267,8 +273,13 @@
           :value="addressItems"
           @change="onSelectAddress(addressItems)"
         >
-          <span class="font-bold text-[16px]">
-            {{ addressItems.address_name }}
+          <span class="font-bold text-[16px] d-flex">
+            <b-img
+              v-if="addressItems.warehouse_type === 'Mitra Kompack'"
+              class="mr-1"
+              :src="addressItems.flag"
+            />
+            {{ addressItems.name }}
           </span><br>
           <span class="text-primary">
             {{ addressItems.orders }}

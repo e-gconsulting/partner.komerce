@@ -188,7 +188,7 @@ export default {
     },
     getPickup() {
       this.loading = true
-      return this.$http_komship.get('v1/pickup/history', {
+      return this.$http_komship.get('v3/pickup/history', {
         params: {
           page: this.currentPage,
           limits: this.totalPerPage,

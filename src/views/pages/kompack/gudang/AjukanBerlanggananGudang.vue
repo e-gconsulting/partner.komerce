@@ -497,6 +497,7 @@ export default {
         })
     },
     async onFinish() {
+      this.disabledBtn = true
       const dataProduct = this.selected.map(product => ({
         product_id: product.id,
         packing_material: product.pm,
@@ -504,13 +505,14 @@ export default {
 
       const payload = {
         partner_id: this.partnerId.partner_detail.id,
-        warehouse_id: this.wh,
-        submission_type: 2,
+        warehouse_id: this.idWarehouse,
+        submission_type: 1,
         product: dataProduct,
       }
 
       await this.$http_komship.post('/v1/komship/submission', payload)
         .then(response => {
+          this.disabledBtn = true
           if (response.data.code === 200) {
             this.$bvModal.show('modal-success-submission')
             this.fetchProduct()
@@ -519,7 +521,9 @@ export default {
             this.fetchProduct()
           }
         })
-        .catch()
+        .catch(() => {
+          this.disabledBtn = true
+        })
     },
     handleDisableTambah() {
       for (let i = 0; i < this.selected.length; i += 1) {
