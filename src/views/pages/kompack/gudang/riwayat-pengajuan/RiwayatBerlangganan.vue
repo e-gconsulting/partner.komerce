@@ -101,7 +101,7 @@ export default {
         },
       ],
 
-      limit: 25,
+      limit: 50,
       offset: 0,
       lastData: false,
 
