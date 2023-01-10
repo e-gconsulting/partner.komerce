@@ -478,12 +478,12 @@ export default {
       this.$refs.html2Pdf.generatePdf()
     },
     handleToPagePrint() {
-      if (this.profile.partner_business_name !== ''
-      && this.profile.partner_no_hp_business !== ''
-      && this.address_partner_business !== '') {
-        this.$router.push({ path: `/detail-orderan-pickup/${this.$route.params.order_data_id}` })
-      } else {
+      if (this.profile.partner_business_name === null
+      || this.profile.partner_no_hp_business === null
+      || this.address_partner_business === null) {
         this.$bvModal.show('modal-blocker-profile')
+      } else {
+        this.$router.push({ path: `/detail-orderan-pickup/${this.$route.params.order_data_id}` })
       }
     },
   },
