@@ -296,8 +296,8 @@ export default {
           this.items = this.inbound
           this.loading = false
           if (this.partnerList) this.offset = 0
-          if (this.formatDateRange(this.dateRange.startDate)) this.offset = 0
-          if (this.formatDateRange(this.dateRange.endDate)) this.offset = 0
+          if (this.dateRange.startDate) this.offset = 0
+          if (this.dateRange.endDate) this.offset = 0
           else this.offset = this.inbound.length
           if (this.inbound.length < this.limit) {
             this.lastData = true
