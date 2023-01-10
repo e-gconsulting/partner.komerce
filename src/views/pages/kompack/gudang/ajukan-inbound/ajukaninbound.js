@@ -13,7 +13,6 @@ import flatPickr from 'vue-flatpickr-component'
 import { Indonesian } from 'flatpickr/dist/l10n/id'
 import 'flatpickr/dist/themes/light.css'
 import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
-import { VListItemSubtitle } from 'vuetify/lib'
 
 export default {
   components: {
