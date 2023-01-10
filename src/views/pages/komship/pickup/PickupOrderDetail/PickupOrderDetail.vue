@@ -236,10 +236,10 @@
         <template #head(warehouse_type)>
           <div>Biaya Fulfillment</div>
           <div
-            class="d-flex mt-1 text-lowercase"
+            class="d-flex mt-1 text-[12px]"
             style="place-content: center"
           >
-            <span>Layanan dari</span>
+            <span class="text-capitalize pr-[5px]">Layanan</span><span class="text-lowercase"> dari</span>
             <img
               class="px-[5px]"
               src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
@@ -502,6 +502,7 @@ export default {
       checklistAllOrder: false,
       page: 1,
       limit: 50,
+      offset: 0,
       lastOrderData: false,
       formatPrint: '',
       printDate: false,
@@ -539,6 +540,7 @@ export default {
         if ((window.innerHeight + window.scrollY)
         >= main.offsetHeight
         && !this.loading) {
+          this.offset += 50
           this.getOrderData()
         }
       }
@@ -552,7 +554,7 @@ export default {
       try {
         const listShipment = await this.$http_komship.get('/v1/shipments')
         const { data } = listShipment.data
-        for (let index = 0; index < data.length; index += 1) {
+        for (let index = 1; index < data.length; index += 1) {
           this.listShipment.push(data[index].shipping_name)
         }
       } catch (error) {
@@ -598,7 +600,7 @@ export default {
       if (this.orderID !== '' && !this.lastOrderData) {
         this.loading = true
         try {
-          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}`)
+          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
           const { data } = order.data
           this.orderDB = data
           this.order.push(...data)

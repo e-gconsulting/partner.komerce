@@ -465,6 +465,9 @@ export default {
               this.$bvModal.hide('modalSubmitPickup')
               this.orderPickupError()
             }
+          } else if (data.code === 1006) {
+            this.$bvModal.hide('modalSubmitPickup')
+            this.$bvModal.show('less-balance-modal')
           } else {
             this.addOrderError(this.order[index])
             this.setProgressSubmit(index)
