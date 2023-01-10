@@ -29,7 +29,7 @@ export default [
     },
   },
   {
-    path: '/detail-gudang-kompack/pengeluaran-barang',
+    path: '/detail-gudang-kompack/:id/pengeluaran-barang',
     name: 'pengeluaran-barang',
     component: () => import('@/views/pages/komship/warehouse/penarikan-barang/listpenarikan.vue'),
     meta: {

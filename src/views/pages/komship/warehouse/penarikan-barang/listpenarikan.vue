@@ -1,13 +1,14 @@
 <template>
   <BCard body>
-    <h3 class="my-2 text-black">
-      Pengeluaran Barang
-    </h3>
-    <b-row class="justify-content-end">
-      <div class="d-flex">
+    <h4 class="font-bold text-black d-inline-flex mb-0">
+      Penarikan Barang
+    </h4>
+    <div class="d-flex justify-content-end">
+      <div class="d-flex gap-4">
         <b-button
           variant="outline-primary"
           class="d-flex"
+          style="padding: 8px"
         >
           <img
             src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/add.svg"
@@ -17,7 +18,7 @@
         </b-button>
         <b-button
           variant="primary"
-          class="mx-2"
+          style="padding: 8px"
         >
           <img
             src="https://storage.googleapis.com/komerce/assets/komerce-icon/Putih/candle-2.svg"
@@ -25,7 +26,7 @@
           >
         </b-button>
       </div>
-    </b-row>
+    </div>
     <b-tabs
       card
     >

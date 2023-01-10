@@ -114,13 +114,23 @@
               </div>
             </template>
           </BButton>
+          <b-popover
+            target="penarikanBarang"
+            variant="dark"
+            triggers="hover"
+            placement="top"
+            boundary="viewport"
+          >
+            Penarikan Barang
+          </b-popover>
           <BButton
-            class="new-button"
+            id="penarikanBarang"
+            style="padding: 7px;"
             variant="outline-primary"
             @click="$router.push({ name: 'pengeluaran-barang' })"
           >
             <img
-              class="w-8"
+              class="w-6"
               src="https://storage.googleapis.com/komerce/assets/komerce-icon/Orange/directbox-send.svg"
             >
           </BButton>
@@ -447,8 +457,5 @@ export default {
   color: #08A0F7;
   padding: 5px 10px;
   border-radius: 4px;
- }
- .new-button {
-  padding: 3px;
  }
 </style>
