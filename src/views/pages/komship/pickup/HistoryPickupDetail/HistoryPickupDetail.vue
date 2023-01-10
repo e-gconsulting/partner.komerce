@@ -361,12 +361,44 @@
         </b-container>
       </section>
     </VueHtml2pdf>
+    <b-modal
+      id="modal-blocker-profile"
+      hide-footer
+      hide-header
+      modal-class="modal-dark"
+      centered
+      no-close-on-backdrop
+      no-close-on-esc
+    >
+      <b-col
+        md="12"
+        class="d-flex justify-content-center pt-1"
+      >
+        <b-img
+          width="100"
+          src="https://storage.googleapis.com/komerce/core/icon-popup-warning.png"
+        />
+      </b-col>
+
+      <b-col class="text-center px-5 pt-2 text-black">
+        Kamu belum melengkapi profile, yuk lengkapi profilemu terlebih dahulu
+      </b-col>
+      <b-col class="text-center px-5 py-2">
+        <b-btn
+          variant="primary"
+          @click="$router.push({ path: '/setting-kompship/profile' })"
+        >
+          Lengkapi Profile
+        </b-btn>
+      </b-col>
+    </b-modal>
   </b-card>
 </template>
 <script>
 import moment from 'moment'
 import VueHtml2pdf from 'vue-html2pdf'
 import imageNull from '@/assets/images/avatars/image-null.png'
+import { mapState } from 'vuex'
 
 export default {
   components: { VueHtml2pdf },
@@ -393,6 +425,9 @@ export default {
         pickupTime: '',
       },
     }
+  },
+  computed: {
+    ...mapState('dashboard', ['profile']),
   },
   created() {
     this.getHistoryPickup()
@@ -443,7 +478,13 @@ export default {
       this.$refs.html2Pdf.generatePdf()
     },
     handleToPagePrint() {
-      this.$router.push({ path: `/detail-orderan-pickup/${this.$route.params.order_data_id}` })
+      if (this.profile.partner_business_name !== ''
+      && this.profile.partner_no_hp_business !== ''
+      && this.address_partner_business !== '') {
+        this.$router.push({ path: `/detail-orderan-pickup/${this.$route.params.order_data_id}` })
+      } else {
+        this.$bvModal.show('modal-blocker-profile')
+      }
     },
   },
 }

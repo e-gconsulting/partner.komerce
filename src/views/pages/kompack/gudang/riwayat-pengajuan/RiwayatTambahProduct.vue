@@ -178,7 +178,7 @@ export default {
 
       loading: false,
 
-      limit: 25,
+      limit: 50,
       offset: 0,
       lastData: false,
 
@@ -293,7 +293,10 @@ export default {
         .then(() => {
           this.items = this.addProduct
           this.loading = false
-          this.offset = this.addProduct.length
+          if (this.partnerList) this.offset = 0
+          if (this.formatDateRange(this.dateRange.startDate)) this.offset = 0
+          if (this.formatDateRange(this.dateRange.endDate)) this.offset = 0
+          else this.offset = this.addProduct.length
           if (this.addProduct.length < this.limit) {
             this.lastData = true
           } else {
