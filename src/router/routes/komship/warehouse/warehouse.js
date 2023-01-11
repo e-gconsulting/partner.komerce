@@ -31,7 +31,7 @@ export default [
   {
     path: '/detail-gudang-kompack/:id/pengeluaran-barang',
     name: 'pengeluaran-barang',
-    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/listpenarikan.vue'),
+    component: () => import('@/views/pages/komship/warehouse/penarikan-barang/Penarikan.vue'),
     meta: {
       resource: 'Gudang Komship',
       action: 'manage',

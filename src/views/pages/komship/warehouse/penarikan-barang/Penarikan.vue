@@ -27,21 +27,28 @@
         </b-button>
       </div>
     </div>
-    <b-tabs
-      card
-    >
+    <b-tabs>
       <b-tab
-        class="text-black"
-        title="Data Barang Dikeluarkan"
+        title="Barang Dikeluarkan"
         lazy
       >
-        <barang-dikeluarkan />
+        <BarangDikeluarkan />
       </b-tab>
       <b-tab
-        title="Menunggu Respons"
         lazy
       >
-        <menunggu-respon />
+        <template slot="title">
+          <div class="d-flex gap-2">
+            Menunggu Respon
+            <b-badge
+              pill
+              variant="primary"
+            >
+              {{ waitingRes }}
+            </b-badge>
+          </div>
+        </template>
+        <MenungguRespon />
       </b-tab>
     </b-tabs>
   </BCard>
@@ -51,6 +58,7 @@
 import {
   BTabs, BTab, BCard,
 } from 'bootstrap-vue'
+import ToastificationContent from '@core/components/toastification/ToastificationContent.vue'
 import BarangDikeluarkan from './DataBarangDikeluarkan.vue'
 import MenungguRespon from './MenungguRespon.vue'
 
@@ -61,6 +69,11 @@ export default {
     BarangDikeluarkan,
     MenungguRespon,
     BCard,
+  },
+  data() {
+    return {
+      waitingRes: 5,
+    }
   },
 }
 </script>
