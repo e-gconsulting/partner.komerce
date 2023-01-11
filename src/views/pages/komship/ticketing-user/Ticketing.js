@@ -607,6 +607,9 @@ export default
       return resultVariant
     },
     searchTicket: _.debounce(async function () {
+      this.ticketStatus = []
+      this.filterTicketType = []
+      this.filterEkspedisi = []
       this.loadingDataTable = true
       const params = {}
       if (this.search) Object.assign(params, { search: this.search })

@@ -185,38 +185,53 @@ export default {
           }
         })
     },
+    adjustCustomLabel() {
+      if (this.profile.partner_business_name === null
+        || this.profile.partner_no_hp_business === null
+        || this.profile.address_partner_business === null) {
+        this.$bvModal.show('modal-blocker-profile')
+      } else {
+        this.$bvModal.show('modal-set-custom-label')
+      }
+    },
     setCustomLabel() {
       if (this.customLabel === false) {
         this.$refs['modal-set-custom-label'].show()
         this.changeAttr()
       }
       if (this.customLabel && this.isNotSetActive) {
-        this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
-          is_custom_label: 1,
-        })
-          .then(async response => {
-            await this.$store.dispatch('dashboard/getProfile')
-            this.getProfile()
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Success',
-                icon: 'CheckIcon',
-                text: 'Custom Label berhasil diaktifkan',
-                variant: 'success',
-              },
-            }, 2000)
-          }).catch(() => {
-            this.$toast({
-              component: ToastificationContent,
-              props: {
-                title: 'Gagal',
-                icon: 'AlertCircleIcon',
-                text: 'Gagal update custom label',
-                variant: 'danger',
-              },
-            }, 2000)
+        if (this.profile.partner_business_name === null
+          || this.profile.partner_no_hp_business === null
+          || this.profile.address_partner_business === null) {
+          this.$bvModal.show('modal-blocker-profile')
+        } else {
+          this.$http.post(`/user/partner/setting/isCustomLabel/${this.profile.partner_id}`, {
+            is_custom_label: 1,
           })
+            .then(async response => {
+              await this.$store.dispatch('dashboard/getProfile')
+              this.getProfile()
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Success',
+                  icon: 'CheckIcon',
+                  text: 'Custom Label berhasil diaktifkan',
+                  variant: 'success',
+                },
+              }, 2000)
+            }).catch(() => {
+              this.$toast({
+                component: ToastificationContent,
+                props: {
+                  title: 'Gagal',
+                  icon: 'AlertCircleIcon',
+                  text: 'Gagal update custom label',
+                  variant: 'danger',
+                },
+              }, 2000)
+            })
+        }
       }
     },
     setNotifWa() {
