@@ -407,7 +407,6 @@ export default {
       this.$http_komship.get('/v1/notification/list')
         .then(response => {
           const { data } = response.data
-          console.log(data)
           this.notificationTotal = data.total_notification
           this.listNotification = data.data
         })
