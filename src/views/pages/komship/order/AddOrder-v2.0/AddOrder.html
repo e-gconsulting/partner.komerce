@@ -74,9 +74,16 @@
       <b-col md="4">
         <v-select
           v-model="address"
-          label="address_name"
+          label="warehouse_name"
           :options="addressList"
+          @input="getProduct(address)"
         >
+          <template v-slot:option="option">
+            <div v-if="option.warehouse_type === 'Mitra Kompack'" class="d-flex">
+              <img class="mr-1" :src="option.flag" />
+              {{ option.warehouse_name }}
+            </div>
+          </template>
           <span
             v-if="addressLength === 0"
             slot="no-options"
