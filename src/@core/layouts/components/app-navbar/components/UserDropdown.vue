@@ -297,9 +297,10 @@
                   {{ getFormatDate(item.created_at) }}
                 </small>
               </div>
-              <small style="color: #626262;">
-                {{ item.description }}
-              </small>
+              <small
+                style="color: #626262;"
+                v-html="item.description"
+              />
             </b-col>
           </b-row>
         </div>
@@ -441,7 +442,7 @@ export default {
       if (hour > 3 && hour < 24) {
         format = moment(new Date(value)).format('HH.mm')
       }
-      if (hour >= 24 && hour <= 48) {
+      if (hour >= 20 && hour <= 48) {
         format = `Kemarin ${moment(new Date(value)).format('HH.mm')}`
       }
       if (hour > 48) {
