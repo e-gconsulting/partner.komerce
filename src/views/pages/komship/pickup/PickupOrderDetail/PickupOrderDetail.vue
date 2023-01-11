@@ -178,7 +178,6 @@
             </b-button>
           </div>
         </template>
-
         <template #cell(customer_name)="data">
           <h5 class="text-top">
             <strong>
@@ -230,6 +229,23 @@
               </strong>
             </span>
           </b-row>
+        </template>
+        <template #cell(warehouse_type)="data">
+          <div>{{ data.item.fulfillment_fee }}</div>
+        </template>
+        <template #head(warehouse_type)>
+          <div>Biaya Fulfillment</div>
+          <div
+            class="d-flex mt-1 text-[12px]"
+            style="place-content: center"
+          >
+            <span class="text-capitalize pr-[5px]">Layanan</span><span class="text-lowercase"> dari</span>
+            <img
+              class="px-[5px]"
+              src="https://storage.googleapis.com/komerce/assets/svg/logo_kompack.svg"
+            >
+            <span>Kompack</span>
+          </div>
         </template>
       </b-table>
     </b-overlay>
@@ -389,6 +405,54 @@
         </b-row>
       </template>
     </b-modal>
+
+    <b-modal
+      ref="popup-warning-downloading"
+      hide-footer
+      hide-header
+      static
+      centered
+    >
+      <b-row class="justify-content-center mb-1 pt-1">
+        <img :src="warningIcon">
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <h4 class="text-black px-4">
+          <strong>
+            Batalin Download Label?
+          </strong>
+        </h4>
+      </b-row>
+      <b-row class="justify-content-center text-center mb-1">
+        <span class="text-black">
+          Proses penyiapan file label pengiriman belum selesai.
+        </span>
+        <br>
+        <span class="text-black">
+          Yakin mau Batalin?
+        </span>
+      </b-row>
+      <b-row class="justify-content-center pb-1">
+        <b-col cols="5">
+          <b-button
+            class="btn-icon"
+            variant="primary"
+            block
+          >
+            Lanjutin
+          </b-button>
+        </b-col>
+        <b-col cols="5">
+          <b-button
+            class="btn-icon"
+            variant="outline-primary"
+            block
+          >
+            Batalin Download
+          </b-button>
+        </b-col>
+      </b-row>
+    </b-modal>
   </b-card>
 </template>
 <script>
@@ -399,6 +463,7 @@ import axios from 'axios'
 import useJwt from '@core/auth/jwt/useJwt'
 import '@core/scss/vue/libs/vue-select.scss'
 import { mapState } from 'vuex'
+import warningIcon from '@/assets/images/icons/warning.svg'
 
 const { jwt } = useJwt(axios, {})
 const token = jwt.getToken()
@@ -428,6 +493,7 @@ export default {
       ],
       orderID: '',
       order: [],
+      orderDB: [],
       loading: false,
       shipment: 'Semua Ekspedisi',
       listShipment: [],
@@ -436,6 +502,7 @@ export default {
       checklistAllOrder: false,
       page: 1,
       limit: 50,
+      offset: 0,
       lastOrderData: false,
       formatPrint: '',
       printDate: false,
@@ -444,6 +511,7 @@ export default {
 
       percentageDownload: 0,
       isDownloadActive: false,
+      warningIcon,
     }
   },
   computed: {
@@ -473,6 +541,7 @@ export default {
         >= main.offsetHeight
         && !this.loading) {
           this.getOrderData()
+          this.offset += 50
         }
       }
     }
@@ -485,7 +554,7 @@ export default {
       try {
         const listShipment = await this.$http_komship.get('/v1/shipments')
         const { data } = listShipment.data
-        for (let index = 0; index < data.length; index += 1) {
+        for (let index = 1; index < data.length; index += 1) {
           this.listShipment.push(data[index].shipping_name)
         }
       } catch (error) {
@@ -531,16 +600,17 @@ export default {
       if (this.orderID !== '' && !this.lastOrderData) {
         this.loading = true
         try {
-          const order = await this.$http_komship.get(`/v1/order/${this.profile.partner_detail.id}`, {
-            params: {
-              order_id: this.orderID,
-              page: this.page,
-              total_per_page: this.limit,
-              shipping_name: this.shipment === 'Semua Ekspedisi' ? '' : this.shipment,
-            },
-          })
-          const { data } = order.data.data
+          const order = await this.$http_komship.get(`/v2/pickup/detail/order/${this.$route.params.order_data_id}?limit=${this.limit}&offset=${this.offset}`)
+          const { data } = order.data
+          this.orderDB = data
           this.order.push(...data)
+          if (this.order[0].warehouse_type === 'Mitra Kompack') {
+            this.fieldOrder.push(
+              {
+                key: 'warehouse_type', label: 'Biaya Fulfillment', thClass: 'text-center', tdClass: 'align-top text-center', labelBottom: 'Layanan dari Kompack',
+              },
+            )
+          }
           this.page += 1
           this.loading = false
           if (data.length < this.limit) {
@@ -553,12 +623,11 @@ export default {
       }
     },
     getOrderDataByExpedition() {
-      this.page = 1
-      this.order = []
-      this.listOrderPrint = []
-      this.checklistAllOrder = false
-      this.lastOrderData = false
-      this.getOrderData()
+      this.order = this.orderDB
+      const array = this.order
+      const newArray = array.filter(item => item.shipping === this.shipment)
+      this.order = newArray
+      if (this.shipment === null) { this.order = this.orderDB }
     },
     selectAllOrder() {
       if (this.checklistAllOrder) {
@@ -567,7 +636,14 @@ export default {
         this.listOrderPrint = []
       }
     },
-    popupPrintLabel() {
+    async popupPrintLabel() {
+      window.addEventListener('beforeunload', event => {
+        if (this.isDownloadActive) {
+          // eslint-disable-next-line no-param-reassign
+          event.returnValue = ''
+        }
+      })
+      this.$forceUpdate()
       this.$bvModal.show('printLabel')
       let orderIdPrint = ''
       for (let index = 0; index < this.listOrderPrint.length; index += 1) {
