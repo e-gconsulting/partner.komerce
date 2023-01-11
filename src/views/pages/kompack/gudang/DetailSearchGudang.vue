@@ -381,7 +381,7 @@ export default {
       // eslint-disable-next-line camelcase
       } if (subscribe_status === 1) {
         this.$router.push({
-          path: '/gudangku-kompack',
+          path: `/detail-gudang-kompack/${this.$route.params.id}`,
         })
       }
     },

@@ -771,6 +771,48 @@
         </b-button>
       </div>
     </b-modal>
+
+    <!-- less balance modal -->
+    <b-modal
+      id="less-balance-modal"
+      hide-header
+      hide-footer
+      centered
+    >
+      <div class="px-2 py-1 text-center">
+        <div
+          class="mb-2"
+          style="text-align: -webkit-center"
+        >
+          <img
+            class="w-40"
+            src="https://storage.googleapis.com/komerce/assets/elements/transfer-fail.png"
+          >
+        </div>
+        <h4 class="text-black text-18-bold">
+          Pengajuan gagal dikirim
+        </h4>
+        <div class="text-black">Saldo kamu tidak mencukupi untuk pengajuan Pick up,
+          isi saldo kamu yuk...</div>
+        <div class="mt-2">
+          <b-button
+            variant="outline-primary"
+            class="text-primary mr-1"
+            @click="$bvModal.hide('less-balance-modal')"
+          >
+            Kembali
+          </b-button>
+          <b-button
+            variant="primary"
+            class="text-white ml-1"
+            @click="$router.push({ name: 'saldo' })"
+          >
+            Top Up
+          </b-button>
+        </div>
+      </div>
+    </b-modal>
+
     <div
       v-if="loading"
       class="loading-order-list"
